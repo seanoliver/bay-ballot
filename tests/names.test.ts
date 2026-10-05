@@ -52,4 +52,32 @@ describe("matchName", () => {
       expect(matchName("...", ["..."].concat(cands.slice(0, 1)))).toEqual({ name: "...", fuzzy: false });
     });
   });
+  describe("parenthetical nicknames", () => {
+    const f = (name: string) => ({ name, fuzzy: true });
+    const ballot = ["Dionjay (DJ) Brookter", "J.R. Eppler", "Theo Ellington", "Donald P. (Don) Wagner"];
+    it("dotted nickname initials match", () =>
+      expect(matchName("D.J. Brookter", ballot)).toEqual(f("Dionjay (DJ) Brookter")));
+    it("nickname in place of the first name matches", () => {
+      expect(matchName("DJ Brookter", ballot)).toEqual(f("Dionjay (DJ) Brookter"));
+      expect(matchName("Don Wagner", ballot)).toEqual(f("Donald P. (Don) Wagner"));
+    });
+    it("name without the parenthetical matches", () => {
+      expect(matchName("Dionjay Brookter", ballot)).toEqual(f("Dionjay (DJ) Brookter"));
+      expect(matchName("Donald Wagner", ballot)).toEqual(f("Donald P. (Don) Wagner"));
+    });
+    it("initials rule still applies to each variant", () => {
+      expect(matchName("Don P. Wagner", ballot)).toEqual(f("Donald P. (Don) Wagner"));
+      expect(matchName("Don Q. Wagner", ballot)).toBeNull();
+      expect(matchName("Donald Q. Wagner", ballot)).toBeNull();
+    });
+    it("a nickname does not collide with another candidate sharing the surname", () => {
+      const c = ["Donald P. (Don) Wagner", "Ronald Wagner", "Mary Wagner"];
+      expect(matchName("Ronald Wagner", c)).toEqual({ name: "Ronald Wagner", fuzzy: false });
+      expect(matchName("Mary Wagner", c)).toEqual({ name: "Mary Wagner", fuzzy: false });
+      expect(matchName("Don Wagner", c)).toEqual(f("Donald P. (Don) Wagner"));
+      expect(matchName("Ron Wagner", c)).toBeNull();
+    });
+    it("is ambiguous when a nickname equals another candidate's name", () =>
+      expect(matchName("DJ Brookter", ["Dionjay (DJ) Brookter", "D.J. Brookter"])).toBeNull());
+  });
 });

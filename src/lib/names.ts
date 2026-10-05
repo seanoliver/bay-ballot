@@ -25,14 +25,37 @@ function isSubsequence(sub: string[], full: string[]): boolean {
   return i === sub.length;
 }
 
+type Tokens = ReturnType<typeof tokenize>;
+
+const PAREN = /\s*\(([^)]*)\)\s*/;
+
+/**
+ * The ways a ballot name may be written. "Dionjay (DJ) Brookter" also appears as printed
+ * without the parenthetical ("Dionjay Brookter") and with the nickname replacing the first
+ * name ("DJ Brookter"). The initials rule applies to each variant.
+ */
+function variants(candidate: string): Tokens[] {
+  const m = candidate.match(PAREN);
+  if (!m) return [tokenize(candidate)];
+  const bare = tokenize(candidate.replace(PAREN, " "));
+  const nick = tokenize(m[1]);
+  const out = [tokenize(candidate), bare];
+  if (nick.names.length > 0 && bare.names.length > 0) {
+    out.push({ names: [...nick.names, ...bare.names.slice(1)], initials: bare.initials });
+  }
+  return out;
+}
+
 function compatible(input: string, candidate: string): boolean {
   const a = tokenize(input);
-  const b = tokenize(candidate);
   return (
     a.names.length > 0 &&
-    a.names.length === b.names.length &&
-    a.names.every((t, i) => t === b.names[i]) &&
-    isSubsequence(a.initials, b.initials)
+    variants(candidate).some(
+      (b) =>
+        a.names.length === b.names.length &&
+        a.names.every((t, i) => t === b.names[i]) &&
+        isSubsequence(a.initials, b.initials),
+    )
   );
 }
 
