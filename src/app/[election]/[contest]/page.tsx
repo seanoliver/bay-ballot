@@ -38,12 +38,12 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   return (
     <>
       <p className="text-sm">
-        <Link href={`/${electionId}`} className="text-muted underline underline-offset-2">
+        <Link href={`/${electionId}`} className="text-muted-foreground underline underline-offset-2">
           {ballot.title}
         </Link>
       </p>
       <h1 className="mt-1 text-2xl font-bold">{contest.title}</h1>
-      {contest.description ? <p className="text-muted">{contest.description}</p> : null}
+      {contest.description ? <p className="text-muted-foreground">{contest.description}</p> : null}
       {contest.kind === "measure" && contest.link ? (
         <p className="mt-1 text-sm">
           <ExternalLink href={contest.link}>Official text</ExternalLink>
@@ -51,16 +51,16 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
       ) : null}
       <p className="mt-4 text-xl font-semibold">
         <span className={TONE_CLASS[headline.tone]}>{headline.label}</span>
-        {headline.ranked ? <span className="ml-1 text-sm font-normal text-muted">(ranked #1)</span> : null}
-        {headline.detail ? <span className="ml-2 text-base font-normal text-muted">{headline.detail}</span> : null}
+        {headline.ranked ? <span className="ml-1 text-sm font-normal text-muted-foreground">(ranked #1)</span> : null}
+        {headline.detail ? <span className="ml-2 text-base font-normal text-muted-foreground">{headline.detail}</span> : null}
       </p>
 
       {groupByPick(contest, rows).map((g) => (
         <section key={g.key} className="mt-6">
-          <h2 className="border-b border-line pb-1 font-semibold">
-            {g.label} <span className="font-normal text-muted">({g.rows.length})</span>
+          <h2 className="border-b border-border pb-1 font-semibold">
+            {g.label} <span className="font-normal text-muted-foreground">({g.rows.length})</span>
           </h2>
-          <ul className="divide-y divide-line-soft">
+          <ul className="divide-y divide-border">
             {g.rows.map((r) => {
               const quotes = reasons(r);
               const pick = rowPick(contest, r.entry);
@@ -69,7 +69,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
                   <Link href={`/guides/${r.guide.id}`} className="font-medium underline underline-offset-2">
                     {r.guide.name}
                   </Link>
-                  <span className="ml-2 text-muted">
+                  <span className="ml-2 text-muted-foreground">
                     {pick.label}
                     {pick.ranked ? <span className="ml-1 text-xs">(ranked #1)</span> : null}
                   </span>
@@ -82,7 +82,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-muted">No reasons published</p>
+                    <p className="text-sm text-muted-foreground">No reasons published</p>
                   )}
                 </li>
               );
@@ -104,7 +104,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         </section>
       ) : null}
 
-      {pending ? <p className="mt-8 text-sm text-muted">{pending}.</p> : null}
+      {pending ? <p className="mt-8 text-sm text-muted-foreground">{pending}.</p> : null}
     </>
   );
 }

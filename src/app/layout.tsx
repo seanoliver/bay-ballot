@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Bay Ballot",
@@ -9,9 +13,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="antialiased">
+    <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
       <body className="min-h-full">
-        <header className="border-b border-line">
+        <header className="border-b border-border">
           <div className="mx-auto max-w-3xl px-4 py-3">
             <Link href="/" className="text-lg font-bold">
               Bay Ballot

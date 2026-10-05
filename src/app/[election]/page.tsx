@@ -24,13 +24,13 @@ export default async function ElectionPage({ params }: PageProps<"/[election]">)
   return (
     <>
       <h1 className="text-2xl font-bold">{ballot.title}</h1>
-      <p className="text-muted">
+      <p className="text-muted-foreground">
         {formatDate(ballot.date)} · {guidesPublished(publishedGuides(guides, endorsements).length)}
       </p>
       {sections(ballot.contests).map((s) => (
         <section key={s.name} className="mt-8">
-          <h2 className="border-b border-line pb-1 text-lg font-semibold">{s.name}</h2>
-          <ul className="divide-y divide-line-soft">
+          <h2 className="border-b border-border pb-1 text-lg font-semibold">{s.name}</h2>
+          <ul className="divide-y divide-border">
             {s.contests.map((c) => (
               <li key={c.id}>
                 <ContestSummary election={id} contest={c} rows={activeEntries(c.id, guides, endorsements, EMPTY)} />

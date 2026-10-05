@@ -15,14 +15,14 @@ export function ContestSummary({ election, contest, rows }: { election: string; 
         </Link>
       </h3>
       {contest.kind === "measure" && contest.description ? (
-        <p className="text-sm text-muted">{contest.description}</p>
+        <p className="text-sm text-muted-foreground">{contest.description}</p>
       ) : null}
       <p className="mt-1">
         <span className={`font-semibold ${TONE_CLASS[headline.tone]}`}>{headline.label}</span>
-        {headline.ranked ? <span className="ml-1 text-xs text-muted">(ranked #1)</span> : null}
-        {headline.detail ? <span className="ml-2 text-sm text-muted">{headline.detail}</span> : null}
+        {headline.ranked ? <span className="ml-1 text-xs text-muted-foreground">(ranked #1)</span> : null}
+        {headline.detail ? <span className="ml-2 text-sm text-muted-foreground">{headline.detail}</span> : null}
       </p>
-      {runnersUp ? <p className="text-sm text-muted">Also: {runnersUp}</p> : null}
+      {runnersUp ? <p className="text-sm text-muted-foreground">Also: {runnersUp}</p> : null}
     </div>
   );
 }

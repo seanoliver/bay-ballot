@@ -39,7 +39,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   return (
     <>
       <h1 className="text-2xl font-bold">{guide.name}</h1>
-      <p className="text-sm capitalize text-muted">{guide.type}</p>
+      <p className="text-sm capitalize text-muted-foreground">{guide.type}</p>
       {guide.description ? <p className="mt-2">{guide.description}</p> : null}
       <p className="mt-2 text-sm">
         <ExternalLink href={guide.homepage}>Homepage</ExternalLink>
@@ -49,19 +49,19 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
             <ExternalLink href={sourceLink(file, file.source)}>Source</ExternalLink>
           </>
         ) : null}
-        {file ? <span className="text-muted"> · as of {formatDate(file.fetchedAt)}</span> : null}
+        {file ? <span className="text-muted-foreground"> · as of {formatDate(file.fetchedAt)}</span> : null}
       </p>
 
       {isPublished(file) ? (
         <section className="mt-6">
-          <h2 className="border-b border-line pb-1 font-semibold">{ballot.title} picks</h2>
-          <ul className="divide-y divide-line-soft">
+          <h2 className="border-b border-border pb-1 font-semibold">{ballot.title} picks</h2>
+          <ul className="divide-y divide-border">
             {guidePicks(ballot.contests, file).map((p) => (
               <li key={p.contest.id}>
                 <Link href={`/${id}/${p.contest.id}`} className="flex items-baseline justify-between gap-4 py-2">
                   <span className="underline underline-offset-2">{p.contest.title}</span>
                   <span className="text-right font-medium">
-                    {p.label} <span aria-hidden="true" className="text-muted">›</span>
+                    {p.label} <span aria-hidden="true" className="text-muted-foreground">›</span>
                   </span>
                 </Link>
               </li>
@@ -69,7 +69,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
           </ul>
         </section>
       ) : (
-        <p className="mt-6 text-muted">Hasn&apos;t published {monthYear(ballot.date)} picks yet</p>
+        <p className="mt-6 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} picks yet</p>
       )}
     </>
   );
