@@ -1,7 +1,7 @@
 guide: milk-club
 election: 2026-11
 status: pending
-source: https://www.milkclub.org/endorsements
+source: https://www.milkclub.org/endorsements  # page also links June 2026 / Nov 2024 slates; extract only "November 2026"
 fetchedAt: 2026-10-05
 hasReasoning: false
 picks: {}

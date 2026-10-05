@@ -1,7 +1,7 @@
 guide: sf-building-trades
 election: 2026-11
 status: pending
-source: https://sfbuildingtrades.org/s/SFBCTC_MidtermEndorsements.pdf  # image/pdf only (landing page: https://sfbuildingtrades.org/endorsements)
+source: https://sfbuildingtrades.org/s/SFBCTC_MidtermEndorsements.pdf  # PDF (has text); landing page: https://sfbuildingtrades.org/endorsements
 fetchedAt: 2026-10-05
 hasReasoning: false
 picks: {}

@@ -1,7 +1,9 @@
 guide: abundant-sf
 election: 2026-11
 status: pending
-source: https://www.abundantsanfrancisco.org/vote
+source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+extraSources:
+  - https://www.abundantsanfrancisco.org/vote  # candidates
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks: {}

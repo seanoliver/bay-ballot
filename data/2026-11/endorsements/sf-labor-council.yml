@@ -2,6 +2,7 @@ guide: sf-labor-council
 election: 2026-11
 status: pending
 source: https://www.sflaborcouncil.org/news-details/webview/our-endorsements/single/9251
+fetchWith: browser
 fetchedAt: 2026-10-05
 hasReasoning: false
 picks: {}

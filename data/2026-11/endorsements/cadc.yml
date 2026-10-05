@@ -1,7 +1,7 @@
 guide: cadc
 election: 2026-11
 status: pending
-source: https://www.sfcadc.org/endorsements
+source: https://www.sfcadc.org/endorsements  # page also lists Mar/Apr 2026 slates; extract only "November 2026 Recommendations"
 fetchedAt: 2026-10-05
-hasReasoning: false
+hasReasoning: true
 picks: {}

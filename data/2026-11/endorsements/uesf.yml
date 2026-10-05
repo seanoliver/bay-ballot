@@ -1,7 +1,7 @@
 guide: uesf
 election: 2026-11
 status: pending
-source: https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf  # image/pdf only (slate also summarized at https://uesf.org/our-work/political-action/)
+source: https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf  # PDF (has text); slate also summarized at https://uesf.org/our-work/political-action/
 fetchedAt: 2026-10-05
 hasReasoning: false
 picks: {}
