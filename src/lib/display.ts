@@ -1,6 +1,6 @@
 import type { Contest, Guide } from "./schema";
 import type { Row } from "./filters";
-import { tally } from "./score";
+import { countedNames, tally } from "./score";
 import type { Tally } from "./score";
 
 export type Headline = {
@@ -14,7 +14,7 @@ export type PickGroup = { key: string; label: string; rows: Row[] };
 export type RankedDetail = { guideName: string; order: string[] };
 
 export function headline(t: Tally): Headline {
-  if (t.total === 0) return { tone: "none", label: "No picks yet", detail: "", ranked: false };
+  if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return { tone: "none", label: "No picks yet", detail: "", ranked: false };
   if (t.kind === "measure") {
     if (t.verdict === "split") {
       return { tone: "split", label: "Split", detail: `${t.yes} Yes · ${t.no} No`, ranked: false };
@@ -58,12 +58,7 @@ export function groupByPick(contest: Contest, rows: Row[]): PickGroup[] {
   return t.counts.map((c) => ({
     key: c.name,
     label: c.name,
-    rows: rows.filter((r) => {
-      const pick = r.entry.pick;
-      if (!Array.isArray(pick)) return false;
-      const names = r.entry.ranked && contest.seats === 1 ? pick.slice(0, 1) : pick;
-      return names.includes(c.name);
-    }),
+    rows: rows.filter((r) => countedNames(contest, r.entry).includes(c.name)),
   }));
 }
 

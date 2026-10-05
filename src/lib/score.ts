@@ -30,6 +30,11 @@ export type CandidateTally = {
 
 export type Tally = MeasureTally | CandidateTally;
 
+export function countedNames(contest: Contest, entry: Entry): string[] {
+  if (!Array.isArray(entry.pick)) return [];
+  return entry.ranked && contest.seats === 1 ? entry.pick.slice(0, 1) : entry.pick;
+}
+
 export function tally(contest: Contest, entries: Entry[]): Tally {
   if (contest.kind !== "candidate") {
     const yes = entries.filter((e) => e.pick === "Y").length;
@@ -54,7 +59,7 @@ export function tally(contest: Contest, entries: Entry[]): Tally {
   for (const e of entries) {
     if (!Array.isArray(e.pick)) continue;
     total += 1;
-    const names = new Set(e.ranked && contest.seats === 1 ? e.pick.slice(0, 1) : e.pick);
+    const names = new Set(countedNames(contest, e));
     for (const name of names) {
       const c = map.get(name) ?? { name, count: 0, fromRanked: false };
       c.count += 1;

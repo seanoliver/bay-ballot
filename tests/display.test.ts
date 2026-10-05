@@ -36,6 +36,10 @@ describe("headline", () => {
     expect(headline(tally(measure, []))).toEqual(none);
     expect(headline(tally(race, []))).toEqual(none);
   });
+  it("candidate tally with no counts is none, not split", () => {
+    const t = { ...tally(race, []), total: 2 };
+    expect(headline(t)).toEqual({ tone: "none", label: "No picks yet", detail: "", ranked: false });
+  });
   it("single candidate 1 of 1", () => {
     expect(headline(tally(race, [e(["A"])]))).toEqual({ tone: "candidate", label: "A", detail: "100% (1 of 1)", ranked: false });
   });

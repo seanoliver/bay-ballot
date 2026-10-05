@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { tally } from "@/lib/score";
+import { countedNames, tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 import type { Tally } from "@/lib/score";
 
@@ -66,5 +66,20 @@ describe("tally", () => {
   });
   it("empty candidate input", () => {
     expect(tally(race, [])).toMatchObject({ kind: "candidate", total: 0, leader: null, pct: 0, split: false });
+  });
+});
+
+describe("countedNames", () => {
+  it("non-array pick gives no names", () => {
+    expect(countedNames(measure, e("Y"))).toEqual([]);
+  });
+  it("ranked single-seat counts first name only", () => {
+    expect(countedNames(race, e(["A", "B"], true))).toEqual(["A"]);
+  });
+  it("unranked single-seat counts all names", () => {
+    expect(countedNames(race, e(["A", "B"]))).toEqual(["A", "B"]);
+  });
+  it("ranked multi-seat counts all names", () => {
+    expect(countedNames(board, e(["A", "B", "C"], true))).toEqual(["A", "B", "C"]);
   });
 });
