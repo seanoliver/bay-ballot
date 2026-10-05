@@ -2,6 +2,7 @@ guide: lwv-ca
 election: 2026-11
 status: published
 source: https://lwvc.org/ballot-recommendations/
+manual: true # positions are shown as Support/Oppose icons, which text extraction cannot read
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks:
