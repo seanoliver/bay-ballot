@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cardDescription, contestHeadline, electionSubtitle, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, electionSubtitle, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Ballot, Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -133,12 +133,5 @@ describe("electionSubtitle", () => {
   it("falls back to the ballot title without a city contest", () => {
     const b = { title: "Special Election", date: "2026-06-02", contests: [withJ("state", "California")] } as Ballot;
     expect(electionSubtitle(b)).toBe("Special Election · June 2, 2026");
-  });
-});
-
-describe("guidesPublished", () => {
-  it("pluralizes", () => {
-    expect(guidesPublished(1)).toBe("1 guide published");
-    expect(guidesPublished(7)).toBe("7 guides published");
   });
 });

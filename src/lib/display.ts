@@ -171,7 +171,3 @@ export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contes
 export function topPickCount(p: TopPick): string {
   return `${p.count} of ${p.total} ${p.total === 1 ? "guide" : "guides"}`;
 }
-
-export function guidesPublished(n: number): string {
-  return `${n} ${n === 1 ? "guide" : "guides"} published`;
-}

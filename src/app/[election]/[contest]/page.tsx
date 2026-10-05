@@ -2,10 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "@/components/ExternalLink";
-import { TONE_CLASS } from "@/components/tone";
-import { contestHeadline, groupByPick, pendingNote, rankedDetails, rankedLabel, reasons, rowPick } from "@/lib/display";
+import { DOT_CLASS } from "@/components/tone";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Verdict } from "@/components/Verdict";
+import {
+  contestHeadline,
+  groupByPick,
+  pendingNote,
+  rankedDetails,
+  rankedLabel,
+  reasons,
+  rowNote,
+  rowPick,
+  sourceLink,
+} from "@/lib/display";
 import { activeEntries, EMPTY, pendingGuides } from "@/lib/filters";
-import { election, elections, sourceLink } from "@/lib/site-data";
+import { election, elections } from "@/lib/site-data";
 
 export const dynamicParams = false;
 
@@ -32,79 +45,85 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   if (!d) notFound();
   const { contest, guides, endorsements, ballot, electionId } = d;
   const rows = activeEntries(contest.id, guides, endorsements, EMPTY);
-  const { headline } = contestHeadline(contest, rows);
+  const { headline, topPicks } = contestHeadline(contest, rows);
   const ranked = rankedDetails(rows);
   const pending = pendingNote(pendingGuides(guides, endorsements));
   return (
-    <>
+    <div className="mx-auto max-w-3xl px-4 pt-4 pb-10">
       <p className="text-sm">
-        <Link href={`/${electionId}`} className="text-muted-foreground underline underline-offset-2">
+        <Link href={`/${electionId}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
           {ballot.title}
         </Link>
       </p>
-      <h1 className="mt-1 text-2xl font-bold">{contest.title}</h1>
-      {contest.description ? <p className="text-muted-foreground">{contest.description}</p> : null}
-      {contest.kind === "measure" && contest.link ? (
-        <p className="mt-1 text-sm">
-          <ExternalLink href={contest.link}>Official text</ExternalLink>
-        </p>
-      ) : null}
-      <p className="mt-4 text-xl font-semibold">
-        <span className={TONE_CLASS[headline.tone]}>{headline.label}</span>
-        {headline.ranked ? <span className="ml-1 text-sm font-normal text-muted-foreground">(ranked #1)</span> : null}
-        {headline.detail ? <span className="ml-2 text-base font-normal text-muted-foreground">{headline.detail}</span> : null}
-      </p>
+      <Card className="mt-3 gap-0 p-4 shadow-xs">
+        <h1 className="text-2xl leading-tight font-bold">{contest.title}</h1>
+        {contest.description ? <p className="mt-1 text-muted-foreground">{contest.description}</p> : null}
+        {contest.kind === "measure" && contest.link ? (
+          <p className="mt-1 text-sm">
+            <ExternalLink href={contest.link} className="inline-block py-2.5 -my-2.5 underline underline-offset-2">
+              Official text
+            </ExternalLink>
+          </p>
+        ) : null}
+        <Verdict headline={headline} topPicks={topPicks} ranked={<span className="text-sm text-muted-foreground">(ranked #1)</span>} />
+      </Card>
 
       {groupByPick(contest, rows).map((g) => (
-        <section key={g.key} className="mt-6">
-          <h2 className="border-b border-border pb-1 font-semibold">
-            {g.label} <span className="font-normal text-muted-foreground">({g.rows.length})</span>
+        <Card key={g.key} className="mt-3 gap-0 px-4 py-2 shadow-xs">
+          <h2 className="flex items-center gap-2 py-2 font-semibold">
+            <span aria-hidden="true" className={`size-2.5 rounded-full ${DOT_CLASS[g.tone]}`} />
+            <span>
+              {g.label} <span className="font-normal text-muted-foreground">· {g.rows.length}</span>
+            </span>
           </h2>
           <ul className="divide-y divide-border">
             {g.rows.map((r) => {
               const quotes = reasons(r);
               const pick = rowPick(contest, r.entry);
+              const note = rowNote(r);
               return (
-                <li key={r.guide.id} className="py-2">
-                  <Link href={`/guides/${r.guide.id}`} className="font-medium underline underline-offset-2">
+                <li key={r.guide.id} className="py-2.5">
+                  <Link href={`/guides/${r.guide.id}`} className="inline-block py-2.5 -my-2.5 font-semibold underline underline-offset-2">
                     {r.guide.name}
                   </Link>
                   <span className="ml-2 text-muted-foreground">
                     {pick.label}
                     {pick.ranked ? <span className="ml-1 text-xs">(ranked #1)</span> : null}
                   </span>
-                  {quotes.length > 0 ? (
-                    <ul className="mt-1 list-disc pl-5 text-sm">
-                      {quotes.map((q, i) => (
-                        <li key={`${i}-${q.text}`}>
-                          <ExternalLink href={sourceLink(r.file, q.source)}>“{q.text}”</ExternalLink>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No reasons published</p>
-                  )}
+                  {quotes.map((q, i) => (
+                    <blockquote key={`${i}-${q.text}`} className="mt-1.5 rounded-lg bg-muted px-3 py-2 text-sm leading-relaxed">
+                      “{q.text}”{" "}
+                      <ExternalLink
+                        href={sourceLink(r.file, q.source)}
+                        className="inline-block py-2.5 -my-2.5 text-xs text-muted-foreground underline underline-offset-2"
+                      >
+                        Source
+                      </ExternalLink>
+                    </blockquote>
+                  ))}
+                  {note ? <p className="text-sm text-muted-foreground">{note}</p> : null}
                 </li>
               );
             })}
           </ul>
-        </section>
+        </Card>
       ))}
 
       {ranked.length > 0 ? (
-        <section className="mt-6">
+        <Card className="mt-3 gap-0 p-4 shadow-xs">
           <h2 className="font-semibold">Ranked-choice order</h2>
-          <ul className="mt-1 text-sm">
+          <Separator className="my-2" />
+          <ul className="space-y-1 text-sm">
             {ranked.map((r) => (
               <li key={r.guideName}>
-                {r.guideName}: {rankedLabel(r.order)}
+                <span className="font-medium">{r.guideName}:</span> <span className="text-muted-foreground">{rankedLabel(r.order)}</span>
               </li>
             ))}
           </ul>
-        </section>
+        </Card>
       ) : null}
 
-      {pending ? <p className="mt-8 text-sm text-muted-foreground">{pending}.</p> : null}
-    </>
+      {pending ? <p className="mt-6 text-sm text-muted-foreground">{pending}.</p> : null}
+    </div>
   );
 }

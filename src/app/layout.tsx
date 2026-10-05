@@ -14,15 +14,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
-      <body className="min-h-full">
-        <header className="border-b border-border">
-          <div className="mx-auto max-w-3xl px-4 py-3">
-            <Link href="/" className="text-lg font-bold">
+      {/* Light: cards on a muted page. Dark: --card is already lighter than --background. */}
+      <body className="min-h-full bg-muted dark:bg-background">
+        <header className="bg-background">
+          <div className="mx-auto max-w-3xl px-4 pt-5">
+            <Link href="/" className="text-2xl font-extrabold tracking-tight">
               Bay Ballot
             </Link>
           </div>
         </header>
-        <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
+        {/* Pages set their own width so bands (like the sticky filter bar) can span the screen. */}
+        <main>{children}</main>
       </body>
     </html>
   );

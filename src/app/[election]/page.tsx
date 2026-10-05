@@ -1,9 +1,13 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BallotView } from "@/components/BallotView";
 import { ContestSummary } from "@/components/ContestSummary";
-import { formatDate, guidesPublished, sections } from "@/lib/display";
-import { activeEntries, EMPTY, publishedGuides } from "@/lib/filters";
+import { SectionHeading } from "@/components/SectionHeading";
+import { electionSubtitle, sections } from "@/lib/display";
+import { activeEntries, EMPTY } from "@/lib/filters";
 import { election, elections } from "@/lib/site-data";
+import type { ElectionData } from "@/lib/data";
 
 export const dynamicParams = false;
 
@@ -23,22 +27,30 @@ export default async function ElectionPage({ params }: PageProps<"/[election]">)
   const { ballot, guides, endorsements } = d;
   return (
     <>
-      <h1 className="text-2xl font-bold">{ballot.title}</h1>
-      <p className="text-muted-foreground">
-        {formatDate(ballot.date)} · {guidesPublished(publishedGuides(guides, endorsements).length)}
-      </p>
+      <div className="bg-background">
+        <h1 className="mx-auto max-w-3xl px-4 pt-0.5 pb-3 text-sm text-muted-foreground">{electionSubtitle(ballot)}</h1>
+      </div>
+      {/* BallotView reads the URL, so it renders on the client; the fallback is the full unfiltered list for no-JS visitors. */}
+      <Suspense fallback={<StaticBallot id={id} data={d} />}>
+        <BallotView election={id} ballot={ballot} guides={guides} endorsements={endorsements} />
+      </Suspense>
+    </>
+  );
+}
+
+function StaticBallot({ id, data: { ballot, guides, endorsements } }: { id: string; data: ElectionData }) {
+  return (
+    <div className="mx-auto max-w-3xl border-t border-border px-3 pb-10 sm:px-4">
       {sections(ballot.contests).map((s) => (
-        <section key={s.name} className="mt-8">
-          <h2 className="border-b border-border pb-1 text-lg font-semibold">{s.name}</h2>
-          <ul className="divide-y divide-border">
+        <section key={s.name}>
+          <SectionHeading>{s.name}</SectionHeading>
+          <div className="flex flex-col gap-3">
             {s.contests.map((c) => (
-              <li key={c.id}>
-                <ContestSummary election={id} contest={c} rows={activeEntries(c.id, guides, endorsements, EMPTY)} />
-              </li>
+              <ContestSummary key={c.id} election={id} contest={c} rows={activeEntries(c.id, guides, endorsements, EMPTY)} />
             ))}
-          </ul>
+          </div>
         </section>
       ))}
-    </>
+    </div>
   );
 }
