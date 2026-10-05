@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { verifyQuotes, type Page } from "@/pipeline/quotes";
+import { isSubstantive, verifyQuotes, type Page } from "@/pipeline/quotes";
 import { htmlToText } from "@/pipeline/fetch";
 
 const html = (text: string, url = "https://a.org/guide"): Page => ({ url, text, kind: "html" });
@@ -281,6 +281,37 @@ describe("own voice means a first-person opening", () => {
     expect(reasonOf(they, [html(`Prop A — Housing\n${they}`)])).toBe("attributed-speech");
     const we = "We argue that the bond is sound and worth the cost.";
     expect(verifyQuotes([we], [html(`Prop A — Housing\n${we}`)]).kept).toHaveLength(1);
+  });
+});
+
+describe("isSubstantive", () => {
+  it.each([
+    "We are proud to endorse Connie Chan for Congress!",
+    "We are thrilled to endorse Supervisor Connie Chan for Congress -again!",
+    "Please vote Yes on Prop B!",
+    "Yes on Prop H, Stronger Muni for All!",
+    "We endorse Connie Chan for Congress.",
+    "Vote Sara Barz for BART Board, District 8.",
+    "Connie Chan for Congress!",
+    "Thank you to everyone who came to our endorsement meeting.",
+  ])("drops announcement %s", (q) => expect(isSubstantive(q)).toBe(false));
+
+  it.each([
+    "For affordable housing to be built, we need our own bank.",
+    "We endorse Prop C because it funds affordable housing without new taxes.",
+    "We support Prop H, which keeps Muni running at night.",
+    "Vote yes on Prop H to save Muni service across the city.",
+    "We are proud to endorse Connie Chan, who has fought for tenants for a decade.",
+    "Sunset Dunes park is already one of the most visited parks on the west coast.",
+    "Voters approved the park in 2024 and it has been a success.",
+    "We support the commitments he made in his SF YIMBY questionnaire: six-story single-stair buildings, more homes near transit, objective by-right approvals and project shot clocks.",
+    "We support Prop A as a basic good governance reform measure.",
+    "Vote Yes on C for more affordable housing (eventually)!",
+  ])("keeps reasoning %s", (q) => expect(isSubstantive(q)).toBe(true));
+
+  it("drops announcements in verifyQuotes with reason not-substantive", () => {
+    const q = "We are proud to endorse Connie Chan for Congress!";
+    expect(verifyQuotes([q], [html(`Congress\n${q}`)]).dropped).toEqual([{ quote: q, reason: "not-substantive" }]);
   });
 });
 

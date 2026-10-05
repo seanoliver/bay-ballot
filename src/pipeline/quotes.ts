@@ -5,7 +5,8 @@ export type DropReason =
   | "too-short"
   | "crosses-boundary"
   | "attributed-speech"
-  | "partial-sentence";
+  | "partial-sentence"
+  | "not-substantive";
 export type DroppedQuote = { quote: string; reason: DropReason };
 
 const MIN_WORDS = 5;
@@ -169,6 +170,32 @@ function findInSegment(segment: string, previous: string, normQuote: string, own
   return out;
 }
 
+// Endorsement announcements and calls to vote state a pick, not a reason for it.
+const ANNOUNCEMENTS = [
+  /^we(?:'re|’re| are)?\s+(?:so\s+|very\s+)?(?:proud|thrilled|excited|happy|pleased|honored|delighted)\s+to\s+(?:endorse|support|recommend)\b/i,
+  /^we\s+(?:endorse|support|recommend|urge)\b/i,
+  /^(?:please\s+)?(?:vote|re-?elect|elect)\b/i,
+  /^(?:yes|no)\s+on\b/i,
+  // "Connie Chan for Congress!": a short slogan naming an office.
+  /^(?:\S+\s+){0,6}for\s+(?:congress|supervisor|assembly|senate|governor|mayor|district|bart|school\s+board|board\s+of|d\d)\b[^.?]*!\s*$/i,
+];
+const MAX_ANNOUNCEMENT_WORDS = 15;
+const THANKS = /^(?:thank\s+you|thanks)\b/i;
+// Words that introduce a reason. "to" counts only before a verb-like word ("to save Muni"),
+// not "to endorse" or "to everyone".
+const REASON =
+  /\b(?:because|since|will|would|could|has|have|had|record|so\s+that|which|as\s+an?|for\s+(?:more|better|safer|cleaner|stronger|fewer|less|lower)|who\s+(?:has|have|will|would|is|was)|to\s+(?!(?:endorse|support|recommend|vote|announce|everyone|all|our|the|a|an|you|us|them)\b)[a-z]+)\b/i;
+
+/** False for quotes that only announce, slogan, call to vote or thank, with no reason in them. */
+export function isSubstantive(text: string): boolean {
+  const t = text.trim().replace(EDGE_QUOTES, "").trim();
+  if (THANKS.test(t)) return false;
+  // A long sentence that opens like an announcement usually goes on to say something.
+  if (t.split(/\s+/).length > MAX_ANNOUNCEMENT_WORDS) return true;
+  if (!ANNOUNCEMENTS.some((re) => re.test(t))) return true;
+  return REASON.test(t);
+}
+
 /** Keep only quotes found word-for-word inside one segment of a page, publishing the page's own text. */
 export function verifyQuotes(
   quotes: string[],
@@ -186,6 +213,10 @@ export function verifyQuotes(
     const normQuote = normalize(trimmed);
     if (isTooShort(trimmed, normQuote)) {
       dropped.push({ quote: raw, reason: "too-short" });
+      continue;
+    }
+    if (!isSubstantive(trimmed)) {
+      dropped.push({ quote: raw, reason: "not-substantive" });
       continue;
     }
 

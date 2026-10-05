@@ -81,6 +81,7 @@ export function systemPrompt(ballot: Ballot): string {
     "",
     "Quotes:",
     "- Each quote must be a complete sentence copied character-for-character from the pages.",
+    "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
     "- Quotes must be in the organization's own voice. Never quote text it attributes to opponents, critics, candidates or anyone else.",
     "- Never paraphrase, summarize, shorten or combine sentences.",
     "- At most 3 quotes per pick. If the pages give no reasons for a pick, return an empty quotes array.",

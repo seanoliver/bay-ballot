@@ -44,6 +44,12 @@ describe("systemPrompt", () => {
     expect(prompt).toMatch(/Only contests with rankedChoice true can be ranked/);
   });
 
+  it("asks for quotes that give reasons, not announcements", () => {
+    expect(prompt).toContain(
+      "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
+    );
+  });
+
   it("marks ranked-choice contests in the contest JSON", () => {
     expect(prompt).toContain('"id":"supervisor-8","title":"Board of Supervisors, District 8","kind":"candidate"');
     expect(prompt).toMatch(/"id":"supervisor-8"[^}]*"rankedChoice":true/);
