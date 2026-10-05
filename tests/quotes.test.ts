@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { verifyQuotes, type Page } from "@/pipeline/quotes";
+import { htmlToText } from "@/pipeline/fetch";
 
 const html = (text: string, url = "https://a.org/guide"): Page => ({ url, text, kind: "html" });
 const pdf = (text: string, url = "https://a.org/guide.pdf"): Page => ({ url, text, kind: "pdf" });
 const Q = "A public bank would cost the city hundreds of millions";
-const page = html(`Prop B — We oppose it. ${Q}, and the risks are real.`);
+const page = html(`Prop B — We oppose it. ${Q}. The risks are real.`);
 const reasonOf = (q: string, pages: Page[]) => verifyQuotes([q], pages).dropped[0]?.reason;
 
 describe("verifyQuotes basics", () => {
@@ -60,10 +61,13 @@ describe("segments", () => {
     expect(reasonOf("Prop B: Public Bank We oppose the creation of a public bank.", [prop])).toBe("crosses-boundary");
   });
   it("keeps pdf quotes across a line wrap", () => {
-    const p = pdf("We note that a public bank would cost the city hundreds of\nmillions, and more.");
-    expect(verifyQuotes(["a public bank would cost the city hundreds of millions"], [p]).kept).toHaveLength(0);
-    const p2 = pdf("Overall, the bank would cost the city hundreds of\nmillions of dollars.");
-    expect(verifyQuotes(["Overall, the bank would cost the city hundreds of millions of dollars."], [p2]).kept).toHaveLength(1);
+    const p = pdf("Overall, the bank would cost the city hundreds of\nmillions of dollars.");
+    expect(verifyQuotes(["Overall, the bank would cost the city hundreds of millions of dollars."], [p]).kept).toHaveLength(1);
+  });
+  it("publishes a wrapped pdf quote with single spaces", () => {
+    const p = pdf("Overall, the bank would cost the city hundreds of\nmillions of dollars.");
+    expect(verifyQuotes(["Overall, the bank would cost the city hundreds of millions of dollars."], [p]).kept[0].text)
+      .toBe("Overall, the bank would cost the city hundreds of millions of dollars.");
   });
   it("drops pdf quotes across a paragraph break", () => {
     const p = pdf("The bank is a risky proposal for the city.\n\nWe urge a no vote on this measure.");
@@ -109,11 +113,11 @@ describe("other people's words", () => {
       expect(reasonOf("The bank would cost the city hundreds of millions.", [p])).toBe("attributed-speech");
     },
   );
-  it("ignores attribution phrases beyond 80 chars or in another segment", () => {
+  it("ignores same-segment attribution beyond 80 chars", () => {
     const far = html(`Critics disagree.${" x".repeat(50)}. The bank would cost the city hundreds of millions.`);
     expect(verifyQuotes(["The bank would cost the city hundreds of millions."], [far]).kept).toHaveLength(1);
     const other = html("Critics disagree.\nThe bank would cost the city hundreds of millions.");
-    expect(verifyQuotes(["The bank would cost the city hundreds of millions."], [other]).kept).toHaveLength(1);
+    expect(reasonOf("The bank would cost the city hundreds of millions.", [other])).toBe("attributed-speech"); // via previous-segment context
   });
 });
 
@@ -125,14 +129,55 @@ describe("sentence boundaries", () => {
   it("keeps a full sentence", () => {
     expect(verifyQuotes(["Some argue a public bank is a good idea, but it would cost billions."], [p]).kept).toHaveLength(1);
   });
-  it("keeps a sentence-start fragment of 8+ words", () => {
-    const q = "The bank would cost the city hundreds of millions";
-    expect(verifyQuotes([q], [html(`${q}, and more.`)]).kept).toHaveLength(1);
+  it("drops a long sentence-start fragment that stops mid-sentence", () => {
+    const p = html("A public bank is a great idea for San Francisco in the long run, but the costs today are too high.");
+    expect(reasonOf("A public bank is a great idea for San Francisco in the long run", [p])).toBe("partial-sentence");
+  });
+  it("drops a long fragment cut before a trailing clause", () => {
+    const p = html("The bank would cost the city hundreds of millions of dollars unless the state helps.");
+    expect(reasonOf("The bank would cost the city hundreds of millions of dollars", [p])).toBe("partial-sentence");
   });
   it("drops a sentence-start fragment under 8 words that stops mid-sentence", () => {
     expect(reasonOf("The bank would cost the city", [html("The bank would cost the city hundreds of millions.")])).toBe("partial-sentence");
   });
   it("accepts a start after a colon or a closing quote after punctuation", () => {
     expect(verifyQuotes(["The bank would cost the city millions."], [html("Our view: The bank would cost the city millions.")]).kept).toHaveLength(1);
+  });
+  it("accepts a start after a closing quote that follows punctuation", () => {
+    const p = html("The mayor called it \u201cunwise.\u201d The bank would cost the city millions.");
+    expect(verifyQuotes(["The bank would cost the city millions."], [p]).kept).toHaveLength(1);
+  });
+  it("accepts a sentence end followed by a closing quote or paren", () => {
+    const p = html("We oppose this measure (The bank would cost the city millions.) Next.");
+    expect(verifyQuotes(["The bank would cost the city millions"], [p]).kept).toHaveLength(0);
+    const q = html("We oppose this. The bank would cost the city millions.\u201d");
+    expect(verifyQuotes(["The bank would cost the city millions"], [q]).kept).toHaveLength(1);
+  });
+});
+
+describe("surrounding context", () => {
+  it("drops a blockquote introduced by an attribution in the previous segment", () => {
+    const text = htmlToText("<p>Opponents argue:</p><blockquote>The bond will raise your taxes for thirty years.</blockquote>");
+    expect(reasonOf("The bond will raise your taxes for thirty years.", [html(text)])).toBe("attributed-speech");
+  });
+  it("drops text after a previous segment ending in a colon", () => {
+    const p = html("Here is what the other side says:\nThe bond will raise your taxes for thirty years.");
+    expect(reasonOf("The bond will raise your taxes for thirty years.", [p])).toBe("attributed-speech");
+  });
+  it("drops text after a previous pdf paragraph with an attribution phrase", () => {
+    const p = pdf("According to the Chamber of Commerce\n\nThe bond will raise your taxes for thirty years.");
+    expect(reasonOf("The bond will raise your taxes for thirty years.", [p])).toBe("attributed-speech");
+  });
+  it("keeps text after an unrelated previous segment", () => {
+    const p = html("Prop C: Housing Bond\nThe bond will raise your taxes for thirty years.");
+    expect(verifyQuotes(["The bond will raise your taxes for thirty years."], [p]).kept).toHaveLength(1);
+  });
+  it("drops a full sentence attributed afterwards", () => {
+    const p = html("\"The bond will raise your taxes.\" said the Chamber.");
+    expect(reasonOf("The bond will raise your taxes.", [p])).toBe("attributed-speech");
+  });
+  it("drops a sentence followed by a trailing attribution", () => {
+    const p = html("The bond will raise your taxes for thirty years, the Chamber of Commerce says.");
+    expect(reasonOf("The bond will raise your taxes for thirty years", [p])).toBe("attributed-speech");
   });
 });

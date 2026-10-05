@@ -10,12 +10,13 @@ export type DroppedQuote = { quote: string; reason: DropReason };
 
 const MIN_WORDS = 5;
 const MIN_CHARS = 20;
-const LONG_QUOTE_WORDS = 8;
 const ATTRIBUTION_WINDOW = 80;
 const ATTRIBUTION_PHRASES = [
   "opponents", "critics", "proponents say", "supporters say", "they say",
   "they claim", "argue that", "according to", "claims that", "say that",
 ];
+const TRAILING_ATTRIBUTION =
+  /^\s*["”’]?\s*,?\s*(?:[^.]{0,40}\s)?(says|said|argues?|argued|claims?|claimed|warns?|warned|according to)\b/i;
 const EDGE_QUOTES = /^["'“”‘’‛‟]+|["'“”‘’‛‟]+$/g;
 
 /** Split page text into segments; a quote must lie entirely inside one. */
@@ -62,22 +63,27 @@ export function isSentenceStart(before: string): boolean {
 }
 
 function isSentenceEnd(span: string, after: string): boolean {
-  const a = after.trimStart();
+  const a = after.trimStart().replace(/^["”’)\]]+/, "").trimStart();
   return a === "" || /^[.!?]/.test(a) || /[.!?]$/.test(span);
 }
 
 /** Span sits inside quotation marks, or is preceded by phrasing that attributes it to someone else. */
-export function isAttributedSpeech(before: string, after: string): boolean {
+export function isAttributedSpeech(before: string, after: string, previous = ""): boolean {
   const curlyInside = before.lastIndexOf("“") > before.lastIndexOf("”") && after.includes("”");
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
-  const window = before.slice(-ATTRIBUTION_WINDOW).toLowerCase();
-  return ATTRIBUTION_PHRASES.some((p) => window.includes(p));
+  const hasPhrase = (t: string) => ATTRIBUTION_PHRASES.some((p) => t.toLowerCase().includes(p));
+  return (
+    hasPhrase(before.slice(-ATTRIBUTION_WINDOW)) ||
+    hasPhrase(previous) ||
+    previous.trimEnd().endsWith(":") ||
+    TRAILING_ATTRIBUTION.test(after.slice(0, 60))
+  );
 }
 
 type Candidate = { text: string } | { reason: DropReason };
 
-function findInSegment(segment: string, normQuote: string): Candidate[] {
+function findInSegment(segment: string, previous: string, normQuote: string): Candidate[] {
   const { norm, map } = normalizeWithMap(segment);
   const out: Candidate[] = [];
   for (let i = norm.indexOf(normQuote); i !== -1; i = norm.indexOf(normQuote, i + 1)) {
@@ -86,15 +92,12 @@ function findInSegment(segment: string, normQuote: string): Candidate[] {
     const span = segment.slice(start, end);
     const before = segment.slice(0, start);
     const after = segment.slice(end);
-    if (isAttributedSpeech(before, after)) {
+    if (isAttributedSpeech(before, after, previous)) {
       out.push({ reason: "attributed-speech" });
-    } else if (
-      !isSentenceStart(before) ||
-      !(isSentenceEnd(span, after) || span.trim().split(/\s+/).length >= LONG_QUOTE_WORDS)
-    ) {
+    } else if (!isSentenceStart(before) || !isSentenceEnd(span, after)) {
       out.push({ reason: "partial-sentence" });
     } else {
-      out.push({ text: span.trim() });
+      out.push({ text: span.replace(/\s+/g, " ").trim() });
     }
   }
   return out;
@@ -124,8 +127,11 @@ export function verifyQuotes(
     let found: KeptQuote | null = null;
     let foundNorm = "";
     outer: for (const { page, segs } of pageSegments) {
+      let previous = "";
       for (const seg of segs) {
-        for (const c of findInSegment(seg, normQuote)) {
+        const candidates = findInSegment(seg, previous, normQuote);
+        if (seg.trim() !== "") previous = seg;
+        for (const c of candidates) {
           if ("text" in c) {
             found = { text: c.text, source: page.url };
             foundNorm = normalize(c.text);
