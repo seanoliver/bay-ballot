@@ -58,24 +58,43 @@ export function FilterPanel({ filters: f, onChange, ballot, guides, files }: Pro
       </CollapsibleTrigger>
       {/* Capped and scrollable: a sticky panel taller than the screen would hide its own bottom. */}
       <CollapsibleContent className="max-h-[calc(100dvh-9rem)] overflow-y-auto overscroll-contain px-0.5 pb-1">
-        <Section title="Show">
-          <Toggle
-            variant="outline"
-            pressed={f.whyOnly}
-            onPressedChange={(on) => onChange({ ...f, whyOnly: on })}
-            className="h-auto min-h-10 rounded-full px-3.5 py-1.5 text-left text-sm font-normal whitespace-normal aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background hover:aria-pressed:bg-foreground/85 hover:aria-pressed:text-background"
-          >
-            {f.whyOnly ? <Check aria-hidden="true" className="size-3.5" /> : null}
-            Only guides that explain their picks
-          </Toggle>
-        </Section>
-        <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
-        <DistrictSelects filters={f} onChange={onChange} ballot={ballot} />
-        <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
-          Reset filters
-        </Button>
+        <FilterControls filters={f} onChange={onChange} ballot={ballot} guides={guides} files={files} />
       </CollapsibleContent>
     </Collapsible>
+  );
+}
+
+// The filter controls themselves, for placing outside the collapsible bar (a sidebar, sheet or popover).
+// `districts={false}` leaves the district selects out for layouts that show them elsewhere.
+export function FilterControls({
+  filters: f,
+  onChange,
+  ballot,
+  guides,
+  files,
+  query,
+  onQueryChange,
+  districts = true,
+}: Props & { query?: string; onQueryChange?: (q: string) => void; districts?: boolean }) {
+  return (
+    <>
+      <Section title="Show">
+        <Toggle
+          variant="outline"
+          pressed={f.whyOnly}
+          onPressedChange={(on) => onChange({ ...f, whyOnly: on })}
+          className="h-auto min-h-10 rounded-full px-3.5 py-1.5 text-left text-sm font-normal whitespace-normal aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background hover:aria-pressed:bg-foreground/85 hover:aria-pressed:text-background"
+        >
+          {f.whyOnly ? <Check aria-hidden="true" className="size-3.5" /> : null}
+          Only guides that explain their picks
+        </Toggle>
+      </Section>
+      <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} query={query} onQueryChange={onQueryChange} />
+      {districts ? <DistrictSelects filters={f} onChange={onChange} ballot={ballot} /> : null}
+      <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
+        Reset filters
+      </Button>
+    </>
   );
 }
 
@@ -88,8 +107,18 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function GuideChecklist({ filters: f, onChange, guides, files }: Omit<Props, "ballot">) {
-  const [query, setQuery] = useState("");
+// `query`/`onQueryChange` make the search controlled (e.g. driven by a search box elsewhere on the page).
+export function GuideChecklist({
+  filters: f,
+  onChange,
+  guides,
+  files,
+  query: controlled,
+  onQueryChange,
+}: Omit<Props, "ballot"> & { query?: string; onQueryChange?: (q: string) => void }) {
+  const [own, setOwn] = useState("");
+  const query = controlled ?? own;
+  const setQuery = onQueryChange ?? setOwn;
   const groups = guideGroups(guides, files, query);
   const searching = query.trim() !== "";
   return (
@@ -166,7 +195,7 @@ function TypeGroup({
   );
 }
 
-function DistrictSelects({ filters: f, onChange, ballot }: Pick<Props, "filters" | "onChange" | "ballot">) {
+export function DistrictSelects({ filters: f, onChange, ballot }: Pick<Props, "filters" | "onChange" | "ballot">) {
   const selects = districtSelect(ballot);
   if (selects.length === 0) return null;
   return (

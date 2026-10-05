@@ -1,53 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useState } from "react";
 import { sections, showHint } from "@/lib/display";
-import {
-  activeEntries,
-  initialFilters,
-  toQuery,
-  visibleContest,
-  type Filters,
-  type GuideInfo,
-  type PickFile,
-} from "@/lib/filters";
+import { activeEntries, visibleContest, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Ballot } from "@/lib/schema";
 import { ContestCard } from "./ContestCard";
 import { FilterPanel } from "./FilterPanel";
 import { SectionHeading } from "./SectionHeading";
-
-const STORAGE_KEY = "bb-filters";
-const CHANGE_EVENT = "bb-filters-change";
-
-// Storage can throw (private mode, blocked site data); every access falls back to "nothing stored".
-function readStored(): string | null {
-  try {
-    return window.localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function writeStored(q: string) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, q);
-  } catch {
-    // Not persisting is fine; the URL still carries the filters.
-  }
-}
-
-const readQuery = () => window.location.search;
-
-function subscribe(onChange: () => void) {
-  window.addEventListener("popstate", onChange);
-  window.addEventListener("storage", onChange);
-  window.addEventListener(CHANGE_EVENT, onChange);
-  return () => {
-    window.removeEventListener("popstate", onChange);
-    window.removeEventListener("storage", onChange);
-    window.removeEventListener(CHANGE_EVENT, onChange);
-  };
-}
+import { useBallotFilters } from "./useBallotFilters";
 
 type Props = {
   election: string;
@@ -61,18 +21,8 @@ type Props = {
 // hydration) render with no filters; the client applies URL/stored filters right after, so the
 // prerendered page is the full ballot and nothing above the cards moves.
 export function BallotView({ election, ballot, guides, files, pending }: Props) {
-  const query = useSyncExternalStore(subscribe, readQuery, () => "");
-  const stored = useSyncExternalStore(subscribe, readStored, () => null);
-  const filters = useMemo(() => initialFilters({ query, stored, ballot, guides }), [query, stored, ballot, guides]);
+  const { filters, setFilters } = useBallotFilters({ ballot, guides });
   const [opened, setOpened] = useState(false);
-
-  const setFilters = useCallback((f: Filters) => {
-    const q = toQuery(f);
-    writeStored(q);
-    // Native replaceState syncs with the Next router without a server round trip or scroll.
-    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
-    window.dispatchEvent(new Event(CHANGE_EVENT));
-  }, []);
   const markOpened = useCallback(() => setOpened(true), []);
 
   const visible = sections(ballot.contests.filter((c) => visibleContest(c, filters)));

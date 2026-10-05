@@ -26,7 +26,7 @@ import { DOT_CLASS } from "./tone";
 import { Verdict } from "./Verdict";
 
 // Inline links keep their line height but get a 40px-tall tap area.
-const TAP = "inline-block py-2.5 -my-2.5";
+export const TAP = "inline-block py-2.5 -my-2.5";
 
 type Props = {
   election: string;
@@ -106,7 +106,7 @@ export function ContestCard({ election, contest, rows, pending, hint, onOpen }: 
   );
 }
 
-function RankedPopover({ rows }: { rows: Row[] }) {
+export function RankedPopover({ rows }: { rows: Row[] }) {
   return (
     <Popover>
       <PopoverTrigger
@@ -134,7 +134,7 @@ function RankedPopover({ rows }: { rows: Row[] }) {
   );
 }
 
-function Groups({ contest, rows }: { contest: Contest; rows: Row[] }) {
+export function Groups({ contest, rows }: { contest: Contest; rows: Row[] }) {
   const groups = groupByPick(contest, rows);
   if (groups.length === 0) {
     return <p className="mt-4 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>;

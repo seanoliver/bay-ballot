@@ -9,6 +9,11 @@
   --yes: #15803d;
   --no: #b91c1c;
   --split: #b45309;
+  /* Candidate bar segments, leader (accent) to tail (neutral); deliberately not yes/no hues. */
+  --bar-1: oklch(0.45 0.16 270);
+  --bar-2: oklch(0.62 0.09 270);
+  --bar-3: oklch(0.75 0.04 270);
+  --bar-4: oklch(0.85 0.01 270);
   --muted: oklch(0.97 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -50,6 +55,10 @@
   --color-yes: var(--yes);
   --color-no: var(--no);
   --color-split: var(--split);
+  --color-bar-1: var(--bar-1);
+  --color-bar-2: var(--bar-2);
+  --color-bar-3: var(--bar-3);
+  --color-bar-4: var(--bar-4);
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-heading: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -94,6 +103,10 @@
   --yes: #4ade80;
   --no: #f87171;
   --split: #fbbf24;
+  --bar-1: oklch(0.74 0.14 270);
+  --bar-2: oklch(0.6 0.09 270);
+  --bar-3: oklch(0.48 0.04 270);
+  --bar-4: oklch(0.38 0.01 270);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

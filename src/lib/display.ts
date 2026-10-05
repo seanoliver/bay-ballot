@@ -179,3 +179,20 @@ export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contes
 export function topPickCount(p: TopPick): string {
   return `${p.count} of ${p.total} ${p.total === 1 ? "guide" : "guides"}`;
 }
+
+export type TopQuote = { guideName: string; text: string; pick: string };
+
+// The first kept quote, reading the most-endorsed side first (then pick-group and guide order).
+export function topQuote(contest: Contest, rows: Row[]): TopQuote | null {
+  const groups = groupByPick(contest, rows)
+    .map((g, i) => ({ g, i }))
+    .sort((a, b) => b.g.rows.length - a.g.rows.length || a.i - b.i)
+    .map(({ g }) => g);
+  for (const g of groups) {
+    for (const r of g.rows) {
+      const q = reasons(r)[0];
+      if (q) return { guideName: r.guide.name, text: q.text, pick: g.label };
+    }
+  }
+  return null;
+}
