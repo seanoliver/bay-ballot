@@ -6,14 +6,17 @@ import { tally } from "./score";
 
 // The contest detail reads WHO (every guide, by pick) then WHY (only the quotes there are).
 
-export type WhoGuide = { id: string; name: string; listOnly: boolean; rank: number | null };
-export type WhoRow = { key: string; label: string; count: number; tone: BarTone; guides: WhoGuide[] };
+// `rank` is set only in ranked-choice contests, where a guide's order matters.
+export type WhoGuide = { id: string; name: string; rank: number | null };
+// `shown` first, `hidden` behind a "+N more" disclosure.
+export type WhoRow = { key: string; label: string; count: number; tone: BarTone; shown: WhoGuide[]; hidden: WhoGuide[] };
 export type ReasonQuote = { text: string; href: string };
 export type ReasonItem = { guideId: string; guideName: string; quotes: ReasonQuote[] };
 // `hidden`: quotes beyond each guide's first, revealed by a "+N more" disclosure.
 export type ReasonSection = { key: string; title: string; tone: BarTone; items: ReasonItem[]; hidden: number };
 export type ResultHeadline = { lead: string; tone: "yes" | "no" | "split" | "candidate" | "none"; detail: string };
 
+const WHO_SHOWN = 4;
 const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
 // Pick groups in bar order (Yes then No; candidates leader first) with their tone. `slots` should come
@@ -26,17 +29,17 @@ function toned(contest: Contest, rows: Row[], slots?: Slots): { group: PickGroup
   }));
 }
 
+// Guides quoted under Reasons lead (same order as there), then the rest alphabetically.
 export function whoRows(contest: Contest, rows: Row[], slots?: Slots): WhoRow[] {
-  return toned(contest, rows, slots).map(({ group, tone }) => ({
-    key: group.key,
-    label: group.label,
-    count: group.rows.length,
-    tone,
-    guides: group.rows.map((r) => {
-      const at = r.entry.ranked && Array.isArray(r.entry.pick) ? r.entry.pick.indexOf(group.key) : -1;
-      return { id: r.guide.id, name: r.guide.name, listOnly: !r.file.hasReasoning, rank: at >= 0 ? at + 1 : null };
-    }),
-  }));
+  return toned(contest, rows, slots).map(({ group, tone }) => {
+    const quoted = group.rows.filter((r) => reasons(r).length > 0);
+    const rest = group.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
+    const all = [...quoted, ...rest].map((r): WhoGuide => {
+      const at = contest.rankedChoice && r.entry.ranked && Array.isArray(r.entry.pick) ? r.entry.pick.indexOf(group.key) : -1;
+      return { id: r.guide.id, name: r.guide.name, rank: at >= 0 ? at + 1 : null };
+    });
+    return { key: group.key, label: group.label, count: group.rows.length, tone, shown: all.slice(0, WHO_SHOWN), hidden: all.slice(WHO_SHOWN) };
+  });
 }
 
 export function reasonSections(contest: Contest, rows: Row[], slots?: Slots): ReasonSection[] {

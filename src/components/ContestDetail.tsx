@@ -128,24 +128,32 @@ function Label({ tone, children }: { tone: BarTone; children: ReactNode }) {
 }
 
 function WhoLine({ row }: { row: WhoRow }) {
+  const [all, setAll] = useState(false);
+  const names = all ? [...row.shown, ...row.hidden] : row.shown;
   return (
     <li className="text-sm leading-relaxed">
       <Label tone={row.tone}>
         {row.label} <span className="font-normal text-muted-foreground normal-case">· {row.count}</span>
       </Label>{" "}
-      {/* Tags and the separator stay on the line with the end of the guide's name. */}
-      {row.guides.map((g, i) => (
+      {names.map((g, i) => (
         <span key={g.id}>
           <Link href={`/guides/${g.id}`} className={`${TAP} underline-offset-2 hover:underline`}>
             {g.name}
           </Link>
-          <span className="whitespace-nowrap text-xs text-muted-foreground">
-            {g.listOnly ? " (list only)" : null}
-            {g.rank !== null ? ` (ranked #${g.rank})` : null}
-            {i < row.guides.length - 1 ? <span className="text-sm"> ·</span> : null}
-          </span>{" "}
+          {g.rank !== null ? <span className="whitespace-nowrap text-xs text-muted-foreground"> (ranked #{g.rank})</span> : null}
+          {i < names.length - 1 ? ", " : " "}
         </span>
       ))}
+      {row.hidden.length ? (
+        <button
+          type="button"
+          aria-expanded={all}
+          onClick={() => setAll(!all)}
+          className="-my-2.5 inline-block rounded-md py-2.5 font-medium whitespace-nowrap text-muted-foreground underline underline-offset-2 outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          {all ? "Show less" : `+${row.hidden.length} more`}
+        </button>
+      ) : null}
     </li>
   );
 }

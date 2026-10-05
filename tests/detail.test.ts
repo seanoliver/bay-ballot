@@ -15,21 +15,40 @@ const row = (name: string, pick: Entry["pick"], quotes: Entry["quotes"] = [], op
 });
 
 describe("whoRows", () => {
-  it("measures: Yes then No, guide names with list-only marked", () => {
-    const rows = [row("A", "Y"), row("B", "N"), row("C", "Y", [], { list: true })];
-    expect(whoRows(measure, rows)).toEqual([
-      { key: "Y", label: "Yes", count: 2, tone: "yes", guides: [{ id: "a", name: "A", listOnly: false, rank: null }, { id: "c", name: "C", listOnly: true, rank: null }] },
-      { key: "N", label: "No", count: 1, tone: "no", guides: [{ id: "b", name: "B", listOnly: false, rank: null }] },
+  const g = (name: string, rank: number | null = null) => ({ id: name.toLowerCase().replace(/\s+/g, "-"), name, rank });
+  it("measures: Yes then No; quoted guides first (in Reasons order), then the rest A–Z; no list-only tags", () => {
+    const rows = [row("Zed", "Y"), row("Quoted Two", "Y", [q("b")]), row("Alpha", "Y", [], { list: true }), row("Quoted One", "Y", [q("a")]), row("Nope", "N")];
+    const out = whoRows(measure, rows);
+    expect(out.map((r) => [r.key, r.label, r.count, r.tone])).toEqual([
+      ["Y", "Yes", 4, "yes"],
+      ["N", "No", 1, "no"],
     ]);
+    expect(out[0].shown).toEqual([g("Quoted Two"), g("Quoted One"), g("Alpha"), g("Zed")]);
+    expect(out[0].hidden).toEqual([]);
   });
-  it("candidates: bar order, slot tone, ranked guides carry the candidate's rank", () => {
+  it("list-only quotes don't count as quoted", () => {
+    const rows = [row("B", "Y"), row("A", "Y", [q("hidden")], { list: true })];
+    expect(whoRows(measure, rows)[0].shown.map((x) => x.name)).toEqual(["A", "B"]);
+  });
+  it("shows the first four and hides the rest", () => {
+    const rows = ["F", "E", "D", "C", "B", "A"].map((n) => row(n, "Y"));
+    const [yes] = whoRows(measure, rows);
+    expect(yes.shown.map((x) => x.name)).toEqual(["A", "B", "C", "D"]);
+    expect(yes.hidden.map((x) => x.name)).toEqual(["E", "F"]);
+    expect(yes.count).toBe(6);
+  });
+  it("candidates: bar order, slot tone; ranked guides carry their rank in ranked-choice contests", () => {
     const rows = [row("A", ["Scott Wiener", "Connie Chan"], [], { ranked: true }), row("B", ["Scott Wiener"]), row("C", ["Connie Chan"])];
     const out = whoRows(race, rows);
     expect(out.map((r) => [r.label, r.count, r.tone])).toEqual([
       ["Scott Wiener", 2, "c2"],
       ["Connie Chan", 1, "c1"],
     ]);
-    expect(out[0].guides[0]).toEqual({ id: "a", name: "A", listOnly: false, rank: 1 });
+    expect(out[0].shown[0]).toEqual(g("A", 1));
+  });
+  it("no rank tag outside ranked-choice contests", () => {
+    const plain = { ...race, rankedChoice: false } as Contest;
+    expect(whoRows(plain, [row("A", ["Scott Wiener"], [], { ranked: true })])[0].shown[0].rank).toBeNull();
   });
   it("no picks, no rows", () => {
     expect(whoRows(measure, [])).toEqual([]);
