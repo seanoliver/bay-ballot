@@ -1,5 +1,4 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import type { Ballot, Contest, Entry } from "@/lib/schema";
 import { matchName } from "@/lib/names";
@@ -27,6 +26,16 @@ export const ExtractOutput = z.object({
   ),
 });
 export type ExtractOutput = z.infer<typeof ExtractOutput>;
+
+/**
+ * The structured-output format, built from zod directly. The SDK's zodOutputFormat
+ * (0.131) folds `enum` into the description, which would leave `vote` unconstrained.
+ */
+function outputFormat(): Anthropic.Messages.JSONOutputFormat {
+  const schema: Record<string, unknown> = { ...z.toJSONSchema(ExtractOutput) };
+  delete schema.$schema;
+  return { type: "json_schema", schema };
+}
 
 export type Source = { url: string; fetched: Fetched };
 export type ExtractClient = { messages: Pick<Anthropic["messages"], "create"> };
@@ -179,7 +188,7 @@ export async function extract(
     max_tokens: 16000,
     system: [{ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } }],
     messages: [{ role: "user", content: userContent(sources) }],
-    output_config: { format: zodOutputFormat(ExtractOutput) },
+    output_config: { format: outputFormat() },
   });
   if (res.stop_reason === "refusal") throw new Error(`refused: ${res.stop_details?.category}`);
   if (res.stop_reason === "max_tokens") throw new Error("model output hit max_tokens before finishing");

@@ -212,6 +212,28 @@ describe("extract", () => {
     ]);
   });
 
+  it("sends a JSON schema that enforces the Y/N vote and closed objects", async () => {
+    const { client, create } = fakeClient({});
+    await extract(client, ballot, sources);
+    const schema = create.mock.calls[0][0].output_config.format.schema;
+    // Follow $refs so the assertion holds whether or not the schema uses $defs.
+    const deref = (node: Record<string, unknown>): Record<string, unknown> => {
+      const ref = node.$ref as string | undefined;
+      if (!ref) return node;
+      const target = ref.replace("#/", "").split("/").reduce<Record<string, unknown>>((n, k) => n[k] as Record<string, unknown>, schema);
+      return deref(target);
+    };
+    expect(schema.$schema).toBeUndefined();
+    expect(schema.additionalProperties).toBe(false);
+    expect(schema.required).toEqual(["hasReasoning", "picks"]);
+    const pickObj = deref(schema.properties.picks.items);
+    expect(pickObj.additionalProperties).toBe(false);
+    expect(pickObj.required).toEqual(expect.arrayContaining(["contestId", "vote", "candidates", "ranked", "quotes"]));
+    const vote = (pickObj.properties as Record<string, { anyOf: Record<string, unknown>[] }>).vote;
+    const enums = vote.anyOf.map(deref).map((v) => v.enum).filter(Boolean);
+    expect(enums).toEqual([["Y", "N"]]);
+  });
+
   it("throws refused with the category, even when the text isn't JSON", async () => {
     const { client } = fakeClient({
       stop_reason: "refusal",
