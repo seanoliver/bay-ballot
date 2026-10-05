@@ -49,7 +49,7 @@ async function extractOne(client: Anthropic, data: ElectionData, guideId: string
   }
 
   const { output, usage } = await extract(client, data.ballot, guide, sources);
-  const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources));
+  const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
 
   const shrunk = shrinkWarning(guideId, prev.picks, picks, { force: flag("--force") });
   if (shrunk) {

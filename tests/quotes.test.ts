@@ -202,6 +202,28 @@ describe("own-voice sentences next to attribution", () => {
   });
 });
 
+describe("sentences following an attributed sentence", () => {
+  it("drops a continuation of the opponents' argument", () => {
+    const q = "It will raise property taxes on every homeowner.";
+    expect(reasonOf(q, [html(`Opponents say the bond is costly. ${q}`)])).toBe("attributed-speech");
+  });
+  it("drops a continuation after 'According to the Chamber'", () => {
+    const q = "It will drive restaurants out of the city.";
+    const p = html(`According to the Chamber, the tax hurts small business. ${q}`);
+    expect(reasonOf(q, [p])).toBe("attributed-speech");
+  });
+  it("keeps a first-person-plural reply", () => {
+    const q = "We think it is a smart investment in housing.";
+    expect(verifyQuotes([q], [html(`Critics say the bond is costly. ${q}`)]).kept).toHaveLength(1);
+  });
+  it("keeps a reply that names the guide", () => {
+    const q = "SPUR believes it is a smart investment in housing.";
+    const p = html(`Critics say the bond is costly. ${q}`);
+    expect(reasonOf(q, [p])).toBe("attributed-speech");
+    expect(verifyQuotes([q], [p], { ownNames: ["SPUR"] }).kept).toHaveLength(1);
+  });
+});
+
 describe("CJK quotes", () => {
   const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
   const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");

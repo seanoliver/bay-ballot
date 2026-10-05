@@ -79,10 +79,6 @@ function isTooShort(quote: string, normQuote: string): boolean {
 
 const SENTENCE_END = /[.!?。！？]/g;
 const FIRST_PERSON_PLURAL = /\b(we|our|us)\b/i;
-// A preceding sentence that is little more than an attribution phrase ("Opponents.", "They claim.")
-// introduces what follows; one with its own content ("Opponents say it's costly.") does not.
-const MAX_INTRO_EXTRA_WORDS = 2;
-
 const hasPhrase = (t: string) => ATTRIBUTION_PHRASES.some((p) => t.toLowerCase().includes(p));
 
 /** Split `before` (capped to the attribution window) into the open sentence and the one before it. */
@@ -95,22 +91,24 @@ function sentencesBefore(before: string): { current: string; previous: string } 
   return { current: w.slice(last + 1), previous: w.slice(prevEnd === undefined ? 0 : prevEnd + 1, last) };
 }
 
-function isIntroSentence(sentence: string): boolean {
-  const lower = sentence.toLowerCase();
-  const phrase = ATTRIBUTION_PHRASES.find((p) => lower.includes(p));
-  if (!phrase) return false;
-  const extra = lower.replace(phrase, " ").split(/\s+/).filter((t) => /[\p{L}\p{N}]/u.test(t));
-  return extra.length <= MAX_INTRO_EXTRA_WORDS;
-}
+const speaksAsGuide = (span: string, ownNames: string[]) =>
+  FIRST_PERSON_PLURAL.test(span) || ownNames.some((n) => n.trim() && span.toLowerCase().includes(n.trim().toLowerCase()));
+
+export type AttributionContext = { span?: string; ownNames?: string[] };
 
 /**
  * Span sits inside quotation marks, or is attributed to someone else: an attribution phrase
- * earlier in its own sentence, a bare introducing sentence just before it ("Critics."), a
- * phrase in the previous segment, a previous segment ending in a colon that isn't the
- * guide speaking ("The Chamber writes:" but not "From our writeup in June:"), or a trailing
- * "..., the Chamber says".
+ * earlier in its own sentence, a previous sentence with an attribution phrase (unless the span
+ * speaks as the guide: "we/our/us" or the guide's name), a phrase in the previous segment, a
+ * previous segment ending in a colon that isn't the guide speaking ("The Chamber writes:" but
+ * not "From our writeup in June:"), or a trailing "..., the Chamber says".
  */
-export function isAttributedSpeech(before: string, after: string, previous = ""): boolean {
+export function isAttributedSpeech(
+  before: string,
+  after: string,
+  previous = "",
+  { span = "", ownNames = [] }: AttributionContext = {},
+): boolean {
   const curlyInside = before.lastIndexOf("“") > before.lastIndexOf("”") && after.includes("”");
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
@@ -118,7 +116,7 @@ export function isAttributedSpeech(before: string, after: string, previous = "")
   const colonIntro = previous.trimEnd().endsWith(":") && !FIRST_PERSON_PLURAL.test(previous);
   return (
     hasPhrase(current) ||
-    isIntroSentence(prevSentence) ||
+    (hasPhrase(prevSentence) && !speaksAsGuide(span, ownNames)) ||
     hasPhrase(previous) ||
     colonIntro ||
     TRAILING_ATTRIBUTION.test(after.slice(0, 60))
@@ -127,7 +125,7 @@ export function isAttributedSpeech(before: string, after: string, previous = "")
 
 type Candidate = { text: string } | { reason: DropReason };
 
-function findInSegment(segment: string, previous: string, normQuote: string): Candidate[] {
+function findInSegment(segment: string, previous: string, normQuote: string, ownNames: string[]): Candidate[] {
   const { norm, map } = normalizeWithMap(segment);
   const out: Candidate[] = [];
   for (let i = norm.indexOf(normQuote); i !== -1; i = norm.indexOf(normQuote, i + 1)) {
@@ -136,7 +134,7 @@ function findInSegment(segment: string, previous: string, normQuote: string): Ca
     const span = segment.slice(start, end);
     const before = segment.slice(0, start);
     const after = segment.slice(end);
-    if (isAttributedSpeech(before, after, previous)) {
+    if (isAttributedSpeech(before, after, previous, { span, ownNames })) {
       out.push({ reason: "attributed-speech" });
     } else if (!isSentenceStart(before) || !isSentenceEnd(span, after)) {
       out.push({ reason: "partial-sentence" });
@@ -151,6 +149,7 @@ function findInSegment(segment: string, previous: string, normQuote: string): Ca
 export function verifyQuotes(
   quotes: string[],
   pages: Page[],
+  { ownNames = [] }: { ownNames?: string[] } = {},
 ): { kept: KeptQuote[]; dropped: DroppedQuote[] } {
   const pageSegments = pages.map((p) => ({ page: p, segs: segments(p) }));
   const wholePages = pageSegments.map(({ segs }) => normalize(segs.join("")));
@@ -172,7 +171,7 @@ export function verifyQuotes(
     outer: for (const { page, segs } of pageSegments) {
       let previous = "";
       for (const seg of segs) {
-        const candidates = findInSegment(seg, previous, normQuote);
+        const candidates = findInSegment(seg, previous, normQuote, ownNames);
         if (seg.trim() !== "") previous = seg;
         for (const c of candidates) {
           if ("text" in c) {

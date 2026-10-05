@@ -124,6 +124,16 @@ describe("toEntries", () => {
     );
   });
 
+  it("passes the guide's own names to quote verification", () => {
+    const q = "SPUR believes the bank is a smart investment in housing.";
+    const pg = [{ url: "https://a.org/g", text: `Critics say the bank is costly. ${q}`, kind: "html" as const }];
+    const out = { hasReasoning: true, picks: [pick({ contestId: "prop-b", vote: "Y", quotes: [q] })] };
+    expect(toEntries(out, contests, pg).picks["prop-b"].quotes).toEqual([]);
+    expect(toEntries(out, contests, pg, { ownNames: ["SPUR"] }).picks["prop-b"].quotes).toEqual([
+      { text: q, source: "https://a.org/g" },
+    ]);
+  });
+
   it("notes and skips unknown contests", () => {
     const r = run(pick({ contestId: "prop-zz", vote: "Y" }));
     expect(r.picks).toEqual({});

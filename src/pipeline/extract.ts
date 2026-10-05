@@ -120,6 +120,7 @@ export function toEntries(
   out: ExtractOutput,
   contests: Contest[],
   pages: Page[],
+  { ownNames = [] }: { ownNames?: string[] } = {},
 ): { picks: Record<string, Entry>; notes: string[] } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const picks: Record<string, Entry> = {};
@@ -160,7 +161,7 @@ export function toEntries(
       pick = p.vote;
     }
 
-    const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages);
+    const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
     for (const d of dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
 
     let ranked = isCandidate && p.ranked;
