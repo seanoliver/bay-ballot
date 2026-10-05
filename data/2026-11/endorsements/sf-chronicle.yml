@@ -1,0 +1,30 @@
+guide: sf-chronicle
+election: 2026-11
+status: published
+source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  us-rep-11: { pick: ["Scott Wiener"] }
+  lt-governor: { pick: ["Fiona Ma"] }
+  secretary-of-state: { pick: ["Shirley N. Weber"] }
+  controller: { pick: ["Malia M. Cohen"] }
+  treasurer: { pick: ["Eleni Kounalakis"] }
+  attorney-general: { pick: ["Rob Bonta"] }
+  insurance-commissioner: { pick: ["Ben Allen"] }
+  superintendent: { pick: ["Richard Barrera"] }
+  prop-1: { pick: Y }
+  prop-3: { pick: Y }
+  prop-37: { pick: Y }
+  prop-38: { pick: N }
+  prop-41: { pick: N }
+  prop-42: { pick: N }
+  prop-44: { pick: N }
+  rtm: { pick: Y }
+  prop-a: { pick: Y }
+  prop-b: { pick: N }
+  prop-c: { pick: Y }
+  prop-d: { pick: Y }
+  prop-e: { pick: Y }
+  prop-g: { pick: N }
+  prop-h: { pick: Y }

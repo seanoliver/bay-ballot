@@ -1,0 +1,16 @@
+guide: lwv-sf
+election: 2026-11
+status: published
+source: https://lwvsf.org/ballot-recommendations
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  prop-a: { pick: N }
+  prop-b: { pick: Y }
+  prop-c: { pick: Y }
+  prop-d: { pick: N }
+  prop-e: { pick: N }
+  prop-f: { pick: N }
+  prop-h: { pick: Y }
+  prop-i: { pick: Y }
+  prop-j: { pick: Y }

@@ -1,0 +1,371 @@
+# Sources: data/2026-11/sources/ (SF DOE Voter Information Pamphlet N26 ballot worksheet;
+# CA SoS Certified List of Candidates 8/27/2026) and the SF DOE qualified-candidates page.
+# Section order follows the brief; within each section, contests follow the SF ballot worksheet.
+election: 2026-11
+title: San Francisco General Election
+date: 2026-11-03
+contests:
+  # ---------- Federal ----------
+  - id: us-rep-11
+    section: Federal
+    title: United States Representative, District 11
+    kind: candidate
+    candidates: [Connie Chan, Scott Wiener]
+    jurisdiction: { level: district, name: Congress, district: "11" }
+  - id: us-rep-15
+    section: Federal
+    title: United States Representative, District 15
+    kind: candidate
+    candidates: [Kevin Mullin, Charles Hoelter]
+    jurisdiction: { level: district, name: Congress, district: "15" }
+
+  # ---------- State ----------
+  - id: governor
+    section: State
+    title: Governor
+    kind: candidate
+    candidates: [Xavier Becerra, Steve Hilton]
+    jurisdiction: { level: state, name: California }
+  - id: lt-governor
+    section: State
+    title: Lieutenant Governor
+    kind: candidate
+    candidates: [Fiona Ma, Gloria Romero]
+    jurisdiction: { level: state, name: California }
+  - id: secretary-of-state
+    section: State
+    title: Secretary of State
+    kind: candidate
+    candidates: [Shirley N. Weber, Donald P. (Don) Wagner]
+    jurisdiction: { level: state, name: California }
+  - id: controller
+    section: State
+    title: Controller
+    kind: candidate
+    candidates: [Malia M. Cohen, Herb W Morgan]
+    jurisdiction: { level: state, name: California }
+  - id: treasurer
+    section: State
+    title: Treasurer
+    kind: candidate
+    candidates: [Eleni Kounalakis, Jennifer Hawks]
+    jurisdiction: { level: state, name: California }
+  - id: attorney-general
+    section: State
+    title: Attorney General
+    kind: candidate
+    candidates: [Rob Bonta, Michael E. Gates]
+    jurisdiction: { level: state, name: California }
+  - id: insurance-commissioner
+    section: State
+    title: Insurance Commissioner
+    kind: candidate
+    candidates: [Ben Allen, Jane Kim]
+    jurisdiction: { level: state, name: California }
+  - id: board-of-equalization-2
+    section: State
+    title: Board of Equalization, District 2
+    kind: candidate
+    candidates: [Sally J. Lieber, John Pimentel]
+    jurisdiction: { level: district, name: Board of Equalization, district: "2" }
+  - id: assembly-17
+    section: State
+    title: State Assembly, District 17
+    kind: candidate
+    candidates: [Matt Haney, Manuel Noris-Barrera]
+    jurisdiction: { level: district, name: Assembly, district: "17" }
+  - id: assembly-19
+    section: State
+    title: State Assembly, District 19
+    kind: candidate
+    candidates: [Catherine Stefani, Philip Louis Wing]
+    jurisdiction: { level: district, name: Assembly, district: "19" }
+  - id: superintendent
+    section: State
+    title: Superintendent of Public Instruction
+    kind: candidate
+    candidates: [Richard Barrera, Sonja Shaw]
+    jurisdiction: { level: state, name: California }
+
+  # ---------- Judicial ----------
+  - id: supreme-court-groban
+    section: Judicial
+    title: Supreme Court Associate Justice Joshua Groban
+    kind: retention
+    description: Shall Associate Justice of the Supreme Court Joshua Groban be elected to the office for the term provided by law?
+    jurisdiction: { level: state, name: California }
+  - id: supreme-court-evans
+    section: Judicial
+    title: Supreme Court Associate Justice Kelli M. Evans
+    kind: retention
+    description: Shall Associate Justice of the Supreme Court Kelli M. Evans be elected to the office for the term provided by law?
+    jurisdiction: { level: state, name: California }
+  - id: court-of-appeal-1
+    section: Judicial
+    title: 1st District Court of Appeal (11 justices)
+    kind: retention
+    description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
+    jurisdiction: { level: state, name: California }
+
+  # ---------- Local candidates ----------
+  - id: board-of-education
+    section: Local candidates
+    title: Board of Education
+    kind: candidate
+    seats: 3
+    candidates: [Autumn Brown Garibay, Virginia Cheung, Alida Fisher, Ryan Hazelton, Phil Kim, Laurance Lee, Reina Tello, Tim Tung]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: college-board
+    section: Local candidates
+    title: Community College Board
+    description: 4-year term ending January 8, 2031
+    kind: candidate
+    seats: 3
+    candidates: [Elijah Ball, Rome Moses Jones, Monroe Lace, Leah LaCroix, Jeremy Lee, Bunny McFadden, Erwin Tam, Lisa Palagi Wynn II]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: college-board-partial
+    section: Local candidates
+    title: Community College Board (partial term)
+    description: Remainder of the current term ending January 8, 2029
+    kind: candidate
+    candidates: [Ruth Ferguson]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: bart-8
+    section: Local candidates
+    title: BART Board, District 8
+    kind: candidate
+    candidates: [Sara Barz]
+    jurisdiction: { level: district, name: BART, district: "8" }
+  - id: assessor
+    section: Local candidates
+    title: Assessor-Recorder
+    kind: candidate
+    candidates: [Joaquín Torres]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: public-defender
+    section: Local candidates
+    title: Public Defender
+    kind: candidate
+    candidates: [Mano Raju]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: supervisor-2
+    section: Local candidates
+    title: Board of Supervisors, District 2
+    kind: candidate
+    candidates: [Nicholas Berg, Guy McCoy, Monthanus Ratanapakdee, Stephen Sherrill]
+    jurisdiction: { level: district, name: Supervisor, district: "2" }
+  - id: supervisor-4
+    section: Local candidates
+    title: Board of Supervisors, District 4
+    kind: candidate
+    candidates: [Albert Chow, Jeremy Julian Greco, Alan Wong]
+    jurisdiction: { level: district, name: Supervisor, district: "4" }
+  - id: supervisor-6
+    section: Local candidates
+    title: Board of Supervisors, District 6
+    kind: candidate
+    candidates: [Alex Behrend, Matt Dorsey]
+    jurisdiction: { level: district, name: Supervisor, district: "6" }
+  - id: supervisor-8
+    section: Local candidates
+    title: Board of Supervisors, District 8
+    kind: candidate
+    candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
+    jurisdiction: { level: district, name: Supervisor, district: "8" }
+  - id: supervisor-10
+    section: Local candidates
+    title: Board of Supervisors, District 10
+    kind: candidate
+    candidates:
+      - Pearci "PJ" Bastiany III
+      - Dionjay (DJ) Brookter
+      - Deandra Bryant
+      - Theo Ellington
+      - J.R. Eppler
+      - Ellsworth "Ell" M. Jennison, Jr.
+      - Mike Trouble Lin
+      - Jamo Muhammad
+      - Jessica Pessecow
+      - Shawn M. Richard
+    jurisdiction: { level: district, name: Supervisor, district: "10" }
+
+  # ---------- State propositions ----------
+  - id: prop-1
+    section: State propositions
+    title: Proposition 1
+    kind: measure
+    description: "Authorizes Bonds for Housing Affordability Programs"
+    link: https://voterguide.sos.ca.gov/propositions/1/
+    jurisdiction: { level: state, name: California }
+  - id: prop-2
+    section: State propositions
+    title: Proposition 2
+    kind: measure
+    description: "Increases State’s Rainy Day Fund"
+    link: https://voterguide.sos.ca.gov/propositions/2/
+    jurisdiction: { level: state, name: California }
+  - id: prop-3
+    section: State propositions
+    title: Proposition 3
+    kind: measure
+    description: "Provides Permanent Funding for Schools and Health Care by Extending Existing Tax on High Incomes"
+    link: https://voterguide.sos.ca.gov/propositions/3/
+    jurisdiction: { level: state, name: California }
+  - id: prop-4
+    section: State propositions
+    title: Proposition 4
+    kind: measure
+    description: "Repeals Prohibition Against Public Funding of Election Campaigns"
+    link: https://voterguide.sos.ca.gov/propositions/4/
+    jurisdiction: { level: state, name: California }
+  - id: prop-5
+    section: State propositions
+    title: Proposition 5
+    kind: measure
+    description: "Changes Recall Election Process for Statewide Officers"
+    link: https://voterguide.sos.ca.gov/propositions/5/
+    jurisdiction: { level: state, name: California }
+  - id: prop-37
+    section: State propositions
+    title: Proposition 37
+    kind: measure
+    description: "Creates Loan Program for Middle-Income Buyers of Qualified New Homes"
+    link: https://voterguide.sos.ca.gov/propositions/37/
+    jurisdiction: { level: state, name: California }
+  - id: prop-38
+    section: State propositions
+    title: Proposition 38
+    kind: measure
+    description: "Authorizes Bonds for Immunology Medical Research"
+    link: https://voterguide.sos.ca.gov/propositions/38/
+    jurisdiction: { level: state, name: California }
+  - id: prop-39
+    section: State propositions
+    title: Proposition 39
+    kind: measure
+    description: "Prohibits Citizens from Voting Unless They Present Government-Issued Identification"
+    link: https://voterguide.sos.ca.gov/propositions/39/
+    jurisdiction: { level: state, name: California }
+  - id: prop-40
+    section: State propositions
+    title: Proposition 40
+    kind: measure
+    description: "Imposes One-Time Tax on Certain Taxpayers"
+    link: https://voterguide.sos.ca.gov/propositions/40/
+    jurisdiction: { level: state, name: California }
+  - id: prop-41
+    section: State propositions
+    title: Proposition 41
+    kind: measure
+    description: "Prohibits New State Taxes that Exclude Revenues from State Spending Limit. Requires Audits for New State Special Taxes"
+    link: https://voterguide.sos.ca.gov/propositions/41/
+    jurisdiction: { level: state, name: California }
+  - id: prop-42
+    section: State propositions
+    title: Proposition 42
+    kind: measure
+    description: "Prohibits New State Personal Property Taxes and Certain Retroactive State Taxes"
+    link: https://voterguide.sos.ca.gov/propositions/42/
+    jurisdiction: { level: state, name: California }
+  - id: prop-43
+    section: State propositions
+    title: Proposition 43
+    kind: measure
+    description: "Limits Voters’ Ability to Raise Revenues for Local Government Services"
+    link: https://voterguide.sos.ca.gov/propositions/43/
+    jurisdiction: { level: state, name: California }
+  - id: prop-44
+    section: State propositions
+    title: Proposition 44
+    kind: measure
+    description: "Requires Community Health Clinics Spend 90% of Revenue on Program Services"
+    link: https://voterguide.sos.ca.gov/propositions/44/
+    jurisdiction: { level: state, name: California }
+  - id: prop-45
+    section: State propositions
+    title: Proposition 45
+    kind: measure
+    description: "Modifies Environmental Review for Certain Projects"
+    link: https://voterguide.sos.ca.gov/propositions/45/
+    jurisdiction: { level: state, name: California }
+
+  # ---------- Regional measures ----------
+  - id: rtm
+    section: Regional measures
+    title: Regional Measure RTM
+    kind: measure
+    description: Regional Transit Measure
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: county, name: Bay Area region }
+
+  # ---------- Local propositions ----------
+  - id: prop-a
+    section: Local propositions
+    title: Proposition A
+    kind: measure
+    description: "Charter Changes Affecting Various City Departments and Commissions"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-b
+    section: Local propositions
+    title: Proposition B
+    kind: measure
+    description: "Establishing a Municipal Finance Corporation and a Public Bank"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-c
+    section: Local propositions
+    title: Proposition C
+    kind: measure
+    description: "Contributions to the Housing Trust Fund"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-d
+    section: Local propositions
+    title: Proposition D
+    kind: measure
+    description: "Changes to Ballot Measure Process"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-e
+    section: Local propositions
+    title: Proposition E
+    kind: measure
+    description: "City Administrator’s Authority and Changes to City Contracting"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-f
+    section: Local propositions
+    title: Proposition F
+    kind: measure
+    description: "Changes to Executive Branch Management"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-g
+    section: Local propositions
+    title: Proposition G
+    kind: measure
+    description: "Allowing Private Vehicles on the Upper Great Highway in Sunset Dunes Park"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-h
+    section: Local propositions
+    title: Proposition H
+    kind: measure
+    description: "Parcel Tax to Fund Muni Operations"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-i
+    section: Local propositions
+    title: Proposition I
+    kind: measure
+    description: "Changes to Real Property Transfer Tax"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-j
+    section: Local propositions
+    title: Proposition J
+    kind: measure
+    description: "Removal of Foreclosure Exemption for Real Property Transfer Tax"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }

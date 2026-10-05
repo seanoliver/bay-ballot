@@ -1,0 +1,28 @@
+guide: spur
+election: 2026-11
+status: published
+source: https://www.spur.org/voter-guide/2026-11
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  prop-1: { pick: Y }
+  prop-2: { pick: Y }
+  prop-3: { pick: Y }
+  prop-4: { pick: Y }
+  prop-5: { pick: Y }
+  prop-37: { pick: Y }
+  prop-39: { pick: N }
+  prop-41: { pick: N }
+  prop-42: { pick: N }
+  prop-43: { pick: N }
+  rtm: { pick: Y }
+  prop-a: { pick: Y }
+  prop-b: { pick: N }
+  prop-c: { pick: Y }
+  prop-d: { pick: Y }
+  prop-e: { pick: Y }
+  prop-f: { pick: Y }
+  prop-g: { pick: N }
+  prop-h: { pick: Y }
+  prop-i: { pick: N }
+  prop-j: { pick: Y }

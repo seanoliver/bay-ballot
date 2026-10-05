@@ -1,0 +1,43 @@
+guide: league-pissed-off-voters
+election: 2026-11
+status: published
+source: https://www.theleaguesf.org/voter_guides
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  us-rep-11: { pick: ["Connie Chan"] }
+  secretary-of-state: { pick: ["Shirley N. Weber"] }
+  insurance-commissioner: { pick: ["Jane Kim"] }
+  board-of-equalization-2: { pick: ["Sally J. Lieber"] }
+  superintendent: { pick: ["Richard Barrera"] }
+  supreme-court-groban: { pick: Y }
+  supreme-court-evans: { pick: Y }
+  court-of-appeal-1: { pick: Y }
+  board-of-education: { pick: ["Virginia Cheung", "Reina Tello", "Ryan Hazelton"] }
+  college-board: { pick: ["Leah LaCroix", "Bunny McFadden"] }
+  assessor: { pick: ["Joaquín Torres"] }
+  public-defender: { pick: ["Mano Raju"] }
+  supervisor-8: { pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true }
+  supervisor-10: { pick: ["J.R. Eppler", "Dionjay (DJ) Brookter"] }
+  prop-1: { pick: Y }
+  prop-3: { pick: Y }
+  prop-4: { pick: Y }
+  prop-5: { pick: Y }
+  prop-38: { pick: N }
+  prop-39: { pick: N }
+  prop-40: { pick: Y }
+  prop-41: { pick: N }
+  prop-42: { pick: N }
+  prop-43: { pick: N }
+  prop-44: { pick: N }
+  prop-45: { pick: N }
+  rtm: { pick: Y }
+  prop-a: { pick: N }
+  prop-b: { pick: Y }
+  prop-c: { pick: Y }
+  prop-d: { pick: N }
+  prop-e: { pick: N }
+  prop-f: { pick: N }
+  prop-h: { pick: Y }
+  prop-i: { pick: Y }
+  prop-j: { pick: Y }

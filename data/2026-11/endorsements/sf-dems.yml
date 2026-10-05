@@ -1,0 +1,42 @@
+guide: sf-dems
+election: 2026-11
+status: published
+source: https://www.sfdems.org/endorsements/nov-3-2026-general-election
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11: { pick: ["Scott Wiener"] }
+  us-rep-15: { pick: ["Kevin Mullin"] }
+  governor: { pick: ["Xavier Becerra"] }
+  lt-governor: { pick: ["Fiona Ma"] }
+  secretary-of-state: { pick: ["Shirley N. Weber"] }
+  controller: { pick: ["Malia M. Cohen"] }
+  treasurer: { pick: ["Eleni Kounalakis"] }
+  attorney-general: { pick: ["Rob Bonta"] }
+  insurance-commissioner: { pick: ["Ben Allen"] }
+  board-of-equalization-2: { pick: ["Sally J. Lieber"] }
+  assembly-17: { pick: ["Matt Haney"] }
+  assembly-19: { pick: ["Catherine Stefani"] }
+  superintendent: { pick: ["Richard Barrera"] }
+  board-of-education: { pick: ["Autumn Brown Garibay", "Phil Kim", "Tim Tung"] }
+  college-board: { pick: ["Elijah Ball", "Monroe Lace", "Erwin Tam"] }
+  college-board-partial: { pick: ["Ruth Ferguson"] }
+  bart-8: { pick: ["Sara Barz"] }
+  assessor: { pick: ["Joaquín Torres"] }
+  public-defender: { pick: ["Mano Raju"] }
+  supervisor-2: { pick: ["Stephen Sherrill"] }
+  supervisor-4: { pick: ["Alan Wong"] }
+  supervisor-6: { pick: ["Matt Dorsey"] }
+  supervisor-10: { pick: ["Theo Ellington"] }
+  prop-40: { pick: N }
+  rtm: { pick: Y }
+  prop-a: { pick: Y }
+  prop-b: { pick: Y }
+  prop-c: { pick: Y }
+  prop-d: { pick: Y }
+  prop-e: { pick: Y }
+  prop-f: { pick: Y }
+  prop-g: { pick: N }
+  prop-h: { pick: Y }
+  prop-i: { pick: N }
+  prop-j: { pick: Y }
