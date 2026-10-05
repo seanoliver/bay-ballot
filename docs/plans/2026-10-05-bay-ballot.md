@@ -1005,7 +1005,11 @@ main();
 
 **Added 2026-10-05 (from Task 6 findings):**
 - **Multi-page guides.** SPUR puts its reasoning on one page per measure, linked from the summary page. Add an optional `extraSources: [url]` to `EndorsementFile` (schema + test first). `extract` fetches the main source plus each extra source and concatenates their text (separated by `\n\n--- <url> ---\n\n`) for both the model input and quote verification. Each quote keeps its own link: add optional `quoteSources: string[]` parallel to `quotes` in `Entry`, set from whichever fetched page contained the quote. Test `toEntries` with two pages.
+- **Multi-page guides, schema status.** `extraSources` already exists in `EndorsementFile` (added in Task 7, commit f221e83). Only `quoteSources` remains to add.
 - **Image-only positions.** LWV California shows Support/Oppose as icons, so text extraction can't read them. Mark such guides `manual: true` in the endorsement file (schema + test first); `extract --all` skips them and prints "skipped (manual)".
+- **Browser fetch hint.** `fetchWith: browser` (already in the schema) makes `extract` use the Playwright path for that guide without the `--browser` flag (Sierra Club, SF Labor Council).
+- **Only this election.** Several pages also list earlier elections (CADC lists Mar/Apr 2026; Milk Club lists June 2026 and Nov 2024). Add to the system prompt: "The page may list endorsements for several elections. Extract only endorsements for the <title> on <date>; ignore every other election." Add a `toEntries`-independent unit test for `systemPrompt` that asserts this sentence is present with the right date.
+- **Archive snapshots.** Generic URLs get overwritten after Nov 3. After a successful extract, request `https://web.archive.org/save/<source>` (and each extra source) and store the returned snapshot URL as `archived:` in the endorsement file (optional `HttpUrl`, schema + test first). Failure to archive is a warning, not an error. The site links to `archived` when present, else `source`.
 
 **Step 4:** `npm test` → PASS.
 
@@ -1024,7 +1028,7 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 
 ### Task 12: Extract every guide (with Sean)
 
-**Step 1:** `npm run bb -- discover`. For each guide listed, find its Nov 2026 page and set `source:` in its endorsement file.
+**Step 1:** `npm run bb -- discover`. For each guide listed, find its Nov 2026 page and set `source:` in its endorsement file. Also check, by hand or browser, guides the Task 7 search couldn't reach: Bay Area Reporter and SF Bay View (both behind Cloudflare). Check the SF Democratic Party's other chartered clubs (sfdems.org/clubs) for Nov 2026 slates: Brownie Mary, District 2, District 3, Fénix, Filipino American, Harriet Tubman, Portola, Raoul Wallenberg, Richmond District, SF Working Families, South Beach D6. Add a guide file plus a stub for each one that publishes a slate.
 
 **Step 2:** `npm run bb -- extract --all`. Re-run failures with `--browser`. Guides that publish only images or social posts: hand-enter.
 
