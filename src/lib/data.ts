@@ -94,6 +94,9 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if (e.status === "pending" && Object.keys(e.picks).length > 0) {
       warnings.push(`${id}: pending file has picks`);
     }
+    if (e.status === "published" && Object.keys(e.picks).length === 0) {
+      warnings.push(`${id}: published file has no picks`);
+    }
     for (const [cid, entry] of Object.entries(e.picks)) {
       const c = contests.get(cid);
       if (!c) {

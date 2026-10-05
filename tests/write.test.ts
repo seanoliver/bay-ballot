@@ -25,11 +25,11 @@ describe("nextFile", () => {
     expect(n.manual).toBeUndefined();
   });
 
-  it("keeps the previous status when nothing was extracted", () => {
+  it("is pending when nothing was extracted, even over a published file (--force)", () => {
     const n = nextFile(prev, {}, false, "2026-10-05");
     expect(n.status).toBe("pending");
     expect(n.picks).toEqual({});
-    expect(nextFile({ ...prev, status: "published" }, {}, false, "2026-10-05").status).toBe("published");
+    expect(nextFile({ ...prev, status: "published" }, {}, false, "2026-10-05").status).toBe("pending");
   });
 
   it("records archive snapshots, keeping the previous ones when none are given", () => {

@@ -18,14 +18,14 @@ export function nextFile(
   return {
     guide: prev.guide,
     election: prev.election,
-    status: Object.keys(picks).length > 0 ? "published" : prev.status,
+    status: Object.keys(picks).length > 0 ? "published" : "pending",
     source: prev.source,
     extraSources: prev.extraSources,
     fetchWith: prev.fetchWith,
     manual: prev.manual,
     allowForeignSources: prev.allowForeignSources,
     archived: archived ?? prev.archived,
-    fetchedAt: unchanged ? prev.fetchedAt : today,
+    fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
     picks,
   };

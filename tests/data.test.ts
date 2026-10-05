@@ -83,6 +83,11 @@ describe("data", () => {
       "g/board: 4 names exceeds 3 seat(s)",
     ]);
   });
+  it("warns on published files without picks", () => {
+    const r = validateElection(withFile(base(), {}, { status: "published" }));
+    expect(r.errors).toEqual([]);
+    expect(r.warnings).toEqual(["g: published file has no picks"]);
+  });
   it("does not warn on ranked picks beyond seats", () => {
     const d = base();
     d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: true, jurisdiction: juris });
