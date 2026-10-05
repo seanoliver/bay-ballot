@@ -1003,6 +1003,10 @@ main();
 
 `discover` v1 lists guides missing a source URL and creates `pending` stubs; finding each URL is done by Claude Code (web search) or by hand, and written into `source:`. Automating the search is a later improvement.
 
+**Added 2026-10-05 (from Task 6 findings):**
+- **Multi-page guides.** SPUR puts its reasoning on one page per measure, linked from the summary page. Add an optional `extraSources: [url]` to `EndorsementFile` (schema + test first). `extract` fetches the main source plus each extra source and concatenates their text (separated by `\n\n--- <url> ---\n\n`) for both the model input and quote verification. Each quote keeps its own link: add optional `quoteSources: string[]` parallel to `quotes` in `Entry`, set from whichever fetched page contained the quote. Test `toEntries` with two pages.
+- **Image-only positions.** LWV California shows Support/Oppose as icons, so text extraction can't read them. Mark such guides `manual: true` in the endorsement file (schema + test first); `extract --all` skips them and prints "skipped (manual)".
+
 **Step 4:** `npm test` → PASS.
 
 **Step 5: Live check against a golden fixture.** Copy `data/2026-11/endorsements/growsf.yml` to `/tmp/growsf.golden.yml`, then:
@@ -1128,6 +1132,34 @@ export function visibleContest(c: Contest, f: Pick<Filters, "districts">): boole
 
 ---
 
+### Task 13b: Display model (TDD)
+
+**Why:** Tasks 14–15 are UI. All display logic lives here as pure, unit-tested functions so the components only render. Added 2026-10-05.
+
+**Files:**
+- Create: `src/lib/display.ts`
+- Test: `tests/display.test.ts`
+
+**Functions and expected outputs** (write each test first, see it fail, implement):
+
+| Function | Input | Output |
+|---|---|---|
+| `headline(tally)` | measure Y 5 / N 1 | `{ tone: "yes", label: "Yes 83%", detail: "5 of 6", ranked: false }` |
+| | measure N 2 / Y 1 | `{ tone: "no", label: "No 67%", detail: "2 of 3", ranked: false }` |
+| | measure 3–3 | `{ tone: "split", label: "Split", detail: "3 Yes · 3 No", ranked: false }` |
+| | candidate leader A 3 of 4, leaderRanked | `{ tone: "candidate", label: "A", detail: "75% (3 of 4)", ranked: true }` |
+| | candidate tie A, B | `{ tone: "split", label: "Split", detail: "A, B", ranked: false }` |
+| | total 0 | `{ tone: "none", label: "No picks yet", detail: "", ranked: false }` |
+| `runnersUp(tally)` | counts A 3, B 1, C 1 | `"B 1 · C 1"`; `""` for measures, splits and single-candidate tallies |
+| `groupByPick(contest, rows)` | measure rows | `[{ key: "Y", label: "Yes", rows }, { key: "N", label: "No", rows }]`, empty groups omitted, Yes first |
+| | candidate rows | one group per candidate in `tally.counts` order; a dual-endorsing guide appears in both groups; a ranked guide appears only under its #1 |
+| `rankedDetails(rows)` | rows with ranked entries | `[{ guideName, order: ["Gary McCoy", "Michael T. Nguyen"] }]`; `[]` when none |
+| `pendingNote(guides)` | 0 / 1 / 3 guides | `null` / `"1 guide hasn't published yet"` / `"3 guides haven't published yet"` |
+
+`rows` is the output type of `activeEntries` (Task 13). Commit `feat: display model`.
+
+---
+
 ### Task 14: Pages and data plumbing
 
 **Files:**
@@ -1216,6 +1248,8 @@ Behavior spec (port the look from `mockups/index.html` view A):
 - Expanded (click the row; `aria-expanded`): guides grouped by pick (Yes group, No group; for candidates, one group per candidate in leader order). Each guide: name (links to `/guides/<id>`), quotes as bullets in quotation marks, a "source" link to `file.source`. List-only guides show "No reasons published".
 - Footer line if `pending.length`: "N guides haven't published yet" with names in a `title`.
 - Measures link to `contest.link` ("Official text").
+
+**Rule:** components contain no display logic. Every string and grouping comes from `src/lib/display.ts` (Task 13b) or `src/lib/filters.ts` (Task 13). If a component needs new logic, add a tested function there first.
 
 **Step 1:** Build the three components. **Step 2:** `npm run dev`, open `http://localhost:3000/2026-11` at 390px width and desktop; click through: toggles recalc, `*` popover opens on tap, URL updates, reload restores state. **Step 3:** commit `feat: ballot list UI`.
 
