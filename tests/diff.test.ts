@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Entry } from "@/lib/schema";
-import { diffPicks } from "@/pipeline/diff";
+import { diffPicks, summaryLine } from "@/pipeline/diff";
 
 const q = (n: number) =>
   Array.from({ length: n }, (_, i) => ({ text: `Reason number ${i + 1} for this pick.`, source: "https://a.org/" }));
@@ -31,5 +31,13 @@ describe("diffPicks", () => {
   it("is empty when nothing changed", () => {
     const picks = { "prop-a": e("Y", { quotes: 1 }) };
     expect(diffPicks(picks, structuredClone(picks))).toEqual([]);
+  });
+});
+
+describe("summaryLine", () => {
+  it("counts picks, changes, quotes and notes", () => {
+    const before = { "prop-a": e("Y"), "prop-b": e("N"), "prop-d": e("Y") };
+    const after = { "prop-a": e("N", { quotes: 2 }), "prop-c": e("Y", { quotes: 1 }), "prop-d": e("Y", { quotes: 3 }) };
+    expect(summaryLine("spur", before, after, ["n1", "n2"])).toBe("spur: 3 picks (+1 ~1 -1), 6 quotes, 2 notes");
   });
 });

@@ -60,6 +60,9 @@ export const Entry = z.object({
 });
 export type Entry = z.infer<typeof Entry>;
 
+export const ArchivedSource = z.object({ source: HttpUrl, snapshot: HttpUrl });
+export type ArchivedSource = z.infer<typeof ArchivedSource>;
+
 export const EndorsementFile = z.object({
   guide: Slug,
   election: Election,
@@ -71,7 +74,7 @@ export const EndorsementFile = z.object({
   extraSources: z.array(HttpUrl).optional(), // further pages of a multi-page guide
   manual: z.boolean().optional(), // positions are hand-entered (e.g. image-only); `bb extract` skips the guide
   allowForeignSources: z.boolean().optional(), // sources may live off the guide's homepage host (e.g. a PDF on a CDN)
-  archived: z.array(HttpUrl).optional(), // web.archive.org snapshots of the fetched sources
+  archived: z.array(ArchivedSource).optional(), // web.archive.org snapshots, one per source that archived
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;

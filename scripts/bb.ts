@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
-import { EndorsementFile } from "../src/lib/schema";
+import { EndorsementFile, type ArchivedSource } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
-import { diffPicks } from "../src/pipeline/diff";
+import { diffPicks, summaryLine } from "../src/pipeline/diff";
 import { extract, pagesFor, toEntries, type Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
@@ -15,13 +15,19 @@ const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force]
        npm run bb -- discover
-       npm run bb -- check`;
+       npm run bb -- check
+
+extract rewrites each guide's picks from its pages, overwriting hand edits to picks
+(mark hand-entered guides with 'manual: true' to skip them). --force accepts a result
+that empties or more than halves the previous picks.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const today = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
 const endorsementPath = (id: string) => path.join(ROOT, ELECTION, "endorsements", `${id}.yml`);
+
+const printNote = (n: string) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`);
 
 async function extractOne(client: Anthropic, data: ElectionData, guideId: string): Promise<void> {
   const guide = data.guides.find((g) => g.id === guideId);
@@ -54,16 +60,16 @@ async function extractOne(client: Anthropic, data: ElectionData, guideId: string
   const shrunk = shrinkWarning(guideId, prev.picks, picks, { force: flag("--force") });
   if (shrunk) {
     console.log(`\n${shrunk}`);
-    notes.forEach((n) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`));
+    notes.forEach(printNote);
     return;
   }
 
-  let archived: string[] | undefined;
+  let archived: ArchivedSource[] | undefined;
   if (flag("--archive")) {
-    const snaps: string[] = [];
+    const snaps: ArchivedSource[] = [];
     for (const url of urls) {
-      const snap = await archiveUrl(url);
-      if (snap) snaps.push(snap);
+      const snapshot = await archiveUrl(url);
+      if (snapshot) snaps.push({ source: url, snapshot });
       else console.warn(`${guideId}: warning: could not archive ${url}`);
     }
     if (snaps.length > 0) archived = snaps;
@@ -73,11 +79,12 @@ async function extractOne(client: Anthropic, data: ElectionData, guideId: string
   const file = endorsementPath(guideId);
   fs.writeFileSync(file, toYaml(next, { previous: fs.readFileSync(file, "utf8") }));
 
+  console.log(`\n${summaryLine(guideId, prev.picks, picks, notes)}`);
   console.log(
-    `\n${guideId}  cache_read=${usage.cache_read_input_tokens ?? 0} cache_write=${usage.cache_creation_input_tokens ?? 0} in=${usage.input_tokens} out=${usage.output_tokens}`,
+    `${guideId}  cache_read=${usage.cache_read_input_tokens ?? 0} cache_write=${usage.cache_creation_input_tokens ?? 0} in=${usage.input_tokens} out=${usage.output_tokens}`,
   );
   diffPicks(prev.picks, picks).forEach((l) => console.log(`  ${l}`));
-  notes.forEach((n) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`));
+  notes.forEach(printNote);
 }
 
 async function runExtract(): Promise<void> {
@@ -122,6 +129,10 @@ function runCheck(): void {
     const e = data.endorsements[g.id];
     return e ? checkHosts(g, e).map((p) => `${g.id}: ${p}`) : [];
   });
+  const manual = data.guides.filter((g) => data.endorsements[g.id]?.manual).map((g) => g.id);
+  const noSource = data.guides.filter((g) => !data.endorsements[g.id]?.source).map((g) => g.id);
+  console.log(`INFO  manual (${manual.length}): ${manual.join(", ") || "none"}`);
+  console.log(`INFO  no source (${noSource.length}): ${noSource.join(", ") || "none"}`);
   warnings.forEach((w) => console.warn(`WARN  ${w}`));
   [...errors, ...hostProblems].forEach((e) => console.error(`ERROR ${e}`));
   if (errors.length > 0 || hostProblems.length > 0) process.exitCode = 1;

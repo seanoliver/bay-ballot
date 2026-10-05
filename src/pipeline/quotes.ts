@@ -79,12 +79,18 @@ function isTooShort(quote: string, normQuote: string): boolean {
 
 const SENTENCE_END = /[.!?。！？]/g;
 const FIRST_PERSON_PLURAL = /\b(we|our|us)\b/i;
+// A colon intro is the guide speaking only when it opens in the first person
+// ("We wrote:", "From our writeup in June:"), not "The Mayor told us:".
+const FIRST_PERSON_OPENING = /^\s*(?:\S+\s+)?(we|our|us|my)\b/i;
+// Abbreviations whose period does not end a sentence.
+const ABBREVIATIONS = /\b(?:U\.S\.A\.|U\.S\.|Mrs\.|Mr\.|Ms\.|Dr\.|St\.|No\.(?=\s*\d)|Prop\.|Jr\.|Sr\.|vs\.|e\.g\.|i\.e\.)/gi;
 const hasPhrase = (t: string) => ATTRIBUTION_PHRASES.some((p) => t.toLowerCase().includes(p));
 
 /** Split `before` (capped to the attribution window) into the open sentence and the one before it. */
 function sentencesBefore(before: string): { current: string; previous: string } {
   const w = before.slice(-ATTRIBUTION_WINDOW);
-  const ends = [...w.matchAll(SENTENCE_END)].map((m) => m.index);
+  const masked = w.replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_")); // same length, so indexes line up
+  const ends = [...masked.matchAll(SENTENCE_END)].map((m) => m.index);
   const last = ends.at(-1);
   if (last === undefined) return { current: w, previous: "" };
   const prevEnd = ends.at(-2);
@@ -100,8 +106,8 @@ export type AttributionContext = { span?: string; ownNames?: string[] };
  * Span sits inside quotation marks, or is attributed to someone else: an attribution phrase
  * earlier in its own sentence, a previous sentence with an attribution phrase (unless the span
  * speaks as the guide: "we/our/us" or the guide's name), a phrase in the previous segment, a
- * previous segment ending in a colon that isn't the guide speaking ("The Chamber writes:" but
- * not "From our writeup in June:"), or a trailing "..., the Chamber says".
+ * previous segment ending in a colon that doesn't open in the first person ("The Chamber
+ * writes:", "The Mayor told us:", but not "From our writeup in June:"), or a trailing "..., the Chamber says".
  */
 export function isAttributedSpeech(
   before: string,
@@ -113,7 +119,7 @@ export function isAttributedSpeech(
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
   const { current, previous: prevSentence } = sentencesBefore(before);
-  const colonIntro = previous.trimEnd().endsWith(":") && !FIRST_PERSON_PLURAL.test(previous);
+  const colonIntro = previous.trimEnd().endsWith(":") && !FIRST_PERSON_OPENING.test(previous);
   return (
     hasPhrase(current) ||
     (hasPhrase(prevSentence) && !speaksAsGuide(span, ownNames)) ||

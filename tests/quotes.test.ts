@@ -224,6 +224,23 @@ describe("sentences following an attributed sentence", () => {
   });
 });
 
+describe("colon intros and abbreviations", () => {
+  const S = "This tax will drive businesses out of San Francisco.";
+  it("treats a colon intro as the guide only when it opens in the first person", () => {
+    expect(verifyQuotes([S], [html(`We wrote in June:\n${S}`)]).kept).toHaveLength(1);
+    expect(verifyQuotes([S], [html(`From our writeup in June:\n${S}`)]).kept).toHaveLength(1);
+    expect(reasonOf(S, [html(`The Mayor told us:\n${S}`)])).toBe("attributed-speech");
+  });
+  it("does not split sentences at abbreviations", () => {
+    const p = html("Critics say the U.S. rules are fine and this measure is redundant overreach.");
+    expect(reasonOf("S. rules are fine and this measure is redundant overreach.", [p])).toBe("attributed-speech");
+    const q = "It will raise property taxes on every homeowner.";
+    expect(reasonOf(q, [html(`Opponents cite Prop. 13 and say Mr. Smith agrees. ${q}`)])).toBe("attributed-speech");
+    const own = "We think Prop. 45 is a smart investment in housing.";
+    expect(verifyQuotes([own], [html(`Some say e.g. delays are fine. ${own}`)]).kept).toHaveLength(1);
+  });
+});
+
 describe("CJK quotes", () => {
   const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
   const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");

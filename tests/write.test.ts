@@ -33,10 +33,22 @@ describe("nextFile", () => {
   });
 
   it("records archive snapshots, keeping the previous ones when none are given", () => {
-    const snap = ["https://web.archive.org/web/20261005000000/https://www.spur.org/voter-guide/2026-11"];
+    const snap = [{
+      source: "https://www.spur.org/voter-guide/2026-11",
+      snapshot: "https://web.archive.org/web/20261005000000/https://www.spur.org/voter-guide/2026-11",
+    }];
     expect(nextFile(prev, picks, true, "2026-10-05", snap).archived).toEqual(snap);
     expect(nextFile({ ...prev, archived: snap }, picks, true, "2026-10-06").archived).toEqual(snap);
     expect(nextFile(prev, picks, true, "2026-10-05").archived).toBeUndefined();
+  });
+
+  it("keeps fetchedAt when picks and quotes are unchanged", () => {
+    const same = { ...prev, picks, fetchedAt: "2026-10-01" };
+    const reordered = Object.fromEntries(Object.entries(structuredClone(picks)).reverse());
+    expect(nextFile(same, reordered, true, "2026-10-05").fetchedAt).toBe("2026-10-01");
+    const moreQuotes = structuredClone(picks);
+    moreQuotes["prop-c"].quotes.push({ text: "A new reason.", source: "https://www.spur.org/" });
+    expect(nextFile(same, moreQuotes, true, "2026-10-05").fetchedAt).toBe("2026-10-05");
   });
 
   it("keeps manual", () => {
@@ -45,7 +57,9 @@ describe("nextFile", () => {
 });
 
 describe("toYaml", () => {
-  const file = nextFile(prev, picks, true, "2026-10-05", ["https://web.archive.org/web/2026/https://www.spur.org/"]);
+  const file = nextFile(prev, picks, true, "2026-10-05", [
+    { source: "https://www.spur.org/", snapshot: "https://web.archive.org/web/2026/https://www.spur.org/" },
+  ]);
 
   it("round-trips through the schema", () => {
     expect(EndorsementFile.parse(parse(toYaml(file)))).toEqual(file);

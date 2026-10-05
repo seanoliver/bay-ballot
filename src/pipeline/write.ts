@@ -1,14 +1,20 @@
 import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
-import type { EndorsementFile, Entry } from "@/lib/schema";
+import { isDeepStrictEqual } from "node:util";
+import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
 
-/** The endorsement file after an extraction run. Settings come from `prev`; picks and fetch facts are new. */
+/**
+ * The endorsement file after an extraction run. Settings come from `prev`; picks and fetch facts
+ * are new. fetchedAt moves only when picks or quotes changed, so unchanged files stay unchanged.
+ */
 export function nextFile(
   prev: EndorsementFile,
   picks: Record<string, Entry>,
   hasReasoning: boolean,
   today: string,
-  archived?: string[],
+  archived?: ArchivedSource[],
 ): EndorsementFile {
+  // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
+  const unchanged = isDeepStrictEqual(prev.picks, picks);
   return {
     guide: prev.guide,
     election: prev.election,
@@ -19,7 +25,7 @@ export function nextFile(
     manual: prev.manual,
     allowForeignSources: prev.allowForeignSources,
     archived: archived ?? prev.archived,
-    fetchedAt: today,
+    fetchedAt: unchanged ? prev.fetchedAt : today,
     hasReasoning,
     picks,
   };
