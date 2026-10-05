@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
+import type { Tally } from "@/lib/score";
 
 const measure = { id: "prop-b", kind: "measure", seats: 1, candidates: [] } as unknown as Contest;
 const retention = { id: "judge", kind: "retention", seats: 1, candidates: [] } as unknown as Contest;
 const race = { id: "sup-d8", kind: "candidate", seats: 1, candidates: ["A", "B", "C"] } as unknown as Contest;
 const board = { id: "boe", kind: "candidate", seats: 3, candidates: ["A", "B", "C", "D"] } as unknown as Contest;
+const cand = (t: Tally) => {
+  if (t.kind !== "candidate") throw new Error("expected candidate tally");
+  return t;
+};
 const e = (pick: Entry["pick"], ranked = false): Entry => ({ pick, ranked, quotes: [] });
 
 describe("tally", () => {
@@ -27,15 +32,29 @@ describe("tally", () => {
   it("ranked pick counts #1 only and flags leaderRanked", () => {
     const t = tally(race, [e(["B", "C"], true), e(["B"]), e(["A"])]);
     expect(t).toMatchObject({ leader: "B", count: 2, total: 3, leaderRanked: true });
-    expect(t.kind === "candidate" && t.counts.find((c) => c.name === "C")).toBeFalsy();
+    expect(cand(t).counts.map((c) => c.name).sort()).toEqual(["A", "B"]);
   });
   it("dual endorsement counts both names", () => {
     const t = tally(race, [e(["A", "B"]), e(["A"])]);
     expect(t).toMatchObject({ leader: "A", count: 2, total: 2 });
-    expect(t.kind === "candidate" && t.counts.find((c) => c.name === "B")?.count).toBe(1);
+    expect(cand(t).counts.find((c) => c.name === "B")?.count).toBe(1);
   });
   it("candidate tie is split", () => {
-    expect(tally(race, [e(["A"]), e(["B"])])).toMatchObject({ split: true });
+    expect(tally(race, [e(["A"]), e(["B"])])).toMatchObject({
+      split: true, leader: null, tied: ["A", "B"], count: 0, pct: 0, leaderRanked: false,
+    });
+  });
+  it("tie including a ranked entry has leaderRanked false", () => {
+    expect(tally(race, [e(["A"], true), e(["B"])])).toMatchObject({ split: true, leader: null, leaderRanked: false });
+  });
+  it("non-split has empty tied", () => {
+    expect(cand(tally(race, [e(["A"]), e(["A"]), e(["B"])])).tied).toEqual([]);
+  });
+  it("wrong-shape candidate entry does not change total", () => {
+    expect(tally(race, [e(["A"]), e("Y")])).toMatchObject({ total: 1, leader: "A", pct: 100 });
+  });
+  it("wrong-shape measure entry does not change total", () => {
+    expect(tally(measure, [e("Y"), e(["A"])])).toMatchObject({ total: 1, yes: 1, pct: 100 });
   });
   it("multi-seat counts every name", () => {
     const t = tally(board, [e(["A", "B", "C"]), e(["A", "D"])]);
@@ -43,7 +62,7 @@ describe("tally", () => {
   });
   it("duplicate name in one entry counts once", () => {
     const t = tally(board, [e(["A", "A", "B"])]);
-    expect(t.kind === "candidate" && t.counts.find((c) => c.name === "A")?.count).toBe(1);
+    expect(cand(t).counts.find((c) => c.name === "A")?.count).toBe(1);
   });
   it("empty candidate input", () => {
     expect(tally(race, [])).toMatchObject({ kind: "candidate", total: 0, leader: null, pct: 0, split: false });
