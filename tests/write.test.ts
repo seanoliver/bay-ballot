@@ -1,0 +1,94 @@
+import { describe, expect, it } from "vitest";
+import { parse } from "yaml";
+import { EndorsementFile, type Entry } from "@/lib/schema";
+import { nextFile, toYaml } from "@/pipeline/write";
+
+const prev: EndorsementFile = {
+  guide: "spur", election: "2026-11", status: "pending", source: "https://www.spur.org/voter-guide/2026-11",
+  extraSources: ["https://www.spur.org/voter-guide/2026-11/sf-prop-b"], fetchWith: "browser",
+  allowForeignSources: true, fetchedAt: "2026-09-01", hasReasoning: false,
+  picks: { "prop-a": { pick: "N", ranked: false, quotes: [] } },
+};
+const picks: Record<string, Entry> = {
+  "prop-b": { pick: "Y", ranked: false, quotes: [{ text: "A public bank would help.", source: "https://www.spur.org/voter-guide/2026-11/sf-prop-b" }] },
+  "prop-c": { pick: "N", ranked: false, quotes: [] },
+  "supervisor-d8": { pick: ["Gary McCoy", "Michael Nguyen"], ranked: true, quotes: [] },
+};
+
+describe("nextFile", () => {
+  it("publishes new picks and keeps the file's settings", () => {
+    const n = nextFile(prev, picks, true, "2026-10-05");
+    expect(n).toMatchObject({
+      guide: "spur", election: "2026-11", status: "published", source: prev.source, extraSources: prev.extraSources,
+      fetchWith: "browser", allowForeignSources: true, fetchedAt: "2026-10-05", hasReasoning: true, picks,
+    });
+    expect(n.manual).toBeUndefined();
+  });
+
+  it("is pending when nothing was extracted", () => {
+    const n = nextFile(prev, {}, false, "2026-10-05");
+    expect(n.status).toBe("pending");
+    expect(n.picks).toEqual({});
+  });
+
+  it("records archive snapshots, keeping the previous ones when none are given", () => {
+    const snap = ["https://web.archive.org/web/20261005000000/https://www.spur.org/voter-guide/2026-11"];
+    expect(nextFile(prev, picks, true, "2026-10-05", snap).archived).toEqual(snap);
+    expect(nextFile({ ...prev, archived: snap }, picks, true, "2026-10-06").archived).toEqual(snap);
+    expect(nextFile(prev, picks, true, "2026-10-05").archived).toBeUndefined();
+  });
+
+  it("keeps manual", () => {
+    expect(nextFile({ ...prev, manual: true }, picks, true, "2026-10-05").manual).toBe(true);
+  });
+});
+
+describe("toYaml", () => {
+  const file = nextFile(prev, picks, true, "2026-10-05", ["https://web.archive.org/web/2026/https://www.spur.org/"]);
+
+  it("round-trips through the schema", () => {
+    expect(EndorsementFile.parse(parse(toYaml(file)))).toEqual(file);
+  });
+
+  it("writes keys in a stable order", () => {
+    const shuffled = Object.fromEntries(Object.entries(file).reverse()) as EndorsementFile;
+    const keys = toYaml(shuffled).split("\n").filter((l) => /^[a-zA-Z]/.test(l)).map((l) => l.split(":")[0]);
+    expect(keys).toEqual([
+      "guide", "election", "status", "source", "extraSources", "fetchWith", "allowForeignSources",
+      "archived", "fetchedAt", "hasReasoning", "picks",
+    ]);
+  });
+
+  it("writes Y/N as plain scalars that re-parse as strings", () => {
+    const y = toYaml(file);
+    expect(y).toMatch(/^ {4}pick: Y$/m);
+    expect(y).toMatch(/^ {4}pick: N$/m);
+    const raw = parse(y) as { picks: Record<string, { pick: unknown }> };
+    expect(raw.picks["prop-b"].pick).toBe("Y");
+    expect(raw.picks["prop-c"].pick).toBe("N");
+  });
+
+  it("does not wrap long lines", () => {
+    const long = "word ".repeat(60).trim() + ".";
+    const f = { ...file, picks: { "prop-b": { pick: "Y" as const, ranked: false, quotes: [{ text: long, source: "https://www.spur.org/" }] } } };
+    expect(toYaml(f)).toContain(long);
+  });
+
+  it("keeps comments from the previous file on keys that remain", () => {
+    const previous = [
+      "# allowForeignSources: the PDF lives on the CDN",
+      "guide: spur",
+      "election: 2026-11",
+      "status: pending",
+      "source: https://www.spur.org/voter-guide/2026-11  # page also lists the June slate",
+      "fetchedAt: 2026-09-01",
+      "hasReasoning: false",
+      "picks: {}",
+      "",
+    ].join("\n");
+    const y = toYaml(file, { previous });
+    expect(y.startsWith("# allowForeignSources: the PDF lives on the CDN\nguide: spur\n")).toBe(true);
+    expect(y).toContain("source: https://www.spur.org/voter-guide/2026-11 # page also lists the June slate\n");
+    expect(EndorsementFile.parse(parse(y))).toEqual(file);
+  });
+});
