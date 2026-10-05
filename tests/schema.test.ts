@@ -167,3 +167,30 @@ describe("tightened schemas", () => {
     expect(EndorsementFile.safeParse({ ...file, extraSources: ["javascript:alert(1)"] }).success).toBe(false);
   });
 });
+
+describe("extraction bookkeeping fields", () => {
+  it("accepts manual, archived and allowForeignSources", () => {
+    const r = EndorsementFile.safeParse({
+      ...file, manual: true, allowForeignSources: true,
+      archived: ["https://web.archive.org/web/20261005000000/https://growsf.org/"],
+    });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data.manual).toBe(true);
+      expect(r.data.allowForeignSources).toBe(true);
+      expect(r.data.archived).toEqual(["https://web.archive.org/web/20261005000000/https://growsf.org/"]);
+    }
+  });
+  it("leaves them undefined when absent", () => {
+    const r = EndorsementFile.parse(file);
+    expect(r.manual).toBeUndefined();
+    expect(r.archived).toBeUndefined();
+    expect(r.allowForeignSources).toBeUndefined();
+  });
+  it("rejects bad values", () => {
+    expect(EndorsementFile.safeParse({ ...file, manual: "yes" }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, allowForeignSources: "yes" }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, archived: "https://web.archive.org/web/1/x" }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, archived: ["javascript:alert(1)"] }).success).toBe(false);
+  });
+});

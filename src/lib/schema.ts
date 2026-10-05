@@ -69,6 +69,9 @@ export const EndorsementFile = z.object({
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(), // "browser" when the page needs JS or blocks plain HTTP
   extraSources: z.array(HttpUrl).optional(), // further pages of a multi-page guide
+  manual: z.boolean().optional(), // positions are hand-entered (e.g. image-only); `bb extract` skips the guide
+  allowForeignSources: z.boolean().optional(), // sources may live off the guide's homepage host (e.g. a PDF on a CDN)
+  archived: z.array(HttpUrl).optional(), // web.archive.org snapshots of the fetched sources
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
