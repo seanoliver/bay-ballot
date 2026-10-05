@@ -14,7 +14,8 @@ import {
 import type { Row } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { ExternalLink } from "./ExternalLink";
-import { DOT_CLASS } from "./tone";
+import { slotTone, type Slots } from "@/lib/bar";
+import { BAR_FILL, DOT_CLASS } from "./tone";
 import { VerdictBar } from "./VerdictBar";
 
 // Inline links keep their line height but get a 40px-tall tap area.
@@ -29,6 +30,7 @@ export function ContestDetail({
   pending,
   heading = true,
   titleId,
+  slots,
 }: {
   election: string;
   contest: Contest;
@@ -36,6 +38,7 @@ export function ContestDetail({
   pending: string | null;
   heading?: boolean;
   titleId?: string;
+  slots?: Slots;
 }) {
   const description = cardDescription(contest);
   const official = officialLink(contest);
@@ -50,8 +53,8 @@ export function ContestDetail({
         </>
       ) : null}
       {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
-      <VerdictBar contest={contest} rows={rows} className="mt-3" />
-      <Groups contest={contest} rows={rows} />
+      <VerdictBar contest={contest} rows={rows} slots={slots} className="mt-3" />
+      <Groups contest={contest} rows={rows} slots={slots} />
       {pending ? <p className="mt-3 text-sm text-muted-foreground">{pending}</p> : null}
       <p className="mt-2 flex flex-wrap gap-x-4 text-sm">
         {official ? (
@@ -67,19 +70,19 @@ export function ContestDetail({
   );
 }
 
-function Groups({ contest, rows }: { contest: Contest; rows: Row[] }) {
+function Groups({ contest, rows, slots }: { contest: Contest; rows: Row[]; slots?: Slots }) {
   const groups = groupByPick(contest, rows);
   if (groups.length === 0) {
     return <p className="mt-4 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>;
   }
-  return groups.map((g) => <Group key={g.key} group={g} />);
+  return groups.map((g) => <Group key={g.key} group={g} dot={g.tone === "candidate" && slots ? BAR_FILL[slotTone(slots, g.key)] : DOT_CLASS[g.tone]} />);
 }
 
-function Group({ group }: { group: PickGroup }) {
+function Group({ group, dot }: { group: PickGroup; dot: string }) {
   return (
     <section>
       <h4 className="mt-4 mb-1 flex items-center gap-2 text-sm font-semibold">
-        <span aria-hidden="true" className={`size-2.5 rounded-full ${DOT_CLASS[group.tone]}`} />
+        <span aria-hidden="true" className={`size-2.5 rounded-full ${dot}`} />
         <span>
           {group.label} <span className="font-normal text-muted-foreground">· {group.rows.length}</span>
         </span>

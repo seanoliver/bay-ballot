@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { barSegments, barShort, barSummary, surname } from "@/lib/bar";
+import { barSegments, barShort, barSummary, candidateSlots, slotTone, surname } from "@/lib/bar";
 import { tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -40,23 +40,35 @@ describe("barSegments: measures", () => {
 });
 
 describe("barSegments: single-seat candidates", () => {
-  it("leader first, neutral-to-accent tones, never yes/no", () => {
+  it("leader first; tones never yes/no", () => {
     const segs = bar(race, [e(["Scott Wiener", "Connie Chan"], true), e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
     expect(segs).toEqual([
       { key: "Scott Wiener", label: "Scott Wiener", count: 3, pct: 75, tone: "c1" },
       { key: "Connie Chan", label: "Connie Chan", count: 1, pct: 25, tone: "c2" },
     ]);
   });
-  it("more than four names folds the tail into Others", () => {
-    const segs = bar(race, [e(["A"]), e(["A"]), e(["B"]), e(["C"]), e(["D"]), e(["E"])]);
+  it("more than four names: the top four keep their colors, the rest fold into Others", () => {
+    const segs = bar(race, [e(["A"]), e(["A"]), e(["B"]), e(["C"]), e(["D"]), e(["E"]), e(["F"])]);
     expect(segs.map((s) => [s.key, s.count, s.tone])).toEqual([
       ["A", 2, "c1"],
       ["B", 1, "c2"],
       ["C", 1, "c3"],
-      ["others", 2, "c4"],
+      ["D", 1, "c4"],
+      ["others", 2, "other"],
     ]);
     expect(segs.at(-1)?.label).toBe("2 others");
     expect(segs.reduce((n, s) => n + s.pct, 0)).toBe(100);
+  });
+  it("one leftover reads singular", () => {
+    const segs = bar(race, [e(["A"]), e(["B"]), e(["C"]), e(["D"]), e(["E"])]);
+    expect(segs.at(-1)).toMatchObject({ key: "others", label: "1 other", tone: "other" });
+  });
+  it("colors come from the slots passed in, not the current rank", () => {
+    const ballot = { ...race, candidates: ["Connie Chan", "Scott Wiener"] } as Contest;
+    const slots = candidateSlots(ballot, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
+    // Filtered down to Wiener alone, he keeps his slot-2 color.
+    const segs = barSegments(tally(ballot, [e(["Scott Wiener"])]), ballot, slots);
+    expect(segs).toEqual([{ key: "Scott Wiener", label: "Scott Wiener", count: 1, pct: 100, tone: "c2" }]);
   });
   it("exactly four names keeps all four", () => {
     expect(bar(race, [e(["A"]), e(["B"]), e(["C"]), e(["D"])]).map((s) => s.key)).toEqual(["A", "B", "C", "D"]);
@@ -71,8 +83,8 @@ describe("barSegments: multi-seat", () => {
     const segs = bar(board, [e(["A", "B", "C"]), e(["A", "B", "D"]), e(["A", "E"]), e(["A"])]);
     expect(segs).toEqual([
       { key: "A", label: "A", count: 4, pct: 100, tone: "c1" },
-      { key: "B", label: "B", count: 2, pct: 50, tone: "c1" },
-      { key: "C", label: "C", count: 1, pct: 25, tone: "c1" },
+      { key: "B", label: "B", count: 2, pct: 50, tone: "c2" },
+      { key: "C", label: "C", count: 1, pct: 25, tone: "c3" },
     ]);
   });
   it("fewer names than seats shows only those names", () => {
@@ -137,5 +149,39 @@ describe("surname", () => {
     ["Madonna", "Madonna"],
   ])("%s -> %s", (name, want) => {
     expect(surname(name)).toBe(want);
+  });
+});
+
+describe("candidateSlots", () => {
+  const ballot = (candidates: string[]) => ({ ...race, candidates }) as Contest;
+  const slotsOf = (m: Map<string, unknown>) => Object.fromEntries(m);
+
+  it("slots follow ballot order among endorsed candidates, not rank", () => {
+    const c = ballot(["Connie Chan", "Scott Wiener", "Nobody Endorsed"]);
+    const m = candidateSlots(c, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
+    expect(slotsOf(m)).toEqual({ "Connie Chan": 1, "Scott Wiener": 2 });
+  });
+  it("names missing from the ballot list follow it, by count then name", () => {
+    const c = ballot(["B"]);
+    expect(slotsOf(candidateSlots(c, [e(["Z"]), e(["Y"]), e(["Y"]), e(["B"])]))).toEqual({ B: 1, Y: 2, Z: 3 });
+  });
+  it("more than four: the top four by count keep slots (in ballot order), the rest are other", () => {
+    const c = ballot(["E", "D", "C", "B", "A"]);
+    const m = candidateSlots(c, [e(["A"]), e(["A"]), e(["B"]), e(["B"]), e(["C"]), e(["C"]), e(["D"]), e(["D"]), e(["E"])]);
+    expect(slotsOf(m)).toEqual({ D: 1, C: 2, B: 3, A: 4, E: "other" });
+  });
+  it("a ranked single-seat pick counts only its #1", () => {
+    const m = candidateSlots(ballot(["A", "B"]), [e(["B", "A"], true)]);
+    expect(slotsOf(m)).toEqual({ B: 1 });
+  });
+  it("no endorsements, no slots", () => {
+    expect(candidateSlots(ballot(["A"]), []).size).toBe(0);
+  });
+});
+
+describe("slotTone", () => {
+  it("maps slots to tones; unknown names are other", () => {
+    const m = new Map<string, 1 | 2 | 3 | 4 | "other">([["A", 3], ["B", "other"]]);
+    expect([slotTone(m, "A"), slotTone(m, "B"), slotTone(m, "C")]).toEqual(["c3", "other", "other"]);
   });
 });

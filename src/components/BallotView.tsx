@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cardDescription, sections } from "@/lib/display";
-import { activeEntries, visibleContest, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, visibleContest, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { candidateSlots, type Slots } from "@/lib/bar";
 import { isPlainClick, pickSelected } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -43,6 +44,8 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
   const selectedId = pickSelected(all.map((c) => c.id), requested);
   const current = all.find((c) => c.id === selectedId);
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
+  // Candidate colors come from every published guide, so a filter never repaints a candidate.
+  const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
   const filterProps = { filters, onChange: setFilters, ballot, guides, files };
 
   // A new selection starts the detail pane at its top.
@@ -78,6 +81,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
                     href={`/${election}/${c.id}`}
                     contest={c}
                     rows={rowsFor(c.id)}
+                    slots={slotsFor(c)}
                     selected={c.id === selectedId}
                     onClick={(e) => onRowClick(e, c)}
                   />
@@ -94,7 +98,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
         </p>
         {current ? (
           <section aria-labelledby="detail-title" className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
-            <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} titleId="detail-title" />
+            <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} titleId="detail-title" slots={slotsFor(current)} />
           </section>
         ) : null}
       </div>
@@ -113,7 +117,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
                 <SheetTitle className="text-lg">{current.title}</SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
-                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} />
+                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} />
               </div>
             </>
           ) : null}
@@ -131,12 +135,14 @@ function ContestRow({
   href,
   contest,
   rows,
+  slots,
   selected,
   onClick,
 }: {
   href: string;
   contest: Contest;
   rows: Row[];
+  slots: Slots;
   selected: boolean;
   onClick: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
@@ -150,7 +156,7 @@ function ContestRow({
             {contest.title}
           </a>
         </h3>
-        <VerdictBar contest={contest} rows={rows} variant="inline" />
+        <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
         <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
       </div>
       {/* Desktop: title over the full bar; the selected row is marked for sight and for AT. */}
@@ -167,7 +173,7 @@ function ContestRow({
           </a>
         </h3>
         {description ? <p className="truncate text-sm text-muted-foreground">{description}</p> : null}
-        <VerdictBar contest={contest} rows={rows} />
+        <VerdictBar contest={contest} rows={rows} slots={slots} />
       </div>
     </>
   );

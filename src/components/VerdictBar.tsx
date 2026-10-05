@@ -1,23 +1,16 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { barSegments, barShort, barSummary, type BarSegment, type BarTone } from "@/lib/bar";
+import { barSegments, barShort, barSummary, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { contestHeadline, rankedDetails } from "@/lib/display";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import type { Row } from "@/lib/filters";
 import { tally } from "@/lib/score";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { BAR_FILL } from "./tone";
 
-const FILL: Record<BarTone, string> = {
-  yes: "bg-yes",
-  no: "bg-no",
-  c1: "bg-bar-1",
-  c2: "bg-bar-2",
-  c3: "bg-bar-3",
-  c4: "bg-bar-4",
-  empty: "bg-muted ring-1 ring-inset ring-border",
-};
+const FILL = BAR_FILL;
 
 const TEXT: Partial<Record<BarTone, string>> = { yes: "text-yes", no: "text-no" };
 
@@ -26,13 +19,15 @@ type Props = {
   rows: Row[];
   // "full": bar plus legend/caption. "inline": a short bar and a few words, for one-line rows.
   variant?: "full" | "inline";
+  // Candidate colors from unfiltered data (candidateSlots), so filters never repaint a candidate.
+  slots?: Slots;
   className?: string;
 };
 
 // A contest's result at a glance. The math lives in lib/bar; this only draws it.
-export function VerdictBar({ contest, rows, variant = "full", className }: Props) {
+export function VerdictBar({ contest, rows, variant = "full", slots, className }: Props) {
   const t = tally(contest, rows.map((r) => r.entry));
-  const segments = barSegments(t, contest);
+  const segments = barSegments(t, contest, slots);
   const summary = barSummary(t, contest);
   const multi = t.kind === "candidate" && contest.seats > 1 && segments[0]?.tone !== "empty";
 
