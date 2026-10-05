@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bay Ballot Mockups</title>
+<style>
+  :root {
+    --bg: #fafaf8; --surface: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #e4e4df;
+    --yes: #2f8a57; --yes-bg: #e3f3e9; --no: #c2453a; --no-bg: #fbe7e4; --tbd: #9a9a94;
+    --accent: #3a5bd9; --chip: #f0f0ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413; --surface: #1d1d1b; --text: #ecece8; --muted: #9a9a94; --line: #2e2e2b;
+      --yes: #5cc28a; --yes-bg: #1c3326; --no: #ef7b70; --no-bg: #3a1f1c; --tbd: #6b6b66;
+      --accent: #8aa2ff; --chip: #262624;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 -apple-system, system-ui, sans-serif; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; font-size: 13px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tabs button { border: 1px solid var(--line); background: var(--surface); color: var(--text); padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; }
+  .tabs button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .explain { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; position: sticky; top: 0; z-index: 2; }
+  .guides { display: flex; flex-wrap: wrap; gap: 6px; }
+  .g { display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border-radius: 8px; padding: 5px 9px; font-size: 13px; cursor: pointer; user-select: none; }
+  .g.off { opacity: .4; text-decoration: line-through; }
+  .g .r { font-size: 10px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .toggle { margin-top: 10px; font-size: 13px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .toggle label { cursor: pointer; }
+  .tri { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .tri button { border: 0; background: transparent; color: var(--muted); padding: 2px 7px; font-size: 12px; cursor: pointer; }
+  .tri button.on.t { background: var(--yes-bg); color: var(--yes); }
+  .tri button.on.n { background: var(--chip); color: var(--text); }
+  .tri button.on.a { background: var(--no-bg); color: var(--no); }
+  .grow { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px; }
+  .grow .row { display: flex; justify-content: space-between; align-items: center; background: var(--chip); border-radius: 8px; padding: 5px 9px; font-size: 13px; }
+  h2 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 22px 0 6px; }
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 6px; }
+  .sum { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; cursor: pointer; }
+  .title { font-weight: 600; }
+  .verdict { font-size: 14px; text-align: right; white-space: nowrap; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 13px; }
+  .pill.y { background: var(--yes-bg); color: var(--yes); }
+  .pill.n { background: var(--no-bg); color: var(--no); }
+  .pill.s { background: var(--chip); color: var(--muted); }
+  .cnt { color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .bar { height: 4px; border-radius: 2px; background: var(--no-bg); overflow: hidden; margin-top: 4px; }
+  .bar i { display: block; height: 100%; background: var(--yes); }
+  .cands { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .cands b { color: var(--text); font-weight: 600; }
+  .detail { border-top: 1px solid var(--line); padding: 8px 14px 12px; display: none; }
+  .item.open .detail { display: block; }
+  .d { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+  .d:last-child { border-bottom: 0; }
+  .d .who { color: var(--muted); }
+  .d .ph { color: var(--muted); font-style: italic; font-size: 12px; margin-top: 2px; }
+  .d a { color: var(--accent); }
+  .axis { position: relative; height: 34px; margin: 4px 14px 10px; border-top: 1px solid var(--line); }
+  .axis .lbl { position: absolute; top: 18px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .dot { position: absolute; top: -9px; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; border: 2px solid var(--surface); font-size: 9px; font-weight: 700; color: #fff; display: grid; place-items: center; }
+  .dot.none { background: var(--tbd); opacity: .45; }
+  .warn { color: var(--no); font-size: 12px; margin-top: 2px; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 18px; }
+  @media (max-width: 560px) { .d { grid-template-columns: 1fr; gap: 2px; } .sum { grid-template-columns: 1fr; } .verdict { text-align: left; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bay Ballot — mockups</h1>
+  <p class="sub">SF, Nov 3 2026. Real picks from 6 guides as of Oct 5. Guide leanings, rationale flags and all quote boxes are placeholders for discussion.</p>
+  <div class="tabs" id="tabs"></div>
+  <div class="explain" id="explain"></div>
+  <div class="panel" id="panel"></div>
+  <div id="list"></div>
+  <p class="note">Click any row to expand. "TBD" = guide hasn't published that pick yet; blank = no pick.</p>
+</div>
+<script>
+// lean: 0 = most progressive, 100 = most moderate (mock placement)
+const GUIDES = [
+  { id: 'grow', name: 'GrowSF', abbr: 'G', lean: 80, rationale: true, url: 'https://growsf.org/voter-guide/' },
+  { id: 'chron', name: 'SF Chronicle', abbr: 'C', lean: 70, rationale: true, url: 'https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/' },
+  { id: 'pov', name: 'Pissed Off Voters', abbr: 'P', lean: 5, rationale: true, url: 'https://www.theleaguesf.org/voter_guides' },
+  { id: 'dems', name: 'SF Dems', abbr: 'D', lean: 35, rationale: false, url: 'https://www.sfdems.org/endorsements/nov-3-2026-general-election' },
+  { id: 'spur', name: 'SPUR', abbr: 'S', lean: 60, rationale: true, url: 'https://www.spur.org/voter-guide/2026-11' },
+  { id: 'lwv', name: 'LWV SF', abbr: 'L', lean: 50, rationale: true, url: 'https://lwvsf.org/ballot-recommendations' },
+];
+// picks in GUIDES order; '' = no pick, 'TBD' = not yet published
+const ITEMS = [
+  ['Federal', 'US Representative, D11', 'c', ['Scott Wiener', 'Scott Wiener', 'Connie Chan', 'Scott Wiener', '', '']],
+  ['Federal', 'US Representative, D15', 'c', ['Kevin Mullin', '', '', 'Kevin Mullin', '', '']],
+  ['State', 'Governor', 'c', ['Xavier Becerra', 'TBD', '', 'Xavier Becerra', '', '']],
+  ['State', 'Lieutenant Governor', 'c', ['Fiona Ma', 'Fiona Ma', '', 'Fiona Ma', '', '']],
+  ['State', 'Secretary of State', 'c', ['Shirley Weber', 'Shirley Weber', 'Shirley Weber', 'Shirley Weber', '', '']],
+  ['State', 'Insurance Commissioner', 'c', ['Ben Allen', 'Ben Allen', 'Jane Kim', 'Ben Allen', '', '']],
+  ['State', 'Board of Equalization, D2', 'c', ['John Pimentel', '', 'Sally Lieber', 'Sally Lieber', '', '']],
+  ['Local', 'Supervisor, District 8', 'c', ['', 'TBD', 'Gary McCoy|Michael Nguyen', '', '', '']],
+  ['Local', 'Supervisor, District 10', 'c', ['Theo Ellington', 'TBD', 'J.R. Eppler|D.J. Brookter', 'Theo Ellington', '', '']],
+  ['Local', 'Board of Education (vote for 3)', 'c', ['Autumn Brown Garibay|Phil Kim|Tim Tung', 'TBD', 'Virginia Cheung|Reina Tello|Ryan Hazelton', 'Autumn Brown Garibay|Phil Kim|Tim Tung', '', '']],
+  ['State props', 'Prop 1 — Housing Bonds', 'm', ['Y', 'Y', 'Y', '', 'Y', 'Y']],
+  ['State props', 'Prop 4 — Public Campaign Financing', 'm', ['N', 'TBD', 'Y', '', 'Y', 'Y']],
+  ['State props', 'Prop 37 — Middle-Income Home Loans', 'm', ['Y', 'Y', '', '', 'Y', 'N']],
+  ['State props', 'Prop 40 — One-Time Billionaire Tax', 'm', ['N', 'TBD', 'Y', 'N', '', '']],
+  ['State props', 'Prop 41 — Spending Limit & Audits for New Taxes', 'm', ['Y', 'N', 'N', '', 'N', 'N']],
+  ['State props', 'Prop 45 — CEQA Changes', 'm', ['Y', 'TBD', 'N', '', '', 'N']],
+  ['Local props', 'Prop A — Charter Changes to Departments & Commissions', 'm', ['Y', 'Y', 'N', 'Y', 'Y', 'N']],
+  ['Local props', 'Prop B — Public Bank', 'm', ['N', 'N', 'Y', 'Y', 'N', 'Y']],
+  ['Local props', 'Prop C — Housing Trust Fund', 'm', ['Y', 'Y', 'Y', 'Y', 'Y', 'Y']],
+  ['Local props', 'Prop G — Cars on Upper Great Highway (Weekdays)', 'm', ['N', 'N', '', 'N', 'N', '']],
+  ['Local props', 'Prop I — Transfer Tax, 50% to Housing', 'm', ['N', 'TBD', 'Y', 'N', 'N', 'Y']],
+].map(([section, title, kind, picks]) => ({ section, title, kind, picks }));
+
+const VIEWS = {
+  A: { label: 'A. Customize', explain: 'Your idea. Every guide that made a pick counts, one vote each. Click a guide to drop it; tick "rationale only" to drop guides that just publish a list. The headline % and the count recalculate.' },
+  B: { label: 'B. Spectrum', explain: 'Same tally, plus each guide plotted on a progressive → moderate line, colored by its pick. You can see at a glance whether a Yes is a left-only, right-only or across-the-board position, without hard bloc labels.' },
+  C: { label: 'C. Trust / Avoid', explain: 'Mark each guide Trust, Neutral or Avoid. The headline counts only trusted guides; a red line warns when a guide you avoid agrees with that pick (your "who to avoid" column, made explicit).' },
+};
+
+const state = {
+  view: 'A',
+  on: Object.fromEntries(GUIDES.map(g => [g.id, true])),
+  rationaleOnly: false,
+  trust: Object.fromEntries(GUIDES.map(g => [g.id, g.id === 'pov' ? 'a' : 't'])),
+  open: new Set(),
+};
+
+const CAND_COLORS = ['#3a5bd9', '#d9883a', '#8a3ad9', '#2f9aa0', '#c23a8a', '#6b8a2f'];
+const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+
+function activeGuides() {
+  return GUIDES.filter((g, i) => {
+    if (state.rationaleOnly && !g.rationale) return false;
+    if (state.view === 'C') return state.trust[g.id] === 't';
+    return state.on[g.id];
+  });
+}
+
+function tally(item, guides) {
+  const idx = guides.map(g => GUIDES.indexOf(g));
+  const picks = idx.map(i => item.picks[i]).filter(p => p && p !== 'TBD');
+  if (item.kind === 'm') {
+    const y = picks.filter(p => p === 'Y').length, n = picks.filter(p => p === 'N').length;
+    return { kind: 'm', y, n, total: y + n };
+  }
+  const counts = {};
+  picks.forEach(p => p.split('|').forEach(name => { counts[name] = (counts[name] || 0) + 1; }));
+  const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return { kind: 'c', ranked, total: picks.length };
+}
+
+function verdictHTML(t) {
+  if (!t.total) return '<span class="pill s">No picks yet</span>';
+  if (t.kind === 'm') {
+    const yes = t.y >= t.n, pct = Math.round(100 * Math.max(t.y, t.n) / t.total);
+    const cls = t.y === t.n ? 's' : yes ? 'y' : 'n';
+    const word = t.y === t.n ? 'Split' : yes ? 'Yes' : 'No';
+    return `<span class="pill ${cls}">${word} ${t.y === t.n ? '' : pct + '%'}</span><span class="cnt">${t.y} Yes · ${t.n} No</span>
+      <div class="bar"><i style="width:${100 * t.y / t.total}%"></i></div>`;
+  }
+  const [name, n] = t.ranked[0];
+  return `<span class="pill y">${esc(name)}</span><span class="cnt">${Math.round(100 * n / t.total)}% (${n} of ${t.total})</span>`;
+}
+
+function candLine(t) {
+  if (t.kind !== 'c' || t.ranked.length < 2) return '';
+  return '<div class="cands">' + t.ranked.slice(1).map(([name, n]) => `${esc(name)} <b>${n}</b>`).join(' · ') + '</div>';
+}
+
+function pickLabel(p) {
+  if (!p) return '<span class="who">no pick</span>';
+  if (p === 'TBD') return '<span class="who">not yet published</span>';
+  if (p === 'Y') return '<span class="pill y">Yes</span>';
+  if (p === 'N') return '<span class="pill n">No</span>';
+  return esc(p.split('|').join(', '));
+}
+
+function colorFor(item, p, t) {
+  if (!p || p === 'TBD') return null;
+  if (item.kind === 'm') return p === 'Y' ? 'var(--yes)' : 'var(--no)';
+  const first = p.split('|')[0];
+  const names = tally(item, GUIDES).ranked.map(r => r[0]);
+  return CAND_COLORS[names.indexOf(first) % CAND_COLORS.length];
+}
+
+function axisHTML(item) {
+  const dots = GUIDES.map((g, i) => {
+    const p = item.picks[i], c = colorFor(item, p);
+    const dim = (!state.on[g.id] || (state.rationaleOnly && !g.rationale)) ? 'opacity:.25;' : '';
+    return `<div class="dot ${c ? '' : 'none'}" title="${g.name}: ${p || 'no pick'}" style="left:${g.lean}%;${c ? 'background:' + c + ';' : ''}${dim}">${g.abbr}</div>`;
+  }).join('');
+  return `<div class="axis">${dots}<span class="lbl" style="left:0">progressive</span><span class="lbl" style="right:0">moderate</span></div>`;
+}
+
+function avoidWarning(item, t) {
+  if (!t.total) return '';
+  const top = t.kind === 'm' ? (t.y > t.n ? 'Y' : t.n > t.y ? 'N' : null) : t.ranked[0][0];
+  if (!top) return '';
+  const hits = GUIDES.filter((g, i) => state.trust[g.id] === 'a' && item.picks[i] && item.picks[i].split('|').includes(top));
+  return hits.length ? `<div class="warn">⚠ Also backed by ${hits.map(g => g.name).join(', ')} (avoid)</div>` : '';
+}
+
+function detailHTML(item) {
+  return GUIDES.map((g, i) => {
+    const p = item.picks[i];
+    const counted = activeGuides().includes(g);
+    const quote = g.rationale && p && p !== 'TBD'
+      ? `<div class="ph">[Placeholder: 1–3 bullets quoted from ${g.name}'s write-up · <a href="${g.url}" target="_blank" rel="noopener">source</a>]</div>`
+      : (p && p !== 'TBD' ? '<div class="ph">No rationale published (list only)</div>' : '');
+    return `<div class="d" style="${counted ? '' : 'opacity:.4'}"><div class="who">${g.name}</div><div>${pickLabel(p)}${quote}</div></div>`;
+  }).join('');
+}
+
+function renderPanel() {
+  const p = document.getElementById('panel');
+  const rat = `<label><input type="checkbox" id="ratonly" ${state.rationaleOnly ? 'checked' : ''}> Only guides that explain their picks</label>`;
+  if (state.view === 'C') {
+    p.innerHTML = '<div class="grow">' + GUIDES.map(g => `<div class="row"><span>${g.name} ${g.rationale ? '' : '<span class="g"><span class="r">list only</span></span>'}</span>
+      <span class="tri" data-g="${g.id}">${['t', 'n', 'a'].map(v => `<button class="${v} ${state.trust[g.id] === v ? 'on' : ''}" data-v="${v}">${{ t: 'Trust', n: 'Neutral', a: 'Avoid' }[v]}</button>`).join('')}</span></div>`).join('') + `</div><div class="toggle">${rat}</div>`;
+  } else {
+    p.innerHTML = '<div class="guides">' + GUIDES.map(g => `<span class="g ${state.on[g.id] && !(state.rationaleOnly && !g.rationale) ? '' : 'off'}" data-g="${g.id}">${g.name}${g.rationale ? '' : ' <span class="r">list only</span>'}</span>`).join('') + `</div><div class="toggle">${rat}</div>`;
+  }
+  p.querySelectorAll('.g[data-g]').forEach(el => el.onclick = () => { state.on[el.dataset.g] = !state.on[el.dataset.g]; render(); });
+  p.querySelectorAll('.tri button').forEach(el => el.onclick = () => { state.trust[el.parentElement.dataset.g] = el.dataset.v; render(); });
+  document.getElementById('ratonly').onchange = e => { state.rationaleOnly = e.target.checked; render(); };
+}
+
+function renderList() {
+  const guides = activeGuides();
+  let html = '', section = '';
+  ITEMS.forEach((item, k) => {
+    if (item.section !== section) { section = item.section; html += `<h2>${section}</h2>`; }
+    const t = tally(item, guides);
+    html += `<div class="item ${state.open.has(k) ? 'open' : ''}" data-k="${k}">
+      <div class="sum"><div><div class="title">${esc(item.title)}</div>${candLine(t)}${state.view === 'C' ? avoidWarning(item, t) : ''}</div><div class="verdict">${verdictHTML(t)}</div></div>
+      ${state.view === 'B' ? axisHTML(item) : ''}
+      <div class="detail">${detailHTML(item)}</div></div>`;
+  });
+  const list = document.getElementById('list');
+  list.innerHTML = html;
+  list.querySelectorAll('.sum').forEach(el => el.onclick = () => {
+    const k = +el.parentElement.dataset.k;
+    state.open.has(k) ? state.open.delete(k) : state.open.add(k);
+    renderList();
+  });
+}
+
+function render() {
+  document.getElementById('tabs').innerHTML = Object.entries(VIEWS).map(([k, v]) => `<button class="${state.view === k ? 'on' : ''}" data-v="${k}">${v.label}</button>`).join('');
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { state.view = b.dataset.v; render(); });
+  document.getElementById('explain').textContent = VIEWS[state.view].explain;
+  renderPanel();
+  renderList();
+}
+render();
+</script>
+</body>
+</html>
