@@ -87,6 +87,13 @@ describe("data", () => {
     const d = withFile(base(), { board: { ...e(["A One", "B Two", "C Three", "D Four"]), ranked: true } });
     expect(validateElection(d).warnings).toEqual([]);
   });
+  it("does not warn on an unranked dual endorsement in a single-seat race", () => {
+    const d = base();
+    d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, jurisdiction: juris });
+    const r = validateElection(withFile(d, { sup: e(["A One", "B Two"]) }));
+    expect(r.errors).toEqual([]);
+    expect(r.warnings).toEqual([]);
+  });
 });
 
 describe("loadElection failures", () => {

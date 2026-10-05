@@ -116,7 +116,8 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
         if (!m) errors.push(`${where}: '${name}' is not a candidate`);
         else if (m.fuzzy) warnings.push(`${where}: '${name}' matched '${m.name}' — fix spelling`);
       }
-      if (!entry.ranked && entry.pick.length > c.seats) {
+      // Single-seat races may carry an unranked dual endorsement; only multi-seat slates are capped.
+      if (!entry.ranked && c.seats > 1 && entry.pick.length > c.seats) {
         warnings.push(`${where}: ${entry.pick.length} names exceeds ${c.seats} seat(s)`);
       }
     }
