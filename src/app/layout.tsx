@@ -11,7 +11,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="antialiased">
       <body className="min-h-full">
-        <header className="border-b border-zinc-200">
+        <header className="border-b border-line">
           <div className="mx-auto max-w-3xl px-4 py-3">
             <Link href="/" className="text-lg font-bold">
               Bay Ballot

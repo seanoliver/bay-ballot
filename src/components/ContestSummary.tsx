@@ -1,33 +1,28 @@
 import Link from "next/link";
-import { contestHeadline, type Headline } from "@/lib/display";
+import { contestHeadline } from "@/lib/display";
 import type { Row } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
-
-const TONE: Record<Headline["tone"], string> = {
-  yes: "text-green-700",
-  no: "text-red-700",
-  candidate: "text-blue-800",
-  split: "text-amber-700",
-  none: "text-zinc-500",
-};
+import { TONE_CLASS } from "./tone";
 
 // Pure presentational: takes precomputed rows so a client view can pass filtered rows later.
 export function ContestSummary({ election, contest, rows }: { election: string; contest: Contest; rows: Row[] }) {
   const { headline, runnersUp } = contestHeadline(contest, rows);
   return (
     <div className="py-3">
-      <Link href={`/${election}/${contest.id}`} className="font-medium underline-offset-2 hover:underline">
-        {contest.title}
-      </Link>
+      <h3 className="font-medium">
+        <Link href={`/${election}/${contest.id}`} className="underline underline-offset-2">
+          {contest.title}
+        </Link>
+      </h3>
       {contest.kind === "measure" && contest.description ? (
-        <p className="text-sm text-zinc-600">{contest.description}</p>
+        <p className="text-sm text-muted">{contest.description}</p>
       ) : null}
       <p className="mt-1">
-        <span className={`font-semibold ${TONE[headline.tone]}`}>{headline.label}</span>
-        {headline.ranked ? <span className="ml-1 text-xs text-zinc-500">(ranked #1)</span> : null}
-        {headline.detail ? <span className="ml-2 text-sm text-zinc-600">{headline.detail}</span> : null}
+        <span className={`font-semibold ${TONE_CLASS[headline.tone]}`}>{headline.label}</span>
+        {headline.ranked ? <span className="ml-1 text-xs text-muted">(ranked #1)</span> : null}
+        {headline.detail ? <span className="ml-2 text-sm text-muted">{headline.detail}</span> : null}
       </p>
-      {runnersUp ? <p className="text-sm text-zinc-500">Also: {runnersUp}</p> : null}
+      {runnersUp ? <p className="text-sm text-muted">Also: {runnersUp}</p> : null}
     </div>
   );
 }

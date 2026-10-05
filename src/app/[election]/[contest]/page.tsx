@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "@/components/ExternalLink";
-import { contestHeadline, groupByPick, pendingNote, pickLabel, rankedDetails, rankedLabel, reasons } from "@/lib/display";
+import { TONE_CLASS } from "@/components/tone";
+import { contestHeadline, groupByPick, pendingNote, rankedDetails, rankedLabel, reasons, rowPick } from "@/lib/display";
 import { activeEntries, EMPTY, pendingGuides } from "@/lib/filters";
 import { election, elections, sourceLink } from "@/lib/site-data";
 
@@ -37,46 +38,51 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   return (
     <>
       <p className="text-sm">
-        <Link href={`/${electionId}`} className="text-zinc-600 underline underline-offset-2">
+        <Link href={`/${electionId}`} className="text-muted underline underline-offset-2">
           {ballot.title}
         </Link>
       </p>
       <h1 className="mt-1 text-2xl font-bold">{contest.title}</h1>
-      {contest.description ? <p className="text-zinc-600">{contest.description}</p> : null}
+      {contest.description ? <p className="text-muted">{contest.description}</p> : null}
       {contest.kind === "measure" && contest.link ? (
         <p className="mt-1 text-sm">
           <ExternalLink href={contest.link}>Official text</ExternalLink>
         </p>
       ) : null}
       <p className="mt-4 text-xl font-semibold">
-        {headline.label}
-        {headline.detail ? <span className="ml-2 text-base font-normal text-zinc-600">{headline.detail}</span> : null}
+        <span className={TONE_CLASS[headline.tone]}>{headline.label}</span>
+        {headline.ranked ? <span className="ml-1 text-sm font-normal text-muted">(ranked #1)</span> : null}
+        {headline.detail ? <span className="ml-2 text-base font-normal text-muted">{headline.detail}</span> : null}
       </p>
 
       {groupByPick(contest, rows).map((g) => (
         <section key={g.key} className="mt-6">
-          <h2 className="border-b border-zinc-200 pb-1 font-semibold">
-            {g.label} <span className="font-normal text-zinc-500">({g.rows.length})</span>
+          <h2 className="border-b border-line pb-1 font-semibold">
+            {g.label} <span className="font-normal text-muted">({g.rows.length})</span>
           </h2>
-          <ul className="divide-y divide-zinc-100">
+          <ul className="divide-y divide-line-soft">
             {g.rows.map((r) => {
               const quotes = reasons(r);
+              const pick = rowPick(contest, r.entry);
               return (
                 <li key={r.guide.id} className="py-2">
                   <Link href={`/guides/${r.guide.id}`} className="font-medium underline underline-offset-2">
                     {r.guide.name}
                   </Link>
-                  <span className="ml-2 text-zinc-600">{pickLabel(r.entry)}</span>
+                  <span className="ml-2 text-muted">
+                    {pick.label}
+                    {pick.ranked ? <span className="ml-1 text-xs">(ranked #1)</span> : null}
+                  </span>
                   {quotes.length > 0 ? (
                     <ul className="mt-1 list-disc pl-5 text-sm">
-                      {quotes.map((q) => (
-                        <li key={q.text}>
+                      {quotes.map((q, i) => (
+                        <li key={`${i}-${q.text}`}>
                           <ExternalLink href={sourceLink(r.file, q.source)}>“{q.text}”</ExternalLink>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-zinc-500">No reasons published</p>
+                    <p className="text-sm text-muted">No reasons published</p>
                   )}
                 </li>
               );
@@ -98,7 +104,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         </section>
       ) : null}
 
-      {pending ? <p className="mt-8 text-sm text-zinc-500">{pending}.</p> : null}
+      {pending ? <p className="mt-8 text-sm text-muted">{pending}.</p> : null}
     </>
   );
 }
