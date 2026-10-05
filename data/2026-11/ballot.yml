@@ -37,6 +37,7 @@ contests:
     title: Secretary of State
     kind: candidate
     candidates: [Shirley N. Weber, Donald P. (Don) Wagner]
+    aliases: { Shirley N. Weber: [Shirley Webber] }
     jurisdiction: { level: state, name: California }
   - id: controller
     section: State
