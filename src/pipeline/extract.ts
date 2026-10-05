@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
 import { matchName, type Aliases } from "@/lib/names";
 import type { Fetched } from "./fetch";
+import { misplacedUnder } from "./placement";
 import { verifyQuotes, type Page } from "./quotes";
 
 export const ExtractOutput = z.object({
@@ -161,8 +162,13 @@ export function toEntries(
       pick = p.vote;
     }
 
-    const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
-    for (const d of dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
+    const verified = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
+    for (const d of verified.dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
+    const kept = verified.kept.filter((q) => {
+      const other = misplacedUnder(q, c.id, pages, contests);
+      if (other) notes.push(`${c.id}: dropped quote (wrong-contest, under ${other}): "${clip(q.text)}"`);
+      return !other;
+    });
 
     // A single name has no order, so it is never ranked (e.g. a "[Sole]" endorsement).
     let ranked = isCandidate && p.ranked && Array.isArray(pick) && pick.length > 1;
