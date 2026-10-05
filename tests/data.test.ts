@@ -1,8 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { loadElection, validateElection, type ElectionData } from "@/lib/data";
+import type { EndorsementFile, Entry } from "@/lib/schema";
 
 const root = path.join(process.cwd(), "tests/fixtures/data");
 
@@ -22,11 +23,16 @@ function base(): ElectionData {
     endorsements: {},
   };
 }
-function withFile(d: ElectionData, picks: Record<string, unknown>, over: Record<string, unknown> = {}, id = "g") {
-  d.endorsements[id] = { guide: id, election: "2026-11", status: "published", fetchedAt: "2026-10-05", hasReasoning: false, picks, ...over } as never;
+function withFile(
+  d: ElectionData,
+  picks: EndorsementFile["picks"],
+  over: Partial<EndorsementFile> = {},
+  id = "g",
+): ElectionData {
+  d.endorsements[id] = { guide: id, election: "2026-11", status: "published", fetchedAt: "2026-10-05", hasReasoning: false, picks, ...over };
   return d;
 }
-const e = (pick: unknown) => ({ pick, ranked: false, quotes: [] });
+const e = (pick: Entry["pick"]): Entry => ({ pick, ranked: false, quotes: [] });
 
 describe("data", () => {
   it("loads an election", () => {
@@ -43,8 +49,8 @@ describe("data", () => {
   it("flags pick/kind mismatch", () => {
     const r = validateElection(withFile(base(), { "prop-b": e(["A One"]), board: e("Y") }));
     expect(r.errors).toEqual([
-      "g/prop-b: pick type doesn't match contest kind",
-      "g/board: pick type doesn't match contest kind",
+      "g/prop-b: expected Y/N for a measure contest, got a name list",
+      "g/board: expected a name list for a candidate contest, got 'Y'",
     ]);
   });
   it("flags non-candidates", () => {
@@ -84,8 +90,13 @@ describe("data", () => {
 });
 
 describe("loadElection failures", () => {
+  const dirs: string[] = [];
+  afterEach(() => {
+    for (const d of dirs.splice(0)) fs.rmSync(d, { recursive: true, force: true });
+  });
   function tmp(files: Record<string, string>) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "bb-"));
+    dirs.push(dir);
     for (const [p, c] of Object.entries(files)) {
       fs.mkdirSync(path.dirname(path.join(dir, p)), { recursive: true });
       fs.writeFileSync(path.join(dir, p), c);
@@ -107,5 +118,26 @@ describe("loadElection failures", () => {
       "2026-11/endorsements/other.yml": "guide: growsf\nelection: 2026-11\nstatus: pending\nfetchedAt: 2026-10-05\nhasReasoning: false\n",
     });
     expect(() => loadElection(dir, "2026-11")).toThrow(/other\.yml.*growsf/);
+  });
+  const guide = (id: string) =>
+    `id: ${id}\nname: G\ndescription: d\ntype: civic\nhomepage: https://g.org/\n`;
+  it("throws when a guide id differs from its filename", () => {
+    const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("b") });
+    expect(() => loadElection(dir, "2026-11")).toThrow(/guides\/a\.yml.*'b'/);
+  });
+  it("throws on duplicate guide ids", () => {
+    // The filename check already makes duplicates unreachable; this pins that two files claiming one id are rejected.
+    const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("a"), "guides/b.yml": guide("a") });
+    expect(() => loadElection(dir, "2026-11")).toThrow(/b\.yml/);
+  });
+  it("throws on non-.yml entries but ignores dotfiles", () => {
+    const ok = { "2026-11/ballot.yml": ballot, "guides/.gitkeep": "", "guides/.DS_Store": "" };
+    expect(() => loadElection(tmp(ok), "2026-11")).not.toThrow();
+    expect(() => loadElection(tmp({ ...ok, "guides/growsf.yaml": guide("growsf") }), "2026-11")).toThrow(/growsf\.yaml/);
+    expect(() => loadElection(tmp({ ...ok, "2026-11/endorsements/notes.txt": "x" }), "2026-11")).toThrow(/notes\.txt/);
+  });
+  it("throws when ballot election differs from directory", () => {
+    const dir = tmp({ "2026-06/ballot.yml": ballot });
+    expect(() => loadElection(dir, "2026-06")).toThrow(/ballot\.yml: election '2026-11' does not match directory '2026-06'/);
   });
 });

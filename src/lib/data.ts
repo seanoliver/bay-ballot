@@ -23,19 +23,39 @@ function readParsed<T>(file: string, schema: z.ZodType<T>): T {
   return r.data;
 }
 
-const ymlFiles = (dir: string) =>
-  fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".yml")).sort() : [];
+function ymlFiles(dir: string): string[] {
+  if (!fs.existsSync(dir)) return [];
+  const names = fs.readdirSync(dir).filter((f) => !f.startsWith(".")).sort();
+  const bad = names.find((f) => !f.endsWith(".yml"));
+  if (bad) throw new Error(`${path.join(dir, bad)}: unexpected entry (only .yml files allowed)`);
+  return names;
+}
+
+const stem = (f: string) => f.replace(/\.yml$/, "");
 
 export function loadElection(root: string, election: string): ElectionData {
-  const ballot = readParsed(path.join(root, election, "ballot.yml"), Ballot);
+  const ballotFile = path.join(root, election, "ballot.yml");
+  const ballot = readParsed(ballotFile, Ballot);
+  if (ballot.election !== election) {
+    throw new Error(`${ballotFile}: election '${ballot.election}' does not match directory '${election}'`);
+  }
   const guidesDir = path.join(root, "guides");
-  const guides = ymlFiles(guidesDir).map((f) => readParsed(path.join(guidesDir, f), Guide));
+  const guides: Guide[] = [];
+  const seenGuides = new Set<string>();
+  for (const f of ymlFiles(guidesDir)) {
+    const file = path.join(guidesDir, f);
+    const g = readParsed(file, Guide);
+    if (g.id !== stem(f)) throw new Error(`${file}: filename does not match guide id '${g.id}'`);
+    if (seenGuides.has(g.id)) throw new Error(`${file}: duplicate guide id '${g.id}'`);
+    seenGuides.add(g.id);
+    guides.push(g);
+  }
   const endorsements: Record<string, EndorsementFile> = {};
   const endDir = path.join(root, election, "endorsements");
   for (const f of ymlFiles(endDir)) {
     const file = path.join(endDir, f);
     const e = readParsed(file, EndorsementFile);
-    if (e.guide !== f.replace(/\.yml$/, "")) {
+    if (e.guide !== stem(f)) {
       throw new Error(`${file}: filename does not match guide field '${e.guide}'`);
     }
     endorsements[e.guide] = e;
@@ -82,8 +102,12 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       }
       const where = `${id}/${cid}`;
       const isNames = Array.isArray(entry.pick);
-      if (isNames !== (c.kind === "candidate")) {
-        errors.push(`${where}: pick type doesn't match contest kind`);
+      if (isNames && c.kind !== "candidate") {
+        errors.push(`${where}: expected Y/N for a ${c.kind} contest, got a name list`);
+        continue;
+      }
+      if (!isNames && c.kind === "candidate") {
+        errors.push(`${where}: expected a name list for a candidate contest, got '${entry.pick}'`);
         continue;
       }
       if (!Array.isArray(entry.pick)) continue;

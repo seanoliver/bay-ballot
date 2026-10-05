@@ -9,7 +9,15 @@ if (!fs.existsSync(root)) {
 }
 let failed = false;
 for (const election of listElections(root)) {
-  const { errors, warnings } = validateElection(loadElection(root, election));
+  let result;
+  try {
+    result = validateElection(loadElection(root, election));
+  } catch (e) {
+    console.error(`ERROR ${election} ${e instanceof Error ? e.message : String(e)}`);
+    failed = true;
+    continue;
+  }
+  const { errors, warnings } = result;
   warnings.forEach((w) => console.warn(`WARN  ${election} ${w}`));
   errors.forEach((e) => console.error(`ERROR ${election} ${e}`));
   if (errors.length || warnings.length) failed = true;
