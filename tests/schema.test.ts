@@ -110,4 +110,25 @@ describe("tightened schemas", () => {
   it("rejects unknown guide type", () => {
     expect(Guide.safeParse({ ...guide, type: "blog" }).success).toBe(false);
   });
+  it("uses a party-neutral club type", () => {
+    expect(Guide.safeParse({ ...guide, type: "club" }).success).toBe(true);
+    expect(Guide.safeParse({ ...guide, type: "dem-club" }).success).toBe(false);
+  });
+  it("accepts fetchWith and extraSources", () => {
+    const r = EndorsementFile.safeParse({
+      ...file, fetchWith: "browser", extraSources: ["https://example.org/vote/ballot-measures"],
+    });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data.fetchWith).toBe("browser");
+      expect(r.data.extraSources).toEqual(["https://example.org/vote/ballot-measures"]);
+    }
+    expect(EndorsementFile.safeParse({ ...file, fetchWith: "http" }).success).toBe(true);
+  });
+  it("rejects an unknown fetchWith", () => {
+    expect(EndorsementFile.safeParse({ ...file, fetchWith: "curl" }).success).toBe(false);
+  });
+  it("rejects a non-http extraSource", () => {
+    expect(EndorsementFile.safeParse({ ...file, extraSources: ["javascript:alert(1)"] }).success).toBe(false);
+  });
 });

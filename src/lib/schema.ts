@@ -5,7 +5,7 @@ const Slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);
 const NonEmpty = z.string().trim().min(1);
 const Election = z.string().regex(/^\d{4}-\d{2}$/);
 
-export const GuideType = z.enum(["newspaper", "party", "dem-club", "union", "advocacy", "civic"]);
+export const GuideType = z.enum(["newspaper", "party", "club", "union", "advocacy", "civic"]);
 export type GuideType = z.infer<typeof GuideType>;
 
 export const Guide = z.object({
@@ -62,6 +62,8 @@ export const EndorsementFile = z.object({
   source: HttpUrl.optional(),
   fetchedAt: z.union([z.iso.date(), z.iso.datetime()]),
   hasReasoning: z.boolean(),
+  fetchWith: z.enum(["http", "browser"]).optional(), // "browser" when the page needs JS or blocks plain HTTP
+  extraSources: z.array(HttpUrl).optional(), // further pages of a multi-page guide
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;

@@ -192,7 +192,7 @@ picks:
 // src/lib/schema.ts
 import { z } from "zod";
 
-export const GuideType = z.enum(["newspaper", "party", "dem-club", "union", "advocacy", "civic"]);
+export const GuideType = z.enum(["newspaper", "party", "club", "union", "advocacy", "civic"]);
 export type GuideType = z.infer<typeof GuideType>;
 
 export const Guide = z.object({
@@ -1042,7 +1042,7 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 - Create: `src/lib/filters.ts`
 - Test: `tests/filters.test.ts`
 
-Filter state, serialized to the URL as `?off=pov,sf-dems&offtypes=dem-club&why=1&sup=8&ad=17`.
+Filter state, serialized to the URL as `?off=pov,sf-dems&offtypes=club&why=1&sup=8&ad=17`.
 
 **Step 1: Failing test**
 
@@ -1052,7 +1052,7 @@ import { activeEntries, fromQuery, toQuery, visibleContest } from "@/lib/filters
 import type { Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 const guides = [
-  { id: "a", type: "advocacy" }, { id: "b", type: "dem-club" }, { id: "c", type: "newspaper" },
+  { id: "a", type: "advocacy" }, { id: "b", type: "club" }, { id: "c", type: "newspaper" },
 ] as Guide[];
 const ends = {
   a: { status: "published", hasReasoning: true, picks: { x: { pick: "Y", ranked: false, quotes: [] } } },
