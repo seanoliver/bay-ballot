@@ -114,7 +114,7 @@ contests:
     kind: candidate
     seats: 3
     candidates: [Autumn Brown Garibay, Virginia Cheung, Alida Fisher, Ryan Hazelton, Phil Kim, Laurance Lee, Reina Tello, Tim Tung]
-    aliases: { Phil Kim: [Philip Kim], Laurance Lee: [Laurence Lee] }
+    aliases: { Phil Kim: [Philip Kim, Phillip Kim], Laurance Lee: [Laurence Lee] }
     jurisdiction: { level: city, name: San Francisco }
   - id: college-board
     section: Local candidates
