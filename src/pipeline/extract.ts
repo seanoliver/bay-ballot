@@ -160,7 +160,13 @@ export function toEntries(
     const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages);
     for (const d of dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
 
-    picks[c.id] = { pick, ranked: isCandidate && p.ranked, quotes: kept };
+    let ranked = isCandidate && p.ranked;
+    if (ranked && (!c.rankedChoice || c.seats > 1)) {
+      notes.push(`${c.id}: ranked ignored (not a ranked-choice contest)`);
+      ranked = false;
+    }
+
+    picks[c.id] = { pick, ranked, quotes: kept };
   }
   return { picks, notes };
 }

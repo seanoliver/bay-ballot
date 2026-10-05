@@ -65,7 +65,9 @@ const contests: Contest[] = [
   contest({ id: "prop-b", kind: "measure" }),
   contest({ id: "retain-smith", kind: "retention" }),
   contest({ id: "assessor", kind: "candidate", candidates: ["Joaquín Torres", "Jane Doe"] }),
-  contest({ id: "supervisor-d8", kind: "candidate", candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"] }),
+  contest({ id: "supervisor-d8", kind: "candidate", rankedChoice: true, candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"] }),
+  contest({ id: "assessor-plain", kind: "candidate", candidates: ["Jane Doe", "John Roe"] }),
+  contest({ id: "school-board", kind: "candidate", seats: 3, rankedChoice: true, candidates: ["A One", "B Two", "C Three"] }),
 ];
 
 const pages: Page[] = [
@@ -205,6 +207,22 @@ describe("toEntries", () => {
   it("preserves ranked order", () => {
     const r = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyen", "Gary McCoy"], ranked: true }));
     expect(r.picks["supervisor-d8"]).toEqual({ pick: ["Michael T. Nguyen", "Gary McCoy"], ranked: true, quotes: [] });
+  });
+
+  it("unranks a pick on a contest without ranked-choice voting", () => {
+    const r = run(pick({ contestId: "assessor-plain", candidates: ["Jane Doe", "John Roe"], ranked: true }));
+    expect(r.picks["assessor-plain"]).toEqual({ pick: ["Jane Doe", "John Roe"], ranked: false, quotes: [] });
+    expect(r.notes).toEqual(["assessor-plain: ranked ignored (not a ranked-choice contest)"]);
+  });
+
+  it("unranks a pick on a multi-seat contest", () => {
+    const r = run(pick({ contestId: "school-board", candidates: ["A One", "B Two"], ranked: true }));
+    expect(r.picks["school-board"].ranked).toBe(false);
+    expect(r.notes).toEqual(["school-board: ranked ignored (not a ranked-choice contest)"]);
+  });
+
+  it("does not note an unranked pick on a non-RCV contest", () => {
+    expect(run(pick({ contestId: "assessor-plain", candidates: ["Jane Doe"] })).notes).toEqual([]);
   });
 
   it("dedupes names, including fuzzy matches of the same candidate", () => {
