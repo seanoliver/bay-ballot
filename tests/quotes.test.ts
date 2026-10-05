@@ -182,6 +182,26 @@ describe("surrounding context", () => {
   });
 });
 
+describe("own-voice sentences next to attribution", () => {
+  const S = "We support Prop 45 because it speeds up housing approvals.";
+  it("does not carry an attribution phrase across a sentence boundary", () => {
+    const p = html(`Opponents say it's costly. ${S}`);
+    expect(verifyQuotes([S], [p]).kept).toHaveLength(1);
+  });
+  it("still drops a sentence in the same sentence as the phrase", () => {
+    const p = html("Opponents say that the bank would cost the city hundreds of millions.");
+    expect(reasonOf("the bank would cost the city hundreds of millions.", [p])).toBe("attributed-speech");
+  });
+  it("keeps text after a first-person-plural colon intro", () => {
+    const p = html(`From our writeup in June:\n${S}`);
+    expect(verifyQuotes([S], [p]).kept).toHaveLength(1);
+  });
+  it.each(["Opponents argue:", "The Chamber writes:"])("still drops text after '%s'", (intro) => {
+    const p = html(`${intro}\n${S}`);
+    expect(reasonOf(S, [p])).toBe("attributed-speech");
+  });
+});
+
 describe("CJK quotes", () => {
   const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
   const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");
