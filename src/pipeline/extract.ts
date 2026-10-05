@@ -164,7 +164,8 @@ export function toEntries(
     const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
     for (const d of dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
 
-    let ranked = isCandidate && p.ranked;
+    // A single name has no order, so it is never ranked (e.g. a "[Sole]" endorsement).
+    let ranked = isCandidate && p.ranked && Array.isArray(pick) && pick.length > 1;
     if (ranked && (!c.rankedChoice || c.seats > 1)) {
       notes.push(`${c.id}: ranked ignored (not a ranked-choice contest)`);
       ranked = false;

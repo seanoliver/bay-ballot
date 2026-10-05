@@ -141,6 +141,12 @@ describe("toEntries", () => {
     ]);
   });
 
+  it("never ranks a single-name pick", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy"], ranked: true }));
+    expect(r.picks["supervisor-d8"]).toEqual({ pick: ["Gary McCoy"], ranked: false, quotes: [] });
+    expect(r.notes).toEqual([]);
+  });
+
   it("notes and skips unknown contests", () => {
     const r = run(pick({ contestId: "prop-zz", vote: "Y" }));
     expect(r.picks).toEqual({});
