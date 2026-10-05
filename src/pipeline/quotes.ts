@@ -10,6 +10,9 @@ export type DroppedQuote = { quote: string; reason: DropReason };
 
 const MIN_WORDS = 5;
 const MIN_CHARS = 20;
+// CJK text has no spaces between words, so length is counted in characters instead.
+const MIN_CJK_CHARS = 10;
+const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu;
 const ATTRIBUTION_WINDOW = 80;
 const ATTRIBUTION_PHRASES = [
   "opponents", "critics", "proponents say", "supporters say", "they say",
@@ -54,17 +57,24 @@ export function normalizeWithMap(s: string): { norm: string; map: number[] } {
 
 const normalize = (s: string) => normalizeWithMap(s).norm;
 
-/** Match starts at segment start or right after . ! ? : ; (optionally followed by a closing quote). */
+/** Match starts at segment start or right after . ! ? : ; 。！？ (optionally followed by a closing quote). */
 export function isSentenceStart(before: string): boolean {
   let b = before.trimEnd();
   if (b === "") return true;
   if (/["“”]$/.test(b)) b = b.slice(0, -1).trimEnd();
-  return b === "" || /[.!?:;]$/.test(b);
+  return b === "" || /[.!?:;。！？]$/.test(b);
 }
 
 function isSentenceEnd(span: string, after: string): boolean {
   const a = after.trimStart().replace(/^["”’)\]]+/, "").trimStart();
-  return a === "" || /^[.!?]/.test(a) || /[.!?]$/.test(span);
+  return a === "" || /^[.!?。！？]/.test(a) || /[.!?。！？]$/.test(span);
+}
+
+function isTooShort(quote: string, normQuote: string): boolean {
+  const cjk = quote.match(CJK)?.length ?? 0;
+  if (cjk > 0) return cjk < MIN_CJK_CHARS;
+  const words = quote.split(/\s+/).filter(Boolean).length;
+  return words < MIN_WORDS || normQuote.length < MIN_CHARS;
 }
 
 /** Span sits inside quotation marks, or is preceded by phrasing that attributes it to someone else. */
@@ -117,8 +127,7 @@ export function verifyQuotes(
   for (const raw of quotes) {
     const trimmed = raw.trim().replace(EDGE_QUOTES, "").trim();
     const normQuote = normalize(trimmed);
-    const words = trimmed.split(/\s+/).filter(Boolean).length;
-    if (words < MIN_WORDS || normQuote.length < MIN_CHARS) {
+    if (isTooShort(trimmed, normQuote)) {
       dropped.push({ quote: raw, reason: "too-short" });
       continue;
     }

@@ -181,3 +181,31 @@ describe("surrounding context", () => {
     expect(reasonOf("The bond will raise your taxes for thirty years", [p])).toBe("attributed-speech");
   });
 });
+
+describe("CJK quotes", () => {
+  const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
+  const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");
+
+  it("keeps a full Chinese sentence from the page", () => {
+    expect(verifyQuotes([zhSentence], [zh]).kept).toEqual([{ text: zhSentence, source: "https://a.org/zh" }]);
+  });
+  it("keeps a Chinese sentence ending in a full-width exclamation mark", () => {
+    const p = html("我们支持B提案。这项措施将帮助每一个社区的家庭！");
+    expect(verifyQuotes(["这项措施将帮助每一个社区的家庭！"], [p]).kept).toHaveLength(1);
+  });
+  it("drops a 6-character fragment as too-short", () => {
+    expect(reasonOf("公共银行将为", [zh])).toBe("too-short");
+  });
+  it("drops a complete sentence under 10 CJK characters as too-short", () => {
+    expect(reasonOf("我们支持B提案。", [zh])).toBe("too-short");
+  });
+  it("drops a CJK partial sentence", () => {
+    expect(reasonOf("公共银行将为城市节省数百万美元", [zh])).toBe("partial-sentence");
+  });
+  it("counts Japanese and Korean by characters too", () => {
+    const ja = html("私たちは賛成です。この法案は市の財政を大きく改善します。");
+    expect(verifyQuotes(["この法案は市の財政を大きく改善します。"], [ja]).kept).toHaveLength(1);
+    const ko = html("우리는 찬성합니다. 이 법안은 도시 재정을 크게 개선합니다.");
+    expect(verifyQuotes(["이 법안은 도시 재정을 크게 개선합니다."], [ko]).kept).toHaveLength(1);
+  });
+});
