@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
@@ -9,13 +10,16 @@ import { extract, pagesFor, toEntries, type Source } from "../src/pipeline/extra
 import { fetchSource } from "../src/pipeline/fetch";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
+import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { nextFile, shrinkWarning, toYaml } from "../src/pipeline/write";
+import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force]
        npm run bb -- discover
        npm run bb -- check
+       npm run bb -- review [--no-open]
 
 extract rewrites each guide's picks from its pages, overwriting hand edits to picks
 (mark hand-entered guides with 'manual: true' to skip them). --force accepts a result
@@ -139,10 +143,38 @@ function runCheck(): void {
   else console.log(`check OK (${data.guides.length} guides, ${warnings.length} warnings)`);
 }
 
+// Last-committed version of each endorsement file, for the review page's change markers.
+function committedEndorsements(ids: string[]): Record<string, EndorsementFile> {
+  const out: Record<string, EndorsementFile> = {};
+  for (const id of ids) {
+    const rel = path.relative(process.cwd(), endorsementPath(id));
+    try {
+      const text = execFileSync("git", ["show", `HEAD:${rel}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+      const parsed = EndorsementFile.safeParse(parseYaml(text));
+      if (parsed.success) out[id] = parsed.data;
+    } catch {
+      // not committed yet: the guide shows as new
+    }
+  }
+  return out;
+}
+
+function runReview(): void {
+  const data = loadElection(ROOT, ELECTION);
+  const previous = committedEndorsements(Object.keys(data.endorsements));
+  const model = buildReviewModel(data.ballot, data.guides, data.endorsements, previous);
+  const out = path.join(process.cwd(), "review.html");
+  fs.writeFileSync(out, renderReviewHtml(model));
+  const t = model.totals;
+  console.log(`review.html: ${t.published} published, ${t.picks} picks, ${t.quotes} quotes, ${t.flagged} flagged`);
+  if (!flag("--no-open")) execFileSync("open", [out]);
+}
+
 async function main(): Promise<void> {
   if (cmd === "extract") await runExtract();
   else if (cmd === "discover") runDiscover();
   else if (cmd === "check") runCheck();
+  else if (cmd === "review") runReview();
   else {
     console.log(USAGE);
     if (cmd !== undefined) process.exitCode = 1;
