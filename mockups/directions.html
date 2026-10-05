@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bay Ballot Directions</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #141414; --muted: #646464; --line: #e3e3e3; --soft: #f5f5f3;
+    --yes: #1f7a4a; --yes-bg: #e2f2e8; --no: #b3362b; --no-bg: #f9e4e1; --split: #8a6100; --split-bg: #f6edd5;
+    --c1: #2f55c9; --c2: #c9772f; --c3: #7a3fc9; --c4: #2f9aa0; --accent: #2f55c9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0d0d; --fg: #ececea; --muted: #a0a0a0; --line: #2b2b2b; --soft: #181818;
+      --yes: #5fc98d; --yes-bg: #173324; --no: #f0827a; --no-bg: #3a1c19; --split: #e6b850; --split-bg: #33290f;
+      --c1: #8aa2ff; --c2: #f0a868; --c3: #b896ff; --c4: #6fd0d6; --accent: #8aa2ff;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d0d0d; --fg: #ececea; --muted: #a0a0a0; --line: #2b2b2b; --soft: #181818;
+    --yes: #5fc98d; --yes-bg: #173324; --no: #f0827a; --no-bg: #3a1c19; --split: #e6b850; --split-bg: #33290f;
+    --c1: #8aa2ff; --c2: #f0a868; --c3: #b896ff; --c4: #6fd0d6; --accent: #8aa2ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 -apple-system, system-ui, "Segoe UI", sans-serif; }
+  button { font: inherit; color: inherit; }
+  .chrome { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .chrome h1 { font-size: 18px; margin: 0 0 4px; }
+  .chrome p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+  .switch { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .switch button { border: 1px solid var(--line); background: var(--bg); padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .switch button.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .switch .theme { margin-left: auto; }
+  .stage { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; padding: 8px 16px 60px; }
+  .phone { width: 390px; max-width: 100%; border: 1px solid var(--line); border-radius: 28px; overflow: hidden; background: var(--bg); }
+  .phone .scroll { height: 760px; overflow-y: auto; }
+  .label { text-align: center; color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+  .desc { max-width: 760px; margin: 0 auto 8px; padding: 0 16px; font-size: 14px; }
+  .desc b { font-weight: 600; }
+
+  /* ---------- A: Ballot ---------- */
+  .A { font-family: -apple-system, system-ui, sans-serif; }
+  .A header { padding: 14px 16px 10px; border-bottom: 2px solid var(--fg); }
+  .A header .t { font-weight: 800; letter-spacing: .02em; text-transform: uppercase; font-size: 13px; }
+  .A header .s { color: var(--muted); font-size: 12px; }
+  .A .bar { position: sticky; top: 0; background: var(--bg); padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--line); z-index: 2; }
+  .A .chip { white-space: nowrap; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font-size: 13px; background: var(--bg); cursor: pointer; min-height: 34px; }
+  .A .chip.off { text-decoration: line-through; color: var(--muted); }
+  .A .chip.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .A h2 { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0; padding: 14px 16px 6px; }
+  .A .row { border-top: 1px solid var(--line); }
+  .A .row:last-child { border-bottom: 1px solid var(--line); }
+  .A .sum { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px 16px; cursor: pointer; width: 100%; text-align: left; background: none; border: 0; min-height: 52px; }
+  .A .ct { font-weight: 600; }
+  .A .cd { color: var(--muted); font-size: 12px; }
+  .A .v { text-align: right; white-space: nowrap; }
+  .A .pill { display: inline-block; font-weight: 700; font-size: 13px; padding: 3px 8px; border-radius: 4px; }
+  .A .y { background: var(--yes-bg); color: var(--yes); } .A .n { background: var(--no-bg); color: var(--no); } .A .sp { background: var(--split-bg); color: var(--split); } .A .cand { background: var(--soft); }
+  .A .cnt { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .A .det { display: none; padding: 0 16px 14px; }
+  .A .row.open .det { display: block; }
+  .A .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .A .col h3 { font-size: 12px; margin: 0 0 4px; }
+  .A .col ul { margin: 0; padding: 0; list-style: none; font-size: 13px; }
+  .A .col li { padding: 3px 0; border-bottom: 1px dashed var(--line); }
+  .A .q { margin: 10px 0 0; font-size: 13px; }
+  .A .q blockquote { margin: 6px 0; padding-left: 10px; border-left: 3px solid var(--line); }
+  .A .q cite { display: block; font-style: normal; color: var(--muted); font-size: 12px; }
+  .A .foot { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+  /* ---------- A2: Ballot, revised ---------- */
+  .A2 { background: var(--soft); min-height: 100%; }
+  .A2 header { padding: 20px 16px 12px; background: var(--bg); }
+  .A2 header .t { font-size: 22px; font-weight: 800; }
+  .A2 header .s { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .A2 .fbar { position: sticky; top: 0; z-index: 3; background: var(--bg); padding: 10px 16px 12px; border-bottom: 1px solid var(--line); }
+  .A2 .fbtn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); cursor: pointer; font-size: 15px; min-height: 48px; }
+  .A2 .fbtn b { font-weight: 600; }
+  .A2 .fbtn .fcount { color: var(--muted); font-size: 13px; margin-left: 6px; }
+  .A2 .fbtn .caret { transition: transform .15s; }
+  .A2 .fbtn[aria-expanded="true"] .caret { transform: rotate(180deg); }
+  .A2 .fpanel { display: none; padding-top: 12px; }
+  .A2 .fpanel.show { display: block; }
+  .A2 .fpanel h4 { margin: 12px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .A2 .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .A2 .pill2 { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+  .A2 .pill2.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .A2 .pill2.on::before { content: "✓"; font-size: 12px; }
+  .A2 .pill2 .tag { font-size: 11px; opacity: .7; }
+  .A2 .reset { margin-top: 14px; border: 0; background: none; color: var(--accent); text-decoration: underline; cursor: pointer; padding: 8px 0; font-size: 14px; }
+  .A2 h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; padding: 22px 16px 8px; }
+  .A2 .card { margin: 0 12px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden; }
+  .A2 .card.open { border-color: var(--fg); }
+  .A2 .hit { display: grid; grid-template-columns: 1fr 36px; gap: 12px; align-items: center; width: 100%; padding: 16px; background: none; border: 0; text-align: left; cursor: pointer; }
+  .A2 .hit:active { background: var(--soft); }
+  .A2 .ct { font-size: 17px; font-weight: 650; line-height: 1.25; }
+  .A2 .cd { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .A2 .verdict { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .A2 .vp { font-weight: 700; font-size: 15px; padding: 4px 10px; border-radius: 8px; }
+  .A2 .y { background: var(--yes-bg); color: var(--yes); } .A2 .n { background: var(--no-bg); color: var(--no); } .A2 .sp { background: var(--split-bg); color: var(--split); } .A2 .cand { background: var(--soft); color: var(--fg); }
+  .A2 .vc { color: var(--muted); font-size: 14px; }
+  .A2 .names { margin: 8px 0 0; padding: 0; list-style: none; font-size: 15px; }
+  .A2 .names li { padding: 2px 0; }
+  .A2 .names .k { color: var(--muted); font-size: 13px; }
+  .A2 .chev { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 16px; transition: transform .15s; color: var(--muted); }
+  .A2 .card.open .chev { transform: rotate(180deg); color: var(--fg); border-color: var(--fg); }
+  .A2 .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .A2 .card.open .hint { display: none; }
+  .A2 .det { display: none; border-top: 1px solid var(--line); padding: 4px 16px 16px; }
+  .A2 .card.open .det { display: block; }
+  .A2 .grp h3 { margin: 14px 0 6px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .A2 .grp h3 .dot2 { width: 10px; height: 10px; border-radius: 50%; }
+  .A2 .gl { list-style: none; margin: 0; padding: 0; }
+  .A2 .gl li { padding: 10px 0; border-top: 1px solid var(--line); }
+  .A2 .gl li:first-child { border-top: 0; }
+  .A2 .gn { font-weight: 600; font-size: 15px; }
+  .A2 .gm { color: var(--muted); font-size: 13px; }
+  .A2 blockquote { margin: 6px 0 0; padding: 8px 12px; background: var(--soft); border-radius: 8px; font-size: 14px; line-height: 1.45; }
+  .A2 blockquote a { font-size: 12px; color: var(--accent); }
+  .A2 .foot { color: var(--muted); font-size: 13px; margin-top: 12px; }
+
+  /* ---------- B: Scoreboard ---------- */
+  .B header { padding: 16px; background: var(--fg); color: var(--bg); }
+  .B header .t { font-weight: 800; font-size: 20px; }
+  .B header .s { opacity: .7; font-size: 12px; }
+  .B .filters { margin: 12px; padding: 10px 12px; border-radius: 14px; background: var(--soft); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .B .filters b { font-size: 14px; } .B .filters span { color: var(--muted); font-size: 12px; }
+  .B .filters button { border: 0; background: var(--fg); color: var(--bg); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+  .B h2 { font-size: 13px; margin: 18px 16px 6px; color: var(--muted); }
+  .B .card { margin: 8px 12px; border: 1px solid var(--line); border-radius: 14px; padding: 12px; cursor: pointer; }
+  .B .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .B .ct { font-weight: 700; } .B .cd { color: var(--muted); font-size: 12px; }
+  .B .big { font-size: 26px; font-weight: 800; line-height: 1; text-align: right; white-space: nowrap; }
+  .B .big small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 3px; }
+  .B .stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 10px; gap: 2px; }
+  .B .seg { flex: 1; }
+  .B .dots { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+  .B .dot { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; }
+  .B .det { display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+  .B .card.open .det { display: block; }
+  .B .gr { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
+  .B .gr .who { font-weight: 600; font-size: 13px; }
+  .B .gr .pk { font-size: 12px; color: var(--muted); }
+  .B .gr blockquote { margin: 4px 0 0; font-size: 13px; }
+  .B .sheet { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); padding: 12px; display: none; }
+  .B .sheet.show { display: block; }
+  .B .sheet .opts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .B .sheet .opts button { border: 1px solid var(--line); background: var(--bg); padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+  .B .sheet .opts button.off { opacity: .45; text-decoration: line-through; }
+
+  /* ---------- C: Editorial ---------- */
+  .C { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; }
+  .C header { padding: 22px 20px 12px; }
+  .C header .kick { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .C header .t { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 6px; }
+  .C header .s { color: var(--muted); font-size: 14px; margin-top: 6px; font-style: italic; }
+  .C .ctl { font-family: -apple-system, system-ui, sans-serif; margin: 0 20px 6px; font-size: 13px; color: var(--muted); }
+  .C .ctl button { border: 0; background: none; color: var(--accent); text-decoration: underline; cursor: pointer; padding: 6px 0; }
+  .C .drawer { display: none; font-family: -apple-system, system-ui, sans-serif; margin: 0 20px 10px; padding: 12px; background: var(--soft); border-radius: 8px; font-size: 13px; }
+  .C .drawer.show { display: block; }
+  .C .drawer label { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+  .C h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-family: -apple-system, system-ui, sans-serif; color: var(--muted); margin: 22px 20px 4px; border-top: 1px solid var(--fg); padding-top: 8px; }
+  .C article { padding: 14px 20px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .C .ct { font-family: -apple-system, system-ui, sans-serif; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .C .lede { font-size: 21px; line-height: 1.25; margin: 4px 0 6px; }
+  .C .lede .y { color: var(--yes); } .C .lede .n { color: var(--no); } .C .lede .sp { color: var(--split); }
+  .C .pull { font-size: 15px; font-style: italic; color: var(--fg); margin: 6px 0 0; }
+  .C .pull cite { font-style: normal; font-family: -apple-system, system-ui, sans-serif; font-size: 12px; color: var(--muted); display: block; margin-top: 2px; }
+  .C .det { display: none; margin-top: 10px; font-family: -apple-system, system-ui, sans-serif; font-size: 13px; }
+  .C article.open .det { display: block; }
+  .C .det h4 { margin: 8px 0 2px; font-size: 13px; }
+  .C .det p { margin: 0 0 4px; }
+  .C .more { font-family: -apple-system, system-ui, sans-serif; font-size: 12px; color: var(--accent); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="chrome">
+  <h1>Bay Ballot: three visual directions</h1>
+  <p>Real picks from 7 guides. Quotes are real, copied word-for-word from guide pages by the extractor. Tap rows to expand; try the filters. Shown at phone width.</p>
+  <div class="switch" id="switch">
+    <button data-d="A2" class="on">A2 · Ballot, revised</button>
+    <button data-d="A">A · Ballot</button>
+    <button data-d="B">B · Scoreboard</button>
+    <button data-d="C">C · Editorial</button>
+    <button data-d="all">A2 + B + C</button>
+    <button class="theme" id="theme">Toggle dark</button>
+  </div>
+</div>
+<div class="desc" id="desc"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+const GUIDES = [
+  { id: "growsf", name: "GrowSF", short: "G", type: "Advocacy", why: true },
+  { id: "chron", name: "SF Chronicle", short: "C", type: "Newspaper", why: true },
+  { id: "league", name: "League of Pissed Off Voters", short: "L", type: "Advocacy", why: true },
+  { id: "dems", name: "SF Dems", short: "D", type: "Party", why: false },
+  { id: "spur", name: "SPUR", short: "S", type: "Civic", why: true },
+  { id: "lwvsf", name: "LWV SF", short: "W", type: "Civic", why: true },
+  { id: "lwvca", name: "LWV California", short: "V", type: "Civic", why: true },
+];
+const SRC = {
+  growsf: "https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/",
+  league: "https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026",
+};
+// picks: guideId -> "Y" | "N" | [names] ; ranked: guideId list
+const CONTESTS = [
+  { section: "Federal", id: "us-rep-11", title: "US Representative, District 11", kind: "c",
+    picks: { growsf: ["Scott Wiener"], chron: ["Scott Wiener"], league: ["Connie Chan"], dems: ["Scott Wiener"] } },
+  { section: "State", id: "governor", title: "Governor", kind: "c",
+    picks: { growsf: ["Xavier Becerra"], dems: ["Xavier Becerra"] },
+    quotes: { growsf: ["Becerra has the experience for the job and a record on housing and public safety that lines up with ours."] } },
+  { section: "Local candidates", id: "supervisor-8", title: "Supervisor, District 8", kind: "c", rcv: true,
+    picks: { league: ["Gary McCoy", "Michael T. Nguyen"] }, ranked: ["league"],
+    quotes: { league: ["We know what Gary McCoy would accomplish as D8 Supervisor, which is why he's our top pick in this ranked-choice voting race."] } },
+  { section: "Local candidates", id: "board-of-education", title: "Board of Education (vote for 3)", kind: "c", seats: 3,
+    picks: { growsf: ["Autumn Brown Garibay", "Phil Kim", "Tim Tung"], league: ["Virginia Cheung", "Reina Tello", "Ryan Hazelton"], dems: ["Autumn Brown Garibay", "Phil Kim", "Tim Tung"] },
+    quotes: { league: ["We're thrilled to build power with a coalition of San Franciscans who won't settle for endless cuts and bloated bureaucracy."] } },
+  { section: "State propositions", id: "prop-40", title: "Prop 40", desc: "One-time billionaire tax", kind: "m",
+    picks: { growsf: "N", league: "Y", dems: "N" } },
+  { section: "Local propositions", id: "prop-b", title: "Prop B", desc: "Public bank", kind: "m",
+    picks: { growsf: "N", chron: "N", league: "Y", dems: "Y", spur: "N", lwvsf: "Y" },
+    quotes: {
+      growsf: ["San Francisco does not need a public bank, especially when the law creating it, Prop B, is riddled with errors."],
+      league: ["If San Francisco owns the banks, it would allow us to facilitate affordable housing construction, particularly social housing."],
+      spur: ["However, Prop. B's proposed charter amendment does not reflect SPUR's principles of good governance."],
+    },
+    qsrc: { spur: "https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank" } },
+  { section: "Local propositions", id: "prop-c", title: "Prop C", desc: "Housing Trust Fund", kind: "m",
+    picks: { growsf: "Y", chron: "Y", league: "Y", dems: "Y", spur: "Y", lwvsf: "Y" } },
+  { section: "Local propositions", id: "prop-g", title: "Prop G", desc: "Cars on Upper Great Highway, weekdays", kind: "m",
+    picks: { growsf: "N", chron: "N", dems: "N", spur: "N" },
+    quotes: { spur: ["Prop. G would undo a successful city effort to protect neighborhoods from the threats of rising sea levels…"] },
+    qsrc: { spur: "https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes" } },
+];
+const PENDING = 34;
+const PLURAL = { Newspaper: "Newspapers", Party: "Parties", Advocacy: "Advocacy groups", Civic: "Civic groups" };
+
+const state = { off: new Set(), offTypes: new Set(), whyOnly: false, open: new Set(["prop-b"]), sheet: false, drawer: false };
+let direction = "A2";
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const active = () => GUIDES.filter((g) => !state.off.has(g.id) && !state.offTypes.has(g.type) && (!state.whyOnly || g.why));
+function rows(c) { return active().filter((g) => c.picks[g.id] !== undefined).map((g) => ({ g, pick: c.picks[g.id] })); }
+function tally(c) {
+  const r = rows(c);
+  if (c.kind === "m") {
+    const y = r.filter((x) => x.pick === "Y").length, n = r.filter((x) => x.pick === "N").length, t = y + n;
+    if (!t) return { kind: "m", t: 0 };
+    const v = y === n ? "split" : y > n ? "Y" : "N";
+    return { kind: "m", y, n, t, v, pct: Math.round(100 * Math.max(y, n) / t) };
+  }
+  const counts = {};
+  r.forEach((x) => { const names = (c.ranked || []).includes(x.g.id) ? [x.pick[0]] : x.pick; names.forEach((nm) => counts[nm] = (counts[nm] || 0) + 1); });
+  const list = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  if (!list.length) return { kind: "c", t: 0 };
+  const split = list.length > 1 && list[1][1] === list[0][1];
+  const ranked = (c.ranked || []).some((id) => r.some((x) => x.g.id === id) && c.picks[id][0] === list[0][0]);
+  const seats = c.seats || 1;
+  return { kind: "c", t: r.length, list, seats, top: list.slice(0, seats), split: seats === 1 && split, leader: list[0][0], count: list[0][1], pct: Math.round(100 * list[0][1] / r.length), ranked };
+}
+function head(t) {
+  if (!t.t) return { cls: "none", label: "No picks yet", detail: "" };
+  if (t.kind === "m") {
+    if (t.v === "split") return { cls: "sp", label: "Split", detail: `${t.y} Yes · ${t.n} No`, word: "split" };
+    return { cls: t.v === "Y" ? "y" : "n", label: `${t.v === "Y" ? "Yes" : "No"} ${t.pct}%`, detail: `${t.v === "Y" ? t.y : t.n} of ${t.t}` };
+  }
+  if (t.seats > 1) return { cls: "cand", label: `Top ${t.seats}`, detail: t.top.map(([nm, n]) => `${nm} ${n}`).join(" · ") };
+  if (t.split) return { cls: "sp", label: "Split", detail: t.list.filter((x) => x[1] === t.list[0][1]).map((x) => x[0]).join(", ") };
+  return { cls: "cand", label: t.leader + (t.ranked ? "*" : ""), detail: `${t.pct}% (${t.count} of ${t.t})` };
+}
+function groups(c) {
+  const r = rows(c);
+  if (c.kind === "m") return [["Yes", r.filter((x) => x.pick === "Y")], ["No", r.filter((x) => x.pick === "N")]].filter((g) => g[1].length);
+  const t = tally(c);
+  if (!t.t) return [];
+  return t.list.map(([nm]) => [nm, r.filter((x) => ((c.ranked || []).includes(x.g.id) ? [x.pick[0]] : x.pick).includes(nm))]);
+}
+function quoteOf(c, gid) {
+  const q = c.quotes && c.quotes[gid];
+  if (!q) return null;
+  return { text: q[0], src: (c.qsrc && c.qsrc[gid]) || SRC[gid] || "#" };
+}
+const sections = () => [...new Set(CONTESTS.map((c) => c.section))];
+const countedLine = () => `${active().length} of ${GUIDES.length} guides counted · ${PENDING} haven't published yet`;
+
+/* ---------- A: Ballot ---------- */
+function renderA() {
+  const chips = [
+    `<button class="chip ${state.whyOnly ? "on" : ""}" data-act="why">Explains picks only</button>`,
+    ...["Newspaper", "Party", "Advocacy", "Civic"].map((t) => `<button class="chip ${state.offTypes.has(t) ? "off" : ""}" data-act="type" data-v="${t}">${PLURAL[t]}</button>`),
+    ...GUIDES.map((g) => `<button class="chip ${state.off.has(g.id) ? "off" : ""}" data-act="guide" data-v="${g.id}">${esc(g.name)}</button>`),
+  ].join("");
+  let html = `<div class="A"><header><div class="t">Bay Ballot · San Francisco</div><div class="s">November 3, 2026 · ${countedLine()}</div></header><div class="bar">${chips}</div>`;
+  for (const s of sections()) {
+    html += `<h2>${esc(s)}</h2>`;
+    for (const c of CONTESTS.filter((x) => x.section === s)) {
+      const h = head(tally(c));
+      const open = state.open.has(c.id);
+      const det = groups(c).map(([lbl, rs]) => `<div class="col"><h3>${esc(lbl)}</h3><ul>${rs.map((x) => `<li>${esc(x.g.name)}${(c.ranked || []).includes(x.g.id) ? " (ranked #1)" : ""}</li>`).join("")}</ul></div>`).join("");
+      const qs = rows(c).map((x) => quoteOf(c, x.g.id) && { q: quoteOf(c, x.g.id), g: x.g }).filter(Boolean)
+        .map(({ q, g }) => `<blockquote>“${esc(q.text)}”<cite>— ${esc(g.name)} · <a href="${esc(q.src)}">source</a></cite></blockquote>`).join("");
+      html += `<div class="row ${open ? "open" : ""}"><button class="sum" data-act="toggle" data-v="${c.id}" aria-expanded="${open}">
+        <span><span class="ct">${esc(c.title)}</span>${c.desc ? `<span class="cd"> · ${esc(c.desc)}</span>` : ""}</span>
+        <span class="v"><span class="pill ${h.cls}">${esc(h.label)}</span><span class="cnt">${esc(h.detail)}</span></span></button>
+        <div class="det"><div class="cols">${det || "<div class='foot'>No guide in your selection took a position.</div>"}</div>${qs ? `<div class="q">${qs}</div>` : ""}<div class="foot">${PENDING} guides haven't published yet</div></div></div>`;
+    }
+  }
+  return html + "</div>";
+}
+
+/* ---------- A2: Ballot, revised ---------- */
+function renderA2() {
+  const pill = (on, act, v, label, tag = "") =>
+    `<button class="pill2 ${on ? "on" : ""}" data-act="${act}" ${v ? `data-v="${v}"` : ""} aria-pressed="${on}">${label}${tag ? ` <span class="tag">${tag}</span>` : ""}</button>`;
+  const panel = `<div class="fpanel ${state.filters ? "show" : ""}">
+    <h4>Show</h4><div class="pills">${pill(state.whyOnly, "why", "", "Only guides that explain their picks")}</div>
+    <h4>Guide types</h4><div class="pills">${["Newspaper", "Party", "Advocacy", "Civic"].map((t) => pill(!state.offTypes.has(t), "type", t, PLURAL[t])).join("")}</div>
+    <h4>Guides</h4><div class="pills">${GUIDES.map((g) => pill(!state.off.has(g.id) && !state.offTypes.has(g.type), "guide", g.id, esc(g.name), g.why ? "" : "list only")).join("")}</div>
+    <button class="reset" data-act="reset">Reset filters</button></div>`;
+  let html = `<div class="A2"><header><div class="t">Bay Ballot</div><div class="s">San Francisco · November 3, 2026</div></header>
+    <div class="fbar"><button class="fbtn" data-act="filters" aria-expanded="${!!state.filters}"><span><b>Filters</b><span class="fcount">${active().length} of ${GUIDES.length} guides counted</span></span><span class="caret">▾</span></button>${panel}</div>`;
+  for (const s of sections()) {
+    html += `<h2>${esc(s)}</h2>`;
+    for (const c of CONTESTS.filter((x) => x.section === s)) {
+      const t = tally(c), h = head(t), open = state.open.has(c.id);
+      const names = t.seats > 1 && t.t ? `<ul class="names">${t.top.map(([nm, n]) => `<li>${esc(nm)} <span class="k">· ${n} of ${t.t} guides</span></li>`).join("")}</ul>` : "";
+      const verdict = t.seats > 1 && t.t
+        ? `<div class="verdict"><span class="vp cand">Most endorsed</span></div>${names}`
+        : `<div class="verdict"><span class="vp ${h.cls}">${esc(h.label)}</span><span class="vc">${esc(h.detail)}</span></div>`;
+      const det = groups(c).map(([lbl, rs]) => {
+        const color = c.kind === "m" ? (lbl === "Yes" ? "var(--yes)" : "var(--no)") : "var(--muted)";
+        return `<div class="grp"><h3><span class="dot2" style="background:${color}"></span>${esc(lbl)} <span class="gm">· ${rs.length}</span></h3><ul class="gl">${rs.map((x) => {
+          const q = quoteOf(c, x.g.id);
+          const ranked = (c.ranked || []).includes(x.g.id) ? `<div class="gm">Ranked: ${x.pick.map((p, i) => `${i + 1}. ${esc(p)}`).join(", ")}</div>` : "";
+          return `<li><div class="gn">${esc(x.g.name)}</div>${ranked}${q ? `<blockquote>“${esc(q.text)}” <a href="${esc(q.src)}">Source</a></blockquote>` : `<div class="gm">${x.g.why ? "No quote for this pick" : "Publishes a list only, no reasons"}</div>`}</li>`;
+        }).join("")}</ul></div>`;
+      }).join("");
+      html += `<div class="card ${open ? "open" : ""}"><button class="hit" data-act="toggle" data-v="${c.id}" aria-expanded="${open}">
+        <span><div class="ct">${esc(c.title)}</div>${c.desc ? `<div class="cd">${esc(c.desc)}</div>` : ""}${verdict}<div class="hint">Tap to see each guide${c.quotes ? " and their reasons" : ""}</div></span>
+        <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="det">${det || `<p class="foot">No guide you're counting took a position.</p>`}<p class="foot">${PENDING} guides haven't published yet</p></div></div>`;
+    }
+  }
+  return html + "</div>";
+}
+
+/* ---------- B: Scoreboard ---------- */
+const COLORS = ["var(--c1)", "var(--c2)", "var(--c3)", "var(--c4)"];
+function renderB() {
+  let html = `<div class="B"><header><div class="t">Bay Ballot</div><div class="s">SF · Nov 3, 2026</div></header>
+    <div class="filters"><div><b>${active().length} guides counted</b><br><span>${PENDING} haven't published yet</span></div><button data-act="sheet">Filters</button></div>`;
+  for (const s of sections()) {
+    html += `<h2>${esc(s)}</h2>`;
+    for (const c of CONTESTS.filter((x) => x.section === s)) {
+      const t = tally(c), h = head(t), r = rows(c), open = state.open.has(c.id);
+      let segs = "";
+      if (c.kind === "m") segs = r.map((x) => `<div class="seg" style="background:${x.pick === "Y" ? "var(--yes)" : "var(--no)"}"></div>`).join("");
+      else if (t.t) segs = t.list.map(([nm, n], i) => `<div class="seg" style="flex:${n};background:${COLORS[i % 4]}"></div>`).join("");
+      const dots = r.map((x) => {
+        const col = c.kind === "m" ? (x.pick === "Y" ? "var(--yes)" : "var(--no)") : COLORS[Math.max(0, (t.list || []).findIndex((e) => e[0] === x.pick[0])) % 4];
+        return `<span class="dot" title="${esc(x.g.name)}" style="background:${col}">${x.g.short}</span>`;
+      }).join("");
+      const legend = c.kind === "c" && t.t ? `<div class="cd" style="margin-top:6px">${t.list.map(([nm, n], i) => `<span style="color:${COLORS[i % 4]}">●</span> ${esc(nm)} ${n}`).join(" · ")}</div>` : "";
+      const det = r.map((x) => {
+        const q = quoteOf(c, x.g.id);
+        const pk = c.kind === "m" ? (x.pick === "Y" ? "Yes" : "No") : x.pick.join(", ") + ((c.ranked || []).includes(x.g.id) ? " (ranked)" : "");
+        return `<div class="gr"><span class="dot" style="background:var(--muted)">${x.g.short}</span><div><div class="who">${esc(x.g.name)}</div><div class="pk">${esc(pk)}</div>${q ? `<blockquote>“${esc(q.text)}” <a href="${esc(q.src)}">source</a></blockquote>` : (x.g.why ? "" : `<div class="pk">List only, no reasons published</div>`)}</div></div>`;
+      }).join("");
+      const big = !t.t ? "—" : c.kind === "m" ? (t.v === "split" ? "Split" : `${t.v === "Y" ? "Yes" : "No"} ${t.pct}%`) : (t.seats > 1 ? `Top ${t.seats}` : t.split ? "Split" : `${t.pct}%`);
+      const sub = !t.t ? "no picks" : c.kind === "m" ? `${t.y} yes · ${t.n} no` : (t.seats > 1 ? `${t.t} guides` : t.split ? h.detail : `${esc(t.leader)}${t.ranked ? "*" : ""}`);
+      html += `<div class="card ${open ? "open" : ""}" data-act="toggle" data-v="${c.id}">
+        <div class="top"><div><div class="ct">${esc(c.title)}</div>${c.desc ? `<div class="cd">${esc(c.desc)}</div>` : ""}</div>
+        <div class="big" style="color:${c.kind === "m" && t.t ? (t.v === "Y" ? "var(--yes)" : t.v === "N" ? "var(--no)" : "var(--split)") : "var(--fg)"}">${big}<small>${sub}</small></div></div>
+        <div class="stack">${segs || `<div class="seg" style="background:var(--line)"></div>`}</div>${legend}<div class="dots">${dots}</div>
+        <div class="det">${det || "No guide in your selection took a position."}</div></div>`;
+    }
+  }
+  const opts = [`<button class="${state.whyOnly ? "" : "off"}" data-act="why">Explains picks only: ${state.whyOnly ? "on" : "off"}</button>`,
+    ...["Newspaper", "Party", "Advocacy", "Civic"].map((t) => `<button class="${state.offTypes.has(t) ? "off" : ""}" data-act="type" data-v="${t}">${PLURAL[t]}</button>`),
+    ...GUIDES.map((g) => `<button class="${state.off.has(g.id) ? "off" : ""}" data-act="guide" data-v="${g.id}">${g.short} · ${esc(g.name)}</button>`)].join("");
+  html += `<div class="sheet ${state.sheet ? "show" : ""}"><b>Filters</b> <button data-act="sheet" style="float:right;border:0;background:none;color:var(--accent);cursor:pointer">Done</button><div class="opts">${opts}</div></div>`;
+  return html + "</div>";
+}
+
+/* ---------- C: Editorial ---------- */
+function lede(c, t) {
+  if (!t.t) return `No guide in your selection has weighed in yet.`;
+  if (c.kind === "m") {
+    if (t.v === "split") return `Guides are <span class="sp">split</span>, ${t.y} to ${t.n}.`;
+    const yes = t.v === "Y";
+    const all = (yes ? t.y : t.n) === t.t;
+    return `${all ? "Every guide" : `${yes ? t.y : t.n} of ${t.t} guides`} ${all ? "says" : "say"} <span class="${yes ? "y" : "n"}">${yes ? "Yes" : "No"}</span>.`;
+  }
+  if (t.seats > 1) return `Most-endorsed for the ${t.seats} seats: ${t.top.map(([nm, n]) => `<b>${esc(nm)}</b> (${n})`).join(", ")}.`;
+  if (t.split) return `Guides are <span class="sp">split</span> between ${esc(t.list.filter((x) => x[1] === t.list[0][1]).map((x) => x[0]).join(" and "))}.`;
+  return `${t.count} of ${t.t} ${t.t === 1 ? "guide backs" : "guides back"} <b>${esc(t.leader)}</b>${t.ranked ? "<sup>*</sup>" : ""}.`;
+}
+function renderC() {
+  const drawer = `<div class="drawer ${state.drawer ? "show" : ""}">
+    <label><input type="checkbox" data-act="why" ${state.whyOnly ? "checked" : ""}> Only guides that explain their picks</label>
+    ${["Newspaper", "Party", "Advocacy", "Civic"].map((t) => `<label><input type="checkbox" data-act="type" data-v="${t}" ${state.offTypes.has(t) ? "" : "checked"}> ${PLURAL[t]}</label>`).join("")}
+    <hr style="border:0;border-top:1px solid var(--line)">
+    ${GUIDES.map((g) => `<label><input type="checkbox" data-act="guide" data-v="${g.id}" ${state.off.has(g.id) ? "" : "checked"}> ${esc(g.name)}</label>`).join("")}</div>`;
+  let html = `<div class="C"><header><div class="kick">San Francisco · November 3, 2026</div><div class="t">What the voter guides say</div><div class="s">${countedLine()}</div></header>
+    <div class="ctl">Counting ${active().length} guides · <button data-act="drawer">${state.drawer ? "Close" : "Choose guides"}</button></div>${drawer}`;
+  for (const s of sections()) {
+    html += `<h2>${esc(s)}</h2>`;
+    for (const c of CONTESTS.filter((x) => x.section === s)) {
+      const t = tally(c), open = state.open.has(c.id);
+      const r = rows(c);
+      const featured = r.map((x) => quoteOf(c, x.g.id) && { q: quoteOf(c, x.g.id), g: x.g }).find(Boolean);
+      const det = groups(c).map(([lbl, rs]) => `<h4>${esc(lbl)}</h4>${rs.map((x) => {
+        const q = quoteOf(c, x.g.id);
+        return `<p><b>${esc(x.g.name)}</b>${q ? ` — “${esc(q.text)}” <a href="${esc(q.src)}">source</a>` : (x.g.why ? "" : " — list only")}</p>`;
+      }).join("")}`).join("");
+      html += `<article class="${open ? "open" : ""}" data-act="toggle" data-v="${c.id}">
+        <div class="ct">${esc(c.title)}${c.desc ? ` · ${esc(c.desc)}` : ""}</div>
+        <div class="lede">${lede(c, t)}</div>
+        ${featured ? `<p class="pull">“${esc(featured.q.text)}”<cite>— ${esc(featured.g.name)}</cite></p>` : ""}
+        <div class="det">${det}</div>
+        <div class="more">${open ? "Show less" : "See every guide"}</div></article>`;
+    }
+  }
+  return html + "</div>";
+}
+
+const DESC = {
+  A2: "<b>A2 · Ballot, revised.</b> A with your notes: bigger type and more space, each contest in its own card with a chevron that flips when open, and a “Tap to see each guide” hint. Filters are one button that opens wrapped pills you tap on and off. Expanded cards stack Yes and No groups with each guide's quote underneath.",
+  A: "<b>A · Ballot.</b> Looks like the paper ballot: a dense list, one line per contest, verdict pill on the right. Filters are a scrollable chip bar pinned to the top. Expanded rows split guides into Yes / No columns, quotes below. Fastest to scan; least decorative.",
+  B: "<b>B · Scoreboard.</b> Each contest is a card with a big number and a bar split by guide, plus a dot per guide (initials) colored by its pick. Filters live in a bottom sheet behind one button. Most visual; you see the split before reading anything.",
+  C: "<b>C · Editorial.</b> Reads like a newspaper explainer: each contest is a plain sentence (“5 of 6 guides say No”) with one featured quote shown before you tap. Filters hide behind “Choose guides”. Most readable for people who don't know the guides; longest page.",
+};
+function render() {
+  document.querySelectorAll("#switch button[data-d]").forEach((b) => b.classList.toggle("on", b.dataset.d === direction));
+  const ds = direction === "all" ? ["A2", "B", "C"] : [direction];
+  document.getElementById("desc").innerHTML = ds.map((d) => `<p>${DESC[d]}</p>`).join("");
+  const r = { A2: renderA2, A: renderA, B: renderB, C: renderC };
+  document.getElementById("stage").innerHTML = ds.map((d) => `<div><div class="phone"><div class="scroll">${r[d]()}</div></div><p class="label">${d}</p></div>`).join("");
+}
+document.getElementById("switch").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-d]");
+  if (b) { direction = b.dataset.d; render(); }
+});
+document.getElementById("theme").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  root.dataset.theme = dark ? "light" : "dark";
+});
+document.getElementById("stage").addEventListener("click", (e) => {
+  if (e.target.closest("a")) return;
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const { act, v } = el.dataset;
+  if (act === "toggle") state.open.has(v) ? state.open.delete(v) : state.open.add(v);
+  if (act === "guide") state.off.has(v) ? state.off.delete(v) : state.off.add(v);
+  if (act === "type") state.offTypes.has(v) ? state.offTypes.delete(v) : state.offTypes.add(v);
+  if (act === "why") state.whyOnly = !state.whyOnly;
+  if (act === "sheet") state.sheet = !state.sheet;
+  if (act === "drawer") state.drawer = !state.drawer;
+  if (act === "filters") state.filters = !state.filters;
+  if (act === "reset") { state.off.clear(); state.offTypes.clear(); state.whyOnly = false; }
+  const scrollers = [...document.querySelectorAll(".scroll")].map((s) => s.scrollTop);
+  render();
+  document.querySelectorAll(".scroll").forEach((s, i) => (s.scrollTop = scrollers[i] || 0));
+});
+render();
+</script>
+</body>
+</html>
