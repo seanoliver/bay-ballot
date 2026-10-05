@@ -233,14 +233,15 @@ describe("extract", () => {
   const usage = { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0 };
   const fakeClient = (response: { text?: string; [k: string]: unknown }) => {
     const { text = JSON.stringify(output), ...rest } = response;
-    const create = vi.fn().mockResolvedValue({
+    const finalMessage = vi.fn().mockResolvedValue({
       stop_reason: "end_turn",
       stop_details: null,
       usage,
       content: [{ type: "text", text }],
       ...rest,
     });
-    return { client: { messages: { create } } as unknown as ExtractClient, create };
+    const stream = vi.fn().mockReturnValue({ finalMessage });
+    return { client: { messages: { stream } } as unknown as ExtractClient, stream, finalMessage };
   };
   const sources = [
     { url: "https://guide.org/slate.pdf", fetched: { kind: "pdf" as const, base64: "JVBERi0=", text: "" } },
@@ -248,13 +249,15 @@ describe("extract", () => {
   ];
 
   it("sends the cached ballot prompt, PDF before its marker, and the output format", async () => {
-    const { client, create } = fakeClient({});
+    const { client, stream, finalMessage } = fakeClient({});
     const r = await extract(client, ballot, guide, sources);
     expect(r).toEqual({ output, usage });
+    expect(stream).toHaveBeenCalledTimes(1);
+    expect(finalMessage).toHaveBeenCalledTimes(1);
 
-    const req = create.mock.calls[0][0];
+    const req = stream.mock.calls[0][0];
     expect(req.model).toBe("claude-sonnet-5-5");
-    expect(req.max_tokens).toBe(16000);
+    expect(req.max_tokens).toBe(64000);
     expect(req.system[0]).toEqual({ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } });
     expect(req.output_config.format.type).toBe("json_schema");
     expect(req.output_config.format.schema).toBeDefined();
@@ -275,9 +278,9 @@ describe("extract", () => {
   });
 
   it("sends a JSON schema that enforces the Y/N vote and closed objects", async () => {
-    const { client, create } = fakeClient({});
+    const { client, stream } = fakeClient({});
     await extract(client, ballot, guide, sources);
-    const schema = create.mock.calls[0][0].output_config.format.schema;
+    const schema = stream.mock.calls[0][0].output_config.format.schema;
     // Follow $refs so the assertion holds whether or not the schema uses $defs.
     const deref = (node: Record<string, unknown>): Record<string, unknown> => {
       const ref = node.$ref as string | undefined;

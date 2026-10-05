@@ -42,9 +42,10 @@ function outputFormat(): Anthropic.Messages.JSONOutputFormat {
 }
 
 export type Source = { url: string; fetched: Fetched };
-export type ExtractClient = { messages: Pick<Anthropic["messages"], "create"> };
+export type ExtractClient = { messages: Pick<Anthropic["messages"], "stream"> };
 
 export const MODEL = "claude-sonnet-5-5";
+const MAX_TOKENS = 64000;
 const MAX_QUOTES = 3;
 const NOTE_QUOTE_CHARS = 80;
 
@@ -204,8 +205,9 @@ function parseOutput(text: string): ExtractOutput {
 
 /**
  * Ask Claude for one guide's endorsements across its already-fetched pages.
- * Uses `create` rather than `parse` so stop_reason is checked before any parsing:
- * `parse` throws on truncated or non-JSON text, which would hide a refusal or max_tokens.
+ * Streams so a long, multi-page guide can use a large max_tokens without an HTTP timeout.
+ * The output format has no `parse` hook, so the SDK leaves the text alone and stop_reason
+ * is checked before any parsing (a truncated or refused reply is never mistaken for bad JSON).
  */
 export async function extract(
   client: ExtractClient,
@@ -213,13 +215,15 @@ export async function extract(
   guide: Guide,
   sources: Source[],
 ): Promise<{ output: ExtractOutput; usage: Anthropic.Messages.Usage }> {
-  const res = await client.messages.create({
-    model: MODEL,
-    max_tokens: 16000,
-    system: [{ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } }],
-    messages: [{ role: "user", content: userContent(guide, sources) }],
-    output_config: { format: outputFormat() },
-  });
+  const res = await client.messages
+    .stream({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: [{ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: userContent(guide, sources) }],
+      output_config: { format: outputFormat() },
+    })
+    .finalMessage();
   if (res.stop_reason === "refusal") throw new Error(`refused (category: ${res.stop_details?.category ?? "none"})`);
   if (res.stop_reason === "max_tokens") throw new Error("model output hit max_tokens before finishing");
   const text = res.content.flatMap((b) => (b.type === "text" ? [b.text] : [])).join("");
