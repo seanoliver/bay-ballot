@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import Anthropic from "@anthropic-ai/sdk";
+import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
 import { EndorsementFile } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
 import { diffPicks } from "../src/pipeline/diff";
 import { extract, pagesFor, toEntries, type Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
-import { resolveApiKey } from "../src/pipeline/key";
+import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { nextFile, shrinkWarning, toYaml } from "../src/pipeline/write";
 
@@ -88,7 +88,7 @@ async function runExtract(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  const client = new Anthropic({ apiKey: resolveApiKey(".env.local") });
+  const client = makeClient(resolveApiKey(".env.local"));
   for (const id of ids) {
     try {
       await extractOne(client, data, id);
