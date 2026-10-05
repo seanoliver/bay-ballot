@@ -138,4 +138,26 @@ describe("matchName", () => {
     it("aliases for names not on the contest are ignored", () =>
       expect(matchName("Philip Kim", sup8, { "Phil Kim": ["Philip Kim"] })).toBeNull());
   });
+  describe("titles and hyphens", () => {
+    const f = (name: string) => ({ name, fuzzy: true });
+    const sos = ["Shirley N. Weber", "Rob Bernosky"];
+    const sup10 = ["Dionjay (DJ) Brookter", "J.R. Eppler", "Theo Ellington"];
+    it("drops a leading title", () => {
+      expect(matchName("Dr. Shirley Weber", sos)).toEqual(f("Shirley N. Weber"));
+      expect(matchName("Supervisor Connie Chan", ["Connie Chan", "Scott Wiener"])).toEqual(f("Connie Chan"));
+    });
+    it("keeps a title-like word when it is part of a two-token name", () => {
+      expect(matchName("Justice Smith", ["Justice Smith"])).toEqual({ name: "Justice Smith", fuzzy: false });
+      expect(matchName("Mayor Smith", ["John Smith"])).toBeNull();
+    });
+    it("joins a hyphen inside a first name", () => {
+      expect(matchName("Dion-Jay (DJ) Brookter", sup10)).toEqual(f("Dionjay (DJ) Brookter"));
+      expect(matchName("Dion-Jay Brookter", sup10)).toEqual(f("Dionjay (DJ) Brookter"));
+    });
+    it("still keeps hyphenated surnames apart from spaced ones", () => {
+      expect(matchName("Ann Smith Jones", ["Ann Smith-Jones"])).toBeNull();
+      expect(matchName("Ann Smith-Jones", ["Ann Smith Jones"])).toBeNull();
+      expect(matchName("Ann Smith–Jones", ["Ann Smith-Jones"])).toEqual(f("Ann Smith-Jones"));
+    });
+  });
 });
