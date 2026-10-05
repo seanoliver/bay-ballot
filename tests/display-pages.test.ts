@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cardDescription, contestHeadline, electionSubtitle, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, electionSubtitle, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Ballot, Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -97,20 +97,6 @@ describe("isPublished", () => {
     expect(isPublished(file())).toBe(true);
     expect(isPublished(file({ status: "pending" }))).toBe(false);
     expect(isPublished(undefined)).toBe(false);
-  });
-});
-
-describe("rowPick", () => {
-  const race = { ...c("sup", "Local", "candidate"), rankedChoice: true } as Contest;
-  const board = { ...c("boe", "Local", "candidate"), seats: 3 } as Contest;
-  it("shows only the counted #1 name for a ranked single-seat pick, marked ranked", () => {
-    expect(rowPick(race, e(["A", "B"], true))).toEqual({ label: "A", ranked: true });
-  });
-  it("shows all names for unranked picks", () => {
-    expect(rowPick(board, e(["A", "B"]))).toEqual({ label: "A, B", ranked: false });
-  });
-  it("measures read Yes/No", () => {
-    expect(rowPick(c("p", "S"), e("N"))).toEqual({ label: "No", ranked: false });
   });
 });
 

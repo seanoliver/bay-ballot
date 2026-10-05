@@ -113,12 +113,6 @@ export function pickLabel(entry: Entry): string {
   return entry.ranked ? rankedLabel(entry.pick) : entry.pick.join(", ");
 }
 
-// A guide's pick as it counts toward the tally: a ranked single-seat pick shows only its #1, marked ranked.
-export function rowPick(contest: Contest, entry: Entry): { label: string; ranked: boolean } {
-  if (!Array.isArray(entry.pick)) return { label: pickLabel(entry), ranked: false };
-  return { label: countedNames(contest, entry).join(", "), ranked: entry.ranked };
-}
-
 // Quotes to show for a row; none when the guide doesn't publish reasoning.
 export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
@@ -126,16 +120,6 @@ export function reasons(row: Row): Quote[] {
 
 export function officialLink(contest: Contest): string | null {
   return contest.kind === "measure" && contest.link ? contest.link : null;
-}
-
-// Why a row shows no quote; null when it has one.
-export function rowNote(row: Row): string | null {
-  if (!row.file.hasReasoning) return "Publishes a list only, no reasons";
-  return row.entry.quotes.length > 0 ? null : "No quote for this pick";
-}
-
-export function rankedLine(entry: Entry): string | null {
-  return entry.ranked && Array.isArray(entry.pick) ? `Ranked: ${rankedLabel(entry.pick)}` : null;
 }
 
 // Prefer the archived snapshot so links survive the guide page changing or going away.
@@ -171,6 +155,3 @@ export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contes
   return `${city ?? ballot.title} · ${formatDate(ballot.date)}`;
 }
 
-export function topPickCount(p: TopPick): string {
-  return `${p.count} of ${p.total} ${p.total === 1 ? "guide" : "guides"}`;
-}

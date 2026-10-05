@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
+import { groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -85,31 +85,6 @@ describe("topPicks", () => {
   });
 });
 
-describe("rowNote", () => {
-  const withFile = (hasReasoning: boolean, entry: Entry): Row =>
-    ({ guide: { id: "g", name: "G" } as Guide, entry, file: { hasReasoning } as Row["file"] });
-  const q = { text: "Because.", source: "https://g.org/a" };
-  it("is null when the row has a quote to show", () => {
-    expect(rowNote(withFile(true, { ...e("Y"), quotes: [q] }))).toBeNull();
-  });
-  it("explains a list-only guide", () => {
-    expect(rowNote(withFile(false, { ...e("Y"), quotes: [q] }))).toBe("Publishes a list only, no reasons");
-  });
-  it("explains a missing quote from a guide that usually gives reasons", () => {
-    expect(rowNote(withFile(true, e("Y")))).toBe("No quote for this pick");
-  });
-});
-
-describe("rankedLine", () => {
-  it("numbers a ranked pick", () => {
-    expect(rankedLine(e(["A", "B"], true))).toBe("Ranked: 1. A, 2. B");
-  });
-  it("is null for unranked picks and measures", () => {
-    expect(rankedLine(e(["A", "B"]))).toBeNull();
-    expect(rankedLine(e("Y"))).toBeNull();
-  });
-});
-
 describe("groupByPick", () => {
   it("measure: Yes first, input order kept, empty omitted", () => {
     const rows = [row("G1", e("N")), row("G2", e("Y")), row("G3", e("Y"))];
@@ -178,13 +153,6 @@ describe("pendingNote", () => {
     expect(pendingNote(g(0))).toBeNull();
     expect(pendingNote(g(1))).toBe("1 guide hasn't published yet.");
     expect(pendingNote(g(3))).toBe("3 guides haven't published yet.");
-  });
-});
-
-describe("topPickCount", () => {
-  it("reads n of m guides, singular for one", () => {
-    expect(topPickCount({ name: "A", count: 2, total: 3 })).toBe("2 of 3 guides");
-    expect(topPickCount({ name: "A", count: 1, total: 1 })).toBe("1 of 1 guide");
   });
 });
 

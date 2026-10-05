@@ -21,11 +21,13 @@ type Props = {
   variant?: "full" | "inline";
   // Candidate colors from unfiltered data (candidateSlots), so filters never repaint a candidate.
   slots?: Slots;
+  // false where a headline above already states the guide count (the contest detail).
+  count?: boolean;
   className?: string;
 };
 
 // A contest's result at a glance. The math lives in lib/bar; this only draws it.
-export function VerdictBar({ contest, rows, variant = "full", slots, className }: Props) {
+export function VerdictBar({ contest, rows, variant = "full", slots, count = true, className }: Props) {
   const t = tally(contest, rows.map((r) => r.entry));
   const segments = barSegments(t, contest, slots);
   const summary = barSummary(t, contest);
@@ -77,7 +79,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, className }
             </li>
           ))}
         </ul>
-        <p className="mt-1 text-xs text-muted-foreground">Top {contest.seats} · {summary.caption}</p>
+        {count ? <p className="mt-1 text-xs text-muted-foreground">Top {contest.seats} · {summary.caption}</p> : null}
       </div>
     );
   }
@@ -99,7 +101,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, className }
                     {s.label}
                   </span>
                 ))}
-                <span className="text-muted-foreground">{summary.caption}</span>
+                {count ? <span className="text-muted-foreground">{summary.caption}</span> : null}
               </>
             )}
           </>

@@ -1,120 +1,217 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import {
-  cardDescription,
-  groupByPick,
-  officialLink,
-  rankedLine,
-  reasons,
-  rowNote,
-  sourceLink,
-  type PickGroup,
-} from "@/lib/display";
+import type { BarTone, Slots } from "@/lib/bar";
+import { reasonSections, resultHeadline, whoRows, type ReasonSection, type ResultHeadline, type WhoRow } from "@/lib/detail";
+import { cardDescription, officialLink } from "@/lib/display";
 import type { Row } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
+import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
-import { slotTone, type Slots } from "@/lib/bar";
-import { BAR_FILL, DOT_CLASS } from "./tone";
+import { BAR_FILL } from "./tone";
 import { VerdictBar } from "./VerdictBar";
 
 // Inline links keep their line height but get a 40px-tall tap area.
 const TAP = "inline-block py-2.5 -my-2.5";
 
-// One contest in full: result bar, who picked what with their quotes and sources, official text.
-// `titleId` labels the surrounding region; `heading={false}` when a sheet title already names it.
+const LEAD_TEXT: Record<ResultHeadline["tone"], string> = {
+  yes: "text-yes",
+  no: "text-no",
+  split: "text-split",
+  candidate: "text-foreground",
+  none: "text-muted-foreground",
+};
+
+// Verdict labels are colored text (AA); candidate hues aren't all 3:1 on white, so candidates get
+// a colored dot or border next to foreground text instead.
+const LABEL_TEXT: Partial<Record<BarTone, string>> = { yes: "text-yes", no: "text-no" };
+const BORDER: Record<BarTone, string> = {
+  yes: "border-yes",
+  no: "border-no",
+  c1: "border-bar-1",
+  c2: "border-bar-2",
+  c3: "border-bar-3",
+  c4: "border-bar-4",
+  other: "border-muted-foreground/40",
+  empty: "border-border",
+};
+
+// One contest in full, shared by the desktop pane, the phone sheet and the contest page:
+// result headline and bar, WHO endorsed each pick, then WHY (only when there are quotes).
+// `heading`: "h1" on the contest page, "h2" in the pane, false when a sheet title already names it.
 export function ContestDetail({
   election,
   contest,
   rows,
   pending,
-  heading = true,
+  heading = "h2",
   titleId,
   slots,
+  pageLink = true,
 }: {
   election: string;
   contest: Contest;
   rows: Row[];
   pending: string | null;
-  heading?: boolean;
+  heading?: "h1" | "h2" | false;
   titleId?: string;
   slots?: Slots;
+  pageLink?: boolean;
 }) {
   const description = cardDescription(contest);
   const official = officialLink(contest);
+  const result = resultHeadline(contest, rows);
+  const who = whoRows(contest, rows, slots);
+  const why = reasonSections(contest, rows, slots);
+  const Title = heading || "h2";
   return (
-    <div>
-      {heading ? (
-        <>
-          <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
-          <h2 id={titleId} tabIndex={titleId ? -1 : undefined} className="mt-1 text-xl font-semibold outline-none">
-            {contest.title}
-          </h2>
-        </>
-      ) : null}
-      {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
-      <VerdictBar contest={contest} rows={rows} slots={slots} className="mt-3" />
-      <Groups contest={contest} rows={rows} slots={slots} />
-      {pending ? <p className="mt-3 text-sm text-muted-foreground">{pending}</p> : null}
-      <p className="mt-2 flex flex-wrap gap-x-4 text-sm">
-        {official ? (
-          <ExternalLink href={official} className={`${TAP} underline underline-offset-2`}>
-            Official text
-          </ExternalLink>
+    <div className="space-y-6">
+      <div>
+        {heading ? (
+          <>
+            <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
+            <Title
+              id={titleId}
+              tabIndex={titleId ? -1 : undefined}
+              className={cn("mt-1 leading-tight font-semibold outline-none", heading === "h1" ? "text-2xl font-bold" : "text-xl")}
+            >
+              {contest.title}
+            </Title>
+          </>
         ) : null}
-        <Link href={`/${election}/${contest.id}`} className={`${TAP} underline underline-offset-2`}>
-          Open contest page
-        </Link>
-      </p>
+        {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
+        <p className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+          <span className={cn("text-lg font-semibold", LEAD_TEXT[result.tone])}>{result.lead}</span>
+          {result.detail ? <span className="text-sm text-muted-foreground tabular-nums">{result.detail}</span> : null}
+        </p>
+        <VerdictBar contest={contest} rows={rows} slots={slots} count={false} className="mt-2" />
+      </div>
+
+      {who.length ? (
+        <section aria-label="Who endorses">
+          <ul className="space-y-2.5">
+            {who.map((w) => (
+              <WhoLine key={w.key} row={w} />
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
+      )}
+
+      {why.length ? (
+        <div className="space-y-6">
+          {why.map((s) => (
+            <Reasons key={s.key} section={s} />
+          ))}
+        </div>
+      ) : null}
+
+      <Footer
+        pending={pending}
+        official={official}
+        page={pageLink ? `/${election}/${contest.id}` : null}
+      />
     </div>
   );
 }
 
-function Groups({ contest, rows, slots }: { contest: Contest; rows: Row[]; slots?: Slots }) {
-  const groups = groupByPick(contest, rows);
-  if (groups.length === 0) {
-    return <p className="mt-4 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>;
-  }
-  return groups.map((g) => <Group key={g.key} group={g} dot={g.tone === "candidate" && slots ? BAR_FILL[slotTone(slots, g.key)] : DOT_CLASS[g.tone]} />);
+function Label({ tone, children }: { tone: BarTone; children: ReactNode }) {
+  const verdict = LABEL_TEXT[tone];
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase", verdict ?? "text-foreground")}>
+      {verdict ? null : <span aria-hidden="true" className={cn("size-2.5 shrink-0 rounded-full", BAR_FILL[tone])} />}
+      {children}
+    </span>
+  );
 }
 
-function Group({ group, dot }: { group: PickGroup; dot: string }) {
+function WhoLine({ row }: { row: WhoRow }) {
+  return (
+    <li className="text-sm leading-relaxed">
+      <Label tone={row.tone}>
+        {row.label} <span className="font-normal text-muted-foreground normal-case">· {row.count}</span>
+      </Label>{" "}
+      {/* Tags and the separator stay on the line with the end of the guide's name. */}
+      {row.guides.map((g, i) => (
+        <span key={g.id}>
+          <Link href={`/guides/${g.id}`} className={`${TAP} underline-offset-2 hover:underline`}>
+            {g.name}
+          </Link>
+          <span className="whitespace-nowrap text-xs text-muted-foreground">
+            {g.listOnly ? " (list only)" : null}
+            {g.rank !== null ? ` (ranked #${g.rank})` : null}
+            {i < row.guides.length - 1 ? <span className="text-sm"> ·</span> : null}
+          </span>{" "}
+        </span>
+      ))}
+    </li>
+  );
+}
+
+function Reasons({ section }: { section: ReasonSection }) {
+  const [all, setAll] = useState(false);
   return (
     <section>
-      <h4 className="mt-4 mb-1 flex items-center gap-2 text-sm font-semibold">
-        <span aria-hidden="true" className={`size-2.5 rounded-full ${dot}`} />
-        <span>
-          {group.label} <span className="font-normal text-muted-foreground">· {group.rows.length}</span>
-        </span>
-      </h4>
-      <ul className="divide-y divide-border">
-        {group.rows.map((r) => (
-          <GuideRow key={r.guide.id} row={r} />
-        ))}
+      <h3>
+        <Label tone={section.tone}>{section.title}</Label>
+      </h3>
+      <ul className="mt-3 space-y-4">
+        {section.items.map((item) =>
+          (all ? item.quotes : item.quotes.slice(0, 1)).map((q, i) => (
+            <li key={`${item.guideId}-${i}`} className={cn("border-l-[3px] pl-3", BORDER[section.tone])}>
+              <blockquote className="text-[15px] leading-relaxed">“{q.text}”</blockquote>
+              <p className="mt-1 text-xs text-muted-foreground">
+                <Link href={`/guides/${item.guideId}`} className={`${TAP} font-medium text-foreground/80 underline-offset-2 hover:underline`}>
+                  {item.guideName}
+                </Link>
+                {" · "}
+                <ExternalLink href={q.href} className={`${TAP} underline underline-offset-2`}>
+                  Source
+                </ExternalLink>
+              </p>
+            </li>
+          )),
+        )}
       </ul>
+      {section.hidden > 0 ? (
+        <button
+          type="button"
+          aria-expanded={all}
+          onClick={() => setAll(!all)}
+          className="mt-2 inline-flex min-h-10 items-center rounded-md text-sm font-medium underline underline-offset-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          {all ? "Show fewer" : `+${section.hidden} more`}
+        </button>
+      ) : null}
     </section>
   );
 }
 
-function GuideRow({ row }: { row: Row }) {
-  const quotes = reasons(row);
-  const note = rowNote(row);
-  const ranked = rankedLine(row.entry);
-  return (
-    <li className="py-2.5">
-      <Link href={`/guides/${row.guide.id}`} className={`${TAP} text-[15px] font-semibold underline-offset-2 hover:underline`}>
-        {row.guide.name}
+function Footer({ pending, official, page }: { pending: string | null; official: string | null; page: string | null }) {
+  const parts = [
+    pending ? <span key="p">{pending.replace(/\.$/, "")}</span> : null,
+    official ? (
+      <ExternalLink key="o" href={official} className={`${TAP} underline underline-offset-2`}>
+        Official text
+      </ExternalLink>
+    ) : null,
+    page ? (
+      <Link key="c" href={page} className={`${TAP} underline underline-offset-2`}>
+        Open contest page
       </Link>
-      {ranked ? <p className="text-sm text-muted-foreground">{ranked}</p> : null}
-      {quotes.map((q, i) => (
-        <blockquote key={`${i}-${q.text}`} className="mt-1.5 rounded-lg bg-muted px-3 py-2 text-sm leading-relaxed">
-          “{q.text}”{" "}
-          <ExternalLink href={sourceLink(row.file, q.source)} className={`${TAP} text-xs text-muted-foreground underline underline-offset-2`}>
-            Source
-          </ExternalLink>
-        </blockquote>
+    ) : null,
+  ].filter(Boolean);
+  if (!parts.length) return null;
+  return (
+    <p className="text-sm text-muted-foreground">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {i > 0 ? " · " : null}
+          {part}
+        </span>
       ))}
-      {note ? <p className="text-sm text-muted-foreground">{note}</p> : null}
-    </li>
+    </p>
   );
 }
