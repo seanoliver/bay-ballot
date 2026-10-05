@@ -4,6 +4,32 @@ status: published
 source: https://www.spur.org/voter-guide/2026-11
 fetchedAt: 2026-10-05
 hasReasoning: true
+extraSources:
+  - https://www.spur.org/voter-guide/2026-11/ba-prop-rtm-regional-transit-sales-tax
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-1-affordable-housing-bond
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-2-rainy-day-fund
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-3-high-earner-income-tax-extension
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-37-homeowner-loans
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-39-california-voter-id
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-4-campaign-financing
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-40-billionaire-tax
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-41-audits-special-taxes
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-42-personal-property-taxes
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-43-local-tax-threshold
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-45-environmental-review-ceqa
+  - https://www.spur.org/voter-guide/2026-11/ca-prop-5-recall-process-reform
+  - https://www.spur.org/voter-guide/2026-11/oak-measure-ee-governance-structure
+  - https://www.spur.org/voter-guide/2026-11/oak-measure-ff-transfer-tax-foreclosures
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-a-departments-and-commission
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-c-housing-trust-fund
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-d-ballot-measure-process
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-e-city-administrator-duties
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-h-muni-parcel-tax
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
+  - https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
 picks:
   prop-1: { pick: Y }
   prop-2: { pick: Y }
