@@ -109,15 +109,19 @@ describe("toEntries", () => {
     expect(r.notes).toContain("assessor: 'Joaquin Torres' -> 'Joaquín Torres'");
   });
 
-  it("notes and skips unknown candidates; skips the pick when none remain", () => {
+  it("drops the whole pick when any name is unknown, since a partial pick changes its meaning", () => {
     const r = run(
       pick({ contestId: "assessor", candidates: ["Nobody Here", "Jane Doe"] }),
       pick({ contestId: "supervisor-d8", candidates: ["Someone Else"] }),
     );
-    expect(r.picks.assessor.pick).toEqual(["Jane Doe"]);
-    expect(r.notes).toContain("assessor: unknown candidate 'Nobody Here'");
-    expect(r.notes).toContain("supervisor-d8: unknown candidate 'Someone Else'");
+    expect(r.picks.assessor).toBeUndefined();
     expect(r.picks["supervisor-d8"]).toBeUndefined();
+    expect(r.notes).toContain(
+      "assessor: PICK DROPPED — unknown candidate 'Nobody Here' (would change the pick's meaning)",
+    );
+    expect(r.notes).toContain(
+      "supervisor-d8: PICK DROPPED — unknown candidate 'Someone Else' (would change the pick's meaning)",
+    );
   });
 
   it("notes and skips unknown contests", () => {

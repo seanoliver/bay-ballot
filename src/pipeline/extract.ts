@@ -96,14 +96,17 @@ export function pagesFor(sources: Source[]): Page[] {
   );
 }
 
-function candidateNames(id: string, raw: string[], official: string[], notes: string[]): string[] {
+/** Official names for a pick, or null when any name is unknown: a partial pick would change its meaning. */
+function candidateNames(id: string, raw: string[], official: string[], notes: string[]): string[] | null {
+  const matches = raw.map((name) => ({ name, m: matchName(name, official) }));
+  const unknown = matches.find(({ m }) => !m);
+  if (unknown) {
+    notes.push(`${id}: PICK DROPPED — unknown candidate '${unknown.name}' (would change the pick's meaning)`);
+    return null;
+  }
   const names: string[] = [];
-  for (const name of raw) {
-    const m = matchName(name, official);
-    if (!m) {
-      notes.push(`${id}: unknown candidate '${name}'`);
-      continue;
-    }
+  for (const { name, m } of matches) {
+    if (!m) continue;
     if (m.fuzzy) notes.push(`${id}: '${name}' -> '${m.name}'`);
     if (!names.includes(m.name)) names.push(m.name);
   }
@@ -147,7 +150,7 @@ export function toEntries(
         continue;
       }
       const names = candidateNames(c.id, p.candidates, c.candidates, notes);
-      if (names.length === 0) continue;
+      if (!names) continue;
       pick = names;
     } else {
       if (p.vote === null) {

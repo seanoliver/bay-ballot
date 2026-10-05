@@ -70,7 +70,7 @@ async function extractOne(client: Anthropic, data: ElectionData, guideId: string
     `\n${guideId}  cache_read=${usage.cache_read_input_tokens ?? 0} cache_write=${usage.cache_creation_input_tokens ?? 0} in=${usage.input_tokens} out=${usage.output_tokens}`,
   );
   diffPicks(prev.picks, picks).forEach((l) => console.log(`  ${l}`));
-  notes.forEach((n) => console.log(`  ! ${n}`));
+  notes.forEach((n) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`));
 }
 
 async function runExtract(): Promise<void> {
