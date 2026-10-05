@@ -40,20 +40,37 @@ source: https://growsf.org/voter-guide/
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks:
-  prop-b: { pick: N, quotes: ["A public bank would cost the city hundreds of millions."] }
+  prop-b:
+    pick: N
+    quotes:
+      - text: A public bank would cost the city hundreds of millions.
+        source: https://growsf.org/voter-guide/prop-b/
   supervisor-d8: { pick: [Gary McCoy, Michael Nguyen], ranked: true }
 `));
     expect(e.picks["prop-b"].pick).toBe("N");
+    expect(e.picks["prop-b"].quotes).toEqual([
+      { text: "A public bank would cost the city hundreds of millions.", source: "https://growsf.org/voter-guide/prop-b/" },
+    ]);
     expect(e.picks["supervisor-d8"].ranked).toBe(true);
   });
 
   it("rejects more than 3 quotes", () => {
     const r = EndorsementFile.safeParse({
       guide: "x", election: "2026-11", status: "published", fetchedAt: "2026-10-05",
-      hasReasoning: true, picks: { a: { pick: "Y", quotes: ["1", "2", "3", "4"] } },
+      hasReasoning: true,
+      picks: { a: { pick: "Y", quotes: ["1", "2", "3", "4"].map((text) => ({ text, source: "https://x.org/" })) } },
     });
     expect(r.success).toBe(false);
     if (!r.success) expect(r.error.issues[0].path).toEqual(["picks", "a", "quotes"]);
+  });
+
+  it("requires each quote to carry its source page", () => {
+    const base = { guide: "x", election: "2026-11", status: "published", fetchedAt: "2026-10-05", hasReasoning: true };
+    const withQuote = (q: unknown) => EndorsementFile.safeParse({ ...base, picks: { a: { pick: "Y", quotes: [q] } } });
+    expect(withQuote("A bare string quote is no longer allowed here.").success).toBe(false);
+    expect(withQuote({ text: "A quote without a source page." }).success).toBe(false);
+    expect(withQuote({ text: "A quote with a non-http source.", source: "ftp://x.org/a" }).success).toBe(false);
+    expect(withQuote({ text: "A quote with its page.", source: "https://x.org/a" }).success).toBe(true);
   });
 });
 
@@ -105,7 +122,7 @@ describe("tightened schemas", () => {
     expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: [] } } }).success).toBe(false);
     expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: "Maybe" } } }).success).toBe(false);
     expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: [" "] } } }).success).toBe(false);
-    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: "Y", quotes: [""] } } }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: "Y", quotes: [{ text: " ", source: "https://x.org/" }] } } }).success).toBe(false);
   });
   it("rejects unknown guide type", () => {
     expect(Guide.safeParse({ ...guide, type: "blog" }).success).toBe(false);

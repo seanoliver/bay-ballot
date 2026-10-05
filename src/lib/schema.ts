@@ -48,10 +48,14 @@ export const Ballot = z.object({
 });
 export type Ballot = z.infer<typeof Ballot>;
 
+// A quote is the guide's own wording, copied from the page it appeared on.
+export const Quote = z.object({ text: NonEmpty, source: HttpUrl });
+export type Quote = z.infer<typeof Quote>;
+
 export const Entry = z.object({
   pick: z.union([z.enum(["Y", "N"]), z.array(NonEmpty).min(1)]),
   ranked: z.boolean().default(false),
-  quotes: z.array(NonEmpty).max(3).default([]),
+  quotes: z.array(Quote).max(3).default([]),
 });
 export type Entry = z.infer<typeof Entry>;
 
