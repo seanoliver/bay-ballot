@@ -97,14 +97,24 @@ function sentencesBefore(before: string): { current: string; previous: string } 
   return { current: w.slice(last + 1), previous: w.slice(prevEnd === undefined ? 0 : prevEnd + 1, last) };
 }
 
+const SPEECH_VERB = /\b(says|said|argues|argued|claims|claimed|warns|warned|writes|wrote)\b/i;
+
+const escapeRegExp = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Word-bounded for any script and for names ending in punctuation: "SPUR" is not in "spurred".
+const mentions = (text: string, name: string) =>
+  new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(name)}(?![\\p{L}\\p{N}])`, "iu").test(text);
+
 const speaksAsGuide = (span: string, ownNames: string[]) =>
-  FIRST_PERSON_PLURAL.test(span) || ownNames.some((n) => n.trim() && span.toLowerCase().includes(n.trim().toLowerCase()));
+  FIRST_PERSON_PLURAL.test(span) || ownNames.some((n) => n.trim() !== "" && mentions(span, n.trim()));
+
+/** A sentence that reports someone else's words: an attribution phrase or a speech verb. */
+const isReportedSpeech = (sentence: string) => hasPhrase(sentence) || SPEECH_VERB.test(sentence);
 
 export type AttributionContext = { span?: string; ownNames?: string[] };
 
 /**
  * Span sits inside quotation marks, or is attributed to someone else: an attribution phrase
- * earlier in its own sentence, a previous sentence with an attribution phrase (unless the span
+ * earlier in its own sentence, a previous sentence with an attribution phrase or speech verb (unless the span
  * speaks as the guide: "we/our/us" or the guide's name), a phrase in the previous segment, a
  * previous segment ending in a colon that doesn't open in the first person ("The Chamber
  * writes:", "The Mayor told us:", but not "From our writeup in June:"), or a trailing "..., the Chamber says".
@@ -122,7 +132,7 @@ export function isAttributedSpeech(
   const colonIntro = previous.trimEnd().endsWith(":") && !FIRST_PERSON_OPENING.test(previous);
   return (
     hasPhrase(current) ||
-    (hasPhrase(prevSentence) && !speaksAsGuide(span, ownNames)) ||
+    (isReportedSpeech(prevSentence) && !speaksAsGuide(span, ownNames)) ||
     hasPhrase(previous) ||
     colonIntro ||
     TRAILING_ATTRIBUTION.test(after.slice(0, 60))

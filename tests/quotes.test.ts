@@ -241,6 +241,25 @@ describe("colon intros and abbreviations", () => {
   });
 });
 
+describe("own names and speech verbs", () => {
+  const critic = "Critics say the bond is costly.";
+  it("matches own names on word boundaries", () => {
+    const q = "It spurred a smart investment in new housing.";
+    expect(reasonOf(q, [html(`${critic} ${q}`)])).toBe("attributed-speech");
+    expect(verifyQuotes([q], [html(`${critic} ${q}`)], { ownNames: ["SPUR"] }).kept).toHaveLength(0);
+    const own = "The SF Dems' view is that it is a smart investment.";
+    expect(verifyQuotes([own], [html(`${critic} ${own}`)], { ownNames: ["SF Dems"] }).kept).toHaveLength(1);
+    const spur = "Overall, SPUR supports this smart investment in housing.";
+    expect(verifyQuotes([spur], [html(`${critic} ${spur}`)], { ownNames: ["spur"] }).kept).toHaveLength(1);
+  });
+  it("treats a previous sentence with a speech verb as attribution", () => {
+    const q = "Rent control will destroy the housing supply in the city.";
+    expect(reasonOf(q, [html(`The No on B campaign says. ${q}`)])).toBe("attributed-speech");
+    const own = "We still support Prop C for these reasons.";
+    expect(verifyQuotes([own], [html(`We said this in June. ${own}`)]).kept).toHaveLength(1);
+  });
+});
+
 describe("CJK quotes", () => {
   const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
   const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");
