@@ -64,11 +64,21 @@ function compatible(input: string, candidate: string): boolean {
   );
 }
 
+/** Alternate spellings a guide may print, keyed by official ballot name. */
+export type Aliases = Record<string, string[]>;
+
+/**
+ * The official candidate `input` refers to. Anything but an exact match is fuzzy, so the
+ * caller notes it for review; that includes a hit on one of the contest's `aliases`.
+ */
 export function matchName(
   input: string,
   candidates: string[],
+  aliases: Aliases = {},
 ): { name: string; fuzzy: boolean } | null {
   if (candidates.includes(input)) return { name: input, fuzzy: false };
-  const hits = candidates.filter((c) => compatible(input, c));
+  const hits = candidates.filter(
+    (c) => compatible(input, c) || (aliases[c] ?? []).some((alt) => compatible(input, alt)),
+  );
   return hits.length === 1 ? { name: hits[0], fuzzy: true } : null;
 }

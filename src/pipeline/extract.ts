@@ -1,7 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
-import { matchName } from "@/lib/names";
+import { matchName, type Aliases } from "@/lib/names";
 import type { Fetched } from "./fetch";
 import { verifyQuotes, type Page } from "./quotes";
 
@@ -97,8 +97,8 @@ export function pagesFor(sources: Source[]): Page[] {
 }
 
 /** Official names for a pick, or null when any name is unknown: a partial pick would change its meaning. */
-function candidateNames(id: string, raw: string[], official: string[], notes: string[]): string[] | null {
-  const matches = raw.map((name) => ({ name, m: matchName(name, official) }));
+function candidateNames(id: string, raw: string[], official: string[], aliases: Aliases, notes: string[]): string[] | null {
+  const matches = raw.map((name) => ({ name, m: matchName(name, official, aliases) }));
   const unknown = matches.find(({ m }) => !m);
   if (unknown) {
     notes.push(`${id}: PICK DROPPED — unknown candidate '${unknown.name}' (would change the pick's meaning)`);
@@ -150,7 +150,7 @@ export function toEntries(
         notes.push(`${c.id}: pick lists no candidates`);
         continue;
       }
-      const names = candidateNames(c.id, p.candidates, c.candidates, notes);
+      const names = candidateNames(c.id, p.candidates, c.candidates, c.aliases ?? {}, notes);
       if (!names) continue;
       pick = names;
     } else {

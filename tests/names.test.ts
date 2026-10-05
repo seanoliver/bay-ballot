@@ -123,4 +123,19 @@ describe("matchName", () => {
     it("omitted middle names stay unique", () =>
       expect(matchName("Mike Lin", ["Mike Trouble Lin", "Mike Lee Lin"])).toBeNull());
   });
+  describe("aliases", () => {
+    const f = (name: string) => ({ name, fuzzy: true });
+    const sup8 = ["Gary McCoy", "Michael T. Nguyen", "Darshini Patel"];
+    const aliases = { "Michael T. Nguyen": ["Michael Trung Nguyen"] };
+    it("an alias resolves to the official name and is flagged", () =>
+      expect(matchName("Michael Trung Nguyen", sup8, aliases)).toEqual(f("Michael T. Nguyen")));
+    it("alias matching tolerates the usual punctuation and accents", () =>
+      expect(matchName("Michael Trung Nguyen.", sup8, aliases)).toEqual(f("Michael T. Nguyen")));
+    it("without aliases the variant stays unknown", () =>
+      expect(matchName("Michael Trung Nguyen", sup8)).toBeNull());
+    it("an exact official name is still exact", () =>
+      expect(matchName("Gary McCoy", sup8, aliases)).toEqual({ name: "Gary McCoy", fuzzy: false }));
+    it("aliases for names not on the contest are ignored", () =>
+      expect(matchName("Philip Kim", sup8, { "Phil Kim": ["Philip Kim"] })).toBeNull());
+  });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { Ballot, EndorsementFile, Guide } from "@/lib/schema";
+import { Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 describe("schemas", () => {
   it("parses a guide", () => {
@@ -196,3 +196,18 @@ describe("extraction bookkeeping fields", () => {
     expect(EndorsementFile.safeParse({ ...file, archived: [{ source: "https://growsf.org/", snapshot: "javascript:alert(1)" }] }).success).toBe(false);
   });
 });
+
+describe("contest aliases", () => {
+  const base = {
+    id: "supervisor-8", section: "Local", title: "D8", kind: "candidate",
+    candidates: ["Michael T. Nguyen"], jurisdiction: { level: "district", name: "Supervisor", district: "8" },
+  };
+  it("accepts aliases keyed by an official candidate", () => {
+    const c = Contest.parse({ ...base, aliases: { "Michael T. Nguyen": ["Michael Trung Nguyen"] } });
+    expect(c.aliases).toEqual({ "Michael T. Nguyen": ["Michael Trung Nguyen"] });
+  });
+  it("rejects an alias keyed by a name that is not a candidate", () => {
+    expect(() => Contest.parse({ ...base, aliases: { "Mike Nguyen": ["Michael Trung Nguyen"] } })).toThrow();
+  });
+});
+

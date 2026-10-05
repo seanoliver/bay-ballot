@@ -68,6 +68,7 @@ const contests: Contest[] = [
   contest({ id: "supervisor-d8", kind: "candidate", rankedChoice: true, candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"] }),
   contest({ id: "assessor-plain", kind: "candidate", candidates: ["Jane Doe", "John Roe"] }),
   contest({ id: "school-board", kind: "candidate", seats: 3, rankedChoice: true, candidates: ["A One", "B Two", "C Three"] }),
+  contest({ id: "public-defender", kind: "candidate", candidates: ["Mano Raju"], aliases: { "Mano Raju": ["Manohar Raju"] } }),
 ];
 
 const pages: Page[] = [
@@ -87,6 +88,12 @@ const pick = (p: Partial<ModelPick> & Pick<ModelPick, "contestId">): ModelPick =
 const run = (...picks: ModelPick[]) => toEntries({ hasReasoning: true, picks }, contests, pages);
 
 describe("toEntries", () => {
+  it("resolves a contest alias to the official name and notes it", () => {
+    const r = run(pick({ contestId: "public-defender", candidates: ["Manohar Raju"] }));
+    expect(r.picks["public-defender"]).toEqual({ pick: ["Mano Raju"], ranked: false, quotes: [] });
+    expect(r.notes).toEqual(["public-defender: 'Manohar Raju' -> 'Mano Raju'"]);
+  });
+
   it("maps a measure pick", () => {
     const r = run(pick({ contestId: "prop-b", vote: "N" }));
     expect(r.picks["prop-b"]).toEqual({ pick: "N", ranked: false, quotes: [] });

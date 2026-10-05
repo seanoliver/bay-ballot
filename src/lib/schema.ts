@@ -37,7 +37,11 @@ export const Contest = z.object({
   candidates: z.array(NonEmpty).default([]),
   seats: z.number().int().positive().default(1),
   rankedChoice: z.boolean().default(false), // SF uses RCV for single-seat city and supervisor races
+  aliases: z.record(NonEmpty, z.array(NonEmpty).min(1)).optional(), // official name -> spellings guides print
   jurisdiction: Jurisdiction,
+}).refine((c) => Object.keys(c.aliases ?? {}).every((name) => c.candidates.includes(name)), {
+  message: "every alias key must be one of the contest's candidates",
+  path: ["aliases"],
 });
 export type Contest = z.infer<typeof Contest>;
 
