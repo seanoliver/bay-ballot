@@ -260,6 +260,30 @@ describe("own names and speech verbs", () => {
   });
 });
 
+describe("own voice means a first-person opening", () => {
+  it("drops a continuation that merely mentions us or our", () => {
+    const a = "It will cost our small businesses millions of dollars.";
+    expect(reasonOf(a, [html(`Opponents say the tax is unfair. ${a}`)])).toBe("attributed-speech");
+    const b = "It will push all of us out of the city.";
+    expect(reasonOf(b, [html(`The Chamber warned the tax is unfair. ${b}`)])).toBe("attributed-speech");
+  });
+  it("keeps a reply that opens in the first person", () => {
+    const q = "We still support Prop C because it builds housing.";
+    expect(verifyQuotes([q], [html(`Critics say the bond is costly. ${q}`)]).kept).toHaveLength(1);
+  });
+  it("treats a first-person colon intro with a speech verb as attribution", () => {
+    const S = "This tax will drive small businesses out of San Francisco.";
+    expect(reasonOf(S, [html(`Our opponent, Supervisor Chan, writes:\n${S}`)])).toBe("attributed-speech");
+    expect(verifyQuotes([S], [html(`From our writeup in June:\n${S}`)]).kept).toHaveLength(1);
+  });
+  it("drops a quote that itself reports speech unless it opens in the first person", () => {
+    const they = "They argue that the bond is a giveaway to developers.";
+    expect(reasonOf(they, [html(`Prop A — Housing\n${they}`)])).toBe("attributed-speech");
+    const we = "We argue that the bond is sound and worth the cost.";
+    expect(verifyQuotes([we], [html(`Prop A — Housing\n${we}`)]).kept).toHaveLength(1);
+  });
+});
+
 describe("CJK quotes", () => {
   const zhSentence = "公共银行将为城市节省数百万美元的利息费用。";
   const zh = html(`B提案\n我们支持B提案。${zhSentence}请投赞成票！`, "https://a.org/zh");

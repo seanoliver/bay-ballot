@@ -78,9 +78,8 @@ function isTooShort(quote: string, normQuote: string): boolean {
 }
 
 const SENTENCE_END = /[.!?。！？]/g;
-const FIRST_PERSON_PLURAL = /\b(we|our|us)\b/i;
-// A colon intro is the guide speaking only when it opens in the first person
-// ("We wrote:", "From our writeup in June:"), not "The Mayor told us:".
+// Text opens in the first person when we/our/us/my is its first or second word ("We think…",
+// "From our writeup in June:"), not "The Mayor told us:" or "It will cost our businesses…".
 const FIRST_PERSON_OPENING = /^\s*(?:\S+\s+)?(we|our|us|my)\b/i;
 // Abbreviations whose period does not end a sentence.
 const ABBREVIATIONS = /\b(?:U\.S\.A\.|U\.S\.|Mrs\.|Mr\.|Ms\.|Dr\.|St\.|No\.(?=\s*\d)|Prop\.|Jr\.|Sr\.|vs\.|e\.g\.|i\.e\.)/gi;
@@ -104,8 +103,13 @@ const escapeRegExp = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const mentions = (text: string, name: string) =>
   new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(name)}(?![\\p{L}\\p{N}])`, "iu").test(text);
 
+// Own voice: the sentence opens in the first person ("We think…", "In our view…") or names the
+// guide. A "we/our/us" later in the sentence ("It will cost our businesses…") is not enough.
 const speaksAsGuide = (span: string, ownNames: string[]) =>
-  FIRST_PERSON_PLURAL.test(span) || ownNames.some((n) => n.trim() !== "" && mentions(span, n.trim()));
+  FIRST_PERSON_OPENING.test(span) || ownNames.some((n) => n.trim() !== "" && mentions(span, n.trim()));
+
+// A speech verb whose subject isn't the guide ("Chan writes", not "We wrote").
+const OTHERS_SPEECH_VERB = new RegExp(`(?<!\\b(?:we|i)\\s+)${SPEECH_VERB.source}`, "i");
 
 /** A sentence that reports someone else's words: an attribution phrase or a speech verb. */
 const isReportedSpeech = (sentence: string) => hasPhrase(sentence) || SPEECH_VERB.test(sentence);
@@ -129,10 +133,14 @@ export function isAttributedSpeech(
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
   const { current, previous: prevSentence } = sentencesBefore(before);
-  const colonIntro = previous.trimEnd().endsWith(":") && !FIRST_PERSON_OPENING.test(previous);
+  const colonIntro =
+    previous.trimEnd().endsWith(":") &&
+    (!FIRST_PERSON_OPENING.test(previous) || hasPhrase(previous) || OTHERS_SPEECH_VERB.test(previous));
+  const speaksAsSelf = speaksAsGuide(span, ownNames);
   return (
     hasPhrase(current) ||
-    (isReportedSpeech(prevSentence) && !speaksAsGuide(span, ownNames)) ||
+    (isReportedSpeech(span) && !speaksAsSelf) ||
+    (isReportedSpeech(prevSentence) && !speaksAsSelf) ||
     hasPhrase(previous) ||
     colonIntro ||
     TRAILING_ATTRIBUTION.test(after.slice(0, 60))
