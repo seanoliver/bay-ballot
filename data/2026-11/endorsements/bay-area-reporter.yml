@@ -1,0 +1,13 @@
+guide: bay-area-reporter
+election: 2026-11
+status: pending
+source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+extraSources:
+  - https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  - https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
+  - https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+  - https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+fetchWith: browser
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks: {}

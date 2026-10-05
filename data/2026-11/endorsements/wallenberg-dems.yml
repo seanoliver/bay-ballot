@@ -1,0 +1,7 @@
+guide: wallenberg-dems
+election: 2026-11
+status: pending
+source: https://wallenbergdems.org/  # Nov 2026 candidate slate is on the homepage
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks: {}

@@ -1,0 +1,7 @@
+guide: d2-dems
+election: 2026-11
+status: pending
+source: https://d2dems.com/news/november-2026-endorsements  # slate is a single image (D2 Dems Endorsement Slate.png); no page text
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks: {}
