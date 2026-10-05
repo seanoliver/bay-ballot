@@ -47,7 +47,7 @@ export function ContestDetail({
       {heading ? (
         <>
           <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
-          <h2 id={titleId} className="mt-1 text-xl font-semibold">
+          <h2 id={titleId} tabIndex={titleId ? -1 : undefined} className="mt-1 text-xl font-semibold outline-none">
             {contest.title}
           </h2>
         </>

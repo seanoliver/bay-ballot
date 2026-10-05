@@ -14,6 +14,7 @@ import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
 const DESKTOP = "(min-width: 1024px)";
@@ -35,7 +36,8 @@ type Props = {
 export function BallotView({ election, subtitle, ballot, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ ballot, guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useHistorySheet();
+  const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
   const paneRef = useRef<HTMLDivElement>(null);
 
@@ -64,12 +66,29 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
 
   return (
     <div className={cn(FRAME, "lg:grid lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6")}>
-      <FilterSidebar {...filterProps} className={cn(PANE, "lg:pr-2")} />
+      {/* Filters need JS; without it the page is the full ballot and rows link to contest pages. */}
+      <noscript>
+        <style>{".js-only{display:none!important}"}</style>
+      </noscript>
+      <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div className="min-w-0 pb-10">
         <div className="pt-0.5 pb-1 lg:pt-4">
           <h1 className="text-sm text-muted-foreground">{subtitle}</h1>
-          <FiltersSheet {...filterProps} className="mt-3 w-full lg:hidden" />
+          <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
+          <noscript>
+            <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
+          </noscript>
+          <a
+            href="#detail-title"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("detail-title")?.focus();
+            }}
+            className="sr-only rounded-md bg-background px-3 py-2 text-sm font-medium underline max-lg:hidden focus:not-sr-only focus:mt-2 focus:inline-block focus:outline-3 focus:outline-ring"
+          >
+            Skip to details
+          </a>
         </div>
         {visible.map((s) => (
           <section key={s.name} aria-label={s.name}>
@@ -108,13 +127,16 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
           side="bottom"
           className="max-h-[85dvh] gap-0 rounded-t-2xl lg:hidden"
           // Back to the row that opened it (Safari doesn't focus links on tap, so name it).
+          initialFocus={sheetTitleRef}
           finalFocus={() => (current ? document.getElementById(`row-m-${current.id}`) : true)}
         >
           {current ? (
             <>
               <SheetHeader className="pr-12 pb-0">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{current.section}</p>
-                <SheetTitle className="text-lg">{current.title}</SheetTitle>
+                <SheetTitle ref={sheetTitleRef} tabIndex={-1} className="text-lg outline-none">
+                  {current.title}
+                </SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
                 <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} />

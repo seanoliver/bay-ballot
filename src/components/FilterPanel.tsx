@@ -27,6 +27,7 @@ import {
 } from "@/lib/filters";
 import type { Ballot } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { useHistorySheet } from "./useHistorySheet";
 
 type Props = {
   filters: Filters;
@@ -50,8 +51,9 @@ export function FilterSidebar({ className, ...props }: Props & { className?: str
 
 // Phone: a Filters button that opens the controls in a bottom sheet.
 export function FiltersSheet({ className, ...props }: Props & { className?: string }) {
+  const [open, setOpen] = useHistorySheet();
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         render={
           <Button
