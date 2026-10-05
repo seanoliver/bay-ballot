@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { elections, latestElection, sourceLink } from "@/lib/site-data";
+import { election, elections, latestElection, sourceLink } from "@/lib/site-data";
 import type { EndorsementFile } from "@/lib/schema";
 
 const file = (archived?: EndorsementFile["archived"]): EndorsementFile => ({
@@ -55,5 +55,19 @@ describe("elections", () => {
   });
   it("defaults to the repo data/ directory", () => {
     expect(latestElection()).toBe("2026-11");
+  });
+});
+
+describe("election", () => {
+  it("loads a known election", () => {
+    const d = election("2026-11");
+    expect(d?.ballot.election).toBe("2026-11");
+    expect(d?.guides.length).toBeGreaterThan(0);
+  });
+  it("returns undefined for unknown and path-like ids", () => {
+    expect(election("2099-01")).toBeUndefined();
+    expect(election("../x")).toBeUndefined();
+    expect(election("guides")).toBeUndefined();
+    expect(election("2026-11/../2026-11")).toBeUndefined();
   });
 });

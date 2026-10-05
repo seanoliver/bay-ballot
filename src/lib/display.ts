@@ -105,6 +105,12 @@ export function pickLabel(entry: Entry): string {
   return entry.ranked ? rankedLabel(entry.pick) : entry.pick.join(", ");
 }
 
+// A guide's pick as it counts toward the tally: a ranked single-seat pick shows only its #1, marked ranked.
+export function rowPick(contest: Contest, entry: Entry): { label: string; ranked: boolean } {
+  if (!Array.isArray(entry.pick)) return { label: pickLabel(entry), ranked: false };
+  return { label: countedNames(contest, entry).join(", "), ranked: entry.ranked };
+}
+
 // Quotes to show for a row; none when the guide doesn't publish reasoning.
 export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];

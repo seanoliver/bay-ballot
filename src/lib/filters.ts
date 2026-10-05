@@ -60,7 +60,7 @@ export function activeEntries(
   const rows: Row[] = [];
   for (const guide of guides) {
     const file = ends[guide.id];
-    if (!file || file.status !== "published") continue;
+    if (!isPublished(file)) continue;
     if (f.off.includes(guide.id) || f.offTypes.includes(guide.type)) continue;
     if (f.whyOnly && !file.hasReasoning) continue;
     const entry = file.picks[contestId];
@@ -69,8 +69,12 @@ export function activeEntries(
   return rows;
 }
 
+export function isPublished(file: EndorsementFile | undefined): file is EndorsementFile {
+  return file?.status === "published";
+}
+
 export function publishedGuides(guides: Guide[], ends: Record<string, EndorsementFile>): Guide[] {
-  return guides.filter((g) => ends[g.id]?.status === "published");
+  return guides.filter((g) => isPublished(ends[g.id]));
 }
 
 export function pendingGuides(guides: Guide[], ends: Record<string, EndorsementFile>): Guide[] {

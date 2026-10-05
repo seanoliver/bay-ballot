@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { contestHeadline, guidesPublished, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
-import { publishedGuides } from "@/lib/filters";
+import { contestHeadline, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
 
@@ -86,5 +86,27 @@ describe("guidesPublished", () => {
   it("pluralizes", () => {
     expect(guidesPublished(1)).toBe("1 guide published");
     expect(guidesPublished(7)).toBe("7 guides published");
+  });
+});
+
+describe("isPublished", () => {
+  it("is true only for a published file", () => {
+    expect(isPublished(file())).toBe(true);
+    expect(isPublished(file({ status: "pending" }))).toBe(false);
+    expect(isPublished(undefined)).toBe(false);
+  });
+});
+
+describe("rowPick", () => {
+  const race = { ...c("sup", "Local", "candidate"), rankedChoice: true } as Contest;
+  const board = { ...c("boe", "Local", "candidate"), seats: 3 } as Contest;
+  it("shows only the counted #1 name for a ranked single-seat pick, marked ranked", () => {
+    expect(rowPick(race, e(["A", "B"], true))).toEqual({ label: "A", ranked: true });
+  });
+  it("shows all names for unranked picks", () => {
+    expect(rowPick(board, e(["A", "B"]))).toEqual({ label: "A, B", ranked: false });
+  });
+  it("measures read Yes/No", () => {
+    expect(rowPick(c("p", "S"), e("N"))).toEqual({ label: "No", ranked: false });
   });
 });
