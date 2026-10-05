@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "@/components/ExternalLink";
+import { FRAME, READING } from "@/components/frame";
 import { DOT_CLASS } from "@/components/tone";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -49,7 +50,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   const ranked = rankedDetails(rows);
   const official = officialLink(contest);
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-4 pb-10">
+    <div className={`${FRAME} ${READING} pt-4 pb-10`}>
       <p className="text-sm">
         <Link href={`/${electionId}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
           {ballot.title}

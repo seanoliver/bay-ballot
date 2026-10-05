@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "@/components/ExternalLink";
+import { FRAME, READING } from "@/components/frame";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -40,7 +41,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   if (!d) notFound();
   const { guide, file, ballot, id } = d;
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-4 pb-10">
+    <div className={`${FRAME} ${READING} pt-4 pb-10`}>
       <Card className="gap-0 p-4 shadow-xs">
         <h1 className="text-2xl leading-tight font-bold">{guide.name}</h1>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">

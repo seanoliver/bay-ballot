@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Check, ChevronDown, SlidersHorizontal } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import {
@@ -35,37 +36,49 @@ type Props = {
   files: Record<string, PickFile>;
 };
 
-export function FilterPanel({ filters: f, onChange, ballot, guides, files }: Props) {
-  const [open, setOpen] = useState(false);
+// Desktop: always open in the left column, scrolling on its own.
+export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger
-        render={
-          <Button
-            variant="outline"
-            className="h-auto min-h-12 w-full justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-normal whitespace-normal"
-          />
-        }
-      >
-        <span className="flex items-center gap-2 text-left">
-          <SlidersHorizontal aria-hidden="true" className="text-muted-foreground" />
-          <span>
-            <span className="font-semibold">Filters</span>
-            <span className="text-muted-foreground"> · {countedLabel(filterSummary(f, guides, files))}</span>
-          </span>
-        </span>
-        <ChevronDown aria-hidden="true" className={cn("size-5 transition-transform", open && "rotate-180")} />
-      </CollapsibleTrigger>
-      {/* Capped and scrollable: a sticky panel taller than the screen would hide its own bottom. */}
-      <CollapsibleContent className="max-h-[calc(100dvh-9rem)] overflow-y-auto overscroll-contain px-0.5 pb-1">
-        <FilterControls filters={f} onChange={onChange} ballot={ballot} guides={guides} files={files} />
-      </CollapsibleContent>
-    </Collapsible>
+    <aside aria-label="Filters" className={className}>
+      <p className="text-sm font-semibold">
+        Filters <span className="font-normal text-muted-foreground">· {countedLabel(filterSummary(props.filters, props.guides, props.files))}</span>
+      </p>
+      <FilterControls {...props} />
+    </aside>
   );
 }
 
-// The filter controls themselves, for placing outside the collapsible bar (a sidebar, sheet or popover).
-export function FilterControls({ filters: f, onChange, ballot, guides, files }: Props) {
+// Phone: a Filters button that opens the controls in a bottom sheet.
+export function FiltersSheet({ className, ...props }: Props & { className?: string }) {
+  return (
+    <Sheet>
+      <SheetTrigger
+        render={
+          <Button
+            variant="outline"
+            className={cn("h-auto min-h-12 justify-start gap-2 rounded-xl px-3.5 py-2.5 text-[15px] font-normal whitespace-normal", className)}
+          />
+        }
+      >
+        <SlidersHorizontal aria-hidden="true" className="text-muted-foreground" />
+        <span className="text-left">
+          <span className="font-semibold">Filters</span>
+          <span className="text-muted-foreground"> · {countedLabel(filterSummary(props.filters, props.guides, props.files))}</span>
+        </span>
+      </SheetTrigger>
+      <SheetContent side="bottom" className="max-h-[85dvh] gap-0 rounded-t-2xl">
+        <SheetHeader className="pr-12 pb-0">
+          <SheetTitle className="text-lg">Filters</SheetTitle>
+        </SheetHeader>
+        <div className="overflow-y-auto overscroll-contain px-4 pb-6">
+          <FilterControls {...props} />
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function FilterControls({ filters: f, onChange, ballot, guides, files }: Props) {
   return (
     <>
       <Section title="Show">
@@ -104,14 +117,27 @@ function GuideChecklist({ filters: f, onChange, guides, files }: Omit<Props, "ba
   return (
     <div role="group" aria-label="Guides">
       <p className="mt-4 mb-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">Guides</p>
-      <Input
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search guides"
-        aria-label="Search guides"
-        className="h-10"
-      />
+      {/* Our own clear button: the native one is hidden (it ignores the theme in dark mode). */}
+      <div className="relative">
+        <Input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search guides"
+          aria-label="Search guides"
+          className="h-10 pr-10"
+        />
+        {query ? (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => setQuery("")}
+            className="absolute top-0 right-0 grid size-10 place-items-center rounded-full text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <X aria-hidden="true" className="size-4" />
+          </button>
+        ) : null}
+      </div>
       {groups.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">No guides match “{query.trim()}”.</p>
       ) : (

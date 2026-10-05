@@ -128,11 +128,6 @@ export function officialLink(contest: Contest): string | null {
   return contest.kind === "measure" && contest.link ? contest.link : null;
 }
 
-// The "Tap to see each guide" hint shows on the first card only, until any card has been opened.
-export function showHint({ index, opened }: { index: number; opened: boolean }): boolean {
-  return index === 0 && !opened;
-}
-
 // Why a row shows no quote; null when it has one.
 export function rowNote(row: Row): string | null {
   if (!row.file.hasReasoning) return "Publishes a list only, no reasons";

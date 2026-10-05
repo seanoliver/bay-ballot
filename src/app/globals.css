@@ -151,4 +151,9 @@
   html {
     @apply font-sans;
   }
+  /* Search boxes draw their own clear button; the native one ignores the theme. */
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
 }

@@ -19,12 +19,5 @@ export default async function ElectionPage({ params }: PageProps<"/[election]">)
   const id = (await params).election;
   const d = election(id);
   if (!d) notFound();
-  return (
-    <>
-      <div className="bg-background">
-        <h1 className="mx-auto max-w-3xl px-4 pt-0.5 pb-3 text-sm text-muted-foreground">{electionSubtitle(d.ballot)}</h1>
-      </div>
-      <BallotView election={id} {...ballotViewProps(d)} />
-    </>
-  );
+  return <BallotView election={id} subtitle={electionSubtitle(d.ballot)} {...ballotViewProps(d)} />;
 }

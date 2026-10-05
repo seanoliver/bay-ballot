@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { barSegments, barShort, barSummary } from "@/lib/bar";
+import { barSegments, barShort, barSummary, surname } from "@/lib/bar";
 import { tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -113,14 +113,29 @@ describe("barShort", () => {
   it("measure verdicts", () => {
     expect(barShort(tally(measure, [...ys(5), ...ns(1)]), measure)).toBe("Yes 83%");
     expect(barShort(tally(measure, [...ys(1), ...ns(2)]), measure)).toBe("No 67%");
-    expect(barShort(tally(measure, [...ys(3), ...ns(3)]), measure)).toBe("Split 3–3");
+    expect(barShort(tally(measure, [...ys(3), ...ns(3)]), measure)).toBe("Split");
     expect(barShort(tally(measure, []), measure)).toBe("No picks");
   });
-  it("single-seat leader or tie", () => {
-    expect(barShort(tally(race, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]), race)).toBe("Scott Wiener");
+  it("single-seat leader by surname and share of guides, or a tie", () => {
+    const t = tally(race, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
+    expect(barShort(t, race)).toBe("Wiener 75%");
     expect(barShort(tally(race, [e(["A"]), e(["B"])]), race)).toBe("Split");
   });
-  it("multi-seat lists the top names", () => {
-    expect(barShort(tally(board, [e(["A", "B", "C", "D"]), e(["A", "B", "C"])]), board)).toBe("A, B, C");
+  it("multi-seat says how many seats", () => {
+    expect(barShort(tally(board, [e(["A", "B", "C", "D"]), e(["A", "B", "C"])]), board)).toBe("Top 3");
+  });
+});
+
+describe("surname", () => {
+  it.each([
+    ["Scott Wiener", "Wiener"],
+    ["Dionjay (DJ) Brookter", "Brookter"],
+    ['Emanuel "Manny" Yekutiel', "Yekutiel"],
+    ["Martin Luther King Jr.", "King"],
+    ["John Smith, III", "Smith"],
+    ["J.R. Eppler", "Eppler"],
+    ["Madonna", "Madonna"],
+  ])("%s -> %s", (name, want) => {
+    expect(surname(name)).toBe(want);
   });
 });

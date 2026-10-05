@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { Geist } from "next/font/google";
+import { FRAME } from "@/components/frame";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {/* Light: cards on a muted page. Dark: --card is already lighter than --background. */}
       <body className="min-h-full bg-muted dark:bg-background">
         <header className="bg-background">
-          <div className="mx-auto max-w-3xl px-4 pt-4">
+          <div className={`${FRAME} pt-4`}>
             <Link href="/" className="inline-flex min-h-10 items-center text-2xl font-extrabold tracking-tight">
               Bay Ballot
             </Link>

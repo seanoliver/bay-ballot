@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, officialLink, pendingNote, showHint, sourceLink, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
+import { groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -195,14 +195,6 @@ describe("officialLink", () => {
   it("is null for candidate races and measures without a link", () => {
     expect(officialLink({ ...race, link: "https://sf.gov/r" } as Contest)).toBeNull();
     expect(officialLink(measure)).toBeNull();
-  });
-});
-
-describe("showHint", () => {
-  it("shows only on the first card until any card has been opened", () => {
-    expect(showHint({ index: 0, opened: false })).toBe(true);
-    expect(showHint({ index: 1, opened: false })).toBe(false);
-    expect(showHint({ index: 0, opened: true })).toBe(false);
   });
 });
 

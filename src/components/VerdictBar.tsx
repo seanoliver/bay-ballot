@@ -1,11 +1,13 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { barSegments, barShort, barSummary, type BarSegment, type BarTone } from "@/lib/bar";
-import { contestHeadline } from "@/lib/display";
+import { contestHeadline, rankedDetails } from "@/lib/display";
+import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import type { Row } from "@/lib/filters";
 import { tally } from "@/lib/score";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
-import { RankedPopover } from "./ContestCard";
 
 const FILL: Record<BarTone, string> = {
   yes: "bg-yes",
@@ -34,9 +36,17 @@ export function VerdictBar({ contest, rows, variant = "full", className }: Props
   const summary = barSummary(t, contest);
   const multi = t.kind === "candidate" && contest.seats > 1 && segments[0]?.tone !== "empty";
 
+  const { headline } = contestHeadline(contest, rows);
+  // The ranked "*" sits above a row's full-row link overlay; its clicks must not reach the row.
+  const ranked = headline.ranked ? (
+    <span className="relative z-10" onClick={(e) => e.stopPropagation()}>
+      <RankedPopover rows={rows} />
+    </span>
+  ) : null;
+
   if (variant === "inline") {
     return (
-      <div className={cn("flex w-28 shrink-0 flex-col items-end gap-1", className)}>
+      <div className={cn("flex w-24 shrink-0 flex-col items-end gap-1", className)}>
         {multi ? (
           <div role="img" aria-label={summary.aria} className="flex w-full flex-col gap-0.5">
             {segments.map((s) => (
@@ -48,18 +58,13 @@ export function VerdictBar({ contest, rows, variant = "full", className }: Props
         ) : (
           <Stack segments={segments} aria={summary.aria} className="h-2" />
         )}
-        <span className={cn("max-w-full truncate text-xs font-medium", lead(segments))}>{barShort(t, contest)}</span>
+        <span className="flex max-w-full items-center">
+          <span className={cn("truncate text-xs font-medium tabular-nums", lead(segments))}>{barShort(t, contest)}</span>
+          {ranked}
+        </span>
       </div>
     );
   }
-
-  const { headline } = contestHeadline(contest, rows);
-  // Clicks inside the popover (portaled, but React events still bubble) must not toggle the row around it.
-  const ranked = headline.ranked ? (
-    <span className="relative z-10" onClick={(e) => e.stopPropagation()}>
-      <RankedPopover rows={rows} />
-    </span>
-  ) : null;
 
   if (multi) {
     return (
@@ -137,5 +142,33 @@ function Stack({ segments, aria, className }: { segments: BarSegment[]; aria: st
         <span key={s.key} className={cn("min-w-1 first:rounded-l-full last:rounded-r-full", FILL[s.tone])} style={{ flex: `${s.pct} 1 0` }} />
       ))}
     </div>
+  );
+}
+
+function RankedPopover({ rows }: { rows: Row[] }) {
+  return (
+    <Popover>
+      <PopoverTrigger
+        aria-label="Includes ranked endorsements — show order"
+        className="relative z-10 -mx-2.5 -my-2 grid size-10 place-items-center rounded-full text-lg font-bold text-muted-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        *
+      </PopoverTrigger>
+      <PopoverContent align="start" collisionPadding={16} className="w-80 max-w-[calc(100vw-2rem)]">
+        <PopoverTitle>Ranked-choice order</PopoverTitle>
+        <ul className="space-y-2">
+          {rankedDetails(rows).map((r) => (
+            <li key={r.guideName}>
+              <p className="font-medium">{r.guideName}</p>
+              <ol className="list-decimal pl-5 text-muted-foreground">
+                {r.order.map((name) => (
+                  <li key={name}>{name}</li>
+                ))}
+              </ol>
+            </li>
+          ))}
+        </ul>
+      </PopoverContent>
+    </Popover>
   );
 }

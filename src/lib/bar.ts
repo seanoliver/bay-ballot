@@ -77,13 +77,25 @@ export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">):
   };
 }
 
-// A few words for the tightest rows: the measure verdict, the single-seat leader, or the top names.
+const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
+
+// The last name for tight labels: nicknames ("DJ", "Manny") and generational suffixes are dropped.
+export function surname(name: string): string {
+  const tokens = name
+    .replace(/\([^)]*\)|["“”][^"“”]*["“”]/g, " ")
+    .split(/[\s,]+/)
+    .filter(Boolean);
+  while (tokens.length > 1 && SUFFIX.test(tokens.at(-1) as string)) tokens.pop();
+  return tokens.at(-1) ?? name;
+}
+
+// A few words for the tightest rows: the measure verdict, the single-seat leader's share, or the seat count.
 export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
   if (isEmpty(t)) return "No picks";
   if (t.kind === "measure") {
-    if (t.verdict === "split") return `Split ${t.yes}–${t.no}`;
+    if (t.verdict === "split") return "Split";
     return `${t.verdict === "Y" ? "Yes" : "No"} ${t.pct}%`;
   }
-  if (contest.seats > 1) return t.counts.slice(0, contest.seats).map((c) => c.name).join(", ");
-  return t.leader ?? "Split";
+  if (contest.seats > 1) return `Top ${contest.seats}`;
+  return t.leader === null ? "Split" : `${surname(t.leader)} ${t.pct}%`;
 }
