@@ -29,7 +29,7 @@ export const ExtractOutput = z.object({
 export type ExtractOutput = z.infer<typeof ExtractOutput>;
 
 export type Source = { url: string; fetched: Fetched };
-export type ParseClient = { messages: Pick<Anthropic["messages"], "parse"> };
+export type ExtractClient = { messages: Pick<Anthropic["messages"], "create"> };
 
 export const MODEL = "claude-sonnet-5-5";
 const MAX_QUOTES = 3;
@@ -105,8 +105,7 @@ export function toEntries(
       continue;
     }
     const isCandidate = c.kind === "candidate";
-    const mismatch = isCandidate ? p.vote !== null : p.vote === null || p.candidates.length > 0;
-    if (mismatch) {
+    if (isCandidate ? p.vote !== null : p.candidates.length > 0) {
       notes.push(`${c.id}: pick doesn't match contest kind`);
       continue;
     }
@@ -117,7 +116,11 @@ export function toEntries(
       if (names.length === 0) continue;
       pick = names;
     } else {
-      pick = p.vote!;
+      if (p.vote === null) {
+        notes.push(`${c.id}: measure pick has no vote`);
+        continue;
+      }
+      pick = p.vote;
     }
 
     const { kept, dropped } = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages);
@@ -146,13 +149,32 @@ function userContent(sources: Source[]): UserContent {
   return content;
 }
 
-/** Ask Claude for one guide's endorsements across its already-fetched pages. */
+function parseOutput(text: string): ExtractOutput {
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`model output did not match the schema: invalid JSON (${e instanceof Error ? e.message : String(e)})`);
+  }
+  const r = ExtractOutput.safeParse(json);
+  if (!r.success) {
+    const issue = r.error.issues[0];
+    throw new Error(`model output did not match the schema: ${issue.path.join(".") || "(root)"}: ${issue.message}`);
+  }
+  return r.data;
+}
+
+/**
+ * Ask Claude for one guide's endorsements across its already-fetched pages.
+ * Uses `create` rather than `parse` so stop_reason is checked before any parsing:
+ * `parse` throws on truncated or non-JSON text, which would hide a refusal or max_tokens.
+ */
 export async function extract(
-  client: ParseClient,
+  client: ExtractClient,
   ballot: Ballot,
   sources: Source[],
 ): Promise<{ output: ExtractOutput; usage: Anthropic.Messages.Usage }> {
-  const res = await client.messages.parse({
+  const res = await client.messages.create({
     model: MODEL,
     max_tokens: 16000,
     system: [{ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } }],
@@ -160,7 +182,7 @@ export async function extract(
     output_config: { format: zodOutputFormat(ExtractOutput) },
   });
   if (res.stop_reason === "refusal") throw new Error(`refused: ${res.stop_details?.category}`);
-  if (res.stop_reason === "max_tokens") throw new Error("model output hit max_tokens");
-  if (res.parsed_output === null) throw new Error("model output did not match the schema");
-  return { output: res.parsed_output, usage: res.usage };
+  if (res.stop_reason === "max_tokens") throw new Error("model output hit max_tokens before finishing");
+  const text = res.content.flatMap((b) => (b.type === "text" ? [b.text] : [])).join("");
+  return { output: parseOutput(text), usage: res.usage };
 }

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { extract, pagesFor, systemPrompt, toEntries, type ExtractOutput, type ParseClient } from "@/pipeline/extract";
+import { extract, pagesFor, systemPrompt, toEntries, type ExtractClient, type ExtractOutput } from "@/pipeline/extract";
 import { loadElection } from "@/lib/data";
 import type { Contest } from "@/lib/schema";
 import type { Page } from "@/pipeline/quotes";
@@ -109,7 +109,7 @@ describe("toEntries", () => {
   it("notes and skips a measure pick without a vote", () => {
     const r = run(pick({ contestId: "prop-b" }));
     expect(r.picks).toEqual({});
-    expect(r.notes).toContain("prop-b: pick doesn't match contest kind");
+    expect(r.notes).toEqual(["prop-b: measure pick has no vote"]);
   });
 
   it("keeps verified quotes with their source page and drops paraphrases with a reason", () => {
@@ -173,9 +173,16 @@ describe("pagesFor", () => {
 describe("extract", () => {
   const output: ExtractOutput = { hasReasoning: false, picks: [pick({ contestId: "prop-b", vote: "Y" })] };
   const usage = { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0 };
-  const fakeClient = (response: Record<string, unknown>) => {
-    const parse = vi.fn().mockResolvedValue({ stop_reason: "end_turn", stop_details: null, usage, parsed_output: output, ...response });
-    return { client: { messages: { parse } } as unknown as ParseClient, parse };
+  const fakeClient = (response: { text?: string; [k: string]: unknown }) => {
+    const { text = JSON.stringify(output), ...rest } = response;
+    const create = vi.fn().mockResolvedValue({
+      stop_reason: "end_turn",
+      stop_details: null,
+      usage,
+      content: [{ type: "text", text }],
+      ...rest,
+    });
+    return { client: { messages: { create } } as unknown as ExtractClient, create };
   };
   const sources = [
     { url: "https://guide.org/slate.pdf", fetched: { kind: "pdf" as const, base64: "JVBERi0=", text: "" } },
@@ -183,15 +190,16 @@ describe("extract", () => {
   ];
 
   it("sends the cached ballot prompt, PDF before its marker, and the output format", async () => {
-    const { client, parse } = fakeClient({});
+    const { client, create } = fakeClient({});
     const r = await extract(client, ballot, sources);
     expect(r).toEqual({ output, usage });
 
-    const req = parse.mock.calls[0][0];
+    const req = create.mock.calls[0][0];
     expect(req.model).toBe("claude-sonnet-5-5");
     expect(req.max_tokens).toBe(16000);
     expect(req.system[0]).toEqual({ type: "text", text: systemPrompt(ballot), cache_control: { type: "ephemeral" } });
-    expect(req.output_config.format).toBeDefined();
+    expect(req.output_config.format.type).toBe("json_schema");
+    expect(req.output_config.format.schema).toBeDefined();
     expect(req.thinking).toBeUndefined();
     expect(req.temperature).toBeUndefined();
     expect(req.messages).toHaveLength(1);
@@ -204,18 +212,38 @@ describe("extract", () => {
     ]);
   });
 
-  it("throws on refusal with the category", async () => {
-    const { client } = fakeClient({ stop_reason: "refusal", stop_details: { type: "refusal", category: "general_harms", explanation: null }, parsed_output: null });
+  it("throws refused with the category, even when the text isn't JSON", async () => {
+    const { client } = fakeClient({
+      stop_reason: "refusal",
+      stop_details: { type: "refusal", category: "general_harms", explanation: null },
+      text: "I can't help with that.",
+    });
     await expect(extract(client, ballot, sources)).rejects.toThrow("refused: general_harms");
   });
 
-  it("throws when the output was cut off", async () => {
-    const { client } = fakeClient({ stop_reason: "max_tokens" });
-    await expect(extract(client, ballot, sources)).rejects.toThrow(/max_tokens/);
+  it("throws the max_tokens message when the JSON was cut off", async () => {
+    const { client } = fakeClient({ stop_reason: "max_tokens", text: '{"hasReasoning": true, "picks": [{"contestId": "pro' });
+    await expect(extract(client, ballot, sources)).rejects.toThrow(/hit max_tokens/);
   });
 
-  it("throws when the output doesn't match the schema", async () => {
-    const { client } = fakeClient({ parsed_output: null });
-    await expect(extract(client, ballot, sources)).rejects.toThrow("model output did not match the schema");
+  it("throws the schema message when the text isn't JSON", async () => {
+    const { client } = fakeClient({ text: "not json" });
+    await expect(extract(client, ballot, sources)).rejects.toThrow(/^model output did not match the schema: /);
+  });
+
+  it("throws the schema message with the first issue when JSON fails the schema", async () => {
+    const { client } = fakeClient({ text: JSON.stringify({ hasReasoning: "yes", picks: [] }) });
+    await expect(extract(client, ballot, sources)).rejects.toThrow(/^model output did not match the schema: hasReasoning: /);
+  });
+
+  it("joins multiple text blocks before parsing", async () => {
+    const json = JSON.stringify(output);
+    const { client } = fakeClient({
+      content: [
+        { type: "text", text: json.slice(0, 10) },
+        { type: "text", text: json.slice(10) },
+      ],
+    });
+    expect((await extract(client, ballot, sources)).output).toEqual(output);
   });
 });
