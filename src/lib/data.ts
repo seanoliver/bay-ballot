@@ -111,6 +111,9 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
         continue;
       }
       if (!Array.isArray(entry.pick)) continue;
+      if (entry.ranked && !c.rankedChoice) {
+        errors.push(`${where}: ranked pick on a contest without ranked-choice voting`);
+      }
       for (const name of entry.pick) {
         const m = matchName(name, c.candidates);
         if (!m) errors.push(`${where}: '${name}' is not a candidate`);

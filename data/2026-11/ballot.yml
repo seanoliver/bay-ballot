@@ -140,42 +140,49 @@ contests:
     section: Local candidates
     title: Assessor-Recorder
     kind: candidate
+    rankedChoice: true
     candidates: [Joaquín Torres]
     jurisdiction: { level: city, name: San Francisco }
   - id: public-defender
     section: Local candidates
     title: Public Defender
     kind: candidate
+    rankedChoice: true
     candidates: [Mano Raju]
     jurisdiction: { level: city, name: San Francisco }
   - id: supervisor-2
     section: Local candidates
     title: Board of Supervisors, District 2
     kind: candidate
+    rankedChoice: true
     candidates: [Nicholas Berg, Guy McCoy, Monthanus Ratanapakdee, Stephen Sherrill]
     jurisdiction: { level: district, name: Supervisor, district: "2" }
   - id: supervisor-4
     section: Local candidates
     title: Board of Supervisors, District 4
     kind: candidate
+    rankedChoice: true
     candidates: [Albert Chow, Jeremy Julian Greco, Alan Wong]
     jurisdiction: { level: district, name: Supervisor, district: "4" }
   - id: supervisor-6
     section: Local candidates
     title: Board of Supervisors, District 6
     kind: candidate
+    rankedChoice: true
     candidates: [Alex Behrend, Matt Dorsey]
     jurisdiction: { level: district, name: Supervisor, district: "6" }
   - id: supervisor-8
     section: Local candidates
     title: Board of Supervisors, District 8
     kind: candidate
+    rankedChoice: true
     candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
     jurisdiction: { level: district, name: Supervisor, district: "8" }
   - id: supervisor-10
     section: Local candidates
     title: Board of Supervisors, District 10
     kind: candidate
+    rankedChoice: true
     candidates:
       - Pearci "PJ" Bastiany III
       - Dionjay (DJ) Brookter

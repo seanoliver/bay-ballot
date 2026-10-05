@@ -36,6 +36,7 @@ export const Contest = z.object({
   link: HttpUrl.optional(),
   candidates: z.array(NonEmpty).default([]),
   seats: z.number().int().positive().default(1),
+  rankedChoice: z.boolean().default(false), // SF uses RCV for single-seat city and supervisor races
   jurisdiction: Jurisdiction,
 });
 export type Contest = z.infer<typeof Contest>;

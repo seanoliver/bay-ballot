@@ -15,8 +15,8 @@ function base(): ElectionData {
       title: "T",
       date: "2026-11-03",
       contests: [
-        { id: "prop-b", section: "S", title: "B", kind: "measure", candidates: [], seats: 1, jurisdiction: juris },
-        { id: "board", section: "S", title: "Board", kind: "candidate", candidates: ["A One", "B Two", "C Three", "D Four"], seats: 3, jurisdiction: juris },
+        { id: "prop-b", section: "S", title: "B", kind: "measure", candidates: [], seats: 1, rankedChoice: false, jurisdiction: juris },
+        { id: "board", section: "S", title: "Board", kind: "candidate", candidates: ["A One", "B Two", "C Three", "D Four"], seats: 3, rankedChoice: false, jurisdiction: juris },
       ],
     },
     guides: [{ id: "g", name: "G", description: "", type: "civic", homepage: "https://g.org/" }],
@@ -84,12 +84,19 @@ describe("data", () => {
     ]);
   });
   it("does not warn on ranked picks beyond seats", () => {
-    const d = withFile(base(), { board: { ...e(["A One", "B Two", "C Three", "D Four"]), ranked: true } });
-    expect(validateElection(d).warnings).toEqual([]);
+    const d = base();
+    d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: true, jurisdiction: juris });
+    const r = validateElection(withFile(d, { sup: { ...e(["A One", "B Two"]), ranked: true } }));
+    expect(r.errors).toEqual([]);
+    expect(r.warnings).toEqual([]);
+  });
+  it("flags a ranked pick on a contest without ranked-choice voting", () => {
+    const d = withFile(base(), { board: { ...e(["A One", "B Two"]), ranked: true } });
+    expect(validateElection(d).errors).toEqual(["g/board: ranked pick on a contest without ranked-choice voting"]);
   });
   it("does not warn on an unranked dual endorsement in a single-seat race", () => {
     const d = base();
-    d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, jurisdiction: juris });
+    d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: false, jurisdiction: juris });
     const r = validateElection(withFile(d, { sup: e(["A One", "B Two"]) }));
     expect(r.errors).toEqual([]);
     expect(r.warnings).toEqual([]);

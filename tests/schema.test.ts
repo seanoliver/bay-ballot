@@ -29,6 +29,24 @@ contests:
 `));
     expect(b.contests[0].seats).toBe(1);
     expect(b.contests[0].candidates).toEqual([]);
+    expect(b.contests[0].rankedChoice).toBe(false);
+  });
+
+  it("marks ranked-choice contests", () => {
+    const b = Ballot.parse(parse(`
+election: 2026-11
+title: SF General Election
+date: 2026-11-03
+contests:
+  - id: supervisor-8
+    section: Local candidates
+    title: Board of Supervisors, District 8
+    kind: candidate
+    rankedChoice: true
+    candidates: [A One]
+    jurisdiction: { level: district, name: Supervisor, district: "8" }
+`));
+    expect(b.contests[0].rankedChoice).toBe(true);
   });
 
   it("keeps bare Y/N as strings (YAML 1.2)", () => {

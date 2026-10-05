@@ -2,7 +2,7 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { extract, pagesFor, systemPrompt, toEntries, type ExtractClient, type ExtractOutput } from "@/pipeline/extract";
 import { loadElection } from "@/lib/data";
-import type { Contest } from "@/lib/schema";
+import type { Contest, Guide } from "@/lib/schema";
 import type { Page } from "@/pipeline/quotes";
 
 const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
@@ -23,6 +23,32 @@ describe("systemPrompt", () => {
   it("is deterministic so the cached prefix is reused", () => {
     expect(systemPrompt(ballot)).toBe(prompt);
   });
+
+  it("limits extraction to the organization's own endorsements", () => {
+    expect(prompt).toContain(
+      "Extract only this organization's own endorsements; ignore endorsements the pages attribute to other organizations.",
+    );
+  });
+
+  it("asks for names as printed, not normalized", () => {
+    expect(prompt).toContain("Copy candidate names exactly as printed on the page; they are matched to the ballot downstream.");
+    expect(prompt).not.toContain("Use the official candidate names");
+  });
+
+  it("covers emphatic phrasing, mixed retention, multi-seat and ranked-choice rules", () => {
+    expect(prompt).toContain('"Oh Hell Yes!"');
+    expect(prompt).toContain('"Strong No"');
+    expect(prompt).toContain('"Retain all"');
+    expect(prompt).toMatch(/retention contest covering several judges/);
+    expect(prompt).toMatch(/up to `seats` names and are never ranked/);
+    expect(prompt).toMatch(/Only contests with rankedChoice true can be ranked/);
+  });
+
+  it("marks ranked-choice contests in the contest JSON", () => {
+    expect(prompt).toContain('"id":"supervisor-8","title":"Board of Supervisors, District 8","kind":"candidate"');
+    expect(prompt).toMatch(/"id":"supervisor-8"[^}]*"rankedChoice":true/);
+    expect(prompt).toMatch(/"id":"board-of-education"[^}]*"rankedChoice":false/);
+  });
 });
 
 const contest = (c: Partial<Contest> & Pick<Contest, "id" | "kind">): Contest => ({
@@ -30,6 +56,7 @@ const contest = (c: Partial<Contest> & Pick<Contest, "id" | "kind">): Contest =>
   title: c.id,
   candidates: [],
   seats: 1,
+  rankedChoice: false,
   jurisdiction: { level: "city", name: "San Francisco" },
   ...c,
 });
@@ -52,6 +79,7 @@ const pick = (p: Partial<ModelPick> & Pick<ModelPick, "contestId">): ModelPick =
   candidates: [],
   ranked: false,
   quotes: [],
+  note: null,
   ...p,
 });
 const run = (...picks: ModelPick[]) => toEntries({ hasReasoning: true, picks }, contests, pages);
@@ -130,7 +158,7 @@ describe("toEntries", () => {
     expect(r.picks["supervisor-d8"].quotes).toEqual([
       { text: "Gary McCoy has spent a decade fixing our parks and streets.", source: "https://guide.org/d8" },
     ]);
-    expect(r.notes).toContain("prop-b: dropped quote (not-found)");
+    expect(r.notes).toContain('prop-b: dropped quote (not-found): "Banks are bad and expensive overall for the city."');
   });
 
   it("only checks the first three quotes", () => {
@@ -138,6 +166,35 @@ describe("toEntries", () => {
     const r = run(pick({ contestId: "prop-b", vote: "N", quotes: ["x1 x2 x3 x4 x5 x6", "y1 y2 y3 y4 y5 y6", "z1 z2 z3 z4 z5 z6", q] }));
     expect(r.picks["prop-b"].quotes).toEqual([]);
     expect(r.notes.filter((n) => n.startsWith("prop-b: dropped quote"))).toHaveLength(3);
+  });
+
+  it("truncates long dropped quotes to 80 characters in the note", () => {
+    const long = "This sentence is made up and long enough that the note must cut it short somewhere past eighty characters.";
+    const r = run(pick({ contestId: "prop-b", vote: "N", quotes: [long] }));
+    expect(r.notes).toEqual([`prop-b: dropped quote (not-found): "${long.slice(0, 80)}…"`]);
+  });
+
+  it("notes a candidate pick that lists no candidates", () => {
+    const r = run(pick({ contestId: "assessor" }));
+    expect(r.picks).toEqual({});
+    expect(r.notes).toEqual(["assessor: pick lists no candidates"]);
+  });
+
+  it("keeps the first of duplicate picks for a contest", () => {
+    const r = run(pick({ contestId: "prop-b", vote: "N" }), pick({ contestId: "prop-b", vote: "Y" }));
+    expect(r.picks["prop-b"].pick).toBe("N");
+    expect(r.notes).toEqual(["prop-b: duplicate pick, kept first"]);
+  });
+
+  it("passes the model's note through, even when the pick is skipped", () => {
+    const r = run(
+      pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy"], note: "Only endorses for the first round." }),
+      pick({ contestId: "retain-smith", note: "Retain all except Justice Banke." }),
+    );
+    expect(r.picks["supervisor-d8"].pick).toEqual(["Gary McCoy"]);
+    expect(r.picks["retain-smith"]).toBeUndefined();
+    expect(r.notes).toContain("supervisor-d8: model note: Only endorses for the first round.");
+    expect(r.notes).toContain("retain-smith: model note: Retain all except Justice Banke.");
   });
 
   it("keeps a dual unranked endorsement", () => {
@@ -172,6 +229,7 @@ describe("pagesFor", () => {
 
 describe("extract", () => {
   const output: ExtractOutput = { hasReasoning: false, picks: [pick({ contestId: "prop-b", vote: "Y" })] };
+  const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/" };
   const usage = { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0 };
   const fakeClient = (response: { text?: string; [k: string]: unknown }) => {
     const { text = JSON.stringify(output), ...rest } = response;
@@ -191,7 +249,7 @@ describe("extract", () => {
 
   it("sends the cached ballot prompt, PDF before its marker, and the output format", async () => {
     const { client, create } = fakeClient({});
-    const r = await extract(client, ballot, sources);
+    const r = await extract(client, ballot, guide, sources);
     expect(r).toEqual({ output, usage });
 
     const req = create.mock.calls[0][0];
@@ -205,16 +263,20 @@ describe("extract", () => {
     expect(req.messages).toHaveLength(1);
     expect(req.messages[0].role).toBe("user");
     expect(req.messages[0].content).toEqual([
-      { type: "document", source: { type: "base64", media_type: "application/pdf", data: "JVBERi0=" } },
-      { type: "text", text: "--- https://guide.org/slate.pdf ---" },
+      {
+        type: "document",
+        source: { type: "base64", media_type: "application/pdf", data: "JVBERi0=" },
+        title: "https://guide.org/slate.pdf",
+      },
       { type: "text", text: "--- https://guide.org/why ---\nWe support Prop B." },
-      { type: "text", text: "Extract this organization's endorsements." },
+      { type: "text", text: "Organization: GrowSF (https://growsf.org/)\nExtract this organization's endorsements." },
     ]);
+    expect(req.system[0].text).not.toContain("GrowSF");
   });
 
   it("sends a JSON schema that enforces the Y/N vote and closed objects", async () => {
     const { client, create } = fakeClient({});
-    await extract(client, ballot, sources);
+    await extract(client, ballot, guide, sources);
     const schema = create.mock.calls[0][0].output_config.format.schema;
     // Follow $refs so the assertion holds whether or not the schema uses $defs.
     const deref = (node: Record<string, unknown>): Record<string, unknown> => {
@@ -240,22 +302,27 @@ describe("extract", () => {
       stop_details: { type: "refusal", category: "general_harms", explanation: null },
       text: "I can't help with that.",
     });
-    await expect(extract(client, ballot, sources)).rejects.toThrow("refused: general_harms");
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow("refused (category: general_harms)");
+  });
+
+  it("says none when a refusal has no category", async () => {
+    const { client } = fakeClient({ stop_reason: "refusal", stop_details: null, text: "" });
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow("refused (category: none)");
   });
 
   it("throws the max_tokens message when the JSON was cut off", async () => {
     const { client } = fakeClient({ stop_reason: "max_tokens", text: '{"hasReasoning": true, "picks": [{"contestId": "pro' });
-    await expect(extract(client, ballot, sources)).rejects.toThrow(/hit max_tokens/);
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow(/hit max_tokens/);
   });
 
   it("throws the schema message when the text isn't JSON", async () => {
     const { client } = fakeClient({ text: "not json" });
-    await expect(extract(client, ballot, sources)).rejects.toThrow(/^model output did not match the schema: /);
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow(/^model output did not match the schema: /);
   });
 
   it("throws the schema message with the first issue when JSON fails the schema", async () => {
     const { client } = fakeClient({ text: JSON.stringify({ hasReasoning: "yes", picks: [] }) });
-    await expect(extract(client, ballot, sources)).rejects.toThrow(/^model output did not match the schema: hasReasoning: /);
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow(/^model output did not match the schema: hasReasoning: /);
   });
 
   it("joins multiple text blocks before parsing", async () => {
@@ -266,6 +333,6 @@ describe("extract", () => {
         { type: "text", text: json.slice(10) },
       ],
     });
-    expect((await extract(client, ballot, sources)).output).toEqual(output);
+    expect((await extract(client, ballot, guide, sources)).output).toEqual(output);
   });
 });
