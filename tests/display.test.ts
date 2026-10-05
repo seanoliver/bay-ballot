@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, pendingNote, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
+import { groupByPick, headline, officialLink, pendingNote, showHint, sourceLink, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -176,8 +176,8 @@ describe("pendingNote", () => {
   const g = (n: number) => Array.from({ length: n }, (_, i) => ({ id: `g${i}` }) as Guide);
   it("handles 0, 1, many", () => {
     expect(pendingNote(g(0))).toBeNull();
-    expect(pendingNote(g(1))).toBe("1 guide hasn't published yet");
-    expect(pendingNote(g(3))).toBe("3 guides haven't published yet");
+    expect(pendingNote(g(1))).toBe("1 guide hasn't published yet.");
+    expect(pendingNote(g(3))).toBe("3 guides haven't published yet.");
   });
 });
 
@@ -185,5 +185,37 @@ describe("topPickCount", () => {
   it("reads n of m guides, singular for one", () => {
     expect(topPickCount({ name: "A", count: 2, total: 3 })).toBe("2 of 3 guides");
     expect(topPickCount({ name: "A", count: 1, total: 1 })).toBe("1 of 1 guide");
+  });
+});
+
+describe("officialLink", () => {
+  it("is the measure's link", () => {
+    expect(officialLink({ ...measure, link: "https://sf.gov/b" } as Contest)).toBe("https://sf.gov/b");
+  });
+  it("is null for candidate races and measures without a link", () => {
+    expect(officialLink({ ...race, link: "https://sf.gov/r" } as Contest)).toBeNull();
+    expect(officialLink(measure)).toBeNull();
+  });
+});
+
+describe("showHint", () => {
+  it("shows only on the first card until any card has been opened", () => {
+    expect(showHint({ index: 0, opened: false })).toBe(true);
+    expect(showHint({ index: 1, opened: false })).toBe(false);
+    expect(showHint({ index: 0, opened: true })).toBe(false);
+  });
+});
+
+describe("sourceLink", () => {
+  const archived = [
+    { source: "https://g.org/a", snapshot: "https://web.archive.org/web/1/https://g.org/a" },
+    { source: "https://g.org/b", snapshot: "https://web.archive.org/web/2/https://g.org/b" },
+  ];
+  it("returns the archived snapshot for a matching source", () => {
+    expect(sourceLink({ archived }, "https://g.org/b")).toBe("https://web.archive.org/web/2/https://g.org/b");
+  });
+  it("falls back to the live url when no snapshot matches or nothing is archived", () => {
+    expect(sourceLink({ archived }, "https://g.org/c")).toBe("https://g.org/c");
+    expect(sourceLink({}, "https://g.org/a")).toBe("https://g.org/a");
   });
 });

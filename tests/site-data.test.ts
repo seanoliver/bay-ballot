@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { election, elections, latestElection, sourceLink } from "@/lib/site-data";
+import { ballotViewProps, election, elections, latestElection } from "@/lib/site-data";
+import type { ElectionData } from "@/lib/data";
 import type { EndorsementFile } from "@/lib/schema";
 
 const file = (archived?: EndorsementFile["archived"]): EndorsementFile => ({
@@ -15,20 +16,22 @@ const file = (archived?: EndorsementFile["archived"]): EndorsementFile => ({
   ...(archived ? { archived } : {}),
 });
 
-describe("sourceLink", () => {
-  it("returns the archived snapshot for a matching source", () => {
-    const f = file([
-      { source: "https://g.org/a", snapshot: "https://web.archive.org/web/1/https://g.org/a" },
-      { source: "https://g.org/b", snapshot: "https://web.archive.org/web/2/https://g.org/b" },
-    ]);
-    expect(sourceLink(f, "https://g.org/b")).toBe("https://web.archive.org/web/2/https://g.org/b");
-  });
-  it("falls back to the live url when no snapshot matches", () => {
-    const f = file([{ source: "https://g.org/a", snapshot: "https://web.archive.org/web/1/https://g.org/a" }]);
-    expect(sourceLink(f, "https://g.org/c")).toBe("https://g.org/c");
-  });
-  it("falls back to the live url when nothing is archived", () => {
-    expect(sourceLink(file(), "https://g.org/a")).toBe("https://g.org/a");
+describe("ballotViewProps", () => {
+  it("passes only published guides and files, slimmed, plus the pending note", () => {
+    const d = {
+      ballot: { election: "2026-11", title: "T", date: "2026-11-03", contests: [] },
+      guides: [
+        { id: "g", name: "G", type: "civic", description: "long", homepage: "https://g.org" },
+        { id: "p", name: "P", type: "club", description: "", homepage: "https://p.org" },
+      ],
+      endorsements: { g: { ...file(), source: "https://g.org/a" }, p: { ...file(), guide: "p", status: "pending" } },
+    } as ElectionData;
+    expect(ballotViewProps(d)).toEqual({
+      ballot: d.ballot,
+      guides: [{ id: "g", name: "G", type: "civic" }],
+      files: { g: { hasReasoning: true, picks: {} } },
+      pending: "1 guide hasn't published yet.",
+    });
   });
 });
 

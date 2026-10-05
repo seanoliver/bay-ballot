@@ -17,8 +17,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {/* Light: cards on a muted page. Dark: --card is already lighter than --background. */}
       <body className="min-h-full bg-muted dark:bg-background">
         <header className="bg-background">
-          <div className="mx-auto max-w-3xl px-4 pt-5">
-            <Link href="/" className="text-2xl font-extrabold tracking-tight">
+          <div className="mx-auto max-w-3xl px-4 pt-4">
+            <Link href="/" className="inline-flex min-h-10 items-center text-2xl font-extrabold tracking-tight">
               Bay Ballot
             </Link>
           </div>

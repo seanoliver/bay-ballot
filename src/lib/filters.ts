@@ -1,13 +1,17 @@
 import type { Ballot, Contest, EndorsementFile, Entry, Guide, GuideType } from "./schema";
 
+// `off` holds published guide ids the reader turned off; it is the only guide state.
 export type Filters = {
   off: string[];
-  offTypes: string[];
   whyOnly: boolean;
   districts: Record<string, string>;
 };
 
-export const EMPTY: Filters = { off: [], offTypes: [], whyOnly: false, districts: {} };
+export const EMPTY: Filters = { off: [], whyOnly: false, districts: {} };
+
+// What the ballot view needs about a guide and its published file (keeps client props small).
+export type GuideInfo = Pick<Guide, "id" | "name" | "type">;
+export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
 
 // URL param -> jurisdiction name. Order here is the serialization order.
 const DISTRICT_PARAMS: Record<string, string> = {
@@ -19,13 +23,12 @@ const DISTRICT_PARAMS: Record<string, string> = {
 
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
 const parseList = (v: string | null) => uniqSorted((v ?? "").split(",").map((s) => s.trim()).filter(Boolean));
+const without = (xs: string[], x: string) => xs.filter((y) => y !== x);
 
 export function toQuery(f: Filters): string {
   const p = new URLSearchParams();
   const off = uniqSorted(f.off);
-  const offTypes = uniqSorted(f.offTypes);
   if (off.length) p.set("off", off.join(","));
-  if (offTypes.length) p.set("offtypes", offTypes.join(","));
   if (f.whyOnly) p.set("why", "1");
   for (const [param, name] of Object.entries(DISTRICT_PARAMS)) {
     const v = f.districts[name];
@@ -34,34 +37,36 @@ export function toQuery(f: Filters): string {
   return p.toString();
 }
 
-export function fromQuery(q: string): Filters {
+// Old URLs may carry `offtypes`; those expand to the ids of `guides` with those types.
+export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []): Filters {
   const p = new URLSearchParams(q);
   const districts: Record<string, string> = {};
   for (const [param, name] of Object.entries(DISTRICT_PARAMS)) {
     const v = p.get(param);
     if (v) districts[name] = v;
   }
+  const offTypes = parseList(p.get("offtypes"));
+  const fromTypes = guides.filter((g) => offTypes.includes(g.type)).map((g) => g.id);
   return {
-    off: parseList(p.get("off")),
-    offTypes: parseList(p.get("offtypes")),
+    off: uniqSorted([...parseList(p.get("off")), ...fromTypes]),
     whyOnly: p.get("why") === "1",
     districts,
   };
 }
 
-export type Row = { guide: Guide; entry: Entry; file: EndorsementFile };
+export function hasFilterParams(q: string): boolean {
+  const p = new URLSearchParams(q);
+  return ["off", "offtypes", "why", ...Object.keys(DISTRICT_PARAMS)].some((k) => p.has(k));
+}
 
-export function activeEntries(
-  contestId: string,
-  guides: Guide[],
-  ends: Record<string, EndorsementFile>,
-  f: Filters,
-): Row[] {
+export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
+
+// `files` holds published files only (see publishedFiles).
+export function activeEntries(contestId: string, guides: GuideInfo[], files: Record<string, PickFile>, f: Filters): Row[] {
   const rows: Row[] = [];
   for (const guide of guides) {
-    const file = ends[guide.id];
-    if (!isPublished(file)) continue;
-    if (!isCounted(f, guide, file)) continue;
+    const file = files[guide.id];
+    if (!file || !isCounted(f, guide.id, file)) continue;
     const entry = file.picks[contestId];
     if (entry) rows.push({ guide, entry, file });
   }
@@ -80,37 +85,45 @@ export function pendingGuides(guides: Guide[], ends: Record<string, EndorsementF
   return guides.filter((g) => !ends[g.id] || ends[g.id].status === "pending");
 }
 
+export function publishedFiles(ends: Record<string, EndorsementFile>): Record<string, PickFile> {
+  const out: Record<string, PickFile> = {};
+  for (const [id, file] of Object.entries(ends)) {
+    if (!isPublished(file)) continue;
+    out[id] = { hasReasoning: file.hasReasoning, picks: file.picks, ...(file.archived ? { archived: file.archived } : {}) };
+  }
+  return out;
+}
+
 export function visibleContest(c: Contest, f: Pick<Filters, "districts">): boolean {
   if (c.jurisdiction.level !== "district") return true;
   const chosen = f.districts[c.jurisdiction.name];
   return chosen === undefined || chosen === c.jurisdiction.district;
 }
 
-// A published guide counts toward tallies unless it's turned off by id or type, or is list-only under whyOnly.
-function isCounted(f: Filters, guide: Guide, file: EndorsementFile): boolean {
-  return isGuideOn(f, guide) && !(f.whyOnly && !file.hasReasoning);
+// A published guide counts toward tallies unless it's turned off, or is list-only under whyOnly.
+function isCounted(f: Filters, id: string, file: PickFile): boolean {
+  return isGuideOn(f, id) && !(f.whyOnly && !file.hasReasoning);
 }
 
-export function isGuideOn(f: Filters, guide: Guide): boolean {
-  return !f.off.includes(guide.id) && !f.offTypes.includes(guide.type);
+export function isGuideOn(f: Filters, id: string): boolean {
+  return !f.off.includes(id);
+}
+
+export function toggleGuide(f: Filters, id: string): Filters {
+  return { ...f, off: isGuideOn(f, id) ? uniqSorted([...f.off, id]) : without(f.off, id) };
 }
 
 export function filterSummary(
   f: Filters,
-  guides: Guide[],
-  ends: Record<string, EndorsementFile>,
+  guides: GuideInfo[],
+  files: Record<string, PickFile>,
 ): { counted: number; published: number } {
-  const published = publishedGuides(guides, ends);
-  return { counted: published.filter((g) => isCounted(f, g, ends[g.id])).length, published: published.length };
+  const published = guides.filter((g) => files[g.id]);
+  return { counted: published.filter((g) => isCounted(f, g.id, files[g.id])).length, published: published.length };
 }
 
 export function countedLabel({ counted, published }: { counted: number; published: number }): string {
   return `${counted} of ${published} ${published === 1 ? "guide" : "guides"} counted`;
-}
-
-export function hasFilterParams(q: string): boolean {
-  const p = new URLSearchParams(q);
-  return ["off", "offtypes", "why", ...Object.keys(DISTRICT_PARAMS)].some((k) => p.has(k));
 }
 
 // Filterable district types (those with a URL param) -> the districts on this ballot, numerically sorted.
@@ -125,6 +138,49 @@ export function districtOptions(ballot: Pick<Ballot, "contests">): Record<string
   return out;
 }
 
+export type DistrictSelect = { name: string; items: { value: string | null; label: string }[] };
+
+export function districtSelect(ballot: Pick<Ballot, "contests">): DistrictSelect[] {
+  return Object.entries(districtOptions(ballot)).map(([name, ds]) => ({
+    name,
+    items: [{ value: null, label: "All" }, ...ds.map((d) => ({ value: d, label: `District ${d}` }))],
+  }));
+}
+
+export function setDistrict(f: Filters, name: string, value: string | null): Filters {
+  const districts = { ...f.districts };
+  if (value === null) delete districts[name];
+  else districts[name] = value;
+  return { ...f, districts };
+}
+
+// Drops anything a stale URL or stored value could carry that this election doesn't have.
+export function sanitizeFilters(f: Filters, ballot: Pick<Ballot, "contests">, guides: Pick<Guide, "id">[]): Filters {
+  const ids = new Set(guides.map((g) => g.id));
+  const opts = districtOptions(ballot);
+  const districts: Record<string, string> = {};
+  for (const [name, v] of Object.entries(f.districts)) {
+    if (opts[name]?.includes(v)) districts[name] = v;
+  }
+  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, districts };
+}
+
+// Filter params in the URL win; otherwise the filters last saved on this device.
+export function initialFilters({
+  query,
+  stored,
+  ballot,
+  guides,
+}: {
+  query: string;
+  stored: string | null;
+  ballot: Pick<Ballot, "contests">;
+  guides: Pick<Guide, "id" | "type">[];
+}): Filters {
+  const raw = hasFilterParams(query) ? query : (stored ?? "");
+  return sanitizeFilters(fromQuery(raw, guides), ballot, guides);
+}
+
 // Plural labels in display order. Kept here (not derived from the zod enum) so client code doesn't pull in zod.
 const TYPE_LABELS: Record<GuideType, string> = {
   newspaper: "Newspapers",
@@ -135,45 +191,33 @@ const TYPE_LABELS: Record<GuideType, string> = {
   civic: "Civic groups",
 };
 
-export function guideTypeOptions(
-  guides: Guide[],
-  ends: Record<string, EndorsementFile>,
-): { type: GuideType; label: string }[] {
-  const present = new Set(publishedGuides(guides, ends).map((g) => g.type));
-  return (Object.keys(TYPE_LABELS) as GuideType[])
-    .filter((t) => present.has(t))
-    .map((type) => ({ type, label: TYPE_LABELS[type] }));
+export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" | "mixed" | "off" {
+  const ofType = guides.filter((g) => g.type === type);
+  const on = ofType.filter((g) => isGuideOn(f, g.id)).length;
+  if (on === ofType.length) return "on";
+  return on === 0 ? "off" : "mixed";
 }
 
-// Drops anything a stale URL or stored value could carry that this election doesn't have.
-export function sanitizeFilters(f: Filters, ballot: Pick<Ballot, "contests">, guides: Guide[]): Filters {
-  const ids = new Set(guides.map((g) => g.id));
-  const opts = districtOptions(ballot);
-  const districts: Record<string, string> = {};
-  for (const [name, v] of Object.entries(f.districts)) {
-    if (opts[name]?.includes(v)) districts[name] = v;
+// All on unless all are already on, in which case all off. `guides` are published guides.
+export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): Filters {
+  const ids = guides.filter((g) => g.type === type).map((g) => g.id);
+  if (typeState(type, f, guides) === "on") return { ...f, off: uniqSorted([...f.off, ...ids]) };
+  return { ...f, off: f.off.filter((id) => !ids.includes(id)) };
+}
+
+export type GuideGroup = { type: GuideType; heading: string; guides: GuideInfo[] };
+
+const fold = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+// Published guides grouped by type; `query` filters by name (case- and accent-insensitive).
+// Headings count the whole type so the checkbox reads the same while searching.
+export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>, query: string): GuideGroup[] {
+  const q = fold(query.trim());
+  const out: GuideGroup[] = [];
+  for (const [type, label] of Object.entries(TYPE_LABELS) as [GuideType, string][]) {
+    const ofType = guides.filter((g) => g.type === type && files[g.id]);
+    const matching = ofType.filter((g) => fold(g.name).includes(q));
+    if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, guides: matching });
   }
-  return {
-    off: f.off.filter((id) => ids.has(id)),
-    offTypes: f.offTypes.filter((t) => t in TYPE_LABELS),
-    whyOnly: f.whyOnly,
-    districts,
-  };
-}
-
-const without = (xs: string[], x: string) => xs.filter((y) => y !== x);
-
-// Turning on a guide whose whole type is off turns that type back on but keeps its siblings off.
-export function toggleGuide(f: Filters, guide: Guide, guides: Guide[]): Filters {
-  if (isGuideOn(f, guide)) return { ...f, off: uniqSorted([...f.off, guide.id]) };
-  if (!f.offTypes.includes(guide.type)) return { ...f, off: without(f.off, guide.id) };
-  const siblings = guides.filter((g) => g.type === guide.type && g.id !== guide.id).map((g) => g.id);
-  return { ...f, offTypes: without(f.offTypes, guide.type), off: uniqSorted([...without(f.off, guide.id), ...siblings]) };
-}
-
-// Turning a type back on turns all of its guides on.
-export function toggleType(f: Filters, type: string, guides: Guide[]): Filters {
-  if (!f.offTypes.includes(type)) return { ...f, offTypes: uniqSorted([...f.offTypes, type]) };
-  const ofType = new Set(guides.filter((g) => g.type === type).map((g) => g.id));
-  return { ...f, offTypes: without(f.offTypes, type), off: f.off.filter((id) => !ofType.has(id)) };
+  return out;
 }

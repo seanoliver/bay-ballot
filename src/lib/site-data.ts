@@ -1,5 +1,7 @@
 import path from "node:path";
 import { listElections, loadElection, type ElectionData } from "./data";
+import { pendingNote } from "./display";
+import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "./filters";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
 
@@ -27,5 +29,13 @@ export function election(id: string): ElectionData | undefined {
   return d;
 }
 
-// sourceLink lives in display.ts so client components can use it without pulling in fs.
-export { sourceLink } from "./display";
+// The ballot view's props: published guides and files only, slimmed, plus the pending note.
+export function ballotViewProps(d: ElectionData) {
+  const published = publishedGuides(d.guides, d.endorsements);
+  return {
+    ballot: d.ballot,
+    guides: published.map(({ id, name, type }): GuideInfo => ({ id, name, type })),
+    files: publishedFiles(d.endorsements),
+    pending: pendingNote(pendingGuides(d.guides, d.endorsements)),
+  };
+}

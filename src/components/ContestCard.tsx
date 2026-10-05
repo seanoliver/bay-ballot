@@ -10,8 +10,8 @@ import {
   cardDescription,
   contestHeadline,
   groupByPick,
+  officialLink,
   rankedDetails,
-  rankedLabel,
   rankedLine,
   reasons,
   rowNote,
@@ -28,29 +28,55 @@ import { Verdict } from "./Verdict";
 // Inline links keep their line height but get a 40px-tall tap area.
 const TAP = "inline-block py-2.5 -my-2.5";
 
-type Props = { election: string; contest: Contest; rows: Row[]; pending: string | null };
+type Props = {
+  election: string;
+  contest: Contest;
+  rows: Row[];
+  pending: string | null;
+  hint: boolean;
+  onOpen: () => void;
+};
 
-export function ContestCard({ election, contest, rows, pending }: Props) {
+export function ContestCard({ election, contest, rows, pending, hint, onOpen }: Props) {
   const [open, setOpen] = useState(false);
   const { headline, topPicks } = contestHeadline(contest, rows);
   const description = cardDescription(contest);
+  const official = officialLink(contest);
+  const href = `/${election}/${contest.id}`;
   return (
     <Collapsible
       open={open}
-      onOpenChange={setOpen}
-      render={<Card className={cn("gap-0 py-0 shadow-xs", open && "ring-2 ring-foreground/70")} />}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) onOpen();
+      }}
+      // Card clips its children (overflow-hidden), so the focus indicator is the Card's own outline.
+      render={
+        <Card
+          className={cn(
+            "gap-0 py-0 shadow-xs outline-offset-2 has-[[data-slot=collapsible-trigger]:focus-visible]:outline-3 has-[[data-slot=collapsible-trigger]:focus-visible]:outline-ring",
+            open && "ring-2 ring-foreground/70",
+          )}
+        />
+      }
     >
-      {/* The trigger's ::after covers the whole header, so a tap anywhere toggles; the ranked popover sits above it. */}
+      {/* The trigger's ::after covers the whole header, so a tap anywhere toggles; the ranked popover sits above it.
+          The trigger is a real link to the contest page: without JS it navigates, with JS it toggles. */}
       <div className="relative grid grid-cols-[1fr_auto] items-start gap-3 p-4 active:bg-muted/60">
         <div className="min-w-0">
           <h3 className="text-lg leading-snug font-semibold">
-            <CollapsibleTrigger className="text-left outline-none after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:after:ring-3 focus-visible:after:ring-ring/50">
+            <CollapsibleTrigger
+              nativeButton={false}
+              render={<a href={href} />}
+              onClick={(e) => e.preventDefault()}
+              className="text-left outline-none after:absolute after:inset-0 after:content-['']"
+            >
               {contest.title}
             </CollapsibleTrigger>
           </h3>
           {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
           <Verdict headline={headline} topPicks={topPicks} ranked={<RankedPopover rows={rows} />} />
-          {open ? null : <p className="mt-2 text-xs text-muted-foreground">Tap to see each guide</p>}
+          {hint && !open ? <p className="mt-2 text-xs text-muted-foreground">Tap to see each guide</p> : null}
         </div>
         <span
           aria-hidden="true"
@@ -64,14 +90,14 @@ export function ContestCard({ election, contest, rows, pending }: Props) {
       </div>
       <CollapsibleContent className="border-t border-border px-4 pb-4">
         <Groups contest={contest} rows={rows} />
-        {pending ? <p className="mt-3 text-sm text-muted-foreground">{pending}.</p> : null}
+        {pending ? <p className="mt-3 text-sm text-muted-foreground">{pending}</p> : null}
         <p className="mt-2 flex flex-wrap gap-x-4 text-sm">
-          {contest.kind === "measure" && contest.link ? (
-            <ExternalLink href={contest.link} className={`${TAP} underline underline-offset-2`}>
+          {official ? (
+            <ExternalLink href={official} className={`${TAP} underline underline-offset-2`}>
               Official text
             </ExternalLink>
           ) : null}
-          <Link href={`/${election}/${contest.id}`} className={`${TAP} underline underline-offset-2`}>
+          <Link href={href} className={`${TAP} underline underline-offset-2`}>
             Open contest page
           </Link>
         </p>
@@ -89,13 +115,17 @@ function RankedPopover({ rows }: { rows: Row[] }) {
       >
         *
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-80 max-w-[calc(100vw-2rem)]">
+      <PopoverContent align="start" collisionPadding={16} className="w-80 max-w-[calc(100vw-2rem)]">
         <PopoverTitle>Ranked-choice order</PopoverTitle>
-        <ul className="space-y-1.5">
+        <ul className="space-y-2">
           {rankedDetails(rows).map((r) => (
             <li key={r.guideName}>
-              <span className="font-medium">{r.guideName}:</span>{" "}
-              <span className="text-muted-foreground">{rankedLabel(r.order)}</span>
+              <p className="font-medium">{r.guideName}</p>
+              <ol className="list-decimal pl-5 text-muted-foreground">
+                {r.order.map((name) => (
+                  <li key={name}>{name}</li>
+                ))}
+              </ol>
             </li>
           ))}
         </ul>

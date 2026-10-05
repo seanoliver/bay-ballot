@@ -78,7 +78,7 @@ export function rankedDetails(rows: Row[]): RankedDetail[] {
 export function pendingNote(guides: Guide[]): string | null {
   const n = guides.length;
   if (n === 0) return null;
-  return n === 1 ? "1 guide hasn't published yet" : `${n} guides haven't published yet`;
+  return n === 1 ? "1 guide hasn't published yet." : `${n} guides haven't published yet.`;
 }
 
 export function contestHeadline(contest: Contest, rows: Row[]): { headline: Headline; topPicks: TopPick[] } {
@@ -124,6 +124,15 @@ export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
 }
 
+export function officialLink(contest: Contest): string | null {
+  return contest.kind === "measure" && contest.link ? contest.link : null;
+}
+
+// The "Tap to see each guide" hint shows on the first card only, until any card has been opened.
+export function showHint({ index, opened }: { index: number; opened: boolean }): boolean {
+  return index === 0 && !opened;
+}
+
 // Why a row shows no quote; null when it has one.
 export function rowNote(row: Row): string | null {
   if (!row.file.hasReasoning) return "Publishes a list only, no reasons";
@@ -135,7 +144,7 @@ export function rankedLine(entry: Entry): string | null {
 }
 
 // Prefer the archived snapshot so links survive the guide page changing or going away.
-export function sourceLink(file: EndorsementFile, url: string): string {
+export function sourceLink(file: Pick<EndorsementFile, "archived">, url: string): string {
   return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
 }
 
@@ -160,7 +169,6 @@ export function formatDate(iso: string): string {
 export function monthYear(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
 }
-
 
 // "San Francisco · November 3, 2026": the city on the ballot (else the ballot title) and election day.
 export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contests">): string {

@@ -9,16 +9,15 @@ import { Verdict } from "@/components/Verdict";
 import {
   contestHeadline,
   groupByPick,
-  pendingNote,
+  officialLink,
   rankedDetails,
-  rankedLabel,
   reasons,
   rowNote,
   rowPick,
   sourceLink,
 } from "@/lib/display";
-import { activeEntries, EMPTY, pendingGuides } from "@/lib/filters";
-import { election, elections } from "@/lib/site-data";
+import { activeEntries, EMPTY } from "@/lib/filters";
+import { ballotViewProps, election, elections } from "@/lib/site-data";
 
 export const dynamicParams = false;
 
@@ -43,11 +42,12 @@ export async function generateMetadata({ params }: PageProps<"/[election]/[conte
 export default async function ContestPage({ params }: PageProps<"/[election]/[contest]">) {
   const d = await load(params);
   if (!d) notFound();
-  const { contest, guides, endorsements, ballot, electionId } = d;
-  const rows = activeEntries(contest.id, guides, endorsements, EMPTY);
+  const { contest, ballot, electionId } = d;
+  const { guides, files, pending } = ballotViewProps(d);
+  const rows = activeEntries(contest.id, guides, files, EMPTY);
   const { headline, topPicks } = contestHeadline(contest, rows);
   const ranked = rankedDetails(rows);
-  const pending = pendingNote(pendingGuides(guides, endorsements));
+  const official = officialLink(contest);
   return (
     <div className="mx-auto max-w-3xl px-4 pt-4 pb-10">
       <p className="text-sm">
@@ -58,9 +58,9 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
       <Card className="mt-3 gap-0 p-4 shadow-xs">
         <h1 className="text-2xl leading-tight font-bold">{contest.title}</h1>
         {contest.description ? <p className="mt-1 text-muted-foreground">{contest.description}</p> : null}
-        {contest.kind === "measure" && contest.link ? (
+        {official ? (
           <p className="mt-1 text-sm">
-            <ExternalLink href={contest.link} className="inline-block py-2.5 -my-2.5 underline underline-offset-2">
+            <ExternalLink href={official} className="inline-block py-2.5 -my-2.5 underline underline-offset-2">
               Official text
             </ExternalLink>
           </p>
@@ -113,17 +113,22 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         <Card className="mt-3 gap-0 p-4 shadow-xs">
           <h2 className="font-semibold">Ranked-choice order</h2>
           <Separator className="my-2" />
-          <ul className="space-y-1 text-sm">
+          <ul className="space-y-2 text-sm">
             {ranked.map((r) => (
               <li key={r.guideName}>
-                <span className="font-medium">{r.guideName}:</span> <span className="text-muted-foreground">{rankedLabel(r.order)}</span>
+                <p className="font-medium">{r.guideName}</p>
+                <ol className="list-decimal pl-5 text-muted-foreground">
+                  {r.order.map((name) => (
+                    <li key={name}>{name}</li>
+                  ))}
+                </ol>
               </li>
             ))}
           </ul>
         </Card>
       ) : null}
 
-      {pending ? <p className="mt-6 text-sm text-muted-foreground">{pending}.</p> : null}
+      {pending ? <p className="mt-6 text-sm text-muted-foreground">{pending}</p> : null}
     </div>
   );
 }

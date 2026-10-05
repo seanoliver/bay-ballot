@@ -1,25 +1,23 @@
 "use client";
 
-import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { pendingNote, sections } from "@/lib/display";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { sections, showHint } from "@/lib/display";
 import {
   activeEntries,
-  fromQuery,
-  hasFilterParams,
-  pendingGuides,
-  sanitizeFilters,
+  initialFilters,
   toQuery,
   visibleContest,
   type Filters,
+  type GuideInfo,
+  type PickFile,
 } from "@/lib/filters";
-import type { Ballot, EndorsementFile, Guide } from "@/lib/schema";
+import type { Ballot } from "@/lib/schema";
 import { ContestCard } from "./ContestCard";
 import { FilterPanel } from "./FilterPanel";
 import { SectionHeading } from "./SectionHeading";
 
 const STORAGE_KEY = "bb-filters";
-const STORAGE_EVENT = "bb-filters-change";
+const CHANGE_EVENT = "bb-filters-change";
 
 // Storage can throw (private mode, blocked site data); every access falls back to "nothing stored".
 function readStored(): string | null {
@@ -36,51 +34,55 @@ function writeStored(q: string) {
   } catch {
     // Not persisting is fine; the URL still carries the filters.
   }
-  window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
+const readQuery = () => window.location.search;
+
 function subscribe(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
   window.addEventListener("storage", onChange);
-  window.addEventListener(STORAGE_EVENT, onChange);
+  window.addEventListener(CHANGE_EVENT, onChange);
   return () => {
+    window.removeEventListener("popstate", onChange);
     window.removeEventListener("storage", onChange);
-    window.removeEventListener(STORAGE_EVENT, onChange);
+    window.removeEventListener(CHANGE_EVENT, onChange);
   };
 }
 
 type Props = {
   election: string;
   ballot: Ballot;
-  guides: Guide[];
-  endorsements: Record<string, EndorsementFile>;
+  guides: GuideInfo[];
+  files: Record<string, PickFile>;
+  pending: string | null;
 };
 
-// Filters live in the URL; a URL without filter params falls back to the last filters saved on this device.
-export function BallotView({ election, ballot, guides, endorsements }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const query = useSearchParams().toString();
+// Filters live in the URL, falling back to the last filters saved on this device. The server (and
+// hydration) render with no filters; the client applies URL/stored filters right after, so the
+// prerendered page is the full ballot and nothing above the cards moves.
+export function BallotView({ election, ballot, guides, files, pending }: Props) {
+  const query = useSyncExternalStore(subscribe, readQuery, () => "");
   const stored = useSyncExternalStore(subscribe, readStored, () => null);
-  const raw = hasFilterParams(query) ? query : (stored ?? "");
-  const filters = useMemo(() => sanitizeFilters(fromQuery(raw), ballot, guides), [raw, ballot, guides]);
+  const filters = useMemo(() => initialFilters({ query, stored, ballot, guides }), [query, stored, ballot, guides]);
+  const [opened, setOpened] = useState(false);
 
-  const setFilters = useCallback(
-    (f: Filters) => {
-      const q = toQuery(f);
-      writeStored(q);
-      router.replace(q ? `?${q}` : pathname, { scroll: false });
-    },
-    [router, pathname],
-  );
+  const setFilters = useCallback((f: Filters) => {
+    const q = toQuery(f);
+    writeStored(q);
+    // Native replaceState syncs with the Next router without a server round trip or scroll.
+    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  }, []);
+  const markOpened = useCallback(() => setOpened(true), []);
 
-  const pending = pendingNote(pendingGuides(guides, endorsements));
   const visible = sections(ballot.contests.filter((c) => visibleContest(c, filters)));
+  let index = 0;
 
   return (
     <>
       <div className="sticky top-0 z-20 border-b border-border bg-background">
         <div className="mx-auto max-w-3xl px-4 py-3">
-          <FilterPanel filters={filters} onChange={setFilters} ballot={ballot} guides={guides} endorsements={endorsements} />
+          <FilterPanel filters={filters} onChange={setFilters} ballot={ballot} guides={guides} files={files} />
         </div>
       </div>
       <div className="mx-auto max-w-3xl px-3 pb-10 sm:px-4">
@@ -93,8 +95,10 @@ export function BallotView({ election, ballot, guides, endorsements }: Props) {
                   key={c.id}
                   election={election}
                   contest={c}
-                  rows={activeEntries(c.id, guides, endorsements, filters)}
+                  rows={activeEntries(c.id, guides, files, filters)}
                   pending={pending}
+                  hint={showHint({ index: index++, opened })}
+                  onOpen={markOpened}
                 />
               ))}
             </div>
