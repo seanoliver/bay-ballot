@@ -9,11 +9,11 @@ import { extract, pagesFor, toEntries, type Source } from "../src/pipeline/extra
 import { fetchSource } from "../src/pipeline/fetch";
 import { resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
-import { nextFile, toYaml } from "../src/pipeline/write";
+import { nextFile, shrinkWarning, toYaml } from "../src/pipeline/write";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
-const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive]
+const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force]
        npm run bb -- discover
        npm run bb -- check`;
 
@@ -50,6 +50,13 @@ async function extractOne(client: Anthropic, data: ElectionData, guideId: string
 
   const { output, usage } = await extract(client, data.ballot, guide, sources);
   const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources));
+
+  const shrunk = shrinkWarning(guideId, prev.picks, picks, { force: flag("--force") });
+  if (shrunk) {
+    console.log(`\n${shrunk}`);
+    notes.forEach((n) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`));
+    return;
+  }
 
   let archived: string[] | undefined;
   if (flag("--archive")) {

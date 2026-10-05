@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
 import { EndorsementFile, type Entry } from "@/lib/schema";
-import { nextFile, toYaml } from "@/pipeline/write";
+import { nextFile, shrinkWarning, toYaml } from "@/pipeline/write";
 
 const prev: EndorsementFile = {
   guide: "spur", election: "2026-11", status: "pending", source: "https://www.spur.org/voter-guide/2026-11",
@@ -25,10 +25,11 @@ describe("nextFile", () => {
     expect(n.manual).toBeUndefined();
   });
 
-  it("is pending when nothing was extracted", () => {
+  it("keeps the previous status when nothing was extracted", () => {
     const n = nextFile(prev, {}, false, "2026-10-05");
     expect(n.status).toBe("pending");
     expect(n.picks).toEqual({});
+    expect(nextFile({ ...prev, status: "published" }, {}, false, "2026-10-05").status).toBe("published");
   });
 
   it("records archive snapshots, keeping the previous ones when none are given", () => {
@@ -90,5 +91,30 @@ describe("toYaml", () => {
     expect(y.startsWith("# allowForeignSources: the PDF lives on the CDN\nguide: spur\n")).toBe(true);
     expect(y).toContain("source: https://www.spur.org/voter-guide/2026-11 # page also lists the June slate\n");
     expect(EndorsementFile.parse(parse(y))).toEqual(file);
+  });
+});
+
+describe("shrinkWarning", () => {
+  const entry: Entry = { pick: "Y", ranked: false, quotes: [] };
+  const many = (n: number) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`prop-${i}`, entry]));
+  const MSG = "  !! spur: 0 picks (previous 4), file left unchanged; rerun with --force to accept";
+
+  it("refuses to wipe existing picks", () => {
+    expect(shrinkWarning("spur", many(4), {})).toBe(MSG);
+  });
+  it("refuses a result with fewer than half the previous picks", () => {
+    expect(shrinkWarning("spur", many(5), many(2))).toBe(
+      "  !! spur: 2 picks (previous 5), file left unchanged; rerun with --force to accept",
+    );
+  });
+  it("accepts half or more", () => {
+    expect(shrinkWarning("spur", many(4), many(2))).toBeNull();
+    expect(shrinkWarning("spur", many(4), many(6))).toBeNull();
+  });
+  it("accepts anything when there were no picks before", () => {
+    expect(shrinkWarning("spur", {}, {})).toBeNull();
+  });
+  it("accepts with force", () => {
+    expect(shrinkWarning("spur", many(4), {}, { force: true })).toBeNull();
   });
 });

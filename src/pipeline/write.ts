@@ -12,7 +12,7 @@ export function nextFile(
   return {
     guide: prev.guide,
     election: prev.election,
-    status: Object.keys(picks).length > 0 ? "published" : "pending",
+    status: Object.keys(picks).length > 0 ? "published" : prev.status,
     source: prev.source,
     extraSources: prev.extraSources,
     fetchWith: prev.fetchWith,
@@ -23,6 +23,22 @@ export function nextFile(
     hasReasoning,
     picks,
   };
+}
+
+/**
+ * A warning when a run would wipe existing picks or cut them below half (usually a fetch or
+ * extraction failure, not a real change), else null. `force` accepts the result anyway.
+ */
+export function shrinkWarning(
+  id: string,
+  prev: Record<string, Entry>,
+  next: Record<string, Entry>,
+  { force = false }: { force?: boolean } = {},
+): string | null {
+  const before = Object.keys(prev).length;
+  const after = Object.keys(next).length;
+  if (force || before === 0 || after * 2 >= before) return null;
+  return `  !! ${id}: ${after} picks (previous ${before}), file left unchanged; rerun with --force to accept`;
 }
 
 const KEY_ORDER = [
