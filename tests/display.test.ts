@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, pendingNote, rankedDetails, runnersUp } from "@/lib/display";
+import { groupByPick, headline, pendingNote, rankedDetails, rankedLine, rowNote, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -45,14 +45,68 @@ describe("headline", () => {
   });
 });
 
-describe("runnersUp", () => {
-  it("lists non-leaders with counts", () => {
-    expect(runnersUp(tally(race, [e(["A"]), e(["A"]), e(["A"]), e(["B"]), e(["C"])]))).toBe("B 1 · C 1");
+describe("multi-seat headline", () => {
+  it("is 'Most endorsed' with no detail", () => {
+    const t = tally(board, [e(["A", "B", "C"]), e(["A", "B", "D"])]);
+    expect(headline(t, 3)).toEqual({ tone: "candidate", label: "Most endorsed", detail: "", ranked: false });
   });
-  it("empty for measures, splits, single candidate", () => {
-    expect(runnersUp(tally(measure, [...ys(2), ...ns(1)]))).toBe("");
-    expect(runnersUp(tally(race, [e(["A"]), e(["B"])]))).toBe("");
-    expect(runnersUp(tally(race, [e(["A"])]))).toBe("");
+  it("never returns Split, even when the top names tie", () => {
+    const t = tally(board, [e(["A"]), e(["B"])]);
+    expect(headline(t, 3).label).toBe("Most endorsed");
+    expect(headline(t, 3).tone).toBe("candidate");
+  });
+  it("still says no picks yet when nobody has picked", () => {
+    expect(headline(tally(board, []), 3)).toEqual({ tone: "none", label: "No picks yet", detail: "", ranked: false });
+  });
+  it("single-seat default is unchanged", () => {
+    expect(headline(tally(race, [e(["A"]), e(["B"])]), 1).label).toBe("Split");
+  });
+});
+
+describe("topPicks", () => {
+  it("returns the top `seats` names with counts out of all guides", () => {
+    const t = tally(board, [e(["A", "B", "C"]), e(["A", "B", "D"]), e(["A", "E", "C"])]);
+    expect(topPicks(t, 3)).toEqual([
+      { name: "A", count: 3, total: 3 },
+      { name: "B", count: 2, total: 3 },
+      { name: "C", count: 2, total: 3 },
+    ]);
+  });
+  it("includes names tied at the cutoff", () => {
+    const t = tally(board, [e(["A", "B", "C"]), e(["A", "D", "E"])]);
+    expect(topPicks(t, 2).map((p) => p.name)).toEqual(["A", "B", "C", "D", "E"]);
+  });
+  it("returns fewer when fewer names were picked", () => {
+    expect(topPicks(tally(board, [e(["A"])]), 3)).toEqual([{ name: "A", count: 1, total: 1 }]);
+  });
+  it("is empty for measures and empty tallies", () => {
+    expect(topPicks(tally(measure, ys(2)), 3)).toEqual([]);
+    expect(topPicks(tally(board, []), 3)).toEqual([]);
+  });
+});
+
+describe("rowNote", () => {
+  const withFile = (hasReasoning: boolean, entry: Entry): Row =>
+    ({ guide: { id: "g", name: "G" } as Guide, entry, file: { hasReasoning } as Row["file"] });
+  const q = { text: "Because.", source: "https://g.org/a" };
+  it("is null when the row has a quote to show", () => {
+    expect(rowNote(withFile(true, { ...e("Y"), quotes: [q] }))).toBeNull();
+  });
+  it("explains a list-only guide", () => {
+    expect(rowNote(withFile(false, { ...e("Y"), quotes: [q] }))).toBe("Publishes a list only, no reasons");
+  });
+  it("explains a missing quote from a guide that usually gives reasons", () => {
+    expect(rowNote(withFile(true, e("Y")))).toBe("No quote for this pick");
+  });
+});
+
+describe("rankedLine", () => {
+  it("numbers a ranked pick", () => {
+    expect(rankedLine(e(["A", "B"], true))).toBe("Ranked: 1. A, 2. B");
+  });
+  it("is null for unranked picks and measures", () => {
+    expect(rankedLine(e(["A", "B"]))).toBeNull();
+    expect(rankedLine(e("Y"))).toBeNull();
   });
 });
 
@@ -65,6 +119,10 @@ describe("groupByPick", () => {
       ["N", "No", ["G1"]],
     ]);
     expect(groupByPick(measure, [row("G1", e("N"))]).map((x) => x.key)).toEqual(["N"]);
+  });
+  it("tones groups: yes, no, candidate", () => {
+    expect(groupByPick(measure, [row("G1", e("Y")), row("G2", e("N"))]).map((x) => x.tone)).toEqual(["yes", "no"]);
+    expect(groupByPick(race, [row("G1", e(["A"]))]).map((x) => x.tone)).toEqual(["candidate"]);
   });
   it("candidate: groups in tally order, dual endorsement in both", () => {
     const rows = [row("G1", e(["A", "B"])), row("G2", e(["A"])), row("G3", e(["C"]))];

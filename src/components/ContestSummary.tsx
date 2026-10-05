@@ -6,7 +6,7 @@ import { TONE_CLASS } from "./tone";
 
 // Pure presentational: takes precomputed rows so a client view can pass filtered rows later.
 export function ContestSummary({ election, contest, rows }: { election: string; contest: Contest; rows: Row[] }) {
-  const { headline, runnersUp } = contestHeadline(contest, rows);
+  const { headline } = contestHeadline(contest, rows);
   return (
     <div className="py-3">
       <h3 className="font-medium">
@@ -22,7 +22,6 @@ export function ContestSummary({ election, contest, rows }: { election: string; 
         {headline.ranked ? <span className="ml-1 text-xs text-muted-foreground">(ranked #1)</span> : null}
         {headline.detail ? <span className="ml-2 text-sm text-muted-foreground">{headline.detail}</span> : null}
       </p>
-      {runnersUp ? <p className="text-sm text-muted-foreground">Also: {runnersUp}</p> : null}
     </div>
   );
 }

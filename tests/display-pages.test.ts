@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contestHeadline, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -53,12 +53,22 @@ describe("dates", () => {
 });
 
 describe("contestHeadline", () => {
-  it("computes headline and runners-up from rows", () => {
+  const rowsOf = (entries: Entry[]) => entries.map((entry) => ({ guide: {} as Guide, entry, file: file() }));
+  it("computes the headline from rows; single-seat has no top picks", () => {
     const race = c("sup", "Local", "candidate");
-    const rows = [e(["A"]), e(["A"]), e(["B"])].map((entry) => ({ guide: {} as Guide, entry, file: file() }));
-    expect(contestHeadline(race, rows)).toEqual({
+    expect(contestHeadline(race, rowsOf([e(["A"]), e(["A"]), e(["B"])]))).toEqual({
       headline: { tone: "candidate", label: "A", detail: "67% (2 of 3)", ranked: false },
-      runnersUp: "B 1",
+      topPicks: [],
+    });
+  });
+  it("multi-seat: Most endorsed plus top picks for the seats", () => {
+    const board = { ...c("boe", "Local", "candidate"), seats: 2 } as Contest;
+    expect(contestHeadline(board, rowsOf([e(["A", "B"]), e(["A", "C"]), e(["B", "A"])]))).toEqual({
+      headline: { tone: "candidate", label: "Most endorsed", detail: "", ranked: false },
+      topPicks: [
+        { name: "A", count: 3, total: 3 },
+        { name: "B", count: 2, total: 3 },
+      ],
     });
   });
 });
@@ -108,5 +118,15 @@ describe("rowPick", () => {
   });
   it("measures read Yes/No", () => {
     expect(rowPick(c("p", "S"), e("N"))).toEqual({ label: "No", ranked: false });
+  });
+});
+
+describe("cardDescription", () => {
+  it("shows a measure's description", () => {
+    expect(cardDescription({ ...c("p", "S"), description: "Housing bond" } as Contest)).toBe("Housing bond");
+  });
+  it("is null for candidate races and measures without one", () => {
+    expect(cardDescription({ ...c("r", "S", "candidate"), description: "x" } as Contest)).toBeNull();
+    expect(cardDescription(c("p", "S"))).toBeNull();
   });
 });

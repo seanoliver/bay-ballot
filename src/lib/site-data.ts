@@ -1,6 +1,5 @@
 import path from "node:path";
 import { listElections, loadElection, type ElectionData } from "./data";
-import type { EndorsementFile } from "./schema";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
 
@@ -28,7 +27,5 @@ export function election(id: string): ElectionData | undefined {
   return d;
 }
 
-// Prefer the archived snapshot so links survive the guide page changing or going away.
-export function sourceLink(file: EndorsementFile, url: string): string {
-  return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
-}
+// sourceLink lives in display.ts so client components can use it without pulling in fs.
+export { sourceLink } from "./display";

@@ -10,11 +10,14 @@ export type Headline = {
   ranked: boolean;
 };
 
-export type PickGroup = { key: string; label: string; rows: Row[] };
+export type PickGroup = { key: string; label: string; tone: "yes" | "no" | "candidate"; rows: Row[] };
+export type TopPick = { name: string; count: number; total: number };
 export type RankedDetail = { guideName: string; order: string[] };
 
-export function headline(t: Tally): Headline {
+// Multi-seat races have no single winner, so they never read as "Split"; topPicks lists the names.
+export function headline(t: Tally, seats = 1): Headline {
   if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return { tone: "none", label: "No picks yet", detail: "", ranked: false };
+  if (t.kind === "candidate" && seats > 1) return { tone: "candidate", label: "Most endorsed", detail: "", ranked: false };
   if (t.kind === "measure") {
     if (t.verdict === "split") {
       return { tone: "split", label: "Split", detail: `${t.yes} Yes · ${t.no} No`, ranked: false };
@@ -38,26 +41,26 @@ export function headline(t: Tally): Headline {
   };
 }
 
-export function runnersUp(t: Tally): string {
-  if (t.kind !== "candidate" || t.split || t.leader === null) return "";
-  return t.counts
-    .slice(1)
-    .map((c) => `${c.name} ${c.count}`)
-    .join(" · ");
+// The `seats` most-endorsed names; every name tied with the last seat is included.
+export function topPicks(t: Tally, seats: number): TopPick[] {
+  if (t.kind !== "candidate" || t.counts.length === 0) return [];
+  const cutoff = t.counts[Math.min(seats, t.counts.length) - 1].count;
+  return t.counts.filter((c) => c.count >= cutoff).map((c) => ({ name: c.name, count: c.count, total: t.total }));
 }
 
 export function groupByPick(contest: Contest, rows: Row[]): PickGroup[] {
   const t = tally(contest, rows.map((r) => r.entry));
   if (t.kind === "measure") {
     const groups: PickGroup[] = [
-      { key: "Y", label: "Yes", rows: rows.filter((r) => r.entry.pick === "Y") },
-      { key: "N", label: "No", rows: rows.filter((r) => r.entry.pick === "N") },
+      { key: "Y", label: "Yes", tone: "yes", rows: rows.filter((r) => r.entry.pick === "Y") },
+      { key: "N", label: "No", tone: "no", rows: rows.filter((r) => r.entry.pick === "N") },
     ];
     return groups.filter((g) => g.rows.length > 0);
   }
   return t.counts.map((c) => ({
     key: c.name,
     label: c.name,
+    tone: "candidate" as const,
     rows: rows.filter((r) => countedNames(contest, r.entry).includes(c.name)),
   }));
 }
@@ -78,9 +81,14 @@ export function pendingNote(guides: Guide[]): string | null {
   return n === 1 ? "1 guide hasn't published yet" : `${n} guides haven't published yet`;
 }
 
-export function contestHeadline(contest: Contest, rows: Row[]): { headline: Headline; runnersUp: string } {
+export function contestHeadline(contest: Contest, rows: Row[]): { headline: Headline; topPicks: TopPick[] } {
   const t = tally(contest, rows.map((r) => r.entry));
-  return { headline: headline(t), runnersUp: runnersUp(t) };
+  return { headline: headline(t, contest.seats), topPicks: contest.seats > 1 ? topPicks(t, contest.seats) : [] };
+}
+
+// The one-line description under a contest title; candidate races are described by their title.
+export function cardDescription(contest: Contest): string | null {
+  return contest.kind === "measure" && contest.description ? contest.description : null;
 }
 
 export type Section = { name: string; contests: Contest[] };
@@ -114,6 +122,21 @@ export function rowPick(contest: Contest, entry: Entry): { label: string; ranked
 // Quotes to show for a row; none when the guide doesn't publish reasoning.
 export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
+}
+
+// Why a row shows no quote; null when it has one.
+export function rowNote(row: Row): string | null {
+  if (!row.file.hasReasoning) return "Publishes a list only, no reasons";
+  return row.entry.quotes.length > 0 ? null : "No quote for this pick";
+}
+
+export function rankedLine(entry: Entry): string | null {
+  return entry.ranked && Array.isArray(entry.pick) ? `Ranked: ${rankedLabel(entry.pick)}` : null;
+}
+
+// Prefer the archived snapshot so links survive the guide page changing or going away.
+export function sourceLink(file: EndorsementFile, url: string): string {
+  return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
 }
 
 export type GuidePick = { contest: Contest; entry: Entry; label: string };
