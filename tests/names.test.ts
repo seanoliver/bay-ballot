@@ -38,14 +38,18 @@ describe("matchName", () => {
       expect(matchName("J. R. Eppler", ["J.R. Eppler"])).toBeNull());
     it("picks the only compatible candidate", () =>
       expect(matchName("Connie Chan", ["Connie M. Chan", "Gordon Chan"])).toEqual(f("Connie M. Chan")));
-    it("nickname in quotes does not match", () =>
-      expect(matchName("Kulvindar Singh", ['Kulvindar "Rani" Singh'])).toBeNull());
+    it("quoted nickname is optional", () =>
+      expect(matchName("Kulvindar Singh", ['Kulvindar "Rani" Singh'])).toEqual(f('Kulvindar "Rani" Singh')));
     it("curly apostrophe matches straight", () =>
       expect(matchName("O\u2019Brien", ["O'Brien"])).toEqual(f("O'Brien")));
     it("hyphenated vs spaced surname returns null", () =>
       expect(matchName("Ann Smith Jones", ["Ann Smith-Jones"])).toBeNull());
-    it("suffix mismatch returns null", () =>
-      expect(matchName("John Smith", ["John Smith Jr."])).toBeNull());
+    it("suffixes are ignored on both sides", () => {
+      expect(matchName("John Smith", ["John Smith Jr."])).toEqual(f("John Smith Jr."));
+      expect(matchName("John Smith Sr.", ["John Smith"])).toEqual(f("John Smith"));
+    });
+    it("suffix-only differences are still ambiguous", () =>
+      expect(matchName("John Smith", ["John Smith Jr.", "John Smith Sr."])).toBeNull());
     it("empty or punctuation-only input returns null", () => {
       expect(matchName("", cands)).toBeNull();
       expect(matchName(" . ", cands)).toBeNull();
@@ -79,5 +83,44 @@ describe("matchName", () => {
     });
     it("is ambiguous when a nickname equals another candidate's name", () =>
       expect(matchName("DJ Brookter", ["Dionjay (DJ) Brookter", "D.J. Brookter"])).toBeNull());
+  });
+  describe("real ballot names", () => {
+    const f = (name: string) => ({ name, fuzzy: true });
+    const sup8 = ["Gary McCoy", "Michael T. Nguyen", "Darshini Patel", 'Emanuel "Manny" Yekutiel'];
+    const sup10 = [
+      'Pearci "PJ" Bastiany III', "Dionjay (DJ) Brookter", "Theo Ellington", "J.R. Eppler",
+      'Ellsworth "Ell" M. Jennison, Jr.', "Mike Trouble Lin",
+    ];
+    const college = ["Elijah Ball", "Rome Moses Jones", "Monroe Lace", "Leah LaCroix", "Jeremy Lee", "Bunny McFadden", "Erwin Tam", "Lisa Palagi Wynn II"];
+    it("Manny / Emanuel Yekutiel", () => {
+      expect(matchName("Manny Yekutiel", sup8)).toEqual(f('Emanuel "Manny" Yekutiel'));
+      expect(matchName("Emanuel Yekutiel", sup8)).toEqual(f('Emanuel "Manny" Yekutiel'));
+      expect(matchName("Emanuel \u201cManny\u201d Yekutiel", sup8)).toEqual(f('Emanuel "Manny" Yekutiel'));
+    });
+    it("PJ / Pearci Bastiany", () => {
+      expect(matchName("PJ Bastiany", sup10)).toEqual(f('Pearci "PJ" Bastiany III'));
+      expect(matchName("Pearci Bastiany", sup10)).toEqual(f('Pearci "PJ" Bastiany III'));
+    });
+    it("Ell / Ellsworth Jennison", () => {
+      expect(matchName("Ell Jennison", sup10)).toEqual(f('Ellsworth "Ell" M. Jennison, Jr.'));
+      expect(matchName("Ellsworth Jennison", sup10)).toEqual(f('Ellsworth "Ell" M. Jennison, Jr.'));
+      expect(matchName("Ellsworth M. Jennison Jr.", sup10)).toEqual(f('Ellsworth "Ell" M. Jennison, Jr.'));
+    });
+    it("Lisa Wynn / Lisa Palagi Wynn", () => {
+      expect(matchName("Lisa Wynn", college)).toEqual(f("Lisa Palagi Wynn II"));
+      expect(matchName("Lisa Palagi Wynn", college)).toEqual(f("Lisa Palagi Wynn II"));
+    });
+    it("Philip Wing", () =>
+      expect(matchName("Philip Wing", ["Catherine Stefani", "Philip Louis Wing"])).toEqual(f("Philip Louis Wing")));
+    it("Jeremy Greco", () =>
+      expect(matchName("Jeremy Greco", ["Albert Chow", "Jeremy Julian Greco", "Alan Wong"])).toEqual(f("Jeremy Julian Greco")));
+    it("Mike Lin", () => expect(matchName("Mike Lin", sup10)).toEqual(f("Mike Trouble Lin")));
+    it("omitted middle names must keep first and last", () => {
+      expect(matchName("Louis Wing", ["Philip Louis Wing"])).toBeNull();
+      expect(matchName("Philip Louis", ["Philip Louis Wing"])).toBeNull();
+      expect(matchName("Wing", ["Philip Louis Wing"])).toBeNull();
+    });
+    it("omitted middle names stay unique", () =>
+      expect(matchName("Mike Lin", ["Mike Trouble Lin", "Mike Lee Lin"])).toBeNull());
   });
 });
