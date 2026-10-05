@@ -69,6 +69,10 @@ export function activeEntries(
   return rows;
 }
 
+export function publishedGuides(guides: Guide[], ends: Record<string, EndorsementFile>): Guide[] {
+  return guides.filter((g) => ends[g.id]?.status === "published");
+}
+
 export function pendingGuides(guides: Guide[], ends: Record<string, EndorsementFile>): Guide[] {
   return guides.filter((g) => !ends[g.id] || ends[g.id].status === "pending");
 }

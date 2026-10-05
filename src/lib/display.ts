@@ -1,4 +1,4 @@
-import type { Contest, Guide } from "./schema";
+import type { Contest, EndorsementFile, Entry, Guide, Quote } from "./schema";
 import type { Row } from "./filters";
 import { countedNames, tally } from "./score";
 import type { Tally } from "./score";
@@ -76,4 +76,62 @@ export function pendingNote(guides: Guide[]): string | null {
   const n = guides.length;
   if (n === 0) return null;
   return n === 1 ? "1 guide hasn't published yet" : `${n} guides haven't published yet`;
+}
+
+export function contestHeadline(contest: Contest, rows: Row[]): { headline: Headline; runnersUp: string } {
+  const t = tally(contest, rows.map((r) => r.entry));
+  return { headline: headline(t), runnersUp: runnersUp(t) };
+}
+
+export type Section = { name: string; contests: Contest[] };
+
+export function sections(contests: Contest[]): Section[] {
+  const out: Section[] = [];
+  for (const c of contests) {
+    const s = out.find((x) => x.name === c.section);
+    if (s) s.contests.push(c);
+    else out.push({ name: c.section, contests: [c] });
+  }
+  return out;
+}
+
+export function rankedLabel(order: string[]): string {
+  return order.map((n, i) => `${i + 1}. ${n}`).join(", ");
+}
+
+export function pickLabel(entry: Entry): string {
+  if (entry.pick === "Y") return "Yes";
+  if (entry.pick === "N") return "No";
+  return entry.ranked ? rankedLabel(entry.pick) : entry.pick.join(", ");
+}
+
+// Quotes to show for a row; none when the guide doesn't publish reasoning.
+export function reasons(row: Row): Quote[] {
+  return row.file.hasReasoning ? row.entry.quotes : [];
+}
+
+export type GuidePick = { contest: Contest; entry: Entry; label: string };
+
+export function guidePicks(contests: Contest[], file: EndorsementFile): GuidePick[] {
+  const out: GuidePick[] = [];
+  for (const contest of contests) {
+    const entry = file.picks[contest.id];
+    if (entry) out.push({ contest, entry, label: pickLabel(entry) });
+  }
+  return out;
+}
+
+// Dates are calendar days; read the YYYY-MM-DD prefix in UTC so the server's timezone can't shift them.
+const day = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+
+export function formatDate(iso: string): string {
+  return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long", day: "numeric" });
+}
+
+export function monthYear(iso: string): string {
+  return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
+}
+
+export function guidesPublished(n: number): string {
+  return `${n} ${n === 1 ? "guide" : "guides"} published`;
 }
