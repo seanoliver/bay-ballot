@@ -1,27 +1,23 @@
 import Link from "next/link";
-import { contestHeadline } from "@/lib/display";
+import { Card } from "@/components/ui/card";
+import { cardDescription, contestHeadline } from "@/lib/display";
 import type { Row } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
-import { TONE_CLASS } from "./tone";
+import { Verdict } from "./Verdict";
 
-// Pure presentational: takes precomputed rows so a client view can pass filtered rows later.
+// Static contest card for the no-JS fallback: the summary plus a link to the contest page.
 export function ContestSummary({ election, contest, rows }: { election: string; contest: Contest; rows: Row[] }) {
-  const { headline } = contestHeadline(contest, rows);
+  const { headline, topPicks } = contestHeadline(contest, rows);
+  const description = cardDescription(contest);
   return (
-    <div className="py-3">
-      <h3 className="font-medium">
-        <Link href={`/${election}/${contest.id}`} className="underline underline-offset-2">
+    <Card className="gap-0 p-4 shadow-xs">
+      <h3 className="text-lg leading-snug font-semibold">
+        <Link href={`/${election}/${contest.id}`} className="underline-offset-2 hover:underline">
           {contest.title}
         </Link>
       </h3>
-      {contest.kind === "measure" && contest.description ? (
-        <p className="text-sm text-muted-foreground">{contest.description}</p>
-      ) : null}
-      <p className="mt-1">
-        <span className={`font-semibold ${TONE_CLASS[headline.tone]}`}>{headline.label}</span>
-        {headline.ranked ? <span className="ml-1 text-xs text-muted-foreground">(ranked #1)</span> : null}
-        {headline.detail ? <span className="ml-2 text-sm text-muted-foreground">{headline.detail}</span> : null}
-      </p>
-    </div>
+      {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
+      <Verdict headline={headline} topPicks={topPicks} ranked={<span className="text-sm text-muted-foreground">(ranked #1)</span>} />
+    </Card>
   );
 }

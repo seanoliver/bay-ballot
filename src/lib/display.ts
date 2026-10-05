@@ -1,4 +1,4 @@
-import type { Contest, EndorsementFile, Entry, Guide, Quote } from "./schema";
+import type { Ballot, Contest, EndorsementFile, Entry, Guide, Quote } from "./schema";
 import type { Row } from "./filters";
 import { countedNames, tally } from "./score";
 import type { Tally } from "./score";
@@ -159,6 +159,17 @@ export function formatDate(iso: string): string {
 
 export function monthYear(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
+}
+
+
+// "San Francisco · November 3, 2026": the city on the ballot (else the ballot title) and election day.
+export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contests">): string {
+  const city = ballot.contests.find((c) => c.jurisdiction.level === "city")?.jurisdiction.name;
+  return `${city ?? ballot.title} · ${formatDate(ballot.date)}`;
+}
+
+export function topPickCount(p: TopPick): string {
+  return `${p.count} of ${p.total} ${p.total === 1 ? "guide" : "guides"}`;
 }
 
 export function guidesPublished(n: number): string {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { cardDescription, contestHeadline, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, electionSubtitle, guidesPublished, rowPick, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
-import type { Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
+import type { Ballot, Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
 
 const c = (id: string, section: string, kind: Contest["kind"] = "measure") =>
@@ -92,13 +92,6 @@ describe("publishedGuides", () => {
   });
 });
 
-describe("guidesPublished", () => {
-  it("pluralizes", () => {
-    expect(guidesPublished(1)).toBe("1 guide published");
-    expect(guidesPublished(7)).toBe("7 guides published");
-  });
-});
-
 describe("isPublished", () => {
   it("is true only for a published file", () => {
     expect(isPublished(file())).toBe(true);
@@ -128,5 +121,24 @@ describe("cardDescription", () => {
   it("is null for candidate races and measures without one", () => {
     expect(cardDescription({ ...c("r", "S", "candidate"), description: "x" } as Contest)).toBeNull();
     expect(cardDescription(c("p", "S"))).toBeNull();
+  });
+});
+
+describe("electionSubtitle", () => {
+  const withJ = (level: string, name: string) => ({ jurisdiction: { level, name } }) as Contest;
+  it("names the city on the ballot and the election day", () => {
+    const b = { title: "San Francisco General Election", date: "2026-11-03", contests: [withJ("state", "California"), withJ("city", "San Francisco")] } as Ballot;
+    expect(electionSubtitle(b)).toBe("San Francisco · November 3, 2026");
+  });
+  it("falls back to the ballot title without a city contest", () => {
+    const b = { title: "Special Election", date: "2026-06-02", contests: [withJ("state", "California")] } as Ballot;
+    expect(electionSubtitle(b)).toBe("Special Election · June 2, 2026");
+  });
+});
+
+describe("guidesPublished", () => {
+  it("pluralizes", () => {
+    expect(guidesPublished(1)).toBe("1 guide published");
+    expect(guidesPublished(7)).toBe("7 guides published");
   });
 });

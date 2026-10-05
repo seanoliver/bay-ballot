@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, pendingNote, rankedDetails, rankedLine, rowNote, topPicks } from "@/lib/display";
+import { groupByPick, headline, pendingNote, rankedDetails, rankedLine, rowNote, topPickCount, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -178,5 +178,12 @@ describe("pendingNote", () => {
     expect(pendingNote(g(0))).toBeNull();
     expect(pendingNote(g(1))).toBe("1 guide hasn't published yet");
     expect(pendingNote(g(3))).toBe("3 guides haven't published yet");
+  });
+});
+
+describe("topPickCount", () => {
+  it("reads n of m guides, singular for one", () => {
+    expect(topPickCount({ name: "A", count: 2, total: 3 })).toBe("2 of 3 guides");
+    expect(topPickCount({ name: "A", count: 1, total: 1 })).toBe("1 of 1 guide");
   });
 });
