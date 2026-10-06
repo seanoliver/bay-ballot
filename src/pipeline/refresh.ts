@@ -145,7 +145,8 @@ async function refreshGuide(
     usage: { extract: usage },
   };
 
-  if (opts.verify !== false && !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) {
+  const hasHeld = (next.held ?? []).length > 0;
+  if (opts.verify !== false && ((!isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) || hasHeld)) {
     const v = await verify(deps.client, data.ballot, guide, next, sources);
     const applied = applyVerdicts(next, v.output);
     next = EndorsementFile.parse(applied.file);

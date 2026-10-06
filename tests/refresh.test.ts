@@ -152,6 +152,20 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(2);
   });
 
+  it("re-verifies a guide with held picks even when the extracted picks didn't change", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: prop-c\n    pick: Y\n    reason: unverified\n    evidence: no verdict\npicks:\n"));
+    const { client, stream } = fakeClient(extractOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5", "claude-opus-5-5"]);
+    const file = parse(fs.readFileSync(f, "utf8"));
+    expect(file.held).toBeUndefined();
+    expect(Object.keys(file.picks)).toEqual(["prop-b", "prop-c"]);
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
   it("stops extracting after the budget and defers the rest without storing their pages", async () => {
     const root = setup(["alpha", "beta"], { stored: false });
     const { client } = fakeClient();

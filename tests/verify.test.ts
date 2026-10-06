@@ -67,7 +67,7 @@ describe("applyVerdicts", () => {
     expect(Object.keys(r.file.picks)).toEqual(["prop-b"]);
     expect(r.file.held).toEqual([
       { contestId: "prop-c", pick: "Y", reason: "wrong-pick", evidence: "The page says No on C." },
-      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "wrong-rank", evidence: "Dual endorsement, not ranked." },
+      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, reason: "wrong-rank", evidence: "Dual endorsement, not ranked." },
     ]);
     expect(r.held).toHaveLength(2);
     expect(r.confirmed).toBe(1);
@@ -102,7 +102,7 @@ describe("applyVerdicts", () => {
     const r = applyVerdicts(file, { ...allConfirmed, picks: allConfirmed.picks.slice(0, 2) });
     expect(r.file.picks["supervisor-8"]).toBeUndefined();
     expect(r.held).toEqual([
-      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "unverified", evidence: "The verifier returned no verdict for this pick." },
+      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, reason: "unverified", evidence: "The verifier returned no verdict for this pick." },
     ]);
   });
 
@@ -121,6 +121,55 @@ describe("applyVerdicts", () => {
       missing: [],
     });
     expect(r.file).toEqual(file);
+  });
+
+  describe("re-checking held picks", () => {
+    const heldD8 = {
+      contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true,
+      quotes: [q("McCoy has fixed our parks for a decade.")], reason: "unverified" as const, evidence: "no verdict",
+    };
+    const withHeld: EndorsementFile = { ...file, picks: { "prop-b": file.picks["prop-b"] }, held: [heldD8] };
+    const base: VerifyOutputT = { picks: [allConfirmed.picks[0]], quotes: allConfirmed.quotes, missing: [] };
+
+    it("moves a held pick the verifier now confirms back into picks, with its ranking and checked quotes", () => {
+      const r = applyVerdicts(withHeld, {
+        ...base,
+        picks: [...base.picks, { contestId: "supervisor-8", verdict: "confirmed", evidence: "#1 McCoy #2 Nguyen" }],
+        quotes: [...base.quotes, { contestId: "supervisor-8", index: 1, verdict: "confirmed", evidence: "" }],
+      });
+      expect(r.file.picks["supervisor-8"]).toEqual({
+        pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, quotes: [q("McCoy has fixed our parks for a decade.")],
+      });
+      expect(r.file.held).toBeUndefined();
+      expect(r.confirmed).toBe(2);
+    });
+    it("keeps a held pick held with the new reason when it still fails", () => {
+      const r = applyVerdicts(withHeld, {
+        ...base,
+        picks: [...base.picks, { contestId: "supervisor-8", verdict: "wrong-rank", evidence: "Dual endorsement." }],
+      });
+      expect(r.file.picks["supervisor-8"]).toBeUndefined();
+      expect(r.file.held).toEqual([{ ...heldD8, reason: "wrong-rank", evidence: "Dual endorsement." }]);
+    });
+    it("keeps a held pick held when the verifier says nothing about it", () => {
+      const r = applyVerdicts(withHeld, base);
+      expect(r.file.held).toEqual([heldD8]);
+    });
+    it("records the ranking and quotes of a newly held pick so it can be restored", () => {
+      const r = applyVerdicts(file, { ...allConfirmed, picks: allConfirmed.picks.slice(0, 2) });
+      expect(r.file.held?.[0]).toMatchObject({ contestId: "supervisor-8", ranked: true });
+    });
+    it("sends held picks to the verifier", async () => {
+      const finalMessage = vi.fn().mockResolvedValue({
+        stop_reason: "end_turn", stop_details: null, usage: {}, content: [{ type: "text", text: JSON.stringify(base) }],
+      });
+      const stream = vi.fn().mockReturnValue({ finalMessage });
+      await verify({ messages: { stream } } as unknown as ExtractClient, ballot, guide, withHeld, []);
+      const audit = stream.mock.calls[0][0].messages[0].content.at(-1).text as string;
+      expect(audit).toContain('"contestId":"supervisor-8"');
+      expect(audit).toContain('"held":true');
+      expect(audit).toContain('"text":"McCoy has fixed our parks for a decade."');
+    });
   });
 
   it("reports missing picks without adding them", () => {

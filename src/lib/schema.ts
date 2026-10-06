@@ -73,6 +73,9 @@ export const HeldPick = z.object({
   pick: Entry.shape.pick,
   reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified"]),
   evidence: z.string(),
+  ranked: z.boolean().optional(),
+  rankedCount: z.number().int().positive().optional(),
+  quotes: z.array(Quote).max(3).optional(),
 });
 export type HeldPick = z.infer<typeof HeldPick>;
 

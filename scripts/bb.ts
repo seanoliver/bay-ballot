@@ -120,7 +120,7 @@ async function runVerify(): Promise<void> {
         console.log(`${id}: skipped (manual)`);
         continue;
       }
-      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length === 0) {
+      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held?.length ?? 0) === 0) {
         console.log(`${id}: skipped (no source or no picks)`);
         continue;
       }

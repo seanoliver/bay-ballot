@@ -1,6 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import type { Ballot, EndorsementFile, Guide, HeldPick } from "@/lib/schema";
+import type { Ballot, EndorsementFile, Entry, Guide, HeldPick } from "@/lib/schema";
 import { pageBlocks, type ExtractClient, type Source } from "./extract";
 
 export const VERIFY_MODEL = "claude-opus-5-5";
@@ -93,12 +93,17 @@ export function verifierPrompt(ballot: Ballot): string {
 }
 
 function auditText(guide: Guide, file: EndorsementFile): string {
-  const picks = Object.entries(file.picks).map(([contestId, e]) => ({
+  const describe = (contestId: string, e: Entry, held: boolean) => ({
     contestId,
     pick: e.pick,
     ...(Array.isArray(e.pick) ? { ranked: e.ranked, ...(e.rankedCount ? { rankedCount: e.rankedCount } : {}) } : {}),
+    ...(held ? { held: true } : {}),
     quotes: e.quotes.map((q, i) => ({ index: i + 1, text: q.text, page: q.source })),
-  }));
+  });
+  const picks = [
+    ...Object.entries(file.picks).map(([contestId, e]) => describe(contestId, e, false)),
+    ...(file.held ?? []).map((h) => describe(h.contestId, heldEntry(h), true)),
+  ];
   return [
     `Organization: ${guide.name} (${guide.homepage})`,
     "Extraction to audit (JSON, one object per pick):",
@@ -143,6 +148,10 @@ export async function verify(
   return { output: parseOutput(text), usage: res.usage };
 }
 
+function heldEntry(h: HeldPick): Entry {
+  return { pick: h.pick, ranked: h.ranked ?? false, ...(h.rankedCount ? { rankedCount: h.rankedCount } : {}), quotes: h.quotes ?? [] };
+}
+
 export type DroppedByVerifier = { contestId: string; text: string; reason: string; evidence: string };
 
 export type Applied = {
@@ -160,11 +169,20 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   const droppedQuotes: DroppedByVerifier[] = [];
   const notes: string[] = [];
   let confirmed = 0;
+  const hold = (contestId: string, e: Entry, reason: HeldPick["reason"], evidence: string): HeldPick => ({
+    contestId,
+    pick: e.pick,
+    reason,
+    evidence,
+    ...(e.ranked ? { ranked: true } : {}),
+    ...(e.rankedCount ? { rankedCount: e.rankedCount } : {}),
+    ...(e.quotes.length ? { quotes: e.quotes } : {}),
+  });
 
   for (const [contestId, entry] of Object.entries(file.picks)) {
     const v = out.picks.find((p) => p.contestId === contestId);
     if (!v) {
-      held.push({ contestId, pick: entry.pick, reason: "unverified", evidence: "The verifier returned no verdict for this pick." });
+      held.push(hold(contestId, entry, "unverified", "The verifier returned no verdict for this pick."));
       delete picks[contestId];
       continue;
     }
@@ -172,8 +190,18 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
       confirmed++;
       continue;
     }
-    held.push({ contestId, pick: entry.pick, reason: v.verdict, evidence: v.evidence });
+    held.push(hold(contestId, entry, v.verdict, v.evidence));
     delete picks[contestId];
+  }
+
+  const stillHeld: HeldPick[] = [];
+  for (const h of file.held ?? []) {
+    const v = out.picks.find((p) => p.contestId === h.contestId);
+    if (v?.verdict === "confirmed" && !(h.contestId in picks)) {
+      picks[h.contestId] = heldEntry(h);
+      confirmed++;
+    } else if (v && v.verdict !== "confirmed") stillHeld.push({ ...h, reason: v.verdict, evidence: v.evidence });
+    else stillHeld.push(h);
   }
 
   for (const [contestId, entry] of Object.entries(picks)) {
@@ -190,12 +218,12 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
     if (keep.length !== entry.quotes.length) picks[contestId] = { ...entry, quotes: keep };
   }
 
-  const allHeld = [...(file.held ?? []).filter((h) => !held.some((n) => n.contestId === h.contestId)), ...held];
+  const allHeld = [...stillHeld.filter((h) => !held.some((n) => n.contestId === h.contestId)), ...held];
   const next: EndorsementFile = {
     ...file,
     status: Object.keys(picks).length > 0 ? file.status : "pending",
     picks,
-    ...(allHeld.length ? { held: allHeld } : {}),
+    held: allHeld.length ? allHeld : undefined,
   };
   return { file: next, confirmed, held, droppedQuotes, missing: out.missing, notes };
 }
