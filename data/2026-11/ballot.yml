@@ -11,13 +11,13 @@ contests:
     title: United States Representative, District 11
     kind: candidate
     candidates: [Connie Chan, Scott Wiener]
-    jurisdiction: { level: district, name: Congress, district: "11" }
+    jurisdiction: { level: district, name: Congress, district: "11", within: [{ level: county, name: San Francisco }] }
   - id: us-rep-15
     section: Federal
     title: United States Representative, District 15
     kind: candidate
     candidates: [Kevin Mullin, Charles Hoelter]
-    jurisdiction: { level: district, name: Congress, district: "15" }
+    jurisdiction: { level: district, name: Congress, district: "15", within: [{ level: county, name: San Francisco }] }
 
   # ---------- State ----------
   - id: governor
@@ -68,19 +68,19 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2" }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
     kind: candidate
     candidates: [Matt Haney, Manuel Noris-Barrera]
-    jurisdiction: { level: district, name: Assembly, district: "17" }
+    jurisdiction: { level: district, name: Assembly, district: "17", within: [{ level: county, name: San Francisco }] }
   - id: assembly-19
     section: State
     title: State Assembly, District 19
     kind: candidate
     candidates: [Catherine Stefani, Philip Louis Wing]
-    jurisdiction: { level: district, name: Assembly, district: "19" }
+    jurisdiction: { level: district, name: Assembly, district: "19", within: [{ level: county, name: San Francisco }] }
   - id: superintendent
     section: State
     title: Superintendent of Public Instruction
@@ -137,7 +137,7 @@ contests:
     title: BART Board, District 8
     kind: candidate
     candidates: [Sara Barz]
-    jurisdiction: { level: district, name: BART, district: "8" }
+    jurisdiction: { level: district, name: BART, district: "8", within: [{ level: county, name: San Francisco }] }
   - id: assessor
     section: Local candidates
     title: Assessor-Recorder
@@ -160,21 +160,21 @@ contests:
     rankedChoice: true
     candidates: [Nicholas Berg, Guy McCoy, Monthanus Ratanapakdee, Stephen Sherrill]
     aliases: { Stephen Sherrill: [Stephen Sherill] }
-    jurisdiction: { level: district, name: Supervisor, district: "2" }
+    jurisdiction: { level: district, name: Supervisor, district: "2", within: [{ level: county, name: San Francisco }] }
   - id: supervisor-4
     section: Local candidates
     title: Board of Supervisors, District 4
     kind: candidate
     rankedChoice: true
     candidates: [Albert Chow, Jeremy Julian Greco, Alan Wong]
-    jurisdiction: { level: district, name: Supervisor, district: "4" }
+    jurisdiction: { level: district, name: Supervisor, district: "4", within: [{ level: county, name: San Francisco }] }
   - id: supervisor-6
     section: Local candidates
     title: Board of Supervisors, District 6
     kind: candidate
     rankedChoice: true
     candidates: [Alex Behrend, Matt Dorsey]
-    jurisdiction: { level: district, name: Supervisor, district: "6" }
+    jurisdiction: { level: district, name: Supervisor, district: "6", within: [{ level: county, name: San Francisco }] }
   - id: supervisor-8
     section: Local candidates
     title: Board of Supervisors, District 8
@@ -182,7 +182,7 @@ contests:
     rankedChoice: true
     candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
     aliases: { Michael T. Nguyen: [Michael Trung Nguyen] }
-    jurisdiction: { level: district, name: Supervisor, district: "8" }
+    jurisdiction: { level: district, name: Supervisor, district: "8", within: [{ level: county, name: San Francisco }] }
   - id: supervisor-10
     section: Local candidates
     title: Board of Supervisors, District 10
@@ -200,7 +200,7 @@ contests:
       - Jessica Pessecow
       - Shawn M. Richard
     aliases: { Dionjay (DJ) Brookter: [Dion-Jay Brookter] }
-    jurisdiction: { level: district, name: Supervisor, district: "10" }
+    jurisdiction: { level: district, name: Supervisor, district: "10", within: [{ level: county, name: San Francisco }] }
 
   # ---------- State propositions ----------
   - id: prop-1
@@ -309,7 +309,7 @@ contests:
     kind: measure
     description: Regional Transit Measure
     link: https://www.sf.gov/qualified-ballot-measures
-    jurisdiction: { level: county, name: Bay Area region }
+    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }] }
 
   # ---------- Local propositions ----------
   - id: prop-a

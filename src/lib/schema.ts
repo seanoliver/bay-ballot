@@ -17,16 +17,32 @@ export const Guide = z.object({
   homepage: HttpUrl,
   previousElectionLink: HttpUrl.optional(),
   lean: z.number().min(0).max(100).optional(),
+  areas: z.array(Slug).min(1),
 });
 export type Guide = z.infer<typeof Guide>;
 
+export const Place = z.object({ level: z.enum(["county", "city"]), name: NonEmpty });
+export type Place = z.infer<typeof Place>;
+
 export const Jurisdiction = z.object({
-  level: z.enum(["state", "county", "city", "district"]),
+  level: z.enum(["state", "region", "county", "city", "district"]),
   name: z.string(),
   district: z.string().optional(),
+  within: z.array(Place).min(1).optional(),
 });
 
 export type Jurisdiction = z.infer<typeof Jurisdiction>;
+
+export const Area = z.object({
+  id: Slug,
+  name: NonEmpty,
+  shortName: NonEmpty.optional(),
+  kind: z.enum(["city", "county"]),
+  jurisdictions: z.array(z.object({ level: z.enum(["state", "county", "city"]), name: NonEmpty })).min(1),
+});
+export type Area = z.infer<typeof Area>;
+
+export const AreasFile = z.object({ areas: z.array(Area).min(1) });
 
 export const Contest = z.object({
   id: Slug,

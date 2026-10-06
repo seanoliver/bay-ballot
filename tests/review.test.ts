@@ -12,7 +12,7 @@ const ballot = {
   ],
 } as unknown as Ballot;
 
-const guide = (id: string): Guide => ({ id, name: id.toUpperCase(), description: "d", type: "advocacy", homepage: "https://example.org/" });
+const guide = (id: string): Guide => ({ id, name: id.toUpperCase(), description: "d", type: "advocacy", homepage: "https://example.org/", areas: ["sf"] });
 const file = (id: string, over: Partial<EndorsementFile> = {}): EndorsementFile => ({
   guide: id, election: "2026-11", status: "published", fetchedAt: "2026-10-05", hasReasoning: true, picks: {}, ...over,
 });

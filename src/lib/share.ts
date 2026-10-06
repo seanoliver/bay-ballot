@@ -111,3 +111,8 @@ export function breakLines(text: string, maxChars: number, maxLines: number): st
   }
   return out;
 }
+
+export function shareLabel(iso: string, place: string): string {
+  const day = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+  return `${day.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" })} · ${place}`;
+}

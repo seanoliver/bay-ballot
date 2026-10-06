@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { breakLines, mostPositions, shareCard, shortTitle } from "@/lib/share";
+import { breakLines, mostPositions, shareCard, shareLabel, shortTitle } from "@/lib/share";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -114,5 +114,12 @@ describe("breakLines", () => {
     expect(out).toHaveLength(2);
     expect(out[1].endsWith("…")).toBe(true);
     expect(out.every((l) => l.length <= 12)).toBe(true);
+  });
+});
+
+describe("shareLabel", () => {
+  it("dates the card and names its place", () => {
+    expect(shareLabel("2026-11-03", "San Francisco")).toBe("Nov 3, 2026 · San Francisco");
+    expect(shareLabel("2026-11-03T08:00:00Z", "Bay Area")).toBe("Nov 3, 2026 · Bay Area");
   });
 });

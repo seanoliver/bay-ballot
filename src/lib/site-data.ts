@@ -1,7 +1,9 @@
 import path from "node:path";
+import { areaGuides, inArea, placeGroups } from "./areas";
 import { listElections, loadElection, type ElectionData } from "./data";
 import { pendingNote } from "./display";
 import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "./filters";
+import type { Area } from "./schema";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
 
@@ -28,12 +30,16 @@ export function election(id: string): ElectionData | undefined {
   return d;
 }
 
-export function ballotViewProps(d: ElectionData) {
-  const published = publishedGuides(d.guides, d.endorsements);
+export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area | null } = {}) {
+  const inScope = area ? areaGuides(d.guides, area) : d.guides;
+  const published = publishedGuides(inScope, d.endorsements);
+  const ids = new Set(published.map((g) => g.id));
+  const contests = area ? d.ballot.contests.filter((c) => inArea(c, area)) : d.ballot.contests;
   return {
-    ballot: d.ballot,
+    ballot: { ...d.ballot, contests },
+    groups: placeGroups(contests, d.areas),
     guides: published.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type })),
-    files: publishedFiles(d.endorsements),
-    pending: pendingNote(pendingGuides(d.guides, d.endorsements)),
+    files: Object.fromEntries(Object.entries(publishedFiles(d.endorsements)).filter(([id]) => ids.has(id))),
+    pending: pendingNote(pendingGuides(inScope, d.endorsements)),
   };
 }
