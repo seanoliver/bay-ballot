@@ -1,8 +1,41 @@
 guide: greenbelt-alliance
 election: 2026-11
-status: pending
+status: published
 source: https://www.greenbelt.org/voter-guide-26/
 fetchWith: browser
+archived:
+  - source: https://www.greenbelt.org/voter-guide-26/
+    snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
 fetchedAt: 2026-10-06
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  prop-45:
+    pick: N
+    quotes:
+      - text: Despite monumental CEQA reforms, California’s business lobby and sprawl developers are proposing a ballot initiative that would make far more radical changes to the law.
+        source: https://www.greenbelt.org/voter-guide-26/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Greenbelt Alliance opposes Proposition 43’s goal to raise the threshold for citizen-initiated local special tax measures, limiting voters’ ability to fund essential local services.
+        source: https://www.greenbelt.org/voter-guide-26/
+  rtm:
+    pick: Y
+    quotes:
+      - text: Greenbelt Alliance endorses a YES vote on the Regional Transit Measure in November to save the Bay Area’s public transit and fight climate change.
+        source: https://www.greenbelt.org/voter-guide-26/
+  san-mateo-county-measure-l:
+    pick: Y
+    quotes:
+      - text: Greenbelt Alliance proudly endorses a YES vote on Measure L in San Mateo County to put climate resilience as a priority in the county’s charter.
+        source: https://www.greenbelt.org/voter-guide-26/
+  half-moon-bay-measure-q:
+    pick: Y
+    quotes:
+      - text: Greenbelt Alliance is excited to endorse Measure Q in Half Moon Bay to unlock a transformational affordable housing community designed for senior farmworkers.
+        source: https://www.greenbelt.org/voter-guide-26/
+  menlo-park-measure-p:
+    pick: N
+    quotes:
+      - text: To protect affordable housing in Menlo Park, Greenbelt Alliance urges voters to say NO on Measure P, the Downtown Parking Plazas Ordinance.
+        source: https://www.greenbelt.org/voter-guide-26/

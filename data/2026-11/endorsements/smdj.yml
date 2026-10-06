@@ -1,7 +1,75 @@
 guide: smdj
 election: 2026-11
-status: pending
+status: published
 source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
+fetchWith: browser
+archived:
+  - source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
+    snapshot: https://web.archive.org/web/20261006200558/https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
 fetchedAt: 2026-10-06
 hasReasoning: false
-picks: {}
+picks:
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+  us-rep-16:
+    pick:
+      - Sam Liccardo
+  assembly-23:
+    pick:
+      - Marc Berman
+  assembly-21:
+    pick:
+      - Diane Papan
+  san-mateo-county-supervisor-5:
+    pick:
+      - Mark Nagales
+  smcccd-trustee-area-2:
+    pick:
+      - Mike Guingona
+  san-mateo-county-board-of-education-2:
+    pick:
+      - Dana Johnson
+  smuhsd-trustee-area-3:
+    pick:
+      - Diana Harris
+  smuhsd-trustee-area-5:
+    pick:
+      - Alison Proctor
+  ssfusd-trustee-area-c:
+    pick:
+      - Chialin Hsieh
+  ssfusd-trustee-area-e:
+    pick:
+      - Mina A. Richardson
+  sequoia-uhsd-trustee-area-a:
+    pick:
+      - Alon Shiran
+  san-carlos-sd-trustee:
+    pick:
+      - Boris Lipkin
+      - Megha Chawla
+      - Shivani Tripathi
+  south-san-francisco-council-3:
+    pick:
+      - Buenaflor (Flor) Nicolas
+  foster-city-council-1:
+    pick:
+      - Phoebe Shin Venkat
+  san-mateo-council-1:
+    pick:
+      - Lisa Diaz Nash
+  san-mateo-council-3:
+    pick:
+      - Robert G. Newsom Jr.
+  san-mateo-council-5:
+    pick:
+      - Dana Yates Sahae
+  burlingame-measure-d:
+    pick: Y
+  redwood-city-measure-e:
+    pick: N
+  half-moon-bay-measure-i:
+    pick: Y
+  san-bruno-measure-ee:
+    pick: Y

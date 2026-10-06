@@ -86,6 +86,7 @@ contests:
     title: State Assembly, District 19
     kind: candidate
     candidates: [Catherine Stefani, Philip Louis Wing]
+    aliases: { Philip Louis Wing: [Phillip Louis Wing] }
     jurisdiction: { level: district, name: Assembly, district: "19", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
   - id: assembly-21
     section: State
@@ -454,12 +455,6 @@ contests:
     kind: candidate
     candidates: [Peter Tokofsky, Lizet Cortes-Ronquillo]
     jurisdiction: { level: district, name: Cabrillo Unified School District, district: "C", within: [{ level: county, name: San Mateo }] }
-  - id: cabrillo-usd-trustee-area-e
-    section: School and special districts
-    title: Cabrillo Unified School District, Trustee Area E
-    kind: candidate
-    candidates: [Mary Beth Alexander, Andrea Rosenthal]
-    jurisdiction: { level: district, name: Cabrillo Unified School District, district: "E", within: [{ level: county, name: San Mateo }] }
   - id: ssfusd-trustee-area-c
     section: School and special districts
     title: South San Francisco Unified School District, Trustee Area C
@@ -477,6 +472,7 @@ contests:
     title: San Mateo Union High School District, Trustee Area 3
     kind: candidate
     candidates: [Diana Harris, Jennifer Jacobson]
+    aliases: { Jennifer Jacobson: [Jennifer Jacobsen] }
     jurisdiction: { level: district, name: San Mateo Union High School District, district: "3", within: [{ level: county, name: San Mateo }] }
   - id: smuhsd-trustee-area-5
     section: School and special districts
@@ -490,26 +486,6 @@ contests:
     kind: candidate
     candidates: [Amy Koo, Alon Shiran]
     jurisdiction: { level: district, name: Sequoia Union High School District, district: "A", within: [{ level: county, name: San Mateo }] }
-  - id: sequoia-uhsd-trustee-area-d
-    section: School and special districts
-    title: Sequoia Union High School District, Trustee Area D
-    kind: candidate
-    candidates: [Michael Dekshenieks, Sathvik Nori]
-    jurisdiction: { level: district, name: Sequoia Union High School District, district: "D", within: [{ level: county, name: San Mateo }] }
-  - id: brisbane-sd-trustee
-    section: School and special districts
-    title: Brisbane School District Board
-    kind: candidate
-    candidates: [Charlene Larson, Morgan Finlay, Emily Wirowek, Sarah Duffy]
-    seats: 3
-    jurisdiction: { level: district, name: Brisbane School District, district: "at-large", within: [{ level: city, name: Brisbane }] }
-  - id: menlo-park-city-sd-trustee
-    section: School and special districts
-    title: Menlo Park City School District Board
-    kind: candidate
-    candidates: [Jed Scolnick, Maya Herstein, Sherwin Chen, Andrew Barnes]
-    seats: 3
-    jurisdiction: { level: district, name: Menlo Park City School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
   - id: pacifica-sd-trustee
     section: School and special districts
     title: Pacifica School District Board
@@ -530,24 +506,6 @@ contests:
     candidates: [Boris Lipkin, Richard F. Wahl, Megha Chawla, Shivani Tripathi]
     seats: 3
     jurisdiction: { level: district, name: San Carlos School District, district: "at-large", within: [{ level: city, name: San Carlos }] }
-  - id: coastside-water-zone-5
-    section: School and special districts
-    title: Coastside County Water District, Zone 5
-    kind: candidate
-    candidates: [Nancy Eleanora Poss, Joey P. Silva]
-    jurisdiction: { level: district, name: Coastside County Water District, district: "5", within: [{ level: county, name: San Mateo }] }
-  - id: coastside-fire-district-d
-    section: School and special districts
-    title: Coastside Fire Protection District, District D
-    kind: candidate
-    candidates: [Ryan McGraw, Cynthia Sherrill]
-    jurisdiction: { level: district, name: Coastside Fire Protection District, district: "D", within: [{ level: county, name: San Mateo }] }
-  - id: coastside-fire-district-e
-    section: School and special districts
-    title: Coastside Fire Protection District, District E
-    kind: candidate
-    candidates: [Gary Burke, Alex Carrillo]
-    jurisdiction: { level: district, name: Coastside Fire Protection District, district: "E", within: [{ level: county, name: San Mateo }] }
   - id: granada-csd-director
     section: School and special districts
     title: Granada Community Services District Board
@@ -604,24 +562,6 @@ contests:
     description: "Bond Measure"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: district, name: San Mateo-Foster City School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
-  - id: belmont-mayor
-    section: Local candidates
-    title: Belmont Mayor
-    kind: candidate
-    candidates: [Julia Mates]
-    jurisdiction: { level: city, name: Belmont }
-  - id: belmont-council-1
-    section: Local candidates
-    title: Belmont City Council, District 1
-    kind: candidate
-    candidates: [Gina Latimerlo]
-    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Belmont }] }
-  - id: belmont-council-3
-    section: Local candidates
-    title: Belmont City Council, District 3
-    kind: candidate
-    candidates: [Sarah K.M. Delisle]
-    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Belmont }] }
   - id: belmont-measure-y
     section: Local measures
     title: Belmont Measure Y
@@ -629,13 +569,6 @@ contests:
     description: "Special Tax Measure (community center)"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Belmont }
-  - id: brisbane-council
-    section: Local candidates
-    title: Brisbane City Council
-    kind: candidate
-    candidates: [Julie Sims, Charles Spencer, Madison Davis, Chaya-Bella David, Christopher Hornick]
-    seats: 2
-    jurisdiction: { level: city, name: Brisbane }
   - id: brisbane-measure-x
     section: Local measures
     title: Brisbane Measure X
@@ -643,24 +576,6 @@ contests:
     description: "Business License Tax Measure"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Brisbane }
-  - id: burlingame-council-1
-    section: Local candidates
-    title: Burlingame City Council, District 1
-    kind: candidate
-    candidates: [Andrea Pappajohn]
-    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Burlingame }] }
-  - id: burlingame-council-3
-    section: Local candidates
-    title: Burlingame City Council, District 3
-    kind: candidate
-    candidates: [Jen Faber, Howard Wettan]
-    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Burlingame }] }
-  - id: burlingame-council-5
-    section: Local candidates
-    title: Burlingame City Council, District 5
-    kind: candidate
-    candidates: [Peter W. Stevenson]
-    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Burlingame }] }
   - id: burlingame-measure-d
     section: Local measures
     title: Burlingame Measure D
@@ -668,13 +583,6 @@ contests:
     description: "Transient Occupancy Tax Measure"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Burlingame }
-  - id: colma-council
-    section: Local candidates
-    title: Colma City Council
-    kind: candidate
-    candidates: [Helen Fisicaro, Laura M Walsh, Joanne F. Del Rosario, Elisabeth Aurora Jenson]
-    seats: 2
-    jurisdiction: { level: city, name: Colma }
   - id: daly-city-council
     section: Local candidates
     title: Daly City Council
@@ -772,12 +680,6 @@ contests:
     description: "Citizen Initiative to Amend Municipal Code (downtown parking plazas)"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Menlo Park }
-  - id: millbrae-council-2
-    section: Local candidates
-    title: Millbrae City Council, District 2
-    kind: candidate
-    candidates: [Sissy Riley]
-    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Millbrae }] }
   - id: millbrae-council-3
     section: Local candidates
     title: Millbrae City Council, District 3 (Short Term)
@@ -815,13 +717,6 @@ contests:
     description: "Transactions and Use Tax Measure"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Pacifica }
-  - id: portola-valley-council
-    section: Local candidates
-    title: Portola Valley Town Council
-    kind: candidate
-    candidates: [Mary Hufty, Craig S Taylor, Judith A. Hasko]
-    seats: 3
-    jurisdiction: { level: city, name: Portola Valley }
   - id: portola-valley-measure-n
     section: Local measures
     title: Portola Valley Measure N
@@ -835,18 +730,6 @@ contests:
     kind: candidate
     candidates: [Chris Sturken]
     jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Redwood City }] }
-  - id: redwood-city-council-5
-    section: Local candidates
-    title: Redwood City Council, District 5
-    kind: candidate
-    candidates: [Kaia Eakin]
-    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Redwood City }] }
-  - id: redwood-city-council-6
-    section: Local candidates
-    title: Redwood City Council, District 6
-    kind: candidate
-    candidates: [Diane Howard]
-    jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Redwood City }] }
   - id: redwood-city-measure-e
     section: Local measures
     title: Redwood City Measure E
@@ -854,12 +737,6 @@ contests:
     description: "Rent Control and Eviction Limits Initiative"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Redwood City }
-  - id: san-bruno-mayor
-    section: Local candidates
-    title: San Bruno Mayor
-    kind: candidate
-    candidates: [Rico E. Medina]
-    jurisdiction: { level: city, name: San Bruno }
   - id: san-bruno-council-1
     section: Local candidates
     title: San Bruno City Council, District 1
@@ -918,6 +795,7 @@ contests:
     title: San Mateo City Council, District 3
     kind: candidate
     candidates: [Seema Patel, Robert G. Newsom Jr.]
+    aliases: { Robert G. Newsom Jr.: [Rob Newsom Jr., Rob Newsom] }
     jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: San Mateo }] }
   - id: san-mateo-council-5
     section: Local candidates
@@ -957,27 +835,3 @@ contests:
     kind: candidate
     candidates: [Eddie Flores]
     jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: South San Francisco }] }
-  - id: south-san-francisco-clerk
-    section: Local candidates
-    title: South San Francisco City Clerk
-    kind: candidate
-    candidates: [Rosa Govea Acosta]
-    jurisdiction: { level: city, name: South San Francisco }
-  - id: south-san-francisco-treasurer
-    section: Local candidates
-    title: South San Francisco City Treasurer
-    kind: candidate
-    candidates: [Frank Risso]
-    jurisdiction: { level: city, name: South San Francisco }
-  - id: woodside-council-2
-    section: Local candidates
-    title: Woodside Town Council, District 2
-    kind: candidate
-    candidates: [Lyle Weaver]
-    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Woodside }] }
-  - id: woodside-council-3
-    section: Local candidates
-    title: Woodside Town Council, District 3
-    kind: candidate
-    candidates: [Daniel Druker]
-    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Woodside }] }

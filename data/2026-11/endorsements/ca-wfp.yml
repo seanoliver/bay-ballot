@@ -1,7 +1,82 @@
 guide: ca-wfp
 election: 2026-11
-status: pending
+status: published
 source: http://caworkingfamilies.org/voter-guide-general-election-2026.pdf
+archived:
+  - source: http://caworkingfamilies.org/voter-guide-general-election-2026.pdf
+    snapshot: https://web.archive.org/web/20261002213302/https://www.caworkingfamilies.org/voter-guide-general-election-2026.pdf
 fetchedAt: 2026-10-06
 hasReasoning: false
-picks: {}
+picks:
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  san-mateo-county-supervisor-5:
+    pick:
+      - Mark Nagales
+  san-mateo-county-board-of-education-2:
+    pick:
+      - Dana Johnson
+  smuhsd-trustee-area-3:
+    pick:
+      - Diana Harris
+  daly-city-council:
+    pick:
+      - Rod Daus-Magbual
+  east-palo-alto-council:
+    pick:
+      - Ruben Abrica
+      - Ofelia Bello
+  foster-city-council-1:
+    pick:
+      - Phoebe Shin Venkat
+  pacifica-council-2:
+    pick:
+      - Christine Boles
+  pacifica-council-5:
+    pick:
+      - Sam Casillas
+  redwood-city-council-2:
+    pick:
+      - Chris Sturken
+  san-bruno-council-4:
+    pick:
+      - Marty P. Medina
+  south-san-francisco-council-1:
+    pick:
+      - Aysha Dominguez Pamukcu
+  south-san-francisco-council-3:
+    pick:
+      - Melanie Olson
+  south-san-francisco-council-5:
+    pick:
+      - Eddie Flores

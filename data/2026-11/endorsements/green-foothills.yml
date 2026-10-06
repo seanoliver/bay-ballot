@@ -1,8 +1,24 @@
 guide: green-foothills
 election: 2026-11
-status: pending
+status: published
 source: https://www.greenfoothills.org/gfs-voter-guide-november-2026-election
 fetchWith: browser
 fetchedAt: 2026-10-06
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  prop-1:
+    pick: Y
+  prop-43:
+    pick: N
+    quotes:
+      - text: Prop 43 would raise the threshold to two-thirds for citizen initiative funding measures, which are put on the ballot by gathering voter signatures on a petition.
+        source: https://www.greenfoothills.org/gfs-voter-guide-november-2026-election
+      - text: Measure D passed with over 55% of the vote – a resounding victory under current law, but not enough to meet the two-thirds threshold that Prop 43 would require.
+        source: https://www.greenfoothills.org/gfs-voter-guide-november-2026-election
+  prop-45:
+    pick: N
+    quotes:
+      - text: Prop 45 would dismantle the California Environmental Quality Act (CEQA) – our state’s bedrock environmental law – for a huge number of development projects, including data centers, warehouses, freeway expansions, herbicide spraying, forest clearcutting, and residential sprawl on open space.
+        source: https://www.greenfoothills.org/gfs-voter-guide-november-2026-election
+  half-moon-bay-measure-q:
+    pick: Y

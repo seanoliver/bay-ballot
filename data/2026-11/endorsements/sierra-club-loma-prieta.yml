@@ -1,8 +1,85 @@
 guide: sierra-club-loma-prieta
 election: 2026-11
-status: pending
+status: published
 source: https://www.sierraclub.org/loma-prieta/november-3-2026-sierra-club-california-and-loma-prieta-chapter-general-election
 fetchWith: browser
 fetchedAt: 2026-10-06
 hasReasoning: false
-picks: {}
+picks:
+  attorney-general:
+    pick:
+      - Rob Bonta
+  controller:
+    pick:
+      - Malia M. Cohen
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+  us-rep-16:
+    pick:
+      - Sam Liccardo
+  assembly-21:
+    pick:
+      - Diane Papan
+  assembly-23:
+    pick:
+      - Marc Berman
+  granada-csd-director:
+    pick:
+      - Barbara Dye
+      - Matt Allen
+      - Patrick Tierney
+  pacifica-council-2:
+    pick:
+      - Christine Boles
+  pacifica-council-3:
+    pick:
+      - Cindy Abbott
+  pacifica-council-5:
+    pick:
+      - Margo Meiman
+  half-moon-bay-council-1:
+    pick:
+      - David Gorn
+  half-moon-bay-council-4:
+    pick:
+      - Debbie Ruddock
+  millbrae-council-3:
+    pick:
+      - Ann Schneider
+  san-mateo-council-1:
+    pick:
+      - Lisa Diaz Nash
+  san-mateo-council-3:
+    pick:
+      - Robert G. Newsom Jr.
+  east-palo-alto-council:
+    pick:
+      - Ruben Abrica
+  menlo-park-council-2:
+    pick:
+      - Drew Combs
+  prop-1:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N

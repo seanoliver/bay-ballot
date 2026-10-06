@@ -1,7 +1,90 @@
 guide: bay-rising-action
 election: 2026-11
-status: pending
+status: published
 source: https://bayrisingaction.org/voterguide/
+archived:
+  - source: https://bayrisingaction.org/voterguide/
+    snapshot: https://web.archive.org/web/20261006195712/https://bayrisingaction.org/voterguide/
 fetchedAt: 2026-10-06
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+    quotes:
+      - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Prop 4 would allow local governments the option to create systems that help candidates rely less on wealthy donors and public interests.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Money in politics sways our elections.
+        source: https://bayrisingaction.org/voterguide/
+  prop-5:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+    quotes:
+      - text: Prop 39 creates significant barriers to voting by prohibiting voting by mail or voting in person without disclosing or presenting a government-issued identification number.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
+        source: https://bayrisingaction.org/voterguide/
+      - text: New hurdles to voting, like requiring you to write your personal ID number on your ballot, would make it easier to steal your identity and harder to protect your privacy.
+        source: https://bayrisingaction.org/voterguide/
+  prop-40:
+    pick: Y
+    quotes:
+      - text: Federal cuts will strip $100 billion from healthcare in California over the next five years—resulting in higher premiums and loss of coverage for millions of Californians.
+        source: https://bayrisingaction.org/voterguide/
+      - text: To stop the healthcare collapse in the state, Prop 40 would impose a one-time tax of up to 5% on taxpayers with covered assets over $1 billion, generating $100 billion in revenue over 5 years.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Ninety percent (90%) of the funds would go to healthcare, and 10% to food assistance or education.
+        source: https://bayrisingaction.org/voterguide/
+  prop-41:
+    pick: N
+    quotes:
+      - text: Prop 41 requires audits on new spending, but goes beyond oversight by creating structural barriers to future voter-approved revenue measures.
+        source: https://bayrisingaction.org/voterguide/
+      - text: The combination of Prop 41 and Prop 42 would make it significantly more difficult to design and implement progressive revenue solutions to fund schools, healthcare, housing, and other public priorities.
+        source: https://bayrisingaction.org/voterguide/
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop 42 blocks new state taxes on personal property, including business interests, intellectual property, and financial assets—restricting California’s ability to ask the wealthiest individuals to contribute more toward public investments.
+        source: https://bayrisingaction.org/voterguide/
+      - text: The combination of Prop 41 and Prop 42 would make it significantly more difficult to design and implement progressive revenue solutions to fund schools, healthcare, housing, and other public priorities.
+        source: https://bayrisingaction.org/voterguide/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Under Prop 43, two-thirds of voters would need to approve local funding measures and taxes, allowing one-third of voters to overrule the majority and block funding for essential services.
+        source: https://bayrisingaction.org/voterguide/
+      - text: "Prop 43 protects corporate special interests by giving them greater power to avoid paying their fair share: they would only need one-third of the vote to block efforts to raise new revenue."
+        source: https://bayrisingaction.org/voterguide/
+      - text: In practice, Prop 43 would make it nearly impossible to raise local revenue.
+        source: https://bayrisingaction.org/voterguide/
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+    quotes:
+      - text: "Without this funding, public transit services would be cut dramatically: MUNI would cut services by at least 30%, AC Transit would reduce service by 16%, and BART would close 15 stations and cut service by 70%."
+        source: https://bayrisingaction.org/voterguide/
+      - text: An investment in public transit is an investment in a thriving economy, clearer air, and a more affordable region.
+        source: https://bayrisingaction.org/voterguide/
+  redwood-city-measure-e:
+    pick: Y
+    quotes:
+      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Half of Redwood City residents, including over 70% of Latino and Black households, are renters who pay an average of almost $4,000 for a 2-bedroom home.
+        source: https://bayrisingaction.org/voterguide/
+      - text: At the same time, 87% of multi-family rental units in Redwood City are owned by corporations and real estate trusts rather than small landlords.
+        source: https://bayrisingaction.org/voterguide/
