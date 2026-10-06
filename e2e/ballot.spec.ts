@@ -189,6 +189,10 @@ test("every page names its canonical URL on bayballot.com", async ({ page }) => 
   }
 });
 
+async function pauseClock(page: Page) {
+  await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
+}
+
 test.describe("desktop keyboard", () => {
   test.skip(({ isMobile }) => isMobile, "desktop only");
 
@@ -301,25 +305,28 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
-  test("holding ArrowDown through the whole list writes the URL only a few times", async ({ page }) => {
+  test("holding ArrowDown through the whole list writes the URL once, on release", async ({ page }) => {
     await page.addInitScript(() => {
-      const w = window as unknown as { __replaces: number };
-      w.__replaces = 0;
-      const orig = history.replaceState.bind(history);
-      history.replaceState = (...args: Parameters<History["replaceState"]>) => {
-        w.__replaces += 1;
-        return orig(...args);
+      const w = window as unknown as { __calls: number };
+      w.__calls = 0;
+      const native = History.prototype.replaceState;
+      History.prototype.replaceState = function (...args: Parameters<History["replaceState"]>) {
+        w.__calls += 1;
+        return native.apply(this, args);
       };
     });
+    await page.clock.install();
     await openBallot(page);
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+    await pauseClock(page);
     const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
-    const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
+    const before = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
     for (let i = 0; i < ids.length; i++) await page.keyboard.down("ArrowDown");
     await page.keyboard.up("ArrowDown");
     await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
     await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
-    const writes = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
-    expect(writes - before).toBeLessThan(10);
+    const calls = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
+    expect(calls - before).toBe(2);
   });
 
   test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
@@ -328,29 +335,6 @@ test.describe("desktop keyboard", () => {
     await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k / Shift+?");
   });
 
-  test("a failed URL write keeps the stepped contest and retries on the next step", async ({ page }) => {
-    await openBallot(page, "?c=us-rep-11");
-    // After hydration (the region role is client-only), so the stub sits in front of Next's own replaceState wrapper.
-    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
-    await page.evaluate(() => {
-      const w = window as unknown as { __fail: boolean };
-      w.__fail = true;
-      const orig = history.replaceState.bind(history);
-      history.replaceState = (...args: Parameters<History["replaceState"]>) => {
-        if (w.__fail) throw new DOMException("too many calls", "SecurityError");
-        return orig(...args);
-      };
-    });
-    await page.keyboard.press("ArrowDown");
-    await page.waitForTimeout(500);
-    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
-    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
-    await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
-    await page.keyboard.press("ArrowUp");
-    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
-    await page.keyboard.press("ArrowDown");
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
-  });
 
   test("a step is written on keyup, so a reload right after keeps it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
@@ -386,6 +370,40 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`${href}$`));
     await page.goBack();
     await expect(page).toHaveURL(/\/2026-11\?c=us-rep-15$/);
+  });
+
+  test("arrows every 260ms and a filter every 520ms for 15 seconds stay under the browser's history limit", async ({ page }) => {
+    test.setTimeout(90_000);
+    // Underneath Next's own wrapper, like the browser: more than 100 calls in 10 seconds throws.
+    await page.addInitScript(() => {
+      const calls: number[] = [];
+      const native = History.prototype.replaceState;
+      History.prototype.replaceState = function (...args: Parameters<History["replaceState"]>) {
+        const now = performance.now();
+        while (calls.length && now - calls[0] > 10_000) calls.shift();
+        calls.push(now);
+        if (calls.length > 100) throw new DOMException("Attempt to use history.replaceState() more than 100 times per 10 seconds", "SecurityError");
+        return native.apply(this, args);
+      };
+    });
+    const errors = watchErrors(page);
+    await openBallot(page, "?c=us-rep-11");
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+    await page.locator("#row-d-us-rep-11").focus();
+    const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" });
+    const started = Date.now();
+    for (let i = 0; Date.now() - started < 15_000; i++) {
+      const at = Date.now();
+      await page.keyboard.press(i % 2 ? "ArrowUp" : "ArrowDown");
+      if (i % 2) await box.evaluate((el: HTMLElement) => el.click(), undefined, { timeout: 2_000 });
+      await page.waitForTimeout(Math.max(0, 260 - (Date.now() - at)));
+    }
+    expect(errors).toEqual([]);
+    const selected = (await page.locator("[id^=row-d-][aria-current=true]").getAttribute("id"))!.replace("row-d-", "");
+    const checked = (await box.getAttribute("aria-checked")) === "true";
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${selected}(&|$)`), { timeout: 15_000 });
+    await expect.poll(() => new URL(page.url()).searchParams.get("why") === "1", { timeout: 15_000 }).toBe(checked);
+    expect(errors).toEqual([]);
   });
 
   test("tapping arrows every 150ms for 15 seconds stays within the history rate limit", async ({ page, browserName }) => {
@@ -473,36 +491,31 @@ test.describe("desktop keyboard", () => {
   });
 });
 
-async function failWrites(page: Page) {
-  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
-  await page.evaluate(() => {
-    const orig = history.replaceState.bind(history);
-    history.replaceState = (...args: Parameters<History["replaceState"]>) => {
-      if ((window as unknown as { __fail?: boolean }).__fail !== false) throw new DOMException("too many calls", "SecurityError");
-      return orig(...args);
-    };
-  });
-}
-
 test("resizing to a phone drops a stepped contest that was never written", async ({ page, isMobile }) => {
   test.skip(isMobile, "starts on desktop");
+  await page.clock.install();
   await openBallot(page, "?c=us-rep-11");
-  await failWrites(page);
-  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  await pauseClock(page);
+  await page.keyboard.down("ArrowDown");
   await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
-  await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator("#row-m-governor")).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator("#row-d-governor")).toBeVisible();
+  await page.clock.runFor(1000);
   await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+  await expect(page).toHaveURL(/[?&]c=us-rep-11/);
 });
 
 test("a phone tap drops a stepped contest that was never written", async ({ page, isMobile }) => {
   test.skip(isMobile, "starts on desktop");
+  await page.clock.install();
   await openBallot(page, "?c=us-rep-11");
-  await failWrites(page);
-  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  await pauseClock(page);
+  await page.keyboard.down("ArrowDown");
   await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
-  await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
   // Phone width for the click handler's one check only, so the resize reset can't be what clears it.
   await page.evaluate(() => {
     let phone = false;

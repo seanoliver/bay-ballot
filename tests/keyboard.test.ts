@@ -252,20 +252,4 @@ describe("trailing rate limit", () => {
     expect(run).toHaveBeenLastCalledWith("b");
     vi.useRealTimers();
   });
-  it("a failed write stays pending, and the next flush retries it", () => {
-    vi.useFakeTimers();
-    let ok = false;
-    const run = vi.fn(() => ok);
-    const t = trailing(250, run);
-    t.push("a");
-    t.flush();
-    expect(run).toHaveBeenCalledTimes(1);
-    ok = true;
-    t.flush();
-    expect(run).toHaveBeenCalledTimes(2);
-    expect(run).toHaveBeenLastCalledWith("a");
-    t.flush();
-    expect(run).toHaveBeenCalledTimes(2);
-    vi.useRealTimers();
-  });
 });

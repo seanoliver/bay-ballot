@@ -65,9 +65,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
       if (window.location.pathname !== path || !window.matchMedia(DESKTOP).matches) return;
-      const written = setRequested(id);
-      if (written) setStepped(null);
-      return written;
+      setRequested(id);
+      setStepped(null);
     }),
   );
   useEffect(() => {

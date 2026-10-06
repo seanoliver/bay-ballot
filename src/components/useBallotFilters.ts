@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { historyBudget } from "@/lib/history-budget";
 
 const STORAGE_KEY = "bb-filters";
 export const CHANGE_EVENT = "bb-filters-change";
@@ -21,7 +22,15 @@ function writeStored(q: string) {
   }
 }
 
-const readQuery = () => window.location.search;
+// Next's replaceState wrapper makes a second browser call per write; browsers throw past 100 calls in 10 seconds.
+export const HISTORY_BUDGET = historyBudget({ max: 35, windowMs: 10_000 });
+let pending: { path: string; search: string } | null = null;
+
+export function currentSearch(): string {
+  return pending && pending.path === window.location.pathname ? pending.search : window.location.search;
+}
+
+const readQuery = currentSearch;
 
 function subscribe(onChange: () => void) {
   window.addEventListener("popstate", onChange);
@@ -34,16 +43,20 @@ function subscribe(onChange: () => void) {
   };
 }
 
-// Not router.replace: that refetches from the server and scrolls.
-export function replaceQuery(q: string): boolean {
-  // Safari throws when replaceState is called too often; a throw must not break the caller.
+function writePending() {
+  const p = pending;
+  pending = null;
+  if (!p || p.path !== window.location.pathname) return;
   try {
-    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
-  } catch {
-    return false;
-  }
+    window.history.replaceState(null, "", p.search || p.path);
+  } catch {}
+}
+
+// Not router.replace: that refetches from the server and scrolls.
+export function replaceQuery(q: string): void {
+  pending = { path: window.location.pathname, search: q ? `?${q}` : "" };
+  HISTORY_BUDGET.run(writePending);
   window.dispatchEvent(new Event(CHANGE_EVENT));
-  return true;
 }
 
 export function useQuery(): string {
@@ -61,7 +74,7 @@ export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; k
       const q = toQuery(f);
       writeStored(q);
       const p = new URLSearchParams(q);
-      const current = new URLSearchParams(window.location.search);
+      const current = new URLSearchParams(currentSearch());
       for (const k of keepKey ? keepKey.split(",") : []) {
         const v = current.get(k);
         if (v !== null) p.set(k, v);
@@ -73,15 +86,15 @@ export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; k
   return { filters, setFilters };
 }
 
-export function useQueryParam(name: string): [string | null, (v: string | null) => boolean] {
+export function useQueryParam(name: string): [string | null, (v: string | null) => void] {
   const query = useQuery();
   const value = new URLSearchParams(query).get(name);
   const set = useCallback(
     (v: string | null) => {
-      const p = new URLSearchParams(window.location.search);
+      const p = new URLSearchParams(currentSearch());
       if (v === null) p.delete(name);
       else p.set(name, v);
-      return replaceQuery(p.toString());
+      replaceQuery(p.toString());
     },
     [name],
   );
