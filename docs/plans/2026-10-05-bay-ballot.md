@@ -8,9 +8,9 @@
 
 **Tech Stack:** Next.js (App Router) + TypeScript + Tailwind, `zod`, `yaml` (v2, YAML 1.2), `@anthropic-ai/sdk` (`claude-sonnet-5-5`), `cheerio`, `tsx`, Vitest, Playwright, Vercel.
 
-**Design doc:** `~/cortex/wiki/side-projects/active/bay-ballot/2026-10-05-bay-ballot-design.md`
+**Design doc:** the design doc (kept in the author's notes)
 
-**Seed data:** `~/cortex/drafts/sf-nov-2026-guides.md` (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
+**Seed data:** an initial research file (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
 
 ---
 
@@ -192,7 +192,7 @@ picks:
 // src/lib/schema.ts
 import { z } from "zod";
 
-export const GuideType = z.enum(["newspaper", "party", "dem-club", "union", "advocacy", "civic"]);
+export const GuideType = z.enum(["newspaper", "party", "club", "union", "advocacy", "civic"]);
 export type GuideType = z.infer<typeof GuideType>;
 
 export const Guide = z.object({
@@ -589,7 +589,7 @@ curl -L -o data/2026-11/sources/SF-Voter-Pamphlet-Nov2026.pdf https://media.api.
 ```
 Also save the CA SoS certified candidate list (`https://elections.cdn.sos.ca.gov/statewide-elections/2026-general/cert-list-candidates.pdf`).
 
-**Step 2:** Write `ballot.yml` covering every contest in `~/cortex/drafts/sf-nov-2026-guides.md`. Rules:
+**Step 2:** Write `ballot.yml` covering every contest from the initial research file. Rules:
 - IDs: `us-rep-11`, `us-rep-15`, `governor`, `lt-governor`, `secretary-of-state`, `controller`, `treasurer`, `attorney-general`, `insurance-commissioner`, `board-of-equalization-2`, `superintendent`, `assembly-17`, `assembly-19`, `supreme-court-groban`, `supreme-court-evans`, `court-of-appeal-1`, `supervisor-2/4/6/8/10`, `board-of-education`, `college-board`, `college-board-partial`, `bart-8`, `assessor`, `public-defender`, `prop-1` … `prop-45`, `rtm`, `prop-a` … `prop-j`.
 - Candidate names exactly as in the SoS certified list / SF candidate list.
 - Measures: `description` = the official one-line title, `link` = `https://voterguide.sos.ca.gov/propositions/<n>/` for state props, the sf.gov measure page for local ones.
@@ -1003,6 +1003,16 @@ main();
 
 `discover` v1 lists guides missing a source URL and creates `pending` stubs; finding each URL is done by Claude Code (web search) or by hand, and written into `source:`. Automating the search is a later improvement.
 
+**Added 2026-10-05 (from Task 6 findings):**
+- **Multi-page guides.** SPUR puts its reasoning on one page per measure, linked from the summary page. Add an optional `extraSources: [url]` to `EndorsementFile` (schema + test first). `extract` fetches the main source plus each extra source and concatenates their text (separated by `\n\n--- <url> ---\n\n`) for both the model input and quote verification. Each quote keeps its own link: done in Task 10 as `quotes: [{ text, source }]` (commit 6519811), replacing the parallel-array idea.
+- **Multi-page guides, schema status.** `extraSources` already exists in `EndorsementFile` (added in Task 7, commit f221e83). Only `quoteSources` remains to add.
+- **Image-only positions.** LWV California shows Support/Oppose as icons, so text extraction can't read them. Mark such guides `manual: true` in the endorsement file (schema + test first); `extract --all` skips them and prints "skipped (manual)".
+- **API key isolation.** The shell's `ANTHROPIC_API_KEY` belongs to Sean's work account. The CLI must read `BAYBALLOT_ANTHROPIC_API_KEY` from `.env.local` (Node `util.parseEnv` on the file contents; never print the value) and construct `new Anthropic({ apiKey })` with it. If it's missing, exit with "Set BAYBALLOT_ANTHROPIC_API_KEY in .env.local" and never fall back to `ANTHROPIC_API_KEY`. Put the key resolution in a small exported function with a test: missing file → throws; file without the var but env `ANTHROPIC_API_KEY` set → still throws; var present → returns it.
+- **Source host check (from Task 10 review).** Before extracting, compare the host of `source` and every `extraSources` URL with `guide.homepage`'s host (ignore `www.`). If any differs, refuse to extract that guide unless the endorsement file sets `allowForeignSources: true` (schema + test first) — this keeps an aggregator or news page from being published under the guide's name. Exempt known document hosts only via that explicit flag (e.g. a PDF on a CDN).
+- **Browser fetch hint.** `fetchWith: browser` (already in the schema) makes `extract` use the Playwright path for that guide without the `--browser` flag (Sierra Club, SF Labor Council).
+- **Only this election.** Several pages also list earlier elections (CADC lists Mar/Apr 2026; Milk Club lists June 2026 and Nov 2024). Add to the system prompt: "The page may list endorsements for several elections. Extract only endorsements for the <title> on <date>; ignore every other election." Add a `toEntries`-independent unit test for `systemPrompt` that asserts this sentence is present with the right date.
+- **Archive snapshots.** Generic URLs get overwritten after Nov 3. After a successful extract, request `https://web.archive.org/save/<source>` (and each extra source) and store the returned snapshot URL as `archived:` in the endorsement file (optional `HttpUrl`, schema + test first). Failure to archive is a warning, not an error. The site links to `archived` when present, else `source`.
+
 **Step 4:** `npm test` → PASS.
 
 **Step 5: Live check against a golden fixture.** Copy `data/2026-11/endorsements/growsf.yml` to `/tmp/growsf.golden.yml`, then:
@@ -1020,17 +1030,33 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 
 ### Task 12: Extract every guide (with Sean)
 
-**Step 1:** `npm run bb -- discover`. For each guide listed, find its Nov 2026 page and set `source:` in its endorsement file.
+**Step 1:** `npm run bb -- discover`. For each guide listed, find its Nov 2026 page and set `source:` in its endorsement file. Also check, by hand or browser, guides the Task 7 search couldn't reach: Bay Area Reporter and SF Bay View (both behind Cloudflare). Check the SF Democratic Party's other chartered clubs (sfdems.org/clubs) for Nov 2026 slates: Brownie Mary, District 2, District 3, Fénix, Filipino American, Harriet Tubman, Portola, Raoul Wallenberg, Richmond District, SF Working Families, South Beach D6. Add a guide file plus a stub for each one that publishes a slate.
 
 **Step 2:** `npm run bb -- extract --all`. Re-run failures with `--browser`. Guides that publish only images or social posts: hand-enter.
 
 **Step 3:** `npm run validate` until `data OK`.
 
-**Step 4:** **Sean reviews `git diff data/`** and commits. Do not commit extraction output without his review.
+**Step 4 (revised 2026-10-05):** independent Opus verification replaces Sean's manual review (see Task 12b). Commit after verification issues are fixed or held.
 
 ---
 
 # Phase 2 — Site (target: Fri 2026-10-16)
+
+### Task 12b: Independent verification (`bb verify`), replacing human data review
+
+**Why (2026-10-05):** 900+ picks is too much to review by hand. Sean replaced the human review gate with an independent AI check. The one-off audit of the first batch used three fresh Opus subagents; this task makes the same check part of the pipeline.
+
+**Behavior:** `npm run bb -- verify <guide...> | --all` (and `extract` runs it automatically unless `--no-verify`):
+1. For each guide, re-fetch its source and extra pages (same fetch path as extract).
+2. Send the page text (and PDFs as documents) plus the guide's already-extracted picks and quotes to `claude-opus-5-5` in a separate request with its own system prompt ("You are auditing someone else's extraction. For each pick and quote, say whether the page supports it."). It never sees the extraction prompt. Structured output per pick: `{ contestId, verdict: "confirmed" | "wrong" | "not-found" | "old-election", evidence }`; per quote: `{ verdict: "confirmed" | "not-found" | "wrong-contest" | "not-own-words" | "not-substantive" }`; plus `missing: [{ contestId, pick, evidence }]`.
+3. Picks not `confirmed` are removed from the file and recorded under `held: [{ contestId, pick, reason, evidence }]` (schema + tests first), so they are not published but stay visible. Unconfirmed quotes are dropped. `missing` items are reported only, never auto-added.
+4. Print a per-guide summary; exit non-zero if any guide had held picks, so a daily run surfaces them.
+
+**Tests (TDD):** the pure merge step `applyVerdicts(file, verdicts)`; the request shape against a fake client (model opus-5-5, cache_control on the system prompt, page blocks, no extraction prompt text); stop-reason handling like `extract`.
+
+**Runbook:** the daily loop becomes `extract --all --archive` (which verifies), then `validate`, then commit. Sean is pinged only when picks are held.
+
+---
 
 ### Task 13: Ballot state helpers
 
@@ -1038,7 +1064,7 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 - Create: `src/lib/filters.ts`
 - Test: `tests/filters.test.ts`
 
-Filter state, serialized to the URL as `?off=pov,sf-dems&offtypes=dem-club&why=1&sup=8&ad=17`.
+Filter state, serialized to the URL as `?off=pov,sf-dems&offtypes=club&why=1&sup=8&ad=17`.
 
 **Step 1: Failing test**
 
@@ -1048,7 +1074,7 @@ import { activeEntries, fromQuery, toQuery, visibleContest } from "@/lib/filters
 import type { Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 const guides = [
-  { id: "a", type: "advocacy" }, { id: "b", type: "dem-club" }, { id: "c", type: "newspaper" },
+  { id: "a", type: "advocacy" }, { id: "b", type: "club" }, { id: "c", type: "newspaper" },
 ] as Guide[];
 const ends = {
   a: { status: "published", hasReasoning: true, picks: { x: { pick: "Y", ranked: false, quotes: [] } } },
@@ -1125,6 +1151,34 @@ export function visibleContest(c: Contest, f: Pick<Filters, "districts">): boole
 ```
 
 **Step 4:** Run → PASS. **Step 5:** `git add -A && git commit -m "feat: filter state and URL serialization"`
+
+---
+
+### Task 13b: Display model (TDD)
+
+**Why:** Tasks 14–15 are UI. All display logic lives here as pure, unit-tested functions so the components only render. Added 2026-10-05.
+
+**Files:**
+- Create: `src/lib/display.ts`
+- Test: `tests/display.test.ts`
+
+**Functions and expected outputs** (write each test first, see it fail, implement):
+
+| Function | Input | Output |
+|---|---|---|
+| `headline(tally)` | measure Y 5 / N 1 | `{ tone: "yes", label: "Yes 83%", detail: "5 of 6", ranked: false }` |
+| | measure N 2 / Y 1 | `{ tone: "no", label: "No 67%", detail: "2 of 3", ranked: false }` |
+| | measure 3–3 | `{ tone: "split", label: "Split", detail: "3 Yes · 3 No", ranked: false }` |
+| | candidate leader A 3 of 4, leaderRanked | `{ tone: "candidate", label: "A", detail: "75% (3 of 4)", ranked: true }` |
+| | candidate tie A, B | `{ tone: "split", label: "Split", detail: "A, B", ranked: false }` |
+| | total 0 | `{ tone: "none", label: "No picks yet", detail: "", ranked: false }` |
+| `runnersUp(tally)` | counts A 3, B 1, C 1 | `"B 1 · C 1"`; `""` for measures, splits and single-candidate tallies |
+| `groupByPick(contest, rows)` | measure rows | `[{ key: "Y", label: "Yes", rows }, { key: "N", label: "No", rows }]`, empty groups omitted, Yes first |
+| | candidate rows | one group per candidate in `tally.counts` order; a dual-endorsing guide appears in both groups; a ranked guide appears only under its #1 |
+| `rankedDetails(rows)` | rows with ranked entries | `[{ guideName, order: ["Gary McCoy", "Michael T. Nguyen"] }]`; `[]` when none |
+| `pendingNote(guides)` | 0 / 1 / 3 guides | `null` / `"1 guide hasn't published yet"` / `"3 guides haven't published yet"` |
+
+`rows` is the output type of `activeEntries` (Task 13). Commit `feat: display model`.
 
 ---
 
@@ -1216,6 +1270,8 @@ Behavior spec (port the look from `mockups/index.html` view A):
 - Expanded (click the row; `aria-expanded`): guides grouped by pick (Yes group, No group; for candidates, one group per candidate in leader order). Each guide: name (links to `/guides/<id>`), quotes as bullets in quotation marks, a "source" link to `file.source`. List-only guides show "No reasons published".
 - Footer line if `pending.length`: "N guides haven't published yet" with names in a `title`.
 - Measures link to `contest.link` ("Official text").
+
+**Rule:** components contain no display logic. Every string and grouping comes from `src/lib/display.ts` (Task 13b) or `src/lib/filters.ts` (Task 13). If a component needs new logic, add a tested function there first.
 
 **Step 1:** Build the three components. **Step 2:** `npm run dev`, open `http://localhost:3000/2026-11` at 390px width and desktop; click through: toggles recalc, `*` popover opens on tap, URL updates, reload restores state. **Step 3:** commit `feat: ballot list UI`.
 
@@ -1317,7 +1373,11 @@ Commit `docs: refresh runbook`.
 
 ## Out of scope for launch (fast-follows)
 
+- **Address / ZIP filter (first post-launch item).** Replaces the district pickers, which were removed on 2026-10-05 as confusing. A visitor enters an address or ZIP; the site shows only contests on their ballot, using `Contest.jurisdiction` (kept in the data for this). ZIPs can span districts, so a ZIP that maps to several districts should ask for the street address.
+- **Guide and contest page layout.** Review layout and spacing on `/guides/<id>` and `/<election>/<contest>`; they reuse list and detail components and haven't had the design pass the main ballot view got.
+- **Guide favicons.** Show each guide's favicon next to its name in chips, lists and quote attributions. Fetch once with `bb` and commit the files (no hotlinking, so visitors' browsers never contact guide sites). Same size and treatment for every guide, with a monogram fallback when a guide has no usable icon.
+- **Agreement filter.** Show only unanimous contests (every guide with a position agrees), or only contested ones (leader under 60%, or a split). Computed from the guides currently counted, so it updates as guides are filtered. Sort by agreement as an option.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
-- Address / ZIP lookup and the district map.
+- District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
 - Automated `discover` via web search.

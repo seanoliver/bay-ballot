@@ -1,0 +1,130 @@
+guide: united-dems
+election: 2026-11
+status: published
+source: https://www.uniteddems.org/endorsements-1
+archived:
+  - source: https://www.uniteddems.org/endorsements-1
+    snapshot: https://web.archive.org/web/20261005224253/https://www.uniteddems.org/endorsements-1
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-education:
+    pick:
+      - Autumn Brown Garibay
+      - Phil Kim
+      - Tim Tung
+  college-board:
+    pick:
+      - Elijah Ball
+      - Monroe Lace
+      - Erwin Tam
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  bart-8:
+    pick:
+      - Sara Barz
+  assessor:
+    pick:
+      - Joaquín Torres
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-10:
+    pick:
+      - Theo Ellington
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  prop-a:
+    pick: Y
+  prop-b:
+    pick: N
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: Y
+  prop-e:
+    pick: Y
+  prop-f:
+    pick: Y
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: N
+  prop-j:
+    pick: Y

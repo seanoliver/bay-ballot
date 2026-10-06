@@ -1,0 +1,104 @@
+guide: milk-club
+election: 2026-11
+status: published
+source: https://www.milkclub.org/endorsements # page also links June 2026 / Nov 2024 slates; extract only "November 2026"
+archived:
+  - source: https://www.milkclub.org/endorsements
+    snapshot: https://web.archive.org/web/20261005221701/https://www.milkclub.org/endorsements
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+  assembly-17:
+    pick:
+      - Matt Haney
+  assessor:
+    pick:
+      - Joaquín Torres
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-4:
+    pick:
+      - Jeremy Julian Greco
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+    ranked: true
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
+    ranked: true
+  board-of-education:
+    pick:
+      - Reina Tello
+      - Virginia Cheung
+      - Ryan Hazelton
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Bunny McFadden
+      - Jeremy Lee
+  prop-a:
+    pick: N
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+  prop-e:
+    pick: N
+  prop-f:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: Y
+  prop-j:
+    pick: Y
+  rtm:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N

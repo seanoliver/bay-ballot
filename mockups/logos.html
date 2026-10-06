@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bay Ballot Logos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Page tokens mirror src/app/globals.css (shadcn neutrals). */
+:root {
+  --background: #ffffff; --foreground: #0a0a0a; --muted: #f5f5f5; --muted-fg: #737373;
+  --border: #e5e5e5; --tool-bg: #ececea; --pin: #0a0a0a;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0a0a0a; --foreground: #fafafa; --muted: #262626; --muted-fg: #a1a1a1;
+    --border: rgba(255,255,255,.1); --tool-bg: #1a1a1a; --pin: #fafafa;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --background: #0a0a0a; --foreground: #fafafa; --muted: #262626; --muted-fg: #a1a1a1;
+  --border: rgba(255,255,255,.1); --tool-bg: #1a1a1a; --pin: #fafafa;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--tool-bg); color: var(--foreground);
+  font: 400 14px/1.5 Geist, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--foreground) 45%, transparent); outline-offset: 2px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ---------- Mockup toolbar ---------- */
+.toolbar {
+  position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+  padding: 12px 24px; background: var(--tool-bg); border-bottom: 1px solid var(--border);
+}
+.toolbar h1 { margin: 0; font-size: 14px; font-weight: 600; }
+.toolbar h1 span { color: var(--muted-fg); font-weight: 400; }
+.seg { display: inline-flex; background: var(--background); border-radius: 10px; padding: 3px; box-shadow: inset 0 0 0 1px var(--border); }
+.seg button { border: 0; background: none; padding: 6px 12px; border-radius: 7px; font: 500 13px Geist, sans-serif; cursor: pointer; color: var(--muted-fg); }
+.seg button[aria-pressed="true"] { background: var(--foreground); color: var(--background); }
+
+main { max-width: 1240px; margin: 0 auto; padding: 24px 24px 80px; }
+.lede { max-width: 72ch; margin: 0 0 24px; color: var(--muted-fg); }
+.lede strong { color: var(--foreground); font-weight: 600; }
+
+/* ---------- Pinned compare row ---------- */
+.pins { background: var(--background); border-radius: 14px; box-shadow: 0 0 0 1px var(--border); padding: 16px 20px 20px; margin-bottom: 40px; }
+.pins h2 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
+.pins > p { margin: 0 0 14px; color: var(--muted-fg); font-size: 13px; }
+.pin-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.pin-card { display: grid; gap: 10px; }
+.pin-card header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 600; }
+.pin-card header button { border: 0; background: none; color: var(--muted-fg); font: 500 12px Geist, sans-serif; cursor: pointer; padding: 2px 4px; }
+.pin-card .minis { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pin-card .zoom canvas { width: 56px; height: 56px; }
+.pin-empty { color: var(--muted-fg); font-size: 13px; padding: 20px 0 4px; }
+
+/* ---------- Concept sections ---------- */
+.family { margin: 44px 0 14px; font-size: 13px; font-weight: 500; color: var(--muted-fg); border-top: 1px solid var(--border); padding-top: 10px; }
+.concept { background: var(--background); border-radius: 14px; box-shadow: 0 0 0 1px var(--border); padding: 20px; margin-bottom: 16px; scroll-margin-top: 70px; }
+.concept-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.concept h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+.concept h3 .n { color: var(--muted-fg); font-weight: 500; margin-right: 6px; }
+.concept .why { margin: 2px 0 0; color: var(--muted-fg); max-width: 75ch; }
+.pin-btn {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer;
+  background: var(--muted); color: var(--foreground); border-radius: 8px; padding: 6px 11px; font: 500 13px Geist, sans-serif;
+}
+.pin-btn svg { width: 14px; height: 14px; }
+.pin-btn[aria-pressed="true"] { background: var(--foreground); color: var(--background); }
+.frames { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.specimens { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; align-items: stretch; }
+.weak { margin: 14px 0 0; font-size: 13px; color: var(--muted-fg); max-width: 90ch; }
+.weak b { color: var(--foreground); font-weight: 600; }
+
+/* ---------- The header band frame (forced light / dark, independent of page theme) ---------- */
+.lt { --f-page: #ffffff; --f-band: #f5f5f5; --f-fg: #0a0a0a; --f-mut: #737373; --f-line: #e5e5e5; }
+.dk { --f-page: #0a0a0a; --f-band: #171717; --f-fg: #fafafa; --f-mut: #a1a1a1; --f-line: rgba(255,255,255,.1); }
+.frame { border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--f-line); background: var(--f-page); color: var(--f-fg); }
+.band { background: var(--f-band); padding: 0 20px; }
+.band-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 52px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; color: var(--f-fg); }
+.brand svg { flex: none; display: block; }
+.word { font-size: 17px; font-weight: 650; letter-spacing: -0.025em; white-space: nowrap; line-height: 1; }
+.date { font-size: 12.5px; color: var(--f-mut); white-space: nowrap; }
+.rule { display: flex; gap: 3px; height: 3px; }
+.rule span { background: var(--f-fg); }
+.rule span:nth-child(1) { flex: 62; } .rule span:nth-child(2) { flex: 24; opacity: .5; } .rule span:nth-child(3) { flex: 14; opacity: .22; }
+.counts { padding: 9px 0 11px; font-size: 13px; color: var(--f-mut); }
+.counts b { color: var(--f-fg); font-weight: 600; }
+.below { height: 22px; background: var(--f-page); }
+
+/* Size sheet */
+.sheet { display: flex; align-items: flex-end; gap: 16px; padding: 14px 16px 10px; border-radius: 10px; background: var(--f-page); color: var(--f-fg); box-shadow: 0 0 0 1px var(--f-line); }
+.sheet figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
+.sheet figcaption, .zoom figcaption { font-size: 11px; color: var(--f-mut); }
+.sheet svg { display: block; }
+
+/* Fake browser tab strip */
+.browser { border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--f-line); min-width: 230px; flex: 1 1 230px; align-self: start; }
+.lt.browser { --strip: #dedee0; --tab: #ffffff; --bar: #ffffff; }
+.dk.browser { --strip: #1f1f1f; --tab: #333335; --bar: #333335; }
+.strip { display: flex; align-items: flex-end; gap: 2px; padding: 8px 8px 0; background: var(--strip); }
+.tab { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; width: 150px; border-radius: 8px 8px 0 0; font: 400 12px system-ui, sans-serif; color: var(--f-fg); }
+.tab.on { background: var(--tab); }
+.tab.off { color: var(--f-mut); width: 64px; }
+.tab .t { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tab .x { opacity: .5; font-size: 13px; }
+.tab img, .tab .ghost { width: 16px; height: 16px; flex: none; display: block; }
+.tab .ghost { border-radius: 4px; background: var(--f-mut); opacity: .35; }
+.addr { background: var(--bar); padding: 7px 10px 9px; }
+.addr div { border-radius: 99px; background: color-mix(in srgb, var(--f-fg) 7%, transparent); color: var(--f-mut); font: 12px system-ui, sans-serif; padding: 5px 12px; }
+
+/* 16px raster, zoomed (true 1x pixels, nearest-neighbour upscale) */
+.zoom { margin: 0; display: grid; grid-template-columns: auto auto; justify-items: center; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+.zoom > div { padding: 10px 10px 0; background: var(--f-page); }
+.zoom figcaption { grid-column: 1 / -1; justify-self: stretch; text-align: center; padding: 0 0 6px; background: var(--background); color: var(--muted-fg); padding-top: 6px; }
+.zoom canvas { width: 80px; height: 80px; image-rendering: pixelated; display: block; }
+
+@media (max-width: 760px) {
+  main { padding: 16px 16px 64px; }
+  .toolbar { padding: 10px 16px; }
+  .frames { grid-template-columns: 1fr; }
+  .concept { padding: 16px; }
+  .band { padding: 0 14px; }
+  .date { display: none; }
+  .browser { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>Bay Ballot logo exploration <span>mockup, not the live site</span></h1>
+  <div class="seg" id="theme" role="group" aria-label="Page theme">
+    <button data-theme="system" aria-pressed="true">System</button>
+    <button data-theme="light" aria-pressed="false">Light</button>
+    <button data-theme="dark" aria-pressed="false">Dark</button>
+  </div>
+</div>
+
+<main>
+  <p class="lede">Twelve marks for the report header: neutral band, three-segment rule, counts line. Every frame below is shown in forced light and dark regardless of the page theme. <strong>All marks are one color</strong> (currentColor), a few use a single lighter tint of that same color, and none use green, red, or blue. The zoomed squares are the real 16-pixel raster, not a vector blow-up.</p>
+
+  <section class="pins" aria-labelledby="pins-h">
+    <h2 id="pins-h">Pinned</h2>
+    <p>Pin concepts below to compare them side by side. Pins are saved in this browser.</p>
+    <div class="pin-row" id="pin-row"></div>
+  </section>
+
+  <div id="concepts"></div>
+</main>
+
+<script>
+/* ---------- Marks: 16-unit grid so the favicon lands on whole pixels ----------
+   Each mark is a function of a unique id (for masks). Fill is currentColor; the one allowed
+   accent is the same color at reduced opacity. */
+const T = 0.42; // the single tint used by any mark that needs a second value
+
+// Pixel-aligned B for the ruled favicon: 3px stem, 2px bowls, 1px counters, every edge on a whole pixel.
+const RULED_B = "M3 0H9A2.5 2.5 0 0 1 9 5H10A2.5 2.5 0 0 1 10 11H3Z M6 2H8.5A.5.5 0 0 1 8.5 3H6Z M6 7H9.5A1 1 0 0 1 9.5 9H6Z";
+
+const CONCEPTS = [
+  /* ---- Wordmarks ---- */
+  {
+    id: "ruled", family: "Wordmarks", name: "Ruled wordmark",
+    why: "No icon at all: the header's three-segment rule is the identity, and the favicon is a B standing on that rule.",
+    weak: "<b>16px:</b> the B holds; the rule's lightest segment nearly disappears on a light tab. <b>Generic:</b> the wordmark alone is plain Geist and only becomes ownable with the rule beside it, so it leans entirely on the frame. <b>Partisan:</b> none.",
+    lockup: () => `<span class="word" style="font-weight:700;letter-spacing:-0.04em;font-size:18px">Bay Ballot</span>`,
+    svg: () => `<path fill-rule="evenodd" d="${RULED_B}"/>
+      <rect x="1" y="13" width="8" height="2"/><rect x="10" y="13" width="3" height="2" opacity=".5"/><rect x="14" y="13" width="2" height="2" opacity=".3"/>`,
+  },
+  {
+    id: "tally", family: "Wordmarks", name: "Tally ll",
+    why: "The two l's in Ballot are struck through like a tally, the oldest way of counting votes by hand. The favicon is the full five-bar gate.",
+    weak: "<b>16px:</b> the gate reads clearly. <b>Wordmark:</b> the slashed ll costs some readability of the name, and some people will read it as a strikethrough or a typo. <b>Generic:</b> tally marks are common in counting apps. <b>Partisan:</b> none.",
+    lockup: () => `<span class="word" style="display:inline-flex;align-items:baseline">Bay Ba<svg viewBox="0 0 9 16" width="9.6" height="17" style="align-self:flex-end;margin:0 1px -1px" fill="currentColor" aria-hidden="true"><rect x="1" y="1" width="1.9" height="13.2"/><rect x="5.6" y="1" width="1.9" height="13.2"/><path d="M0 11.2L9 5.2" stroke="currentColor" stroke-width="1.5"/></svg>ot</span>`,
+    svg: () => `<rect x="2" y="2" width="2" height="12"/><rect x="5" y="2" width="2" height="12"/><rect x="8" y="2" width="2" height="12"/><rect x="11" y="2" width="2" height="12"/>
+      <path d="M0.5 12.5L15.5 4.5" stroke="currentColor" stroke-width="2" fill="none"/>`,
+  },
+  /* ---- Monograms ---- */
+  {
+    id: "mirror", family: "Monograms", name: "Mirrored BB",
+    why: "Two B's back to back on one shared stem. It is symmetric on purpose: the site takes no side, so neither half leads.",
+    weak: "<b>16px:</b> holds as a solid silhouette; the four counters close up a little. <b>Read:</b> at small sizes it reads as the number 88, a bow tie, or a game-controller glyph before it reads as BB. <b>Partisan:</b> none, and the symmetry argues the opposite.",
+    svg: () => {
+      const half = `<path fill-rule="evenodd" d="M8 1H11.5A3.5 3.5 0 0 1 11.5 8A3.5 3.5 0 0 1 11.5 15H8Z M9 3H11.5A1.5 1.5 0 0 1 11.5 6H9Z M9 10H11.5A1.5 1.5 0 0 1 11.5 13H9Z"/>`;
+      return `${half}<g transform="translate(16 0) scale(-1 1)">${half}</g>`;
+    },
+  },
+  {
+    id: "barb", family: "Monograms", name: "Bar B",
+    why: "A B drawn as a chart: one axis and two result bars, the lower one longer. It is the same bar the site uses for every contest, turned into a letter.",
+    weak: "<b>16px:</b> strong; the 2px gaps survive because they land on whole pixels. <b>Lineage:</b> this is a cousin of the rejected stacked-bars mark; it adds the axis and drops the third bar, which may not be enough distance. <b>Partisan:</b> none.",
+    svg: () => `<rect x="1" y="1" width="3" height="14"/>
+      <path d="M6 1H10A3 3 0 0 1 10 7H6Z"/><path d="M6 9H12A3 3 0 0 1 12 15H6Z"/>`,
+  },
+  {
+    id: "notch", family: "Monograms", name: "Checked B",
+    why: "A solid B whose lower bowl has a check cut through it, so the letter carries the mark of a filled-in choice.",
+    weak: "<b>16px:</b> the first pass used a 3-pixel check that smudged; this one cuts the check out through the bowl's edge, which survives the raster, though the B itself gets harder to read. <b>Generic:</b> a check inside a letter is a familiar move. <b>Lineage:</b> keeps the check from the rejected checkbox. <b>Partisan:</b> none.",
+    svg: (u) => `<mask id="m-${u}"><rect width="16" height="16" fill="#fff"/>
+      <rect x="5" y="3" width="4" height="2" fill="#000"/>
+      <path d="M4.5 10.5L7 13L13 7" fill="none" stroke="#000" stroke-width="2.2"/></mask>
+      <path mask="url(#m-${u})" d="M2 1H9A3 3 0 0 1 9 7H10A4 4 0 0 1 10 15H2Z"/>`,
+  },
+  /* ---- Ballot-derived ---- */
+  {
+    id: "ovals", family: "Ballot-derived", name: "Filled oval",
+    why: "Three ballot lines, one oval filled in. It is what a voter actually does on paper, without saying which line.",
+    weak: "<b>16px:</b> clean, because the empty ovals are drawn as a lighter tint rather than 1px rings (rings turned to noise in the first pass). Still reads as a list icon with one bullet picked. <b>Generic:</b> close to radio-button and to-do glyphs. <b>Partisan:</b> none; the middle line is chosen so no option looks favored by position.",
+    svg: () => `<rect x="1" y="1" width="5" height="3" rx="1.5" opacity="${T}"/><rect x="8" y="2" width="7" height="1" opacity="${T}"/>
+      <rect x="1" y="6" width="5" height="4" rx="2"/><rect x="8" y="7" width="7" height="2"/>
+      <rect x="1" y="12" width="5" height="3" rx="1.5" opacity="${T}"/><rect x="8" y="13" width="7" height="1" opacity="${T}"/>`,
+  },
+  {
+    id: "fold", family: "Ballot-derived", name: "Folded check",
+    why: "A check drawn as a sheet folded once: the short arm is the tucked-under panel, a shade lighter. Ballots go in the envelope folded.",
+    weak: "<b>16px:</b> clear as a check; the lighter fold panel needs 32px and up to read as paper. <b>Generic:</b> a check mark is the most common civic and to-do symbol there is. <b>Lineage:</b> close in spirit to the rejected checkbox. <b>Partisan:</b> none.",
+    svg: () => `<path d="M1.5 7.5L6 12" stroke="currentColor" stroke-width="3" opacity="${T}"/><path d="M4.6 13.4L14.5 3.5" stroke="currentColor" stroke-width="3"/>`,
+  },
+  {
+    id: "punch", family: "Ballot-derived", name: "Punch-card B",
+    why: "A B made of the square holes of an old punch-card ballot, which doubles as a pixel letter. Counting, literally.",
+    weak: "<b>16px:</b> the best of the set; it is designed on the pixel grid. <b>Generic:</b> pixel letters read as retro or gaming, and the punch-card reference is lost on anyone under forty. <b>Partisan:</b> none.",
+    svg: () => {
+      const on = ["1110","1001","1110","1001","1110"];
+      let s = "";
+      on.forEach((row, r) => [...row].forEach((c, k) => {
+        s += `<rect x="${2 + k * 3}" y="${1 + r * 3}" width="2" height="2" rx=".35"${c === "1" ? "" : ` opacity=".14"`}/>`;
+      }));
+      return s;
+    },
+  },
+  /* ---- Data-derived ---- */
+  {
+    id: "split", family: "Data-derived", name: "Split bar",
+    why: "One result bar with a leader and the rest, the most-used shape on the site, scaled up into a square tile. A first pass as a thin bar filled only half the favicon and read as a battery; the tile fixes that.",
+    weak: "<b>16px:</b> strong, a solid block with one clean split. <b>Generic:</b> at a glance it resembles a sidebar or split-view layout icon from editor apps. <b>Partisan:</b> fine in one color; it must never ship in the site's green and red or it implies a verdict.",
+    svg: () => `<path d="M3.5 2H10V14H3.5A2.5 2.5 0 0 1 1 11.5V4.5A2.5 2.5 0 0 1 3.5 2Z"/><path d="M11 2H12.5A2.5 2.5 0 0 1 15 4.5V11.5A2.5 2.5 0 0 1 12.5 14H11Z" opacity="${T}"/>`,
+  },
+  {
+    id: "pct", family: "Data-derived", name: "Share sign",
+    why: "A percent sign with one filled dot and one open one: the share of guides that agree, the number every row of the site reports.",
+    weak: "<b>16px:</b> the open dot's ring is a single pixel and goes soft. <b>Read:</b> a percent sign says discounts, interest rates, or finance before it says ballots. <b>Partisan:</b> none.",
+    svg: () => `<circle cx="4.5" cy="4.5" r="3"/><circle cx="11.5" cy="11.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M12.8 2.2L3.2 13.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+  },
+  /* ---- Place-derived ---- */
+  {
+    id: "cable", family: "Place-derived", name: "Cable rule",
+    why: "Two towers and a sagging cable over a deck line, the generic suspension-bridge shape rather than any one bridge. The deck is the header rule.",
+    weak: "<b>16px:</b> better than expected; the towers and deck carry it even though the 1.5px cable softens. <b>Generic:</b> every Bay Area brand has used a bridge; it says tourism more than elections. <b>Trademark:</b> abstract enough, but avoid adding the Golden Gate's tower windows or color. <b>Partisan:</b> none.",
+    svg: () => `<rect x="3" y="2" width="2" height="13"/><rect x="11" y="2" width="2" height="13"/><rect x="0" y="11" width="16" height="2"/>
+      <path d="M0 8.5Q2 7 4 3Q8 12 12 3Q14 7 16 8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  },
+  /* ---- Hybrids ---- */
+  {
+    id: "checkbar", family: "Hybrids", name: "Checked bar",
+    why: "A result bar whose leading segment carries a check, with the remainder in the lighter tint: the picks, tallied, with the leader marked.",
+    weak: "<b>16px:</b> the knocked-out check is about 4 pixels wide; readable on a light tab, mushier on dark. <b>Generic:</b> resembles a 'complete' badge or toggle switch. <b>Partisan:</b> none in one color; never fill the segments with the site's yes/no colors.",
+    svg: (u) => `<mask id="m-${u}"><rect width="16" height="16" fill="#fff"/>
+      <path d="M3.6 8.2L5.6 10.1L9.1 6.4" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></mask>
+      <path mask="url(#m-${u})" d="M4.5 3.5H11V12.5H4.5A4.5 4.5 0 0 1 4.5 3.5Z"/>
+      <path d="M12 3.5H12.5A3 3 0 0 1 15.5 6.5V9.5A3 3 0 0 1 12.5 12.5H12Z" opacity="${T}"/>`,
+  },
+];
+
+/* ---------- Rendering ---------- */
+let uidN = 0;
+const uid = () => `u${++uidN}`;
+const svgMark = (c, px, extra = "") =>
+  `<svg viewBox="0 0 16 16" width="${px}" height="${px}" fill="currentColor" aria-hidden="true" ${extra}>${c.svg(uid())}</svg>`;
+const svgDoc = (c, color) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="${color}" color="${color}">${c.svg(uid()).replaceAll("currentColor", color)}</svg>`;
+const dataUrl = (c, color) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgDoc(c, color));
+
+const lockup = (c) => c.lockup
+  ? `<span class="brand">${c.lockup()}</span>`
+  : `<span class="brand">${svgMark(c, 20)}<span class="word">Bay Ballot</span></span>`;
+
+const frame = (c, theme) => `
+  <div class="frame ${theme}" role="img" aria-label="${c.name} in the header, ${theme === "lt" ? "light" : "dark"}">
+    <div class="band">
+      <div class="band-top">${lockup(c)}<span class="date">November 3, 2026</span></div>
+      <div class="rule"><span></span><span></span><span></span></div>
+      <div class="counts tabular"><b>36</b> guides · <b>52</b> contests · <b>914</b> picks</div>
+    </div>
+    <div class="below"></div>
+  </div>`;
+
+const sheet = (c, theme) => `
+  <div class="sheet ${theme}">
+    ${[64, 32, 16].map(px => `<figure>${svgMark(c, px)}<figcaption>${px}</figcaption></figure>`).join("")}
+  </div>`;
+
+const tabStrip = (c, theme) => `
+  <div class="browser ${theme}">
+    <div class="strip">
+      <div class="tab on"><img alt="" width="16" height="16" src="${dataUrl(c, theme === "lt" ? "#0a0a0a" : "#fafafa")}"><span class="t">Bay Ballot</span><span class="x">×</span></div>
+      <div class="tab off"><span class="ghost"></span><span class="t">New tab</span></div>
+    </div>
+    <div class="addr"><div>bayballot.com</div></div>
+  </div>`;
+
+const zoom = (c) =>
+  `<figure class="zoom" data-zoom="${c.id}">${["lt", "dk"].map(t => `<div class="${t}"><canvas width="16" height="16" data-c="${c.id}" data-color="${t === "lt" ? "#0a0a0a" : "#fafafa"}"></canvas></div>`).join("")}<figcaption>16px raster, 5×</figcaption></figure>`;
+
+function drawZooms(root) {
+  root.querySelectorAll("canvas[data-c]").forEach(cv => {
+    const c = CONCEPTS.find(x => x.id === cv.dataset.c);
+    const img = new Image();
+    img.onload = () => { const g = cv.getContext("2d"); g.clearRect(0, 0, 16, 16); g.drawImage(img, 0, 0, 16, 16); cv.dataset.ready = "1"; };
+    img.src = dataUrl(c, cv.dataset.color);
+  });
+}
+
+const pinIcon = `<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 1.5h6l-1 4 2.5 3v1.5H9V15l-1 .5-1-.5v-5H3.5V8.5L6 5.5z"/></svg>`;
+
+function renderConcepts() {
+  let fam = "", html = "";
+  CONCEPTS.forEach((c, i) => {
+    if (c.family !== fam) { fam = c.family; html += `<h2 class="family">${fam}</h2>`; }
+    html += `
+    <article class="concept" id="c-${c.id}">
+      <div class="concept-head">
+        <div><h3><span class="n">${i + 1}</span>${c.name}</h3><p class="why">${c.why}</p></div>
+        <button class="pin-btn" data-pin="${c.id}" aria-pressed="false">${pinIcon}<span>Pin</span></button>
+      </div>
+      <div class="frames">${frame(c, "lt")}${frame(c, "dk")}</div>
+      <div class="specimens">${sheet(c, "lt")}${sheet(c, "dk")}${zoom(c)}${tabStrip(c, "lt")}${tabStrip(c, "dk")}</div>
+      <p class="weak">${c.weak}</p>
+    </article>`;
+  });
+  const root = document.getElementById("concepts");
+  root.innerHTML = html;
+  drawZooms(root);
+}
+
+/* ---------- Pins (localStorage, best effort) ---------- */
+const PIN_KEY = "bb-logo-pins";
+function loadPins() { try { return JSON.parse(localStorage.getItem(PIN_KEY) ?? "[]").filter(id => CONCEPTS.some(c => c.id === id)); } catch { return []; } }
+function savePins(p) { try { localStorage.setItem(PIN_KEY, JSON.stringify(p)); } catch {} }
+let pins = loadPins();
+
+function renderPins() {
+  document.querySelectorAll("[data-pin]").forEach(b => {
+    const on = pins.includes(b.dataset.pin);
+    b.setAttribute("aria-pressed", String(on));
+    b.querySelector("span").textContent = on ? "Pinned" : "Pin";
+  });
+  const row = document.getElementById("pin-row");
+  if (!pins.length) { row.innerHTML = `<p class="pin-empty">Nothing pinned yet. Use Pin on any concept to bring it up here.</p>`; return; }
+  row.innerHTML = pins.map(id => {
+    const c = CONCEPTS.find(x => x.id === id), n = CONCEPTS.indexOf(c) + 1;
+    return `<div class="pin-card">
+      <header><a href="#c-${c.id}" style="color:inherit;text-decoration:none">${n}. ${c.name}</a><button data-unpin="${c.id}">Unpin</button></header>
+      ${frame(c, "lt")}${frame(c, "dk")}
+      <div class="minis">${sheet(c, "lt")}${zoom(c)}</div>
+    </div>`;
+  }).join("");
+  drawZooms(row);
+}
+function toggle(id) { pins = pins.includes(id) ? pins.filter(p => p !== id) : [...pins, id]; savePins(pins); renderPins(); }
+document.addEventListener("click", e => {
+  const p = e.target.closest("[data-pin]"); if (p) toggle(p.dataset.pin);
+  const u = e.target.closest("[data-unpin]"); if (u) toggle(u.dataset.unpin);
+});
+
+/* ---------- Theme ---------- */
+function theme(t) {
+  document.querySelectorAll("#theme button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
+  if (t === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.dataset.theme = t;
+  try { localStorage.setItem("bb-logo-theme", t); } catch {}
+}
+document.getElementById("theme").addEventListener("click", e => { const b = e.target.closest("button"); if (b) theme(b.dataset.theme); });
+let savedTheme = null; try { savedTheme = localStorage.getItem("bb-logo-theme"); } catch {}
+theme(new URLSearchParams(location.search).get("theme") ?? savedTheme ?? "system");
+
+renderConcepts();
+renderPins();
+</script>
+</body>
+</html>

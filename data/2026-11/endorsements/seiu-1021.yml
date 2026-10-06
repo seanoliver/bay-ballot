@@ -1,0 +1,100 @@
+guide: seiu-1021
+election: 2026-11
+status: published
+source: https://www.seiu1021.org/post/election-endorsements-nov-3-2026
+archived:
+  - source: https://www.seiu1021.org/post/election-endorsements-nov-3-2026
+    snapshot: https://web.archive.org/web/20261005221918/https://www.seiu1021.org/post/election-endorsements-nov-3-2026
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-17:
+    pick:
+      - Matt Haney
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-education:
+    pick:
+      - Virginia Cheung
+      - Ryan Hazelton
+      - Reina Tello
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Jeremy Lee
+      - Bunny McFadden
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+    ranked: true
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
+    ranked: true
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-43:
+    pick: N
+  rtm:
+    pick: Y
+  prop-a:
+    pick: N
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+  prop-e:
+    pick: N
+  prop-f:
+    pick: N
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: Y
+  prop-j:
+    pick: Y

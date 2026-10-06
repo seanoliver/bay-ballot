@@ -1,0 +1,72 @@
+guide: sf-green-party
+election: 2026-11
+status: published
+source: https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+archived:
+  - source: https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+    snapshot: https://web.archive.org/web/20261005222158/https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  supervisor-4:
+    pick:
+      - Jeremy Julian Greco
+  supervisor-8:
+    pick:
+      - Michael T. Nguyen
+  supervisor-10:
+    pick:
+      - Pearci "PJ" Bastiany III
+  board-of-education:
+    pick:
+      - Virginia Cheung
+      - Alida Fisher
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Jeremy Lee
+  prop-a:
+    pick: N
+  prop-b:
+    pick: Y
+  prop-d:
+    pick: N
+  prop-e:
+    pick: N
+  prop-f:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-j:
+    pick: Y
+  prop-1:
+    pick: N
+  prop-2:
+    pick: N
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: N
+  prop-37:
+    pick: N
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: Y
+  prop-45:
+    pick: N

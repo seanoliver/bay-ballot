@@ -1,0 +1,54 @@
+import { writeFileSync } from "node:fs";
+import path from "node:path";
+import { chromium } from "@playwright/test";
+import { HOLE, HOLE_RADIUS, HOLES, OFF_OPACITY, logoSvg } from "../src/lib/logo";
+
+const APP = path.join(process.cwd(), "src/app");
+const INK = "#171717";
+const PAPER = "#fafafa";
+
+const markOnly = (color: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="1.5 0.5 13 15" fill="${color}">${HOLES.map(
+    (h) => `<rect x="${h.x}" y="${h.y}" width="${HOLE}" height="${HOLE}" rx="${HOLE_RADIUS}"${h.on ? "" : ` opacity="${OFF_OPACITY}"`}/>`,
+  ).join("")}</svg>`;
+
+function ico(png: Buffer, size: number): Buffer {
+  const header = Buffer.alloc(22);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(1, 4); // count
+  header.writeUInt8(size, 6);
+  header.writeUInt8(size, 7);
+  header.writeUInt16LE(1, 10); // planes
+  header.writeUInt16LE(32, 12); // bits per pixel
+  header.writeUInt32LE(png.length, 14);
+  header.writeUInt32LE(22, 18); // offset
+  return Buffer.concat([header, png]);
+}
+
+async function main() {
+  const svgTile = logoSvg({ color: PAPER, tile: INK, size: 32 });
+  writeFileSync(path.join(APP, "icon.svg"), `${svgTile}\n`);
+
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ deviceScaleFactor: 1 });
+  const shoot = async (html: string, w: number, h: number, transparent: boolean) => {
+    // A roomy viewport, clipped to the icon: Chromium won't lay out a 32px-wide window as asked.
+    await page.setViewportSize({ width: 400, height: 400 });
+    await page.setContent(`<!doctype html><html><body style="margin:0;background:transparent"><div style="width:${w}px;height:${h}px;line-height:0">${html}</div></body></html>`);
+    return page.screenshot({ omitBackground: transparent, clip: { x: 0, y: 0, width: w, height: h } });
+  };
+
+  const png32 = await shoot(logoSvg({ color: PAPER, tile: INK, size: 32 }), 32, 32, true);
+  writeFileSync(path.join(APP, "icon1.png"), png32);
+  writeFileSync(path.join(APP, "favicon.ico"), ico(png32, 32));
+
+  // Opaque and square: iOS rounds the corners itself.
+  const apple = `<div style="width:180px;height:180px;background:${INK};display:flex;align-items:center;justify-content:center">
+    <div style="width:104px;height:120px">${markOnly(PAPER).replace("<svg ", '<svg width="104" height="120" ')}</div></div>`;
+  writeFileSync(path.join(APP, "apple-icon.png"), await shoot(apple, 180, 180, false));
+
+  await browser.close();
+}
+
+main();

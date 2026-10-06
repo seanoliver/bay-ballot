@@ -1,0 +1,46 @@
+CA Prop 4 Guide CA Prop 37
+​ Print Voter Guide
+Prop
+5
+CA
+Prop 5
+Constitutional Amendment
+Changes Recall Election Process for Statewide Officers
+Amends the California Constitution to remove the choice of a successor from recall elections. Allows vacancies created by recalls to be filled under succession rules for state officers.
+SPUR's Recommendation
+Prop. 5 would help California avoid scenarios in which a successor can take statewide office with only a small plurality of votes. It would eliminate an incentive structure that has made recalls an attractive strategic partisan tool for removing elected officials without majority support. Replacing a plurality-rule special election with an institutional process tied to officials who themselves were elected by a majority of voters represents a more democratic and coherent outcome than the status quo.
+Vote YES
+What Prop. 5 Would Do
+Proposition 5 would amend the California Constitution to change how state officer recall elections work in three key ways.1
+First, when voters choose to recall an elected official, they also choose that person’s successor on the same ballot. Prop. 5 would eliminate the successor election and instead fill the office through existing constitutional succession rules. These rules require the governor to fill non-legislative office vacancies (e.g., secretary of state, attorney general, controller) by appointment, and special elections to fill legislative office vacancies (senator, assemblymember).
+Second, if a governor is recalled, Prop. 5 would require the lieutenant governor to assume the governorship for the remainder of the term. If the governor is successfully recalled before the close of nomination for the next statewide election, a special election would be held at the next statewide primary. This special election would prevent an unelected appointed governor from holding office for a full four-year term.2
+Third, Prop. 5 removes the prohibition on recalled officers running for the same office in a subsequent special election to fill their seat.
+State Senator Josh Newman, who was recalled in 2019, and Assemblymember Isaac Bryan introduced the measure in 2023. The legislation was referred to the 2026 state ballot and requires a simple majority (50% plus one vote) to pass.
+The Backstory
+California voters authorized the recall process in 1911 through a ballot measure that passed with 76.8% of the vote.3 The current recall process for state officers requires that voters elect a successor on the same ballot. The recalled official is prohibited from appearing as a candidate on the successor ballot. If a recall is successful, the replacement candidate who receives the most votes takes office immediately.4
+Current voting requirements for candidates to win regular elections (with two final candidates) differ from those for candidates in recall elections (with multiple candidates). A candidate can prevail in a recall successor race with a plurality of votes (the most votes, even if it's not more than 50%) rather than a majority (more than 50%). All voters may vote for a replacement candidate on the same ballot as the recall, regardless of whether they voted yes or no on the initial recall question. In the successful 2003 gubernatorial recall, Governor Arnold Schwarzenegger replaced Governor Gray Davis with only 48.6% of the vote. The attempted 2021 recall of Governor Gavin Newsom renewed attention to the process.
+Most states that allow recalls already use either established succession rules or a separate special election. Since 1913, 179 recall attempts have targeted California state elected officials; 11 qualified for the ballot, and six officials were ultimately recalled.5
+The current recall system benefits the minority party in state politics because it offers an additional opportunity outside the normal election cycle to elect minority-party candidates. This election would occur at a moment of discontent with the majority-party officeholder, which is likely to increase the minority party’s chances of electing its candidate. In the near term, this advantage would favor Republicans, given that Democrats have held a majority in both the state legislature and the governorship since 2011.
+State Gubernatorial Recall Provisions
+Source: Ballotpedia, States with gubernatorial recall provisions.
+Equity Impacts
+Prop. 5’s equity implications are largely procedural rather than direct, but two dynamics are worth weighing.
+First, the current successor-election system allows a candidate to take statewide office with a plurality of the vote — sometimes well under 50% — which can dilute the influence of any single bloc of voters, including communities of color. The current dynamic of off-cycle election timing is known to widen underrepresentation by shrinking and skewing the electorate toward already-engaged, disproportionately white and older voters.6 Prop. 5 would increase the likelihood that gubernatorial successor elections are pushed to an on-cycle election, reducing the risk of underrepresentation from various voting blocs.
+Second, eliminating the simultaneous successor vote does reduce one direct opportunity for voters to weigh in on a successor, which could be read as narrowing immediate civic participation. However, the constitutional succession process (e.g., replacing a recalled governor with the lieutenant governor, who was elected statewide) preserves a democratically legitimate alternative.
+Pros
+Prop. 5 would reduce the risk that a recall election would install an officeholder who lacks majority support. The change would align recall outcomes more closely with how California fills other vacancies.
+The measure would discourage political actors from using recalls as a strategic end-run around the normal election cycle by calculating they could win a low-turnout plurality race even without majority public support.
+It would provide more predictability and stability in succession for gubernatorial recalls because the lieutenant governor (already elected statewide) fills the vacancy under established, non-ad-hoc rules rather than through a compressed, high-stakes special election.
+It would clarify decisions for voters who may be confused by the current successor election process, which is inherently more complicated than a single choice to recall or not recall an officer.
+It would reduce the likelihood that voters would choose not to recall an elected officer because they are concerned about their successor. It would increase the likelihood that votes are cast to address actual non-partisan concerns about the officer targeted by the recall election.
+Cons
+Prop. 5 would require an additional election for recalls in the legislature, which could increase the cost of filling a vacancy in those seats.
+The measure would allow appointees who were not elected to hold the governorship and preside over a lame-duck period, thereby potentially weakening the leadership’s ability to enact strong policy.
+Vote YES on Prop 5 - Recall Process Reform
+Footnotes
+1 State officers include the governor, legislators, attorney general, secretary of state, controller, treasurer, insurance commissioner, superintendent of public instruction, and board of education members.
+2 If recall of the governor or secretary of state is initiated, the recall duties of that office shall be performed by the secretary of state or controller, respectively. If recalls of the governor and secretary of state are initiated at the same time, the recall duties of both offices shall be performed by the controller.
+3 Ballotpedia, "California Proposition 8, Recall of Elected Officials Amendment ( )," accessed .
+4 Ballotpedia, "California Proposition 5, Eliminate State Officer Recall Successor Elections Amendment (2026)," accessed .
+5 Ballotpedia, "California Proposition 5, Eliminate State Officer Recall Successor Elections Amendment (2026)," accessed .
+6 National Vote at Home Institute, "Who's Voting for America's Mayors? Hardly Anyone," ; Kevin Morris and Coryn Grange, Growing Racial Disparities in Voter Turnout, 2008–2022, Brennan Center for Justice, 2024.

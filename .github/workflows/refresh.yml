@@ -1,0 +1,185 @@
+name: Daily data refresh
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+env:
+  BRANCH: data/refresh
+  ISSUE_TITLE: Data refresh needs review
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Start from the open refresh PR, if any
+        id: base
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # A fork can open a PR from its own data/refresh branch; never continue or merge that one.
+          pr="$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository,headRepositoryOwner \
+            --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')"
+          if [ -n "$pr" ]; then
+            git fetch -q origin "$BRANCH"
+            git switch -q -c "$BRANCH" FETCH_HEAD
+            echo "Continuing open PR #$pr"
+            if ! git merge -q --no-edit origin/main; then
+              git merge --abort
+              gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
+              gh pr edit "$pr" --add-label needs-review
+              gh pr comment "$pr" --body "Refresh branch conflicts with main; resolve by hand."
+              echo "stop=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # Without this delete, the push from a fresh main branch is rejected as non-fast-forward.
+            if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+              git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --delete "$BRANCH"
+            fi
+            git switch -q -c "$BRANCH"
+          fi
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install pdftotext
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Install Chromium for browser-fetched guides
+        run: npx playwright install --with-deps chromium
+
+      - name: Read the open review issue
+        id: issue
+        if: steps.base.outputs.stop != 'true'
+        run: |
+          issue="$(gh issue list --state open --app github-actions --search "in:title \"$ISSUE_TITLE\"" --json number,title --jq "map(select(.title == env.ISSUE_TITLE)) | .[0].number // empty")"
+          echo "number=$issue" >> "$GITHUB_OUTPUT"
+          if [ -n "$issue" ]; then
+            gh issue view "$issue" --json body --jq .body \
+              | sed -n 's/^<!-- shrunk-state: \(.*\) -->$/\1/p' > shrunk-state.json
+          fi
+
+      - name: Refresh
+        id: refresh
+        if: steps.base.outputs.stop != 'true'
+        env:
+          BAYBALLOT_ANTHROPIC_API_KEY: ${{ secrets.BAYBALLOT_ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
+      - name: Decide whether to commit
+        id: changes
+        if: steps.base.outputs.stop != 'true'
+        run: |
+          data_changed="$(git status --porcelain -- data/2026-11/endorsements)"
+          extracted="$(node -e "try { console.log(require('./result.json').extracted.length) } catch { console.log(0) }")"
+          if [ -z "$data_changed" ] && [ "$extracted" = "0" ]; then
+            git checkout -- data/
+            git clean -fdq -- data/
+            echo "commit=false" >> "$GITHUB_OUTPUT"
+            echo "No relevant changes; nothing to commit."
+          else
+            echo "commit=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit, push, and open or update the PR
+        id: pr
+        if: steps.changes.outputs.commit == 'true'
+        run: |
+          git add data/
+          git commit -q -m "data: refresh $(date -u +%F)"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$BRANCH"
+          { cat summary.md; echo; echo "cc @seanoliver"; } > pr-body.md
+          pr="${{ steps.base.outputs.pr }}"
+          if [ -n "$pr" ]; then
+            gh pr edit "$pr" --body-file pr-body.md
+            gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code ${{ steps.refresh.outputs.code }}); summary above is updated."
+          else
+            url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
+            pr="${url##*/}"
+          fi
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+          labels="$(gh pr view "$pr" --json labels --jq '[.labels[].name] | join(",")')"
+          echo "labels=$labels" >> "$GITHUB_OUTPUT"
+
+      # PRs opened with GITHUB_TOKEN don't trigger other workflows, so check them here.
+      - name: Validate, test and build
+        id: checks
+        if: steps.changes.outputs.commit == 'true'
+        continue-on-error: true
+        run: npm run validate && npm test && npm run build
+
+      - name: Auto-merge a clean refresh
+        if: >-
+          steps.changes.outputs.commit == 'true' && steps.refresh.outputs.code == '0' &&
+          steps.checks.outcome == 'success' && !contains(steps.pr.outputs.labels, 'needs-review')
+        run: |
+          pr="${{ steps.pr.outputs.pr }}"
+          [ "$(gh pr view "$pr" --json isCrossRepository,headRefName --jq '"\(.isCrossRepository) \(.headRefName)"')" = "false $BRANCH" ] \
+            || { echo "PR #$pr is not this repo's $BRANCH; not merging."; exit 1; }
+          gh pr merge "$pr" --squash --delete-branch --match-head-commit "$(git rev-parse HEAD)"
+
+      - name: Leave the PR open for review
+        if: >-
+          steps.changes.outputs.commit == 'true' &&
+          (steps.refresh.outputs.code != '0' || steps.checks.outcome != 'success')
+        run: |
+          gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
+          gh pr edit "${{ steps.pr.outputs.pr }}" --add-label needs-review
+          gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
+
+      - name: Open, update or close the review issue
+        if: always() && steps.refresh.outcome != 'skipped'
+        run: |
+          code="${{ steps.refresh.outputs.code }}"
+          issue="${{ steps.issue.outputs.number }}"
+          # Without result.json (a crash) keep the previous shrunk-state rather than wiping it.
+          state="$(node -e "const fs = require('fs'); try { const r = JSON.parse(fs.readFileSync('result.json', 'utf8')); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash])))) } catch { try { console.log(JSON.stringify(JSON.parse(fs.readFileSync('shrunk-state.json', 'utf8')))) } catch { console.log('{}') } }")"
+          if [ "$code" != "0" ] && { [ "${{ steps.changes.outputs.commit }}" != "true" ] || [ "$state" != "{}" ]; }; then
+            {
+              cat summary.md 2>/dev/null || echo "The refresh run failed before writing a summary: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+              echo
+              echo "cc @seanoliver"
+              echo
+              # Parsed by the "Read the open review issue" step's sed; keep the format identical.
+              echo "<!-- shrunk-state: $state -->"
+            } > issue-body.md
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --body-file issue-body.md
+              gh issue comment "$issue" --body "Refresh run $(date -u +%F): exit code $code. Summary above is updated."
+            else
+              gh issue create --title "$ISSUE_TITLE" --body-file issue-body.md
+            fi
+          elif [ -n "$issue" ] && [ "$code" = "0" ]; then
+            gh issue close "$issue" --comment "Refresh run $(date -u +%F) was clean; closing."
+          fi
+
+      - name: Fail the run on a refresh error
+        if: steps.refresh.outputs.code == '1'
+        run: exit 1

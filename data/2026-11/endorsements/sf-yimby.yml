@@ -1,0 +1,139 @@
+guide: sf-yimby
+election: 2026-11
+status: published
+source: https://sfyimby.org/endorsements/sf-2026-general-election/
+archived:
+  - source: https://sfyimby.org/endorsements/sf-2026-general-election/
+    snapshot: https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  attorney-general:
+    pick:
+      - Rob Bonta
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: The YIMBY movement would not be anywhere near where it is today if not for the work and influence of Scott Wiener.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Scott has been unwavering in his commitment to building more housing, even when it was politically difficult.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: He has been the YIMBY movement's most important champion in elected office, and we stand with the leader who has stood with us from the beginning.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+    quotes:
+      - text: We have been encouraged by his pro-housing record, including his vote and vocal support for the Family Zoning Plan, and his willingness to help advance key projects that add homes such as 3333 and 3700 California Street.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Equally important, Supervisor Sherrill has been consistently accessible and engaged with community organizations, including ours.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  supervisor-4:
+    pick:
+      - Alan Wong
+    quotes:
+      - text: Alan voted to approve the Family Zoning Plan, strongly demonstrating his support for our cause - that we need more homes in the Sunset and across the city.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: He has backed the Family Zoning Plan, the 6th Cycle Housing Element, upzoning in Central SoMa and Mission Bay, and fee and inclusionary reductions for adaptive reuse and office-to-residential conversions.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: He has voted to reject every housing appeal that has come before the Board during his term, and used his seat to support state-level bills like SB 35 and SB 79.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  supervisor-8:
+    pick:
+      - Gary McCoy
+    quotes:
+      - text: SF YIMBY is endorsing Gary McCoy due to his history of commitment to YIMBYism and his strong potential as a member of the Board of Supervisors.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: McCoy has been a public ally in our fight for more housing for a decade, and has a great focus in his policy goals toward things that make housing of all kinds easier to build.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  supervisor-10:
+    pick:
+      - Theo Ellington
+    quotes:
+      - text: "We support the commitments he made in his SF YIMBY questionnaire: six-story single-stair buildings, more homes near transit, objective by-right approvals, project shot clocks, and consequences when review deadlines are missed."
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Theo has committed to begin a community and economic-development planning process within his first 30 days.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  assessor:
+    pick:
+      - Joaquín Torres
+    quotes:
+      - text: For 12 years, as President of the SF Housing Authority Commission, Torres led the rehabilitation of over 3,400 units of public housing with roughly $1 billion in improvements, ultimately transferring that housing to affordable-housing operators who could run it better, and grew the number of families served by 20% to over 16,500 households.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Torres has also served on SPUR's executive board, supporting the kind of urbanist research and advocacy that aligns with our own priorities.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  bart-8:
+    pick:
+      - Sara Barz
+    quotes:
+      - text: Sara has years of experience in transportation and supports more housing in the Bay Area.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: She supports building more housing near BART stations (transit oriented development) which would help both BART’s ridership recovery and address our housing crisis.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-a:
+    pick: Y
+  prop-c:
+    pick: Y
+    quotes:
+      - text: The best thing about the Housing Trust Fund is that it doesn't tax new homes out of existence, but instead aligns the revenue incentives of the city to promote new growth.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: The measure also lets the Board pause or trim contributions in bad budget years, so it isn't a blank check.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-d:
+    pick: Y
+    quotes:
+      - text: San Francisco's rock-bottom signature threshold is exactly how a small, well-funded opposition group can lock in an anti-housing rule that the elected Board can never fix without another citywide vote.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Raising the bar to put something on the ballot, and making it require an actual Board majority to route around normal legislating, cuts down on that vector for freezing bad housing and zoning policy into the Charter.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-e:
+    pick: Y
+    quotes:
+      - text: Prop E centralizes city purchasing rules under the City Administrator instead of leaving them scattered across a hundred-plus code sections that nobody owns and nobody can fix.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Housing supply doesn't happen in a vacuum — it needs functioning city infrastructure processes around it, and Prop E is a real fix.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-f:
+    pick: Y
+    quotes:
+      - text: Enacting this reform requires voters to pass Proposition F, which cleans up the City Charter so Mayor Lurie and future mayors can streamline and reorganize city departments.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-g:
+    pick: N
+    quotes:
+      - text: Since April 12, 2025, the 2-mile oceanfront park has been used every day of the year, averaging 4,900 daily visits (3,800 on weekdays, 7,200 on weekend days and holidays).
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-h:
+    pick: Y
+    quotes:
+      - text: Prop H is a 15-year parcel tax to close Muni's post-pandemic operating deficit, which the SFMTA puts at $300M+ a year once pandemic era one-time relief funding runs out.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Transit and housing supply are the same fight.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Every unit of housing in this city only works if people can actually get around.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  prop-i:
+    pick: N
+    quotes:
+      - text: Proposition I is built on the fundamentally mistaken idea that we can fund housing by taxing housing.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: Across the country, transfer taxes demonstrably cut housing production and reduce mobility, and San Francisco is at risk of locking the city into a tax that will harm housing production over the long term.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+  rtm:
+    pick: Y
+    quotes:
+      - text: BART has already cut over a billion dollars in costs since 2019 and without new revenue, it may face a 63% cut in train hours, three lines instead of five, 9pm closures, and fare hikes of up to 50% starting in 2027, followed by station closures and mass layoffs.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/
+      - text: A regional economy this large cannot function with a gutted BART, and a modest, sunsetting sales tax is a far better outcome than losing the system.
+        source: https://sfyimby.org/endorsements/sf-2026-general-election/

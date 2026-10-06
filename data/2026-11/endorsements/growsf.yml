@@ -1,0 +1,347 @@
+guide: growsf
+election: 2026-11
+status: published
+source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+archived:
+  - source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+    snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: Scott Wiener has spent the last decade as one of California's most persistent and effective pro-housing legislators.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "Wiener's strongest argument in this race is simple: he has actually passed pro-housing law at scale."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+    quotes:
+      - text: In Congress he sits on the Energy and Commerce Committee, and this year he brought home $12.8 million in community project funding for the district, including $960,000 for the Visitacion Valley Family Center and $250,000 for Crocker Amazon Playground.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  governor:
+    pick:
+      - Xavier Becerra
+    quotes:
+      - text: Becerra has the experience for the job and a record on housing and public safety that lines up with ours.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "Becerra has spent his career in government: more than two decades representing Los Angeles in Congress, then California Attorney General, then U.S. Secretary of Health and Human Services."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  lt-governor:
+    pick:
+      - Fiona Ma
+    quotes:
+      - text: Ma chairs the committee that allocates the tax credits that make affordable housing possible, sits on the California Housing Finance Agency board, issued the state's first-ever bonds for community college student housing, and launched the Dream for All down payment program for first-time homebuyers.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+    quotes:
+      - text: The Secretary of State's primary job is running California's elections, and Weber has done it without drama, which is exactly what you want.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  controller:
+    pick:
+      - Malia M. Cohen
+    quotes:
+      - text: Cohen knows public finance, and she knows San Francisco.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Overall, Cohen has brought transparency and accountability to the state's spending.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+    quotes:
+      - text: Kounalakis is the only candidate in this race who has actually built housing, financed infrastructure, and managed large-scale investments in the private sector.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Before entering public life, Kounalakis spent nearly two decades as a housing developer at AKT Development, building master-planned communities in the Sacramento region where thousands of California families now live.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  attorney-general:
+    pick:
+      - Rob Bonta
+    quotes:
+      - text: Rob Bonta has been an effective Attorney General, and we're happy to endorse him for another term.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Bonta has also been active defending California against the Trump administration, filing over 50 lawsuits on issues from immigration to environmental protections.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+    quotes:
+      - text: Allen has the experience, knowledge, and track record to fix California's broken insurance market.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Allen has spent over a decade working on insurance, climate, and consumer protection.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Ben Allen understands how insurance works and has already done more than anyone in this race to fix it.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  board-of-equalization-2:
+    pick:
+      - John Pimentel
+    quotes:
+      - text: Pimentel is the rare candidate who agrees that this elected office shouldn't exist.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Pimentel's record is heavy on execution.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: When the central question in a race is whether the office should exist at all, we side with the candidate who wants to wind it down and has the record to run what remains well in the meantime.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  assembly-17:
+    pick:
+      - Matt Haney
+    quotes:
+      - text: Haney has been one of the most productive SF legislators in Sacramento.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Haney works across party lines and gets bills signed.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  assembly-19:
+    pick:
+      - Catherine Stefani
+    quotes:
+      - text: Stefani has had a productive first term.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Newsom signed seven of her bills into law in 2025.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  superintendent:
+    pick:
+      - Richard Barrera
+  supreme-court-groban:
+    pick: Y
+    quotes:
+      - text: "Our rule is the same as for the Court of Appeal: retain a judge unless there is serious misconduct on the record, or poor judgment that deviates from legal norms."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  supreme-court-evans:
+    pick: Y
+    quotes:
+      - text: "Our rule is the same as for the Court of Appeal: retain a judge unless there is serious misconduct on the record, or poor judgment that deviates from legal norms."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  court-of-appeal-1:
+    pick: Y
+    quotes:
+      - text: "Our rule is simple: retain a judge unless there is serious misconduct on the record, or poor judgment that deviates from legal norms."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: We checked the Commission on Judicial Performance, which publishes every public censure, admonishment, and removal in California, and none of these eleven justices appears in it.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  board-of-education:
+    pick:
+      - Autumn Brown Garibay
+      - Phil Kim
+      - Tim Tung
+    quotes:
+      - text: Phil is a former public school teacher who led STEM policy across 20+ states and 300+ schools, and his colleagues elected him Board President unanimously in January.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Autumn is a public school parent of three and a former PTA president who still serves on her school's executive team.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Tim has 20 years of experience auditing and balancing budgets, exactly the expertise the district needs to solve its budget crisis.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  college-board:
+    pick:
+      - Elijah Ball
+      - Monroe Lace
+      - Erwin Tam
+    quotes:
+      - text: Ball is a college campus planner who has done this job at other California community colleges.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Tam, a former City College student, has spent 25 years as a municipal financial advisor and has worked with more than 30 California community colleges on their financing plans.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Ball knows how a campus gets built and paid for, Lace knows where the students would come from, and Tam knows how to read the books.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+    quotes:
+      - text: Ferguson has spent her first six months on the Board learning exactly where the money goes.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  bart-8:
+    pick:
+      - Sara Barz
+    quotes:
+      - text: We endorsed Barz for the Democratic County Central Committee in March 2024, and this is the job her career has been pointed at the whole time.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  assessor:
+    pick:
+      - Joaquín Torres
+    quotes:
+      - text: Though Torres is running unopposed, he has earned the seat on the merits.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Torres inherited an in-progress $55 million replacement of the office's decades-old technology, started under his predecessor Carmen Chu, and carried it to completion.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+    quotes:
+      - text: Sherrill brings real policy experience and a laser focus on responsive, effective government.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Sherrill has done a great job as Supervisor, and we're excited to see him keep working alongside Mayor Lurie to get San Francisco back on track.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  supervisor-4:
+    pick:
+      - Alan Wong
+    quotes:
+      - text: District 4 asked for a supervisor who listens, and in less than a year Wong has voted their priorities, delivered visible wins, and won their votes once already.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: Supervisor Dorsey has done more to redirect San Francisco's drug policy toward treatment and recovery than any of his colleagues.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Dorsey has relentlessly focused on solving SFPD's staffing shortage.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "Dorsey championed bringing speed cameras to San Francisco, and the results came fast: at camera locations, speeding by 10+ mph is down 79% a year after the March 2025 launch, roughly 40,000 fewer speeding drivers a day, and he has introduced a resolution urging the state to let the program expand."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  supervisor-10:
+    pick:
+      - Theo Ellington
+    quotes:
+      - text: Ellington has spent more than fifteen years working on District 10's problems.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Unlike his opponent DJ Brookter, Theo Ellington supports arresting and prosecuting fentanyl dealers and the leaders of theft rings.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-1:
+    pick: Y
+    quotes:
+      - text: Prop 1 would deliver the funding to build about 45,000 subsidized homes that are already fully designed, permitted, and ready to break ground.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: We think voters should authorize the bond and push for better cost controls.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-2:
+    pick: Y
+    quotes:
+      - text: Overall, we think building up the rainy day fund is the right choice.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-3:
+    pick: Y
+    quotes:
+      - text: "Luckily, we already know the effects of this tax: 535 top-bracket taxpayers left the state after this tax was enacted, against a backdrop of 66,936 total individuals, or about 0.8%."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-4:
+    pick: N
+    quotes:
+      - text: Public financing in San Francisco has meant donors give less, taxpayers pay more, and elections come out the same.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: We analyzed every itemized contribution to SF candidates since 2012 and found that after the city raised its match to 6-to-1 in 2019, the median donation went down while city funding was largely unchanged.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-5:
+    pick: Y
+    quotes:
+      - text: San Francisco already runs recalls the way Prop 5 proposes.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-37:
+    pick: Y
+    quotes:
+      - text: Prop 37 will help restart condo construction, which has fallen to just 3% of new multifamily construction.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: But borrowers repay the loans, and if the program fails, taxpayers won't owe anything.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-38:
+    pick: N
+    quotes:
+      - text: Immunotherapy is not a field short of money.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Public money is not needed where private money is abundant.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-39:
+    pick: N
+    quotes:
+      - text: "In-person impersonation, the only fraud a photo ID check can stop, is about the rarest event in American elections: a Brennan Center review of the Heritage Foundation's database of proven fraud cases found just 10 cases across billions of votes."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-40:
+    pick: N
+  prop-41:
+    pick: Y
+    quotes:
+      - text: "Prop 41 closes the loophole: no new state tax may exempt itself from the limit."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: A constitutional limit that any measure can evade in a definitions section is not law, it is decoration.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-42:
+    pick: Y
+    quotes:
+      - text: "Prop 42 closes a door that should never have been open: taxing Californians on wealth they have not realized and may never see."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Ownership taxes fail on their own mechanics.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-43:
+    pick: Y
+    quotes:
+      - text: We think treating the same law differently based on how it gets on the ballot is unfair and inconsistent.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-44:
+    pick: N
+  prop-45:
+    pick: Y
+    quotes:
+      - text: Environmental review in California has no clock, and finishing it buys no certainty.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  rtm:
+    pick: Y
+    quotes:
+      - text: If BART runs out of money, there is no backup plan.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: The choice is between a 63% service cut with 30% higher fares, or a modest sales tax that keeps transit running and riders moving.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: The economy of the entire Bay Area depends on keeping transit running.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-a:
+    pick: Y
+    quotes:
+      - text: "Prop A is a common-sense solution to an obvious problem: City Hall has too much bureaucracy that slows everything down."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-b:
+    pick: N
+    quotes:
+      - text: San Francisco does not need a public bank, especially when the law creating it, Prop B, is riddled with errors.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Let's at least get our own finances in order before trying to run a bank.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-c:
+    pick: Y
+    quotes:
+      - text: "We typically oppose set-asides, but this one is built well: growth caps at 3% per year once the fund reaches $125M, and the Board can freeze or trim contributions in bad budget years."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-d:
+    pick: Y
+    quotes:
+      - text: San Francisco is forced to vote on too many ballot measures.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Laws that are not easy to fix should not be this easy to enact.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-e:
+    pick: Y
+    quotes:
+      - text: Nobody is in charge of the rules, so nobody can fix them.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "Prop E puts one person in charge: The City Administrator will write one purchasing rulebook, every department will follow it, and either the Board of Supervisors or the Mayor can reject bad rules."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-f:
+    pick: Y
+    quotes:
+      - text: The Mayor would choose department heads, reorganize departments that aren't working, and answer to you for the results.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-g:
+    pick: N
+    quotes:
+      - text: Prop G asks the whole city to vote on the same question a third time, and it would not be the last.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "The park is a hit: 1.7 million visits in its first year, more than half of them on weekdays (the very days Prop G would give back to cars)."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-h:
+    pick: Y
+    quotes:
+      - text: "Funding it directly is the better deal, and the price is reasonable: most homeowners pay $129 per year, and a rent-controlled tenant pays at most $65 per year."
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: The real choice is whether Muni gets its own funding or its deficit quietly eats the rest of the budget.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-i:
+    pick: N
+    quotes:
+      - text: Prop I would remove $120M per year from the City's General Fund (the account that pays for most city services), and dedicate it to a small list of preferred housing programs.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Prop I also locks in San Francisco's transfer tax (the second highest in the state!).
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+  prop-j:
+    pick: Y

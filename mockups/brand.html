@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bay Ballot Brand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Tokens mirror src/app/globals.css (shadcn neutrals + verdict and candidate colors). */
+:root {
+  color-scheme: light;
+  --background: #ffffff; --foreground: #0a0a0a; --muted: #f5f5f5; --muted-fg: #737373;
+  --card: #ffffff; --border: #e5e5e5; --ring-soft: rgba(10,10,10,.1);
+  --yes: #15803d; --no: #b91c1c; --bar-1: #2a78d6; --bar-2: #e87ba4;
+  /* The one accent, used only by direction 3 ("Bay line"). */
+  --teal: #0f6b73; --teal-tint: #e7f2f2; --teal-line: #cfe4e4;
+  --tool-bg: #ececea;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #0a0a0a; --foreground: #fafafa; --muted: #262626; --muted-fg: #a1a1a1;
+    --card: #171717; --border: rgba(255,255,255,.1); --ring-soft: rgba(255,255,255,.1);
+    --yes: #4ade80; --no: #f87171; --bar-1: #3987e5; --bar-2: #d55181;
+    --teal: #6cc4c9; --teal-tint: #102526; --teal-line: #1d3b3d;
+    --tool-bg: #1f1f1f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0a0a0a; --foreground: #fafafa; --muted: #262626; --muted-fg: #a1a1a1;
+  --card: #171717; --border: rgba(255,255,255,.1); --ring-soft: rgba(255,255,255,.1);
+  --yes: #4ade80; --no: #f87171; --bar-1: #3987e5; --bar-2: #d55181;
+  --teal: #6cc4c9; --teal-tint: #102526; --teal-line: #1d3b3d;
+  --tool-bg: #1f1f1f;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+  background: var(--tool-bg); color: var(--foreground);
+  -webkit-font-smoothing: antialiased; font-size: 15px; line-height: 1.45;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--foreground) 45%, transparent); outline-offset: 2px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ---------- Mockup toolbar (not part of any direction) ---------- */
+.toolbar {
+  position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 12px 24px;
+  align-items: center; justify-content: space-between; padding: 12px 24px;
+  background: var(--tool-bg); border-bottom: 1px solid var(--border);
+}
+.toolbar h1 { margin: 0; font-size: 14px; font-weight: 600; }
+.toolbar h1 span { color: var(--muted-fg); font-weight: 400; }
+.seg { display: inline-flex; background: var(--background); border-radius: 10px; padding: 3px; box-shadow: inset 0 0 0 1px var(--border); }
+.seg { max-width: 100%; overflow-x: auto; }
+.seg button { white-space: nowrap; border: 0; background: none; padding: 6px 12px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted-fg); }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--foreground); color: var(--background); }
+
+.stage { padding: 24px; display: grid; gap: 48px; }
+.direction { display: grid; gap: 20px; }
+.direction[hidden] { display: none; }
+.dir-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.dir-head h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.dir-head p { margin: 0; color: var(--muted-fg); max-width: 70ch; }
+
+/* Mark sheet: lockup + mark at 64 / 32 / 16, plus 16 on the opposite surface. */
+.sheet { display: flex; flex-wrap: wrap; align-items: center; gap: 28px; padding: 20px 24px; background: var(--background); border-radius: 14px; box-shadow: 0 0 0 1px var(--border); }
+.sizes { display: flex; align-items: flex-end; gap: 20px; }
+.sizes figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
+.sizes figcaption { font-size: 11px; color: var(--muted-fg); }
+.chip { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; }
+.chip.light { background: #ffffff; box-shadow: 0 0 0 1px #e5e5e5; --foreground: #0a0a0a; --background: #ffffff; --teal: #0f6b73; color: #0a0a0a; }
+.chip.dark { background: #0a0a0a; box-shadow: 0 0 0 1px #333; --foreground: #fafafa; --background: #0a0a0a; --teal: #6cc4c9; color: #fafafa; }
+.tabsim { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 10px; border-radius: 9px 9px 0 0; background: var(--muted); font-size: 12px; }
+
+svg.mark { display: block; flex: none; }
+
+/* Device frames */
+.views { display: grid; gap: 24px; justify-items: start; }
+.desk-wrap { width: 100%; }
+.desk { border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px var(--border), 0 8px 30px rgba(0,0,0,.08); height: 940px; max-width: 1440px; }
+.phone { width: 390px; height: 820px; border-radius: 36px; overflow: hidden; box-shadow: 0 0 0 1px var(--border), 0 0 0 9px var(--foreground), 0 12px 30px rgba(0,0,0,.15); margin: 9px; justify-self: center; }
+.view-label { font-size: 12px; color: var(--muted-fg); margin: 0 0 8px; }
+
+/* All three: marks + phones side by side; desktops live on the tabs. */
+.all { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.all[hidden] { display: none; }
+.all .col { display: grid; gap: 16px; align-content: start; justify-items: center; }
+.all .col .sheet { width: 100%; justify-content: center; }
+.all .col > h2 { margin: 0; font-size: 18px; justify-self: start; }
+
+/* ---------- The replica (shared by all directions) ---------- */
+.site { background: var(--muted); color: var(--foreground); height: 100%; overflow: hidden; }
+:root[data-theme="dark"] .site { background: var(--background); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .site { background: var(--background); } }
+
+.frame { padding: 0 16px; }
+.cols { display: grid; grid-template-columns: 17rem minmax(0,1fr) minmax(0,1.15fr); gap: 24px; }
+.side { padding-top: 16px; padding-right: 8px; font-size: 14px; }
+.side .h { font-weight: 600; } .side .h span { color: var(--muted-fg); font-weight: 400; }
+.side .lab { margin: 18px 0 8px; font-size: 12px; font-weight: 600; color: var(--muted-fg); }
+.pill { display: inline-block; padding: 8px 14px; border-radius: 999px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+.input { padding: 9px 11px; border-radius: 8px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); color: var(--muted-fg); }
+.checks { margin-top: 10px; border-radius: 8px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+.checks div { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-top: 1px solid var(--border); font-weight: 500; }
+.checks div:first-child { border-top: 0; }
+.cbox { width: 16px; height: 16px; border-radius: 4px; background: var(--foreground); display: grid; place-items: center; }
+.cbox svg { width: 11px; height: 11px; }
+.sel { width: 144px; padding: 9px 11px; border-radius: 8px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); color: var(--muted-fg); margin-bottom: 10px; }
+
+.list { min-width: 0; }
+.section-h { padding: 22px 4px 8px; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--muted-fg); text-transform: uppercase; margin: 0; }
+.card { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--ring-soft); overflow: hidden; }
+.row { padding: 12px 16px; border-top: 1px solid var(--border); }
+.row:first-child { border-top: 0; }
+.row.selected { background: var(--muted); box-shadow: inset 3px 0 0 var(--foreground); }
+.row h3 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.35; }
+.row .desc { margin: 0; font-size: 14px; color: var(--muted-fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar { display: flex; gap: 2px; height: 10px; margin-top: 8px; border-radius: 999px; overflow: hidden; }
+.bar span:first-child { border-radius: 999px 0 0 999px; } .bar span:last-child { border-radius: 0 999px 999px 0; }
+.bar span:only-child { border-radius: 999px; }
+.legend { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 6px; font-size: 14px; align-items: center; }
+.legend .c { display: inline-flex; align-items: center; gap: 6px; }
+.legend .c:first-child { font-weight: 600; }
+.legend .n, .legend .cap { color: var(--muted-fg); font-weight: 400; }
+.dot { width: 8px; height: 8px; border-radius: 99px; }
+.f-c1 { background: var(--bar-1); } .f-c2 { background: var(--bar-2); } .f-yes { background: var(--yes); } .f-no { background: var(--no); }
+.t-yes { color: var(--yes); } .t-no { color: var(--no); }
+
+.detail { padding-top: 16px; }
+.detail .card { padding: 20px; }
+.detail .kick { font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--muted-fg); text-transform: uppercase; }
+.detail h2 { margin: 2px 0 14px; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+.detail .lead { display: flex; justify-content: space-between; align-items: baseline; }
+.detail .lead b { font-size: 18px; font-weight: 600; } .detail .lead span { color: var(--muted-fg); font-size: 14px; }
+.detail .grp { margin: 16px 0 0; font-size: 14px; line-height: 1.6; }
+.detail .grp b { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+.detail .grp u { color: var(--muted-fg); }
+.quote { margin: 18px 0 0; padding-left: 14px; border-left: 3px solid var(--bar-2); font-size: 15px; }
+.quote small { display: block; margin-top: 4px; font-size: 12px; color: var(--muted-fg); }
+
+/* Phone rows */
+.p-filter { display: flex; gap: 8px; align-items: center; margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); font-size: 15px; }
+.p-filter svg { color: var(--muted-fg); }
+.p-filter span { color: var(--muted-fg); }
+.prow { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 8px 8px 12px; border-top: 1px solid var(--border); }
+.prow:first-child { border-top: 0; }
+.prow h3 { flex: 1; min-width: 0; margin: 0; font-size: 15px; font-weight: 500; line-height: 1.3; }
+.mini { width: 96px; flex: none; display: grid; justify-items: end; gap: 4px; }
+.mini .bar { height: 8px; margin: 0; width: 100%; }
+.mini small { font-size: 12px; font-weight: 500; }
+.chev { flex: none; color: var(--muted-fg); }
+
+/* ---------- Direction 1: Checkbox ---------- */
+.d1 .hdr { background: var(--background); border-bottom: 1px solid var(--border); }
+.d1 .hdr-in { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.d1 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.d1 .word { font-size: 22px; font-weight: 800; letter-spacing: -0.035em; }
+.d1 .nav a { color: var(--foreground); font-size: 14px; font-weight: 500; text-decoration: none; padding: 8px 4px; }
+.d1 .nav a:hover { text-decoration: underline; }
+.d1 .intro { padding-top: 18px; }
+.d1 .intro h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
+.d1 .intro p { margin: 4px 0 0; font-size: 14px; color: var(--muted-fg); }
+.d1.is-phone .hdr-in { height: 56px; }
+.d1.is-phone .word { font-size: 20px; }
+.d1.is-phone .intro h1 { font-size: 20px; }
+
+/* ---------- Direction 2: Verdict bars ---------- */
+.d2 .hdr { background: var(--background); }
+.d2 .hdr-in { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.d2 .brand { display: inline-flex; align-items: center; gap: 9px; color: inherit; text-decoration: none; }
+.d2 .word { font-size: 20px; font-weight: 700; letter-spacing: -0.03em; }
+.d2 .nav a { color: var(--muted-fg); font-size: 14px; font-weight: 500; text-decoration: none; padding: 8px 4px; }
+.d2 .nav a:hover { color: var(--foreground); }
+/* The mark's three bars, reused as a rule under the header: same proportions, same 2px gaps. */
+.d2 .rule { display: flex; gap: 3px; height: 4px; }
+.d2 .rule span { background: var(--foreground); }
+.d2 .rule span:nth-child(1) { flex: 62; } .d2 .rule span:nth-child(2) { flex: 24; opacity: .55; } .d2 .rule span:nth-child(3) { flex: 14; opacity: .25; }
+.d2 .intro { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding-top: 16px; font-size: 14px; color: var(--muted-fg); }
+.d2 .intro .where { color: var(--foreground); font-weight: 600; }
+.d2 .intro b { color: var(--foreground); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px; }
+.d2.is-phone .intro { display: block; }
+.d2.is-phone .intro div + div { margin-top: 2px; }
+
+/* ---------- Direction 3: Bay line ---------- */
+.d3 .hdr { background: var(--teal-tint); border-bottom: 1px solid var(--teal-line); }
+.d3 .hdr-in { padding-top: 18px; padding-bottom: 22px; }
+.d3 .top { display: flex; align-items: center; justify-content: space-between; }
+.d3 .brand { display: inline-flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
+.d3 .word { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; }
+.d3 .nav a { color: var(--teal); font-size: 15px; font-weight: 600; text-decoration: none; padding: 8px 4px; }
+.d3 .nav a:hover { text-decoration: underline; }
+.d3 .tag { margin: 14px 0 0; font-size: 19px; line-height: 1.4; max-width: 64ch; }
+.d3 .tag small { display: block; font-size: 14px; color: var(--muted-fg); margin-top: 2px; }
+.d3 .row h3 { font-size: 16px; }
+.d3 .legend { font-size: 14.5px; }
+.d3 .card { border-radius: 16px; }
+.d3 .row.selected { box-shadow: inset 3px 0 0 var(--teal); }
+.d3 .section-h { text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--foreground); font-weight: 600; }
+.d3 .prow h3 { font-size: 16px; }
+.d3.is-phone .word { font-size: 22px; }
+.d3.is-phone .tag { font-size: 17px; }
+
+/* Narrow viewports: the page itself becomes the phone. */
+@media (max-width: 900px) {
+  .stage { padding: 0; gap: 0; }
+  .toolbar { padding: 10px 16px; }
+  .dir-head, .sheet { margin: 16px; }
+  .direction { gap: 0; }
+  .views { display: block; }
+  .views .desk-wrap { display: none; }
+  .phone { width: 100%; height: auto; border-radius: 0; margin: 0; box-shadow: none; }
+  .phone .site { height: auto; min-height: 760px; }
+  .phone-wrap .view-label { display: none; }
+  .all { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>Bay Ballot brand directions <span>· mockup, not the live site</span></h1>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <div class="seg" role="tablist" aria-label="Direction" id="tabs">
+      <button role="tab" data-show="d1" aria-selected="true">1 Checkbox</button>
+      <button role="tab" data-show="d2" aria-selected="false">2 Verdict bars</button>
+      <button role="tab" data-show="d3" aria-selected="false">3 Bay line</button>
+      <button role="tab" data-show="all" aria-selected="false">All three</button>
+    </div>
+    <div class="seg" aria-label="Theme" id="theme">
+      <button data-theme="system" aria-pressed="true">System</button>
+      <button data-theme="light" aria-pressed="false">Light</button>
+      <button data-theme="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+</div>
+
+<main class="stage" id="stage"></main>
+
+<script>
+/* ---------- Marks (32-unit grid so 16px lands on whole pixels) ---------- */
+const MARKS = {
+  // A filled ballot checkbox with the check knocked out.
+  d1: `<rect x="3" y="3" width="26" height="26" rx="7" fill="var(--foreground)"/>
+       <path d="M9.5 16.5l4.6 4.6L22.8 11.4" fill="none" stroke="var(--background)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  // Three result bars, stacked like the site's verdict bars: long / short / longest, so the right edge pinches like a B.
+  d2: `<rect x="3" y="3.5" width="21" height="7" rx="3.5" fill="var(--foreground)"/>
+       <rect x="3" y="12.5" width="15" height="7" rx="3.5" fill="var(--foreground)"/>
+       <rect x="3" y="21.5" width="26" height="7" rx="3.5" fill="var(--foreground)"/>`,
+  // A bay/hills line over a ballot box slot.
+  d3: `<path d="M3 10c4.3-4.6 8.4-4.6 13 0s8.7 4.6 13 0" fill="none" stroke="var(--teal)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+       <rect x="3" y="16" width="26" height="13" rx="3.5" fill="var(--foreground)"/>
+       <rect x="7" y="20.5" width="18" height="3.2" rx="1.6" fill="var(--background)"/>`,
+};
+const mark = (d, px, label) =>
+  `<svg class="mark" width="${px}" height="${px}" viewBox="0 0 32 32" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}>${MARKS[d]}</svg>`;
+
+const DIRS = {
+  d1: { name: "Checkbox", lockupSize: 30,
+        blurb: "A filled ballot checkbox and a heavy wordmark. Clean civic frame: white header, About link, a plain-language intro line." },
+  d2: { name: "Verdict bars", lockupSize: 28,
+        blurb: "Three stacked result bars whose right edge pinches like a B. The bars come back as a thin rule under the header; the intro leads with live counts." },
+  d3: { name: "Bay line", lockupSize: 34,
+        blurb: "A bay-and-hills line over a ballot slot. Softer tinted header band, larger type, a friendlier tagline. Teal is the one added accent." },
+};
+
+/* ---------- Data (from the live ballot) ---------- */
+const SECTIONS = [
+  { name: "Federal", contests: [
+    { title: "United States Representative, District 11", kind: "cand", segs: [["c2","Scott Wiener",15],["c1","Connie Chan",12]], short: "Wiener 56%", selected: true },
+    { title: "United States Representative, District 15", kind: "cand", segs: [["c1","Kevin Mullin",10]], short: "Mullin 100%" },
+  ]},
+  { name: "State", contests: [
+    { title: "Governor", kind: "cand", segs: [["c1","Xavier Becerra",13]], short: "Becerra 100%" },
+    { title: "Lieutenant Governor", kind: "cand", segs: [["c1","Fiona Ma",15]], short: "Ma 100%" },
+  ]},
+  { name: "Local propositions", contests: [
+    { title: "Proposition B", desc: "Establishing a Municipal Finance Corporation and a Public Bank", kind: "measure", segs: [["yes","Yes",56],["no","No",44]], cap: "27 guides", short: "Yes 56%" },
+    { title: "Proposition C", kind: "measure", segs: [["yes","Yes",100]], cap: "9 guides", short: "Yes 100%" },
+  ]},
+];
+
+const bar = (c) => `<div class="bar" role="img" aria-label="${c.segs.map(s => s[1] + " " + s[2]).join(", ")}">${
+  c.segs.map(([t,,n]) => `<span class="f-${t}" style="flex:${n} 1 0"></span>`).join("")}</div>`;
+
+const legend = (c) => c.kind === "measure"
+  ? `<div class="legend tabular">${c.segs.map(([t,l,n], i) => `<span class="t-${t}" style="${i ? "" : "font-weight:600"}">${l} ${n}%</span>`).join("")}<span class="cap">${c.cap}</span></div>`
+  : `<div class="legend">${c.segs.map(([t,l,n]) => `<span class="c"><span class="dot f-${t}"></span>${l}<span class="n tabular">${n}</span></span>`).join("")}</div>`;
+
+const desktopList = () => SECTIONS.map(s => `
+  <h2 class="section-h">${s.name}</h2>
+  <ul class="card" style="list-style:none;margin:0;padding:0">${s.contests.map(c => `
+    <li class="row${c.selected ? " selected" : ""}">
+      <h3>${c.title}</h3>${c.desc ? `<p class="desc">${c.desc}</p>` : ""}
+      ${bar(c)}${legend(c)}
+    </li>`).join("")}
+  </ul>`).join("");
+
+const chev = `<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>`;
+const phoneList = () => SECTIONS.map(s => `
+  <h2 class="section-h">${s.name}</h2>
+  <ul class="card" style="list-style:none;margin:0;padding:0">${s.contests.map(c => {
+    const lead = c.segs[0][0];
+    return `<li class="prow"><h3>${c.title}</h3>
+      <div class="mini">${bar(c)}<small class="tabular ${lead === "yes" ? "t-yes" : lead === "no" ? "t-no" : ""}">${c.short}</small></div>${chev}</li>`;
+  }).join("")}
+  </ul>`).join("");
+
+const checkSvg = `<svg viewBox="0 0 12 12" fill="none" stroke="var(--background)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg>`;
+const sidebar = () => `
+  <aside class="side" aria-label="Filters">
+    <div class="h">Filters <span>· 36 of 36 guides counted</span></div>
+    <div class="lab">Show</div><span class="pill">Only guides that explain their picks</span>
+    <div class="lab">Guides</div><div class="input">Search guides</div>
+    <div class="checks">${["Newspapers (2)","Parties (3)","Political clubs (12)","Unions (4)","Advocacy groups (12)","Civic groups (3)"]
+      .map(g => `<div><span class="cbox">${checkSvg}</span>${g}</div>`).join("")}</div>
+    <div class="lab">Districts</div>
+    <div style="font-size:13px;color:var(--muted-fg);margin-bottom:6px">Supervisor</div><div class="sel">All</div>
+    <div style="font-size:13px;color:var(--muted-fg);margin-bottom:6px">Assembly</div><div class="sel">All</div>
+  </aside>`;
+
+const detail = () => `
+  <div class="detail"><section class="card" aria-label="Contest details">
+    <div class="kick">Federal</div>
+    <h2>United States Representative, District 11</h2>
+    <div class="lead"><b>Scott Wiener</b><span class="tabular">15 of 27 guides · 56%</span></div>
+    ${bar(SECTIONS[0].contests[0])}${legend(SECTIONS[0].contests[0])}
+    <p class="grp"><b><span class="dot f-c2" style="display:inline-block;margin-right:6px"></span>Scott Wiener</b> <span class="tabular" style="color:var(--muted-fg)">· 15</span> GrowSF, San Francisco Chronicle, San Francisco YIMBY, Sierra Club San Francisco Bay Chapter <u>+11 more</u></p>
+    <p class="grp"><b><span class="dot f-c1" style="display:inline-block;margin-right:6px"></span>Connie Chan</b> <span class="tabular" style="color:var(--muted-fg)">· 12</span> San Francisco League of Pissed Off Voters, SF Rising Action, Chinese American Democratic Club <u>+9 more</u></p>
+    <blockquote class="quote">“Wiener&#8217;s strongest argument in this race is simple: he has actually passed pro-housing law at scale.”<small>GrowSF · Source</small></blockquote>
+  </section></div>`;
+
+/* ---------- Per-direction header + intro ---------- */
+function header(d, phone) {
+  const about = `<nav class="nav" aria-label="Site"><a href="#about">About</a></nav>`;
+  if (d === "d1") return `
+    <header class="hdr"><div class="frame hdr-in">
+      <a class="brand" href="#">${mark("d1", phone ? 26 : 30)}<span class="word">Bay Ballot</span></a>${about}
+    </div></header>
+    <div class="frame intro">
+      <h1>What 36 San Francisco voter guides recommend for November 3</h1>
+      ${phone ? "" : `<p>Newspapers, parties, clubs, unions and civic groups, counted side by side.</p>`}
+    </div>`;
+  if (d === "d2") return `
+    <header class="hdr"><div class="frame hdr-in">
+      <a class="brand" href="#">${mark("d2", phone ? 24 : 28)}<span class="word">Bay Ballot</span></a>${about}
+    </div><div class="rule" aria-hidden="true"><span></span><span></span><span></span></div></header>
+    <div class="frame intro">
+      <div class="where">San Francisco · November 3, 2026</div>
+      <div><b>36</b> guides · <b>52</b> contests · <b>914</b> picks</div>
+    </div>`;
+  return `
+    <header class="hdr"><div class="frame hdr-in">
+      <div class="top"><a class="brand" href="#">${mark("d3", phone ? 30 : 34)}<span class="word">Bay Ballot</span></a>${about}</div>
+      <p class="tag">See what 36 San Francisco voter guides recommend, all in one place.<small>November 3, 2026 general election</small></p>
+    </div></header>`;
+}
+
+function desktop(d) {
+  return `<div class="site ${d}">
+    ${d === "d3" ? header(d, false) : ""}
+    <div class="frame cols">
+      ${sidebar()}
+      <div class="list">${desktopList()}</div>
+      ${detail()}
+    </div></div>`;
+}
+// d1/d2 keep the header full width with the intro over the list column, like the live page's subtitle.
+function desktopFramed(d) {
+  if (d === "d3") return desktop(d);
+  const h = header(d, false);
+  const [hdr, intro] = [h.slice(0, h.indexOf('<div class="frame intro">')), h.slice(h.indexOf('<div class="frame intro">'))];
+  return `<div class="site ${d}">${hdr}
+    <div class="frame cols">${sidebar()}
+      <div class="list">${intro.replace('class="frame intro"', 'class="intro"')}${desktopList()}</div>
+      ${detail()}
+    </div></div>`;
+}
+
+function phone(d) {
+  return `<div class="site ${d} is-phone">${header(d, true)}
+    <div class="frame" style="padding-bottom:24px">
+      <div class="p-filter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg><b>Filters</b><span>· 36 of 36 guides counted</span></div>
+      ${phoneList()}
+    </div></div>`;
+}
+
+function markSheet(d) {
+  return `<div class="sheet">
+    <span style="display:inline-flex;align-items:center;gap:10px" class="${d}">${mark(d, DIRS[d].lockupSize, "Bay Ballot")}
+      <span class="word" style="font-size:${d === "d3" ? 26 : 24}px;font-weight:${d === "d1" ? 800 : 700};letter-spacing:-0.03em">Bay Ballot</span></span>
+    <div class="sizes">
+      <figure>${mark(d, 64)}<figcaption>64</figcaption></figure>
+      <figure>${mark(d, 32)}<figcaption>32</figcaption></figure>
+      <figure>${mark(d, 16)}<figcaption>16</figcaption></figure>
+      <figure><span class="chip light">${mark(d, 16)}</span><figcaption>16 light</figcaption></figure>
+      <figure><span class="chip dark">${mark(d, 16)}</span><figcaption>16 dark</figcaption></figure>
+    </div>
+    <span class="tabsim">${mark(d, 16)}Bay Ballot · SF Nov 2026</span>
+  </div>`;
+}
+
+const stage = document.getElementById("stage");
+stage.innerHTML = Object.keys(DIRS).map(d => `
+  <section class="direction" id="${d}" aria-label="${DIRS[d].name}">
+    <div class="dir-head"><h2>${d.slice(1)}. ${DIRS[d].name}</h2><p>${DIRS[d].blurb}</p></div>
+    ${markSheet(d)}
+    <div class="views">
+      <div class="desk-wrap"><p class="view-label">Desktop split view</p><div class="desk">${desktopFramed(d)}</div></div>
+      <div class="phone-wrap"><p class="view-label">Phone, 390</p><div class="phone">${phone(d)}</div></div>
+    </div>
+  </section>`).join("") + `
+  <section class="all" id="all" hidden aria-label="All three">${Object.keys(DIRS).map(d => `
+    <div class="col"><h2>${d.slice(1)}. ${DIRS[d].name}</h2>${markSheet(d)}<div class="phone">${phone(d)}</div></div>`).join("")}
+  </section>`;
+
+/* ---------- Tabs + theme ---------- */
+const params = new URLSearchParams(location.search);
+function show(which) {
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.show === which)));
+  Object.keys(DIRS).forEach(d => document.getElementById(d).hidden = which !== d);
+  document.getElementById("all").hidden = which !== "all";
+}
+function theme(t) {
+  document.querySelectorAll("#theme button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
+  if (t === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme = t;
+}
+document.getElementById("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.show); });
+document.getElementById("theme").addEventListener("click", e => { const b = e.target.closest("button"); if (b) theme(b.dataset.theme); });
+show(params.get("d") ?? "d1");
+theme(params.get("theme") ?? "system");
+</script>
+</body>
+</html>

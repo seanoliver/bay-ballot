@@ -1,0 +1,9 @@
+guide: growsf
+election: 2026-11
+status: published
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  prop-b: { pick: N }
+  assessor: { pick: [Joaquin Torres] }
+  prop-z: { pick: Y }

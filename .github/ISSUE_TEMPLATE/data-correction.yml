@@ -1,0 +1,44 @@
+name: Data correction
+description: A pick or quote on Bay Ballot doesn't match what a guide published.
+title: "Correction: <guide>, <contest>"
+labels: ["data correction"]
+body:
+  - type: input
+    id: guide
+    attributes:
+      label: Guide
+      description: The voter guide, as named on the site.
+      placeholder: San Francisco Chronicle
+    validations:
+      required: true
+  - type: input
+    id: contest
+    attributes:
+      label: Contest
+      placeholder: Proposition B
+    validations:
+      required: true
+  - type: textarea
+    id: site-says
+    attributes:
+      label: Site's pick or quote
+    validations:
+      required: true
+  - type: textarea
+    id: guide-says
+    attributes:
+      label: Guide's published pick or quote
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link to the guide's page
+      placeholder: https://
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Other errors in this guide
+      description: Optional.

@@ -1,0 +1,66 @@
+guide: wallenberg-dems
+election: 2026-11
+status: published
+source: https://wallenbergdems.org/ # Nov 2026 candidate slate is on the homepage
+archived:
+  - source: https://wallenbergdems.org/
+    snapshot: https://web.archive.org/web/20261005224354/https://wallenbergdems.org/
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  attorney-general:
+    pick:
+      - Rob Bonta
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  controller:
+    pick:
+      - Malia M. Cohen
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-10:
+    pick:
+      - Theo Ellington
+  board-of-education:
+    pick:
+      - Tim Tung
+      - Autumn Brown Garibay
+  college-board:
+    pick:
+      - Elijah Ball
+      - Monroe Lace
+  assessor:
+    pick:
+      - Joaquín Torres

@@ -1,0 +1,50 @@
+guide: noe-valley-dems
+election: 2026-11
+status: published
+source: https://www.noevalleydemocrats.org/endorsements
+archived:
+  - source: https://www.noevalleydemocrats.org/endorsements
+    snapshot: https://web.archive.org/web/20261005221756/https://www.noevalleydemocrats.org/endorsements
+fetchedAt: 2026-10-05
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  assembly-17:
+    pick:
+      - Matt Haney
+  supervisor-8:
+    pick:
+      - Emanuel "Manny" Yekutiel
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  public-defender:
+    pick:
+      - Mano Raju
+  assessor:
+    pick:
+      - Joaquín Torres
+  prop-a:
+    pick: Y
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: Y
+  prop-e:
+    pick: Y
+  prop-f:
+    pick: Y
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: N
+  prop-j:
+    pick: Y
+  rtm:
+    pick: Y

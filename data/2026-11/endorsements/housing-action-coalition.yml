@@ -1,0 +1,14 @@
+guide: housing-action-coalition
+election: 2026-11
+status: published
+source: https://housingactioncoalition.org/news/nov-2026-endorsements
+archived:
+  - source: https://housingactioncoalition.org/news/nov-2026-endorsements
+    snapshot: https://web.archive.org/web/20261005221424/https://housingactioncoalition.org/news/nov-2026-endorsements
+fetchedAt: 2026-10-05
+hasReasoning: false
+manual: true # hand-edited after review 2026-10-05; extract skips this guide
+picks:
+  supervisor-2:
+    pick:
+      - Stephen Sherrill

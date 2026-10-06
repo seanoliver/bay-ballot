@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contest detail options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&display=swap" rel="stylesheet">
+<!--
+  Bay Ballot: three structures for the contest detail panel.
+  A  Breakdown by guide type   (organized by who the guides are)
+  B  Sides with reasons        (organized by pick: who + why per side)
+  C  Who / Why tabs            (organized by question)
+  D  Hybrid                    (B's sides + a compact by-type strip under the bar)
+  E  Tabs, roomier             (C's tabs; Who = strip + short-name columns; Why = one column + side toggle)
+  Data: generated from bay-ballot/data/2026-11 (published guides only). Every quote below is
+  verbatim from the endorsement YAML, linked to its archived snapshot when one exists.
+  URL params: ?opt=A|B|C|D|E&c=prop-b|prop-c|us-rep-11|board-of-education&vp=desktop|phone&theme=light|dark&tab=who|why&seg=<side key>
+-->
+<style>
+:root {
+  --page: #f5f5f5; --card: #ffffff; --fg: oklch(0.145 0 0); --fg2: oklch(0.145 0 0 / 0.9);
+  --muted: oklch(0.50 0 0); --line: oklch(0.922 0 0); --track: oklch(0.145 0 0 / 0.08);
+  --chip: #ffffff; --chip-line: oklch(0.88 0 0); --hover: oklch(0.97 0 0);
+  --yes: #15803d; --no: #b91c1c; --split: #b45309;
+  --yes-fill: #166534; --no-fill: #e25c5c;
+  --bar-1: #2a78d6; --bar-2: #e87ba4; --bar-3: #4a3aa7; --bar-4: #1baf7a; --other: oklch(0.50 0 0 / 0.4);
+  --focus: #2a78d6;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --page: oklch(0.145 0 0); --card: oklch(0.205 0 0); --fg: oklch(0.985 0 0); --fg2: oklch(0.985 0 0 / 0.9);
+  --muted: oklch(0.708 0 0); --line: oklch(1 0 0 / 0.1); --track: oklch(1 0 0 / 0.08);
+  --chip: oklch(0.235 0 0); --chip-line: oklch(1 0 0 / 0.14); --hover: oklch(0.269 0 0);
+  --yes: #4ade80; --no: #f87171; --split: #fbbf24;
+  --yes-fill: #13753a; --no-fill: #e66262;
+  --bar-1: #3987e5; --bar-2: #d55181; --bar-3: #9085e9; --bar-4: #199e70; --other: oklch(0.708 0 0 / 0.4);
+  --focus: #3987e5;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--fg); font: 400 16px/24px Geist, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- mockup chrome ---------- */
+.chrome { max-width: 1120px; margin: 0 auto; padding: 24px 16px 16px; }
+.chrome h1 { font-size: 20px; line-height: 28px; font-weight: 600; margin: 0; }
+.chrome .sub { font-size: 14px; line-height: 20px; color: var(--muted); margin: 4px 0 16px; max-width: 70ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; }
+.ctl { display: grid; gap: 4px; }
+.ctl > span { font-size: 14px; line-height: 20px; color: var(--muted); }
+.seg { display: inline-flex; background: var(--track); border-radius: 8px; padding: 2px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 14px; line-height: 20px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--card); color: var(--fg); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+.optnote { font-size: 14px; line-height: 20px; color: var(--muted); margin: 16px 0 0; max-width: 70ch; }
+.optnote b { color: var(--fg); font-weight: 600; }
+.stage { display: flex; justify-content: center; padding: 16px 16px 64px; }
+
+/* ---------- frames ---------- */
+.pane { width: 520px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; position: relative; }
+.sheet { width: 390px; background: var(--card); border-radius: 16px 16px 0 0; border: 1px solid var(--line); border-bottom: 0; padding: 8px 16px 32px; position: relative; }
+.grab { width: 40px; height: 4px; border-radius: 2px; background: var(--chip-line); margin: 0 auto 16px; }
+.close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: transparent; border-radius: 8px; cursor: pointer; color: var(--fg); }
+.sheet .close { top: 16px; right: 8px; }
+.close:hover { background: var(--hover); }
+
+/* ---------- detail: shared header ---------- */
+.d { display: grid; gap: 32px; }
+.d-head { display: grid; gap: 0; padding-right: 40px; }
+.eyebrow { font-size: 14px; line-height: 20px; color: var(--muted); margin: 0; }
+.title { font-size: 20px; line-height: 28px; font-weight: 600; margin: 0; }
+.desc { font-size: 16px; line-height: 24px; color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.result { display: grid; gap: 8px; }
+.lead-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.lead { font-size: 18px; line-height: 28px; font-weight: 600; margin: 0; }
+.meta { font-size: 14px; line-height: 20px; color: var(--muted); white-space: nowrap; }
+.bar { display: flex; gap: 2px; height: 12px; }
+.bar > i { display: block; height: 100%; min-width: 4px; }
+.bar > i:first-child { border-radius: 6px 0 0 6px; }
+.bar > i:last-child { border-radius: 0 6px 6px 0; }
+.bar > i:only-child { border-radius: 6px; }
+.legend { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 20px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+/* multi-seat chart */
+.seats { display: grid; grid-template-columns: minmax(0, max-content) 1fr 24px; gap: 8px 12px; align-items: center; font-size: 14px; line-height: 20px; }
+.seats .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seats .nm.top { font-weight: 600; }
+.seats .trk { height: 8px; background: var(--track); border-radius: 4px; position: relative; }
+.seats .trk > i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+.seats .ct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.caption { font-size: 14px; line-height: 20px; color: var(--muted); margin: 0; }
+
+/* ---------- section scaffolding ---------- */
+.sec { display: grid; gap: 16px; }
+.sec-h { font-size: 16px; line-height: 24px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+.sec-h .n { font-weight: 400; color: var(--muted); font-size: 14px; }
+.sub-h { font-size: 14px; line-height: 20px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+.sub-h .n { font-weight: 400; color: var(--muted); }
+
+/* chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; padding: 2px 10px 2px 8px; border: 1px solid var(--chip-line); background: var(--chip); border-radius: 999px; white-space: nowrap; }
+.chip .g { color: var(--muted); }
+.chip .q { color: var(--fg); }
+.chip.more { border-style: dashed; cursor: pointer; color: var(--muted); padding: 2px 10px; }
+.chip.more:hover { color: var(--fg); }
+.dots { display: inline-flex; gap: 2px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; display: block; }
+svg.gl { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+svg.qm { width: 12px; height: 12px; box-sizing: content-box; fill: currentColor; stroke: none; flex: none; }
+
+/* quotes */
+.quotes { display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.qt { border-left: 2px solid; padding-left: 16px; }
+.qt blockquote { margin: 0; font-size: 16px; line-height: 24px; max-width: 62ch; text-indent: -0.45ch; }
+.qt .by { margin: 8px 0 0; font-size: 14px; line-height: 20px; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.qt .by b { color: var(--fg); font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.qt .by a { color: var(--muted); text-underline-offset: 3px; }
+.qt .by a:hover { color: var(--fg); }
+.qt .slate { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; }
+.qt .slate span { display: inline-flex; align-items: center; gap: 4px; }
+.textbtn { border: 0; background: none; padding: 10px 0; margin: -10px 0; font-size: 14px; line-height: 20px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--chip-line); justify-self: start; }
+.textbtn:hover { text-decoration-color: currentColor; }
+.empty { font-size: 14px; line-height: 20px; color: var(--muted); margin: 0; }
+
+/* ---------- option A: by type ---------- */
+.types { display: grid; gap: 0; }
+.trow { display: grid; grid-template-columns: minmax(0, 1fr) var(--tw, 120px) 32px 32px; column-gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.trow.hd { border-top: 0; padding: 0 0 8px; font-size: 14px; line-height: 20px; }
+.trow.hd .c { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; white-space: nowrap; }
+.trow .tn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600; min-width: 0; }
+.trow .tn .n { font-weight: 400; color: var(--muted); }
+.trow .mb { display: flex; gap: 2px; height: 8px; }
+.trow .mb > i { height: 100%; display: block; }
+.trow .mb > i:first-child { border-radius: 4px 0 0 4px; }
+.trow .mb > i:last-child { border-radius: 0 4px 4px 0; }
+.trow .mb > i:only-child { border-radius: 4px; }
+.trow .v { text-align: right; font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; }
+.trow .v.z { color: var(--muted); }
+.trow .chips { grid-column: 1 / -1; margin-top: 8px; }
+.matrix { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; }
+.matrix th { font-weight: 400; color: var(--muted); padding: 0 0 8px; text-align: center; vertical-align: bottom; }
+.matrix th .gl { display: block; margin: 0 auto 2px; color: var(--fg); }
+.matrix th:first-child { text-align: left; }
+.matrix td { padding: 2px; text-align: center; }
+.matrix td:first-child { text-align: left; padding-right: 12px; white-space: nowrap; }
+.matrix td:first-child span { display: inline-flex; align-items: center; gap: 8px; }
+.matrix .cell { display: block; border-radius: 4px; padding: 4px 0; min-width: 36px; }
+
+/* ---------- option B: sides ---------- */
+.side { display: grid; gap: 16px; }
+.side-h { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; font-weight: 600; margin: 0; }
+.side-h .n { margin-left: auto; font-size: 14px; line-height: 20px; font-weight: 400; color: var(--muted); }
+.side-h .sq { width: 12px; height: 12px; border-radius: 3px; }
+.side + .side { margin-top: 16px; padding-top: 32px; border-top: 1px solid var(--line); }
+.side .quotes { gap: 16px; }
+
+/* ---------- option C: tabs ---------- */
+.tabs { display: flex; background: var(--track); border-radius: 8px; padding: 2px; gap: 2px; }
+.tabs button { flex: 1; border: 0; background: transparent; border-radius: 6px; padding: 8px 12px; font-size: 14px; line-height: 20px; cursor: pointer; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--card); color: var(--fg); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+.tabs .n { font-weight: 400; color: var(--muted); margin-left: 4px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.col { display: grid; gap: 12px; min-width: 0; }
+.col-h { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600; padding-bottom: 8px; border-bottom: 2px solid; margin: 0; }
+.col-h .n { margin-left: auto; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.glist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.glist li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; line-height: 20px; min-height: 28px; }
+.glist li .g { color: var(--muted); padding-top: 3px; }
+.glist li .qm { padding-top: 4px; }
+.glist li .nm { min-width: 0; }
+.glist li .qm { color: var(--muted); margin-left: auto; }
+.sheet .cols.why { grid-template-columns: 1fr; gap: 32px; }
+.slates { display: grid; gap: 16px; }
+.slate-row { display: grid; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.slate-row:first-child { border-top: 0; padding-top: 0; }
+.slate-h { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 14px; line-height: 20px; font-weight: 600; }
+.slate-h span { display: inline-flex; align-items: center; gap: 6px; }
+.slate-h .n { font-weight: 400; color: var(--muted); margin-left: auto; }
+.slate-g { font-size: 14px; line-height: 20px; color: var(--fg2); margin: 0; }
+
+
+/* ---------- option D: compact by-type strip ---------- */
+.strip { display: grid; gap: 8px; }
+.strip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; margin: 0; padding: 0; list-style: none; }
+.strip-grid li { display: grid; gap: 4px; min-width: 0; }
+.strip-grid .l1 { display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; }
+.strip-grid .l1 .tl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip-grid .l1 .v { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.strip-grid .l1 .v.m { color: var(--muted); }
+.strip-grid .mb { display: flex; gap: 2px; height: 6px; }
+.strip-grid .mb > i { display: block; height: 100%; }
+.strip-grid .mb > i:first-child { border-radius: 3px 0 0 3px; }
+.strip-grid .mb > i:last-child { border-radius: 0 3px 3px 0; }
+.strip-grid .mb > i:only-child { border-radius: 3px; }
+.strip-grid .tri { display: flex; gap: 10px; font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; }
+.strip-grid .tri span { display: inline-flex; align-items: center; gap: 4px; }
+.strip-grid .tri .z { color: var(--muted); }
+.sheet .strip-grid .g { display: none !important; }
+.sheet .strip-grid { gap: 12px; }
+.strip-grid .l1 .tl { min-width: 0; }
+.reasons-h { font-size: 14px; line-height: 20px; font-weight: 600; margin: 0; }
+
+
+/* ---------- option E: tabs, roomy why ---------- */
+.segs { display: flex; flex-wrap: wrap; background: var(--track); border-radius: 8px; padding: 2px; gap: 2px; }
+.segs button { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 14px; line-height: 20px; cursor: pointer; color: var(--muted); white-space: nowrap; }
+.segs button[aria-pressed="true"] { background: var(--card); color: var(--fg); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+.segs .n { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.why-list { display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.why-list > li { display: grid; gap: 12px; }
+.why-list .more { border: 0; background: none; padding: 10px 0; margin: -10px 0 -10px 18px; font-size: 14px; line-height: 20px; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--chip-line); justify-self: start; }
+.why-list .more:hover { color: var(--fg); text-decoration-color: currentColor; }
+.why-list .extra { display: grid; gap: 16px; padding-top: 4px; margin: 0; padding: 0; list-style: none; }
+.e-who { display: grid; gap: 24px; }
+.e-who .glist li .qm { margin-left: 0; display: inline; padding-left: 4px; }
+.e-who .glist li .nm { flex: 1; }
+.sheet .e-who .cols { gap: 12px; }
+.sheet .e-who .glist li { gap: 6px; }
+
+/* footer + key */
+.foot { display: grid; gap: 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.foot p { margin: 0; }
+.foot a { text-underline-offset: 3px; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* tooltip */
+#tip { position: fixed; pointer-events: none; z-index: 10; background: var(--fg); color: var(--card); font-size: 14px; line-height: 20px; padding: 4px 8px; border-radius: 6px; opacity: 0; transform: translate(-50%, -100%); white-space: nowrap; }
+#tip.on { opacity: 1; }
+[data-tip] { cursor: default; }
+
+/* phone-width overrides */
+.sheet .trow { --tw: 72px; grid-template-columns: minmax(0, 1fr) var(--tw) 28px 28px; column-gap: 8px; }
+.sheet .cols { gap: 16px; }
+.sheet .matrix .cell { min-width: 32px; }
+@media (max-width: 560px) { .pane { width: 100%; } .sheet { width: 100%; } .stage { padding: 16px 0 48px; } }
+</style>
+</head>
+<body>
+<div class="chrome" id="chrome">
+  <h1>Contest detail: three structures</h1>
+  <p class="sub">Real data from 36 published guides. Every quote is verbatim from the guide's YAML and links to its archived source.</p>
+  <div class="controls">
+    <div class="ctl"><span>Option</span><div class="seg" id="ctl-opt"></div></div>
+    <div class="ctl"><span>Contest</span><div class="seg" id="ctl-c"></div></div>
+    <div class="ctl"><span>Viewport</span><div class="seg" id="ctl-vp"></div></div>
+    <div class="ctl"><span>Theme</span><div class="seg" id="ctl-theme"></div></div>
+  </div>
+  <p class="optnote" id="optnote"></p>
+</div>
+<div class="stage"><div id="frame"></div></div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const DATA = {"totalGuides":44,"published":36,"pending":8,"contests":{"prop-b":{"id":"prop-b","section":"Local propositions","title":"Proposition B","description":"Establishing a Municipal Finance Corporation and a Public Bank","kind":"measure","seats":1,"candidates":null,"link":"https://www.sf.gov/qualified-ballot-measures","rows":[{"id":"alice-b-toklas","name":"Alice B. Toklas LGBTQ Democratic Club","short":"Alice B. Toklas Club","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"bay-area-reporter","name":"Bay Area Reporter","short":"Bay Area Reporter","type":"newspaper","picks":["N"],"ranked":false,"quotes":[{"text":"In short, we don’t see a need for a public bank with its encompassing bureaucratic infrastructure in San Francisco right now.","href":"https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures"}]},{"id":"blueprint-sf","name":"Blueprint SF","short":"Blueprint SF","type":"advocacy","picks":["N"],"ranked":false,"quotes":[]},{"id":"cadc","name":"Chinese American Democratic Club","short":"Chinese American Dems","type":"club","picks":["N"],"ranked":false,"quotes":[{"text":"CADC opposes Prop. B because the measure creates the institutional framework without identifying a secure source for the substantial capitalization needed to establish the bank.","href":"https://web.archive.org/web/20261005220914/https://www.sfcadc.org/endorsements"},{"text":"Members were concerned about financial risk and committing the City to a banking structure before its funding and long-term viability were clear.","href":"https://web.archive.org/web/20261005220914/https://www.sfcadc.org/endorsements"}]},{"id":"d11-dems","name":"San Francisco District 11 Democratic Club","short":"D11 Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"d2-dems","name":"District 2 Democratic Club","short":"D2 Dems","type":"club","picks":["N"],"ranked":false,"quotes":[]},{"id":"ed-lee-dems","name":"Edwin M. Lee Asian Pacific Democratic Club","short":"Ed Lee Dems","type":"club","picks":["N"],"ranked":false,"quotes":[]},{"id":"endc","name":"San Francisco Eastern Neighborhoods Democratic Club","short":"Eastern Neighborhoods Dems","type":"club","picks":["N"],"ranked":false,"quotes":[]},{"id":"growsf","name":"GrowSF","short":"GrowSF","type":"advocacy","picks":["N"],"ranked":false,"quotes":[{"text":"San Francisco does not need a public bank, especially when the law creating it, Prop B, is riddled with errors.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"Let's at least get our own finances in order before trying to run a bank.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"}]},{"id":"league-pissed-off-voters","name":"San Francisco League of Pissed Off Voters","short":"Pissed Off Voters","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"For affordable housing to be built, we need our own bank.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"},{"text":"If San Francisco owns the banks, it would allow us to facilitate affordable housing construction, particularly social housing.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"}]},{"id":"lwv-sf","name":"League of Women Voters of San Francisco","short":"LWV SF","type":"civic","picks":["Y"],"ranked":false,"quotes":[{"text":"A public bank keeps municipal dollars working for the public good rather than funneling fees and interest to big for-profit banks.","href":"https://web.archive.org/web/20261005221630/https://lwvsf.org/ballot-recommendations"},{"text":"The proposition comes with a comprehensive plan for how the public bank would be run, with strong governance and guardrails to limit risk, and no spending requirement.","href":"https://web.archive.org/web/20261005221630/https://lwvsf.org/ballot-recommendations"}]},{"id":"milk-club","name":"Harvey Milk LGBTQ Democratic Club","short":"Milk Club","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"noe-valley-dems","name":"Noe Valley Democratic Club","short":"Noe Valley Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"seiu-1021","name":"SEIU Local 1021","short":"SEIU 1021","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-building-trades","name":"San Francisco Building & Construction Trades Council","short":"SF Building Trades","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-chronicle","name":"San Francisco Chronicle","short":"SF Chronicle","type":"newspaper","picks":["N"],"ranked":false,"quotes":[{"text":"But good intentions do not automatically make a good institution — and Prop B is set up to fail.","href":"https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/"}]},{"id":"sf-dems","name":"San Francisco Democratic Party","short":"SF Democratic Party","type":"party","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-gop","name":"San Francisco Republican Party","short":"SF Republican Party","type":"party","picks":["N"],"ranked":false,"quotes":[{"text":"San Francisco's municipal government lacks the competence, integrity, and incentives to run a bank.","href":"https://web.archive.org/web/20261005222129/https://sfgop.org/nov-2026-endorsements"},{"text":"We believe they would make lending decisions based on cronyism - not risk.","href":"https://web.archive.org/web/20261005222129/https://sfgop.org/nov-2026-endorsements"}]},{"id":"sf-green-party","name":"San Francisco Green Party","short":"SF Green Party","type":"party","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-labor-council","name":"San Francisco Labor Council","short":"SF Labor Council","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-tenants-union","name":"San Francisco Tenants Union","short":"SF Tenants Union","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sflcv","name":"San Francisco League of Conservation Voters","short":"SF Conservation Voters","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sfwpc","name":"San Francisco Women's Political Committee","short":"Women's Political Committee","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[]},{"id":"spur","name":"SPUR","short":"SPUR","type":"civic","picks":["N"],"ranked":false,"quotes":[{"text":"However, Prop. B’s proposed charter amendment does not reflect SPUR’s principles of good governance.","href":"https://web.archive.org/web/20261005223717/https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank"},{"text":"Importantly, establishing a public bank does not require these governance provisions to be in the charter.","href":"https://web.archive.org/web/20261005223717/https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank"},{"text":"The city could pursue a public bank through ordinance, administrative action, and existing oversight processes.","href":"https://web.archive.org/web/20261005223717/https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank"}]},{"id":"uesf","name":"United Educators of San Francisco","short":"United Educators (UESF)","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"united-dems","name":"United Democratic Club","short":"United Dems","type":"club","picks":["N"],"ranked":false,"quotes":[]},{"id":"westside-family-dems","name":"Westside Family Democratic Club","short":"Westside Family Dems","type":"club","picks":["N"],"ranked":false,"quotes":[{"text":"While public banks aren’t necessarily bad, this proposal is a solution in search of a problem.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"San Francisco is served by many community banks, which already focus on community needs.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"Moreover, public banks have been previously tried in the US; the only one that hasn’t failed is a state public bank, rather than a city one.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"}]}]},"prop-c":{"id":"prop-c","section":"Local propositions","title":"Proposition C","description":"Contributions to the Housing Trust Fund","kind":"measure","seats":1,"candidates":null,"link":"https://www.sf.gov/qualified-ballot-measures","rows":[{"id":"abundant-sf","name":"Abundant San Francisco","short":"Abundant SF","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"Building more affordable housing is a priority for Abundant and this was part of a deal to lower the inclusionary rate for new housing – a key barrier to building new homes.","href":"https://web.archive.org/web/20261005220230/https://www.abundantsanfrancisco.org/vote/ballot-measures"}]},{"id":"alice-b-toklas","name":"Alice B. Toklas LGBTQ Democratic Club","short":"Alice B. Toklas Club","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"bay-area-reporter","name":"Bay Area Reporter","short":"Bay Area Reporter","type":"newspaper","picks":["Y"],"ranked":false,"quotes":[{"text":"It is the city’s most significant fund for affordable housing.","href":"https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures"}]},{"id":"d11-dems","name":"San Francisco District 11 Democratic Club","short":"D11 Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"d2-dems","name":"District 2 Democratic Club","short":"D2 Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"ed-lee-dems","name":"Edwin M. Lee Asian Pacific Democratic Club","short":"Ed Lee Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"endc","name":"San Francisco Eastern Neighborhoods Democratic Club","short":"Eastern Neighborhoods Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"growsf","name":"GrowSF","short":"GrowSF","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"We think this is a good deal, and Prop C is how voters keep the City's end of it.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"The lower tax is what makes every kind of home cheaper to build, which puts downward pressure on rents across the city.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"}]},{"id":"league-pissed-off-voters","name":"San Francisco League of Pissed Off Voters","short":"Pissed Off Voters","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"Proposition C simply renews the Housing Trust Fund through 2058 and raises its annual funding cap from $50 million to $125 million.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"}]},{"id":"lwv-sf","name":"League of Women Voters of San Francisco","short":"LWV SF","type":"civic","picks":["Y"],"ranked":false,"quotes":[{"text":"Proposition C is exactly the kind of government funding for affordable housing the League of Women Voters supports because we believe a decent place to live should be possible for San Franciscans at all income levels.","href":"https://web.archive.org/web/20261005221630/https://lwvsf.org/ballot-recommendations"},{"text":"The proposition would require the city government to put more money into the Housing Trust Fund, slowly raising that amount from today's $52 million to $125 million each year, without raising taxes.","href":"https://web.archive.org/web/20261005221630/https://lwvsf.org/ballot-recommendations"}]},{"id":"milk-club","name":"Harvey Milk LGBTQ Democratic Club","short":"Milk Club","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"noe-valley-dems","name":"Noe Valley Democratic Club","short":"Noe Valley Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"potrero-hill-dems","name":"Potrero Hill Democratic Club","short":"Potrero Hill Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"seiu-1021","name":"SEIU Local 1021","short":"SEIU 1021","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-building-trades","name":"San Francisco Building & Construction Trades Council","short":"SF Building Trades","type":"union","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-chronicle","name":"San Francisco Chronicle","short":"SF Chronicle","type":"newspaper","picks":["Y"],"ranked":false,"quotes":[{"text":"Prop C will not solve San Francisco’s housing crisis, but it is part of a concerted and thoughtful city-directed effort to stem the bleeding.","href":"https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/"},{"text":"And it is the only measure on the November ballot that will provide something the city desperately needs: a predictable source of public investment at a time when the cost of building and preserving housing keeps rising.","href":"https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/"}]},{"id":"sf-dems","name":"San Francisco Democratic Party","short":"SF Democratic Party","type":"party","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-gop","name":"San Francisco Republican Party","short":"SF Republican Party","type":"party","picks":["N"],"ranked":false,"quotes":[]},{"id":"sf-tenants-union","name":"San Francisco Tenants Union","short":"SF Tenants Union","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sf-yimby","name":"San Francisco YIMBY","short":"SF YIMBY","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"The best thing about the Housing Trust Fund is that it doesn't tax new homes out of existence, but instead aligns the revenue incentives of the city to promote new growth.","href":"https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/"},{"text":"The measure also lets the Board pause or trim contributions in bad budget years, so it isn't a blank check.","href":"https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/"}]},{"id":"sflcv","name":"San Francisco League of Conservation Voters","short":"SF Conservation Voters","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"San Francisco’s chronic shortage of affordable housing is not only an urgent social and economic problem, but also a serious climate and environmental problem.","href":"https://web.archive.org/web/20261005231236/https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment"},{"text":"Prop C would provide significant and predictable additional funding for affordable housing while taking into account other important City priorities and the possibility of future budgetary crises.","href":"https://web.archive.org/web/20261005231236/https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment"},{"text":"Prop C is thus fiscally responsible in how it addresses the City’s affordable housing crisis.","href":"https://web.archive.org/web/20261005231236/https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment"}]},{"id":"sfwpc","name":"San Francisco Women's Political Committee","short":"Women's Political Committee","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[]},{"id":"sierra-club-sf-bay","name":"Sierra Club San Francisco Bay Chapter","short":"Sierra Club","type":"advocacy","picks":["Y"],"ranked":false,"quotes":[{"text":"Building homes in San Francisco is a climate issue.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"},{"text":"If passed, it would expand the Housing Trust Fund from $52 million to $125 million a year and extend it for thirty years, dedicating more than $3 billion to building and preserving affordable housing in San Francisco.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"},{"text":"And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"}]},{"id":"spur","name":"SPUR","short":"SPUR","type":"civic","picks":["Y"],"ranked":false,"quotes":[{"text":"Affordable housing is one of San Francisco's highest priorities, yet it consistently struggles to secure sufficient funding, and state and federal funding is increasingly unreliable.","href":"https://web.archive.org/web/20261005223814/https://www.spur.org/voter-guide/2026-11/sf-prop-c-housing-trust-fund"}]},{"id":"united-dems","name":"United Democratic Club","short":"United Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[]},{"id":"westside-family-dems","name":"Westside Family Democratic Club","short":"Westside Family Dems","type":"club","picks":["Y"],"ranked":false,"quotes":[{"text":"Subsidized housing typically relies on multiple income streams; San Francisco contributes some money, but so do affordable housing developers and potentially other governmental and nonprofit partners.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"We hope that expanding the Housing Trust Fund will support development of subsidized housing not only by directly funding new developments, but also by providing a reliable long-term income stream that gives federal, state, and nonprofit partners confidence that if they contribute to projects in SF, those projects will succeed.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"}]}]},"us-rep-11":{"id":"us-rep-11","section":"Federal","title":"United States Representative, District 11","description":null,"kind":"candidate","seats":1,"candidates":["Connie Chan","Scott Wiener"],"link":null,"rows":[{"id":"abundant-sf","name":"Abundant San Francisco","short":"Abundant SF","type":"advocacy","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"alice-b-toklas","name":"Alice B. Toklas LGBTQ Democratic Club","short":"Alice B. Toklas Club","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"cadc","name":"Chinese American Democratic Club","short":"Chinese American Dems","type":"club","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"d11-dems","name":"San Francisco District 11 Democratic Club","short":"D11 Dems","type":"club","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"d2-dems","name":"District 2 Democratic Club","short":"D2 Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"ed-lee-dems","name":"Edwin M. Lee Asian Pacific Democratic Club","short":"Ed Lee Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"endc","name":"San Francisco Eastern Neighborhoods Democratic Club","short":"Eastern Neighborhoods Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"growsf","name":"GrowSF","short":"GrowSF","type":"advocacy","picks":["Scott Wiener"],"ranked":false,"quotes":[{"text":"Scott Wiener has spent the last decade as one of California's most persistent and effective pro-housing legislators.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"Wiener's strongest argument in this race is simple: he has actually passed pro-housing law at scale.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"Sending someone to Congress whose primary skill is saying no is not what San Francisco needs right now.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"}]},{"id":"league-pissed-off-voters","name":"San Francisco League of Pissed Off Voters","short":"Pissed Off Voters","type":"advocacy","picks":["Connie Chan"],"ranked":false,"quotes":[{"text":"Connie’s track record shows she can lead with her values and still get shit done.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"},{"text":"She’s accountable to the communities she comes from and not to corporate donors.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"},{"text":"We need a leader whose track record shows she can lead with San Francisco values while still getting shit done, take Congress’s responsibility to oversee military spending seriously, and fight for the dignity and rights of all people.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"}]},{"id":"milk-club","name":"Harvey Milk LGBTQ Democratic Club","short":"Milk Club","type":"club","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"noe-valley-dems","name":"Noe Valley Democratic Club","short":"Noe Valley Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"potrero-hill-dems","name":"Potrero Hill Democratic Club","short":"Potrero Hill Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"seiu-1021","name":"SEIU Local 1021","short":"SEIU 1021","type":"union","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-building-trades","name":"San Francisco Building & Construction Trades Council","short":"SF Building Trades","type":"union","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-chronicle","name":"San Francisco Chronicle","short":"SF Chronicle","type":"newspaper","picks":["Scott Wiener"],"ranked":false,"quotes":[{"text":"With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.","href":"https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/"},{"text":"Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.","href":"https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/"}]},{"id":"sf-dems","name":"San Francisco Democratic Party","short":"SF Democratic Party","type":"party","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"sf-green-party","name":"San Francisco Green Party","short":"SF Green Party","type":"party","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-labor-council","name":"San Francisco Labor Council","short":"SF Labor Council","type":"union","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-rising-action","name":"SF Rising Action","short":"SF Rising Action","type":"advocacy","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-tenants-union","name":"San Francisco Tenants Union","short":"SF Tenants Union","type":"advocacy","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sf-yimby","name":"San Francisco YIMBY","short":"SF YIMBY","type":"advocacy","picks":["Scott Wiener"],"ranked":false,"quotes":[{"text":"The YIMBY movement would not be anywhere near where it is today if not for the work and influence of Scott Wiener.","href":"https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/"},{"text":"Scott has been unwavering in his commitment to building more housing, even when it was politically difficult.","href":"https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/"},{"text":"He has been the YIMBY movement's most important champion in elected office, and we stand with the leader who has stood with us from the beginning.","href":"https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/"}]},{"id":"sfwpc","name":"San Francisco Women's Political Committee","short":"Women's Political Committee","type":"advocacy","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"sierra-club-sf-bay","name":"Sierra Club San Francisco Bay Chapter","short":"Sierra Club","type":"advocacy","picks":["Scott Wiener"],"ranked":false,"quotes":[{"text":"Senator Scott Wiener, with his prolific legislative history and bold, detailed agenda, is the climate champion we need.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"},{"text":"Sen. Wiener has championed numerous Sierra Club priorities over his 9 years in the California Senate.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"},{"text":"Critically, Wiener has jumped into the fray three times in three years to save the Bay Area’s public transit systems from financial collapse, including authoring the law that authorized the Connect Bay Area regional funding measure.","href":"https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations"}]},{"id":"uesf","name":"United Educators of San Francisco","short":"United Educators (UESF)","type":"union","picks":["Connie Chan"],"ranked":false,"quotes":[]},{"id":"united-dems","name":"United Democratic Club","short":"United Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"wallenberg-dems","name":"Raoul Wallenberg Jewish Democratic Club","short":"Wallenberg Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[]},{"id":"westside-family-dems","name":"Westside Family Democratic Club","short":"Westside Family Dems","type":"club","picks":["Scott Wiener"],"ranked":false,"quotes":[{"text":"In the state Senate, he has managed to pass bills once thought impossible, especially on the issue of housing.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"He has the best chance of any candidate to make a difference for San Francisco if we send him to Washington.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"}]}]},"board-of-education":{"id":"board-of-education","section":"Local candidates","title":"Board of Education","description":null,"kind":"candidate","seats":3,"candidates":["Autumn Brown Garibay","Virginia Cheung","Alida Fisher","Ryan Hazelton","Phil Kim","Laurance Lee","Reina Tello","Tim Tung"],"link":null,"rows":[{"id":"abundant-sf","name":"Abundant San Francisco","short":"Abundant SF","type":"advocacy","picks":["Phil Kim","Autumn Brown Garibay","Tim Tung"],"ranked":false,"quotes":[]},{"id":"alice-b-toklas","name":"Alice B. Toklas LGBTQ Democratic Club","short":"Alice B. Toklas Club","type":"club","picks":["Phil Kim","Alida Fisher","Autumn Brown Garibay"],"ranked":false,"quotes":[]},{"id":"bay-area-reporter","name":"Bay Area Reporter","short":"Bay Area Reporter","type":"newspaper","picks":["Phil Kim","Ryan Hazelton","Alida Fisher"],"ranked":false,"quotes":[{"text":"He would be a good addition to the school board.","href":"https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations"},{"text":"Fisher’s correct that achieving a balanced budget is a major milestone for the district and that the work is not finished.","href":"https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations"}]},{"id":"blueprint-sf","name":"Blueprint SF","short":"Blueprint SF","type":"advocacy","picks":["Phil Kim","Autumn Brown Garibay","Tim Tung"],"ranked":false,"quotes":[{"text":"She has a record of engaging with various stakeholders across the city, bringing people together, and standing up for students and parents in front of the SF Board of Education.","href":"https://web.archive.org/web/20261005220731/https://www.sfblueprint.org/advocacy/november-2026-voter-guide"},{"text":"Tung is a finance professional with decades of experience and the credentials to match.","href":"https://web.archive.org/web/20261005220731/https://www.sfblueprint.org/advocacy/november-2026-voter-guide"}]},{"id":"cadc","name":"Chinese American Democratic Club","short":"Chinese American Dems","type":"club","picks":["Phil Kim","Virginia Cheung","Laurance Lee"],"ranked":false,"quotes":[]},{"id":"d11-dems","name":"San Francisco District 11 Democratic Club","short":"D11 Dems","type":"club","picks":["Alida Fisher","Reina Tello","Virginia Cheung"],"ranked":false,"quotes":[]},{"id":"d2-dems","name":"District 2 Democratic Club","short":"D2 Dems","type":"club","picks":["Phil Kim","Tim Tung"],"ranked":false,"quotes":[]},{"id":"ed-lee-dems","name":"Edwin M. Lee Asian Pacific Democratic Club","short":"Ed Lee Dems","type":"club","picks":["Phil Kim","Tim Tung","Autumn Brown Garibay"],"ranked":false,"quotes":[]},{"id":"endc","name":"San Francisco Eastern Neighborhoods Democratic Club","short":"Eastern Neighborhoods Dems","type":"club","picks":["Phil Kim","Alida Fisher","Tim Tung"],"ranked":false,"quotes":[]},{"id":"growsf","name":"GrowSF","short":"GrowSF","type":"advocacy","picks":["Autumn Brown Garibay","Phil Kim","Tim Tung"],"ranked":false,"quotes":[{"text":"Three seats are open, and these three candidates each bring something the Board needs.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"Tim has 20 years of experience auditing and balancing budgets, exactly the expertise the district needs to solve its budget crisis.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"},{"text":"Together, these three are a dream team: an educator who put algebra back in 8th grade, a parent who caught the district promising one thing and planning another, and an auditor who balanced city budgets through the 2008 crash.","href":"https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/"}]},{"id":"league-pissed-off-voters","name":"San Francisco League of Pissed Off Voters","short":"Pissed Off Voters","type":"advocacy","picks":["Virginia Cheung","Reina Tello","Ryan Hazelton"],"ranked":false,"quotes":[{"text":"Virginia Cheung is a SFUSD parent, a longtime leader in the nonprofit world, and a strong advocate for families and educators.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"},{"text":"Reina Tello is a single parent of SFUSD kids (and an SFUSD graduate herself) and has been an organizer with PODER for decades.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"},{"text":"Ryan Hazelton is the executive director of Mariposa Kids afterschool and summer programs, and the chair of the SF Childcare Planning & Advisory Council.","href":"https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026"}]},{"id":"milk-club","name":"Harvey Milk LGBTQ Democratic Club","short":"Milk Club","type":"club","picks":["Reina Tello","Virginia Cheung","Ryan Hazelton"],"ranked":false,"quotes":[]},{"id":"potrero-hill-dems","name":"Potrero Hill Democratic Club","short":"Potrero Hill Dems","type":"club","picks":["Alida Fisher","Phil Kim","Reina Tello"],"ranked":false,"quotes":[]},{"id":"seiu-1021","name":"SEIU Local 1021","short":"SEIU 1021","type":"union","picks":["Virginia Cheung","Ryan Hazelton","Reina Tello"],"ranked":false,"quotes":[]},{"id":"sf-dems","name":"San Francisco Democratic Party","short":"SF Democratic Party","type":"party","picks":["Autumn Brown Garibay","Phil Kim","Tim Tung"],"ranked":false,"quotes":[]},{"id":"sf-gop","name":"San Francisco Republican Party","short":"SF Republican Party","type":"party","picks":["Laurance Lee","Phil Kim","Tim Tung"],"ranked":false,"quotes":[{"text":"Our public schools should focus on outcomes: reading, math, and preparing kids for real opportunity.","href":"https://web.archive.org/web/20261005222129/https://sfgop.org/nov-2026-endorsements"}]},{"id":"sf-green-party","name":"San Francisco Green Party","short":"SF Green Party","type":"party","picks":["Virginia Cheung","Alida Fisher"],"ranked":false,"quotes":[]},{"id":"sf-labor-council","name":"San Francisco Labor Council","short":"SF Labor Council","type":"union","picks":["Virginia Cheung","Ryan Hazelton","Reina Tello"],"ranked":false,"quotes":[]},{"id":"sf-parents-action","name":"SF Parents Action","short":"SF Parents Action","type":"advocacy","picks":["Autumn Brown Garibay","Phil Kim","Alida Fisher"],"ranked":false,"quotes":[{"text":"Her positions demonstrate that she is committed to improving student outcomes across SFUSD's broad student population and that she fully supports our teachers.","href":"https://web.archive.org/web/20261005222249/https://sfparentaction.org/endorsements-2026-nov/"},{"text":"He has a strong record of increasing student instruction time in core subjects, supporting teachers, and pushing for a responsible district budget.","href":"https://web.archive.org/web/20261005222249/https://sfparentaction.org/endorsements-2026-nov/"},{"text":"She has been a genuinely strong board member, and with critical work still underway, we believe she has earned another term.","href":"https://web.archive.org/web/20261005222249/https://sfparentaction.org/endorsements-2026-nov/"}]},{"id":"sf-rising-action","name":"SF Rising Action","short":"SF Rising Action","type":"advocacy","picks":["Reina Tello"],"ranked":false,"quotes":[]},{"id":"sflcv","name":"San Francisco League of Conservation Voters","short":"SF Conservation Voters","type":"advocacy","picks":["Alida Fisher","Phil Kim","Tim Tung"],"ranked":false,"quotes":[]},{"id":"sfwpc","name":"San Francisco Women's Political Committee","short":"Women's Political Committee","type":"advocacy","picks":["Phil Kim","Alida Fisher","Autumn Brown Garibay"],"ranked":false,"quotes":[]},{"id":"uesf","name":"United Educators of San Francisco","short":"United Educators (UESF)","type":"union","picks":["Reina Tello","Ryan Hazelton","Virginia Cheung"],"ranked":false,"quotes":[]},{"id":"united-dems","name":"United Democratic Club","short":"United Dems","type":"club","picks":["Autumn Brown Garibay","Phil Kim","Tim Tung"],"ranked":false,"quotes":[]},{"id":"wallenberg-dems","name":"Raoul Wallenberg Jewish Democratic Club","short":"Wallenberg Dems","type":"club","picks":["Tim Tung","Autumn Brown Garibay"],"ranked":false,"quotes":[]},{"id":"westside-family-dems","name":"Westside Family Democratic Club","short":"Westside Family Dems","type":"club","picks":["Phil Kim","Autumn Brown Garibay","Tim Tung"],"ranked":false,"quotes":[{"text":"Phil Kim has performed well as Board of Education president since his appointment in August 2024, including spearheading a 4-3 board vote to bring back eighth grade algebra.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"Autumn Brown Garibay shows unusual tenacity and willingness to tackle the hard issues, coupled with pragmatic ideas and a drive to get things done.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"},{"text":"Tim Tung is similarly pragmatic and outcomes-focused, and will bring badly needed fiscal expertise to the BOE.","href":"https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements"}]}]}}};
+
+// ---------- constants ----------
+const TYPES = ["newspaper", "party", "club", "union", "advocacy", "civic"];
+const TYPE_PLURAL = { newspaper: "Newspapers", party: "Parties", club: "Political clubs", union: "Unions", advocacy: "Advocacy groups", civic: "Civic groups" };
+const TYPE_ONE = { newspaper: "Newspaper", party: "Party", club: "Political club", union: "Union", advocacy: "Advocacy group", civic: "Civic group" };
+const TYPE_ABBR = { newspaper: "News", party: "Party", club: "Clubs", union: "Union", advocacy: "Advoc.", civic: "Civic" };
+const GLYPH = {
+  newspaper: '<rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M5 6.5h6M5 9h6M5 11.5h3"/>',
+  party: '<path d="M4 14V2.5"/><path d="M4 3h8.5l-2 3 2 3H4"/>',
+  club: '<circle cx="6" cy="5.5" r="2"/><path d="M2.5 13.5c0-2.2 1.6-3.8 3.5-3.8s3.5 1.6 3.5 3.8"/><circle cx="11.2" cy="6.2" r="1.6"/><path d="M11 9.8c1.6 0 2.7 1.5 2.7 3.7"/>',
+  union: '<path d="M2 12.5h12"/><path d="M3.2 12.5a4.8 4.8 0 0 1 9.6 0"/><path d="M6.8 8V5h2.4v3"/>',
+  advocacy: '<path d="M2.5 6.5h2.5l6-3.5v10l-6-3.5H2.5z"/><path d="M5 9.5l1 4"/>',
+  civic: '<path d="M2 6l6-3.5L14 6"/><path d="M2.5 13.5h11"/><path d="M4.5 7.5v4M8 7.5v4M11.5 7.5v4"/>',
+};
+const glyph = (t) => `<svg class="gl" viewBox="0 0 16 16" aria-hidden="true">${GLYPH[t]}</svg>`;
+const QM = '<svg class="qm" viewBox="0 0 12 12" aria-label="gave reasons" role="img"><path d="M1 7.5C1 5 2.2 3.2 4.6 2.5l.4.9C3.8 4 3.2 4.9 3.1 6H5v4H1zM7 7.5C7 5 8.2 3.2 10.6 2.5l.4.9C9.8 4 9.2 4.9 9.1 6H11v4H7z"/></svg>';
+const FILL = { yes: "var(--yes-fill)", no: "var(--no-fill)", c1: "var(--bar-1)", c2: "var(--bar-2)", c3: "var(--bar-3)", c4: "var(--bar-4)", other: "var(--other)" };
+const LEAD_INK = { yes: "var(--yes)", no: "var(--no)", split: "var(--split)" };
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const plural = (n, one, many = one + "s") => `${n} ${n === 1 ? one : many}`;
+const surname = (n) => n.split(" ").slice(1).join(" ") || n;
+const pct = (a, b) => Math.round((a / b) * 100);
+
+// ---------- model ----------
+// Same rules as the site: published guides only; quotes only where the guide gives reasoning;
+// candidate colors = top 4 by count, slotted in ballot order (lib/bar.ts slotsFromCounts).
+function model(c) {
+  const rows = c.rows;
+  const orderGuides = (rs) => {
+    const quoted = rs.filter((r) => r.quotes.length);
+    const rest = rs.filter((r) => !r.quotes.length).sort((a, b) => a.name.localeCompare(b.name, "en"));
+    return [...quoted, ...rest];
+  };
+  let sides;
+  if (c.kind === "measure") {
+    sides = [
+      { key: "Y", label: "Yes", tone: "yes", why: "Reasons for" },
+      { key: "N", label: "No", tone: "no", why: "Reasons against" },
+    ];
+  } else {
+    const counts = {};
+    for (const r of rows) for (const p of r.picks) counts[p] = (counts[p] || 0) + 1;
+    const order = (n) => c.candidates.indexOf(n);
+    const byCount = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || order(a) - order(b));
+    const kept = byCount.slice(0, 4).sort((a, b) => order(a) - order(b));
+    const tone = {};
+    kept.forEach((n, i) => (tone[n] = "c" + (i + 1)));
+    byCount.slice(4).forEach((n) => (tone[n] = "other"));
+    sides = byCount.map((n) => ({ key: n, label: n, short: surname(n), tone: tone[n], why: `Why guides back ${n}` }));
+  }
+  for (const s of sides) {
+    s.guides = orderGuides(rows.filter((r) => r.picks.includes(s.key)));
+    s.count = s.guides.length;
+    // one quote per guide before any guide's second (stable sort by quote index)
+    s.quotes = s.guides.flatMap((g) => g.quotes.map((q, i) => ({ ...q, g, i }))).sort((a, b) => a.i - b.i);
+  }
+  if (c.kind === "measure") sides = sides.filter((s) => s.count > 0);
+  const total = rows.length;
+  const toneOf = Object.fromEntries(sides.map((s) => [s.key, s.tone]));
+  return { c, rows, sides, total, toneOf, multi: c.seats > 1, quotedGuides: rows.filter((r) => r.quotes.length) };
+}
+
+// ---------- shared pieces ----------
+function header(m, { inSheet }) {
+  const { c } = m;
+  const head = inSheet ? "" : `<div class="d-head"><p class="eyebrow">${esc(c.section)}</p><h2 class="title">${esc(c.title)}</h2>${c.description ? `<p class="desc">${esc(c.description)}</p>` : ""}</div>`;
+  return head + `<div class="result">${m.multi ? multiResult(m) : singleResult(m)}</div>` + (state.opt === "D" ? typeStrip(m) : "");
+}
+
+function singleResult(m) {
+  const [a, b] = m.sides;
+  const tie = b && a.count === b.count;
+  let lead;
+  if (m.c.kind === "measure") {
+    const win = tie ? null : (a.count > (b?.count ?? 0) ? a : b);
+    lead = win ? `<p class="lead" style="color:${LEAD_INK[win.tone]}">${win.label} ${pct(win.count, m.total)}%</p>` : `<p class="lead" style="color:var(--split)">Split</p>`;
+  } else {
+    lead = tie ? `<p class="lead">Split</p>` : `<p class="lead">${esc(a.label)} ${pct(a.count, m.total)}%</p>`;
+  }
+  const segs = m.sides.map((s) => `<i style="flex:${s.count};background:${FILL[s.tone]}" data-tip="${esc(s.label)}: ${s.count} of ${m.total} guides (${pct(s.count, m.total)}%)"></i>`).join("");
+  const leg = (s, right) => `<span>${right ? "" : `<i class="sw" style="background:${FILL[s.tone]}"></i>`}${esc(s.short ?? s.label)} <span class="n">${s.count}</span>${right ? `<i class="sw" style="background:${FILL[s.tone]}"></i>` : ""}</span>`;
+  return `<div class="lead-row">${lead}<span class="meta">${m.total} guides</span></div>
+    <div class="bar" role="img" aria-label="${m.sides.map((s) => `${esc(s.label)} ${s.count}`).join(", ")}">${segs}</div>
+    <div class="legend">${leg(a)}${b ? leg(b, true) : ""}</div>`;
+}
+
+function multiResult(m) {
+  const top = m.sides.slice(0, m.c.seats);
+  const rows = m.sides.map((s, i) => `<span class="nm${i < m.c.seats ? " top" : ""}">${esc(s.label)}</span>
+      <span class="trk" data-tip="${esc(s.label)}: ${s.count} of ${m.total} guides"><i style="width:${(s.count / m.total) * 100}%;background:${FILL[s.tone]}"></i></span>
+      <span class="ct">${s.count}</span>`).join("");
+  return `<div class="lead-row"><p class="lead">${top.map((s) => esc(s.label)).join(", ")}</p></div>
+    <p class="caption">Most endorsed for ${m.c.seats} seats. Each bar counts guides out of ${m.total}; guides pick up to ${m.c.seats}.</p>
+    <div class="seats">${rows}</div>`;
+}
+
+const chip = (g, { dotTone, picks, toneOf, quoted = true, type = true } = {}) =>
+  `<li class="chip" title="${esc(g.name)}, ${TYPE_ONE[g.type].toLowerCase()}">${dotTone ? `<i class="sw" style="background:${FILL[dotTone]};width:8px;height:8px"></i>` : ""}${type ? `<span class="g">${glyph(g.type)}</span>` : ""}${esc(g.short)}${picks ? `<span class="dots">${picks.map((p) => `<i style="background:${FILL[toneOf[p]]}"></i>`).join("")}</span>` : ""}${quoted && g.quotes.length ? `<span class="q">${QM}</span>` : ""}</li>`;
+
+function quote(q, tone, { slate, m, short = false } = {}) {
+  const sl = slate ? `<span class="slate">${q.g.picks.map((p) => `<span><i class="sw" style="background:${FILL[m.toneOf[p]]};width:8px;height:8px"></i>${esc(surname(p))}</span>`).join("")}</span>` : "";
+  return `<li class="qt" style="border-color:${tone ? FILL[tone] : "var(--chip-line)"}"><blockquote>“${esc(q.text)}”</blockquote>
+    <p class="by"><b title="${esc(q.g.name)}">${glyph(q.g.type)}${esc(short ? q.g.short : q.g.name)}</b>${sl}<a href="${esc(q.href)}" target="_blank" rel="noopener">Source</a></p></li>`;
+}
+
+function footer(m, { key = true } = {}) {
+  const present = TYPES.filter((t) => m.rows.some((r) => r.type === t));
+  const k = key ? `<p class="key">${present.map((t) => `<span>${glyph(t)}${TYPE_ONE[t]}</span>`).join("")}<span>${QM}Gave reasons</span></p>` : "";
+  const official = m.c.link ? `<a href="${esc(m.c.link)}" target="_blank" rel="noopener">Official measure text</a>. ` : "";
+  return `<div class="foot">${k}<p>${DATA.pending} guides haven't published yet. ${official}<a href="#">Open contest page</a></p></div>`;
+}
+
+// expandable list: first n items, then a button that reveals the rest
+let uid = 0;
+function expandable(items, n, label, { ulClass = "quotes" } = {}) {
+  const id = "x" + uid++;
+  const shown = items.slice(0, n).join("");
+  const hidden = items.slice(n);
+  const btn = hidden.length ? `<button class="textbtn" data-reveal="${id}" aria-expanded="false">${label(hidden.length)}</button>` : "";
+  return `<ul class="${ulClass}">${shown}</ul>${hidden.length ? `<ul class="${ulClass}" id="${id}" hidden>${hidden.join("")}</ul>` : ""}${btn}`;
+}
+
+// ---------- option A: breakdown by guide type ----------
+function optionA(m, vp) {
+  let breakdown;
+  const present = TYPES.filter((t) => m.rows.some((r) => r.type === t));
+  if (!m.multi) {
+    const [a, b] = m.sides;
+    const per = present.map((t) => {
+      const gs = m.rows.filter((r) => r.type === t);
+      return { t, gs, a: gs.filter((g) => g.picks.includes(a.key)), b: b ? gs.filter((g) => g.picks.includes(b.key)) : [] };
+    });
+    const max = Math.max(...per.map((p) => p.gs.length));
+    const colHead = (s) => `<span class="c"><i class="sw" style="background:${FILL[s.tone]}"></i>${esc(s.short ?? s.label)}</span>`;
+    const hd = `<div class="trow hd"><span></span><span></span>${colHead(a)}${b ? colHead(b) : "<span></span>"}</div>`;
+    const lines = per.map((p) => {
+      const seg = (gs, s) => gs.length ? `<i style="width:${(gs.length / max) * 100}%;background:${FILL[s.tone]}" data-tip="${TYPE_PLURAL[p.t]}: ${gs.length} ${esc(s.short ?? s.label)}"></i>` : "";
+      const chips = [...p.a.map((g) => chip(g, { dotTone: a.tone, type: false })), ...p.b.map((g) => chip(g, { dotTone: b.tone, type: false }))].join("");
+      return `<div class="trow"><span class="tn">${glyph(p.t)}${TYPE_PLURAL[p.t]}</span>
+        <span class="mb">${seg(p.a, a)}${b ? seg(p.b, b) : ""}</span>
+        <span class="v${p.a.length ? "" : " z"}">${p.a.length}</span><span class="v${p.b.length ? "" : " z"}">${b ? p.b.length : ""}</span>
+        <ul class="chips">${chips}</ul></div>`;
+    }).join("");
+    // wide name columns (candidates) need more room than Yes/No
+    const wide = m.c.kind === "candidate" ? (vp === "phone" ? "grid-template-columns:minmax(0,1fr) 56px 56px 48px" : "grid-template-columns:minmax(0,1fr) 140px 64px 56px") : "";
+    breakdown = `<div class="types"${wide ? ` style="--cols:1"` : ""}>${(hd + lines).replace(/class="trow( hd)?"/g, (x) => wide ? `${x} style="${wide}"` : x)}</div>`;
+  } else {
+    // multi-seat: candidates x guide types, cell = guides of that type picking the candidate
+    const totals = Object.fromEntries(present.map((t) => [t, m.rows.filter((r) => r.type === t).length]));
+    const head = `<tr><th>Candidate</th>${present.map((t) => `<th title="${TYPE_PLURAL[t]}">${glyph(t)}${vp === "phone" ? TYPE_ABBR[t] : TYPE_ABBR[t]}<br>${totals[t]}</th>`).join("")}</tr>`;
+    const body = m.sides.map((s) => `<tr><td><span><i class="sw" style="background:${FILL[s.tone]}"></i>${esc(vp === "phone" ? s.short : s.label)}</span></td>${present.map((t) => {
+      const n = s.guides.filter((g) => g.type === t).length;
+      const share = n / totals[t];
+      const bg = n ? `oklch(from var(--fg) l c h / ${(0.06 + share * 0.5).toFixed(2)})` : "transparent";
+      const ink = share > 0.6 ? "var(--card)" : n ? "var(--fg)" : "var(--muted)";
+      return `<td><span class="cell" style="background:${bg};color:${ink}" data-tip="${esc(s.short)}: ${n} of ${totals[t]} ${TYPE_PLURAL[t].toLowerCase()}">${n || "–"}</span></td>`;
+    }).join("")}</tr>`).join("");
+    const groups = present.map((t) => {
+      const gs = m.rows.filter((r) => r.type === t).sort((x, y) => x.short.localeCompare(y.short, "en"));
+      return `<div class="sec" style="gap:8px"><p class="sub-h">${glyph(t)}${TYPE_PLURAL[t]} <span class="n">${gs.length}</span></p><ul class="chips">${gs.map((g) => chip(g, { picks: g.picks, toneOf: m.toneOf, type: false })).join("")}</ul></div>`;
+    }).join("");
+    breakdown = `<table class="matrix">${head}${body}</table><p class="caption">Darker cells: a larger share of that guide type picked the candidate.</p></div>
+      <div class="sec"><h3 class="sec-h">Who, by type</h3><div class="sec" style="gap:16px">${groups}</div>`;
+  }
+  return `<div class="sec"><h3 class="sec-h">By guide type</h3>${breakdown}</div>${reasonsBySide(m)}`;
+}
+
+function reasonsBySide(m) {
+  if (m.multi) {
+    const items = m.quotedGuides.flatMap((g) => g.quotes.map((q) => quote({ ...q, g }, null, { slate: true, m })));
+    return `<div class="sec"><h3 class="sec-h">Reasons <span class="n">${plural(items.length, "quote")} from ${plural(m.quotedGuides.length, "guide")}</span></h3>${expandable(items, 3, (n) => `Show ${n} more`)}</div>`;
+  }
+  const blocks = m.sides.map((s) => {
+    if (!s.quotes.length) return `<div class="sec" style="gap:12px"><p class="sub-h"><i class="sw" style="background:${FILL[s.tone]}"></i>${esc(s.why)}</p><p class="empty">None of the ${plural(s.count, "guide")} that picked ${esc(s.short ?? s.label)} gave reasons.</p></div>`;
+    const items = s.quotes.map((q) => quote(q, s.tone));
+    return `<div class="sec" style="gap:16px"><p class="sub-h"><i class="sw" style="background:${FILL[s.tone]}"></i>${esc(s.why)} <span class="n">${s.quotes.length}</span></p>${expandable(items, 2, (n) => `Show ${n} more`)}</div>`;
+  }).join("");
+  return `<div class="sec" style="gap:32px">${blocks}</div>`;
+}
+
+// ---------- option B: sides with their strongest reasons ----------
+// "Strongest" here is a rule, not an editorial call: one quote per guide, guides of different
+// types first, quotes under 200 characters preferred, then data order.
+function pickReasons(s, n) {
+  const byGuide = s.guides.filter((g) => g.quotes.length).map((g) => {
+    const short = g.quotes.find((q) => q.text.length <= 200) ?? g.quotes[0];
+    return { ...short, g };
+  });
+  const out = [], seen = new Set();
+  for (const q of byGuide) if (out.length < n && !seen.has(q.g.type)) { out.push(q); seen.add(q.g.type); }
+  for (const q of byGuide) if (out.length < n && !out.includes(q)) out.push(q);
+  return out;
+}
+function optionB(m) {
+  if (m.multi) {
+    const blocks = m.sides.map((s) => {
+      const named = s.quotes.find((q) => new RegExp(`\\b${s.short}\\b`).test(q.text));
+      const chips = s.guides.map((g) => chip(g, { quoted: true }));
+      return `<section class="side"><h3 class="side-h"><i class="sw sq" style="background:${FILL[s.tone]}"></i>${esc(s.label)}<span class="n">${plural(s.count, "guide")}</span></h3>
+        ${expandable(chips, 6, (n) => `+${n} more`, { ulClass: "chips" })}
+        ${named ? `<ul class="quotes">${quote(named, s.tone)}</ul>` : ""}</section>`;
+    }).join("");
+    const all = m.quotedGuides.flatMap((g) => g.quotes.map((q) => quote({ ...q, g }, null, { slate: true, m })));
+    return `<div class="sec" style="gap:0">${blocks}</div>
+      <div class="sec"><h3 class="sec-h">All reasons <span class="n">${all.length}</span></h3>${expandable(all, 0, (n) => `Show all ${n} reasons`)}</div>`;
+  }
+  const blocks = m.sides.map((s) => {
+    const top = pickReasons(s, 2);
+    const rest = s.quotes.filter((q) => !top.some((t) => t.text === q.text && t.g.id === q.g.id));
+    const chips = s.guides.map((g) => chip(g)).join("");
+    const reasons = s.quotes.length
+      ? `<p class="reasons-h">Reasons</p><ul class="quotes">${top.map((q) => quote(q, s.tone)).join("")}</ul>${rest.length ? expandable(rest.map((q) => quote(q, s.tone)), 0, (n) => `All reasons (${s.quotes.length})`) : ""}`
+      : `<p class="empty">None of the ${plural(s.count, "guide")} that picked ${esc(s.short ?? s.label)} gave reasons.</p>`;
+    return `<section class="side"><h3 class="side-h"><i class="sw sq" style="background:${FILL[s.tone]}"></i>${esc(s.label)}<span class="n">${plural(s.count, "guide")}</span></h3>
+      <ul class="chips">${chips}</ul>${reasons}</section>`;
+  }).join("");
+  return `<div class="sec" style="gap:0">${blocks}</div>`;
+}
+
+
+// ---------- option D: B's sides + a compact by-type strip under the bar ----------
+const TYPE_STRIP = { newspaper: "Papers", party: "Parties", club: "Clubs", union: "Unions", advocacy: "Advocacy", civic: "Civic" };
+function typeStrip(m) {
+  const present = TYPES.filter((t) => m.rows.some((r) => r.type === t));
+  const per = present.map((t) => ({ t, gs: m.rows.filter((r) => r.type === t) }));
+  let cells;
+  if (!m.multi) {
+    const max = Math.max(...per.map((p) => p.gs.length));
+    cells = per.map(({ t, gs }) => {
+      const n = m.sides.map((s) => gs.filter((g) => g.picks.includes(s.key)).length);
+      const tipTxt = m.sides.map((s, i) => `${n[i]} ${s.short ?? s.label}`).join(", ");
+      const segs = m.sides.map((s, i) => n[i] ? `<i style="width:${(n[i] / max) * 100}%;background:${FILL[s.tone]}"></i>` : "").join("");
+      return `<li title="${TYPE_PLURAL[t]}: ${esc(tipTxt)}" data-tip="${TYPE_PLURAL[t]}: ${esc(tipTxt)}"><span class="l1"><span class="g" style="color:var(--muted);display:inline-flex">${glyph(t)}</span><span class="tl">${TYPE_STRIP[t]}</span><span class="v">${n.join("–")}</span></span><span class="mb">${segs}</span></li>`;
+    }).join("");
+  } else {
+    const top = m.sides.slice(0, m.c.seats);
+    cells = per.map(({ t, gs }) => {
+      const n = top.map((s) => gs.filter((g) => g.picks.includes(s.key)).length);
+      const tipTxt = top.map((s, i) => `${n[i]} ${s.short}`).join(", ") + ` of ${gs.length}`;
+      return `<li data-tip="${TYPE_PLURAL[t]}: ${esc(tipTxt)}"><span class="l1"><span class="g" style="color:var(--muted);display:inline-flex">${glyph(t)}</span><span class="tl">${TYPE_STRIP[t]}</span><span class="v m">${gs.length}</span></span>
+        <span class="tri">${top.map((s, i) => `<span${n[i] ? "" : ' class="z"'}><i class="sw" style="background:${FILL[s.tone]};width:8px;height:8px"></i>${n[i]}</span>`).join("")}</span></li>`;
+    }).join("");
+  }
+  const cap = m.multi ? `By guide type: guides backing the top ${m.c.seats}, out of each type's total` : `By guide type`;
+  return `<div class="strip"><p class="caption">${cap}</p><ul class="strip-grid">${cells}</ul></div>`;
+}
+function optionD(m) { return optionB(m); }
+
+
+// ---------- option E: C's tabs; Who gets D's strip, Why is one roomy column ----------
+let eSeg = null; // remembered across contests when the key exists there (Y/N carry across measures)
+function eSegments(m) {
+  if (m.c.kind === "measure") return m.sides.map((s) => ({ key: s.key, label: s.key === "Y" ? "For" : "Against", tone: null, guides: s.guides }));
+  if (!m.multi) return m.sides.map((s) => ({ key: s.key, label: s.label, short: s.short, tone: s.tone, guides: s.guides }));
+  const top = m.sides.slice(0, m.c.seats).map((s) => ({ key: s.key, label: s.short, tone: s.tone, guides: s.guides }));
+  const rest = new Set(m.sides.slice(m.c.seats).map((s) => s.key));
+  return [...top, { key: "__others", label: "Others", tone: "other", guides: m.rows.filter((r) => r.picks.some((p) => rest.has(p))) }];
+}
+// keep the quote mark glued to the last word so it never wraps alone
+const nameWithMark = (n) => { const i = n.lastIndexOf(" "); return `${esc(n.slice(0, i + 1))}<span style="white-space:nowrap">${esc(n.slice(i + 1))}<span class="qm">${QM}</span></span>`; };
+function optionE(m, vp) {
+  const nq = m.rows.reduce((n, r) => n + r.quotes.length, 0);
+  const tabs = `<div class="tabs" role="tablist" aria-label="Detail view">
+    <button role="tab" aria-selected="${cTab === "who"}" data-tab="who">Who<span class="n">${m.total} guides</span></button>
+    <button role="tab" aria-selected="${cTab === "why"}" data-tab="why">Why<span class="n">${nq} reasons</span></button></div>`;
+  let body;
+  if (cTab === "who") {
+    let list;
+    if (m.multi) {
+      const slates = {};
+      const rank = (p) => m.sides.findIndex((s) => s.key === p);
+      for (const r of m.rows) { const k = [...r.picks].sort((a, b) => rank(a) - rank(b)).join("|"); (slates[k] ??= []).push(r); }
+      list = `<div class="slates">${Object.entries(slates).sort((a, b) => b[1].length - a[1].length).map(([k, gs]) => `<div class="slate-row"><div class="slate-h">${k.split("|").map((p) => `<span><i class="sw" style="background:${FILL[m.toneOf[p]]}"></i>${esc(surname(p))}</span>`).join("")}<span class="n">${plural(gs.length, "guide")}</span></div>
+        <ul class="chips">${gs.map((g) => chip(g)).join("")}</ul></div>`).join("")}</div>`;
+    } else {
+      list = `<div class="cols">${m.sides.map((s) => `<div class="col"><p class="col-h" style="border-color:${FILL[s.tone]}">${esc(vp === "phone" ? (s.short ?? s.label) : s.label)}<span class="n">${s.count}</span></p>
+        <ul class="glist">${s.guides.map((g) => `<li title="${esc(g.name)}, ${TYPE_ONE[g.type].toLowerCase()}"><span class="g">${glyph(g.type)}</span><span class="nm">${g.quotes.length ? nameWithMark(g.short) : esc(g.short)}</span></li>`).join("")}</ul></div>`).join("")}</div>`;
+    }
+    body = `<div class="e-who">${typeStrip(m)}${m.multi ? `<div class="sec" style="gap:12px"><p class="caption">Guides grouped by the slate they picked.</p>${list}</div>` : list}</div>`;
+  } else {
+    const segs = eSegments(m);
+    const lead = segs.reduce((a, b) => (b.guides.length > a.guides.length ? b : a), segs[0]);
+    const cur = segs.find((x) => x.key === eSeg) ?? lead;
+    const qcount = (sg) => sg.guides.reduce((n, g) => n + g.quotes.length, 0);
+    const ctl = `<div class="segs" role="group" aria-label="Whose reasons">${segs.map((sg) => `<button aria-pressed="${sg === cur}" data-seg="${esc(sg.key)}">${sg.tone ? `<i class="sw" style="background:${FILL[sg.tone]}"></i>` : ""}${esc(vp === "phone" && sg.short ? sg.short : sg.label)}<span class="n">(${qcount(sg)})</span></button>`).join("")}</div>`;
+    const tone = cur.tone ?? (cur.key === "Y" ? "yes" : "no");
+    const quoted = cur.guides.filter((g) => g.quotes.length);
+    const list = quoted.length ? `<ul class="why-list">${quoted.map((g) => {
+      const [first, ...more] = g.quotes.map((q) => ({ ...q, g }));
+      const opts = m.multi ? { slate: true, m } : {};
+      const id = "e" + uid++;
+      return `<li><ul class="quotes">${quote(first, tone, opts)}</ul>${more.length ? `<ul class="extra" id="${id}" hidden>${more.map((q) => quote(q, tone, opts)).join("")}</ul><button class="more" data-reveal="${id}">+${more.length} more from ${esc(g.short)}</button>` : ""}</li>`;
+    }).join("")}</ul>` : `<p class="empty">No guide on this side published reasons.</p>`;
+    body = `<div class="sec" style="gap:24px">${ctl}${list}</div>`;
+  }
+  return `<div class="sec">${tabs}<div role="tabpanel">${body}</div></div>`;
+}
+
+// ---------- option C: who / why tabs ----------
+let cTab = "who";
+function optionC(m, vp) {
+  const nq = m.rows.reduce((n, r) => n + r.quotes.length, 0);
+  const tabs = `<div class="tabs" role="tablist" aria-label="Detail view">
+    <button role="tab" aria-selected="${cTab === "who"}" data-tab="who">Who<span class="n">${m.total} guides</span></button>
+    <button role="tab" aria-selected="${cTab === "why"}" data-tab="why">Why<span class="n">${nq} reasons</span></button></div>`;
+  let body;
+  if (cTab === "who") {
+    if (m.multi) {
+      const slates = {};
+      for (const r of m.rows) { const k = [...r.picks].sort((a, b) => m.sides.findIndex((s) => s.key === a) - m.sides.findIndex((s) => s.key === b)).join("|"); (slates[k] ??= []).push(r); }
+      const list = Object.entries(slates).sort((a, b) => b[1].length - a[1].length).map(([k, gs]) => `<div class="slate-row"><div class="slate-h">${k.split("|").map((p) => `<span><i class="sw" style="background:${FILL[m.toneOf[p]]}"></i>${esc(surname(p))}</span>`).join("")}<span class="n">${plural(gs.length, "guide")}</span></div>
+        <ul class="chips">${gs.map((g) => chip(g)).join("")}</ul></div>`).join("");
+      body = `<div class="sec"><p class="caption">Guides grouped by the slate they picked.</p><div class="slates">${list}</div></div>`;
+    } else {
+      body = `<div class="cols">${m.sides.map((s) => `<div class="col"><p class="col-h" style="border-color:${FILL[s.tone]}">${esc(vp === "phone" ? (s.short ?? s.label) : s.label)}<span class="n">${s.count}</span></p>
+        <ul class="glist">${s.guides.map((g) => `<li title="${esc(g.name)}, ${TYPE_ONE[g.type].toLowerCase()}"><span class="g">${glyph(g.type)}</span><span class="nm">${esc(g.short)}</span>${g.quotes.length ? `<span class="qm">${QM}</span>` : ""}</li>`).join("")}</ul></div>`).join("")}</div>`;
+    }
+  } else {
+    if (m.multi) {
+      const items = m.quotedGuides.flatMap((g) => g.quotes.map((q) => quote({ ...q, g }, null, { slate: true, m })));
+      body = `<ul class="quotes">${items.join("")}</ul>`;
+    } else {
+      body = `<div class="cols why">${m.sides.map((s) => `<div class="col" style="gap:16px"><p class="col-h" style="border-color:${FILL[s.tone]}">${esc(m.c.kind === "measure" ? (s.key === "Y" ? "For" : "Against") : s.label)}<span class="n">${s.quotes.length}</span></p>
+        ${s.quotes.length ? expandable(s.quotes.map((q) => quote(q, null, { short: vp !== "phone" })), 4, (n) => `Show ${n} more`) : `<p class="empty">None of the ${plural(s.count, "guide")} that picked ${esc(s.short ?? s.label)} gave reasons.</p>`}</div>`).join("")}</div>`;
+    }
+  }
+  return `<div class="sec">${tabs}<div role="tabpanel">${body}</div></div>`;
+}
+
+// ---------- render ----------
+const OPTS = {
+  A: ["Breakdown by guide type", "Organized by <b>who the guides are</b>. One row per guide type with its split and the guides in it, then reasons by side."],
+  B: ["Sides with reasons", "Organized by <b>pick</b>. Each side gets its guides as chips and up to two reasons (one per guide, mixed types, chosen by rule, not ranked), with the rest behind “All reasons”."],
+  E: ["Tabs, roomier", "C's Who / Why tabs. <b>Who</b> opens with the by-type strip, then short-name columns (slates for multi-seat). <b>Why</b> is one full-width column with a toggle per side; the tab and side you pick stick as you switch contests."],
+  D: ["Hybrid: sides + type strip", "B's per-side blocks, plus <b>one compact by-type strip</b> under the headline bar: each guide type's split on a shared scale (top 3 candidates for multi-seat races)."],
+  C: ["Who / Why tabs", "Organized by <b>question</b>. A segmented control switches between who endorsed each side and the reasons they gave, side by side on desktop."],
+};
+const CONTESTS = { "prop-b": "Prop B (split)", "prop-c": "Prop C (near-unanimous)", "us-rep-11": "US Rep 11", "board-of-education": "Board of Ed (3 seats)" };
+const qs = new URLSearchParams(location.search);
+const state = {
+  opt: qs.get("opt") ?? "A",
+  c: qs.get("c") ?? "prop-b",
+  vp: qs.get("vp") ?? "desktop",
+  theme: qs.get("theme") ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+};
+if (qs.get("tab")) cTab = qs.get("tab");
+if (qs.get("seg")) eSeg = qs.get("seg");
+
+function seg(id, opts, key) {
+  document.getElementById(id).innerHTML = Object.entries(opts).map(([k, v]) => `<button aria-pressed="${state[key] === k}" data-k="${key}" data-v="${k}">${v}</button>`).join("");
+}
+function render() {
+  document.documentElement.dataset.theme = state.theme;
+  seg("ctl-opt", { A: "A  By type", B: "B  Sides", C: "C  Who / Why", D: "D  Hybrid", E: "E  Tabs, roomier" }, "opt");
+  seg("ctl-c", CONTESTS, "c");
+  seg("ctl-vp", { desktop: "Desktop pane", phone: "Phone sheet" }, "vp");
+  seg("ctl-theme", { light: "Light", dark: "Dark" }, "theme");
+  document.getElementById("optnote").innerHTML = `<b>${state.opt}. ${OPTS[state.opt][0]}.</b> ${OPTS[state.opt][1]}`;
+  const m = model(DATA.contests[state.c]);
+  const phone = state.vp === "phone";
+  uid = 0;
+  const body = state.opt === "A" ? optionA(m, state.vp) : state.opt === "B" ? optionB(m, state.vp) : state.opt === "D" ? optionD(m) : state.opt === "E" ? optionE(m, state.vp) : optionC(m, state.vp);
+  const close = `<button class="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button>`;
+  const sheetHead = phone ? `<div class="grab"></div><div class="d-head" style="margin-bottom:24px"><p class="eyebrow">${esc(m.c.section)}</p><h2 class="title">${esc(m.c.title)}</h2>${m.c.description ? `<p class="desc">${esc(m.c.description)}</p>` : ""}</div>` : "";
+  document.getElementById("frame").innerHTML = `<div class="${phone ? "sheet" : "pane"}" id="panel">${close}${sheetHead}<div class="d">${header(m, { inSheet: phone })}${body}${footer(m)}</div></div>`;
+  const u = new URL(location); for (const [k, v] of Object.entries(state)) u.searchParams.set(k, v); u.searchParams.set("tab", cTab); if (eSeg) u.searchParams.set("seg", eSeg); history.replaceState(null, "", u);
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.k) { state[b.dataset.k] = b.dataset.v; render(); }
+  else if (b.dataset.tab) { cTab = b.dataset.tab; render(); }
+  else if (b.dataset.seg) { eSeg = b.dataset.seg; render(); }
+  else if (b.dataset.reveal) { document.getElementById(b.dataset.reveal).hidden = false; b.remove(); }
+});
+const tip = document.getElementById("tip");
+document.addEventListener("mouseover", (e) => {
+  const t = e.target.closest("[data-tip]");
+  if (!t) { tip.classList.remove("on"); return; }
+  const r = t.getBoundingClientRect();
+  tip.textContent = t.dataset.tip;
+  tip.style.left = r.left + r.width / 2 + "px";
+  tip.style.top = r.top - 6 + "px";
+  tip.classList.add("on");
+});
+render();
+</script>
+</body>
+</html>

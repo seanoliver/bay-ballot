@@ -1,0 +1,6 @@
+id: sf-examiner
+name: San Francisco Examiner
+shortName: "SF Examiner"
+description: A San Francisco newspaper whose editorial board endorses candidates and ballot measures.
+type: newspaper
+homepage: https://www.sfexaminer.com/

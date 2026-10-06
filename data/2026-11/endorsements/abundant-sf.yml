@@ -1,0 +1,106 @@
+guide: abundant-sf
+election: 2026-11
+status: published
+source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+extraSources:
+  - https://www.abundantsanfrancisco.org/vote
+archived:
+  - source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+    snapshot: https://web.archive.org/web/20261005220230/https://www.abundantsanfrancisco.org/vote/ballot-measures
+  - source: https://www.abundantsanfrancisco.org/vote
+    snapshot: https://web.archive.org/web/20261005220248/https://www.abundantsanfrancisco.org/vote
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-10:
+    pick:
+      - Theo Ellington
+  board-of-education:
+    pick:
+      - Phil Kim
+      - Autumn Brown Garibay
+      - Tim Tung
+  college-board:
+    pick:
+      - Elijah Ball
+      - Erwin Tam
+      - Monroe Lace
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  bart-8:
+    pick:
+      - Sara Barz
+  board-of-equalization-2:
+    pick:
+      - John Pimentel
+  rtm:
+    pick: Y
+    quotes:
+      - text: This measure is critical to saving Bay Area public transit – without it we will see catastrophic service cuts at BART, Muni and Caltrain, including entire lines being cut, station closures, and service ending at 9pm.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-a:
+    pick: Y
+    quotes:
+      - text: Civic participation in government is important but San Francisco has too many commissions and committees that create bottlenecks and unnecessary hearings.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+      - text: By eliminating and consolidating commissions and committees, this measure will improve efficiency while ensuring that residents can still participate in government in a meaningful and impactful way.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Building more affordable housing is a priority for Abundant and this was part of a deal to lower the inclusionary rate for new housing – a key barrier to building new homes.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-d:
+    pick: Y
+    quotes:
+      - text: While there are arguments for keeping the status quo in place, we believe that on balance this measure continues to provide access to the ballot for citizen-initiatives in line with other jurisdictions, while also driving the decisions around ballot measures to be more consensus driven.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-e:
+    pick: Y
+    quotes:
+      - text: This measure strengthens the City Administrator’s Office and consolidates contracting provisions to improve and speed up how the city procures services.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+      - text: San Francisco has made strides in improving its permitting and contracting – expanding on that work is important to build trust with the public and improve outcomes for residents.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-f:
+    pick: Y
+    quotes:
+      - text: This measure gives the Mayor more flexibility to manage the structure of City Departments and to be a more effective administrator.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+      - text: Our charter should set clear values and broad responsibilities, while empowering our leaders to be nimble and responsive to the needs of the city.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-g:
+    pick: N
+    quotes:
+      - text: Sunset Dunes park is already one of the most visited parks on the west coast of the United States.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+      - text: Closing this park would take away an incredible open space for San Francisco residents, seniors, and families.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+      - text: We should be advocating for more parks – not trying to close them down.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-h:
+    pick: Y
+    quotes:
+      - text: This measure is a parcel tax that will prevent Muni from having to cut service by 30%, double wait times, eliminate entire bus lines, and end night service.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
+  prop-j:
+    pick: Y

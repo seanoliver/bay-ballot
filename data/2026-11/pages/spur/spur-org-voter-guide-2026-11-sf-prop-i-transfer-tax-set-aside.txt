@@ -1,0 +1,74 @@
+SF Prop H Guide SF Prop J
+​ Print Voter Guide
+Prop
+I
+SF
+Prop I
+Ordinance
+Changes to Real Property Transfer Tax
+Permanently dedicates a portion of transfer tax revenues from property transactions valued at $10 million or more to specific affordable housing and tenant protection programs.
+SPUR's Recommendation
+SPUR strongly supports expanding funding for affordable housing and appreciates the measure’s targeted exemptions for qualified housing projects. However, Prop. I would permanently dedicate a significant portion of General Fund revenue at a time when San Francisco faces a structural deficit exceeding $1 billion in just a few years. This diversion would reduce General Fund revenue available for core services, including fire, police, public health, and children's programs.
+Prop. I would also remove the Board of Supervisors’ authority to adjust the transfer tax and the flexibility to respond to evolving housing needs. While Prop. I allows certain legislative amendments that further the purposes of the House SF Fund, the scope of the board’s amendment authority is unclear.
+The transfer tax has been identified as a significant impediment to real estate investment and downtown recovery. Although this measure provides relief for some types of residential projects, commercial real estate projects would still face high transfer taxes. Weighing all these factors, we believe Prop. I could do more harm than good.
+Vote NO
+What Prop. I Would Do
+Proposition I would reduce the current real estate transfer tax rates for property transactions valued at $10 million or more, impose a new tax on these transactions instead, and funnel that money into a fund for specific affordable housing programs.
+The transfer tax rates would be halved for properties valued between $10 million and $25 million, from 5.5% to 2.75%, and for property transactions over $25 million, from 6% to 3%.
+The measure would then apply a new “House SF” tax of 2.75% on properties valued between $10 million and $25 million and 3% on transactions over $25 million.
+The resulting House SF Fund would dedicate revenues as follows:
+No less than 60% for affordable housing production, with at least half of that dedicated to alternative models for permanent affordable housing, such as social housing, community land trusts, and limited-equity cooperatives
+No less than 25% for affordable housing preservation and acquisition, with at least 60% of which would be dedicated to acquisitions
+No less than 10% for tenant protections and homelessness prevention, at least half of which would be dedicated to eviction defense and prevention
+Up to 5% for administration
+The House SF transfer tax offers an exemption for new multi-unit properties that meet certain requirements.
+According to the San Francisco Controller’s Office, this measure would redirect $114 million annually beginning in fiscal year 2026–2027 from the General Fund into this new fund. By 2030, that annual amount is projected to exceed $124 million.1
+Prop. I would also remove the Board of Supervisors’ existing authority to modify the transfer tax. Under this measure, the supervisors could enact amendments without voter approval only if they are “consistent with the stated purposes of the new transfer tax” and comply with other restrictions, including exempting rent-restricted affordable housing.2
+The Backstory
+San Francisco charges a real estate transfer tax when commercial and residential properties are sold. Transfer tax revenues go into the General Fund, meaning they cannot be designated for a specific purpose.
+In 2020, voters approved Prop. I, which doubled San Francisco’s property transfer tax rate on commercial and residential properties valued between $10 million and $25 million from 2.75% to 5.5%, and on properties valued at $25 million or more from 3% to 6%. The Board of Supervisors then voted to dedicate the additional revenues from the tax increase to rent relief and social housing, but the vote was not binding.3 Prop. I seeks to make this commitment permanent by dedicating a portion of transfer tax revenues to affordable housing.
+Transfer tax revenue fluctuates with the strength of the economy and the number of real estate transactions, as shown in the graph below.
+Rate-Adjusted Real Property Transfer Tax Revenue, Actual and Projected (in millions)
+Transfer tax revenue fluctuates with the economy, making it an unstable income source.
+[SF Prop I]
+Source: “Five Year Financial Plan Update: FY 2026-27 through FY 2029-30,” City and County of San Francisco, p. 18.
+Recognizing that transfer taxes were a barrier to the post-pandemic recovery of the real estate market, voters passed Proposition C in 2024, exempting up to 5 million square feet of commercial-to-residential conversion projects from the transfer tax. Prop. C also enabled the city to make legislative changes to the tax through the Board of Supervisors, rather than sending proposed amendments to voters.
+Another measure on the ballot, Prop. C, also aims to address the shortage of affordable housing. Compared with Prop. C, Prop. I would divert more discretionary General Fund revenue from core city services, increasing the city's overall risk.
+Projected Annual Negative Fiscal Impact of Affordable Housing Measures4
+Both Prop. I and Prop. C would negatively affect San Francisco’s General Fund, but Prop. I’s impact would be more significant.
+Ballot Measure
+FY 2026–2027
+FY 2027–2028
+FY 2028–2029
+FY 2029–2030
+Prop C – Housing Trust Fund Charter Amendment
+$6.1 million
+$13.6 million
+Prop I –Transfer Tax Set Aside
+$114.1 million
+$117.3 million
+$120.4 million
+$123.6 million
+In March, the city controller projected long-term General Fund structural shortfalls to be $1.1 billion by 2030.5 Prop. I would increase that figure by $475 million over the next four years.
+Prop. I is a citizens’ initiative and was placed on the ballot through a signature-gathering drive. It requires a simple majority (50% plus one vote) to pass.
+Equity Impacts
+Funding affordable housing production, preservation, and tenant protections will greatly benefit lower-income households, including many Black and Latinx households, seniors, people with disabilities, and single-parent households.
+At the same time, redirecting these revenues from the General Fund will reduce funding for other programs that disproportionately serve low-income residents, including public safety, homelessness services, public health, human services, and other support programs targeted to low-income children and families in San Francisco.6
+Pros
+Prop. I creates a dedicated funding source for affordable housing that can’t be redirected during annual budget deliberations.
+The measure offers an exemption that would significantly reduce transfer taxes for the first sale of certain qualifying new multifamily housing projects over $10 million.
+Cons
+Prop. I removes the Board of Supervisors’ authority to reduce, suspend, or repeal transfer taxes, limiting its ability to respond to changing fiscal conditions and needs.
+The measure reduces available annual General Fund revenues by between $114 million and $124 million, with no exceptions during fiscal deficits, which would significantly strain the city’s ability to allocate resources to other services.7
+It directs spending to highly specific programs and establishes minimum allocations. The measure states that half of the housing production funding would go to alternative models, some of which are less proven than conventional models. This requirement could reduce the city's ability to finance traditional affordable housing projects. Although the measure contains amendment provisions, it is unclear how much discretion future policymakers would have to adjust those allocations.8
+Transfer tax revenues are highly volatile, making funding levels less predictable and potentially complicating affordable housing financing.
+Vote NO on Prop I - Transfer Tax Set-Aside
+Footnotes
+1 Office of the Controller, Budget and Analysis Division, “FY2026-2027 and FY 2027-2028 Revenue Letter,” City and County of San Francisco, p. 8.
+2 City Attorney’s Office, “Changes to Real Property Transfer Tax,” City and County of San Francisco.
+3 “Supporting the Intent to Fund COVID -19 Rent Resolution and Relief Fund and Social Housing Program Fund,” City and County of San Francisco Board of Supervisors, .
+4 Office of the Controller Budget and Analysis Division. “FY2026–2027 and FY 2027–2028 Revenue Letter.” City and County of San Francisco, p. 8.
+5 Board of Supervisors’ Budget and Legislative Analyst, Mayor’s Budget Director and Controller, “Budget Outlook Update: March Five Year Update,” City and County of San Francisco, .
+6 Nicole Neditch, “Balancing San Francisco’s Budget, Part 2: Revenues and Expenditures,” SPUR, .
+7 Office of the Controller, Budget and Analysis Division, “FY2026–2027 and FY 2027–2028 Revenue Letter,” City and County of San Francisco, p. 28.
+8 A Board-initiated amendment of the House SF tax requires that it further or facilitate stated purposes.
