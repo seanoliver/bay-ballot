@@ -21,6 +21,9 @@ Then the workflow:
   - Error (exit 1, e.g. a page failed to load): the run is marked failed. If anything else changed, its PR stays open too.
 - **One PR at a time:** while the refresh PR is open, each daily run starts from the `data/refresh` branch rather than `main`. Its stored page text and held picks are the baseline, so nothing is re-extracted twice. New changes are added as another commit, and the PR body is replaced with the latest summary plus a comment. Once a PR is labeled `needs-review` it is never auto-merged, even if a later run is clean; merge it by hand after review. If the PR is closed without merging, the next run deletes the leftover branch and starts again from `main`.
 
+- **Needs a person but nothing to commit:** an issue titled "Data refresh needs review" is opened, or updated if one is open, with the summary and a cc to Sean. Examples: a guide's picks shrank to under half, or a page failed to load. When a later run is clean, the issue is closed automatically.
+- **Shrunk guides:** the extraction is not written and the guide's page text is not stored. The issue keeps a hash of the guide's pages in a hidden `shrunk-state` comment. While that guide's pages hash the same, later runs report it as "shrunk earlier, pages unchanged since; not re-extracted" and make no model call. Once the page changes, it is re-extracted. To clear one by hand, fix the input, or delete its entry from the hidden comment.
+
 Nothing is ever pushed straight to `main`.
 
 **Run it by hand:** GitHub → Actions → Daily data refresh → Run workflow.

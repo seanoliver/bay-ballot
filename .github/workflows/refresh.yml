@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   group: data-refresh
@@ -17,6 +18,7 @@ concurrency:
 
 env:
   BRANCH: data/refresh
+  ISSUE_TITLE: Data refresh needs review
 
 jobs:
   refresh:
@@ -62,6 +64,18 @@ jobs:
       - name: Install Chromium for browser-fetched guides
         run: npx playwright install --with-deps chromium
 
+      # Guides whose picks shrank are reported in an issue with a hash of their pages. While
+      # those pages stay the same, later runs skip re-extracting them (no model call).
+      - name: Read the open review issue
+        id: issue
+        run: |
+          issue="$(gh issue list --state open --search "in:title \"$ISSUE_TITLE\"" --json number,title --jq "map(select(.title == env.ISSUE_TITLE)) | .[0].number // empty")"
+          echo "number=$issue" >> "$GITHUB_OUTPUT"
+          if [ -n "$issue" ]; then
+            gh issue view "$issue" --json body --jq .body \
+              | sed -n 's/^<!-- shrunk-state: \(.*\) -->$/\1/p' > shrunk-state.json
+          fi
+
       # Pages that changed only in dates, banners or text naming no contest are skipped
       # with no model call, so a quiet day costs nothing.
       - name: Refresh
@@ -70,7 +84,7 @@ jobs:
           BAYBALLOT_ANTHROPIC_API_KEY: ${{ secrets.BAYBALLOT_ANTHROPIC_API_KEY }}
         run: |
           set +e
-          npm run bb -- refresh --summary summary.md --result result.json
+          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json
           echo "code=$?" >> "$GITHUB_OUTPUT"
 
       # Commit only when endorsement data changed or a guide was re-extracted (its page text
@@ -135,6 +149,33 @@ jobs:
           gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
           gh pr edit "${{ steps.pr.outputs.pr }}" --add-label needs-review
           gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
+
+      # Anything that needs a person but produced no PR (shrunk guides, errors with no data
+      # change) goes to one issue, which also carries the shrunk-page hashes for the next run.
+      # When a run is clean and nothing is shrunk, an open review issue is closed.
+      - name: Open, update or close the review issue
+        if: always() && steps.refresh.outcome != 'skipped'
+        run: |
+          code="${{ steps.refresh.outputs.code }}"
+          issue="${{ steps.issue.outputs.number }}"
+          state="$(node -e "try { const r = require('./result.json'); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash])))) } catch { console.log('{}') }")"
+          if [ "$code" != "0" ] && { [ "${{ steps.changes.outputs.commit }}" != "true" ] || [ "$state" != "{}" ]; }; then
+            {
+              cat summary.md 2>/dev/null || echo "The refresh run failed before writing a summary: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+              echo
+              echo "cc @seanoliver"
+              echo
+              echo "<!-- shrunk-state: $state -->"
+            } > issue-body.md
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --body-file issue-body.md
+              gh issue comment "$issue" --body "Refresh run $(date -u +%F): exit code $code. Summary above is updated."
+            else
+              gh issue create --title "$ISSUE_TITLE" --body-file issue-body.md
+            fi
+          elif [ -n "$issue" ] && [ "$code" = "0" ]; then
+            gh issue close "$issue" --comment "Refresh run $(date -u +%F) was clean; closing."
+          fi
 
       - name: Fail the run on a refresh error
         if: steps.refresh.outputs.code == '1'

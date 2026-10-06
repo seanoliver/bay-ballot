@@ -12,14 +12,14 @@ import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
-import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { costOf, exitCodeFor, resultJson, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
-       npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--archive]
+       npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--archive]
        npm run bb -- verify <guide...> | --all [--browser]
        npm run bb -- pages --seed [<guide...>]
        npm run bb -- discover
@@ -44,7 +44,7 @@ the command exits non-zero when anything is held.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
-const VALUE_OPTIONS = ["--summary", "--result"];
+const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state"];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
 // The daily job extracts at most this many changed guides per run; the rest wait a day.
@@ -148,7 +148,7 @@ function refreshDeps(): RefreshDeps {
 
 function totalsLine(results: GuideResult[]): string {
   const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
-  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk")} need attention. Estimated model cost $${costOf(results).toFixed(2)}.`;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost $${costOf(results).toFixed(2)}.`;
 }
 
 async function runExtract(): Promise<void> {
@@ -173,6 +173,7 @@ async function runRefreshCmd(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION,
     browser: flag("--browser"), archive: flag("--archive"), maxChanged: REFRESH_BUDGET,
+    shrunkSkip: readShrunkState(option("--shrunk-state")),
   });
   const { errors } = validateElection(loadElection(ROOT, ELECTION));
   let md = summarize(results, { date: today() });
@@ -181,16 +182,22 @@ async function runRefreshCmd(): Promise<void> {
   const summaryPath = option("--summary");
   if (summaryPath) fs.writeFileSync(summaryPath, md);
   const resultPath = option("--result");
-  if (resultPath) {
-    const ids = (s: GuideResult["status"]) => results.filter((r) => r.status === s).map((r) => r.id);
-    fs.writeFileSync(
-      resultPath,
-      JSON.stringify({ exitCode: code, extracted: ids("changed"), deferred: ids("deferred"), failed: ids("failed") }, null, 2),
-    );
-  }
+  if (resultPath) fs.writeFileSync(resultPath, JSON.stringify(resultJson(results, code), null, 2));
   console.log(`\n${totalsLine(results)}`);
   errors.forEach((e) => console.error(`ERROR ${e}`));
   process.exitCode = code;
+}
+
+/** `{ "<guide>": "<page hash>" }` from an earlier run's shrunk report; missing or unreadable means none. */
+function readShrunkState(file: string | undefined): Record<string, string> | undefined {
+  if (!file || !fs.existsSync(file)) return undefined;
+  try {
+    const parsed: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (!parsed || typeof parsed !== "object") return undefined;
+    return Object.fromEntries(Object.entries(parsed).filter((e): e is [string, string] => typeof e[1] === "string"));
+  } catch {
+    return undefined;
+  }
 }
 
 async function runPages(): Promise<void> {

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
@@ -30,6 +31,9 @@ export type RefreshOptions = {
   forceExtract?: boolean; // extract even when no page changed
   verify?: boolean; // default true
   maxChanged?: number; // budget guard: extract at most this many guides per run
+  // Guides reported as shrunk earlier, with the hash of their pages then. If the pages still
+  // hash the same, the guide is not re-extracted (no model call); it stays reported.
+  shrunkSkip?: Record<string, string>;
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -39,7 +43,8 @@ export type GuideResult =
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
   | { id: string; status: "failed"; error: string }
-  | { id: string; status: "shrunk"; message: string; notes: string[] }
+  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string }
+  | { id: string; status: "shrunk-skipped"; pageHash: string }
   | {
       id: string;
       status: "changed";
@@ -107,6 +112,8 @@ async function refreshGuide(
     for (const p of pages) writeStored(p.path, p.stored);
     return { id, status: "unchanged" };
   }
+  const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
+  if (!opts.forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
 
@@ -114,7 +121,7 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, data.ballot, guide, sources);
   const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
   const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
-  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes };
+  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash };
 
   let archived: ArchivedSource[] | undefined;
   if (opts.archive && deps.archiveUrl) {
@@ -205,6 +212,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
       return [r.message, ...r.notes.map((n) => `  ! ${n}`)].join("\n");
+    case "shrunk-skipped":
+      return `${r.id}: shrunk earlier, pages unchanged since; not re-extracted`;
     case "changed":
       return [
         `${r.id}: ${r.dataChanged ? "changed" : "re-extracted, no data change"}`,
@@ -242,7 +251,7 @@ export function costOf(results: GuideResult[]): number {
 /** 0 = clean, 1 = an error, 2 = something needs review (held picks or a shrunk result). */
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
-  if (results.some((r) => r.status === "shrunk" || (r.status === "changed" && r.held.length > 0))) return 2;
+  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && r.held.length > 0))) return 2;
   return 0;
 }
 
@@ -260,7 +269,7 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
     "",
     `| checked | unchanged | re-extracted | data changed | deferred | skipped | failed |`,
     `|---|---|---|---|---|---|---|`,
-    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length} |`,
+    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
     "",
     `Estimated model cost: $${costOf(results).toFixed(2)}`,
   ];
@@ -274,10 +283,10 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }
   }
-  const problems = [...by("failed"), ...by("shrunk")];
+  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
   if (problems.length) {
     lines.push("", "## Needs attention");
-    for (const r of problems) lines.push(`- ${r.status === "failed" ? `${r.id}: FAILED — ${r.error}` : r.status === "shrunk" ? r.message.replace(/^!!\s*/, "") : r.id}`);
+    for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
   }
   const deferred = by("deferred").map((r) => r.id);
   if (deferred.length) lines.push("", `Deferred (budget): ${deferred.join(", ")} — picked up by the next run.`);
@@ -315,4 +324,23 @@ export async function seedPages(
     deps.log?.(`${id}: stored ${stored} page(s)${out.at(-1)?.error ? ` — FAILED: ${out.at(-1)?.error}` : ""}`);
   }
   return out;
+}
+
+export type ResultJson = {
+  exitCode: number;
+  extracted: string[];
+  deferred: string[];
+  failed: { id: string; error: string }[];
+  shrunk: { id: string; pageHash: string }[];
+};
+
+/** Machine-readable run result for the workflow: what was extracted, and what needs a person. */
+export function resultJson(results: GuideResult[], exitCode: number): ResultJson {
+  return {
+    exitCode,
+    extracted: results.filter((r) => r.status === "changed").map((r) => r.id),
+    deferred: results.filter((r) => r.status === "deferred").map((r) => r.id),
+    failed: results.flatMap((r) => (r.status === "failed" ? [{ id: r.id, error: r.error }] : [])),
+    shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
+  };
 }
