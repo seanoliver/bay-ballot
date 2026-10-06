@@ -6,6 +6,11 @@
 
 :root {
   color-scheme: light;
+  /* One motion spec for every expand, collapse, pane and popover. Plain ease-out, no overshoot. */
+  --motion-in: 200ms;
+  --motion-out: 150ms;
+  --motion-stagger: 20ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
   --yes: #15803d;
   --no: #b91c1c;
   --split: #b45309;
@@ -159,6 +164,47 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-in: 0ms;
+    --motion-out: 0ms;
+    --motion-stagger: 0ms;
+  }
+}
+
+/* Height + opacity for a Base UI Collapsible panel (uses its --collapsible-panel-height). */
+@utility reveal {
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition:
+    height var(--motion-in) var(--ease-out),
+    opacity var(--motion-in) var(--ease-out);
+  &[data-starting-style],
+  &[data-ending-style] {
+    height: 0;
+    opacity: 0;
+  }
+  &[data-ending-style] {
+    transition-duration: var(--motion-out);
+  }
+  &[hidden]:not([hidden="until-found"]) {
+    display: none;
+  }
+}
+
+/* Children of an opening panel slide in one after another (index in --i, capped at 150ms).
+   Sideways: a vertical offset would add to the panel's measured height and overshoot it. */
+@keyframes reveal-item {
+  from {
+    opacity: 0;
+    translate: -6px 0;
+  }
+}
+@utility reveal-item {
+  animation: reveal-item var(--motion-in) var(--ease-out) both;
+  animation-delay: min(calc(var(--i, 0) * var(--motion-stagger)), 150ms);
 }
 
 /* Thin, muted scrollbars for panes that scroll on their own. */

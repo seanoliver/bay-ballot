@@ -22,8 +22,8 @@ const DESKTOP = "(min-width: 1024px)";
 // self-start: a grid item stretches to the row (the whole list), which made the sticky box a full
 // viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
 const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
-const EXIT_MS = 150;
-const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
+const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
   election: string;
@@ -43,7 +43,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const paneRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
   const [animate, setAnimate] = useState(false);
-  // The contest still drawn while its pane fades out; it's inert, then unmounted after EXIT_MS.
+  // The contest still drawn while its pane fades out; it's inert, then unmounted after --motion-out.
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -67,9 +67,10 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const select = (next: string | null) => {
     setAnimate(true);
     clearTimeout(exitTimer.current);
-    if (next === null && current && !reducedMotion()) {
+    const out = motionOutMs();
+    if (next === null && current && out > 0) {
       setExiting(current);
-      exitTimer.current = setTimeout(() => setExiting(null), EXIT_MS);
+      exitTimer.current = setTimeout(() => setExiting(null), out);
     } else {
       setExiting(null);
     }
@@ -115,7 +116,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         current
           ? "lg:grid-cols-[17rem_minmax(0,calc((100%-20rem)/2.15))_minmax(0,1fr)]"
           : "lg:grid-cols-[17rem_minmax(0,min(48rem,calc(100%-20rem)))_minmax(0,1fr)]",
-        animate && "lg:transition-[grid-template-columns] lg:duration-200 lg:ease-out motion-reduce:transition-none",
+        animate && "lg:transition-[grid-template-columns] lg:duration-(--motion-in) lg:ease-(--ease-out)",
       )}
     >
       <p aria-live="polite" className="sr-only">
@@ -178,9 +179,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
           className={cn(
             PANE,
             "min-w-0",
-            animate && "lg:transition-[opacity,translate] lg:duration-200 lg:ease-out lg:starting:translate-x-4 lg:starting:opacity-0",
-            animate && "motion-reduce:transition-none",
-            !current && "lg:translate-x-4 lg:opacity-0 lg:duration-150",
+            animate && "lg:transition-[opacity,translate] lg:duration-(--motion-in) lg:ease-(--ease-out) lg:starting:translate-x-4 lg:starting:opacity-0",
+            !current && "lg:translate-x-4 lg:opacity-0 lg:duration-(--motion-out)",
           )}
           inert={!current}
           onKeyDown={onEscape}

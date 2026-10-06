@@ -38,7 +38,7 @@ test.describe("desktop detail pane", () => {
     const pane = page.getByRole("region", { name: "Proposition B" });
     await expect(pane).toBeVisible();
     await expect(pane.getByText(/^(Yes|No) \d+%$|^Split$/).first()).toBeVisible();
-    const chips = pane.getByRole("list").first().getByRole("link");
+    const chips = pane.getByRole("group", { name: /^Guides for / }).first().getByRole("link");
     expect(await chips.count()).toBeGreaterThan(0);
     const more = pane.getByRole("button", { name: /^\+\d+ more$/ }).first();
     const before = await chips.count();

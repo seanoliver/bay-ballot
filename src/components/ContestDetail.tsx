@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideGuide, type SideQuote } from "@/lib/detail";
 import { cardDescription, contestHeadline, officialLink } from "@/lib/display";
@@ -145,7 +146,7 @@ function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; co
         <span className="min-w-0">{side.label}</span>
         <span className="ml-auto shrink-0 text-sm font-normal text-muted-foreground">{guidesLabel(side.count)}</span>
       </h3>
-      <Chips guides={side.guides} short={short} />
+      <Chips guides={side.guides} short={short} label={`Guides for ${side.label}`} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
@@ -164,23 +165,18 @@ function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; co
 function OtherCandidates({ others, rows, contest, short }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean }) {
   const [open, setOpen] = useState(false);
   return (
-    <section className="mt-6 border-t border-border pt-6">
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
+    <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
+      <CollapsibleTrigger className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {open ? "Hide other candidates" : `Other candidates (${others.length})`}
-      </button>
-      {open ? (
-        <div className="mt-6">
+      </CollapsibleTrigger>
+      <CollapsibleContent className="reveal">
+        <div className="pt-6">
           {others.map((side) => (
             <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} />
           ))}
         </div>
-      ) : null}
-    </section>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -190,42 +186,55 @@ const QUOTE_MARK = (
   </svg>
 );
 
-function Chips({ guides, short }: { guides: SideGuide[]; short: boolean }) {
-  const [all, setAll] = useState(false);
-  const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
-  const hidden = guides.length - CHIPS_SHOWN;
+function Chip({ guide, short, style, className }: { guide: SideGuide; short: boolean; style?: CSSProperties; className?: string }) {
   return (
-    <ul className="flex flex-wrap gap-2">
-      {shown.map((g) => (
-        <li key={g.id}>
-          <Link
-            href={`/guides/${g.id}`}
-            title={g.name}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-          >
-            {short ? g.short : g.name}
-            {g.quoted ? (
-              <>
-                {QUOTE_MARK}
-                <span className="sr-only">(gave reasons)</span>
-              </>
-            ) : null}
-          </Link>
-        </li>
-      ))}
-      {hidden > 0 ? (
-        <li>
-          <button
-            type="button"
-            aria-expanded={all}
-            onClick={() => setAll(!all)}
-            className="inline-flex min-h-10 items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-          >
-            {all ? "Show less" : `+${hidden} more`}
-          </button>
-        </li>
+    <li style={style} className={className}>
+      <Link
+        href={`/guides/${guide.id}`}
+        title={guide.name}
+        className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
+      >
+        {short ? guide.short : guide.name}
+        {guide.quoted ? (
+          <>
+            {QUOTE_MARK}
+            <span className="sr-only">(gave reasons)</span>
+          </>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
+// The first few chips, then "+N more" opens the rest below them; the extra chips rise in one by one.
+function Chips({ guides, short, label }: { guides: SideGuide[]; short: boolean; label: string }) {
+  const [all, setAll] = useState(false);
+  const first = guides.slice(0, CHIPS_SHOWN);
+  const rest = guides.slice(CHIPS_SHOWN);
+  return (
+    <Collapsible open={all} onOpenChange={setAll} render={<div role="group" aria-label={label} />}>
+      <ul className="flex flex-wrap gap-2">
+        {first.map((g) => (
+          <Chip key={g.id} guide={g} short={short} />
+        ))}
+        {rest.length > 0 ? (
+          <li>
+            <CollapsibleTrigger className="inline-flex min-h-10 items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8">
+              {all ? "Show less" : `+${rest.length} more`}
+            </CollapsibleTrigger>
+          </li>
+        ) : null}
+      </ul>
+      {rest.length > 0 ? (
+        <CollapsibleContent className="reveal">
+          <ul className="flex flex-wrap gap-2 pt-2">
+            {rest.map((g, i) => (
+              <Chip key={g.id} guide={g} short={short} className="reveal-item" style={{ "--i": i } as CSSProperties} />
+            ))}
+          </ul>
+        </CollapsibleContent>
       ) : null}
-    </ul>
+    </Collapsible>
   );
 }
 
@@ -252,23 +261,18 @@ function QuoteItem({ quote, tone }: { quote: SideQuote; tone: BarTone }) {
 function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; tone: BarTone }) {
   const [open, setOpen] = useState(false);
   return (
-    <>
-      {open ? (
-        <ul className="space-y-4">
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleContent className="reveal">
+        <ul className="space-y-4 pb-4">
           {rest.map((q, i) => (
             <QuoteItem key={`${q.guideId}-${i}`} quote={q} tone={tone} />
           ))}
         </ul>
-      ) : null}
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-sm font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
+      </CollapsibleContent>
+      <CollapsibleTrigger className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-sm font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {open ? "Fewer reasons" : `All reasons (${total})`}
-      </button>
-    </>
+      </CollapsibleTrigger>
+    </Collapsible>
   );
 }
 

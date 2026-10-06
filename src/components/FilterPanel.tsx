@@ -166,11 +166,10 @@ function TypeGroup({
           disabled={searching}
           className="grid size-10 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-40"
         >
-          <ChevronDown aria-hidden="true" className={cn("size-5 transition-transform duration-200 ease-out motion-reduce:transition-none", open && "rotate-180")} />
+          <ChevronDown aria-hidden="true" className={cn("size-5 transition-transform duration-(--motion-in) ease-(--ease-out)", open && "rotate-180")} />
         </CollapsibleTrigger>
       </div>
-      {/* Height and opacity animate between 0 and the panel's measured height (Base UI's --collapsible-panel-height). */}
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out motion-reduce:transition-none data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 [&[hidden]:not([hidden='until-found'])]:hidden">
+      <CollapsibleContent className="reveal">
         <ul className="pb-1">
           {group.guides.map((g) => (
             <li key={g.id}>
