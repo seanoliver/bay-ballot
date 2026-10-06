@@ -16,7 +16,12 @@ What a run does:
    A long line that only moved is ignored unless it names a contest or candidate. Anything else is "unchanged" and costs nothing.
 3. Re-extracted guides whose picks or quotes changed go through `verify` (a separate model audits them against the pages). Unconfirmed picks are moved to `held:` and not published.
 4. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
-5. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data. It compares the guide against `main` (the workflow passes main's `data/` as `--baseline`), so an open refresh PR holds one up-to-date entry per guide and a change undone before merge leaves none. Wording: "GrowSF published endorsements for 12 contests" for a first publication, otherwise its changes separated by semicolons (two named, the rest counted). Held picks aren't announced. Edit or delete an entry in the PR if its wording is wrong.
+5. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data.
+   - The entry compares the guide against `main`. The workflow extracts `data/` from the `main` commit that the run merged into the refresh branch, and passes that directory as `--baseline`.
+   - On an open refresh PR, each guide's entry is rewritten on every run, and a change undone before merge leaves no entry.
+   - A file already on `main` is never rewritten. A second run on the same day after a merge writes `<date>-refresh-<guide>-2.yml`, then `-3`.
+   - An entry reads "GrowSF published endorsements for 12 contests" for a first publication. Otherwise it lists the guide's changes, separated by semicolons: two by name, the rest as a count. Held picks aren't announced.
+   - To fix an entry's wording, edit the file on `main` after the refresh PR merges. A clean run merges itself, and an edit on an open refresh PR is overwritten the next time that guide changes.
 6. `validate` runs, and the summary is written for the pull request.
 
 Then the workflow:

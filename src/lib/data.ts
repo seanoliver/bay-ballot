@@ -63,7 +63,6 @@ export function loadElection(root: string, election: string): ElectionData {
   return { ballot, guides, endorsements };
 }
 
-
 export function listElections(root: string): string[] {
   return fs.readdirSync(root).filter((d) => /^\d{4}-\d{2}$/.test(d)).sort();
 }

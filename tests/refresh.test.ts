@@ -156,6 +156,13 @@ describe("runRefresh", () => {
     expect(parse(fs.readFileSync(path.join(root, "changelog", "2026-10-06-refresh-alpha.yml"), "utf8")).title).toBe("ALPHA endorsed Yes on Prop C");
   });
 
+  it("refuses a missing baseline before fetching anything", async () => {
+    const root = setup(["alpha"]);
+    const f = fetcher({ alpha: PAGE("alpha", "x") });
+    await expect(runRefresh(deps(fakeClient(extractOut).client, f), { root, election: ELECTION, baseline: path.join(root, "nope") })).rejects.toThrow(/baseline/);
+    expect(f).not.toHaveBeenCalled();
+  });
+
   it("does not announce a held pick", async () => {
     const root = setup(["alpha"], { stored: false });
     const { client } = fakeClient(extractOut, { held: true });

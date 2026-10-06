@@ -56,9 +56,9 @@ export function guideChangelogEntry({
   return { date, type: "data", title: `${guideName} ${title}` };
 }
 
-export const refreshEntryFile = (date: string, guideId: string) => `${date}-refresh-${guideId}.yml`;
+export const refreshEntryFile = (date: string, guideId: string, n = 1) => `${date}-refresh-${guideId}${n > 1 ? `-${n}` : ""}.yml`;
 
-// `keep`: files already on main. This guide's other refresh files are from the open refresh PR and are replaced.
+// `keep`: files already on main, never rewritten. This guide's other refresh files are from the open refresh PR and are replaced.
 export function writeRefreshEntry(
   dir: string,
   guideId: string,
@@ -66,8 +66,10 @@ export function writeRefreshEntry(
   { date, keep }: { date: string; keep: Set<string> },
 ): void {
   fs.mkdirSync(dir, { recursive: true });
-  const target = refreshEntryFile(date, guideId);
-  const ours = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-refresh-${guideId}\\.yml$`);
+  let n = 1;
+  while (keep.has(refreshEntryFile(date, guideId, n))) n += 1;
+  const target = refreshEntryFile(date, guideId, n);
+  const ours = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-refresh-${guideId}(-\\d+)?\\.yml$`);
   for (const f of fs.readdirSync(dir)) {
     if (ours.test(f) && !keep.has(f) && !(entry && f === target)) fs.rmSync(path.join(dir, f));
   }

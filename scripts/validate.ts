@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { readChangelog, validateChangelog } from "../src/lib/changelog";
+import { readChangelog, utcDay, validateChangelog } from "../src/lib/changelog";
 import { listElections, loadElection, validateElection } from "../src/lib/data";
 
 const root = path.join(process.cwd(), "data");
@@ -24,8 +24,7 @@ for (const election of listElections(root)) {
   if (errors.length || warnings.length) failed = true;
 }
 try {
-  // Local YYYY-MM-DD, not toISOString(): the UTC date can trail the local one and reject today's entry.
-  const today = new Date().toLocaleDateString("en-CA");
+  const today = utcDay();
   const { entries, errors: read } = readChangelog(root);
   const errors = [...read, ...validateChangelog(entries, today)];
   errors.forEach((e) => console.error(`ERROR ${e}`));

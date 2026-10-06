@@ -82,6 +82,32 @@ describe("writeRefreshEntry", () => {
     writeRefreshEntry(d, "growsf", entry, { date: "2026-10-07", keep: new Set(["2026-10-01-refresh-growsf.yml"]) });
     expect(fs.readdirSync(d).sort()).toEqual(["2026-10-01-refresh-growsf.yml", "2026-10-07-refresh-growsf.yml"]);
   });
+  it("never overwrites a file already on main: a same-day run after a merge writes -2, then rewrites it", () => {
+    const d = tmp();
+    fs.writeFileSync(path.join(d, "2026-10-07-refresh-growsf.yml"), "date: 2026-10-07\ntype: data\ntitle: merged this morning\n");
+    const keep = new Set(["2026-10-07-refresh-growsf.yml"]);
+    writeRefreshEntry(d, "growsf", entry, { date: "2026-10-07", keep });
+    expect(fs.readdirSync(d).sort()).toEqual(["2026-10-07-refresh-growsf-2.yml", "2026-10-07-refresh-growsf.yml"]);
+    expect(fs.readFileSync(path.join(d, "2026-10-07-refresh-growsf.yml"), "utf8")).toContain("merged this morning");
+    writeRefreshEntry(d, "growsf", { ...entry, title: "GrowSF changed Prop C from Yes to No; endorsed Yes on Prop D" }, { date: "2026-10-07", keep });
+    expect(fs.readdirSync(d).sort()).toEqual(["2026-10-07-refresh-growsf-2.yml", "2026-10-07-refresh-growsf.yml"]);
+    expect(fs.readFileSync(path.join(d, "2026-10-07-refresh-growsf-2.yml"), "utf8")).toContain("Prop D");
+    writeRefreshEntry(d, "growsf", null, { date: "2026-10-07", keep });
+    expect(fs.readdirSync(d)).toEqual(["2026-10-07-refresh-growsf.yml"]);
+  });
+  it("skips every suffix already on main", () => {
+    const d = tmp();
+    const keep = new Set(["2026-10-07-refresh-growsf.yml", "2026-10-07-refresh-growsf-2.yml"]);
+    for (const f of keep) fs.writeFileSync(path.join(d, f), "x");
+    writeRefreshEntry(d, "growsf", entry, { date: "2026-10-07", keep });
+    expect(fs.readdirSync(d).sort()).toEqual(["2026-10-07-refresh-growsf-2.yml", "2026-10-07-refresh-growsf-3.yml", "2026-10-07-refresh-growsf.yml"]);
+  });
+  it("does not touch another guide whose id starts the same way", () => {
+    const d = tmp();
+    fs.writeFileSync(path.join(d, "2026-10-06-refresh-growsf-action.yml"), "x");
+    writeRefreshEntry(d, "growsf", entry, { date: "2026-10-07", keep: new Set() });
+    expect(fs.readdirSync(d).sort()).toEqual(["2026-10-06-refresh-growsf-action.yml", "2026-10-07-refresh-growsf.yml"]);
+  });
   it("a change undone before merge leaves no entry", () => {
     const d = tmp();
     fs.writeFileSync(path.join(d, "2026-10-06-refresh-growsf.yml"), "date: 2026-10-06\ntype: data\ntitle: flip\n");

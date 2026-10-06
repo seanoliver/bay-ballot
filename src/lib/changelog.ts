@@ -46,6 +46,8 @@ export function validateChangelog(entries: Pick<ChangelogItem, "date" | "file">[
   return errors;
 }
 
+export const utcDay = (now = new Date()) => now.toISOString().slice(0, 10);
+
 export type ChangelogMonth<E> = { label: string; entries: E[] };
 
 export function changelogMonths<E extends Pick<ChangelogEntry, "date">>(entries: E[]): ChangelogMonth<E>[] {

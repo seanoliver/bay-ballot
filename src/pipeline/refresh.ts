@@ -174,6 +174,9 @@ async function refreshGuide(
 }
 
 export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promise<GuideResult[]> {
+  if (opts.baseline && !fs.existsSync(path.join(opts.baseline, opts.election))) {
+    throw new Error(`baseline ${opts.baseline} has no ${opts.election}/ data`);
+  }
   const log = deps.log ?? (() => {});
   const data = loadElection(opts.root, opts.election);
   const ids = opts.ids ?? Object.keys(data.endorsements).sort();

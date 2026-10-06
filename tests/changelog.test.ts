@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
-import { changelogMonths, readChangelog, validateChangelog } from "@/lib/changelog";
+import { changelogMonths, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
@@ -65,6 +65,13 @@ describe("validateChangelog", () => {
     expect(validateChangelog([f("2026-10-06-x.yml", "2026-10-06"), f("2026-10-06-X.yml", "2026-10-06")], "2026-10-06")).toEqual([
       "changelog/2026-10-06-X.yml: duplicates 2026-10-06-x.yml",
     ]);
+  });
+});
+
+describe("utcDay", () => {
+  it("is the UTC calendar day, whatever the local time zone", () => {
+    expect(utcDay(new Date("2026-10-06T23:30:00-07:00"))).toBe("2026-10-07");
+    expect(utcDay(new Date("2026-10-07T00:30:00+09:00"))).toBe("2026-10-06");
   });
 });
 
