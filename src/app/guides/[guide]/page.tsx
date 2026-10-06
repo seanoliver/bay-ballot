@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "@/components/ExternalLink";
-import { FRAME, READING } from "@/components/frame";
+import { PageColumn } from "@/components/PageColumn";
+import { SectionHeading } from "@/components/SectionHeading";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { formatDate, guidePicks, monthYear, sourceLink } from "@/lib/display";
 import { isPublished } from "@/lib/filters";
 import { election, latestElection } from "@/lib/site-data";
@@ -40,52 +39,54 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   if (!d) notFound();
   const { guide, file, ballot, id } = d;
   return (
-    <div className={`${FRAME} ${READING} pt-4 pb-10`}>
-      <Card className="gap-0 p-4 shadow-xs">
-        <h1 className="text-2xl font-semibold">{guide.name}</h1>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Badge variant="secondary" className="capitalize">
+    <PageColumn>
+      <header>
+        <h1 className="text-xl font-semibold">{guide.name}</h1>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          <Badge variant="outline" className="capitalize">
             {guide.type}
           </Badge>
           {isPublished(file) && !file.hasReasoning ? <Badge variant="outline">List only</Badge> : null}
         </div>
-        {guide.description ? <p className="mt-3">{guide.description}</p> : null}
-        <Separator className="my-3" />
-        <p className="text-sm">
-          <ExternalLink href={guide.homepage} className="inline-block py-2.5 -my-2.5 underline underline-offset-2">
+        {guide.description ? <p className="measure mt-2 text-base">{guide.description}</p> : null}
+        <p className="mt-2 text-sm text-muted-foreground">
+          <ExternalLink href={guide.homepage} className="inline-block py-2.5 -my-2.5 text-foreground underline underline-offset-2">
             Homepage
           </ExternalLink>
           {file?.source ? (
             <>
               {" · "}
-              <ExternalLink href={sourceLink(file, file.source)} className="inline-block py-2.5 -my-2.5 underline underline-offset-2">
+              <ExternalLink href={sourceLink(file, file.source)} className="inline-block py-2.5 -my-2.5 text-foreground underline underline-offset-2">
                 Source
               </ExternalLink>
             </>
           ) : null}
-          {isPublished(file) ? <span className="text-muted-foreground"> · as of {formatDate(file.fetchedAt)}</span> : null}
+          {isPublished(file) ? <span> · as of {formatDate(file.fetchedAt)}</span> : null}
         </p>
-      </Card>
+      </header>
 
       {isPublished(file) ? (
-        <Card className="mt-3 gap-0 px-4 py-2 shadow-xs">
-          <h2 className="py-2 font-semibold">{ballot.title} endorsements</h2>
-          <ul className="divide-y divide-border">
+        <section>
+          <SectionHeading>{ballot.title} endorsements</SectionHeading>
+          <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
             {guidePicks(ballot.contests, file).map((p) => (
               <li key={p.contest.id}>
-                <Link href={`/${id}/${p.contest.id}`} className="flex min-h-11 items-baseline justify-between gap-4 py-2.5">
-                  <span className="underline underline-offset-2">{p.contest.title}</span>
-                  <span className="text-right font-medium">
+                <Link
+                  href={`/${id}/${p.contest.id}`}
+                  className="flex min-h-12 items-baseline justify-between gap-4 px-4 py-3 outline-none transition-colors hover:bg-muted/60 focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-ring"
+                >
+                  <span className="min-w-0 font-medium">{p.contest.title}</span>
+                  <span className="max-w-1/2 shrink-0 text-right text-sm">
                     {p.label} <span aria-hidden="true" className="text-muted-foreground">›</span>
                   </span>
                 </Link>
               </li>
             ))}
           </ul>
-        </Card>
+        </section>
       ) : (
-        <p className="mt-6 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} endorsements yet</p>
+        <p className="mt-8 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} endorsements yet</p>
       )}
-    </div>
+    </PageColumn>
   );
 }

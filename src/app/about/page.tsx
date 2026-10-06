@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { ExternalLink } from "@/components/ExternalLink";
-import { FRAME, READING } from "@/components/frame";
+import { PageColumn } from "@/components/PageColumn";
 
 export const metadata: Metadata = { title: "About · Bay Ballot", alternates: { canonical: "/about" } };
 
@@ -23,7 +23,7 @@ function List({ children }: { children: ReactNode }) {
 
 export default function AboutPage() {
   return (
-    <div className={`${FRAME} ${READING} pt-6 pb-10`}>
+    <PageColumn>
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
         <p className="mt-2 text-base">
@@ -90,6 +90,6 @@ export default function AboutPage() {
           </List>
         </Section>
       </article>
-    </div>
+    </PageColumn>
   );
 }

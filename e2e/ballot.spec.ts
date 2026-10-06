@@ -401,3 +401,21 @@ test("the changelog is linked from the footer and lists entries by month", async
   await expect(launch).toBeVisible();
   await expect(launch).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
 });
+
+test.describe("pages without the filter column", () => {
+  for (const url of ["/2026-11/us-rep-11", "/guides/growsf", "/about", "/changelog"]) {
+    test(`${url} centers its content at the list's reading width`, async ({ page, isMobile }) => {
+      await page.goto(url);
+      const column = page.locator("[data-page-column]");
+      const box = (await column.boundingBox())!;
+      const width = page.viewportSize()!.width;
+      if (isMobile) {
+        expect(box.x).toBe(16);
+        expect(Math.round(box.width)).toBe(width - 32);
+      } else {
+        expect(Math.round(box.width)).toBe(768);
+        expect(Math.abs(box.x - (width - box.x - box.width))).toBeLessThanOrEqual(1);
+      }
+    });
+  }
+});
