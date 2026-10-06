@@ -106,7 +106,8 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
       </noscript>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
-      <div className="min-w-0 pb-10" onKeyDown={onEscape}>
+      {/* Without the pane the list keeps a reading width instead of stretching bars across the screen. */}
+      <div className={cn("min-w-0 pb-10", !current && "lg:max-w-3xl")} onKeyDown={onEscape}>
         <div className="pt-0.5 pb-1 lg:pt-4">
           <h1 className="text-sm text-muted-foreground">{subtitle}</h1>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
