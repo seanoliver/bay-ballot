@@ -33,7 +33,6 @@ export type RefreshOptions = {
   verify?: boolean;
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
-  // main's data/ (another checkout) while continuing an open refresh; changelog entries compare against it.
   baseline?: string;
 };
 

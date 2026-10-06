@@ -145,12 +145,10 @@ describe("runRefresh", () => {
   it("describes changes against main's data while continuing an open refresh", async () => {
     const main = setup(["alpha"]);
     const root = setup(["alpha"]);
-    // The open refresh already flipped Prop B to Yes and wrote an entry for it.
     const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
     fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("pick: N", "pick: Y"));
     fs.mkdirSync(path.join(root, "changelog"));
     fs.writeFileSync(path.join(root, "changelog", "2026-10-05-refresh-alpha.yml"), "date: 2026-10-05\ntype: data\ntitle: ALPHA changed Prop B from No to Yes\n");
-    // Today the page says No again and adds Prop C.
     const { client } = fakeClient(extractOut);
     const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
     await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, baseline: main });
