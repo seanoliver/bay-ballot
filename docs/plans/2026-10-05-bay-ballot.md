@@ -1374,6 +1374,7 @@ Commit `docs: refresh runbook`.
 ## Out of scope for launch (fast-follows)
 
 - **Address / ZIP filter (first post-launch item).** Replaces the district pickers, which were removed on 2026-10-05 as confusing. A visitor enters an address or ZIP; the site shows only contests on their ballot, using `Contest.jurisdiction` (kept in the data for this). ZIPs can span districts, so a ZIP that maps to several districts should ask for the street address.
+- **Guide and contest page layout.** Review layout and spacing on `/guides/<id>` and `/<election>/<contest>`; they reuse list and detail components and haven't had the design pass the main ballot view got.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
 - District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
