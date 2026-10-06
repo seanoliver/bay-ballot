@@ -5,11 +5,7 @@ import { parseEnv } from "node:util";
 const VAR = "BAYBALLOT_ANTHROPIC_API_KEY";
 const MISSING = `Set ${VAR} in .env.local`;
 
-/**
- * The Bay Ballot API key: from the env file when it exists (local runs), else from
- * BAYBALLOT_ANTHROPIC_API_KEY in the environment (CI secrets). The shell's ANTHROPIC_API_KEY
- * belongs to another account and is never used. Never log the return value.
- */
+/** Never falls back to ANTHROPIC_API_KEY: the shell's key bills another account. Never log the result. */
 export function resolveApiKey(envFilePath: string): string {
   let contents: string | null = null;
   try {
@@ -22,10 +18,7 @@ export function resolveApiKey(envFilePath: string): string {
   return key;
 }
 
-/**
- * A client pinned to the public API with only this key, so a shell's ANTHROPIC_BASE_URL or
- * ANTHROPIC_AUTH_TOKEN (e.g. a work proxy) can't redirect or re-authenticate the requests.
- */
+/** Explicit baseURL and null authToken, so a shell's ANTHROPIC_BASE_URL or ANTHROPIC_AUTH_TOKEN can't apply. */
 export function makeClient(apiKey: string): Anthropic {
   return new Anthropic({ apiKey, authToken: null, baseURL: "https://api.anthropic.com" });
 }

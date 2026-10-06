@@ -5,16 +5,11 @@ export type Fetched = { kind: "text"; text: string } | { kind: "pdf"; base64: st
 
 const BLOCKS = "p, div, li, ul, ol, h1, h2, h3, h4, h5, h6, tr, table, section, article, header, main, aside, blockquote, pre, dl, dt, dd, figure, figcaption, form, fieldset, summary, details";
 
-/**
- * Convert HTML to plain text, preserving the page's words verbatim (quotes are later
- * verified against this text). Whitespace in the source is collapsed to single spaces;
- * line breaks come only from block elements, <br>, and table rows.
- */
+/** Keeps the page's words verbatim: extracted quotes are verified against this text. */
 export function htmlToText(html: string): string {
   const $ = cheerio.load(html);
   $("script, style, noscript, template, nav, footer, svg, iframe, head").remove();
 
-  // Normalize source whitespace (incl. nbsp) so only structural breaks create newlines.
   $("body *")
     .addBack("body")
     .contents()
@@ -42,8 +37,7 @@ export function htmlToText(html: string): string {
     .join("\n");
 }
 
-// Some sites (sftu.org, bhdemocrats.org, sfbike.org) return 403/406 to bot-ish or short UAs,
-// so use a realistic desktop Chrome UA and leave the BayBallot identifier out.
+// A real browser UA: some guide sites return 403/406 to bot-like or short ones.
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 
@@ -55,7 +49,7 @@ function pdfToText(buf: Buffer): string {
       stdio: ["pipe", "pipe", "ignore"],
     }).toString("utf8");
   } catch {
-    return ""; // pdftotext missing or failed; caller should warn
+    return "";
   }
 }
 

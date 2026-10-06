@@ -66,7 +66,6 @@ describe("barSegments: single-seat candidates", () => {
   it("colors come from the slots passed in, not the current rank", () => {
     const ballot = { ...race, candidates: ["Connie Chan", "Scott Wiener"] } as Contest;
     const slots = candidateSlots(ballot, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
-    // Filtered down to Wiener alone, he keeps his slot-2 color.
     const segs = barSegments(tally(ballot, [e(["Scott Wiener"])]), ballot, slots);
     expect(segs).toEqual([{ key: "Scott Wiener", label: "Scott Wiener", count: 1, pct: 100, tone: "c2" }]);
   });

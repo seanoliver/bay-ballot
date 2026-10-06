@@ -23,13 +23,13 @@ export type RefreshDeps = {
 export type RefreshOptions = {
   root: string;
   election: string;
-  ids?: string[]; // default: every guide with an endorsement file
+  ids?: string[];
   browser?: boolean;
   archive?: boolean;
-  force?: boolean; // accept a result that empties or halves the picks
-  forceExtract?: boolean; // extract even when no page changed
+  force?: boolean;
+  forceExtract?: boolean;
   verify?: boolean; // default true
-  maxChanged?: number; // budget guard: extract at most this many guides per run
+  maxChanged?: number;
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -43,7 +43,7 @@ export type GuideResult =
   | {
       id: string;
       status: "changed";
-      dataChanged: boolean; // the endorsement file changed (something new to publish)
+      dataChanged: boolean;
       diff: string[];
       notes: string[];
       held: HeldPick[];
@@ -140,7 +140,6 @@ async function refreshGuide(
     usage: { extract: usage },
   };
 
-  // Verify only what this run changed; an unchanged file was verified before.
   if (opts.verify !== false && !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) {
     const v = await verify(deps.client, data.ballot, guide, next, sources);
     const applied = applyVerdicts(next, v.output);
@@ -166,10 +165,6 @@ async function refreshGuide(
   return result;
 }
 
-/**
- * Re-check each guide's pages and extract (then verify) only guides whose pages changed in a
- * way that could matter. A run where nothing relevant changed makes no model calls.
- */
 export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promise<GuideResult[]> {
   const log = deps.log ?? (() => {});
   const data = loadElection(opts.root, opts.election);
@@ -217,8 +212,7 @@ function describe(r: GuideResult): string {
 
 const showPick = (p: HeldPick["pick"]) => (Array.isArray(p) ? p.join(" / ") : p);
 
-// $ per million tokens. Extraction: Claude Sonnet 5.5; verification: Claude Opus 5.5.
-// Cache writes are 1.25x input; cache reads $0.20.
+// USD per million tokens.
 const RATES = {
   extract: { in: 2, out: 10, cacheWrite: 2.5, cacheRead: 0.2 },
   verify: { in: 4, out: 20, cacheWrite: 5, cacheRead: 0.2 },
@@ -239,14 +233,12 @@ export function costOf(results: GuideResult[]): number {
   );
 }
 
-/** 0 = clean, 1 = an error, 2 = something needs review (held picks or a shrunk result). */
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
   if (results.some((r) => r.status === "shrunk" || (r.status === "changed" && r.held.length > 0))) return 2;
   return 0;
 }
 
-/** Markdown summary of a refresh run, for the pull request body. */
 export function summarize(results: GuideResult[], { date }: { date: string }): string {
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
@@ -288,10 +280,6 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
   return lines.join("\n") + "\n";
 }
 
-/**
- * Fetch every extractable guide's sources and store their normalized text, with no model calls.
- * Run once so the first scheduled refresh compares against today's pages, not an empty store.
- */
 export async function seedPages(
   deps: RefreshDeps,
   opts: Pick<RefreshOptions, "root" | "election" | "ids" | "browser">,

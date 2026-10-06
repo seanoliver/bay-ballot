@@ -23,8 +23,8 @@ describe("verifyQuotes basics", () => {
   });
   it("requires at least 5 words and 20 non-space chars", () => {
     const p = html("It is a bad idea. Supercalifragilistic expialidocious wonderfully.");
-    expect(reasonOf("It is a bad idea.", [p])).toBe("too-short"); // 5 words but 13 chars
-    expect(reasonOf("Supercalifragilistic expialidocious wonderfully.", [p])).toBe("too-short"); // 3 words
+    expect(reasonOf("It is a bad idea.", [p])).toBe("too-short");
+    expect(reasonOf("Supercalifragilistic expialidocious wonderfully.", [p])).toBe("too-short");
   });
   it("matches across merged inline words", () => {
     const p = html("Sara BarzCo-founder of Mission Housing");
@@ -118,7 +118,7 @@ describe("other people's words", () => {
     const far = html(`Critics disagree.${" x".repeat(50)}. The bank would cost the city hundreds of millions.`);
     expect(verifyQuotes(["The bank would cost the city hundreds of millions."], [far]).kept).toHaveLength(1);
     const other = html("Critics disagree.\nThe bank would cost the city hundreds of millions.");
-    expect(reasonOf("The bank would cost the city hundreds of millions.", [other])).toBe("attributed-speech"); // via previous-segment context
+    expect(reasonOf("The bank would cost the city hundreds of millions.", [other])).toBe("attributed-speech");
   });
 });
 

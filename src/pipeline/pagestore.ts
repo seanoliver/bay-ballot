@@ -4,9 +4,6 @@ import type { Aliases } from "@/lib/names";
 import type { Fetched } from "./fetch";
 import { contestMarkers } from "./placement";
 
-// Normalized page text is stored per source so a daily refresh can tell a real change (a new
-// pick, a changed rank) from churn (dates, "3 hours ago", cookie banners) without calling a model.
-
 const MONTHS =
   "jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?";
 const WEEKDAYS = "mon(?:day)?|tue(?:s(?:day)?)?|wed(?:nesday)?|thu(?:rs(?:day)?)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?";
@@ -28,7 +25,6 @@ const BOILERPLATE =
   /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content|^you are here\b|^breadcrumbs?\b/i;
 const MAX_BOILERPLATE_LINE = 200;
 
-/** Page text with dates, relative times, counters and boilerplate removed; whitespace collapsed; duplicate lines dropped. */
 export function normalizePageText(text: string): string {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -49,7 +45,6 @@ export function normalizePageText(text: string): string {
 
 const PDF_DIGEST = /^pdf-sha256:[0-9a-f]{64}$/;
 
-/** What gets stored for a fetched source: normalized text, or a digest for a PDF with no extractable text. */
 export function storedText(fetched: Fetched): string {
   if (fetched.kind === "pdf" && fetched.text.trim() === "") {
     return `pdf-sha256:${createHash("sha256").update(fetched.base64).digest("hex")}`;
@@ -78,11 +73,6 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   return [...names].filter(Boolean).map((n) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, "iu"));
 }
 
-/**
- * True when the difference between two versions of a page could change an endorsement: an
- * added or removed line names a contest, candidate, alias or surname, or uses an endorsement
- * word. Date, counter, boilerplate and whitespace changes never count.
- */
 export function relevantChange(oldText: string, newText: string, ballot: Ballot, aliases: Aliases = {}): boolean {
   const a = new Set(normalizePageText(oldText).split("\n"));
   const b = new Set(normalizePageText(newText).split("\n"));
@@ -94,7 +84,6 @@ export function relevantChange(oldText: string, newText: string, ballot: Ballot,
 
 export type Gate = "new" | "same" | "irrelevant" | "relevant";
 
-/** How a freshly fetched page compares with what is stored for it. */
 export function pageGate(stored: string | null, fresh: string, ballot: Ballot, aliases: Aliases = {}): Gate {
   if (stored === null) return "new";
   if (stored === fresh) return "same";
@@ -104,7 +93,7 @@ export function pageGate(stored: string | null, fresh: string, ballot: Ballot, a
 
 const MAX_SLUG = 100;
 
-/** A stable, file-safe name for a source URL: host (without www.) plus path. */
+/** Names the stored page-text files: changing it orphans every stored page. */
 export function sourceSlug(url: string): string {
   const u = new URL(url);
   const slug = `${u.hostname.replace(/^www\./, "")}${u.pathname}${u.search}`

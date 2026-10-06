@@ -386,7 +386,6 @@ describe("extract", () => {
     const { client, stream } = fakeClient({});
     await extract(client, ballot, guide, sources);
     const schema = stream.mock.calls[0][0].output_config.format.schema;
-    // Follow $refs so the assertion holds whether or not the schema uses $defs.
     const deref = (node: Record<string, unknown>): Record<string, unknown> => {
       const ref = node.$ref as string | undefined;
       if (!ref) return node;

@@ -18,7 +18,6 @@ export function latestElection(root: string = DATA_ROOT): string {
 
 const cache = new Map<string, ElectionData>();
 
-// Loads (once per process) an election from DATA_ROOT; undefined for ids that aren't election directories.
 export function election(id: string): ElectionData | undefined {
   if (!elections().includes(id)) return undefined;
   let d = cache.get(id);
@@ -29,7 +28,6 @@ export function election(id: string): ElectionData | undefined {
   return d;
 }
 
-// The ballot view's props: published guides and files only, slimmed, plus the pending note.
 export function ballotViewProps(d: ElectionData) {
   const published = publishedGuides(d.guides, d.endorsements);
   return {

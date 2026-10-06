@@ -162,7 +162,6 @@ describe("loadElection failures", () => {
     expect(() => loadElection(dir, "2026-11")).toThrow(/guides\/a\.yml.*'b'/);
   });
   it("throws on duplicate guide ids", () => {
-    // The filename check already makes duplicates unreachable; this pins that two files claiming one id are rejected.
     const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("a"), "guides/b.yml": guide("a") });
     expect(() => loadElection(dir, "2026-11")).toThrow(/b\.yml/);
   });

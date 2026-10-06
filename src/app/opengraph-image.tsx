@@ -8,7 +8,6 @@ export const alt = "Bay Ballot: every San Francisco voter guide in one place, No
 export const size = SIZE;
 export const contentType = "image/png";
 
-// Site-wide image: the tagline, then one real result as an example of what the site shows.
 export default async function Image() {
   const example = exampleShare();
   return new ImageResponse(

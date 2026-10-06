@@ -36,10 +36,6 @@ const BORDER: Record<BarTone, string> = {
   empty: "border-border",
 };
 
-// One contest in full, shared by the desktop pane, the phone sheet and the contest page: the result
-// (one number, the guide total, the bar and its legend), then one block per side with its guides
-// and its strongest reasons.
-// `heading`: "h1" on the contest page, "h2" in the pane, false when a sheet title already names it.
 export function ContestDetail({
   election,
   contest,
@@ -60,9 +56,7 @@ export function ContestDetail({
   titleId?: string;
   slots?: Slots;
   pageLink?: boolean;
-  // Short guide names on chips (the contest page shows full names).
   shortNames?: boolean;
-  // Sits at the header's top-right (the desktop pane's close button).
   action?: ReactNode;
 }) {
   const description = cardDescription(contest);
@@ -118,10 +112,8 @@ export function ContestDetail({
   );
 }
 
-// Measure segments carry their share in the label; the lead line already says it once.
 const SIDE_NAME: Record<string, string> = { Y: "Yes", N: "No" };
 
-// Names and counts under the bar; with two sides, one at each end so each sits by its segment.
 function Legend({ segments }: { segments: BarSegment[] }) {
   if (segments[0]?.tone === "empty") return null;
   const item = (s: BarSegment, end = false) => (
@@ -198,7 +190,6 @@ const QUOTE_MARK = (
   </svg>
 );
 
-// Guide chips: the first few, then "+N more" reveals the rest in place. Every chip opens the guide's page.
 function Chips({ guides, short }: { guides: SideGuide[]; short: boolean }) {
   const [all, setAll] = useState(false);
   const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);

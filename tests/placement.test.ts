@@ -69,7 +69,6 @@ describe("contestMarkers", () => {
     expect(hits(byId("supreme-court-evans"), "California Supreme Court")).toBe(true);
   });
   it("does not use bare last names that collide with other words", () => {
-    // Jeremy Lee runs for College Board; "Ed Lee Dems" is a club, not that race.
     expect(hits(byId("college-board"), "Ed Lee Dems endorse")).toBe(false);
     expect(hits(byId("college-board"), "Jeremy Lee")).toBe(true);
   });
@@ -79,7 +78,6 @@ const page = (text: string, url = "https://g.org/"): Page => ({ url, text, kind:
 const quote = (text: string, source = "https://g.org/") => ({ text, source });
 const contests = ballot.contests;
 
-// Real layout from abundantsanfrancisco.org/vote/ballot-measures (Oct 2026).
 const abundant = page(
   [
     "Ballot Measures",

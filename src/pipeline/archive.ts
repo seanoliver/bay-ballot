@@ -14,10 +14,7 @@ function snapshot(candidate: string | null): string | null {
   }
 }
 
-/**
- * Ask the Wayback Machine to capture `url` and return the snapshot URL, or null on any
- * failure. Never throws: archiving is best-effort and must not fail an extraction.
- */
+/** Never throws: a failed archive must not fail an extraction. */
 export async function archiveUrl(url: string, fetchFn: FetchFn = fetch): Promise<string | null> {
   try {
     const res = await fetchFn(`${ARCHIVE}/save/${url}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });

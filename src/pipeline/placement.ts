@@ -1,12 +1,9 @@
 import type { Contest } from "@/lib/schema";
 import { normalizeWithMap, type KeptQuote, type Page } from "./quotes";
 
-// Only headings count as markers: a short line (not a sentence ending in ".") with the marker
-// near its start, such as "No on Prop G: …" or "Supervisor, District 10: …". Prose mentions
-// ("The Controller cautions…", "…vote yes on BOTH RTM and Prop H") are cross-references, and a
-// line that is only an image caption ("[Prop G: Closing Sunset Dunes Park]") trails its section.
 const HEADING_CHARS = 40;
 const HEADING_LINE_MAX = 120;
+// A heading: a short line that is not a sentence ending in "." or a bracketed image caption.
 const isHeadingLine = (line: string) =>
   line.trim().length <= HEADING_LINE_MAX && !/\.\s*$/.test(line) && !/^\s*\[[^\]]*\]\s*$/.test(line);
 
@@ -22,7 +19,6 @@ const asHeading = (body: string) => `${body}(?=[^\\S\\n]*(?:\\n|$|[:—–\\-,(|
 const PROP_WORD = `(?:${ci("proposition")}|${ci("prop")}\\.?|${ci("measure")})`;
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
 
-/** "First Last" patterns for a candidate: first name or nickname (initials' dots optional), then last name. */
 function namePatterns(candidate: string): string[] {
   const nick = candidate.match(/\(([^)]*)\)|["“”]([^"“”]*)["“”]/);
   const bare = candidate.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " ");
@@ -43,8 +39,7 @@ function districtPatterns(c: Contest): string[] {
   switch (c.jurisdiction.name) {
     case "Supervisor": {
       const sup = `${ci("supervisor")}s?`;
-      // A bare "District 8" / "D8" means a supervisor race on SF guides; longer BART and BOE
-      // headings ("BART D8") win where they overlap.
+      // A bare "District 8" / "D8" means a supervisor race on SF guides.
       return [`(?:${ciWords("board of")}\\s+)?${sup},?\\s*${d}`, `${d}(?:,?\\s*${sup})?`];
     }
     case "Assembly":
@@ -60,7 +55,6 @@ function districtPatterns(c: Contest): string[] {
   }
 }
 
-/** Patterns that mark where a contest's section starts on a guide's page. */
 export function contestMarkers(c: Contest): RegExp[] {
   const out: string[] = [];
   if (c.kind === "measure") {
@@ -86,7 +80,6 @@ type Marker = { start: number; end: number; ids: string[] };
 
 const markerCache = new WeakMap<Page, Marker[]>();
 
-/** Section headings on a page, cached per page object. */
 function pageMarkers(page: Page, contests: Contest[]): Marker[] {
   let m = markerCache.get(page);
   if (!m) {
@@ -96,12 +89,6 @@ function pageMarkers(page: Page, contests: Contest[]): Marker[] {
   return m;
 }
 
-/**
- * One marker per heading section. Overlapping matches go to the longest ("Lieutenant Governor"
- * over "Governor", "BART D8" over "D8"); a heading naming several contests covers all of them,
- * as does a run of consecutive heading lines ("Prop 41: …" / "Prop 42: …" / "Prop 43: …"
- * followed by one shared write-up). The last line's contests come first in `ids`.
- */
 function headingMarkers(text: string, contests: Contest[]): Marker[] {
   const lines: { start: number; text: string }[] = [];
   let at = 0;
@@ -122,6 +109,7 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
       }
     }
   }
+  // Overlapping matches go to the longest: "Lieutenant Governor" over "Governor".
   const kept = found.filter(
     (a) => !found.some((b) => b !== a && b.start <= a.start && b.end >= a.end && b.end - b.start > a.end - a.start),
   );
@@ -135,6 +123,7 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
     } else byLine.set(m.line, { end: m.end, ids: [m.id] });
   }
 
+  // Consecutive heading lines share one section ("Prop 41: …" / "Prop 42: …", then one write-up).
   const out: Marker[] = [];
   let prevLine = -2;
   for (const li of [...byLine.keys()].sort((a, b) => a - b)) {
@@ -149,11 +138,6 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
   return out;
 }
 
-/**
- * The contest a quote actually sits under, when that is not `contestId`; else null. A quote
- * counts as placed if it names its own contest, or if any occurrence on its page has no heading
- * before it (a single-contest page) or has this contest among the nearest heading's contests.
- */
 export function misplacedUnder(quote: KeptQuote, contestId: string, pages: Page[], contests: Contest[]): string | null {
   const page = pages.find((p) => p.url === quote.source);
   if (!page) return null;

@@ -1,5 +1,3 @@
-// Renders share-image states that the current data doesn't produce, to look at them.
-// Run: npx tsx scripts/share-fixtures.tsx <out-dir>
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
@@ -15,7 +13,6 @@ async function main() {
   const d = election(latestElection());
   const contest = d?.ballot.contests.find((c) => c.kind === "measure");
   if (!contest) throw new Error("no measure on the latest ballot");
-  // A real contest with no guide rows: the "no positions" state.
   const card = shareCard(contest, []);
   const res = new ImageResponse(
     (

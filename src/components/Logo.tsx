@@ -1,7 +1,5 @@
 import { HOLE, HOLE_RADIUS, HOLES, LOGO_VIEWBOX, OFF_OPACITY } from "@/lib/logo";
 
-// The Punch-card B mark in currentColor. Decorative: the wordmark beside it is the accessible name.
-// Small sizes snap to the pixel grid (crispEdges); larger ones keep the rounded holes.
 export function Logo({ size = 28, className }: { size?: number; className?: string }) {
   return (
     <svg

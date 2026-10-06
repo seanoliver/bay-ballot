@@ -3,7 +3,6 @@ import type { BarSegment, BarTone } from "@/lib/bar";
 import { breakLines } from "@/lib/share";
 import { HOLE, HOLE_RADIUS, HOLES, OFF_OPACITY } from "@/lib/logo";
 
-// Light-mode values of the site's tokens (globals.css); share images are always light.
 export const INK = "#0a0a0a";
 export const MUTED = "#666666";
 export const PAPER = "#fafafa";
@@ -21,11 +20,9 @@ export const FILL: Record<BarTone, string> = {
 export const LEAD_INK = { yes: "#15803d", no: "#b91c1c", split: "#b45309", candidate: INK, none: MUTED } as const;
 export const SIZE = { width: 1200, height: 630 };
 
-// One unbreakable run: the renderer measures each word unkerned but draws it kerned, so text it
-// splits at spaces gets uneven gaps. Non-breaking spaces keep a line as a single kerned run.
+// Nbsp keeps each line one kerned run: the renderer leaves uneven gaps where it splits at spaces.
 export const run = (text: string) => text.replace(/ /g, "\u00a0");
 
-// Multi-line text, broken by breakLines and drawn one run per line.
 export function Lines({ text, maxChars, maxLines, style }: { text: string; maxChars: number; maxLines: number; style?: CSSProperties }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", ...style }}>
@@ -48,7 +45,6 @@ function Mark({ size }: { size: number }) {
   );
 }
 
-// Report frame: brand top-left, election top-right, content, and the three-bar rule at the bottom.
 export function ShareFrame({ right, children }: { right?: string; children: ReactNode }) {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: PAPER, color: INK, fontFamily: "Geist" }}>
@@ -71,7 +67,6 @@ export function ShareFrame({ right, children }: { right?: string; children: Reac
   );
 }
 
-// The site's stacked bar: segments sized by count with 4px gaps, rounded outer ends.
 export function ShareBar({ segments, height = 36 }: { segments: BarSegment[]; height?: number }) {
   return (
     <div style={{ display: "flex", gap: 4, height, width: "100%" }}>

@@ -6,7 +6,7 @@ import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/fil
 const STORAGE_KEY = "bb-filters";
 const CHANGE_EVENT = "bb-filters-change";
 
-// Storage can throw (private mode, blocked site data); every access falls back to "nothing stored".
+// Storage access can throw (private mode, blocked site data).
 function readStored(): string | null {
   try {
     return window.localStorage.getItem(STORAGE_KEY);
@@ -19,7 +19,6 @@ function writeStored(q: string) {
   try {
     window.localStorage.setItem(STORAGE_KEY, q);
   } catch {
-    // Not persisting is fine; the URL still carries the filters.
   }
 }
 
@@ -36,19 +35,16 @@ function subscribe(onChange: () => void) {
   };
 }
 
-// Native replaceState syncs with the Next router without a server round trip or scroll.
+// Not router.replace: that refetches from the server and scrolls.
 function replaceQuery(q: string) {
   window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
-// The URL's search string; "" on the server and during hydration.
 export function useQuery(): string {
   return useSyncExternalStore(subscribe, readQuery, () => "");
 }
 
-// Filters live in the URL, falling back to the last filters saved on this device. `keep` names
-// non-filter params (like a selected contest) that survive a filter change.
 export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
   const query = useQuery();
   const stored = useSyncExternalStore(subscribe, readStored, () => null);
@@ -72,7 +68,6 @@ export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; k
   return { filters, setFilters };
 }
 
-// A single non-filter URL param (e.g. ?c=prop-b) and its setter; null removes it.
 export function useQueryParam(name: string): [string | null, (v: string | null) => void] {
   const query = useQuery();
   const value = new URLSearchParams(query).get(name);

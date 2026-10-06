@@ -47,7 +47,6 @@ const flag = (f: string) => args.includes(f);
 const VALUE_OPTIONS = ["--summary", "--result"];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
-// The daily job extracts at most this many changed guides per run; the rest wait a day.
 const REFRESH_BUDGET = 20;
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const today = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
@@ -70,7 +69,6 @@ async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[
   return sources;
 }
 
-/** Audit one guide's file against its pages, write the result, and print what changed. */
 async function verifyAndWrite(client: Anthropic, data: ElectionData, guide: Guide, file: EndorsementFile, sources: Source[]): Promise<void> {
   const { output, usage } = await verify(client, data.ballot, guide, file, sources);
   const r = applyVerdicts(file, output);
@@ -168,7 +166,6 @@ async function runExtract(): Promise<void> {
   process.exitCode = exitCodeFor(results);
 }
 
-/** The daily job: re-check every guide, extract and verify only relevant changes, validate, summarize. */
 async function runRefreshCmd(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION,
@@ -239,7 +236,6 @@ function runCheck(): void {
   else console.log(`check OK (${data.guides.length} guides, ${warnings.length} warnings)`);
 }
 
-// Last-committed version of each endorsement file, for the review page's change markers.
 function committedEndorsements(ids: string[]): Record<string, EndorsementFile> {
   const out: Record<string, EndorsementFile> = {};
   for (const id of ids) {

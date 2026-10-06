@@ -3,7 +3,6 @@ import { formatDate } from "@/lib/display";
 import { mostPositions, shareCard } from "@/lib/share";
 import { ballotViewProps, election, latestElection } from "@/lib/site-data";
 
-// Share data for a contest, from every published guide (no filters).
 export function contestShare(electionId: string, contestId: string) {
   const d = election(electionId);
   const contest = d?.ballot.contests.find((c) => c.id === contestId);
@@ -12,7 +11,6 @@ export function contestShare(electionId: string, contestId: string) {
   return { card: shareCard(contest, activeEntries(contest.id, guides, files, EMPTY)), right: electionLabel(d.ballot.date) };
 }
 
-// The latest election's most-answered contest, for the site-wide image.
 export function exampleShare() {
   const id = latestElection();
   const d = election(id);
@@ -23,7 +21,6 @@ export function exampleShare() {
   return contest ? { card: shareCard(contest, rowsFor(contest.id)), date: formatDate(d.ballot.date) } : null;
 }
 
-// "Nov 3, 2026 · San Francisco"
 function electionLabel(iso: string) {
   const day = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
   return `${day.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" })} · San Francisco`;

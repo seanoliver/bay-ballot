@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-// Geist (SIL OFL, src/app/fonts/OFL.txt) as TTF: the image renderer can't read woff2.
+// TTF, not woff2: the image renderer can't read woff2.
 const dir = path.join(process.cwd(), "src/app/fonts");
 const load = (file: string) => readFile(path.join(dir, file));
 

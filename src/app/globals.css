@@ -4,17 +4,13 @@
 
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
-/* shadcn tokens plus three app tokens for endorsement verdicts (AA contrast on --background in both modes). */
 :root {
   --yes: #15803d;
   --no: #b91c1c;
   --split: #b45309;
-  /* --yes/--no are text colors (AA). Bars use these fills: distinguishable under deutan/protan
-     (Yes always draws first, with a 2px gap and a text label as secondary encoding). */
   --yes-fill: #166534;
   --no-fill: #e25c5c;
-  /* Candidate slots: blue, magenta, violet, aqua (distinct under CVD; never the yes/no hues).
-     Magenta and aqua are under 3:1 on white, so candidate colors always sit next to text labels. */
+  /* Magenta and aqua are under 3:1 on white: never use a slot color without a text label. */
   --bar-1: #2a78d6;
   --bar-2: #e87ba4;
   --bar-3: #4a3aa7;
@@ -55,7 +51,6 @@
 }
 
 @theme inline {
-  /* Type scale: six sizes, every line height on the 4px grid. */
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
   --text-sm: 0.875rem;
@@ -164,7 +159,6 @@
   }
 }
 
-/* Reading measure for quotes and long descriptions. */
 @utility measure {
   max-width: 62ch;
 }

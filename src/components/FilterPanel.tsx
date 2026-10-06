@@ -32,7 +32,6 @@ type Props = {
   files: Record<string, PickFile>;
 };
 
-// Desktop: always open in the left column, scrolling on its own.
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
   return (
     <aside aria-label="Filters" className={className}>
@@ -43,7 +42,6 @@ export function FilterSidebar({ className, ...props }: Props & { className?: str
   );
 }
 
-// Phone: a Filters button that opens the controls in a bottom sheet.
 export function FiltersSheet({ className, ...props }: Props & { className?: string }) {
   const [open, setOpen] = useHistorySheet();
   return (
@@ -77,7 +75,6 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
 function FilterControls({ filters: f, onChange, guides, files }: Props) {
   return (
     <>
-      {/* One control idiom in the panel: a checkbox row, like the guide list. */}
       <Section title="Show">
         <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
           <Checkbox checked={f.whyOnly} onCheckedChange={(on) => onChange({ ...f, whyOnly: on === true })} />
@@ -108,7 +105,6 @@ function GuideChecklist({ filters: f, onChange, guides, files }: Props) {
   return (
     <div role="group" aria-label="Guides">
       <p className="mt-6 mb-2 text-sm text-muted-foreground">Guides</p>
-      {/* Our own clear button: the native one is hidden (it ignores the theme in dark mode). */}
       <div className="relative">
         <Input
           type="search"
@@ -152,7 +148,6 @@ function TypeGroup({
 }: { group: GuideGroup; searching: boolean } & Props) {
   const [expanded, setExpanded] = useState(false);
   const state = typeState(group.type, f, guides);
-  // Searching expands every group that has a match; the chevron then has nothing to collapse.
   const open = searching || expanded;
   return (
     <Collapsible open={open} onOpenChange={setExpanded}>

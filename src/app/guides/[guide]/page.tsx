@@ -12,7 +12,6 @@ import { election, latestElection } from "@/lib/site-data";
 
 export const dynamicParams = false;
 
-// Guide pages describe the guide's picks for the latest election.
 function current() {
   const id = latestElection();
   const d = election(id);

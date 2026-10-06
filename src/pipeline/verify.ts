@@ -17,7 +17,7 @@ const QUOTE_VERDICTS = [
   "old-election",
 ] as const;
 
-// Plain numbers and strings only: structured outputs reject the bounds z.int() would emit.
+// No z.int(): structured outputs reject the integer bounds it emits.
 export const VerifyOutput = z.object({
   picks: z.array(
     z.object({
@@ -50,7 +50,7 @@ function outputFormat(): Anthropic.Messages.JSONOutputFormat {
   return { type: "json_schema", schema };
 }
 
-/** The auditor's system prompt. It never includes the extraction instructions, so the check is independent. */
+/** Must not reuse the extraction prompt: the audit has to be independent of it. */
 export function verifierPrompt(ballot: Ballot): string {
   const contests = ballot.contests
     .map((c) => {
@@ -121,11 +121,6 @@ function parseOutput(text: string): VerifyOutput {
   return r.data;
 }
 
-/**
- * Ask a separate model to audit one guide's extracted picks and quotes against its pages.
- * Opus 5.5 always thinks, so no `thinking` param is sent; effort is raised from its medium
- * default. stop_reason is checked before parsing, as in `extract`.
- */
 export async function verify(
   client: ExtractClient,
   ballot: Ballot,
@@ -159,10 +154,6 @@ export type Applied = {
   notes: string[];
 };
 
-/**
- * Apply the verifier's verdicts: unconfirmed picks move from `picks` to `held` (not published,
- * still visible), unconfirmed quotes are dropped, missing picks are only reported.
- */
 export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied {
   const picks = { ...file.picks };
   const held: HeldPick[] = [];

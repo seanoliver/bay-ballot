@@ -104,7 +104,6 @@ export function buildReviewModel(
     }];
   });
 
-  // "ranked pick" alone is informational; a guide counts as flagged when it has anything else.
   const isFlagged = (g: ReviewGuide) => g.flags.some((f) => f !== "ranked pick");
   const rank = (g: ReviewGuide) => (g.status !== "published" ? 2 : isFlagged(g) ? 0 : 1);
   reviewed.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name, "en"));

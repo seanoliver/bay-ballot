@@ -4,9 +4,6 @@ import type { Row } from "./filters";
 import type { Contest, GuideType } from "./schema";
 import { tally } from "./score";
 
-// The contest detail: one block per side (Yes/No, or each candidate in bar order), each with its
-// guides as chips and its strongest reasons.
-
 export type SideGuide = { id: string; name: string; short: string; type: GuideType; quoted: boolean };
 export type SideQuote = { guideId: string; guideName: string; type: GuideType; text: string; href: string };
 export type Side = { key: string; label: string; tone: BarTone; count: number; guides: SideGuide[]; quotes: SideQuote[] };
@@ -14,9 +11,6 @@ export type ResultHeadline = { lead: string; tone: "yes" | "no" | "split" | "can
 
 const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-// Sides in bar order. Multi-seat races: the top `seats` names are sides, the rest `others`.
-// Within a side, guides that gave reasons come first (row order), then the rest A-Z.
-// `slots` should come from unfiltered data (candidateSlots) so colors match the bar.
 export function detailSides(contest: Contest, rows: Row[], slots?: Slots): { sides: Side[]; others: Side[] } {
   const colors = slots ?? candidateSlots(contest, rows.map((r) => r.entry));
   const all = groupByPick(contest, rows).map((g): Side => {
@@ -48,9 +42,6 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const mentions = (text: string, name: string) =>
   [name, surname(name)].some((n) => new RegExp(`\\b${escape(n)}\\b`, "i").test(text));
 
-// Up to two reasons for a side, by rule: one quote per guide; quotes about the side's own candidate,
-// or naming no rival, before attacks on rivals; different guide types first; then quotes of 200
-// characters or fewer, shorter first. `rest` is every other quote, in data order.
 export function pickReasons(side: Side, rows: Row[], contest: Contest): { top: SideQuote[]; rest: SideQuote[] } {
   const rivals =
     contest.kind === "candidate"
@@ -82,7 +73,6 @@ export function pickReasons(side: Side, rows: Row[], contest: Contest): { top: S
   return { top, rest: side.quotes.filter((q) => !top.includes(q)) };
 }
 
-// The header line: the one number (winner's or leader's share) and the guide total.
 export function resultHeadline(contest: Contest, rows: Row[]): ResultHeadline {
   const t = tally(contest, rows.map((r) => r.entry));
   const none: ResultHeadline = { lead: "No picks yet", tone: "none", detail: "" };

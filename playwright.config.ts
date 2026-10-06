@@ -1,6 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// The suite builds and starts its own production server. Set PORT to move it off 3200.
 const PORT = Number(process.env.PORT ?? 3200);
 const BASE = `http://127.0.0.1:${PORT}`;
 
@@ -12,7 +11,7 @@ export default defineConfig({
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: { baseURL: BASE, trace: "retain-on-failure" },
   projects: [
-    // iPhone 13 viewport, touch and user agent, run in Chromium (the only browser CI installs).
+    // Chromium, not WebKit: CI installs only Chromium.
     { name: "phone", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
   ],

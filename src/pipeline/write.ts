@@ -3,20 +3,12 @@ import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
 import { sourcesFor } from "./sources";
 
-/**
- * New snapshots replace older ones for the same source; snapshots for sources that weren't
- * re-archived this run are kept, and ones for sources the file no longer lists are dropped.
- */
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
   const bySource = new Map((prev.archived ?? []).map((a) => [a.source, a]));
   for (const a of fresh) bySource.set(a.source, a);
   return sourcesFor(prev).flatMap((url) => bySource.get(url) ?? []);
 }
 
-/**
- * The endorsement file after an extraction run. Settings come from `prev`; picks and fetch facts
- * are new. fetchedAt moves only when picks or quotes changed, so unchanged files stay unchanged.
- */
 export function nextFile(
   prev: EndorsementFile,
   picks: Record<string, Entry>,
@@ -24,8 +16,7 @@ export function nextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
-  // A held pick stays held (and out of `picks`) while extraction keeps returning it unchanged;
-  // a different pick for that contest drops the hold and goes back through verification.
+  // A held pick stays held while extraction returns it unchanged; a different pick goes back to verification.
   const held = (prev.held ?? []).filter((h) => picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick));
   if (held.length) {
     picks = { ...picks };
@@ -50,10 +41,6 @@ export function nextFile(
   };
 }
 
-/**
- * A warning when a run would wipe existing picks or cut them below half (usually a fetch or
- * extraction failure, not a real change), else null. `force` accepts the result anyway.
- */
 export function shrinkWarning(
   id: string,
   prev: Record<string, Entry>,
@@ -71,7 +58,6 @@ const KEY_ORDER = [
   "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 
-/** An entry without its schema defaults (ranked: false, quotes: []), so files stay short. */
 function compactEntry(e: Entry): Record<string, unknown> {
   return {
     pick: e.pick,
@@ -107,11 +93,6 @@ function topLevelComments(previous: string): Map<string, Comments> {
   return out;
 }
 
-/**
- * Serialize an endorsement file with a stable key order and no line wrapping. When `previous`
- * (the old file's text) is given, comments on top-level keys that still exist are carried over,
- * so hand-written notes like "# page also lists the June slate" survive re-extraction.
- */
 export function toYaml(file: EndorsementFile, { previous }: { previous?: string } = {}): string {
   const doc = new Document(ordered(file));
   if (previous !== undefined && isMap(doc.contents)) {

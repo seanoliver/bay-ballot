@@ -4,13 +4,11 @@ import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { tally } from "./score";
 
-// The data behind a contest's share image and share description, kept apart from the drawing.
-
 export type ShareLegendItem = { label: string; count: number; tone: BarTone };
 export type ShareSeat = { label: string; count: number; pct: number; tone: BarTone };
 export type ShareCard = {
   title: string;
-  kicker: string | null; // a measure's description
+  kicker: string | null;
   lead: string | null;
   leadTone: "yes" | "no" | "split" | "candidate" | "none";
   sub: string;
@@ -25,7 +23,6 @@ export type ShareCard = {
 const MAX_TITLE = 56;
 const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-// Titles sized for a share card: common long forms shortened, then capped at a word boundary.
 export function shortTitle(title: string): string {
   const t = title
     .replace(/^Proposition\b/, "Prop")
@@ -36,7 +33,6 @@ export function shortTitle(title: string): string {
   return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[,.;:]$/, "")}…`;
 }
 
-// `rows`: every published guide's entry for the contest (no filters), so the card matches a fresh visit.
 export function shareCard(contest: Contest, rows: Row[], slots?: Slots): ShareCard {
   const entries = rows.map((r) => r.entry);
   const t = tally(contest, entries);
@@ -85,7 +81,6 @@ export function shareCard(contest: Contest, rows: Row[], slots?: Slots): ShareCa
 
 const sfGuides = (n: number) => `${n} SF voter ${n === 1 ? "guide" : "guides"}`;
 
-// One line for the page description and social previews.
 export function shareDescription(card: ShareCard): string {
   const head = `${card.title}: `;
   if (card.lead === null) return `${head}no SF voter guide has taken a position yet`;
@@ -95,7 +90,6 @@ export function shareDescription(card: ShareCard): string {
   return `${head}${card.lead} of ${sfGuides(card.total)}`;
 }
 
-// The contest most guides took a position on (the first on ties), for the site-wide example bar.
 export function mostPositions<C extends { id: string }>(contests: C[], rowsFor: (id: string) => Row[]): C | undefined {
   let best: C | undefined;
   let most = -1;
@@ -106,9 +100,6 @@ export function mostPositions<C extends { id: string }>(contests: C[], rowsFor: 
   return best;
 }
 
-// Share-image text is laid out one line per run: the image renderer measures each word without
-// its kerning but draws it kerned, so letting it wrap at spaces opens uneven gaps between words.
-// Lines are filled greedily up to `maxChars`, never end on a "·", and the last line is cut with "…".
 export function breakLines(text: string, maxChars: number, maxLines: number): string[] {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[][] = [];
@@ -116,7 +107,7 @@ export function breakLines(text: string, maxChars: number, maxLines: number): st
   while (i < words.length && lines.length < maxLines) {
     const line: string[] = [];
     while (i < words.length && [...line, words[i]].join(" ").length <= maxChars) line.push(words[i++]);
-    if (line.length === 0) line.push(words[i++]); // a single word longer than the line
+    if (line.length === 0) line.push(words[i++]); // a word longer than maxChars; without this the loop never advances
     if (line.length > 1 && line.at(-1) === "·" && i < words.length) {
       line.pop();
       i -= 1;

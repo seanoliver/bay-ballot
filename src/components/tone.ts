@@ -1,6 +1,5 @@
 import type { BarTone } from "@/lib/bar";
 
-// Bar segments, legend dots and candidate group dots. Candidates get four distinct hues by slot.
 export const BAR_FILL: Record<BarTone, string> = {
   yes: "bg-yes-fill",
   no: "bg-no-fill",

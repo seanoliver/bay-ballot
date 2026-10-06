@@ -1,7 +1,6 @@
 import type { ShareCard } from "@/lib/share";
 import { FILL, LEAD_INK, Lines, MUTED, run, ShareBar, Swatch } from "./ShareFrame";
 
-// One contest's result as drawn on its share image. `compact`: the smaller example on the site-wide image.
 export function ContestShare({ card, compact = false }: { card: ShareCard; compact?: boolean }) {
   const titleSize = compact ? 36 : 64;
   return (
@@ -16,7 +15,7 @@ export function ContestShare({ card, compact = false }: { card: ShareCard; compa
       {card.lead === null ? (
         <div style={{ display: "flex", marginTop: 40, fontSize: 40, color: MUTED }}>{run(card.sub)}</div>
       ) : (
-        // The image renderer lays out fragments as rows; a column div keeps the result stacked.
+        // Not a fragment: the image renderer lays fragments out as a row.
         <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: compact ? 16 : 36 }}>
             <div style={{ display: "flex", alignItems: "baseline", fontSize: compact ? 36 : 52, fontWeight: 600, color: LEAD_INK[card.leadTone] }}>

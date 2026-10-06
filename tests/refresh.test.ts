@@ -193,7 +193,7 @@ describe("summarize", () => {
     expect(md).toContain("HELD prop-d: Y — wrong-pick: page says No on D");
     expect(md).toContain("Deferred (budget): gamma");
     expect(md).toContain("Unchanged: alpha");
-    expect(md).toContain("Estimated model cost: $3.00"); // 1M in at $2 + 100K out at $10
+    expect(md).toContain("Estimated model cost: $3.00");
   });
 });
 

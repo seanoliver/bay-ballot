@@ -14,7 +14,6 @@ export type DroppedQuote = { quote: string; reason: DropReason };
 
 const MIN_WORDS = 5;
 const MIN_CHARS = 20;
-// CJK text has no spaces between words, so length is counted in characters instead.
 const MIN_CJK_CHARS = 10;
 const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu;
 const ATTRIBUTION_WINDOW = 80;
@@ -26,7 +25,6 @@ const TRAILING_ATTRIBUTION =
   /^\s*["”’]?\s*,?\s*(?:[^.]{0,40}\s)?(says|said|argues?|argued|claims?|claimed|warns?|warned|according to)\b/i;
 const EDGE_QUOTES = /^["'“”‘’‛‟]+|["'“”‘’‛‟]+$/g;
 
-/** Split page text into segments; a quote must lie entirely inside one. */
 export function segments(page: Page): string[] {
   if (page.kind === "html") return page.text.split("\n");
   const joined = page.text.replace(/([a-z])-\n([a-z])/g, "$1$2");
@@ -44,7 +42,7 @@ function normalizeChar(ch: string): string {
     .toLowerCase();
 }
 
-/** Normalize, keeping for each output char the index of its source char in `s`. */
+/** `map[i]` is the index in `s` of the char that produced `norm[i]`. */
 export function normalizeWithMap(s: string): { norm: string; map: number[] } {
   let norm = "";
   const map: number[] = [];
@@ -61,7 +59,6 @@ export function normalizeWithMap(s: string): { norm: string; map: number[] } {
 
 const normalize = (s: string) => normalizeWithMap(s).norm;
 
-/** Match starts at segment start or right after . ! ? : ; 。！？ (optionally followed by a closing quote). */
 export function isSentenceStart(before: string): boolean {
   let b = before.trimEnd();
   if (b === "") return true;
@@ -82,14 +79,11 @@ function isTooShort(quote: string, normQuote: string): boolean {
 }
 
 const SENTENCE_END = /[.!?。！？]/g;
-// Text opens in the first person when we/our/us/my is its first or second word ("We think…",
-// "From our writeup in June:"), not "The Mayor told us:" or "It will cost our businesses…".
+// we/our/us/my as the first or second word: "We think…", "From our writeup…".
 const FIRST_PERSON_OPENING = /^\s*(?:\S+\s+)?(we|our|us|my)\b/i;
-// Abbreviations whose period does not end a sentence.
 const ABBREVIATIONS = /\b(?:U\.S\.A\.|U\.S\.|Mrs\.|Mr\.|Ms\.|Dr\.|St\.|No\.(?=\s*\d)|Prop\.|Jr\.|Sr\.|vs\.|e\.g\.|i\.e\.)/gi;
 const hasPhrase = (t: string) => ATTRIBUTION_PHRASES.some((p) => t.toLowerCase().includes(p));
 
-/** Split `before` (capped to the attribution window) into the open sentence and the one before it. */
 function sentencesBefore(before: string): { current: string; previous: string } {
   const w = before.slice(-ATTRIBUTION_WINDOW);
   const masked = w.replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_")); // same length, so indexes line up
@@ -107,26 +101,16 @@ const escapeRegExp = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const mentions = (text: string, name: string) =>
   new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(name)}(?![\\p{L}\\p{N}])`, "iu").test(text);
 
-// Own voice: the sentence opens in the first person ("We think…", "In our view…") or names the
-// guide. A "we/our/us" later in the sentence ("It will cost our businesses…") is not enough.
 const speaksAsGuide = (span: string, ownNames: string[]) =>
   FIRST_PERSON_OPENING.test(span) || ownNames.some((n) => n.trim() !== "" && mentions(span, n.trim()));
 
 // A speech verb whose subject isn't the guide ("Chan writes", not "We wrote").
 const OTHERS_SPEECH_VERB = new RegExp(`(?<!\\b(?:we|i)\\s+)${SPEECH_VERB.source}`, "i");
 
-/** A sentence that reports someone else's words: an attribution phrase or a speech verb. */
 const isReportedSpeech = (sentence: string) => hasPhrase(sentence) || SPEECH_VERB.test(sentence);
 
 export type AttributionContext = { span?: string; ownNames?: string[] };
 
-/**
- * Span sits inside quotation marks, or is attributed to someone else: an attribution phrase
- * earlier in its own sentence, a previous sentence with an attribution phrase or speech verb (unless the span
- * speaks as the guide: "we/our/us" or the guide's name), a phrase in the previous segment, a
- * previous segment ending in a colon that doesn't open in the first person ("The Chamber
- * writes:", "The Mayor told us:", but not "From our writeup in June:"), or a trailing "..., the Chamber says".
- */
 export function isAttributedSpeech(
   before: string,
   after: string,
@@ -137,6 +121,7 @@ export function isAttributedSpeech(
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
   const { current, previous: prevSentence } = sentencesBefore(before);
+  // "The Chamber writes:" introduces someone else's words; "From our writeup in June:" does not.
   const colonIntro =
     previous.trimEnd().endsWith(":") &&
     (!FIRST_PERSON_OPENING.test(previous) || hasPhrase(previous) || OTHERS_SPEECH_VERB.test(previous));
@@ -173,7 +158,6 @@ function findInSegment(segment: string, previous: string, normQuote: string, own
   return out;
 }
 
-// Endorsement announcements and calls to vote state a pick, not a reason for it.
 const ANNOUNCEMENTS = [
   /^we(?:'re|’re| are)?\s+(?:so\s+|very\s+)?(?:proud|thrilled|excited|happy|pleased|honored|delighted)\s+to\s+(?:endorse|support|recommend)\b/i,
   /^we\s+(?:endorse|support|recommend|urge)\b/i,
@@ -184,24 +168,18 @@ const ANNOUNCEMENTS = [
 ];
 const MAX_ANNOUNCEMENT_WORDS = 15;
 const THANKS = /^(?:thank\s+you|thanks)\b/i;
-// Words that introduce a reason. "to" counts only before a verb-like word ("to save Muni"),
-// not "to endorse" or "to everyone".
+// "to" counts only before a verb-like word: "to save Muni", not "to endorse" or "to everyone".
 const REASON =
   /\b(?:because|since|will|would|could|has|have|had|record|so\s+that|which|as\s+an?|for\s+(?:more|better|safer|cleaner|stronger|fewer|less|lower)|who\s+(?:has|have|will|would|is|was)|to\s+(?!(?:endorse|support|recommend|vote|announce|everyone|all|our|the|a|an|you|us|them)\b)[a-z]+)\b/i;
 
-/** False for quotes that only announce, slogan, call to vote or thank, with no reason in them. */
 export function isSubstantive(text: string): boolean {
   const t = text.trim().replace(EDGE_QUOTES, "").trim();
   if (THANKS.test(t)) return false;
-  // A long sentence that opens like an announcement usually goes on to say something.
   if (t.split(/\s+/).length > MAX_ANNOUNCEMENT_WORDS) return true;
   if (!ANNOUNCEMENTS.some((re) => re.test(t))) return true;
   return REASON.test(t);
 }
 
-// A quote that opens with a pronoun or demonstrative leans on an earlier sentence ("This will
-// only make it worse."). "This/That/These/Those" before a self-contained noun ("This measure",
-// "This city's ballots", "These elections") names its own subject and stands alone.
 const ANAPHORIC_OPENING = /^\W*(?:this|that|it|these|those|he|she|they|his|her|their|such)\b/i;
 const SELF_CONTAINED_NOUNS =
   "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter";
@@ -231,11 +209,6 @@ function namesSubject(text: string, c: Contest): boolean {
 
 const PERSONAL_PRONOUN = /^\W*(?:he|she|his|her)\b/i;
 
-/**
- * False for a quote that opens by pointing back at an earlier sentence and never names its
- * subject. "He/She/His/Her" is fine when the pick endorses exactly one candidate, since the
- * pronoun can only mean that person.
- */
 export function standsAlone(text: string, contest: Contest, { names }: { names?: string[] } = {}): boolean {
   const t = text.trim();
   if (!ANAPHORIC_OPENING.test(t) || SELF_REFERENCE.test(t)) return true;
@@ -243,7 +216,6 @@ export function standsAlone(text: string, contest: Contest, { names }: { names?:
   return namesSubject(t, contest);
 }
 
-/** Keep only quotes found word-for-word inside one segment of a page, publishing the page's own text. */
 export function verifyQuotes(
   quotes: string[],
   pages: Page[],

@@ -1,5 +1,3 @@
-// Phone sheets behave like pages for the Back button: opening pushes a history entry, Back closes
-// the sheet, and closing from the UI goes back over that entry. Desktop selection never pushes.
 export type SheetState = { open: boolean; pushed: boolean };
 export type SheetEvent = "open" | "dismiss" | "popstate";
 export const CLOSED: SheetState = { open: false, pushed: false };

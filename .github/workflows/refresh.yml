@@ -2,8 +2,7 @@ name: Daily data refresh
 
 on:
   schedule:
-    # 13:00 UTC = 6:00 am Pacific during daylight time (PDT). After clocks change on
-    # Nov 1 it runs at 5:00 am PST; Election Day is Nov 3, so that is left alone.
+    # 13:00 UTC: 6 am PDT, 5 am PST after Nov 1.
     - cron: "0 13 * * *"
   workflow_dispatch:
 
@@ -37,8 +36,6 @@ jobs:
       - name: Install Chromium for browser-fetched guides
         run: npx playwright install --with-deps chromium
 
-      # Pages that changed only in dates, banners or text naming no contest are skipped
-      # with no model call, so a quiet day costs nothing.
       - name: Refresh
         id: refresh
         env:
@@ -48,9 +45,7 @@ jobs:
           npm run bb -- refresh --summary summary.md --result result.json
           echo "code=$?" >> "$GITHUB_OUTPUT"
 
-      # Open a PR only when endorsement data changed or a guide was re-extracted (its page
-      # text must be committed, or tomorrow's run would pay to re-extract it). Page-text
-      # drift alone (dates, banners) is discarded: it never counts as a relevant change.
+      # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
       - name: Decide whether to open a PR
         id: changes
         run: |

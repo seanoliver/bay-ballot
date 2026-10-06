@@ -12,7 +12,6 @@ export type MeasureTally = {
 export type CandidateCount = {
   name: string;
   count: number;
-  // set for any name from a ranked entry; SF multi-seat races aren't ranked, so in practice this means a ranked #1
   fromRanked: boolean;
 };
 

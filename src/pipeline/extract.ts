@@ -18,7 +18,7 @@ export const ExtractOutput = z.object({
         .array(z.string())
         .describe("endorsed candidate names, in rank order if ranked; empty for measures"),
       ranked: z.boolean(),
-      // A plain number: structured outputs reject the integer bounds that z.int() emits.
+      // Not z.int(): structured outputs reject the integer bounds it emits.
       rankedCount: z
         .number()
         .nullable()
@@ -37,10 +37,7 @@ export const ExtractOutput = z.object({
 });
 export type ExtractOutput = z.infer<typeof ExtractOutput>;
 
-/**
- * The structured-output format, built from zod directly. The SDK's zodOutputFormat
- * (0.131) folds `enum` into the description, which would leave `vote` unconstrained.
- */
+/** Not the SDK's zodOutputFormat: it folds `enum` into the description, leaving `vote` unconstrained. */
 function outputFormat(): Anthropic.Messages.JSONOutputFormat {
   const schema: Record<string, unknown> = { ...z.toJSONSchema(ExtractOutput) };
   delete schema.$schema;
@@ -55,7 +52,7 @@ const MAX_TOKENS = 64000;
 const MAX_QUOTES = 3;
 const NOTE_QUOTE_CHARS = 80;
 
-/** The ballot-specific system prompt. Deterministic (no clock) so every guide call hits the prompt cache. */
+/** No clock or per-guide text: the prompt must stay byte-identical across guides to hit the cache. */
 export function systemPrompt(ballot: Ballot): string {
   const contests = ballot.contests.map((c) => ({
     id: c.id,
@@ -98,14 +95,12 @@ export function systemPrompt(ballot: Ballot): string {
   ].join("\n");
 }
 
-/** Pages for quote verification. A PDF with empty extracted text yields no verifiable quotes, so its quotes all drop. */
 export function pagesFor(sources: Source[]): Page[] {
   return sources.map(({ url, fetched }) =>
     fetched.kind === "pdf" ? { url, text: fetched.text, kind: "pdf" } : { url, text: fetched.text, kind: "html" },
   );
 }
 
-/** Official names for a pick, or null when any name is unknown: a partial pick would change its meaning. */
 function candidateNames(id: string, raw: string[], official: string[], aliases: Aliases, notes: string[]): string[] | null {
   const matches = raw.map((name) => ({ name, m: matchName(name, official, aliases) }));
   const unknown = matches.find(({ m }) => !m);
@@ -124,7 +119,6 @@ function candidateNames(id: string, raw: string[], official: string[], aliases: 
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
 
-/** Turn model output into schema entries, normalizing names and keeping only verified quotes. */
 export function toEntries(
   out: ExtractOutput,
   contests: Contest[],
@@ -182,14 +176,12 @@ export function toEntries(
       return !other;
     });
 
-    // A single name has no order, so it is never ranked (e.g. a "[Sole]" endorsement).
     let ranked = isCandidate && p.ranked && Array.isArray(pick) && pick.length > 1;
     if (ranked && (!c.rankedChoice || c.seats > 1)) {
       notes.push(`${c.id}: ranked ignored (not a ranked-choice contest)`);
       ranked = false;
     }
 
-    // rankedCount only matters when it leaves some names unranked.
     const n = p.rankedCount;
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
     picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
@@ -199,7 +191,6 @@ export function toEntries(
 
 type UserContent = Anthropic.Messages.ContentBlockParam[];
 
-/** The fetched pages as content blocks: PDFs as documents, HTML as text headed by its URL. */
 export function pageBlocks(sources: Source[]): UserContent {
   const content: UserContent = [];
   for (const { url, fetched } of sources) {
@@ -218,7 +209,6 @@ export function pageBlocks(sources: Source[]): UserContent {
 
 function userContent(guide: Guide, sources: Source[]): UserContent {
   const content = pageBlocks(sources);
-  // The guide goes here, not in the system prompt, so the ballot prefix stays cacheable across guides.
   content.push({
     type: "text",
     text: `Organization: ${guide.name} (${guide.homepage})\nExtract this organization's endorsements.`,
@@ -241,12 +231,6 @@ function parseOutput(text: string): ExtractOutput {
   return r.data;
 }
 
-/**
- * Ask Claude for one guide's endorsements across its already-fetched pages.
- * Streams so a long, multi-page guide can use a large max_tokens without an HTTP timeout.
- * The output format has no `parse` hook, so the SDK leaves the text alone and stop_reason
- * is checked before any parsing (a truncated or refused reply is never mistaken for bad JSON).
- */
 export async function extract(
   client: ExtractClient,
   ballot: Ballot,
@@ -254,6 +238,7 @@ export async function extract(
   sources: Source[],
 ): Promise<{ output: ExtractOutput; usage: Anthropic.Messages.Usage }> {
   const res = await client.messages
+    // Streams so a large max_tokens can't hit the HTTP timeout.
     .stream({
       model: MODEL,
       max_tokens: MAX_TOKENS,

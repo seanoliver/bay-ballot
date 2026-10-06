@@ -12,10 +12,8 @@ export type Headline = {
 
 export type PickGroup = { key: string; label: string; tone: "yes" | "no" | "candidate"; rows: Row[] };
 export type TopPick = { name: string; count: number; total: number };
-// `order` is the ranked part (rankedCount names when only some are ranked); `unranked` the rest.
 export type RankedDetail = { guideName: string; short: string; order: string[]; unranked: string[] };
 
-// Multi-seat races have no single winner, so they never read as "Split"; topPicks lists the names.
 export function headline(t: Tally, seats = 1): Headline {
   if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return { tone: "none", label: "No picks yet", detail: "", ranked: false };
   if (t.kind === "candidate" && seats > 1) return { tone: "candidate", label: "Most endorsed", detail: "", ranked: false };
@@ -42,7 +40,7 @@ export function headline(t: Tally, seats = 1): Headline {
   };
 }
 
-// The `seats` most-endorsed names; every name tied with the last seat is included.
+// Names tied with the last seat are included, so this can return more than `seats`.
 export function topPicks(t: Tally, seats: number): TopPick[] {
   if (t.kind !== "candidate" || t.counts.length === 0) return [];
   const cutoff = t.counts[Math.min(seats, t.counts.length) - 1].count;
@@ -88,7 +86,6 @@ export function contestHeadline(contest: Contest, rows: Row[]): { headline: Head
   return { headline: headline(t, contest.seats), topPicks: contest.seats > 1 ? topPicks(t, contest.seats) : [] };
 }
 
-// The one-line description under a contest title; candidate races are described by their title.
 export function cardDescription(contest: Contest): string | null {
   return contest.kind === "measure" && contest.description ? contest.description : null;
 }
@@ -115,7 +112,6 @@ export function pickLabel(entry: Entry): string {
   return entry.ranked ? rankedLabel(entry.pick) : entry.pick.join(", ");
 }
 
-// Quotes to show for a row; none when the guide doesn't publish reasoning.
 export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
 }
@@ -124,7 +120,6 @@ export function officialLink(contest: Contest): string | null {
   return contest.kind === "measure" && contest.link ? contest.link : null;
 }
 
-// Prefer the archived snapshot so links survive the guide page changing or going away.
 export function sourceLink(file: Pick<EndorsementFile, "archived">, url: string): string {
   return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
 }
@@ -140,7 +135,7 @@ export function guidePicks(contests: Contest[], file: EndorsementFile): GuidePic
   return out;
 }
 
-// Dates are calendar days; read the YYYY-MM-DD prefix in UTC so the server's timezone can't shift them.
+// Parse as UTC midnight so the server's timezone can't shift the calendar day.
 const day = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`);
 
 export function formatDate(iso: string): string {
@@ -153,8 +148,6 @@ export function monthYear(iso: string): string {
 
 const counted = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
-// The ballot page intro: "San Francisco ballot" and "November 3, 2026 · 36 guides · 52 contests · 914 picks".
-// `files` holds published files only; picks count entries for contests on this ballot.
 export function electionIntro(
   ballot: Pick<Ballot, "title" | "date" | "contests">,
   files: Record<string, Pick<EndorsementFile, "picks">>,
@@ -170,18 +163,15 @@ export function electionIntro(
 }
 
 
-// Short names (when a guide has one) go where space is tight; the full name everywhere else.
 export function displayName(g: { name: string; shortName?: string }, { short = false }: { short?: boolean } = {}): string {
   return short ? (g.shortName ?? g.name) : g.name;
 }
 
-// "#1 Brookter · also Eppler, Bryant (unranked)"
 export function rankedText(d: Pick<RankedDetail, "order" | "unranked">): string {
   const ranked = d.order.map((name, i) => `#${i + 1} ${name}`).join(", ");
   return d.unranked.length ? `${ranked} · also ${d.unranked.join(", ")} (unranked)` : ranked;
 }
 
-// "Data as of": the most recent fetch among published guides, as a calendar date.
 export function dataAsOf(ends: Record<string, Pick<EndorsementFile, "fetchedAt" | "status">>): string | null {
   const days = Object.values(ends)
     .filter((e) => e.status === "published")

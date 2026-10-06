@@ -8,7 +8,6 @@ export const alt = "How San Francisco voter guides split on this contest";
 export const size = SIZE;
 export const contentType = "image/png";
 
-// Prerender one image per contest at build time, like the contest pages.
 export const dynamicParams = false;
 export { generateStaticParams } from "./page";
 

@@ -43,7 +43,6 @@ test.describe("desktop detail pane", () => {
     const more = pane.getByRole("button", { name: /^\+\d+ more$/ }).first();
     const before = await chips.count();
     await more.click();
-    // The button relabels itself once expanded.
     await expect(pane.getByRole("button", { name: "Show less" })).toHaveAttribute("aria-expanded", "true");
     expect(await chips.count()).toBeGreaterThan(before);
     const href = await chips.first().getAttribute("href");

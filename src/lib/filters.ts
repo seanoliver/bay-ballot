@@ -1,8 +1,5 @@
 import type { EndorsementFile, Entry, Guide, GuideType } from "./schema";
 
-// `off` holds published guide ids the reader turned off; it is the only guide state.
-// District filters were removed; an address lookup replaces them later. Old URLs may still carry
-// sup/ad/cd/bart params; they are ignored and dropped on the next filter change.
 export type Filters = {
   off: string[];
   whyOnly: boolean;
@@ -10,7 +7,6 @@ export type Filters = {
 
 export const EMPTY: Filters = { off: [], whyOnly: false };
 
-// What the ballot view needs about a guide and its published file (keeps client props small).
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
 export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
 
@@ -26,7 +22,7 @@ export function toQuery(f: Filters): string {
   return p.toString();
 }
 
-// Old URLs may carry `offtypes`; those expand to the ids of `guides` with those types.
+// Nothing writes `offtypes` any more, but old shared URLs still carry it.
 export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []): Filters {
   const p = new URLSearchParams(q);
   const offTypes = parseList(p.get("offtypes"));
@@ -44,7 +40,6 @@ export function hasFilterParams(q: string): boolean {
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
 
-// `files` holds published files only (see publishedFiles).
 export function activeEntries(contestId: string, guides: GuideInfo[], files: Record<string, PickFile>, f: Filters): Row[] {
   const rows: Row[] = [];
   for (const guide of guides) {
@@ -77,7 +72,6 @@ export function publishedFiles(ends: Record<string, EndorsementFile>): Record<st
   return out;
 }
 
-// A published guide counts toward tallies unless it's turned off, or is list-only under whyOnly.
 function isCounted(f: Filters, id: string, file: PickFile): boolean {
   return isGuideOn(f, id) && !(f.whyOnly && !file.hasReasoning);
 }
@@ -103,13 +97,11 @@ export function countedLabel({ counted, published }: { counted: number; publishe
   return `${counted} of ${published} ${published === 1 ? "guide" : "guides"} counted`;
 }
 
-// Drops guide ids a stale URL or stored value could carry that this election doesn't have.
 export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
   return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly };
 }
 
-// Filter params in the URL win; otherwise the filters last saved on this device.
 export function initialFilters({
   query,
   stored,
@@ -123,7 +115,7 @@ export function initialFilters({
   return sanitizeFilters(fromQuery(raw, guides), guides);
 }
 
-// Plural labels in display order. Kept here (not derived from the zod enum) so client code doesn't pull in zod.
+// Not derived from the zod enum: client code must not import zod.
 const TYPE_LABELS: Record<GuideType, string> = {
   newspaper: "Newspapers",
   party: "Parties",
@@ -140,20 +132,16 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
   return on === 0 ? "off" : "mixed";
 }
 
-// All on unless all are already on, in which case all off. `guides` are published guides.
 export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): Filters {
   const ids = guides.filter((g) => g.type === type).map((g) => g.id);
   if (typeState(type, f, guides) === "on") return { ...f, off: uniqSorted([...f.off, ...ids]) };
   return { ...f, off: f.off.filter((id) => !ids.includes(id)) };
 }
 
-// `heading` is label plus count, for accessible names; the UI shows the count in its own column.
 export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
 
 const fold = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-// Published guides grouped by type; `query` filters by name or short name (case- and accent-insensitive).
-// Headings count the whole type so the checkbox reads the same while searching.
 export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>, query: string): GuideGroup[] {
   const q = fold(query.trim());
   const out: GuideGroup[] = [];

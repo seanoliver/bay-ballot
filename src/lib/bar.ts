@@ -1,7 +1,6 @@
 import type { Contest, Entry } from "./schema";
 import { tally, type CandidateCount, type Tally } from "./score";
 
-// Candidate tones are four distinct hues (never the Yes/No colors); "other" is neutral.
 export type BarTone = "yes" | "no" | "c1" | "c2" | "c3" | "c4" | "other" | "empty";
 export type Slot = 1 | 2 | 3 | 4 | "other";
 export type Slots = Map<string, Slot>;
@@ -29,19 +28,15 @@ function percents(counts: number[]): number[] {
 
 const isEmpty = (t: Tally) => t.total === 0 || (t.kind === "candidate" && t.counts.length === 0);
 
-// Color follows the candidate, never their rank: slots are assigned from the unfiltered counts, so a
-// filter that drops the leader doesn't repaint anyone. The top four by count get slots 1-4 in
-// ballot order (names not on the ballot list follow, by count then name); the rest are "other".
-// A race with a single endorsed candidate is neutral throughout.
 function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: CandidateCount[]): Slots {
   const order = (name: string) => {
     const i = contest.candidates.indexOf(name);
     return i === -1 ? Infinity : i;
   };
   const endorsed = counts.filter((c) => c.count > 0);
-  // A lone candidate has no rival to tell apart; a color would only suggest a contest.
   if (endorsed.length === 1) return new Map([[endorsed[0].name, "other"]]);
   const byCount = [...endorsed].sort((a, b) => b.count - a.count || order(a.name) - order(b.name) || a.name.localeCompare(b.name, "en"));
+  // The top four by count get slots, assigned in ballot order; the rest are "other".
   const kept = byCount.slice(0, MAX_SLOTS);
   const ranked = new Map(byCount.map((c, i) => [c.name, i]));
   const slotted = [...kept].sort((a, b) => order(a.name) - order(b.name) || (ranked.get(a.name) ?? 0) - (ranked.get(b.name) ?? 0));
@@ -51,7 +46,6 @@ function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: Candidate
   return out;
 }
 
-// `entries` should be every published guide's entry for the contest, before filters.
 export function candidateSlots(contest: Contest, entries: Entry[]): Slots {
   const t = tally(contest, entries);
   return t.kind === "candidate" ? slotsFromCounts(contest, t.counts) : new Map();
@@ -61,10 +55,6 @@ export function slotTone(slots: Slots, name: string): BarTone {
   return SLOT_TONES[slots.get(name) ?? "other"];
 }
 
-// What a collapsed contest's bar draws. Measures and single-seat races are one stacked bar whose
-// segments sum to 100. Multi-seat races are up to `seats` independent bars, each `count` of `total` guides.
-// `slots` (from candidateSlots on unfiltered entries) fixes each candidate's color; without it,
-// slots come from this tally.
 export function barSegments(t: Tally, contest: Pick<Contest, "seats" | "candidates">, slots?: Slots): BarSegment[] {
   if (isEmpty(t)) return [EMPTY];
   if (t.kind === "measure") {
@@ -102,7 +92,6 @@ export function barSegments(t: Tally, contest: Pick<Contest, "seats" | "candidat
 const guidesOf = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 const single = (t: Tally, contest: Pick<Contest, "seats">) => t.kind === "candidate" && contest.seats === 1 && t.counts.length === 1;
 
-// The bar's accessible name (it is role="img").
 export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">): { aria: string } {
   if (isEmpty(t)) return { aria: `${contest.title}: no picks yet` };
   if (t.kind === "measure") return { aria: `${contest.title}: ${t.yes} Yes, ${t.no} No` };
@@ -116,8 +105,6 @@ export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">):
 export type LegendItem = { key: string; label: string; value: string; tone: BarTone | "split" };
 export type BarLegend = { lead: LegendItem | null; others: LegendItem[]; caption: string };
 
-// The line under a list bar, one grammar everywhere: the answer (winner's share, or the leader's),
-// then the rest as counts, then the guide total once. A single candidate gets no % (it isn't a contest).
 export function barLegend(t: Tally, contest: Pick<Contest, "seats" | "candidates">, slots?: Slots): BarLegend {
   if (isEmpty(t)) return { lead: null, others: [], caption: "No picks yet" };
   if (t.kind === "measure") {
@@ -152,7 +139,6 @@ export function surname(name: string): string {
   return tokens.at(-1) ?? name;
 }
 
-// A few words for the tightest rows, split so the label can truncate and the number never does.
 export function barShortParts(t: Tally, contest: Pick<Contest, "seats">): { label: string; value: string } {
   if (isEmpty(t)) return { label: "No picks", value: "" };
   if (t.kind === "measure") {
@@ -170,7 +156,6 @@ export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
 }
 
 
-// The verdict a measure's text should wear: its winner (Yes always draws first, so never segment 0).
 export function winnerTone(t: Tally): "yes" | "no" | "split" | null {
   if (t.kind !== "measure" || t.verdict === "none") return null;
   return t.verdict === "Y" ? "yes" : t.verdict === "N" ? "no" : "split";

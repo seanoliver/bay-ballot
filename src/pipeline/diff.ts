@@ -3,7 +3,6 @@ import type { Entry } from "@/lib/schema";
 const rankNote = (e: Entry) => (e.ranked ? ` (ranked${e.rankedCount ? ` ${e.rankedCount}` : ""})` : "");
 const show = (e: Entry) => (Array.isArray(e.pick) ? e.pick.join(" / ") + rankNote(e) : e.pick);
 
-/** Human-readable changes between two pick sets: "+" added, "~" changed, "q" quote count, "-" removed. */
 export function diffPicks(before: Record<string, Entry>, after: Record<string, Entry>): string[] {
   const out: string[] = [];
   for (const [id, e] of Object.entries(after)) {
@@ -19,7 +18,6 @@ export function diffPicks(before: Record<string, Entry>, after: Record<string, E
   return out;
 }
 
-/** One line per guide before the details: "<id>: <n> picks (+a ~c -r), <k> quotes, <x> notes". */
 export function summaryLine(
   id: string,
   before: Record<string, Entry>,
