@@ -32,7 +32,9 @@ jobs:
       - name: Start from the open refresh PR, if any
         id: base
         run: |
-          pr="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+          # A fork can open a PR from its own data/refresh branch; never continue or merge that one.
+          pr="$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository,headRepositoryOwner \
+            --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')"
           if [ -n "$pr" ]; then
             git fetch -q origin "$BRANCH"
             git switch -q -c "$BRANCH" FETCH_HEAD
@@ -108,8 +110,8 @@ jobs:
             gh pr edit "$pr" --body-file pr-body.md
             gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code ${{ steps.refresh.outputs.code }}); summary above is updated."
           else
-            gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md
-            pr="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')"
+            url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
+            pr="${url##*/}"
           fi
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
           labels="$(gh pr view "$pr" --json labels --jq '[.labels[].name] | join(",")')"
@@ -126,7 +128,11 @@ jobs:
         if: >-
           steps.changes.outputs.commit == 'true' && steps.refresh.outputs.code == '0' &&
           steps.checks.outcome == 'success' && !contains(steps.pr.outputs.labels, 'needs-review')
-        run: gh pr merge "${{ steps.pr.outputs.pr }}" --squash --delete-branch
+        run: |
+          pr="${{ steps.pr.outputs.pr }}"
+          [ "$(gh pr view "$pr" --json isCrossRepository,headRefName --jq '"\(.isCrossRepository) \(.headRefName)"')" = "false $BRANCH" ] \
+            || { echo "PR #$pr is not this repo's $BRANCH; not merging."; exit 1; }
+          gh pr merge "$pr" --squash --delete-branch --match-head-commit "$(git rev-parse HEAD)"
 
       - name: Leave the PR open for review
         if: >-
