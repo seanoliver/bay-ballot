@@ -33,7 +33,6 @@ const MEASURE_TITLE = /^(?:(.+?)\s+)?(Proposition|Measure)\s+(\w+)$/;
 const measureLetter = (c: Contest) => (c.kind === "measure" && c.id !== "rtm" ? (c.title.match(MEASURE_TITLE)?.[3] ?? null) : null);
 const sameDistrict = (a: Contest, b: Contest) =>
   a.id !== b.id && a.jurisdiction.name === b.jurisdiction.name && a.jurisdiction.district === b.jurisdiction.district;
-// A city named like its county ("San Mateo") must not match the county's name ("San Mateo County").
 const placeWords = (place: string, city: boolean) => (city ? `${ciWords(place)}(?!\\s+${ci("county")})` : ciWords(place));
 const nearPlace = (place: string, body: string, city: boolean) => [
   `${placeWords(place, city)}[^\\n]{0,40}?${body}`,
