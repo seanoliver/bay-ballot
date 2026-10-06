@@ -2,12 +2,19 @@ guide: smdj
 election: 2026-11
 status: published
 source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
+extraSources:
+  - https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
+  - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
 fetchWith: browser
 archived:
   - source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
     snapshot: https://web.archive.org/web/20261006200558/https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
+  - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+    snapshot: https://web.archive.org/web/20261006204424/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+  - source: https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
+    snapshot: https://web.archive.org/web/20261006204956/https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
 fetchedAt: 2026-10-06
-hasReasoning: false
+hasReasoning: true
 picks:
   us-rep-15:
     pick:
@@ -71,5 +78,19 @@ picks:
     pick: N
   half-moon-bay-measure-i:
     pick: Y
+  half-moon-bay-council-5:
+    pick:
+      - Steven R. Booker
+  half-moon-bay-council-1:
+    pick:
+      - Robert Brownstone
+  half-moon-bay-council-4:
+    pick:
+      - Debbie Ruddock
   san-bruno-measure-ee:
     pick: Y
+    quotes:
+      - text: The current system is regressive, meaning the more money a business makes, the less it will pay.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+      - text: The tax is not designed to target small businesses, and more than 75% of businesses will not see a change if it’s approved.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
