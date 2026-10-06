@@ -16,7 +16,7 @@ What a run does:
    A long line that only moved is ignored unless it names a contest or candidate. Anything else is "unchanged" and costs nothing.
 3. Re-extracted guides whose picks or quotes changed go through `verify` (a separate model audits them against the pages). Unconfirmed picks are moved to `held:` and not published.
 4. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
-5. Each guide whose data changed gets one entry at the top of `data/changelog.yml`, committed with the data: "GrowSF published endorsements for 12 contests" for a first publication, otherwise its changed, added and removed endorsements and new reasons (two named, the rest counted). Held picks aren't announced. Edit or delete an entry in the PR if its wording is wrong.
+5. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data. It compares the guide against `main` (the workflow passes main's `data/` as `--baseline`), so an open refresh PR holds one up-to-date entry per guide and a change undone before merge leaves none. Wording: "GrowSF published endorsements for 12 contests" for a first publication, otherwise its changes separated by semicolons (two named, the rest counted). Held picks aren't announced. Edit or delete an entry in the PR if its wording is wrong.
 6. `validate` runs, and the summary is written for the pull request.
 
 Then the workflow:

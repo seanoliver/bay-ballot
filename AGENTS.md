@@ -10,4 +10,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Changelog
 
-Every PR that changes what visitors see or what data the site shows adds an entry to `data/changelog.yml` in the same PR. Internal-only changes (tests, CI, refactors, docs) don't.
+Every PR that changes what visitors see or what data the site shows adds an entry in the same PR: one file, `data/changelog/<YYYY-MM-DD>-<slug>.yml`, holding `date`, `type` (`new`, `data` or `fix`), `title`, and optional `details` and `pr`. Internal-only changes (tests, CI, refactors, docs) don't.

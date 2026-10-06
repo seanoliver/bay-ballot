@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
-import { Ballot, EndorsementFile, Guide, ChangelogFile, type ChangelogEntry } from "./schema";
+import { Ballot, EndorsementFile, Guide } from "./schema";
 import { matchName } from "./names";
 
 export type ElectionData = {
@@ -63,10 +63,6 @@ export function loadElection(root: string, election: string): ElectionData {
   return { ballot, guides, endorsements };
 }
 
-export function loadChangelog(root: string): ChangelogEntry[] {
-  const file = path.join(root, "changelog.yml");
-  return fs.existsSync(file) ? readParsed(file, ChangelogFile) : [];
-}
 
 export function listElections(root: string): string[] {
   return fs.readdirSync(root).filter((d) => /^\d{4}-\d{2}$/.test(d)).sort();

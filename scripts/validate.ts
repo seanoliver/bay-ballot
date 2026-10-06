@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { validateChangelog } from "../src/lib/changelog";
-import { listElections, loadChangelog, loadElection, validateElection } from "../src/lib/data";
+import { readChangelog, validateChangelog } from "../src/lib/changelog";
+import { listElections, loadElection, validateElection } from "../src/lib/data";
 
 const root = path.join(process.cwd(), "data");
 if (!fs.existsSync(root)) {
@@ -26,7 +26,8 @@ for (const election of listElections(root)) {
 try {
   // Local YYYY-MM-DD, not toISOString(): the UTC date can trail the local one and reject today's entry.
   const today = new Date().toLocaleDateString("en-CA");
-  const errors = validateChangelog(loadChangelog(root), today);
+  const { entries, errors: read } = readChangelog(root);
+  const errors = [...read, ...validateChangelog(entries, today)];
   errors.forEach((e) => console.error(`ERROR ${e}`));
   if (errors.length) failed = true;
 } catch (e) {

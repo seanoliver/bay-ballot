@@ -195,5 +195,5 @@ test("the changelog is linked from the footer and lists entries by month", async
   await expect(page).toHaveURL(/\/changelog$/);
   await expect(page.getByRole("heading", { level: 1, name: "Changelog" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 2, name: "October 2026" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "#1", exact: true })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
+  await expect(page.getByRole("link", { name: "Pull request #1 (opens in new tab)" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
 });

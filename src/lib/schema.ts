@@ -104,4 +104,3 @@ export const ChangelogEntry = z.object({
   pr: z.number().int().positive().optional(),
 });
 export type ChangelogEntry = z.infer<typeof ChangelogEntry>;
-export const ChangelogFile = z.array(ChangelogEntry);

@@ -89,7 +89,10 @@ jobs:
           BAYBALLOT_ANTHROPIC_API_KEY: ${{ secrets.BAYBALLOT_ANTHROPIC_API_KEY }}
         run: |
           set +e
-          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json
+          git fetch -q origin main
+          mkdir -p "$RUNNER_TEMP/main"
+          git archive origin/main data | tar -x -C "$RUNNER_TEMP/main"
+          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json --baseline "$RUNNER_TEMP/main/data"
           echo "code=$?" >> "$GITHUB_OUTPUT"
 
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.

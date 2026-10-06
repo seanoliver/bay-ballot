@@ -1,35 +1,31 @@
 import fs from "node:fs";
-import { parseDocument, stringify } from "yaml";
+import path from "node:path";
+import { stringify } from "yaml";
 import type { ChangelogEntry, Contest, EndorsementFile, Entry } from "@/lib/schema";
 import { shortTitle } from "@/lib/share";
 
 const SHOWN = 2;
 
-const pickText = (p: Entry["pick"]) => (p === "Y" ? "Yes" : p === "N" ? "No" : p.join(" and "));
+function names(list: string[]): string {
+  return list.length <= 1 ? (list[0] ?? "") : `${list.slice(0, -1).join(", ")} and ${list.at(-1)}`;
+}
+const pickText = (p: Entry["pick"]) => (p === "Y" ? "Yes" : p === "N" ? "No" : names(p));
+const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((x) => b.includes(x));
 const reasons = (n: number) => (n === 1 ? "a reason" : `${n} reasons`);
 
-function changes(before: EndorsementFile, after: EndorsementFile, contests: Contest[]): string[] {
-  const held = new Set((after.held ?? []).map((h) => h.contestId));
-  const out: string[] = [];
-  for (const c of contests) {
-    if (held.has(c.id)) continue;
-    const name = shortTitle(c.title);
-    const b = before.picks[c.id];
-    const a = after.picks[c.id];
-    if (!a && !b) continue;
-    if (!b && a) {
-      out.push(Array.isArray(a.pick) ? `endorsed ${pickText(a.pick)} for ${name}` : `endorsed ${pickText(a.pick)} on ${name}`);
-      continue;
-    }
-    if (b && !a) {
-      out.push(`removed its endorsement for ${name}`);
-      continue;
-    }
-    if (!a || !b) continue;
-    if (pickText(a.pick) !== pickText(b.pick)) out.push(`changed ${name} from ${pickText(b.pick)} to ${pickText(a.pick)}`);
-    else if (after.hasReasoning && a.quotes.length > b.quotes.length) out.push(`added ${reasons(a.quotes.length - b.quotes.length)} for ${name}`);
+function change(name: string, b: Entry | undefined, a: Entry | undefined, hasReasoning: boolean): string | null {
+  if (!a && !b) return null;
+  if (!b && a) return Array.isArray(a.pick) ? `endorsed ${pickText(a.pick)} for ${name}` : `endorsed ${pickText(a.pick)} on ${name}`;
+  if (b && !a) return `removed its endorsement for ${name}`;
+  if (!a || !b) return null;
+  if (Array.isArray(a.pick) && Array.isArray(b.pick) && sameSet(a.pick, b.pick)) {
+    const order = a.pick.join("\n") !== b.pick.join("\n") || a.ranked !== b.ranked || a.rankedCount !== b.rankedCount;
+    if (order && (a.ranked || b.ranked)) return `changed its ranking for ${name}`;
+  } else if (pickText(a.pick) !== pickText(b.pick)) {
+    return `changed ${name} from ${pickText(b.pick)} to ${pickText(a.pick)}`;
   }
-  return out;
+  if (hasReasoning && a.quotes.length > b.quotes.length) return `added ${reasons(a.quotes.length - b.quotes.length)} for ${name}`;
+  return null;
 }
 
 export function guideChangelogEntry({
@@ -45,31 +41,38 @@ export function guideChangelogEntry({
   contests: Contest[];
   date: string;
 }): ChangelogEntry | null {
-  const firstPublished = before.status !== "published";
   const count = Object.keys(after.picks).length;
-  if (after.status === "published" && firstPublished && count > 0) {
+  if (after.status === "published" && before.status !== "published" && count > 0) {
     return { date, type: "data", title: `${guideName} published endorsements for ${count} ${count === 1 ? "contest" : "contests"}` };
   }
-  const list = changes(before, after, contests);
+  const held = new Set((after.held ?? []).map((h) => h.contestId));
+  const list = contests
+    .filter((c) => !held.has(c.id))
+    .map((c) => change(shortTitle(c.title), before.picks[c.id], after.picks[c.id], after.hasReasoning))
+    .filter((x): x is string => x !== null);
   if (list.length === 0) return null;
-  let title: string;
-  if (list.length <= SHOWN) title = list.join(" and ");
-  else {
-    const more = list.length - SHOWN;
-    title = `${list.slice(0, SHOWN).join(", ")}, and ${more} more ${more === 1 ? "change" : "changes"}`;
-  }
+  const more = list.length - SHOWN;
+  const title = more > 0 ? `${list.slice(0, SHOWN).join("; ")}; and ${more} more ${more === 1 ? "change" : "changes"}` : list.join("; ");
   return { date, type: "data", title: `${guideName} ${title}` };
 }
 
-export function prependChangelog(file: string, entries: ChangelogEntry[]): void {
-  if (entries.length === 0) return;
-  if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, stringify(entries));
-    return;
+export const refreshEntryFile = (date: string, guideId: string) => `${date}-refresh-${guideId}.yml`;
+
+// `keep`: files already on main. This guide's other refresh files are from the open refresh PR and are replaced.
+export function writeRefreshEntry(
+  dir: string,
+  guideId: string,
+  entry: ChangelogEntry | null,
+  { date, keep }: { date: string; keep: Set<string> },
+): void {
+  fs.mkdirSync(dir, { recursive: true });
+  const target = refreshEntryFile(date, guideId);
+  const ours = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-refresh-${guideId}\\.yml$`);
+  for (const f of fs.readdirSync(dir)) {
+    if (ours.test(f) && !keep.has(f) && !(entry && f === target)) fs.rmSync(path.join(dir, f));
   }
-  const doc = parseDocument(fs.readFileSync(file, "utf8"));
-  const items = (doc.toJS() as ChangelogEntry[] | null) ?? [];
-  const next = parseDocument(stringify([...entries, ...items]));
-  next.commentBefore = doc.commentBefore;
-  fs.writeFileSync(file, next.toString());
+  if (!entry) return;
+  const text = stringify(entry);
+  const p = path.join(dir, target);
+  if (!fs.existsSync(p) || fs.readFileSync(p, "utf8") !== text) fs.writeFileSync(p, text);
 }

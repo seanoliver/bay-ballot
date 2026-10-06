@@ -5,7 +5,7 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { EndorsementFile, type ArchivedSource, type Guide, type HeldPick } from "@/lib/schema";
-import { guideChangelogEntry, prependChangelog } from "./changelog";
+import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
@@ -33,6 +33,8 @@ export type RefreshOptions = {
   verify?: boolean;
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
+  // main's data/ (another checkout) while continuing an open refresh; changelog entries compare against it.
+  baseline?: string;
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -196,18 +198,22 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
   return results;
 }
 
-function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, before: ElectionData, results: GuideResult[]): void {
+function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, start: ElectionData, results: GuideResult[]): void {
   const changed = results.filter((r) => r.status === "changed" && r.dataChanged).map((r) => r.id);
   if (changed.length === 0) return;
+  const main = opts.baseline ? loadElection(opts.baseline, opts.election) : start;
+  const mainDir = path.join(opts.baseline ?? opts.root, "changelog");
+  const keep = new Set(opts.baseline && fs.existsSync(mainDir) ? fs.readdirSync(mainDir) : []);
   const after = loadElection(opts.root, opts.election);
-  const entries = changed.flatMap((id) => {
+  const dir = path.join(opts.root, "changelog");
+  for (const id of changed) {
     const guide = after.guides.find((g) => g.id === id);
-    const e = guide
-      ? guideChangelogEntry({ guideName: guide.name, before: before.endorsements[id], after: after.endorsements[id], contests: after.ballot.contests, date: deps.today() })
-      : null;
-    return e ? [e] : [];
-  });
-  prependChangelog(path.join(opts.root, "changelog.yml"), entries);
+    const before = main.endorsements[id];
+    if (!guide || !before) continue;
+    const entry = guideChangelogEntry({ guideName: guide.name, before, after: after.endorsements[id], contests: after.ballot.contests, date: deps.today() });
+    if (!entry && !opts.baseline) continue;
+    writeRefreshEntry(dir, id, entry, { date: deps.today(), keep: opts.baseline ? keep : new Set(fs.existsSync(dir) ? fs.readdirSync(dir) : []) });
+  }
 }
 
 function describe(r: GuideResult): string {
