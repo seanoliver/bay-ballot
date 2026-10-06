@@ -1,0 +1,7 @@
+id: sccdp
+name: Santa Clara County Democratic Party
+shortName: "SCC Democrats"
+description: The official Democratic Party committee for Santa Clara County.
+type: party
+homepage: https://sccdp.org/
+areas: [palo-alto, mountain-view]

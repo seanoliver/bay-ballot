@@ -1,0 +1,8 @@
+guide: south-bay-labor
+election: 2026-11
+status: pending
+source: https://www.southbaylabor.org/2026_endorsements
+fetchWith: browser
+fetchedAt: 2026-10-06
+hasReasoning: false
+picks: {}

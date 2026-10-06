@@ -2,6 +2,8 @@ guide: courage-california
 election: 2026-11
 status: published
 source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+extraSources:
+  - https://www.progressivevotersguide.com/california/2026/general/county/santaclara
 archived:
   - source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
     snapshot: https://web.archive.org/web/20261006200128/https://www.progressivevotersguide.com/california/2026/general/county/sanmateo

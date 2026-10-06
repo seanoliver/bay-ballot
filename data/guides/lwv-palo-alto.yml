@@ -1,0 +1,7 @@
+id: lwv-palo-alto
+name: League of Women Voters of Palo Alto
+shortName: "LWV Palo Alto"
+description: The nonpartisan League of Women Voters for Palo Alto, which takes positions on measures but never endorses candidates.
+type: civic
+homepage: https://www.lwvpaloalto.org/
+areas: [palo-alto]

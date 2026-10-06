@@ -1,0 +1,7 @@
+id: svgop
+name: Santa Clara County Republican Party
+shortName: "SCC Republicans"
+description: The official Republican Party committee for Santa Clara County.
+type: party
+homepage: https://www.svgop.com/
+areas: [palo-alto, mountain-view]
