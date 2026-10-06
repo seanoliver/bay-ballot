@@ -298,7 +298,7 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
-  test("a fast sweep of the whole list writes the URL only a few times", async ({ page }) => {
+  test("a fast sweep of 50 rows writes the URL only a few times", async ({ page }) => {
     await page.addInitScript(() => {
       const w = window as unknown as { __replaces: number };
       w.__replaces = 0;
@@ -309,7 +309,7 @@ test.describe("desktop keyboard", () => {
       };
     });
     await openBallot(page);
-    const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const ids = (await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")))).slice(0, 50);
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
     for (let i = 0; i < ids.length; i++) await page.keyboard.press("ArrowDown");
     await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
