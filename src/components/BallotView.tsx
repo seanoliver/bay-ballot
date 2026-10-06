@@ -17,6 +17,7 @@ import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useHomeRedirect } from "./useHomeRedirect";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
@@ -38,8 +39,9 @@ type Props = {
   pending: string | null;
 };
 
-export function BallotView({ election, links, intro, groups, guides, files, pending }: Props) {
+export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
+  useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
