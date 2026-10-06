@@ -7,7 +7,13 @@ GitHub Actions runs **Daily data refresh** (`.github/workflows/refresh.yml`) eve
 What a run does:
 
 1. `npm run bb -- refresh --summary summary.md` fetches every guide's pages and compares them with the stored page text in `data/2026-11/pages/<guide>/`. Dates, "3 hours ago", cookie and newsletter banners, counters and duplicate lines are stripped first.
-2. A guide is re-extracted only if an added or removed line names a contest, candidate (or alias, or surname), or uses an endorsement word (endorse, recommend, support, oppose, "yes on", "no on", #1, ranked, slate). Anything else is "unchanged" and costs nothing.
+2. Lines are compared in order, so a flipped or swapped verdict is seen. A guide is re-extracted only if a changed line:
+   - names a contest or candidate (or alias, or surname),
+   - starts with a verdict (yes, no, support, oppose, neutral, "No position"),
+   - uses an endorsement word (endorse, recommend, support, oppose, "vote for/against", "yes on", "no on", #1, ranked, slate),
+   - or is a short label, or says "against", within 3 lines below a contest or candidate line.
+
+   A long line that only moved is ignored unless it names a contest or candidate. Anything else is "unchanged" and costs nothing.
 3. Re-extracted guides whose picks or quotes changed go through `verify` (a separate model audits them against the pages). Unconfirmed picks are moved to `held:` and not published.
 4. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
 5. `validate` runs, and the summary is written for the pull request.

@@ -28,7 +28,7 @@ const NAVIGATION = /^(?:you are here\b|breadcrumbs?\b)/i;
 const MAX_BOILERPLATE_LINE = 200;
 
 const ENDORSEMENT_WORDS =
-  /\b(?:endors\w*|recommend\w*|support\w*|oppos\w*|vote\s+(?:yes|no)|yes\s+on|no\s+on|ranked|rank|slate)\b|#\s?1\b/i;
+  /\b(?:endors\w*|recommend\w*|support\w*|oppos\w*|vote\s+(?:yes|no|for|against)|yes\s+on|no\s+on|ranked|rank|slate)\b|#\s?1\b/i;
 // A verdict at the start of a line: "YES", "No - …", "Strong yes", "No position", "✓".
 const VERDICT = /^[\W_]*(?:(?:strong(?:ly)?|hell|oh hell)\s+)?(?:yes|no|support|oppose|neutral)\b|^[\W_]*(?:✓|✔|✗|✘|❌|✅)/i;
 const GENERIC_CONTEST = /\b(?:[Pp]rop(?:osition)?s?\.?|PROP(?:OSITION)?S?\.?|[Mm]easure|MEASURE)\s*[A-Z0-9]{1,3}\b|\bRTM\b/;
@@ -141,11 +141,13 @@ export function relevantChange(oldText: string, newText: string, ballot: Ballot,
     if (!line) return false;
     // Verdicts and short labels count even if the text exists elsewhere: "YES" under another heading is a new pick.
     const isLabel = VERDICT.test(line) || line.split(/\s+/).length <= MAX_LABEL_WORDS;
-    if (!isLabel && other.has(line)) return false;
+    // A moved line naming a contest or candidate can be a reordered ranking, so it is never exempt.
+    if (!isLabel && !mentions(line) && other.has(line)) return false;
     if (endorsementContent(line, markers)) return true;
-    if (line.split(/\s+/).length > MAX_LABEL_WORDS) return false;
-    for (let k = idx - 1; k >= Math.max(0, idx - CONTEXT_LINES); k--) if (mentions(lines[k])) return true;
-    return false;
+    let nearContest = false;
+    for (let k = idx - 1; k >= Math.max(0, idx - CONTEXT_LINES); k--) if (mentions(lines[k])) nearContest = true;
+    if (nearContest && /\bagainst\b/i.test(line)) return true;
+    return nearContest && line.split(/\s+/).length <= MAX_LABEL_WORDS;
   };
   return removed.some((i) => relevant(a, i, inB)) || added.some((j) => relevant(b, j, inA));
 }

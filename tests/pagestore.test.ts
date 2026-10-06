@@ -114,6 +114,28 @@ describe("relevantChange: real pick changes the gate must see", () => {
     const next = `${title}\nBy the editors\nWe back three candidates.\nMore stories\nOne common item ended years of dog scratching\nHealth Weekly`;
     expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("irrelevant");
   });
+  it("sees two long candidate lines swap order under a heading", () => {
+    const head = "Board of Supervisors, District 4";
+    const ell = "Theo Ellington has spent a decade building housing coalitions across the southeast of the city.";
+    const djb = "Dionjay (DJ) Brookter runs a Bayview nonprofit and has served on two city commissions.";
+    const old = `${head}\n${ell}\n${djb}\nThanks for reading`;
+    const next = `${head}\n${djb}\n${ell}\nThanks for reading`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("sees 'vote for this one' become 'vote against this one' under a Prop heading", () => {
+    const old = "Proposition C - Housing Fund\nWe say vote for this one, without hesitation.\nThanks for reading";
+    const next = "Proposition C - Housing Fund\nWe say vote against this one, without hesitation.\nThanks for reading";
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("sees 'against' change under a contest heading even without 'vote'", () => {
+    const old = "Proposition C - Housing Fund\nOur members were firmly behind it this year.\nThanks";
+    const next = "Proposition C - Housing Fund\nOur members came out firmly against it this year.\nThanks";
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("ignores 'against' far from any contest", () => {
+    const page = "Ballot measures\nProposition C - Housing Fund\nYES\nOne\nTwo\nThree\nFour";
+    expect(relevantChange(page, `${page}\nOur softball team plays against the Elks on Saturday.`, ballot)).toBe(false);
+  });
   it("sees a short label change under a contest heading", () => {
     const old = `${C}\nNo position\nThanks for reading`;
     const next = `${C}\nStrong yes\nThanks for reading`;
