@@ -17,9 +17,7 @@ picks:
   prop-4:
     pick: Y
     quotes:
-      - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
-        source: https://bayrisingaction.org/voterguide/
-      - text: Prop 4 would allow local governments the option to create systems that help candidates rely less on wealthy donors and public interests.
+      - text: Wealthy donors and special interests continue to dominate election campaign spending.
         source: https://bayrisingaction.org/voterguide/
       - text: Money in politics sways our elections.
         source: https://bayrisingaction.org/voterguide/
@@ -32,9 +30,7 @@ picks:
     quotes:
       - text: Prop 39 creates significant barriers to voting by prohibiting voting by mail or voting in person without disclosing or presenting a government-issued identification number.
         source: https://bayrisingaction.org/voterguide/
-      - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
-        source: https://bayrisingaction.org/voterguide/
-      - text: New hurdles to voting, like requiring you to write your personal ID number on your ballot, would make it easier to steal your identity and harder to protect your privacy.
+      - text: Voter suppression tactics like requiring government-issued IDs at the polls or on mail-in ballots create unnecessary barriers to engage in our democracy.
         source: https://bayrisingaction.org/voterguide/
   prop-40:
     pick: Y
@@ -42,8 +38,6 @@ picks:
       - text: Federal cuts will strip $100 billion from healthcare in California over the next five years—resulting in higher premiums and loss of coverage for millions of Californians.
         source: https://bayrisingaction.org/voterguide/
       - text: To stop the healthcare collapse in the state, Prop 40 would impose a one-time tax of up to 5% on taxpayers with covered assets over $1 billion, generating $100 billion in revenue over 5 years.
-        source: https://bayrisingaction.org/voterguide/
-      - text: Ninety percent (90%) of the funds would go to healthcare, and 10% to food assistance or education.
         source: https://bayrisingaction.org/voterguide/
   prop-41:
     pick: N
@@ -64,8 +58,6 @@ picks:
     quotes:
       - text: Under Prop 43, two-thirds of voters would need to approve local funding measures and taxes, allowing one-third of voters to overrule the majority and block funding for essential services.
         source: https://bayrisingaction.org/voterguide/
-      - text: "Prop 43 protects corporate special interests by giving them greater power to avoid paying their fair share: they would only need one-third of the vote to block efforts to raise new revenue."
-        source: https://bayrisingaction.org/voterguide/
       - text: In practice, Prop 43 would make it nearly impossible to raise local revenue.
         source: https://bayrisingaction.org/voterguide/
   prop-44:
@@ -79,12 +71,47 @@ picks:
         source: https://bayrisingaction.org/voterguide/
       - text: An investment in public transit is an investment in a thriving economy, clearer air, and a more affordable region.
         source: https://bayrisingaction.org/voterguide/
-  redwood-city-measure-e:
+  prop-a:
+    pick: N
+  prop-b:
     pick: Y
     quotes:
-      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
+      - text: Banks currently invest our public dollars in harmful industries like fossil fuels, tobacco, the military, and weapons manufacturing.
         source: https://bayrisingaction.org/voterguide/
-      - text: Half of Redwood City residents, including over 70% of Latino and Black households, are renters who pay an average of almost $4,000 for a 2-bedroom home.
+      - text: A public bank would benefit San Franciscans by creating low-interest loans for city infrastructure and affordable housing, commercial loans through credit unions and community banks, and loans to drive community revitalization.
         source: https://bayrisingaction.org/voterguide/
-      - text: At the same time, 87% of multi-family rental units in Redwood City are owned by corporations and real estate trusts rather than small landlords.
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+    quotes:
+      - text: Prop D would make it harder for voters to have their voices heard by increasing the number of signatures a measure needs to reach the ballot.
         source: https://bayrisingaction.org/voterguide/
+  prop-e:
+    pick: N
+    quotes:
+      - text: Prop E slashes the authority and community oversight provided by the city’s commissions and replaces it with more Deputy Mayors in a bloated executive branch of government.
+        source: https://bayrisingaction.org/voterguide/
+  prop-f:
+    pick: N
+    quotes:
+      - text: Prop F gives the Mayor more powers vis-à-vis the Board of Supervisors by raising the threshold for Board approval and amendments of contracts, increasing the Mayor’s authority over contracts, and extending the City Administrator’s term from 5 to 10 years.
+        source: https://bayrisingaction.org/voterguide/
+  prop-h:
+    pick: Y
+    quotes:
+      - text: After years of pandemic disruption and lost revenue, Muni is confronting a $307 million annual deficit—a shortfall so large it rivals the combined budgets of the city’s parks and library systems.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Resulting cuts to Muni would worsen SF’s congestion and gridlock, which is already ranked the 3rd-worst in any major US city.
+        source: https://bayrisingaction.org/voterguide/
+  prop-i:
+    pick: Y
+    quotes:
+      - text: San Francisco faces an affordable housing crisis that is displacing thousands of people from the city.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.
+        source: https://bayrisingaction.org/voterguide/
+  prop-j:
+    pick: Y
+  redwood-city-measure-e:
+    pick: Y

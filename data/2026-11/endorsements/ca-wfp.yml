@@ -8,6 +8,9 @@ archived:
 fetchedAt: 2026-10-06
 hasReasoning: false
 picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
   insurance-commissioner:
     pick:
       - Jane Kim
@@ -40,6 +43,24 @@ picks:
     pick: N
   prop-45:
     pick: N
+  board-of-education:
+    pick:
+      - Virginia Cheung
+      - Ryan Hazelton
+      - Reina Tello
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Jeremy Lee
+      - Bunny McFadden
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
   san-mateo-county-supervisor-5:
     pick:
       - Mark Nagales

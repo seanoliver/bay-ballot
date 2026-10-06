@@ -2,48 +2,57 @@ guide: yimby-action
 election: 2026-11
 status: published
 source: https://yimbyaction.org/endorsements/november-2026-california-general
-extraSources:
-  - https://peninsulaforeveryone.org/endorsements/2026-endorsements/2026-endorsements/
-allowForeignSources: true
 archived:
   - source: https://yimbyaction.org/endorsements/november-2026-california-general
     snapshot: https://web.archive.org/web/20261006200824/https://yimbyaction.org/endorsements/november-2026-california-general
-  - source: https://peninsulaforeveryone.org/endorsements/2026-endorsements/2026-endorsements/
-    snapshot: https://web.archive.org/web/20261006200843/https://peninsulaforeveryone.org/endorsements/2026-endorsements/2026-endorsements/
 fetchedAt: 2026-10-06
 hasReasoning: false
 picks:
-  governor:
-    pick:
-      - Xavier Becerra
-  lt-governor:
-    pick:
-      - Fiona Ma
   attorney-general:
     pick:
       - Rob Bonta
+  governor:
+    pick:
+      - Xavier Becerra
   insurance-commissioner:
     pick:
       - Ben Allen
+  lt-governor:
+    pick:
+      - Fiona Ma
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  assembly-17:
+    pick:
+      - Matt Haney
   assembly-19:
     pick:
       - Catherine Stefani
   assembly-23:
     pick:
       - Marc Berman
+  supervisor-10:
+    pick:
+      - Theo Ellington
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-8:
+    pick:
+      - Gary McCoy
   san-mateo-county-supervisor-5:
     pick:
       - Mark Nagales
-  prop-43:
-    pick: N
-  prop-1:
-    pick: Y
-  prop-37:
-    pick: Y
-  menlo-park-measure-p:
-    pick: N
-  rtm:
-    pick: Y
+  assessor:
+    pick:
+      - Joaquín Torres
   foster-city-council-1:
     pick:
       - Phoebe Shin Venkat
@@ -53,9 +62,38 @@ picks:
   san-mateo-council-3:
     pick:
       - Seema Patel
-  san-mateo-council-5:
-    pick:
-      - Adam Loraine
   san-bruno-council-4:
     pick:
       - Auros Harman
+  san-mateo-council-5:
+    pick:
+      - Adam Loraine
+  bart-8:
+    pick:
+      - Sara Barz
+  prop-43:
+    pick: N
+  prop-1:
+    pick: Y
+  prop-37:
+    pick: Y
+  menlo-park-measure-p:
+    pick: N
+  prop-g:
+    pick: N
+  prop-i:
+    pick: N
+  prop-a:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: Y
+  prop-e:
+    pick: Y
+  prop-f:
+    pick: Y
+  prop-h:
+    pick: Y
+  rtm:
+    pick: Y

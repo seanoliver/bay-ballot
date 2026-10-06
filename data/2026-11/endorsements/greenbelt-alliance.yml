@@ -19,6 +19,13 @@ picks:
     quotes:
       - text: Greenbelt Alliance opposes Proposition 43’s goal to raise the threshold for citizen-initiated local special tax measures, limiting voters’ ability to fund essential local services.
         source: https://www.greenbelt.org/voter-guide-26/
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+    quotes:
+      - text: Greenbelt Alliance recommends voting YES on Proposition H in San Francisco to ensure enough funds to keep Muni going strong.
+        source: https://www.greenbelt.org/voter-guide-26/
   rtm:
     pick: Y
     quotes:
