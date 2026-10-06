@@ -18,9 +18,9 @@ export const ExtractOutput = z.object({
         .array(z.string())
         .describe("endorsed candidate names, in rank order if ranked; empty for measures"),
       ranked: z.boolean(),
+      // A plain number: structured outputs reject the integer bounds that z.int() emits.
       rankedCount: z
         .number()
-        .int()
         .nullable()
         .describe("when only the first N listed names are ranked and the rest are unranked co-endorsements, N; otherwise null"),
       quotes: z
@@ -191,7 +191,7 @@ export function toEntries(
 
     // rankedCount only matters when it leaves some names unranked.
     const n = p.rankedCount;
-    const partial = ranked && Array.isArray(pick) && n !== null && n >= 1 && n < pick.length;
+    const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
     picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
   return { picks, notes };

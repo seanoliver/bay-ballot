@@ -1,6 +1,7 @@
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { extract, pagesFor, systemPrompt, toEntries, type ExtractClient, type ExtractOutput } from "@/pipeline/extract";
+import { z } from "zod";
+import { extract, ExtractOutput, pagesFor, systemPrompt, toEntries, type ExtractClient } from "@/pipeline/extract";
 import { loadElection } from "@/lib/data";
 import type { Contest, Guide } from "@/lib/schema";
 import type { Page } from "@/pipeline/quotes";
@@ -58,6 +59,11 @@ describe("systemPrompt", () => {
     expect(prompt).toContain(
       "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
     );
+  });
+
+  it("uses only schema keywords structured outputs accept (no integer bounds)", () => {
+    const json = JSON.stringify(z.toJSONSchema(ExtractOutput));
+    expect(json).not.toMatch(/"(minimum|maximum|exclusiveMinimum|exclusiveMaximum)"/);
   });
 
   it("marks ranked-choice contests in the contest JSON", () => {
@@ -169,6 +175,8 @@ describe("toEntries", () => {
     expect(all.picks["supervisor-d8"]).toEqual({ pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, quotes: [] });
     const zero = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 0 }));
     expect(zero.picks["supervisor-d8"].rankedCount).toBeUndefined();
+    const frac = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1.5 }));
+    expect(frac.picks["supervisor-d8"].rankedCount).toBeUndefined();
   });
 
   it("never ranks a single-name pick", () => {
