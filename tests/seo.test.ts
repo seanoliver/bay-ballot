@@ -11,7 +11,7 @@ describe("latestFetchDay", () => {
 
 describe("sitemapEntries", () => {
   const entries = sitemapEntries({
-    elections: [{ id: "2026-11", contests: ["prop-b", "us-rep-11"] }],
+    elections: [{ id: "2026-11", areas: ["sf"], contests: ["prop-b", "us-rep-11"] }],
     guides: ["spur", "growsf"],
     lastModified: "2026-10-05",
   });
@@ -20,6 +20,7 @@ describe("sitemapEntries", () => {
   it("lists the election, every contest, every guide, /about and /changelog, absolute on bayballot.com", () => {
     expect(urls).toEqual([
       "https://bayballot.com/2026-11",
+      "https://bayballot.com/2026-11/sf",
       "https://bayballot.com/2026-11/prop-b",
       "https://bayballot.com/2026-11/us-rep-11",
       "https://bayballot.com/guides/spur",
