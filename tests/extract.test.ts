@@ -334,7 +334,7 @@ describe("pagesFor", () => {
 
 describe("extract", () => {
   const output: ExtractOutput = { hasReasoning: false, picks: [pick({ contestId: "prop-b", vote: "Y" })] };
-  const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/" };
+  const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/", areas: ["sf"] };
   const usage = { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0 };
   const fakeClient = (response: { text?: string; [k: string]: unknown }) => {
     const { text = JSON.stringify(output), ...rest } = response;

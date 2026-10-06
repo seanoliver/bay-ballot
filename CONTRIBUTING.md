@@ -4,7 +4,8 @@ Corrections and pull requests are welcome. Most fixes are a one-line change to a
 
 ## Data layout
 
-- `data/guides/<guide>.yml`: one file per voter guide (name, type, and homepage).
+- `data/guides/<guide>.yml`: one file per voter guide (name, type, homepage, and `areas`, the area ids it covers).
+- `data/areas.yml`: the areas with their own page (`/2026-11/sf`), each with the jurisdictions it covers.
 - `data/2026-11/ballot.yml`: the contests on the ballot, with candidate names and aliases.
 - `data/2026-11/endorsements/<guide>.yml`: one guide's picks for the election, keyed by contest id.
 

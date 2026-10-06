@@ -14,7 +14,7 @@ export function watchErrors(page: Page): string[] {
 
 export async function openBallot(page: Page, query = "") {
   await page.goto(`${BALLOT}${query}`);
-  await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
 }
 
 // Each row has a phone and a desktop link; take the visible one.

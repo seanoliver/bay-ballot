@@ -150,15 +150,15 @@ export function monthYear(iso: string): string {
 const counted = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export function electionIntro(
-  ballot: Pick<Ballot, "title" | "date" | "contests">,
+  ballot: Pick<Ballot, "date" | "contests">,
   files: Record<string, Pick<EndorsementFile, "picks">>,
+  { place }: { place: string },
 ): { title: string; line: string } {
-  const city = ballot.contests.find((c) => c.jurisdiction.level === "city")?.jurisdiction.name;
   const ids = new Set(ballot.contests.map((c) => c.id));
   const guides = Object.values(files);
   const picks = guides.reduce((n, f) => n + Object.keys(f.picks).filter((id) => ids.has(id)).length, 0);
   return {
-    title: city ? `${city} ballot` : ballot.title,
+    title: `${place} ballot`,
     line: [formatDate(ballot.date), counted(guides.length, "guide"), counted(ballot.contests.length, "contest"), counted(picks, "endorsement")].join(" · "),
   };
 }

@@ -4,13 +4,15 @@ import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, 
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { cardDescription, sections } from "@/lib/display";
+import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
-import type { Ballot, Contest } from "@/lib/schema";
+import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
@@ -18,6 +20,7 @@ import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
+import { useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
@@ -38,15 +41,18 @@ const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).
 
 type Props = {
   election: string;
+  area: string | null;
+  links: AreaLink[];
   intro: { title: string; line: string };
-  ballot: Ballot;
+  groups: PlaceGroup[];
   guides: GuideInfo[];
   files: Record<string, PickFile>;
   pending: string | null;
 };
 
-export function BallotView({ election, intro, ballot, guides, files, pending }: Props) {
+export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
+  useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
@@ -59,8 +65,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const visible = sections(ballot.contests);
-  const all = visible.flatMap((s) => s.contests);
+  const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
@@ -234,6 +239,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
               Keyboard shortcuts
             </button>
           </div>
+          <AreaPicker links={links} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -251,23 +257,28 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
             </a>
           ) : null}
         </div>
-        {visible.map((s) => (
-          <section key={s.name} aria-label={s.name}>
-            <SectionHeading>{s.name}</SectionHeading>
-            <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-              {s.contests.map((c) => (
-                <li key={c.id}>
-                  <ContestRow
-                    href={`/${election}/${c.id}`}
-                    contest={c}
-                    rows={rowsFor(c.id)}
-                    slots={slotsFor(c)}
-                    selected={c.id === selectedId}
-                    onClick={(e) => onRowClick(e, c)}
-                  />
-                </li>
-              ))}
-            </ul>
+        {groups.map((g) => (
+          <section key={g.key} aria-label={g.heading}>
+            <SectionHeading>{g.heading}</SectionHeading>
+            {g.sections.map((s) => (
+              <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
+                <SectionHeading as="h3">{s.name}</SectionHeading>
+                <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                  {s.contests.map((c) => (
+                    <li key={c.id}>
+                      <ContestRow
+                        href={`/${election}/${c.id}`}
+                        contest={c}
+                        rows={rowsFor(c.id)}
+                        slots={slotsFor(c)}
+                        selected={c.id === selectedId}
+                        onClick={(e) => onRowClick(e, c)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </section>
         ))}
       </div>
@@ -357,11 +368,11 @@ function ContestRow({
   return (
     <>
       <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
-        <h3 className="min-w-0 flex-1 text-base font-medium">
+        <h4 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
-        </h3>
+        </h4>
         <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
       </div>
       <div
@@ -371,7 +382,7 @@ function ContestRow({
           selected && "bg-muted shadow-[inset_3px_0_0_var(--foreground)]",
         )}
       >
-        <h3 className="text-base font-semibold">
+        <h4 className="text-base font-semibold">
           <a
             id={`row-d-${contest.id}`}
             href={href}
@@ -381,7 +392,7 @@ function ContestRow({
           >
             {contest.title}
           </a>
-        </h3>
+        </h4>
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         <VerdictBar contest={contest} rows={rows} slots={slots} />
       </div>

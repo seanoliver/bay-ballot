@@ -1,15 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { FILTERS_KEY, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
-const STORAGE_KEY = "bb-filters";
 export const CHANGE_EVENT = "bb-filters-change";
 
 function readStored(): string | null {
   try {
-    return window.localStorage.getItem(STORAGE_KEY);
+    return window.localStorage.getItem(FILTERS_KEY);
   } catch {
     return null;
   }
@@ -17,7 +16,7 @@ function readStored(): string | null {
 
 function writeStored(q: string) {
   try {
-    window.localStorage.setItem(STORAGE_KEY, q);
+    window.localStorage.setItem(FILTERS_KEY, q);
   } catch {
   }
 }

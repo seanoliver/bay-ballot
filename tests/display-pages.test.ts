@@ -112,22 +112,18 @@ describe("cardDescription", () => {
 
 describe("electionIntro", () => {
   const withJ = (id: string, level: string, name: string) => ({ id, jurisdiction: { level, name } }) as Contest;
-  const ballot = {
-    title: "San Francisco General Election",
-    date: "2026-11-03",
-    contests: [withJ("gov", "state", "California"), withJ("prop-a", "city", "San Francisco")],
-  } as Ballot;
+  const ballot = { date: "2026-11-03", contests: [withJ("gov", "state", "California"), withJ("prop-a", "city", "San Francisco")] } as Ballot;
   const pick = { pick: "Y", ranked: false, quotes: [] } as Entry;
-  it("titles the city's ballot and counts guides, contests and picks", () => {
+  it("titles the place's ballot and counts guides, contests and picks", () => {
     const files = { a: { hasReasoning: true, picks: { gov: pick, "prop-a": pick } }, b: { hasReasoning: false, picks: { gov: pick } } };
-    expect(electionIntro(ballot, files)).toEqual({ title: "San Francisco ballot", line: "November 3, 2026 · 2 guides · 2 contests · 3 endorsements" });
+    expect(electionIntro(ballot, files, { place: "San Francisco" })).toEqual({ title: "San Francisco ballot", line: "November 3, 2026 · 2 guides · 2 contests · 3 endorsements" });
   });
   it("ignores picks for contests not on the ballot, and singularizes", () => {
     const files = { a: { hasReasoning: true, picks: { gov: pick, stale: pick } } };
-    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, files).line).toBe("November 3, 2026 · 1 guide · 1 contest · 1 endorsement");
+    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, files, { place: "Bay Area" }).line).toBe("November 3, 2026 · 1 guide · 1 contest · 1 endorsement");
   });
-  it("falls back to the ballot title without a city contest", () => {
-    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, {}).title).toBe("San Francisco General Election");
+  it("titles the Bay Area list", () => {
+    expect(electionIntro(ballot, {}, { place: "Bay Area" }).title).toBe("Bay Area ballot");
   });
 });
 
