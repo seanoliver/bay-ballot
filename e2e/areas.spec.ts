@@ -88,3 +88,13 @@ test("the area picker doesn't prefetch other list pages", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   expect(fetched).toEqual([]);
 });
+
+test("arrow keys walk the SF page in its grouped order", async ({ page, isMobile }) => {
+  test.skip(isMobile, "desktop only");
+  await page.goto(`${BALLOT}/sf`);
+  await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", /ArrowDown/);
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf\\?c=us-rep-15$`));
+  await expect(page.locator("#row-d-us-rep-15")).toBeFocused();
+});
