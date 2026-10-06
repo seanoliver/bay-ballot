@@ -63,7 +63,6 @@ export function loadElection(root: string, election: string): ElectionData {
   return { ballot, guides, endorsements };
 }
 
-// data/changelog.yml; an empty list when the file doesn't exist yet.
 export function loadChangelog(root: string): ChangelogEntry[] {
   const file = path.join(root, "changelog.yml");
   return fs.existsSync(file) ? readParsed(file, ChangelogFile) : [];

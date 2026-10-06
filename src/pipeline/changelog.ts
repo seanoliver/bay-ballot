@@ -3,8 +3,6 @@ import { parseDocument, stringify } from "yaml";
 import type { ChangelogEntry, Contest, EndorsementFile, Entry } from "@/lib/schema";
 import { shortTitle } from "@/lib/share";
 
-// Changelog entries for a data refresh: one per guide whose published picks changed, in visitor terms.
-
 const SHOWN = 2;
 
 const pickText = (p: Entry["pick"]) => (p === "Y" ? "Yes" : p === "N" ? "No" : p.join(" and "));
@@ -63,7 +61,6 @@ export function guideChangelogEntry({
   return { date, type: "data", title: `${guideName} ${title}` };
 }
 
-// New entries go on top (the file is newest first); comments in the file are kept.
 export function prependChangelog(file: string, entries: ChangelogEntry[]): void {
   if (entries.length === 0) return;
   if (!fs.existsSync(file)) {

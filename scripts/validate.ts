@@ -24,7 +24,7 @@ for (const election of listElections(root)) {
   if (errors.length || warnings.length) failed = true;
 }
 try {
-  // Local calendar date: an entry dated today must pass wherever it's run.
+  // Local YYYY-MM-DD, not toISOString(): the UTC date can trail the local one and reject today's entry.
   const today = new Date().toLocaleDateString("en-CA");
   const errors = validateChangelog(loadChangelog(root), today);
   errors.forEach((e) => console.error(`ERROR ${e}`));

@@ -196,8 +196,6 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
   return results;
 }
 
-// One visitor-facing entry per guide whose data changed, written to data/changelog.yml so it ships
-// in the same refresh commit. Held picks aren't announced; a rerun with no change adds nothing.
 function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, before: ElectionData, results: GuideResult[]): void {
   const changed = results.filter((r) => r.status === "changed" && r.dataChanged).map((r) => r.id);
   if (changed.length === 0) return;
