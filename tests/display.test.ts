@@ -32,13 +32,13 @@ describe("headline", () => {
     expect(headline(tally(race, [e(["A"]), e(["B"])]))).toEqual({ tone: "split", label: "Split", detail: "A, B", ranked: false });
   });
   it("no picks, measure and candidate", () => {
-    const none = { tone: "none", label: "No picks yet", detail: "", ranked: false };
+    const none = { tone: "none", label: "No endorsements yet", detail: "", ranked: false };
     expect(headline(tally(measure, []))).toEqual(none);
     expect(headline(tally(race, []))).toEqual(none);
   });
   it("candidate tally with no counts is none, not split", () => {
     const t = { ...tally(race, []), total: 2 };
-    expect(headline(t)).toEqual({ tone: "none", label: "No picks yet", detail: "", ranked: false });
+    expect(headline(t)).toEqual({ tone: "none", label: "No endorsements yet", detail: "", ranked: false });
   });
   it("single candidate 1 of 1", () => {
     expect(headline(tally(race, [e(["A"])]))).toEqual({ tone: "candidate", label: "A", detail: "100% (1 of 1)", ranked: false });
@@ -56,7 +56,7 @@ describe("multi-seat headline", () => {
     expect(headline(t, 3).tone).toBe("candidate");
   });
   it("still says no picks yet when nobody has picked", () => {
-    expect(headline(tally(board, []), 3)).toEqual({ tone: "none", label: "No picks yet", detail: "", ranked: false });
+    expect(headline(tally(board, []), 3)).toEqual({ tone: "none", label: "No endorsements yet", detail: "", ranked: false });
   });
   it("single-seat default is unchanged", () => {
     expect(headline(tally(race, [e(["A"]), e(["B"])]), 1).label).toBe("Split");

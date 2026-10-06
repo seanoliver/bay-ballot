@@ -78,7 +78,7 @@ function FilterControls({ filters: f, onChange, guides, files }: Props) {
       <Section title="Show">
         <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
           <Checkbox checked={f.whyOnly} onCheckedChange={(on) => onChange({ ...f, whyOnly: on === true })} />
-          Only guides that explain their picks
+          Only guides that explain their endorsements
         </label>
       </Section>
       <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />

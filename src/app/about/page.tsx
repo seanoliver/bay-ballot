@@ -27,14 +27,14 @@ export default function AboutPage() {
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
         <p className="mt-2 text-base">
-          Bay Ballot puts every San Francisco voter guide&apos;s picks for the November 3, 2026 election side by side, one contest at a
+          Bay Ballot puts every San Francisco voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
           time.
         </p>
 
         <Section title="Counting">
           <List>
             <li>Only guides that took a position on a contest count toward it.</li>
-            <li>A guide that ranks candidates counts toward its #1.</li>
+            <li>A guide that ranks candidates counts toward its first choice.</li>
             <li>In races with more than one seat, each name a guide endorses counts.</li>
           </List>
         </Section>
@@ -42,11 +42,11 @@ export default function AboutPage() {
         <Section title="Sources">
           <List>
             <li>
-              Picks come from each guide&apos;s own published pages. They are collected automatically, then checked against those pages in
+              Endorsements come from each guide&apos;s own published pages. They are collected automatically, then checked against those pages in
               a separate review pass.
             </li>
             <li>Quotes are verbatim and link to their source or an archived copy.</li>
-            <li>Guides that publish only a list of picks show no quotes.</li>
+            <li>Guides that publish only a list of endorsements show no quotes.</li>
           </List>
         </Section>
 

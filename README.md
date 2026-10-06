@@ -1,6 +1,6 @@
 # Bay Ballot
 
-Bay Ballot shows every San Francisco voter guide's picks for the November 3, 2026 election side by side, at [bayballot.com](https://bayballot.com).
+Bay Ballot shows every San Francisco voter guide's endorsements for the November 3, 2026 election side by side, at [bayballot.com](https://bayballot.com).
 
 ## Data and counting
 

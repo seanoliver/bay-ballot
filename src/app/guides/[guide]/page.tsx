@@ -69,7 +69,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
 
       {isPublished(file) ? (
         <Card className="mt-3 gap-0 px-4 py-2 shadow-xs">
-          <h2 className="py-2 font-semibold">{ballot.title} picks</h2>
+          <h2 className="py-2 font-semibold">{ballot.title} endorsements</h2>
           <ul className="divide-y divide-border">
             {guidePicks(ballot.contests, file).map((p) => (
               <li key={p.contest.id}>
@@ -84,7 +84,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
           </ul>
         </Card>
       ) : (
-        <p className="mt-6 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} picks yet</p>
+        <p className="mt-6 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} endorsements yet</p>
       )}
     </div>
   );

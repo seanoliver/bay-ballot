@@ -35,7 +35,7 @@ describe("barSegments: measures", () => {
     ]);
   });
   it("no picks is one muted empty segment", () => {
-    expect(bar(measure, [])).toEqual([{ key: "none", label: "No picks yet", count: 0, pct: 100, tone: "empty" }]);
+    expect(bar(measure, [])).toEqual([{ key: "none", label: "No endorsements yet", count: 0, pct: 100, tone: "empty" }]);
   });
 });
 
@@ -78,7 +78,7 @@ describe("barSegments: single-seat candidates", () => {
     ]);
   });
   it("no picks", () => {
-    expect(bar(race, [])).toEqual([{ key: "none", label: "No picks yet", count: 0, pct: 100, tone: "empty" }]);
+    expect(bar(race, [])).toEqual([{ key: "none", label: "No endorsements yet", count: 0, pct: 100, tone: "empty" }]);
   });
 });
 
@@ -114,7 +114,7 @@ describe("barSummary", () => {
     expect(barSummary(t, board).aria).toBe("Board of Education: A 2 of 2, B 1 of 2");
   });
   it("no picks", () => {
-    expect(barSummary(tally(measure, []), measure).aria).toBe("Proposition B: no picks yet");
+    expect(barSummary(tally(measure, []), measure).aria).toBe("Proposition B: no endorsements yet");
   });
 });
 
@@ -155,7 +155,7 @@ describe("barLegend", () => {
     });
   });
   it("no picks", () => {
-    expect(barLegend(tally(measure, []), measure)).toEqual({ lead: null, others: [], caption: "No picks yet" });
+    expect(barLegend(tally(measure, []), measure)).toEqual({ lead: null, others: [], caption: "No endorsements yet" });
   });
 });
 
@@ -174,7 +174,7 @@ describe("barShort", () => {
     expect(barShort(tally(measure, [...ys(5), ...ns(1)]), measure)).toBe("Yes 83%");
     expect(barShort(tally(measure, [...ys(1), ...ns(2)]), measure)).toBe("No 67%");
     expect(barShort(tally(measure, [...ys(3), ...ns(3)]), measure)).toBe("Split");
-    expect(barShort(tally(measure, []), measure)).toBe("No picks");
+    expect(barShort(tally(measure, []), measure)).toBe("None yet");
   });
   it("a single candidate: surname and count, no %", () => {
     expect(barShort(tally(race, [...Array(13)].map(() => e(["Xavier Becerra"]))), race)).toBe("Becerra · 13");

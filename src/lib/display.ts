@@ -15,7 +15,7 @@ export type TopPick = { name: string; count: number; total: number };
 export type RankedDetail = { guideName: string; short: string; order: string[]; unranked: string[] };
 
 export function headline(t: Tally, seats = 1): Headline {
-  if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return { tone: "none", label: "No picks yet", detail: "", ranked: false };
+  if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return { tone: "none", label: "No endorsements yet", detail: "", ranked: false };
   if (t.kind === "candidate" && seats > 1) return { tone: "candidate", label: "Most endorsed", detail: "", ranked: false };
   if (t.kind === "measure") {
     if (t.verdict === "split") {
@@ -158,7 +158,7 @@ export function electionIntro(
   const picks = guides.reduce((n, f) => n + Object.keys(f.picks).filter((id) => ids.has(id)).length, 0);
   return {
     title: city ? `${city} ballot` : ballot.title,
-    line: [formatDate(ballot.date), counted(guides.length, "guide"), counted(ballot.contests.length, "contest"), counted(picks, "pick")].join(" · "),
+    line: [formatDate(ballot.date), counted(guides.length, "guide"), counted(ballot.contests.length, "contest"), counted(picks, "endorsement")].join(" · "),
   };
 }
 
