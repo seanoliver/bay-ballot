@@ -33,7 +33,7 @@
 1. **Where a district is.** `Jurisdiction` gains `within: [{ level: county|city, name }]`, which is required for `level: district` and for the new `level: region` (RTM). A contest is in an area when it is statewide, or when its own county or city, or any `within` place, is one of the area's jurisdictions.
 2. **State districts go under California.** Contests with district name `Congress`, `State Senate`, `Assembly` or `Board of Equalization` (and `Court of Appeal` from Phase 3) are listed in the California group, even when they lie in a single county. Otherwise `us-rep-11` would sit under San Francisco while `us-rep-15` sat under California. A local district (Supervisor, BART, City Council, a school district) must be `within` exactly one place.
 3. **SF is one city and county.** In `areas.yml`, `sf` has `kind: city`. A city area whose city and county share a name is "consolidated": its city contests sit in the county group, and that group is headed "San Francisco", not "San Francisco County". San Mateo the city is not consolidated, because the `san-mateo` area has `kind: county`.
-4. **The ballot title becomes "Bay Area General Election".** It feeds the extraction prompt and the guide page heading. The intro heading becomes `${place} ballot` ("Bay Area ballot", "San Francisco ballot").
+4. **The ballot title becomes "Bay Area General Election" in Phase 2 (Task 16), not Phase 1.** It feeds the extraction and verify prompts and the guide page heading, so Phase 1 keeps "San Francisco General Election" and those prompts stay byte-identical. Page headings never read `ballot.title`: the intro heading is `${place} ballot` ("Bay Area ballot", "San Francisco ballot") and list titles come from `areaTitle`.
 5. **Local contest titles name their place** ("Menlo Park Measure P", "San Mateo County Board of Supervisors, District 5"). Existing SF titles stay as they are.
 6. **The redirect happens at most once.** On `/2026-11` with no query string, a visitor with no `bb-area` marker and either saved filters or saved `sf.` districts is sent to `/2026-11/sf`. Every list page then writes `bb-area`, so the redirect never fires again and the area picker's "Bay Area" link always works.
 7. **The county filter is separate from `Filters`.** It lives in `?offc=` and localStorage `bb-counties`, with its own "All counties" reset, the same way the address plan keeps `d` separate. "Reset filters" stays guide-only. The filter changes which contests are shown, never what is counted.
@@ -366,8 +366,8 @@ git commit -m "feat(areas): area schema and contest membership"
 **Files:**
 - Modify: `src/lib/data.ts`
 - Create: `data/areas.yml`, `tests/fixtures/data/areas.yml`
-- Modify: `data/2026-11/ballot.yml` (title, `within`, RTM `region`)
-- Test: `tests/data.test.ts`, plus fixtures in `tests/refresh.test.ts`, `tests/extract.test.ts`, `tests/site-data.test.ts`
+- Modify: `data/2026-11/ballot.yml` (`within`, RTM `region`; the title stays until Task 16)
+- Test: `tests/data.test.ts`, plus fixtures in `tests/refresh.test.ts`, `tests/site-data.test.ts`
 
 **Step 1: Write the failing tests**
 
@@ -509,16 +509,14 @@ In `src/lib/data.ts`:
 Migrate `data/2026-11/ballot.yml`:
 
 ```bash
-perl -pi -e 's/^title: San Francisco General Election$/title: Bay Area General Election/' data/2026-11/ballot.yml
 perl -pi -e 's/(jurisdiction: \{ level: district, name: [^,]+, district: "\d+")( \})/$1, within: [{ level: county, name: San Francisco }]$2/' data/2026-11/ballot.yml
 perl -pi -e 's/jurisdiction: \{ level: county, name: Bay Area region \}/jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }] }/' data/2026-11/ballot.yml
 grep -c "within:" data/2026-11/ballot.yml
 ```
 Expected count: `12` (2 Congress, 2 Assembly, 1 BOE, 1 BART, 5 Supervisor, and RTM). Every `level: district` line must carry `within`. Check with `grep "level: district" data/2026-11/ballot.yml | grep -vc within`, which should print `0`.
 
-Fix the other fixtures that build a data root or name the ballot title:
+Fix the other fixtures that build a data root:
 - `tests/refresh.test.ts`: in `setup()`, after copying the ballot, add `fs.copyFileSync(path.join(__dirname, "..", "data", "areas.yml"), path.join(root, "areas.yml"));`.
-- `tests/extract.test.ts:16`: "San Francisco General Election" becomes "Bay Area General Election".
 - `tests/site-data.test.ts`: the `ElectionData` literal in "passes only published guides…" gains `areas: []`.
 - If #18 added `tests/refresh-changelog.test.ts` with its own temp root, copy `areas.yml` the same way.
 
@@ -530,7 +528,7 @@ Expected: all PASS, and `data OK`. If a recount in step 3 found a district line 
 **Step 5: Commit**
 
 ```bash
-git add src/lib/data.ts data/areas.yml data/2026-11/ballot.yml tests/fixtures/data/areas.yml tests/data.test.ts tests/refresh.test.ts tests/extract.test.ts tests/site-data.test.ts
+git add src/lib/data.ts data/areas.yml data/2026-11/ballot.yml tests/fixtures/data/areas.yml tests/data.test.ts tests/refresh.test.ts tests/site-data.test.ts
 git commit -m "feat(areas): load areas.yml; validate membership, guide areas and slug collisions"
 ```
 
@@ -1584,8 +1582,8 @@ Expected: green, and `data OK`. `data/areas.yml` lists only `sf`.
 
 **Files:**
 - Create: `src/pipeline/scope.ts`
-- Modify: `src/pipeline/refresh.ts` (`refreshGuide`, `seedPages`), `scripts/bb.ts` (`verifyAndWrite`), `src/pipeline/extract.ts` (one comment)
-- Test: `tests/scope.test.ts`, `tests/refresh.test.ts`
+- Modify: `src/pipeline/refresh.ts` (`refreshGuide`, `seedPages`), `scripts/bb.ts` (`verifyAndWrite`), `src/pipeline/extract.ts` (one comment), `data/2026-11/ballot.yml` (title)
+- Test: `tests/scope.test.ts`, `tests/refresh.test.ts`, `tests/extract.test.ts`
 
 **Step 1: Write the failing tests**
 
@@ -1635,8 +1633,10 @@ Append to `describe("runRefresh")` in `tests/refresh.test.ts`:
 
 **Step 2: Run tests to verify they fail**
 
-Run: `npx vitest run tests/scope.test.ts tests/refresh.test.ts`
-Expected: FAIL. `scope.ts` is not found, and both system prompts contain `menlo-park-measure-p`.
+Also in `tests/extract.test.ts:16`, "San Francisco General Election" becomes "Bay Area General Election" (moved here from Phase 1, so the prompts change once, in the PR that also scopes them).
+
+Run: `npx vitest run tests/scope.test.ts tests/refresh.test.ts tests/extract.test.ts`
+Expected: FAIL. `scope.ts` is not found, both system prompts contain `menlo-park-measure-p`, and the extraction prompt still names the San Francisco General Election.
 
 **Step 3: Write minimal implementation**
 
@@ -1660,6 +1660,8 @@ In `seedPages`: inside the loop, add `const guide = data.guides.find((g) => g.id
 
 In `scripts/bb.ts` → `verifyAndWrite`: `verify(client, guideBallot(data.ballot, guide, data.areas), guide, file, sources)`.
 
+Rename the ballot: `perl -pi -e 's/^title: San Francisco General Election$/title: Bay Area General Election/' data/2026-11/ballot.yml`. The guide page heading then reads "Bay Area General Election endorsements".
+
 In `src/pipeline/extract.ts`, the comment above `systemPrompt` becomes `/** No clock or per-guide text: the prompt must stay byte-identical across guides with the same areas to hit the cache. */`.
 
 **Step 4: Run tests to verify they pass**
@@ -1670,7 +1672,7 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add src/pipeline/scope.ts src/pipeline/refresh.ts src/pipeline/extract.ts scripts/bb.ts tests/scope.test.ts tests/refresh.test.ts
+git add src/pipeline/scope.ts src/pipeline/refresh.ts src/pipeline/extract.ts scripts/bb.ts data/2026-11/ballot.yml tests/scope.test.ts tests/refresh.test.ts tests/extract.test.ts
 git commit -m "feat(pipeline): extract and verify each guide against its areas' contests only"
 ```
 
