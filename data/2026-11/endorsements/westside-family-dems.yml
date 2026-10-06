@@ -8,13 +8,25 @@ archived:
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks:
-  supervisor-4:
+  us-rep-11:
     pick:
-      - Alan Wong
+      - Scott Wiener
     quotes:
-      - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+      - text: A long-time staple of the San Francisco political scene, Wiener is known for being one of the most effective people in local government.
         source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: Appointed last year by Mayor Lurie, Wong has voted in support of the Family Zoning plan, supports increased police staffing to boost public safety and reduce overtime costs, has worked to cut red tape for small businesses, and has already taken innovative steps like creating a process for San Franciscans to propose repeal or revision of unhelpful laws.
+      - text: In the state Senate, he has managed to pass bills once thought impossible, especially on the issue of housing.
+        source: https://westsidefamilysf.com/november-2026-endorsements
+  assembly-17:
+    pick:
+      - Matt Haney
+    quotes:
+      - text: Matt Haney is running unopposed, but we can still recognize his contributions in the Assembly, especially around housing, homelessness, and public safety.
+        source: https://westsidefamilysf.com/november-2026-endorsements
+  assembly-19:
+    pick:
+      - Catherine Stefani
+    quotes:
+      - text: As a city supervisor Stefani focused on improving public safety, housing, small business conditions, and government oversight, and she has continued that important work in the Assembly.
         source: https://westsidefamilysf.com/november-2026-endorsements
   board-of-education:
     pick:
@@ -43,14 +55,22 @@ picks:
   college-board-partial:
     pick:
       - Ruth Ferguson
-  assessor:
-    pick:
-      - Joaquín Torres
   bart-8:
     pick:
       - Sara Barz
     quotes:
-      - text: While Sara is a passionate advocate for public transit, she’s also a level-headed leader who explores all sides of issues and looks for fair, reasonable conclusions.
+      - text: BART faces both short-term and long-term fiscal, infrastructural, and governance problems, and we need Sara on the BART Board and help fix them.
+        source: https://westsidefamilysf.com/november-2026-endorsements
+  assessor:
+    pick:
+      - Joaquín Torres
+  supervisor-4:
+    pick:
+      - Alan Wong
+    quotes:
+      - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+        source: https://westsidefamilysf.com/november-2026-endorsements
+      - text: Appointed last year by Mayor Lurie, Wong has voted in support of the Family Zoning plan, supports increased police staffing to boost public safety and reduce overtime costs, has worked to cut red tape for small businesses, and has already taken innovative steps like creating a process for San Franciscans to propose repeal or revision of unhelpful laws.
         source: https://westsidefamilysf.com/november-2026-endorsements
   prop-a:
     pick: Y
@@ -68,14 +88,11 @@ picks:
         source: https://westsidefamilysf.com/november-2026-endorsements
   prop-c:
     pick: Y
-    quotes:
-      - text: Prop C would impose a tax set-aside to expand the fund to more than $125 million per year and extend it until 2058.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: We hope that expanding the Housing Trust Fund will support development of subsidized housing not only by directly funding new developments, but also by providing a reliable long-term income stream that gives federal, state, and nonprofit partners confidence that if they contribute to projects in SF, those projects will succeed.
-        source: https://westsidefamilysf.com/november-2026-endorsements
   prop-d:
     pick: Y
     quotes:
+      - text: This city’s ballots are choked with unnecessary ballot measures, many of which are imposed as bargaining chips, attempts to sabotage rival measures, or ways to confuse voters.
+        source: https://westsidefamilysf.com/november-2026-endorsements
       - text: Prop D would raise the threshold for ballot access in several ways, while still making SF’s ballot more accessible than almost anywhere else in the country.
         source: https://westsidefamilysf.com/november-2026-endorsements
   prop-e:
@@ -112,27 +129,7 @@ picks:
   rtm:
     pick: Y
     quotes:
+      - text: BART now faces a financial shortfall, and if the gap isn’t closed it may have to make severe cuts.
+        source: https://westsidefamilysf.com/november-2026-endorsements
       - text: We cannot afford to slash BART, especially not at this critical time.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: While we don’t love the idea of a new tax on top of our already high cost of living, we simply cannot afford to let BART fail.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-  assembly-17:
-    pick:
-      - Matt Haney
-    quotes:
-      - text: Matt Haney is running unopposed, but we can still recognize his contributions in the Assembly, especially around housing, homelessness, and public safety.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-  assembly-19:
-    pick:
-      - Catherine Stefani
-    quotes:
-      - text: As a city supervisor Stefani focused on improving public safety, housing, small business conditions, and government oversight, and she has continued that important work in the Assembly.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-  us-rep-11:
-    pick:
-      - Scott Wiener
-    quotes:
-      - text: A long-time staple of the San Francisco political scene, Wiener is known for being one of the most effective people in local government.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: In the state Senate, he has managed to pass bills once thought impossible, especially on the issue of housing.
         source: https://westsidefamilysf.com/november-2026-endorsements

@@ -45,9 +45,6 @@ picks:
     pick: N
   prop-h:
     pick: Y
-    quotes:
-      - text: From the Presidio to the Bayview, the Muni connects the vibrant neighborhoods of San Francisco.
-        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/3/
   prop-i:
     pick: Y
     quotes:

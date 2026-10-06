@@ -200,9 +200,15 @@ export function isSubstantive(text: string): boolean {
 }
 
 // A quote that opens with a pronoun or demonstrative leans on an earlier sentence ("This will
-// only make it worse."). "This measure" / "This proposition" refers to the contest itself.
+// only make it worse."). "This/That/These/Those" before a self-contained noun ("This measure",
+// "This city's ballots", "These elections") names its own subject and stands alone.
 const ANAPHORIC_OPENING = /^\W*(?:this|that|it|these|those|he|she|they|his|her|their|such)\b/i;
-const SELF_REFERENCE = /^\W*(?:this|that|these|those)\s+(?:measures?|propositions?|props?|initiatives?|charter\s+amendments?|ballot\s+measures?)\b/i;
+const SELF_CONTAINED_NOUNS =
+  "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter";
+const SELF_REFERENCE = new RegExp(
+  `^\\W*(?:this|that|these|those)\\s+(?:${SELF_CONTAINED_NOUNS})(?:s|['’]s)?(?![\\p{L}\\p{N}])`,
+  "iu",
+);
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 
 function surnames(c: Contest): string[] {

@@ -199,7 +199,8 @@ export function toEntries(
 
 type UserContent = Anthropic.Messages.ContentBlockParam[];
 
-function userContent(guide: Guide, sources: Source[]): UserContent {
+/** The fetched pages as content blocks: PDFs as documents, HTML as text headed by its URL. */
+export function pageBlocks(sources: Source[]): UserContent {
   const content: UserContent = [];
   for (const { url, fetched } of sources) {
     if (fetched.kind === "pdf") {
@@ -212,6 +213,11 @@ function userContent(guide: Guide, sources: Source[]): UserContent {
       content.push({ type: "text", text: `--- ${url} ---\n${fetched.text}` });
     }
   }
+  return content;
+}
+
+function userContent(guide: Guide, sources: Source[]): UserContent {
+  const content = pageBlocks(sources);
   // The guide goes here, not in the system prompt, so the ballot prefix stays cacheable across guides.
   content.push({
     type: "text",

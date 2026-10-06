@@ -70,6 +70,15 @@ export type Entry = z.infer<typeof Entry>;
 export const ArchivedSource = z.object({ source: HttpUrl, snapshot: HttpUrl });
 export type ArchivedSource = z.infer<typeof ArchivedSource>;
 
+// A pick the independent verifier did not confirm: kept out of `picks` (so not published) but visible.
+export const HeldPick = z.object({
+  contestId: Slug,
+  pick: Entry.shape.pick,
+  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election"]),
+  evidence: z.string(),
+});
+export type HeldPick = z.infer<typeof HeldPick>;
+
 export const EndorsementFile = z.object({
   guide: Slug,
   election: Election,
@@ -82,6 +91,7 @@ export const EndorsementFile = z.object({
   manual: z.boolean().optional(), // positions are hand-entered (e.g. image-only); `bb extract` skips the guide
   allowForeignSources: z.boolean().optional(), // sources may live off the guide's homepage host (e.g. a PDF on a CDN)
   archived: z.array(ArchivedSource).optional(), // web.archive.org snapshots, one per source that archived
+  held: z.array(HeldPick).optional(), // picks `bb verify` could not confirm against the pages
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;

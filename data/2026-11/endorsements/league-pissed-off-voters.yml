@@ -160,9 +160,6 @@ picks:
     pick: N
   prop-45:
     pick: N
-    quotes:
-      - text: Without those specifics, it’s hard to believe that this measure won’t chip away at necessary environmental protections.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   rtm:
     pick: Y
     quotes:
@@ -186,9 +183,6 @@ picks:
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-c:
     pick: Y
-    quotes:
-      - text: Proposition C simply renews the Housing Trust Fund through 2058 and raises its annual funding cap from $50 million to $125 million.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-d:
     pick: N
     quotes:
@@ -218,8 +212,6 @@ picks:
   prop-i:
     pick: Y
     quotes:
-      - text: Prop I does just that by protecting the luxury transfer tax for affordable housing.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: Prop I is also the only measure on the ballot that dedicates funds to rent relief and eviction defense.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-j:
