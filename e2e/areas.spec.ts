@@ -50,3 +50,29 @@ test("share image alt text names no place on contest and area pages", async ({ p
     await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute("content", "How voter guides split, side by side");
   }
 });
+
+test("?c= on the SF page opens that contest's details, and Back on a phone closes the sheet", async ({ page, isMobile }) => {
+  if (!isMobile) {
+    await page.goto(`${BALLOT}/sf?c=prop-b`);
+    await expect(page.getByRole("region", { name: "Proposition B" })).toBeVisible();
+    return;
+  }
+  await page.goto(`${BALLOT}/sf`);
+  await contestRow(page, "Proposition B").tap();
+  const sheet = page.getByRole("dialog", { name: "Proposition B" });
+  await expect(sheet).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf\\?c=prop-b$`));
+  await page.goBack();
+  await expect(sheet).toBeHidden();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf`));
+});
+
+test("a visitor whose first list page is /sf is never redirected from the Bay Area list", async ({ page }) => {
+  await page.goto("/about");
+  await page.evaluate(() => localStorage.setItem("bb-filters", "why=1"));
+  await page.goto(`${BALLOT}/sf`);
+  await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+  await page.goto(BALLOT);
+  await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+});
