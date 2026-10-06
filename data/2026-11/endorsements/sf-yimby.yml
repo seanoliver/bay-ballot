@@ -41,8 +41,6 @@ picks:
     quotes:
       - text: Alan voted to approve the Family Zoning Plan, strongly demonstrating his support for our cause - that we need more homes in the Sunset and across the city.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
-      - text: Though we have developed concerns over NIMBY stances on key housing projects in his area, we feel he is still the best choice for the Sunset in this election.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
   supervisor-6:
     pick:
       - Matt Dorsey
@@ -85,9 +83,6 @@ picks:
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-a:
     pick: Y
-    quotes:
-      - text: SF YIMBY endorses Proposition A because it gives the Board the flexibility to make those updates instead of requiring yet another ballot measure.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-c:
     pick: Y
     quotes:
@@ -112,15 +107,11 @@ picks:
   prop-f:
     pick: Y
     quotes:
-      - text: Unifying these two important departments will create a new optimized pathway to build more housing.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
       - text: Enacting this reform requires voters to pass Proposition F, which cleans up the City Charter so Mayor Lurie and future mayors can streamline and reorganize city departments.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-g:
     pick: N
     quotes:
-      - text: In the 2024 General Election, San Franciscans voted to create a large, permanent, oceanfront park where the Great Highway once was, to make a more liveable and enjoyable city for all of us to call home.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
       - text: Since April 12, 2025, the 2-mile oceanfront park has been used every day of the year, averaging 4,900 daily visits (3,800 on weekdays, 7,200 on weekend days and holidays).
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-h:

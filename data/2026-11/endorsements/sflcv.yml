@@ -64,14 +64,10 @@ picks:
     quotes:
       - text: The San Francisco League of Conservation Voters (SFLCV) endorses Matt Dorsey for supervisor in District 6 based on his steadfast support for increasing housing density, improving transit, and reducing San Francisco’s carbon footprint by shifting away from automobile dependency.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-matt-dorsey-for-district-6-supervisor
-      - text: A vote for Dorsey represents the best choice for District 6 voters concerned with the environment.
-        source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-matt-dorsey-for-district-6-supervisor
   supervisor-8:
     pick:
       - Gary McCoy
     quotes:
-      - text: Gary McCoy aligned with SFLCV across each of these priority areas and has a track record of advocating for these positions.
-        source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-gary-mccoy-for-district-8-supervisor
       - text: McCoy is a Muni supporter, rider, and policy expert who understands its value as well as its complexity.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-gary-mccoy-for-district-8-supervisor
       - text: McCoy's record is unusually deep for a first-time candidate.
@@ -87,11 +83,6 @@ picks:
   bart-8:
     pick:
       - Sara Barz
-    quotes:
-      - text: BART would benefit from competent, experienced leadership to weather its circumstances and ensure long-term financial viability of the system, while maintaining its critical role in reducing regional greenhouse gas emissions.
-        source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-sara-barz-for-bart-district-8-director
-      - text: Barz would draw on her background as a member of the SF County Transportation Authority’s (SFCTA) Community Advisory Committee and as a co-founder of Seamless Bay Area, a not-for-profit transit advocacy group, to bring about these changes as a BART Director.
-        source: https://www.sflcv.org/blog/2026/9/29/november-2026-sflcv-endorses-sara-barz-for-bart-district-8-director
   college-board:
     pick:
       - Elijah Ball
@@ -150,8 +141,6 @@ picks:
     pick: Y
     quotes:
       - text: Bay Area transit systems are facing a fiscal crisis that will result in major cutbacks on services unless voters step in to authorize increased funding.
-        source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-prop-h-and-rtm
-      - text: The Regional Transit Measure will raise ~$1 billion/year over the next 14 years via a sales tax of 1% in San Francisco (and 0.5% in all other Bay Area counties).
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-prop-h-and-rtm
       - text: Investing in transit is an investment in a healthier and more resilient Bay Area.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-prop-h-and-rtm
