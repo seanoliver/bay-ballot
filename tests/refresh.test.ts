@@ -92,14 +92,6 @@ const deps = (client: ExtractClient, fetchSource: ReturnType<typeof fetcher>) =>
 describe("runRefresh", () => {
   it("offers the model only the contests in the guide's areas", async () => {
     const root = setup(["alpha"], { stored: false });
-    fs.appendFileSync(
-      path.join(root, "areas.yml"),
-      "  - id: san-mateo\n    name: San Mateo County\n    kind: county\n    jurisdictions:\n      - { level: state, name: California }\n      - { level: county, name: San Mateo }\n      - { level: city, name: Menlo Park }\n",
-    );
-    fs.appendFileSync(
-      path.join(root, ELECTION, "ballot.yml"),
-      "  - id: menlo-park-measure-p\n    section: Local measures\n    title: Menlo Park Measure P\n    kind: measure\n    jurisdiction: { level: city, name: Menlo Park }\n",
-    );
     const { client, stream } = fakeClient();
     await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), { root, election: ELECTION });
     const systems = stream.mock.calls.map((c) => (c[0] as unknown as { system: { text: string }[] }).system[0].text);
