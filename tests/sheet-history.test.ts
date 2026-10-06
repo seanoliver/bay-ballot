@@ -48,3 +48,20 @@ describe("sheetStep", () => {
     });
   });
 });
+
+describe("sheetStep with the history budget", () => {
+  it("opens without a history entry when the budget can't take a push", () => {
+    expect(sheetStep(CLOSED, { type: "open", search: "?off=a", push: false })).toEqual({
+      state: { open: true, pushed: false, openedWith: "?off=a", latest: "?off=a", restore: null },
+      effect: null,
+    });
+    const s = sheetStep(CLOSED, { type: "open", search: "?off=a", push: false }).state;
+    expect(sheetStep(s, { type: "dismiss" })).toEqual({ state: CLOSED, effect: null });
+  });
+  it("opened while a write is pending, dismissing replays the pending query on the entry back() reveals", () => {
+    const { state } = sheetStep(CLOSED, { type: "open", search: "?off=a", latest: "?off=a&why=1" });
+    const { state: closed, effect } = sheetStep(state, { type: "dismiss" });
+    expect(effect).toEqual({ type: "back" });
+    expect(sheetStep(closed, { type: "popstate" }).effect).toEqual({ type: "replace", search: "?off=a&why=1" });
+  });
+});

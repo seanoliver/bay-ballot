@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CLOSED, sheetStep, type SheetEvent } from "@/lib/sheet-history";
-import { CHANGE_EVENT } from "./useBallotFilters";
+import { CHANGE_EVENT, currentSearch, HISTORY_BUDGET, replaceQuery } from "./useBallotFilters";
 
 export function useHistorySheet(): [boolean, (open: boolean) => void] {
   const state = useRef(CLOSED);
@@ -14,15 +14,12 @@ export function useHistorySheet(): [boolean, (open: boolean) => void] {
     setOpenState(next.open);
     if (effect?.type === "push") window.history.pushState(null, "", window.location.href);
     if (effect?.type === "back") window.history.back();
-    if (effect?.type === "replace") {
-      window.history.replaceState(null, "", effect.search || window.location.pathname);
-      window.dispatchEvent(new Event(CHANGE_EVENT));
-    }
+    if (effect?.type === "replace") replaceQuery(effect.search.replace(/^\?/, ""));
   }, []);
 
   useEffect(() => {
     const onPop = () => step({ type: "popstate" });
-    const onChange = () => step({ type: "change", search: window.location.search });
+    const onChange = () => step({ type: "change", search: currentSearch() });
     window.addEventListener("popstate", onPop);
     window.addEventListener(CHANGE_EVENT, onChange);
     return () => {
@@ -32,7 +29,11 @@ export function useHistorySheet(): [boolean, (open: boolean) => void] {
   }, [step]);
 
   const setOpen = useCallback(
-    (next: boolean) => step(next ? { type: "open", search: window.location.search } : { type: "dismiss" }),
+    (next: boolean) => {
+      if (!next) return step({ type: "dismiss" });
+      const push = !state.current.open && HISTORY_BUDGET.tryNote(2);
+      step({ type: "open", search: window.location.search, latest: currentSearch(), push });
+    },
     [step],
   );
   return [open, setOpen];
