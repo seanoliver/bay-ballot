@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mostPositions, shareCard, shareDescription, shortTitle } from "@/lib/share";
+import { breakLines, mostPositions, shareCard, shareDescription, shortTitle } from "@/lib/share";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -106,5 +106,26 @@ describe("mostPositions", () => {
   it("picks the contest with the most guides taking a position, first on ties", () => {
     const rowsFor = (id: string) => (id === "b" ? many(3, "Y") : many(2, "Y"));
     expect(mostPositions([contest({ id: "a" }), contest({ id: "b" }), contest({ id: "c" })], rowsFor)?.id).toBe("b");
+  });
+});
+
+describe("breakLines", () => {
+  it("keeps short text on one line", () => {
+    expect(breakLines("Prop B", 30, 2)).toEqual(["Prop B"]);
+  });
+  it("splits into balanced lines at word boundaries", () => {
+    expect(breakLines("Every San Francisco voter guide in one place · November 3, 2026", 40, 2)).toEqual([
+      "Every San Francisco voter guide in one",
+      "place · November 3, 2026",
+    ]);
+  });
+  it("never ends a line on a separator dot", () => {
+    expect(breakLines("Every San Francisco voter guide in one place · Nov 3", 46, 2)).toEqual(["Every San Francisco voter guide in one place", "· Nov 3"]);
+  });
+  it("ellipsizes what doesn't fit in the last line", () => {
+    const out = breakLines("one two three four five six seven eight nine ten", 12, 2);
+    expect(out).toHaveLength(2);
+    expect(out[1].endsWith("…")).toBe(true);
+    expect(out.every((l) => l.length <= 12)).toBe(true);
   });
 });

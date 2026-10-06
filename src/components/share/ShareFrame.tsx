@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { BarSegment, BarTone } from "@/lib/bar";
+import { breakLines } from "@/lib/share";
 import { HOLE, HOLE_RADIUS, HOLES, OFF_OPACITY } from "@/lib/logo";
 
 // Light-mode values of the site's tokens (globals.css); share images are always light.
@@ -20,6 +21,23 @@ export const FILL: Record<BarTone, string> = {
 export const LEAD_INK = { yes: "#15803d", no: "#b91c1c", split: "#b45309", candidate: INK, none: MUTED } as const;
 export const SIZE = { width: 1200, height: 630 };
 
+// One unbreakable run: the renderer measures each word unkerned but draws it kerned, so text it
+// splits at spaces gets uneven gaps. Non-breaking spaces keep a line as a single kerned run.
+export const run = (text: string) => text.replace(/ /g, "\u00a0");
+
+// Multi-line text, broken by breakLines and drawn one run per line.
+export function Lines({ text, maxChars, maxLines, style }: { text: string; maxChars: number; maxLines: number; style?: CSSProperties }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", ...style }}>
+      {breakLines(text, maxChars, maxLines).map((line, i) => (
+        <div key={i} style={{ display: "flex" }}>
+          {run(line)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Mark({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill={INK}>
@@ -38,9 +56,9 @@ export function ShareFrame({ right, children }: { right?: string; children: Reac
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <Mark size={52} />
-            <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em" }}>Bay Ballot</span>
+            <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em" }}>{run("Bay Ballot")}</span>
           </div>
-          {right ? <span style={{ fontSize: 26, color: MUTED }}>{right}</span> : null}
+          {right ? <span style={{ fontSize: 26, color: MUTED }}>{run(right)}</span> : null}
         </div>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center" }}>{children}</div>
       </div>

@@ -105,3 +105,29 @@ export function mostPositions<C extends { id: string }>(contests: C[], rowsFor: 
   }
   return best;
 }
+
+// Share-image text is laid out one line per run: the image renderer measures each word without
+// its kerning but draws it kerned, so letting it wrap at spaces opens uneven gaps between words.
+// Lines are filled greedily up to `maxChars`, never end on a "·", and the last line is cut with "…".
+export function breakLines(text: string, maxChars: number, maxLines: number): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[][] = [];
+  let i = 0;
+  while (i < words.length && lines.length < maxLines) {
+    const line: string[] = [];
+    while (i < words.length && [...line, words[i]].join(" ").length <= maxChars) line.push(words[i++]);
+    if (line.length === 0) line.push(words[i++]); // a single word longer than the line
+    if (line.length > 1 && line.at(-1) === "·" && i < words.length) {
+      line.pop();
+      i -= 1;
+    }
+    lines.push(line);
+  }
+  const out = lines.map((l) => l.join(" "));
+  if (i < words.length) {
+    let last = out[out.length - 1];
+    while (last.length > maxChars - 1 && last.includes(" ")) last = last.slice(0, last.lastIndexOf(" "));
+    out[out.length - 1] = `${last.replace(/[\s,.;:·]+$/, "")}…`;
+  }
+  return out;
+}
