@@ -122,7 +122,6 @@ test.describe("phone sheet", () => {
 
     await filters.click();
     await expect(why).toBeChecked();
-    // Back closes the sheet and still keeps the filters.
     await why.click();
     await expect(page).not.toHaveURL(/[?&]why=1/);
     await page.goBack();

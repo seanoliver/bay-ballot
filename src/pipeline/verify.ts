@@ -164,7 +164,6 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   for (const [contestId, entry] of Object.entries(file.picks)) {
     const v = out.picks.find((p) => p.contestId === contestId);
     if (!v) {
-      // No verdict is not a confirmation: hold it rather than publish an unchecked pick.
       held.push({ contestId, pick: entry.pick, reason: "unverified", evidence: "The verifier returned no verdict for this pick." });
       delete picks[contestId];
       continue;

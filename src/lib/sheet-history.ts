@@ -1,6 +1,3 @@
-// Phone sheets push a history entry on open, so Back closes them. URL changes made while a sheet is
-// open (filters) land on that pushed entry, so whichever way the sheet closes, they are copied onto
-// the entry it returns to. `latest` is the URL while open; `restore` is what to copy after our own back().
 export type SheetState = { open: boolean; pushed: boolean; openedWith?: string; latest?: string; restore?: string | null };
 export type SheetEvent = { type: "open"; search: string } | { type: "change"; search: string } | { type: "dismiss" } | { type: "popstate" };
 export type SheetEffect = { type: "push" } | { type: "back" } | { type: "replace"; search: string } | null;

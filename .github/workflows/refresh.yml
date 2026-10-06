@@ -25,13 +25,10 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      # No stored credentials in .git/config: only the push step below uses the token.
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # One refresh PR at a time. If yesterday's PR is still open, today's run starts from its
-      # branch, so its stored page text and held picks are the baseline, and commits on top.
       - name: Start from the open refresh PR, if any
         id: base
         run: |
@@ -41,7 +38,7 @@ jobs:
             git switch -q -c "$BRANCH" FETCH_HEAD
             echo "Continuing open PR #$pr"
           else
-            # A leftover branch whose PR was closed without merging is stale; start over from main.
+            # Without this delete, the push from a fresh main branch is rejected as non-fast-forward.
             if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
               git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --delete "$BRANCH"
             fi
@@ -125,8 +122,6 @@ jobs:
         continue-on-error: true
         run: npm run validate && npm test && npm run build
 
-      # A PR already labeled needs-review (held picks from an earlier run) waits for a person,
-      # even if today's run was clean.
       - name: Auto-merge a clean refresh
         if: >-
           steps.changes.outputs.commit == 'true' && steps.refresh.outputs.code == '0' &&
@@ -142,9 +137,6 @@ jobs:
           gh pr edit "${{ steps.pr.outputs.pr }}" --add-label needs-review
           gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
 
-      # Anything that needs a person but produced no PR (shrunk guides, errors with no data
-      # change) goes to one issue, which also carries the shrunk-page hashes for the next run.
-      # When a run is clean and nothing is shrunk, an open review issue is closed.
       - name: Open, update or close the review issue
         if: always() && steps.refresh.outcome != 'skipped'
         run: |
@@ -157,6 +149,7 @@ jobs:
               echo
               echo "cc @seanoliver"
               echo
+              # Parsed by the "Read the open review issue" step's sed; keep the format identical.
               echo "<!-- shrunk-state: $state -->"
             } > issue-body.md
             if [ -n "$issue" ]; then

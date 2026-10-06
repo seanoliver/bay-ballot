@@ -229,7 +229,6 @@ describe("seedPages", () => {
 });
 
 describe("shrunk guides", () => {
-  // Five picks before; the model returns one, so the guide "shrinks" and is not written.
   const fivePicks = (root: string) => {
     const p = path.join(root, ELECTION, "endorsements", "alpha.yml");
     fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace("picks:\n", "picks:\n  prop-c:\n    pick: Y\n  prop-d:\n    pick: Y\n  prop-e:\n    pick: Y\n  prop-f:\n    pick: Y\n"));

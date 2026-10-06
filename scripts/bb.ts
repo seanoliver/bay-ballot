@@ -185,7 +185,6 @@ async function runRefreshCmd(): Promise<void> {
   process.exitCode = code;
 }
 
-/** `{ "<guide>": "<page hash>" }` from an earlier run's shrunk report; missing or unreadable means none. */
 function readShrunkState(file: string | undefined): Record<string, string> | undefined {
   if (!file || !fs.existsSync(file)) return undefined;
   try {
