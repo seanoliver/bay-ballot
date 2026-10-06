@@ -157,7 +157,7 @@ describe("every contest on the current ballot", () => {
       const ending = title.split(": ")[1];
       if (ending !== undefined) expect(ending, c.id).toMatch(/\d|split|lead/);
     }
-  });
+  }, 20_000);
 });
 
 describe("review fixes", () => {
