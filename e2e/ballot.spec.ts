@@ -183,7 +183,7 @@ test("a published list-only guide still shows its badge and date", async ({ page
 });
 
 test("every page names its canonical URL on bayballot.com", async ({ page }) => {
-  for (const path of [BALLOT, `${BALLOT}/prop-b`, "/guides/spur", "/about"]) {
+  for (const path of [BALLOT, `${BALLOT}/sf`, `${BALLOT}/prop-b`, "/guides/spur", "/about"]) {
     await page.goto(path);
     await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", `https://bayballot.com${path}`);
   }
