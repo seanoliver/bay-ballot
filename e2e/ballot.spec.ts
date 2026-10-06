@@ -350,3 +350,22 @@ test.describe("phone keyboard", () => {
     await expect(page.locator("[aria-keyshortcuts]").filter({ visible: true })).toHaveCount(0);
   });
 });
+
+test("a contest page has a search title and a plain answer sentence", async ({ page }) => {
+  await page.goto(`${BALLOT}/prop-b`);
+  await expect(page).toHaveTitle(/^SF Prop B endorsements \(Nov 2026\)(: (\d+ of \d+ guides say (Yes|No)|guides split \d+–\d+))?$/);
+  await expect(
+    page.getByText(/^(\d+ of \d+ San Francisco voter guides recommend (Yes|No)|San Francisco voter guides split \d+–\d+) on Prop B, as of \w+ \d+, \d{4}\.$/),
+  ).toBeVisible();
+});
+
+test("the changelog is linked from the footer and lists entries by month", async ({ page }) => {
+  await page.goto(BALLOT);
+  await expect(page.getByRole("contentinfo").getByRole("link", { name: "Changelog" })).toHaveAttribute("href", "/changelog");
+  await page.goto("/changelog");
+  await expect(page.getByRole("heading", { level: 1, name: "Changelog" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "October 2026" })).toBeVisible();
+  const launch = page.getByRole("link", { name: "Pull request #1 (opens in new tab)" });
+  await expect(launch).toBeVisible();
+  await expect(launch).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
+});
