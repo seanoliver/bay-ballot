@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, inArea, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, inArea, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
-import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, sup8 } from "./fixtures/areas";
+import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
 const areas = [SF, SM, PA];
 const ids = (as: Area[]) => as.map((a) => a.id);
@@ -57,5 +57,29 @@ describe("areaLinks", () => {
       { href: "/2026-11/san-mateo", label: "San Mateo County", current: false },
     ]);
     expect(areaLinks("2026-11", [SF], null)[0].current).toBe(true);
+  });
+});
+
+describe("placeGroups", () => {
+  const all = [mpP, propB, prop1, smL, rc2, sup8, rep15, rtm, smX, sccA];
+  const groups = placeGroups(all, areas);
+  it("puts California first, then each county in areas.yml order with its cities after it", () => {
+    expect(groups.map((g) => [g.heading, g.sections.flatMap((s) => s.contests.map((x) => x.id))])).toEqual([
+      ["California", ["prop-1", "us-rep-15", "rtm"]],
+      ["San Francisco", ["prop-b", "supervisor-8"]],
+      ["San Mateo County", ["san-mateo-county-measure-l"]],
+      ["Menlo Park", ["menlo-park-measure-p"]],
+      ["Redwood City", ["redwood-city-council-2"]],
+      ["San Mateo", ["san-mateo-measure-x"]],
+      ["Santa Clara County", ["santa-clara-county-measure-a"]],
+    ]);
+  });
+  it("records each group's county for the county filter", () => {
+    expect(groups.map((g) => g.county)).toEqual([null, "San Francisco", "San Mateo", "San Mateo", "San Mateo", "San Mateo", "Santa Clara"]);
+  });
+  it("keeps sections in first-appearance order inside a group", () => {
+    const a = { ...prop1, id: "a", section: "State" };
+    const b = { ...prop1, id: "b", section: "State propositions" };
+    expect(placeGroups([b, a], [SF])[0].sections.map((s) => s.name)).toEqual(["State propositions", "State"]);
   });
 });
