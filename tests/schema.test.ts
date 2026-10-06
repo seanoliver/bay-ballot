@@ -3,6 +3,13 @@ import { parse } from "yaml";
 import { Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 describe("schemas", () => {
+  it("requires a guide to name at least one area", () => {
+    const base = { id: "g", name: "G", description: "", type: "club", homepage: "https://g.org/" };
+    expect(Guide.safeParse(base).success).toBe(false);
+    expect(Guide.safeParse({ ...base, areas: [] }).success).toBe(false);
+    expect(Guide.parse({ ...base, areas: ["sf", "san-mateo"] }).areas).toEqual(["sf", "san-mateo"]);
+  });
+
   it("parses a guide", () => {
     const g = Guide.parse(parse(`
 id: growsf
@@ -11,6 +18,7 @@ description: Moderate SF political group focused on housing and public safety
 type: advocacy
 homepage: https://growsf.org/
 previousElectionLink: https://growsf.org/voter-guide/june-2026/
+areas: [sf]
 `));
     expect(g.type).toBe("advocacy");
   });
@@ -93,7 +101,7 @@ picks:
 });
 
 const guide = {
-  id: "growsf", name: "GrowSF", description: "d", type: "advocacy", homepage: "https://growsf.org/",
+  id: "growsf", name: "GrowSF", description: "d", type: "advocacy", homepage: "https://growsf.org/", areas: ["sf"],
 };
 const file = {
   guide: "x", election: "2026-11", status: "published", fetchedAt: "2026-10-05",
@@ -213,7 +221,7 @@ describe("contest aliases", () => {
 
 
 describe("Guide shortName", () => {
-  const base = { id: "league", name: "San Francisco League of Pissed Off Voters", description: "d", type: "advocacy", homepage: "https://example.org/" };
+  const base = { id: "league", name: "San Francisco League of Pissed Off Voters", description: "d", type: "advocacy", homepage: "https://example.org/", areas: ["sf"] };
   it("accepts an optional short name", () => {
     expect(Guide.parse({ ...base, shortName: "Pissed Off Voters" }).shortName).toBe("Pissed Off Voters");
     expect(Guide.parse(base).shortName).toBeUndefined();

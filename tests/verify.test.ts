@@ -14,7 +14,7 @@ import {
 } from "@/pipeline/verify";
 
 const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
-const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/" };
+const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/", areas: ["sf"] };
 const src = "https://growsf.org/guide";
 const q = (text: string) => ({ text, source: src });
 

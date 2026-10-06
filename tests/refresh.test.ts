@@ -32,7 +32,7 @@ function setup(guides: string[], { stored = true }: { stored?: boolean } = {}) {
   fs.mkdirSync(path.join(root, ELECTION, "endorsements"), { recursive: true });
   fs.copyFileSync(REAL_BALLOT, path.join(root, ELECTION, "ballot.yml"));
   for (const g of guides) {
-    fs.writeFileSync(path.join(root, "guides", `${g}.yml`), `id: ${g}\nname: ${g.toUpperCase()}\ndescription: d\ntype: club\nhomepage: https://${g}.org/\n`);
+    fs.writeFileSync(path.join(root, "guides", `${g}.yml`), `id: ${g}\nname: ${g.toUpperCase()}\ndescription: d\ntype: club\nhomepage: https://${g}.org/\nareas: [sf]\n`);
     fs.writeFileSync(
       path.join(root, ELECTION, "endorsements", `${g}.yml`),
       `guide: ${g}\nelection: "${ELECTION}"\nstatus: published\nsource: ${url(g)}\nfetchedAt: 2026-10-05\nhasReasoning: true\npicks:\n  prop-b:\n    pick: N\n`,

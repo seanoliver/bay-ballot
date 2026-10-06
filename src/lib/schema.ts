@@ -17,6 +17,7 @@ export const Guide = z.object({
   homepage: HttpUrl,
   previousElectionLink: HttpUrl.optional(),
   lean: z.number().min(0).max(100).optional(),
+  areas: z.array(Slug).min(1),
 });
 export type Guide = z.infer<typeof Guide>;
 

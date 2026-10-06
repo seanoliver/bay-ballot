@@ -19,7 +19,7 @@ function base(): ElectionData {
         { id: "board", section: "S", title: "Board", kind: "candidate", candidates: ["A One", "B Two", "C Three", "D Four"], seats: 3, rankedChoice: false, jurisdiction: juris },
       ],
     },
-    guides: [{ id: "g", name: "G", description: "", type: "civic", homepage: "https://g.org/" }],
+    guides: [{ id: "g", name: "G", description: "", type: "civic", homepage: "https://g.org/", areas: ["sf"] }],
     endorsements: {},
   };
 }
@@ -156,7 +156,7 @@ describe("loadElection failures", () => {
     expect(() => loadElection(dir, "2026-11")).toThrow(/other\.yml.*growsf/);
   });
   const guide = (id: string) =>
-    `id: ${id}\nname: G\ndescription: d\ntype: civic\nhomepage: https://g.org/\n`;
+    `id: ${id}\nname: G\ndescription: d\ntype: civic\nhomepage: https://g.org/\nareas: [sf]\n`;
   it("throws when a guide id differs from its filename", () => {
     const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("b") });
     expect(() => loadElection(dir, "2026-11")).toThrow(/guides\/a\.yml.*'b'/);

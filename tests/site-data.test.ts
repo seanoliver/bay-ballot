@@ -21,8 +21,8 @@ describe("ballotViewProps", () => {
     const d = {
       ballot: { election: "2026-11", title: "T", date: "2026-11-03", contests: [] },
       guides: [
-        { id: "g", name: "G", type: "civic", description: "long", homepage: "https://g.org" },
-        { id: "p", name: "P", type: "club", description: "", homepage: "https://p.org" },
+        { id: "g", name: "G", type: "civic", description: "long", homepage: "https://g.org", areas: ["sf"] },
+        { id: "p", name: "P", type: "club", description: "", homepage: "https://p.org", areas: ["sf"] },
       ],
       endorsements: { g: { ...file(), source: "https://g.org/a" }, p: { ...file(), guide: "p", status: "pending" } },
     } as ElectionData;
