@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countyOptions, countySlug, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
+import { countyOptions, countySlug, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
 import { placeGroups } from "@/lib/areas";
 import { mpP, PA, prop1, propB, rtm, sccA, SF, SM, smL } from "./fixtures/areas";
 
@@ -32,5 +32,11 @@ describe("county filter", () => {
   it("hides a county's county and city groups and always keeps California and the Bay Area measure", () => {
     expect(visibleGroups(groups, ["san-mateo"]).map((g) => g.heading)).toEqual(["California", "Bay Area", "San Francisco", "Santa Clara County"]);
     expect(visibleGroups(groups, options.map((o) => o.id)).map((g) => g.heading)).toEqual(["California", "Bay Area"]);
+  });
+  it("finds the hidden county that holds a linked contest", () => {
+    expect(hiddenCountyOf(groups, ["san-mateo"], "menlo-park-measure-p")).toEqual({ id: "san-mateo", name: "San Mateo" });
+    expect(hiddenCountyOf(groups, ["santa-clara"], "menlo-park-measure-p")).toBeNull();
+    expect(hiddenCountyOf(groups, ["san-mateo"], "prop-1")).toBeNull();
+    expect(hiddenCountyOf(groups, ["san-mateo"], null)).toBeNull();
   });
 });

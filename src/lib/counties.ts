@@ -29,3 +29,11 @@ export function toggleCounty(off: string[], id: string): string[] {
 export function visibleGroups(groups: PlaceGroup[], off: string[]): PlaceGroup[] {
   return groups.filter((g) => g.county === null || !off.includes(countySlug(g.county)));
 }
+
+export function hiddenCountyOf(groups: PlaceGroup[], off: string[], contestId: string | null): CountyOption | null {
+  if (contestId === null) return null;
+  const g = groups.find((x) => x.county !== null && x.sections.some((s) => s.contests.some((c) => c.id === contestId)));
+  if (!g?.county) return null;
+  const id = countySlug(g.county);
+  return off.includes(id) ? { id, name: g.county } : null;
+}

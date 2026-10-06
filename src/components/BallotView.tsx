@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, parseCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
+import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -68,6 +68,15 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
+  const revealed = hiddenCountyOf(groups, offCounties, requested);
+  const [revealedId, setRevealedId] = useState<string | null>(null);
+  if (revealed && revealed.id !== revealedId) {
+    setRevealedId(revealed.id);
+    setAnnounce(`Showing ${revealed.name} contests for this link`);
+  }
+  useEffect(() => {
+    if (revealed) setOffParam(toCountiesParam(offCounties.filter((x) => x !== revealed.id)));
+  }, [revealed, offCounties, setOffParam]);
   const paneRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
   const [animate, setAnimate] = useState(false);

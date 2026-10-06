@@ -163,3 +163,16 @@ test("a San Mateo measure page names its place and links back to the San Mateo l
   await expect(page).toHaveTitle(/^Menlo Park Measure P endorsements \(Nov 2026\)/);
   await expect(page.getByRole("link", { name: "San Mateo County ballot" })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
 });
+
+test("a shared link to a contest in a hidden county shows that county again and says so", async ({ page }, info) => {
+  await page.goto("/about");
+  await page.evaluate(() => {
+    localStorage.setItem("bb-counties", "san-mateo");
+    localStorage.setItem("bb-area", "bay-area");
+  });
+  await page.goto(`${BALLOT}?c=menlo-park-measure-p`);
+  await expect(contestRow(page, "Menlo Park Measure P")).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toBeVisible();
+  await expect(page.locator("[aria-live=polite]").filter({ hasText: "Showing San Mateo contests for this link" })).toHaveCount(1);
+  if (!isPhone(info)) await expect(page.getByRole("region", { name: "Menlo Park Measure P" })).toBeVisible();
+});
