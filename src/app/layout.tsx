@@ -4,6 +4,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main>{children}</main>
         <SiteFooter />
+        {/* The analytics script is served only by Vercel; elsewhere (local, CI) it would 404. */}
+        {process.env.VERCEL ? <SiteAnalytics /> : null}
       </body>
     </html>
   );

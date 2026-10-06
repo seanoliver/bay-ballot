@@ -57,6 +57,13 @@ export default function AboutPage() {
           </List>
         </Section>
 
+        <Section title="Privacy">
+          <List>
+            <li>Bay Ballot counts page views with Vercel Web Analytics, which uses no cookies.</li>
+            <li>It never records addresses or ZIP codes.</li>
+          </List>
+        </Section>
+
         <Section title="Corrections">
           <p>If something here doesn&apos;t match what a guide published:</p>
           <List>
