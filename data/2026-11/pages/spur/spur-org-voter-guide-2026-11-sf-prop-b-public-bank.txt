@@ -1,0 +1,49 @@
+SF Prop A Guide SF Prop C
+​ Print Voter Guide
+Prop
+B
+SF
+Prop B
+Charter Amendment
+Establishing a Municipal Finance Corporation and a Public Bank
+Establishes the purpose and governance structure of a municipal finance corporation and public bank to invest in affordable housing, small businesses, and climate sustainability and resilience.
+SPUR's Recommendation
+SPUR recognizes the significant potential of a public bank as a tool to advance San Francisco’s public priorities and expand the city’s capacity to invest in communities. A well-designed public bank could help address gaps in access to capital by financing affordable housing, small businesses, climate resilience, and environmental justice projects that traditional financial institutions may underserve. It could also keep more public resources circulating locally, provide flexible financing, and create revolving loan programs that allow public dollars to support multiple projects over time.
+However, Prop. B’s proposed charter amendment does not reflect SPUR’s principles of good governance. The measure embeds detailed governance structures for the proposed Municipal Financial Corporation, future public bank, and multiple oversight commissions directly into the city charter, limiting future flexibility and adding complexity to a document that should focus on fundamental governmental structures. Importantly, establishing a public bank does not require these governance provisions to be in the charter. The city could pursue a public bank through ordinance, administrative action, and existing oversight processes. At a time when San Francisco is working to simplify its charter and improve governance, SPUR does not believe adding new charter-defined commissions and requirements is the right approach.
+Vote NO
+What Prop. B Would Do
+Proposition B would amend the city charter to establish the mission and governance structure of a municipal finance corporation (MFC) and future public bank that could invest in local priorities, including affordable housing, homeownership, small businesses, environmental justice, and sustainability.
+Two-Step Process
+The measure would authorize the creation of a nonprofit MFC once sufficient funding is available. The MFC would operate as an interim entity, building institutional capacity and making loans while preparing to transition its assets and liabilities to a public bank. It could not accept deposits and would make most loans through community finance institutions (CFIs) and community development financial institutions (CDFIs), with the remainder of loans offered directly.
+After three to five years of profitable MFC operations and successful accreditation, the MFC could transition to a state- and federally chartered depository institution, or publicly owned bank. The public bank could accept government deposits, such as tax revenues and agency funds, but would not accept personal deposits or operate ATMs. These deposits could provide the city, affordable housing developers, small businesses, nonprofits, low-income homeowners, and other aligned borrowers with a lower-cost source of funding for longer-term loans than those typically available through CDFIs or private banks. The California Department of Financial Protection and Innovation and the Federal Deposit Insurance Corporation would regulate the public bank. The MFC and its governance structures would dissolve upon transition to a public bank.
+Both the MFC and the public bank would have a two-tier governance structure: a board of directors and an oversight commission. The oversight commissions would provide public accountability and non-binding advice on lending priorities, while the boards of directors would oversee operations.
+Both entities would be prohibited from investing in fossil fuels, weapons manufacturers, prisons and detention centers, or businesses with labor law violations.
+The proposed MFC and public bank could fill financing gaps while advancing San Francisco’s public priorities. The MFC could offer low-interest loans, credit enhancements, guarantees, and revolving loan funds to reduce costs and attract private capital. The public bank could accept public deposits and further expand its lending capacity. A public bank could stretch existing housing dollars, such as the city’s Housing Trust Fund, by providing low-cost, revolving loans. This financing could complement subsidies by addressing the need for affordable loan capital. These tools would complement — not replace — those of existing public, private, and community lenders.1
+Funding and Fiscal Impact
+The measure would not authorize or appropriate funding to provide capital for the MFC or public bank and therefore would not directly create new city costs. Instead, it would establish a legal and governance framework for future capitalization from sources such as state and federal funding, philanthropy, and other public financing. The mayor and Board of Supervisors would retain authority over the initial bank capitalization decisions. The board could dissolve the MFC and public bank at any time by unanimous vote.
+The Backstory
+Traditional Banks and Public Banks
+Today, billions of dollars in state and local government deposits flow through San Francisco’s traditional banks, where they may finance investments that do not align with public goals and fail to equitably serve several city priorities, including building affordable housing. Greenlining Institute data show significant disparities in Bay Area home lending from traditional banks: Black households represent 6% of the population but receive less than 1% of home purchase loans, while Hispanic households represent 16% of the population but receive only 4%.2
+Unlike traditional financial institutions, such as privately owned banks and credit unions that are primarily accountable to shareholders and members, a public bank would have an explicit public mission and could prioritize investments that generate broad community benefits.
+Previous Legislation and Policy
+The proposed measure builds on years of state and local planning. In 2017, the San Francisco Board of Supervisors recommended studying the creation of a public bank, leading to a feasibility study focused on affordable housing and small-business lending. Although the feasibility study was important, the models it examined do not directly reflect the MFC and public bank governance proposal the city is putting forth in Prop. B.
+In 2019, then-Assemblymember David Chiu authored Assembly Bill 857, the California Public Banking Act, establishing a legal pathway for local governments to charter public banks.3 Los Angeles put a measure before voters, but it was defeated in 2018. This election, Berkeley will vote on a proposed six-year parcel tax generating approximately $9.2 million annually to capitalize a public bank.4
+In 2021, the Board of Supervisors established the San Francisco Reinvestment Working Group, which developed an analysis specifying how the public bank and its precursor entity, the MFC, would operate. According to this study, the MFC and public bank would require $90 million in capitalization and funding during their first three years. Potential funding sources studied included city appropriations, new taxes, state or federal grants, philanthropic contributions, and bank investments seeking Community Reinvestment Act credit.5 The board unanimously adopted the study’s recommendations, which form Prop. B’s basis.
+After the withdrawal of a ballot measure to raise business taxes on credit card companies, consumer lenders, and mortgage brokers to provide $400 million in funding over 9 years to capitalize a public bank, five supervisors — Chen, Fielder, Melgar, Mahmood, and Walton — sponsored Prop. B. It passed the Board of Supervisors with a 9–2 vote to reach the ballot.
+The measure requires a simple majority (50% plus one vote) to pass.
+Equity Impacts
+A public bank can advance equity by expanding access to affordable financing for communities and projects historically underserved by traditional financial institutions. The extent to which San Francisco’s MFC and public bank would advance equitable outcomes would depend on their capitalization by the mayor and the Board of Supervisors, in addition to the lending policies of the MFC Board of Directors and Oversight Commission members and eventual equivalents for the public bank.
+Pros
+A public bank could keep more public resources circulating locally while advancing priorities such as affordable housing, small businesses, climate resilience, and environmental justice.
+Once chartered, the California Department of Financial Protection and Innovation and the Federal Deposit Insurance Corporation (FDIC) would regulate the bank. FDIC insurance would protect insured city deposits if the bank failed.
+Subsidized lending and revolving loan funds could stretch public dollars further than direct grants.
+Cons
+Embedding detailed governance structures in the city charter runs counter to San Francisco’s pursuit of charter reform.
+The measure does not identify how the public bank would be capitalized. It may require General Fund or new revenues alongside grants, which is challenging given the city’s current budget deficit. Without capital, the MFC would remain inactive and unfunded.
+Vote NO on Prop B - Public Bank
+Footnotes
+1 HR&A Advisors, "Municipal Financial Corporation Business Plan," prepared for the San Francisco Reinvestment Working Group, .
+2 HR&A Advisors, "Municipal Financial Corporation Business Plan."
+3 California Legislature, Assembly Bill 857 (2019–2020 Regular Session): Public Banks, Chapter 442, Statutes of 2019.
+4 Sydney Bostick, “Berkeley Has 7 City Ballot Measures on the November Ballot. Here’s What You Need to Know,” Berkeleyside, .
+5 HR&A Advisors, “San Francisco Submits Plans for a Public Bank to Fund Sustainable and Equitable Economic Recovery,” .

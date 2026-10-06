@@ -1,0 +1,49 @@
+CA Prop 37 Guide CA Prop 40
+​ Print Voter Guide
+Prop
+39
+CA
+Prop 39
+Constitutional Amendment
+Prohibits Citizens From Voting Unless They Present Government-Issued Identification
+Requires voters to present a government-issued identification card at the polls or the last four digits of a government-issued identification number when voting by mail.
+SPUR's Recommendation
+California already has safeguards to protect election integrity. When registering, voters certify eligibility under penalty of perjury and provide identifying information. In-person voters state their name and address and sign the roster, while signature verification is used for vote-by-mail ballots. Illegal voting is a felony. California has no evidence of widespread voter fraud, despite allegations following the 2020 presidential election. Research has found that strict voter ID requirements can create barriers for voters who lack acceptable identification.
+In , California enacted SB 1174, which prohibits local governments — including charter cities — from requiring voters to present identification to vote unless required by state or federal law. Prop. 39 would override this prohibition and establish a statewide voter ID requirement.
+Implementing the strict voter ID requirements in this proposition could impose high costs on state and local governments. Without evidence of widespread voter fraud, adding barriers to voting and imposing significant implementation costs on already-strained public budgets is not a good investment.
+Vote NO
+What Prop. 39 Would Do
+Proposition 39 would amend the California Constitution to add three new requirements to statewide voter rules:
+Voters would need to present government-issued identification to vote in person or provide the last four digits of a government-issued identification number to vote by mail.
+The state would be required to provide a free voter identification card to any voter who requests one.
+The Secretary of State and county elections officials would be required to verify voters’ citizenship attestations and annually report the percentage of each county’s voter rolls that have been citizenship-verified.
+The proposition language does not specify which forms of ID would qualify or how citizenship would be verified. Instead, it authorizes the Legislature to pass implementing legislation to work out those details after voters pass the initiative.
+The Backstory
+The federal Voting Rights Act of 1965 (VRA) was enacted to protect the constitutional right to vote for Black Americans and other minority groups. For decades, it provided federal oversight of elections in jurisdictions with histories of discrimination. However, recent Supreme Court decisions have weakened key VRA provisions. As a result, states face fewer barriers to adopting stricter voter ID laws, reducing early voting, closing polling locations, and changing election procedures, raising concerns about voter access and representation.
+Under the 2002 Help America Vote Act, all first-time voters in federal elections who registered by mail must show ID. California also verifies voter identity with a driver’s license number, state identification number, or the last four digits of a Social Security number when registering people to vote, attesting under penalty of perjury that they are U.S. citizens. In addition, states verify signatures on vote-by-mail ballots.
+Since the 2020 presidential election, public claims of voter fraud have increased, despite extremely low instances in U.S. elections.1 Currently, 36 states require some form of identification at polling sites. Of those, only nine states have “strict” voter ID laws that require a voter to present an ID (some states require a photo ID; others do not) to cast a ballot. Voters without proper ID must cast a provisional ballot and then take additional steps before their ballot is officially counted. In the remaining 27 “non-strict” voter ID states, voters without proper ID can sign an affidavit verifying their identity (subject to perjury).2
+State Voter ID Requirements as of 2020
+[Prop 39 Map]
+Source: National Conference of State Legislatures
+Recently, Republican Party leaders have made efforts to enact voter ID laws in California. In , the state Legislature passed Senate Bill 1174, which prohibits local governments in California from enacting their own voter ID requirements. The state then sued Huntington Beach over its 2024 voter ID measure, arguing that state election law preempted it. In , the California Supreme Court sided with the state and struck down Huntington Beach’s local voter ID requirement.
+In , Assemblymember Carl DeMaio introduced the California Voter ID and Election Integrity Act of 2025 (Assembly Bill 25), pursuing a legislative path to a statewide voter ID law. The bill failed on a party-line vote in . This year, a federal voter ID law, H.R.7296, the SAVE America Act, was introduced to Congress. If H.R. 7296 were to pass, voters in all states would be required to present photo identification showing U.S. citizenship when voting, preempting state laws.
+Assemblymember DeMaio’s organization, Reform California, pursued the voter initiative process this year and gathered signatures for Prop. 39. If passed, California would join the nine states with strict voter ID requirements. Prop. 39 requires a simple majority (50% plus one vote) to pass.
+Equity Impacts
+Research consistently finds that voters of color, low-income individuals, elderly voters, students, people with disabilities, and those who recently changed their names are less likely to possess the specific government-issued IDs required under strict voter ID laws and are more likely to face barriers to obtaining them.3 Costs — including fees for birth certificates and other documents, transportation to government offices, and time away from work — can create additional burdens.4 Researchers have documented racial disparities in ID possession and evidence that strict voter ID requirements can widen racial turnout gaps. Approximately 13% of Black Americans lack acceptable voter ID, compared with 5% of white Americans, making voter ID laws a significant equity issue.5
+Pros
+SPUR could not identify any benefits to this measure.
+Cons
+Studies have found that voter ID laws do not reduce actual or perceived voter fraud.6
+Government-issued ID requirements can create barriers for eligible voters, increase ballot rejections from data-entry errors, slow voting, and disproportionately affect people who face challenges taking time off work, traveling to obtain ID, or securing required documentation.
+Including partial ID numbers with names and addresses on mail-ballot envelopes (as would be required under this proposition) could increase privacy and identity-theft risks when combined with information exposed through other data breaches.7
+Prop. 39 would impose additional costs on state and local governments, with estimated one-time costs in the tens of millions of dollars and ongoing annual costs ranging from tens to hundreds of millions, depending on future legislative requirements.8
+Vote NO on Prop 39 - California Voter ID
+Footnotes
+1 Brennan Center for Justice, “Noncitizen Voting Is Vanishingly Rare,” updated .
+2 MIT Election Data and Science Lab, “Voter Identification,” accessed .
+3 Brennan Center for Justice, “The Impact of Voter Suppression on Communities of Color,” accessed .
+4 Richard Sobel, “The High Cost of ‘Free’ Photo Voter Identification Cards,” Charles Hamilton Houston Institute for Race and Justice, Harvard Law School, .
+5 American Civil Liberties Union, “Oppose Voter ID Legislation – Fact Sheet,” (updated version available 2016).
+6 Enrico Cantoni and Vincent Pons, “Strict ID Laws Don’t Stop Voters: Evidence from a U.S. Nationwide Panel, 2008–2018,” Quarterly Journal of Economics 136, no. 4 ( ): 2615–2660; Nathaniel Persily, “The Promise and Pitfalls of the New Voting Rights Act,” Stanford Law Review 68 (2016): 1741–1793.
+7 Identity Theft Resource Center, “Can Someone Steal Your Identity From Your Driver’s License?,” .
+8 California Legislative Analyst’s Office, “Voting in California (A.G. File No. 25-0007),” .

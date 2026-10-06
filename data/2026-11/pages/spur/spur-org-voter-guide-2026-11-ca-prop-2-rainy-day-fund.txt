@@ -1,0 +1,40 @@
+CA Prop 1 Guide CA Prop 3
+​ Print Voter Guide
+Prop
+2
+CA
+Prop 2
+Constitutional Amendment
+Increases State’s Rainy Day Fund
+Increases the maximum balance of the state’s rainy day reserves from 10% to 20%, changes how deposits and withdrawals from the account are calculated and authorized, exempts deposits from state spending caps, and expands mandatory repayment of certain debts and unfunded liabilities.
+SPUR's Recommendation
+Given the volatile nature of California’s tax revenue structure, adequate reserve requirements are necessary to avoid severe service reductions during economic downturns. The proposed measure would better manage this boom-and-bust cycle by requiring greater savings during good times to avoid deeper reductions during bad ones — when public safety-net services are most needed.
+Vote YES
+What Prop. 2 Would Do
+Proposition 2 would modify California’s Budget Stabilization Account (the state’s rainy day fund) to
+Increase the maximum reserve balance from 10% to 20% of the state’s annual general fund revenues.
+Require additional revenue deposits to increase the reserve and repay certain state long-term debts during periods of extraordinary revenue growth.
+Expand the definition of long-term debts eligible for repayment from the reserve and extend these requirements from 2030 to 2040.
+Clarify the account’s interaction with state constitutional limits on appropriations (setting funds aside for a specific purpose).
+The Backstory
+California’s tax system produces volatile revenues because it relies heavily on personal income taxes, particularly capital gains. Consequently, revenues rise when the economy and stock market are strong and can fall by billions during downturns, creating boom-and-bust budget cycles. The Legislative Analyst’s Office (LAO) notes that these swings are an inherent feature of California’s revenue structure and are likely to continue, making a strong reserve policy an important tool for maintaining stable public services over time.1
+In response, California voters approved Proposition 2 in 2014, establishing a constitutional rainy day reserve known as the Budget Stabilization Account. During strong revenue years, the state must put half of excess revenues into the reserve until the reserve totals 10% of annual General Fund revenues. The other half must be used to pay down specific long-term debts and liabilities through 2030. According to the LAO, Proposition 2 has substantially improved California’s fiscal resilience, allowing the state to build larger reserves that have helped cushion recent budget deficits.2 Nevertheless, the LAO concludes that the current reserve structure remains insufficient to offset the magnitude of California’s long-term revenue volatility, leaving the state vulnerable to significant budget reductions during prolonged downturns. While California’s reserves have grown, they remain relatively low: the state ranks fifth in the nation for revenue volatility but only twenty-eighth for reserve levels.3
+This election’s Prop. 2 seeks to strengthen California’s reserve framework by increasing both the size of required reserve deposits and the maximum amount the state may accumulate in the reserve. The measure would double the constitutional cap on the reserve from 10% to 20%, require larger deposits to the reserve during years of exceptionally strong capital gains tax revenue growth, broaden the defined debts that may be paid down with other required deposits, and extend these debt payment obligations from 2030 to 2040.
+The LAO concludes that these changes would allow California to save substantially more during boom years and better prepare for future recessions, although it also notes that even larger reserves would ultimately provide greater long-term protection against the state’s unusually volatile revenue base. The LAO estimates that the current reserve equal to 10% of revenues would cover about 30% of future budget gaps, while the proposed 20% reserve would cover about half of future gaps.
+Finally, Prop. 2 would make several constitutional and procedural changes related to the state appropriations limit established by the Gann Limit, which imposes requirements on how the state can spend General Fund revenues. Under current law, reserve deposits count toward the appropriations limit when made, even though the funds are merely set aside rather than spent. The measure would instead count withdrawals from these accounts (spending), rather than deposits (setting funds aside). This approach better aligns the appropriations limit with the state’s reserve policy by allowing the state to save excess revenues without triggering the spending limit, while ensuring those funds count against the limit when ultimately spent.
+The California Legislature placed the measure on the ballot, and it requires a simple majority (50% plus one vote) for approval.
+Equity Impacts
+Over time, the measure would improve services for vulnerable communities that disproportionately rely on state-administered and state-funded programs. By building reserves during better economic times to minimize state budget reductions during recessions and economic downturns, the state would be better able to meet demand for public safety-net services, which often increases during those periods.
+Pros
+Prop. 2 would improve the state’s rainy day account requirements to better manage the boom-and-bust nature of the state’s volatile revenue structure, better matching spending and revenues over time.
+By improving the stability of the state’s fiscal management, the measure would benefit California city and county governments that often face state budget reductions during economic downturns.
+By extending mandatory requirements to pay down debts and long-term liabilities, the measure would reduce the state’s long-term costs.
+The measure would rationalize the reserve’s interaction with state constitutional appropriation limit requirements.
+Con
+The maximum required balance for the Budget Stabilization Account would cover only about 50% of revenue losses during a typical economic downturn.
+Vote YES on Prop 2 - Rainy Day Fund
+Footnotes
+1 California Legislative Analyst Office, Rethinking California’s Reserve Policy, 5–6.
+2 LAO, Rethinking California’s Reserve Policy, 10–11.
+3 LAO, Rethinking California’s Reserve Policy, 14–15.
+4 LAO, Rethinking California’s Reserve Policy, 17–18.

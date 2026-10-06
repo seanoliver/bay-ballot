@@ -1,0 +1,61 @@
+CA Prop 43 Guide
+​ Print Voter Guide
+Prop
+45
+CA
+Prop 45
+Statute
+Modifies Environmental Review for Certain Projects
+Changes the California Environmental Quality Act to streamline the environmental review of eight categories of housing and certain transportation, energy, health, public safety, education, and water projects designated as essential.
+SPUR's Recommendation
+The SPUR Board of Directors could not reach a supermajority consensus position on this measure. SPUR agrees that CEQA creates excessive risk, cost, uncertainty, and delay and has consistently supported targeted reforms for infill housing, clean energy, and climate resilience. However, Prop. 45 would make broader changes that conflict with SPUR’s vision for urban growth. The measure could accelerate desirable projects, such as infill housing near transit and zero-emission energy infrastructure, but it could also streamline development that contributes to sprawl or environmental harm, including subdivisions on the urban edge and polluting energy facilities. Given weak growth controls and lower land costs at the urban edge, Prop. 45's provisions could encourage development patterns that undermine the measure’s benefits and SPUR’s mission. Prop. 45 could reduce frivolous litigation and delays by strengthening evidentiary standards and establishing deadlines. However, its timelines could strain local governments, and potential lawsuits could discourage legitimate planning decisions. Finally, the law would be difficult to modify, requiring voter approval or a two-thirds legislative majority.
+The SPUR Board of Directors supports removing excessive risk, uncertainty, and delay from building infill housing, public transit, drinking water, hospitals, schools, and truly zero-emission infrastructure in the right places, but it remains deeply concerned about this measure’s potential negative impacts.
+No Recommendation
+What Prop. 45 Would Do
+Proposition 45 would amend the California Environmental Quality Act (CEQA) to streamline environmental review for eight categories of projects it deems “essential,” regardless of location or scale, as well as any related public, private, or utility infrastructure. It would limit the scope of environmental analysis, create shorter, enforceable timelines, narrow court discretion, and provide project applicants with new enforcement remedies.
+“Essential” projects are described as:
+Housing projects, defined as residential units, emergency shelters, transitional housing, supportive housing, farmworker housing, mixed-use developments, student housing, group living accommodations, and senior housing
+Clean energy projects that produce, generate, or store electricity derived from renewable or sustainable resources, including but not limited to solar, wind, geothermal, fuel cells, small hydroelectric generation, digester gas, biomass, landfill gas, ocean wave, ocean thermal, or tidal current, and associated transmission lines
+Water projects, including those that directly or indirectly provide water to a public water system
+Public health projects, defined as medical treatment facilities
+Public safety projects, defined as first-responder facilities or wildfire reduction projects undertaken by a public agency, including home hardening and vegetation management and electric utility line replacement, hardening, or undergrounding
+Broadband Internet access projects, defined as projects to provide mass market retail Internet service to customers, such as data centers
+Transportation projects, including public streets, highways, bridges, transit projects, and electric vehicle charging and refueling infrastructure
+Education facilities, including their acquisition and expansion
+Projects eligible for streamlining would include new construction, improvements, maintenance, repair, or replacement projects. Projects not eligible for streamlining under this measure include jail or detention facilities, new oil or natural gas production facilities, the California high-speed rail system, and the Delta conveyance project.
+Prop 45 would make the following key changes to CEQA environmental review:
+Enforceable timelines for environmental review: Currently, the timeline for certifying an environmental review depends on the project’s complexity and the staff workload at the responsible public agency (the “lead agency”). Prop. 45 would establish the following enforceable timelines for the certification of an environmental review:
+30 days to determine whether an application is complete
+180 days to approve a negative declaration (when a project has no environmental impacts) or mitigated negative declaration (when a project’s environmental impacts can be mitigated)
+365 days to certify an environmental impact report
+If a lead public agency misses these deadlines or imposes unlawful conditions on the project, applicants may file a legal complaint within 90 days to compel a decision and may require the lead agency to convene its highest-ranking governing body to vote on the project application.
+Public comment: Prop. 45 would cap public comment periods for essential projects at 45 days for draft environmental impact reports and 20 days for negative or mitigated negative declarations.
+Scope of environmental review: The measure would narrow the scope of the environmental impact report for essential projects and give project applicants greater discretion. Key changes include:
+Optional scoping: Makes the scoping phase of environmental impact reports optional. If the project applicant pursues scoping, the lead agency must complete it within 60 days, including the mandatory 30-day public comment period.
+Limited alternatives: Restricts the review to a single project alternative selected by the applicant, shifting planning responsibility from the lead agency to the developer.
+Legal challenges: Makes several changes to reduce frivolous legal challenges and risk of delays.
+Filing limitations: Requires lawsuits to be filed within 30 days of project approval.
+Substantial evidence: Increases the standard of review from “fair argument” to “substantial evidence,” creating a higher standard for challenging the lead agency’s decision and reducing frivolous lawsuits.
+Judicial “shot clock”: Requires courts to resolve lawsuits within 270 days.
+Judicial discretion: Directs courts to require applicants to correct rejected portions of an environmental impact report but not to redo the entire report.
+The Backstory
+The California Environmental Quality Act (CEQA), enacted in 1970, requires state and local public agencies to evaluate, disclose, and mitigate the potential environmental impacts of public and private projects that require government approval, use public funds, and could physically change the environment. CEQA currently applies to most projects, except some types of infill housing and transportation projects within existing cities and within walking distance to transit.
+CEQA is a foundation of California environmental protection, helping preserve natural resources and prevent harmful projects in disadvantaged communities. However, its review and litigation processes can also add significant time and cost to housing and infrastructure projects and have been used to block infill housing, transit, and other projects.
+In recent years, California has sought to preserve CEQA’s protections while addressing the state’s significant need for affordable housing and climate-friendly transportation options by streamlining or exempting certain infill housing, affordable housing, and sustainable transportation projects through legislative action. Despite these reforms, the housing affordability crisis has worsened. Prop. 45 would pursue broader CEQA reforms directly through the ballot.
+The California Chamber of Commerce placed the measure on the ballot through a voter signature initiative. It requires a simple majority (50% plus one vote) to pass and would take effect immediately. If enacted, amendments would require a two-thirds vote of the state legislature.
+Equity Impacts
+Prop. 45 would pose three main negative equity impacts. First, it could streamline projects that increase pollution and toxic exposures in environmental justice communities — those with an unfair share of pollution, health risks, and climate hazards — including certain renewable energy facilities and ancillary infrastructure such as highway expansions.
+Second, it would limit required consultation with federally recognized tribes, excluding more than 50 state-recognized tribes and disempowering many tribes that lack sufficient documentation to become federally recognized.
+Third, it would cap public comment periods (45 days for full environmental impact reports), which may be insufficient for large or complex projects. A short comment period tends to favor those commenters who are well-organized and well-resourced.
+Pros
+Prop. 45 could reduce project delays and costs by addressing routine administrative burdens, resolving legal ambiguity, providing greater certainty, and potentially speeding housing approvals and construction.
+Expedited review could accelerate safety projects such as undergrounding power lines, helping prevent loss of life and property damage while controlling ratepayer costs.
+Requiring substantial evidence of harm could raise the legal standard and make frivolous lawsuits easier to dismiss, potentially speeding up approval and construction.
+Cons
+The measure’s broad scope could streamline environmentally harmful projects or worsen conditions in environmental justice communities, regardless of location or scale.
+Streamlining low-density, greenfield, hazard-prone, and auto-oriented development could encourage sprawl, including through highway expansions, gas pipelines, and fueling stations.
+Allowing lawsuits over project denials and conditions could undermine local planning powers, increase litigation risk, and discourage agencies from regulating projects with significant impacts.
+Strict review timelines could burden resource-constrained agencies, particularly smaller cities, and increase litigation risk. Strict public comment timelines may make it harder for people with fewer resources to participate.
+Allowing environmental reviews to analyze only one applicant-selected alternative could limit consideration of better options.
+Requiring a two-thirds legislative vote for amendments could make the law difficult to adapt or improve.
+No Recommendation on Prop 45 - Environmental Review (CEQA)
