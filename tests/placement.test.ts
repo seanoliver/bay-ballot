@@ -220,6 +220,12 @@ describe("markers across places", () => {
     expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
     expect(marks(smSup5, [smSup5], "Supervisor, District 5")).toBe(true);
     expect(marks(smSup5, [smSup5], "District 5 - Margo Meiman")).toBe(false);
+    const smc1 = race("san-mateo-council-1", "San Mateo City Council, District 1", { level: "district", name: "City Council", district: "1", within: [{ level: "city", name: "San Mateo" }] });
+    const fc1 = race("foster-city-council-1", "Foster City Council, District 1", { level: "district", name: "City Council", district: "1", within: [{ level: "city", name: "Foster City" }] });
+    expect(marks(smc1, [smc1, fc1], "San Mateo County: Foster City Council, District 1")).toBe(false);
+    expect(marks(fc1, [smc1, fc1], "San Mateo County: Foster City Council, District 1")).toBe(true);
+    expect(marks(smc1, [smc1, fc1], "San Mateo City Council, District 1")).toBe(true);
+    expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
     expect(marks(sfSup5, [sfSup5], "District 5")).toBe(true);
   });
   it("places a quote under the right city's Measure P", () => {

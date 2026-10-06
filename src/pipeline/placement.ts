@@ -33,7 +33,12 @@ const MEASURE_TITLE = /^(?:(.+?)\s+)?(Proposition|Measure)\s+(\w+)$/;
 const measureLetter = (c: Contest) => (c.kind === "measure" && c.id !== "rtm" ? (c.title.match(MEASURE_TITLE)?.[3] ?? null) : null);
 const sameDistrict = (a: Contest, b: Contest) =>
   a.id !== b.id && a.jurisdiction.name === b.jurisdiction.name && a.jurisdiction.district === b.jurisdiction.district;
-const nearPlace = (place: string, body: string) => [`${ciWords(place)}[^\\n]{0,40}?${body}`, `${body}[^\\n]{0,40}?${ciWords(place)}`];
+// A city named like its county ("San Mateo") must not match the county's name ("San Mateo County").
+const placeWords = (place: string, city: boolean) => (city ? `${ciWords(place)}(?!\\s+${ci("county")})` : ciWords(place));
+const nearPlace = (place: string, body: string, city: boolean) => [
+  `${placeWords(place, city)}[^\\n]{0,40}?${body}`,
+  `${body}[^\\n]{0,40}?${placeWords(place, city)}`,
+];
 
 function measurePatterns(c: Contest, siblings: Contest[], sharedBare: boolean): string[] {
   const m = c.title.match(MEASURE_TITLE);
@@ -46,7 +51,7 @@ function measurePatterns(c: Contest, siblings: Contest[], sharedBare: boolean): 
   const bare = `(?:${ci("measure")}|${yesNo})\\s*${letter}`;
   const shared = sharedBare ? [bare] : [];
   if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`, ...shared];
-  return place ? [...nearPlace(place, bare), ...shared] : shared;
+  return place ? [...nearPlace(place, bare, c.jurisdiction.level === "city"), ...shared] : shared;
 }
 
 function districtPatterns(c: Contest): string[] {
@@ -84,9 +89,9 @@ export function contestMarkers(c: Contest, siblings: Contest[] = [], { sharedBar
     else out.push(...measurePatterns(c, siblings, sharedBare));
   } else {
     const dp = c.jurisdiction.district ? districtPatterns(c) : [];
-    const place = c.jurisdiction.within?.length === 1 ? c.jurisdiction.within[0].name : null;
-    const qualify = place !== null && siblings.some((s) => sameDistrict(s, c));
-    if (dp.length) out.push(...(qualify ? dp.flatMap((p) => nearPlace(place, p)) : dp));
+    const within = c.jurisdiction.within?.length === 1 ? c.jurisdiction.within[0] : null;
+    const qualify = within !== null && siblings.some((s) => sameDistrict(s, c));
+    if (dp.length) out.push(...(qualify ? dp.flatMap((p) => nearPlace(within.name, p, within.level === "city")) : dp));
     else out.push(asHeading(ciWords(c.title)));
     if (c.id === "lt-governor") out.push(asHeading(`${ci("lt")}\\.?\\s+${ci("gov")}(?:${ci("ernor")})?`));
     if (c.id === "assessor") out.push(asHeading(ci("assessor")));
