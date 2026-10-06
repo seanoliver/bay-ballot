@@ -20,28 +20,48 @@ const DATE_PATTERNS = [
   /\b\d{1,2}:\d{2}(?::\d{2})?\s*(?:[ap]\.?m\.?)?/gi, // 9:30 am, 21:30
   /\b\d{1,2}\s*[ap]\.?m\.?(?![a-z])/gi, // 9am, 9 p.m.
 ];
-// Lines that only report freshness: "3 hours ago", "Updated 5 minutes ago", "Last updated yesterday".
-const RELATIVE_LINE =
-  /^(?:(?:last\s+)?updated|posted|published|edited)\b|\b(?:\d+|an?|a few)\s+(?:seconds?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\s+ago\b|^(?:just now|yesterday|today)$/i;
+// "3 hours ago", "just now": freshness phrases removed from any line.
+const RELATIVE_TIME = /\b(?:\d+|an?|a few)\s+(?:seconds?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\s+ago\b|\bjust now\b/gi;
+// "Updated …", "Posted …": the prefix and date are dropped, but any other text on the line is kept.
+const FRESHNESS_PREFIX = /^(?:last\s+)?(?:updated|posted|published|edited)\b/i;
+const FILLER = /\b(?:on|at|by|yesterday|today)\b|[:\-–—.,]/gi;
 const COUNTER = /\b\d[\d,.]*\s*[kKmM]?\s+(?:comments?|shares?|likes?|views?|followers?|retweets?|reposts?|reactions?|replies)\b/g;
 const BOILERPLATE =
-  /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content|^you are here\b|^breadcrumbs?\b/i;
+  /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content/i;
+// Breadcrumb navigation ("You are here: Home > Endorsements") is never content, even with an endorsement word.
+const NAVIGATION = /^(?:you are here\b|breadcrumbs?\b)/i;
 const MAX_BOILERPLATE_LINE = 200;
 
-/** Page text with dates, relative times, counters and boilerplate removed; whitespace collapsed; duplicate lines dropped. */
-export function normalizePageText(text: string): string {
-  const seen = new Set<string>();
+const ENDORSEMENT_WORDS =
+  /\b(?:endors\w*|recommend\w*|support\w*|oppos\w*|vote\s+(?:yes|no)|yes\s+on|no\s+on|ranked|rank|slate)\b|#\s?1\b/i;
+// A verdict at the start of a line: "YES", "No - …", "Strong yes", "No position", "✓".
+const VERDICT = /^[\W_]*(?:(?:strong(?:ly)?|hell|oh hell)\s+)?(?:yes|no|support|oppose|neutral)\b|^[\W_]*(?:✓|✔|✗|✘|❌|✅)/i;
+// Ballot-independent contest mention, for normalizing without a ballot.
+const GENERIC_CONTEST = /\b(?:[Pp]rop(?:osition)?s?\.?|PROP(?:OSITION)?S?\.?|[Mm]easure|MEASURE)\s*[A-Z0-9]{1,3}\b|\bRTM\b/;
+
+/** Lines that could carry a pick: a verdict, an endorsement word, or a contest/candidate mention. */
+function endorsementContent(line: string, markers: RegExp[] = []): boolean {
+  return VERDICT.test(line) || ENDORSEMENT_WORDS.test(line) || GENERIC_CONTEST.test(line) || markers.some((re) => re.test(line));
+}
+
+/**
+ * Page text with dates, relative times, counters and boilerplate removed and whitespace collapsed.
+ * Duplicate lines and line order are kept: bare "YES"/"NO" lines under each heading carry the picks.
+ * Boilerplate-looking lines are kept when they carry endorsement content.
+ */
+export function normalizePageText(text: string, { ballot }: { ballot?: Ballot } = {}): string {
+  const markers = ballot ? ballotMarkers(ballot, {}) : [];
   const out: string[] = [];
   for (const raw of text.split("\n")) {
     let line = raw.replace(/\s+/g, " ").trim();
     if (!line) continue;
-    if (RELATIVE_LINE.test(line)) continue;
-    if (line.length <= MAX_BOILERPLATE_LINE && BOILERPLATE.test(line)) continue;
-    line = line.replace(COUNTER, " ");
+    line = line.replace(COUNTER, " ").replace(RELATIVE_TIME, " ");
     for (const re of DATE_PATTERNS) line = line.replace(re, " ");
     line = line.replace(/\s*[·|•,]\s*(?=[·|•,]|$)/g, "").replace(/^[\s·|•,:-]+/, "").replace(/\s+/g, " ").trim();
-    if (!line || seen.has(line)) continue;
-    seen.add(line);
+    if (!line || /^(?:yesterday|today)$/i.test(line)) continue;
+    if (FRESHNESS_PREFIX.test(line) && line.replace(FRESHNESS_PREFIX, "").replace(FILLER, " ").trim() === "") continue;
+    if (NAVIGATION.test(line)) continue;
+    if (line.length <= MAX_BOILERPLATE_LINE && BOILERPLATE.test(line) && !endorsementContent(line, markers)) continue;
     out.push(line);
   }
   return out.join("\n");
@@ -50,15 +70,13 @@ export function normalizePageText(text: string): string {
 const PDF_DIGEST = /^pdf-sha256:[0-9a-f]{64}$/;
 
 /** What gets stored for a fetched source: normalized text, or a digest for a PDF with no extractable text. */
-export function storedText(fetched: Fetched): string {
+export function storedText(fetched: Fetched, { ballot }: { ballot?: Ballot } = {}): string {
   if (fetched.kind === "pdf" && fetched.text.trim() === "") {
     return `pdf-sha256:${createHash("sha256").update(fetched.base64).digest("hex")}`;
   }
-  return normalizePageText(fetched.text);
+  return normalizePageText(fetched.text, { ballot });
 }
 
-const ENDORSEMENT_WORDS =
-  /\b(?:endors\w*|recommend\w*|support\w*|oppos\w*|vote\s+(?:yes|no)|yes\s+on|no\s+on|ranked|rank|slate)\b|#\s?1\b/i;
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 
 function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
@@ -78,18 +96,73 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   return [...names].filter(Boolean).map((n) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, "iu"));
 }
 
+function ballotMarkers(ballot: Ballot, aliases: Aliases): RegExp[] {
+  return [...ballot.contests.flatMap(contestMarkers), ...nameMarkers(ballot, aliases)];
+}
+
+/** Indexes of lines in `a` and `b` that are not part of their longest common subsequence. */
+export function changedLines(a: string[], b: string[]): { removed: number[]; added: number[] } {
+  let start = 0;
+  while (start < a.length && start < b.length && a[start] === b[start]) start++;
+  let endA = a.length;
+  let endB = b.length;
+  while (endA > start && endB > start && a[endA - 1] === b[endB - 1]) {
+    endA--;
+    endB--;
+  }
+  const n = endA - start;
+  const m = endB - start;
+  // lcs[i][j] = LCS length of a[start+i..endA) and b[start+j..endB), stored row-major.
+  const lcs = new Uint32Array((n + 1) * (m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      lcs[i * (m + 1) + j] =
+        a[start + i] === b[start + j]
+          ? lcs[(i + 1) * (m + 1) + j + 1] + 1
+          : Math.max(lcs[(i + 1) * (m + 1) + j], lcs[i * (m + 1) + j + 1]);
+    }
+  }
+  const removed: number[] = [];
+  const added: number[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (a[start + i] === b[start + j]) {
+      i++;
+      j++;
+    } else if (lcs[(i + 1) * (m + 1) + j] >= lcs[i * (m + 1) + j + 1]) removed.push(start + i++);
+    else added.push(start + j++);
+  }
+  while (i < n) removed.push(start + i++);
+  while (j < m) added.push(start + j++);
+  return { removed, added };
+}
+
+const CONTEXT_LINES = 3;
+const MAX_LABEL_WORDS = 4;
+
 /**
- * True when the difference between two versions of a page could change an endorsement: an
- * added or removed line names a contest, candidate, alias or surname, or uses an endorsement
- * word. Date, counter, boilerplate and whitespace changes never count.
+ * True when the difference between two versions of a page could change an endorsement. Lines
+ * are compared in order (an LCS diff), so a flipped or swapped "YES"/"NO" shows up. A changed
+ * line counts when it carries a verdict, an endorsement word, or a contest/candidate mention,
+ * or when it is a short label (up to 4 words) within 3 lines below a contest or candidate line.
+ * Date, counter, boilerplate and whitespace changes never count.
  */
 export function relevantChange(oldText: string, newText: string, ballot: Ballot, aliases: Aliases = {}): boolean {
-  const a = new Set(normalizePageText(oldText).split("\n"));
-  const b = new Set(normalizePageText(newText).split("\n"));
-  const changed = [...[...a].filter((l) => !b.has(l)), ...[...b].filter((l) => !a.has(l))].filter(Boolean);
-  if (changed.length === 0) return false;
-  const markers = [...ballot.contests.flatMap(contestMarkers), ...nameMarkers(ballot, aliases)];
-  return changed.some((line) => ENDORSEMENT_WORDS.test(line) || markers.some((re) => re.test(line)));
+  const markers = ballotMarkers(ballot, aliases);
+  const a = normalizePageText(oldText, { ballot }).split("\n");
+  const b = normalizePageText(newText, { ballot }).split("\n");
+  const { removed, added } = changedLines(a, b);
+  const mentions = (line: string) => GENERIC_CONTEST.test(line) || markers.some((re) => re.test(line));
+  const relevant = (lines: string[], idx: number) => {
+    const line = lines[idx];
+    if (!line) return false;
+    if (endorsementContent(line, markers)) return true;
+    if (line.split(/\s+/).length > MAX_LABEL_WORDS) return false;
+    for (let k = idx - 1; k >= Math.max(0, idx - CONTEXT_LINES); k--) if (mentions(lines[k])) return true;
+    return false;
+  };
+  return removed.some((i) => relevant(a, i)) || added.some((j) => relevant(b, j));
 }
 
 export type Gate = "new" | "same" | "irrelevant" | "relevant";

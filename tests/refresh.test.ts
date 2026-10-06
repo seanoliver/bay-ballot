@@ -114,7 +114,7 @@ describe("runRefresh", () => {
     const file = parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8"));
     expect(Object.keys(file.picks)).toEqual(["prop-b", "prop-c"]);
     const stored = fs.readFileSync(path.join(root, ELECTION, "pages", "alpha", `${sourceSlug(url("alpha"))}.txt`), "utf8");
-    expect(stored).toBe(normalizePageText(PAGE("alpha", "x")));
+    expect(stored).toBe(normalizePageText(PAGE("alpha", "October 6, 2026")));
   });
 
   it("extracts on a relevant change but skips verify when the picks come back the same", async () => {

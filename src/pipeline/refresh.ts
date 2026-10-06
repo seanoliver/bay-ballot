@@ -97,7 +97,7 @@ async function refreshGuide(
   for (const url of urls) {
     const fetched = await deps.fetchSource(url, { browser });
     const p = pagePath(opts.root, opts.election, id, url);
-    const stored = storedText(fetched);
+    const stored = storedText(fetched, { ballot: data.ballot });
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(readStored(p), stored, data.ballot) });
   }
 
@@ -305,7 +305,7 @@ export async function seedPages(
     let stored = 0;
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser })));
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot: data.ballot }));
         stored++;
       }
       out.push({ id, stored });
