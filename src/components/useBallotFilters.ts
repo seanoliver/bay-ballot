@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { FILTERS_KEY, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { FILTERS_KEY, filterQuery, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
 
 export const CHANGE_EVENT = "bb-filters-change";
 
@@ -51,8 +51,9 @@ export function useQuery(): string {
 export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
   const query = useQuery();
   const stored = useSyncExternalStore(subscribe, () => readKey(FILTERS_KEY), () => null);
-  const filters = useMemo(() => initialFilters({ query, stored, guides }), [query, stored, guides]);
   const keepKey = keep.join(",");
+  const relevant = filterQuery(query, keepKey ? keepKey.split(",") : []);
+  const filters = useMemo(() => initialFilters({ query: relevant, stored, guides }), [relevant, stored, guides]);
 
   const setFilters = useCallback(
     (f: Filters) => {
