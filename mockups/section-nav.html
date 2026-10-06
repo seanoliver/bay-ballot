@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Section navigation options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&display=swap" rel="stylesheet">
+<!--
+  Bay Ballot: four ways to navigate the ballot list's place / section headings.
+  A  Outline in the filter column   (desktop outline + scroll-spy; phone "Jump to" sheet)
+  B  Sticky "where am I" menu       (California › State, itself a jump menu; same on phone)
+  C  Collapsible headings           (counts, collapse/expand all, remembered, keyboard skips collapsed)
+  D  Index rail                     (thin right-edge rail with short labels, desktop only)
+  Data: headings and contest titles from data/2026-11/ballot.yml. "San Mateo County (example)" is
+  placeholder structure only. Grey bars stand in for results; no endorsement data is shown.
+  URL params: ?opt=A|B|C|D&vp=desktop|phone&theme=light|dark
+-->
+<style>
+:root {
+  --page: oklch(0.97 0 0); --bg: oklch(1 0 0); --card: oklch(1 0 0); --fg: oklch(0.145 0 0);
+  --muted: oklch(0.50 0 0); --line: oklch(0.922 0 0); --ring10: oklch(0.145 0 0 / 0.1); --ring15: oklch(0.145 0 0 / 0.15);
+  --hover: oklch(0.97 0 0 / 0.6); --sel: oklch(0.955 0 0); --track: oklch(0.145 0 0 / 0.08);
+  --g1: oklch(0.87 0 0); --g2: oklch(0.70 0 0); --g3: oklch(0.556 0 0);
+  --focus: oklch(0.708 0 0); --scrim: oklch(0 0 0 / 0.35);
+  --motion-in: 200ms; --motion-out: 150ms; --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: oklch(0.145 0 0); --bg: oklch(0.145 0 0); --card: oklch(0.205 0 0); --fg: oklch(0.985 0 0);
+    --muted: oklch(0.708 0 0); --line: oklch(1 0 0 / 0.1); --ring10: oklch(1 0 0 / 0.1); --ring15: oklch(1 0 0 / 0.15);
+    --hover: oklch(0.269 0 0 / 0.6); --sel: oklch(0.269 0 0); --track: oklch(1 0 0 / 0.08);
+    --g1: oklch(0.371 0 0); --g2: oklch(0.48 0 0); --g3: oklch(0.60 0 0);
+    --focus: oklch(0.556 0 0); --scrim: oklch(0 0 0 / 0.55);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: oklch(0.145 0 0); --bg: oklch(0.145 0 0); --card: oklch(0.205 0 0); --fg: oklch(0.985 0 0);
+  --muted: oklch(0.708 0 0); --line: oklch(1 0 0 / 0.1); --ring10: oklch(1 0 0 / 0.1); --ring15: oklch(1 0 0 / 0.15);
+  --hover: oklch(0.269 0 0 / 0.6); --sel: oklch(0.269 0 0); --track: oklch(1 0 0 / 0.08);
+  --g1: oklch(0.371 0 0); --g2: oklch(0.48 0 0); --g3: oklch(0.60 0 0);
+  --focus: oklch(0.556 0 0); --scrim: oklch(0 0 0 / 0.55);
+  color-scheme: dark;
+}
+@media (prefers-reduced-motion: reduce) { :root { --motion-in: 0ms; --motion-out: 0ms; } }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--fg); font: 400 16px/24px Geist, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+button, input { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid color-mix(in oklab, var(--focus) 60%, transparent); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+.muted { color: var(--muted); }
+.tab { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- mockup chrome (not part of the design) ---------- */
+.chrome { padding: 14px 16px 10px; max-width: 1440px; margin: 0 auto; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.bar h1 { font-size: 15px; line-height: 20px; font-weight: 600; margin-right: auto; }
+.seg { display: inline-flex; padding: 2px; border-radius: 9px; background: var(--track); }
+.seg button { font-size: 13px; line-height: 18px; padding: 5px 10px; border-radius: 7px; color: var(--muted); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--fg); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+.note { margin-top: 10px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 20px; font-size: 13px; line-height: 18px; color: var(--muted); }
+.note b { color: var(--fg); font-weight: 600; }
+.note p { min-width: 0; }
+@media (max-width: 1100px) { .note { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) {
+  .note { grid-template-columns: 1fr; }
+  .note p:not(:first-child) { display: none; }
+  .note.more p { display: block; }
+  .bar h1 { flex-basis: 100%; }
+}
+.note-toggle { display: none; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; margin-top: 2px; }
+@media (max-width: 640px) { .note-toggle { display: inline; } }
+.stage { padding: 0 16px 16px; max-width: 1472px; margin: 0 auto; }
+.stage.phone-stage { display: flex; justify-content: center; }
+@media (max-width: 500px) { .stage { padding: 0; } }
+
+/* ---------- frame = one simulated browser viewport ---------- */
+.frame { position: relative; overflow: hidden; height: var(--fh, 760px); border-radius: 12px; box-shadow: 0 0 0 1px var(--line), 0 8px 30px oklch(0 0 0 / 0.08); background: var(--page); }
+.frame.phone { width: 390px; max-width: 100%; }
+@media (max-width: 500px) { .frame { border-radius: 0; box-shadow: none; } }
+.desk-wrap { overflow-x: auto; }
+.frame.desk { min-width: 1024px; }
+.scroller { height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
+
+/* ---------- site header (report frame) ---------- */
+.site { background: var(--bg); }
+.site .top { border-bottom: 1px solid var(--line); background: color-mix(in oklab, var(--page) 40%, var(--bg)); }
+.fr { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+.site .row1 { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-size: 24px; line-height: 32px; font-weight: 800; letter-spacing: -0.025em; }
+.brand svg { width: 36px; height: 36px; margin: -8px 0 -8px -4px; fill: currentColor; }
+.site nav { font-size: 14px; font-weight: 500; color: var(--muted); }
+.rule { display: flex; gap: 3px; height: 4px; }
+.rule span:nth-child(1) { flex: 62; background: var(--fg); }
+.rule span:nth-child(2) { flex: 24; background: color-mix(in oklab, var(--fg) 55%, transparent); }
+.rule span:nth-child(3) { flex: 14; background: color-mix(in oklab, var(--fg) 25%, transparent); }
+
+/* ---------- desktop grid ---------- */
+.grid { display: grid; column-gap: 24px; grid-template-columns: 17rem minmax(0, min(48rem, calc(100% - 20rem))) minmax(0, 1fr); transition: grid-template-columns var(--motion-in) var(--ease-out); }
+.grid.open { grid-template-columns: 17rem minmax(0, calc((100% - 20rem) / 2.15)) minmax(0, 1fr); }
+.side, .pane { position: sticky; top: 0; align-self: start; max-height: var(--fh); overflow-y: auto; overscroll-behavior: contain; padding: 24px 0; scrollbar-width: thin; }
+.side { padding-right: 8px; }
+.list { min-width: 0; padding-bottom: 40px; }
+
+.intro { padding: 24px 0 4px; }
+.phone .intro { padding-top: 16px; }
+.intro h1 { font-size: 20px; line-height: 28px; font-weight: 600; }
+.intro p { font-size: 14px; line-height: 20px; color: var(--muted); }
+.hint { display: flex; gap: 8px; }
+.hint kbd { font: inherit; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 14px; }
+.pill { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--ring15); }
+.pill.on { background: var(--fg); color: var(--bg); font-weight: 500; }
+
+.h2 { padding: 32px 4px 4px; font-size: 16px; line-height: 24px; font-weight: 600; }
+.h3 { padding: 16px 4px 8px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--muted); }
+.ex { font-weight: 400; color: var(--muted); }
+[data-sec], [data-group] { scroll-margin-top: var(--stick, 8px); }
+
+.cards { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--ring10); overflow: hidden; }
+.cards li + li { border-top: 1px solid var(--line); }
+.row { position: relative; display: block; padding: 12px 16px; transition: background-color 150ms; outline: none; }
+.row:hover { background: var(--hover); }
+.row:focus-visible { box-shadow: inset 0 0 0 3px color-mix(in oklab, var(--focus) 60%, transparent); border-radius: 0; }
+.row.sel { background: var(--sel); box-shadow: inset 3px 0 0 var(--fg); }
+.row h4 { font-size: 16px; line-height: 24px; font-weight: 600; }
+.row .d { font-size: 14px; line-height: 20px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.vb { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.vb .lab { width: 72px; height: 8px; border-radius: 4px; background: var(--g1); flex: none; }
+.track { flex: 1; height: 8px; border-radius: 999px; background: var(--track); display: flex; gap: 2px; overflow: hidden; }
+.track span:nth-child(1) { background: var(--g3); }
+.track span:nth-child(2) { background: var(--g1); }
+/* phone row */
+.prow { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px; }
+.prow h4 { flex: 1; min-width: 0; font-size: 16px; line-height: 24px; font-weight: 500; }
+.prow .ib { width: 96px; flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.prow .ib .track { width: 100%; flex: none; }
+.prow .ib .lab { width: 56px; height: 8px; border-radius: 4px; background: var(--g1); }
+
+/* ---------- filter sidebar (static stand-in) ---------- */
+.f-title { font-size: 14px; line-height: 20px; font-weight: 600; }
+.f-sub { font-size: 14px; line-height: 20px; color: var(--muted); }
+.f-lab { margin: 24px 0 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.chk { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 14px; line-height: 20px; }
+.box { width: 16px; height: 16px; border-radius: 4px; flex: none; box-shadow: inset 0 0 0 1px var(--ring15); }
+.box.on { background: var(--fg); box-shadow: none; }
+.search { display: block; width: 100%; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: transparent; padding: 0 12px; font-size: 14px; color: var(--muted); line-height: 38px; }
+.types { margin-top: 8px; border: 1px solid var(--line); border-radius: 12px; }
+.types > div { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; }
+.types > div + div { border-top: 1px solid var(--line); }
+.types .sk { height: 8px; border-radius: 4px; background: var(--g1); }
+.reset { margin-top: 12px; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; min-height: 40px; display: inline-flex; align-items: center; }
+
+/* ---------- pane / sheets ---------- */
+.detail { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--ring10); padding: 24px; animation: pane-in var(--motion-in) var(--ease-out); }
+@keyframes pane-in { from { opacity: 0; translate: 16px 0; } }
+.detail .head { display: flex; gap: 12px; align-items: flex-start; }
+.detail .head > div { flex: 1; min-width: 0; }
+.detail h2 { font-size: 20px; line-height: 28px; font-weight: 600; }
+.xbtn { width: 40px; height: 40px; margin: -6px -8px 0 0; border-radius: 999px; display: grid; place-items: center; color: var(--muted); flex: none; }
+.xbtn:hover { background: var(--hover); color: var(--fg); }
+.ph { margin-top: 20px; display: grid; gap: 10px; }
+.ph .track { flex: none; height: 12px; }
+.ph .ln { height: 8px; border-radius: 4px; background: var(--g1); }
+.ph small { font-size: 12px; line-height: 16px; color: var(--muted); }
+
+.overlay { position: absolute; inset: 0; z-index: 30; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); animation: fade var(--motion-in) var(--ease-out); }
+@keyframes fade { from { opacity: 0; } }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 85%; display: flex; flex-direction: column; background: var(--bg); border-radius: 16px 16px 0 0; box-shadow: 0 -8px 30px oklch(0 0 0 / 0.15); animation: up var(--motion-in) var(--ease-out); }
+@keyframes up { from { translate: 0 40px; opacity: 0; } }
+.sheet .sh { display: flex; align-items: flex-start; gap: 8px; padding: 16px 12px 4px 16px; }
+.sheet .sh > div { flex: 1; min-width: 0; }
+.sheet .sh h2 { font-size: 18px; line-height: 28px; font-weight: 600; }
+.sheet .sb { overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 24px; }
+
+/* ---------- shared outline list (A sheet, B menu, D phone) ---------- */
+.ol-g { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px; padding: 0 8px; font-size: 14px; line-height: 20px; font-weight: 600; border-radius: 8px; }
+.ol-s { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px; padding: 0 8px 0 20px; font-size: 14px; line-height: 20px; color: var(--muted); border-radius: 8px; }
+.ol-g:hover, .ol-s:hover, .ol-g:focus-visible, .ol-s:focus-visible { background: var(--hover); color: var(--fg); }
+.ol-s.on { color: var(--fg); font-weight: 500; background: var(--sel); }
+.ol-s .c, .ol-g .c { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); }
+.ol-s .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--fg); margin-left: -14px; margin-right: 2px; visibility: hidden; flex: none; }
+.ol-s.on .dot { visibility: visible; }
+
+/* ---------- A: outline in the filter column ---------- */
+.outline { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.outline .f-lab { margin-top: 0; display: flex; align-items: baseline; justify-content: space-between; }
+.outline .f-lab span { font-size: 12px; }
+.oa-g { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 32px; padding: 0 8px; border-radius: 6px; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--muted); }
+.oa-g .c, .oa-s .c { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--muted); }
+.oa-grp.cur > .oa-g { color: var(--fg); }
+.oa-secs { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--motion-in) var(--ease-out); }
+.oa-secs > ul { overflow: hidden; }
+.oa-grp.cur .oa-secs { grid-template-rows: 1fr; }
+.oa-s { display: flex; align-items: center; width: 100%; min-height: 30px; padding: 0 8px 0 18px; border-radius: 6px; font-size: 14px; line-height: 20px; color: var(--muted); position: relative; }
+.oa-s::before { content: ""; position: absolute; left: 8px; top: 7px; bottom: 7px; width: 2px; border-radius: 2px; background: var(--line); }
+.oa-s.on { color: var(--fg); font-weight: 500; }
+.oa-s.on::before { background: var(--fg); }
+.oa-g:hover, .oa-s:hover { background: var(--hover); color: var(--fg); }
+
+/* A/D phone: sticky Filters + Jump to bar */
+.pbar { position: sticky; top: 0; z-index: 10; display: flex; gap: 8px; padding: 8px 0; margin-top: 4px; background: color-mix(in oklab, var(--page) 92%, transparent); backdrop-filter: blur(8px); }
+.pbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 14px; border-radius: 12px; background: var(--bg); box-shadow: 0 0 0 1px var(--line); font-size: 16px; line-height: 20px; }
+.pbtn.grow { flex: 1; min-width: 0; }
+.pbtn .muted { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fbtn { display: flex; width: 100%; margin-top: 12px; }
+
+/* ---------- B: sticky section menu ---------- */
+.secbar { position: sticky; top: 0; z-index: 10; padding: 6px 0; background: var(--page); }
+.secbar.stuck { box-shadow: 0 1px 0 var(--line); }
+.sb-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 10px 0 4px; border-radius: 8px; font-size: 14px; line-height: 20px; max-width: 100%; }
+.sb-btn:hover, .sb-btn[aria-expanded="true"] { background: var(--track); }
+.sb-btn .p { color: var(--muted); white-space: nowrap; }
+.sb-btn .s { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-btn .sep { color: var(--muted); }
+.sb-btn svg { color: var(--muted); }
+.phone .sb-btn { width: 100%; min-height: 44px; }
+.phone .sb-btn .chev { margin-left: auto; }
+.menu { position: absolute; z-index: 20; left: 0; top: calc(100% + 2px); width: 20rem; max-height: min(28rem, calc(var(--fh) - 120px)); overflow-y: auto; padding: 6px; border-radius: 12px; background: var(--card); box-shadow: 0 0 0 1px var(--ring10), 0 12px 32px oklch(0 0 0 / 0.14); animation: pop var(--motion-in) var(--ease-out); scrollbar-width: thin; }
+.phone .menu { width: auto; right: 0; }
+@keyframes pop { from { opacity: 0; translate: 0 -4px; } }
+.menu button:focus-visible { outline: 2px solid color-mix(in oklab, var(--focus) 70%, transparent); outline-offset: -2px; }
+.menu .gsep { height: 1px; background: var(--line); margin: 6px 4px; }
+
+/* ---------- C: collapsible headings ---------- */
+.tog { display: flex; align-items: center; gap: 6px; width: 100%; border-radius: 8px; color: inherit; font-weight: inherit; }
+.tog:hover .nm { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ring15); }
+.tog .chev { color: var(--muted); transition: rotate var(--motion-in) var(--ease-out); }
+[data-collapsed] > .hd .chev { rotate: -90deg; }
+.tog .c { font-weight: 400; color: var(--muted); }
+.h2 .tog { min-height: 32px; }
+.h3 .tog { min-height: 28px; }
+.h2.c, .h3.c { padding-left: 0; }
+.body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows var(--motion-in) var(--ease-out), opacity var(--motion-in) var(--ease-out); }
+.body > div { overflow: hidden; min-height: 0; }
+[data-collapsed] > .body { grid-template-rows: 0fr; opacity: 0; }
+.gsum { display: none; padding: 0 4px 4px 22px; font-size: 14px; line-height: 22px; color: var(--muted); }
+[data-group][data-collapsed] > .gsum { display: block; }
+.gsum button { text-decoration: underline; text-decoration-color: var(--ring15); text-underline-offset: 3px; }
+.gsum button:hover { color: var(--fg); }
+.ctools { display: flex; justify-content: flex-end; gap: 4px; margin: 4px 0 -24px; font-size: 13px; line-height: 18px; color: var(--muted); position: relative; z-index: 1; }
+.ctools button { padding: 4px 6px; border-radius: 6px; }
+.ctools button:hover { color: var(--fg); background: var(--track); }
+.ctools button:disabled { opacity: 0.45; cursor: default; background: none; color: var(--muted); }
+.phone .ctools { margin: 8px 0 -20px; }
+.phone .tog { min-height: 44px; }
+.phone .h3.c { padding: 4px 0 0; }
+.phone .h2.c { padding-top: 20px; }
+
+/* ---------- D: index rail ---------- */
+.list.has-rail { display: grid; grid-template-columns: minmax(0, 1fr) 3.5rem; column-gap: 8px; }
+.rail { grid-column: 2; grid-row: 1; position: sticky; top: 0; align-self: start; padding: 24px 0; max-height: var(--fh); display: flex; flex-direction: column; justify-content: center; min-height: min(var(--fh), 640px); user-select: none; touch-action: none; }
+.rail ul { display: flex; flex-direction: column; }
+.rail .pl { font-size: 10px; line-height: 14px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); padding: 8px 6px 2px; }
+.rail .pl:first-child { padding-top: 0; }
+.rail a { position: relative; display: flex; align-items: center; gap: 5px; min-height: 22px; padding: 0 6px; border-radius: 5px; font-size: 11px; line-height: 14px; color: var(--muted); white-space: nowrap; cursor: pointer; }
+.rail a::before { content: ""; width: 3px; height: 3px; border-radius: 99px; background: currentColor; opacity: 0.5; flex: none; }
+.rail a.on { color: var(--fg); font-weight: 600; }
+.rail a.on::before { width: 5px; height: 5px; opacity: 1; margin-left: -1px; }
+.rail a:hover { color: var(--fg); background: var(--track); }
+.rail a:hover::after, .rail a:focus-visible::after { content: attr(data-full); position: absolute; right: calc(100% + 8px); top: 50%; translate: 0 -50%; padding: 4px 8px; border-radius: 6px; background: var(--fg); color: var(--bg); font-size: 12px; font-weight: 500; line-height: 16px; pointer-events: none; }
+.list.has-rail > .lc { grid-column: 1; grid-row: 1; min-width: 0; }
+.fallback { font-size: 12px; line-height: 16px; color: var(--muted); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="chrome">
+  <div class="bar">
+    <h1>Section navigation · Bay Ballot list page</h1>
+    <div class="seg" role="group" aria-label="Option" id="optSeg"></div>
+    <div class="seg" role="group" aria-label="Viewport" id="vpSeg"></div>
+    <div class="seg" role="group" aria-label="Theme" id="themeSeg"></div>
+  </div>
+  <div class="note" id="note"></div>
+  <button class="note-toggle" id="noteToggle" type="button">More notes</button>
+</div>
+<div id="stageWrap"></div>
+
+<script>
+(() => {
+// ---------- data (headings + titles from data/2026-11/ballot.yml) ----------
+const C = (id, title, d) => ({ id, title, d: d ?? null });
+const GROUPS = [
+  { key: "ca", heading: "California", abbr: "CA", sections: [
+    { name: "Federal", short: "Federal", contests: [
+      C("us-rep-11", "United States Representative, District 11"), C("us-rep-15", "United States Representative, District 15")] },
+    { name: "State", short: "State", contests: [
+      C("governor", "Governor"), C("lt-governor", "Lieutenant Governor"), C("secretary-of-state", "Secretary of State"),
+      C("controller", "Controller"), C("treasurer", "Treasurer"), C("attorney-general", "Attorney General"),
+      C("insurance-commissioner", "Insurance Commissioner"), C("board-of-equalization-2", "Board of Equalization, District 2"),
+      C("assembly-17", "State Assembly, District 17"), C("assembly-19", "State Assembly, District 19"),
+      C("superintendent", "Superintendent of Public Instruction")] },
+    { name: "Judicial", short: "Judicial", contests: [
+      C("supreme-court-groban", "Supreme Court Associate Justice Joshua Groban"),
+      C("supreme-court-evans", "Supreme Court Associate Justice Kelli M. Evans"),
+      C("court-of-appeal-1", "1st District Court of Appeal (11 justices)")] },
+    { name: "State propositions", short: "Props", contests: [
+      C("prop-1", "Proposition 1", "Authorizes Bonds for Housing Affordability Programs"),
+      C("prop-2", "Proposition 2", "Increases State’s Rainy Day Fund"),
+      C("prop-3", "Proposition 3", "Provides Permanent Funding for Schools and Health Care by Extending Existing Tax on High Incomes"),
+      C("prop-4", "Proposition 4", "Repeals Prohibition Against Public Funding of Election Campaigns"),
+      C("prop-5", "Proposition 5", "Changes Recall Election Process for Statewide Officers"),
+      C("prop-37", "Proposition 37", "Creates Loan Program for Middle-Income Buyers of Qualified New Homes"),
+      C("prop-38", "Proposition 38", "Authorizes Bonds for Immunology Medical Research"),
+      C("prop-39", "Proposition 39", "Prohibits Citizens from Voting Unless They Present Government-Issued Identification"),
+      C("prop-40", "Proposition 40", "Imposes One-Time Tax on Certain Taxpayers"),
+      C("prop-41", "Proposition 41", "Prohibits New State Taxes that Exclude Revenues from State Spending Limit. Requires Audits for New State Special Taxes"),
+      C("prop-42", "Proposition 42", "Prohibits New State Personal Property Taxes and Certain Retroactive State Taxes"),
+      C("prop-43", "Proposition 43", "Limits Voters’ Ability to Raise Revenues for Local Government Services"),
+      C("prop-44", "Proposition 44", "Requires Community Health Clinics Spend 90% of Revenue on Program Services"),
+      C("prop-45", "Proposition 45", "Modifies Environmental Review for Certain Projects")] },
+    { name: "Regional measures", short: "Regional", contests: [C("rtm", "Regional Measure RTM", "Regional Transit Measure")] },
+  ] },
+  { key: "sf", heading: "San Francisco", abbr: "SF", sections: [
+    { name: "Local candidates", short: "Candidates", contests: [
+      C("board-of-education", "Board of Education"), C("college-board", "Community College Board"),
+      C("college-board-partial", "Community College Board (partial term)"), C("bart-8", "BART Board, District 8"),
+      C("assessor", "Assessor-Recorder"), C("public-defender", "Public Defender"),
+      C("supervisor-2", "Board of Supervisors, District 2"), C("supervisor-4", "Board of Supervisors, District 4"),
+      C("supervisor-6", "Board of Supervisors, District 6"), C("supervisor-8", "Board of Supervisors, District 8"),
+      C("supervisor-10", "Board of Supervisors, District 10")] },
+    { name: "Local propositions", short: "Props", contests: [
+      C("prop-a", "Proposition A", "Charter Changes Affecting Various City Departments and Commissions"),
+      C("prop-b", "Proposition B", "Establishing a Municipal Finance Corporation and a Public Bank"),
+      C("prop-c", "Proposition C", "Contributions to the Housing Trust Fund"),
+      C("prop-d", "Proposition D", "Changes to Ballot Measure Process"),
+      C("prop-e", "Proposition E", "City Administrator’s Authority and Changes to City Contracting"),
+      C("prop-f", "Proposition F", "Changes to Executive Branch Management"),
+      C("prop-g", "Proposition G", "Allowing Private Vehicles on the Upper Great Highway in Sunset Dunes Park"),
+      C("prop-h", "Proposition H", "Parcel Tax to Fund Muni Operations"),
+      C("prop-i", "Proposition I", "Changes to Real Property Transfer Tax"),
+      C("prop-j", "Proposition J", "Removal of Foreclosure Exemption for Real Property Transfer Tax")] },
+  ] },
+  { key: "sm", heading: "San Mateo County", abbr: "SM", example: true, sections: [
+    ["County candidates", "County", 4], ["County measures", "Measures", 5], ["School districts", "Schools", 3], ["Special districts", "Districts", 4],
+  ].map(([name, short, n], si) => ({ name, short, example: true,
+    contests: Array.from({ length: n }, (_, k) => C(`sm-${si}-${k}`, `Example contest ${si + 1}.${k + 1}`, si === 1 ? "Placeholder measure description" : null)) })) },
+];
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+for (const g of GROUPS) {
+  g.count = 0;
+  for (const s of g.sections) { s.id = `${g.key}-${slug(s.name)}`; s.group = g; g.count += s.contests.length; for (const c of s.contests) c.sec = s; }
+}
+const SECTIONS = GROUPS.flatMap((g) => g.sections);
+const ALL = SECTIONS.flatMap((s) => s.contests);
+const REAL = ALL.filter((c) => !c.sec.example).length;
+const EX = '<span class="ex"> (example)</span>';
+const secName = (s) => s.name + (s.example ? EX : "");
+const grpName = (g) => g.heading + (g.example ? EX : "");
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+// Deterministic neutral bar widths, so screenshots are stable. Not results.
+const w = (id) => { let h = 0; for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return 35 + (h % 45); };
+const bar = (id) => `<div class="track" aria-hidden="true"><span style="width:${w(id)}%"></span><span style="width:${Math.max(8, 92 - w(id))}%"></span></div>`;
+
+const ICON = {
+  chev: '<svg class="i chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+  x: '<svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  sliders: '<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-7M8 10v4M8 12H3"/></svg>',
+  list: '<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M3 5h.01M3 12h.01M3 19h.01M8 5h13M8 12h13M8 19h13"/></svg>',
+};
+const LOGO = (() => {
+  const rows = ["1110", "1001", "1110", "1001", "1110"];
+  const r = rows.flatMap((row, i) => [...row].map((c, k) => `<rect x="${2 + k * 3}" y="${1 + i * 3}" width="2" height="2" rx="0.35"${c === "1" ? "" : ' opacity="0.14"'}/>`)).join("");
+  return `<svg viewBox="0 0 16 16" aria-hidden="true">${r}</svg>`;
+})();
+
+// ---------- option notes ----------
+const NOTES = {
+  A: ["<b>A · Outline in the filter column.</b> A quiet “On this ballot” list under the filters. The place you’re in expands to its sections; scroll-spy marks the current one; click scrolls. Phone: Filters becomes a sticky bar with a “Jump to” button that opens a short sheet.",
+      "<b>Pros:</b> the list itself doesn’t change at all; uses empty space in a column that already exists; only the current place expands, so 6+ places stay short.",
+      "<b>Cons:</b> shares the sticky column with filters (on short screens the column scrolls); jumping into another place’s section is two clicks; phone gains a sticky bar.",
+      "<b>Keys / pane / phone:</b> ↑↓ unchanged; <b>[</b> and <b>]</b> jump to the previous/next section. The pane is on the other side, so no conflict. The phone sheet is the same Sheet as Filters."],
+  B: ["<b>B · Sticky “you are here” menu.</b> A slim line pinned atop the list reads “California › State” and is itself the jump menu. One component for desktop and phone.",
+      "<b>Pros:</b> always shows context, which also helps when ↓ walks past a section boundary; nothing added to the filter column; identical on phone.",
+      "<b>Cons:</b> a ~48px sticky strip over the list; the menu hides until clicked, so it’s less discoverable than A; briefly repeats the heading you just scrolled past.",
+      "<b>Keys / pane / phone:</b> <b>g</b> opens the menu focused on the current section; ↑↓ move, Enter jumps, Esc returns focus. The bar lives in the list column, so it narrows with it when the pane opens. Phone: drops down under the bar, no sheet."],
+  C: ["<b>C · Collapsible headings.</b> Every place and section heading toggles, with a count. “Collapse all” turns the list into its own outline; open just the part you want. Remembered in this browser.",
+      "<b>Pros:</b> no new chrome; doubles as “hide what I’ve already decided”; identical on phone; a collapsed place still lists its sections as links.",
+      "<b>Cons:</b> collapsed contests are easy to forget (counts help); deep links (?c=) and search must auto-expand their section; headings gain button weight.",
+      "<b>Keys / pane / phone:</b> ↑↓ skip collapsed sections; on a focused heading Enter toggles, ← collapses, → expands. Collapsing the open contest’s section keeps the pane; ↓ resumes after it. Phone: same headings, 44px targets."],
+  D: ["<b>D · Index rail.</b> A thin rail at the list’s right edge with short labels grouped by place (CA / SF / SM). Hover shows the full name; click or drag to scrub. Desktop only.",
+      "<b>Pros:</b> always visible, one click to any section, almost no footprint; drag-scrubbing is quick on a long list.",
+      "<b>Cons:</b> short labels repeat (“Props” under CA and SF) and lean on the place labels; small targets; sits between list and pane, so it’s tight when the pane is open; unusual on desktop web.",
+      "<b>Keys / pane / phone:</b> <b>[</b> <b>]</b> jump sections, as in A. The rail rides the list column’s right edge. Phone: no rail; it falls back to A’s “Jump to” sheet (shown in the phone view)."],
+};
+
+// ---------- state ----------
+const params = new URLSearchParams(location.search);
+const pick = (v, ok, d) => (ok.includes(v) ? v : d);
+const state = {
+  opt: pick((params.get("opt") || "").toUpperCase(), ["A", "B", "C", "D"], "A"),
+  vp: pick(params.get("vp"), ["desktop", "phone"], innerWidth >= 1024 ? "desktop" : "phone"),
+  theme: pick(params.get("theme"), ["light", "dark"], "auto"),
+  selected: null, current: SECTIONS[0].id, collapsed: loadCollapsed(),
+};
+function loadCollapsed() {
+  try { return new Set(JSON.parse(localStorage.getItem("bb-mock-collapsed") || "[]")); } catch { return new Set(); }
+}
+function saveCollapsed() {
+  try { localStorage.setItem("bb-mock-collapsed", JSON.stringify([...state.collapsed])); } catch {}
+}
+function syncUrl() {
+  const p = new URLSearchParams();
+  p.set("opt", state.opt); p.set("vp", state.vp);
+  if (state.theme !== "auto") p.set("theme", state.theme);
+  history.replaceState(null, "", `?${p}`);
+}
+
+// ---------- chrome ----------
+function seg(el, items, cur, on) {
+  el.innerHTML = items.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${l}</button>`).join("");
+  el.onclick = (e) => { const b = e.target.closest("button"); if (b) on(b.dataset.v); };
+}
+function chrome() {
+  seg(document.getElementById("optSeg"), [["A", "A · Outline"], ["B", "B · Sticky menu"], ["C", "C · Collapse"], ["D", "D · Rail"]], state.opt, (v) => { state.opt = v; state.selected = null; render(); });
+  seg(document.getElementById("vpSeg"), [["desktop", "Desktop"], ["phone", "Phone"]], state.vp, (v) => { state.vp = v; state.selected = null; render(); });
+  seg(document.getElementById("themeSeg"), [["auto", "Auto"], ["light", "Light"], ["dark", "Dark"]], state.theme, (v) => { state.theme = v; applyTheme(); chrome(); syncUrl(); });
+  document.getElementById("note").innerHTML = NOTES[state.opt].map((p) => `<p>${p}</p>`).join("");
+}
+document.getElementById("noteToggle").onclick = (e) => {
+  const n = document.getElementById("note"); n.classList.toggle("more");
+  e.target.textContent = n.classList.contains("more") ? "Fewer notes" : "More notes";
+};
+function applyTheme() {
+  if (state.theme === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme = state.theme;
+}
+
+// ---------- markup ----------
+const desk = () => state.vp === "desktop";
+const siteHeader = () => `<header class="site"><div class="top"><div class="fr row1"><a class="brand" href="#" onclick="return false">${LOGO}Bay Ballot</a><nav aria-label="Site">About</nav></div></div><div class="rule" aria-hidden="true"><span></span><span></span><span></span></div></header>`;
+
+function hintLine() {
+  const extra = { A: " · [ ] for sections", B: " · g to jump", C: " · ← → on a heading", D: " · [ ] for sections" }[state.opt];
+  return `<p class="hint" aria-hidden="true">↑↓ to browse${extra} · ? for shortcuts</p>`;
+}
+function intro() {
+  const pills = `<nav class="pills" aria-label="Area"><span class="pill on">Bay Area</span><span class="pill">San Francisco</span><span class="pill">San Mateo County <span class="ex">&nbsp;(example)</span></span></nav>`;
+  let phoneCtl = "";
+  if (!desk()) {
+    const filters = (grow) => `<button type="button" class="pbtn ${grow ? "grow" : ""}" data-act="noop">${ICON.sliders}<span><b style="font-weight:600">Filters</b><span class="muted"> · All guides counted</span></span></button>`;
+    if (state.opt === "A" || state.opt === "D") phoneCtl = `</div><div class="pbar" id="pbar">${filters(true)}<button type="button" class="pbtn" data-act="open-jump" aria-haspopup="dialog">${ICON.list}Jump to</button></div><div>`;
+    else phoneCtl = `<div class="fbtn">${filters(true).replace('class="pbtn grow"', 'class="pbtn grow" style="width:100%"')}</div>`;
+  }
+  return `<div class="intro"><h1>Bay Area ballot</h1><p>Nov 3, 2026 · ${REAL} contests · plus San Mateo examples</p>${desk() ? hintLine() : ""}${pills}${phoneCtl}</div>`;
+}
+function row(c) {
+  if (desk()) return `<li><a class="row" href="#" id="row-${c.id}" data-id="${c.id}"><h4>${esc(c.title)}</h4>${c.d ? `<p class="d">${esc(c.d)}</p>` : ""}<div class="vb" aria-hidden="true"><span class="lab"></span>${bar(c.id)}</div></a></li>`;
+  return `<li><a class="row prow" href="#" id="row-${c.id}" data-id="${c.id}"><h4>${esc(c.title).replace(/ (\d+)$/, "&nbsp;$1")}</h4><span class="ib" aria-hidden="true">${bar(c.id)}<span class="lab"></span></span></a></li>`;
+}
+function groupsHTML() {
+  const C_ = state.opt === "C";
+  return GROUPS.map((g) => {
+    const gc = C_ && state.collapsed.has(g.key) ? " data-collapsed" : "";
+    const secs = g.sections.map((s) => {
+      const sc = C_ && state.collapsed.has(s.id) ? " data-collapsed" : "";
+      const head = C_
+        ? `<h3 class="h3 c hd"><button type="button" class="tog" data-toggle="${s.id}" aria-expanded="${!sc}">${ICON.chev}<span class="nm">${secName(s)}</span><span class="c">· ${s.contests.length}</span></button></h3>`
+        : `<h3 class="h3">${secName(s)}</h3>`;
+      const list = `<ul class="cards">${s.contests.map(row).join("")}</ul>`;
+      return `<section data-sec="${s.id}"${sc} aria-label="${g.heading}: ${s.name}">${head}${C_ ? `<div class="body"${sc ? " inert" : ""}><div>${list}</div></div>` : list}</section>`;
+    }).join("");
+    const head = C_
+      ? `<h2 class="h2 c hd"><button type="button" class="tog" data-toggle="${g.key}" aria-expanded="${!gc}">${ICON.chev}<span class="nm">${grpName(g)}</span><span class="c">· ${g.count}</span></button></h2>`
+      : `<h2 class="h2">${grpName(g)}</h2>`;
+    const sum = C_ ? `<p class="gsum">${g.sections.map((s) => `<button type="button" data-open-sec="${s.id}">${s.name}</button>`).join(" · ")}</p>` : "";
+    return `<section data-group="${g.key}"${gc} aria-label="${g.heading}">${head}${sum}${C_ ? `<div class="body"${gc ? " inert" : ""}><div>${secs}</div></div>` : secs}</section>`;
+  }).join("");
+}
+function outlineList({ kind }) {
+  // kind: "sheet" (A/D phone) or "menu" (B)
+  return GROUPS.map((g, i) => `${kind === "menu" && i ? '<div class="gsep"></div>' : ""}<button type="button" class="ol-g" data-jump="${g.key}">${grpName(g)}<span class="c tab">${g.count}</span></button>` +
+    g.sections.map((s) => `<button type="button" class="ol-s${s.id === state.current ? " on" : ""}" data-jump="${s.id}" ${s.id === state.current ? 'aria-current="location"' : ""}><span class="dot"></span>${secName(s)}<span class="c tab">${s.contests.length}</span></button>`).join("")).join("");
+}
+function sidebar() {
+  const types = [64, 48, 80].map((n) => `<div><span class="box on"></span><span class="sk" style="width:${n}%"></span><span class="c muted" style="margin-left:auto;display:inline-block;width:14px;height:8px;border-radius:4px;background:var(--g1)"></span></div>`).join("");
+  let out = `<aside class="side" aria-label="Filters"><p class="f-title">Filters</p><p class="f-sub">All guides counted</p>
+    <p class="f-lab">Show</p><div class="chk"><span class="box"></span>Only guides that explain their endorsements</div>
+    <p class="f-lab">Guides</p><div class="search">Search guides</div><div class="types" aria-hidden="true">${types}</div>
+    <span class="reset">Reset filters</span>`;
+  if (state.opt === "A") {
+    out += `<nav class="outline" aria-label="On this ballot"><p class="f-lab">On this ballot <span class="tab">${ALL.length} contests</span></p><ul>` +
+      GROUPS.map((g) => `<li class="oa-grp" data-oa-grp="${g.key}"><button type="button" class="oa-g" data-jump="${g.key}">${grpName(g)}<span class="c tab">${g.count}</span></button><div class="oa-secs"><ul>` +
+        g.sections.map((s) => `<li><button type="button" class="oa-s" data-jump="${s.id}" data-oa="${s.id}">${secName(s)}<span class="c tab">${s.contests.length}</span></button></li>`).join("") +
+        `</ul></div></li>`).join("") + `</ul></nav>`;
+  }
+  return out + `</aside>`;
+}
+function rail() {
+  return `<nav class="rail" aria-label="Sections" id="rail"><ul>` + GROUPS.map((g) => `<li class="pl" aria-hidden="true">${g.abbr}</li>` +
+    g.sections.map((s) => `<li><a data-jump="${s.id}" data-rail="${s.id}" href="#${s.id}" data-full="${esc(g.heading)} › ${esc(s.name)}${s.example ? " (example)" : ""} · ${s.contests.length}" aria-label="${esc(g.heading)}: ${esc(s.name)}">${s.short}</a></li>`).join("")).join("") + `</ul></nav>`;
+}
+function secbar() {
+  return `<div class="secbar" id="secbar"><div style="position:relative"><button type="button" class="sb-btn" id="sbBtn" aria-haspopup="menu" aria-expanded="false"><span class="p" id="sbP"></span><span class="sep">›</span><span class="s" id="sbS"></span>${ICON.chev}</button><div class="menu" id="menu" role="menu" hidden></div></div></div>`;
+}
+function detail(c) {
+  return `<section class="detail" aria-labelledby="detail-title"><div class="head"><div><p class="muted" style="font-size:14px;line-height:20px">${grpName(c.sec.group)} › ${secName(c.sec)}</p><h2 id="detail-title" tabindex="-1">${esc(c.title)}</h2></div><button type="button" class="xbtn" data-act="close-pane" aria-label="Close details">${ICON.x}</button></div>${placeholder(c)}</section>`;
+}
+function placeholder(c) {
+  return `<div class="ph" aria-hidden="true">${c.d ? `<p style="font-size:14px;line-height:20px" class="muted">${esc(c.d)}</p>` : ""}${bar(c.id)}<span class="ln" style="width:40%"></span><span class="ln" style="width:72%"></span><span class="ln" style="width:58%"></span><span class="ln" style="width:66%"></span><small>Placeholder: the real contest detail renders here.</small></div>`;
+}
+
+let root, scroller;
+function render() {
+  chrome(); syncUrl();
+  const wrap = document.getElementById("stageWrap");
+  const D = desk();
+  const listInner = `${state.opt === "C" ? "" : ""}${intro()}${state.opt === "B" ? secbar() : ""}${state.opt === "C" ? `<div class="ctools"><button type="button" data-act="collapse-all">Collapse all</button><span aria-hidden="true">·</span><button type="button" data-act="expand-all">Expand all</button></div>` : ""}${groupsHTML()}`;
+  let body;
+  if (D) {
+    const rl = state.opt === "D";
+    body = `${siteHeader()}<div class="fr grid" id="grid">${sidebar()}<div class="list${rl ? " has-rail" : ""}" role="region" aria-label="Contests">${rl ? `<div class="lc">${listInner}</div>${rail()}` : listInner}</div><div class="pane" id="pane"></div></div>`;
+  } else {
+    body = `${siteHeader()}<div style="padding:0 16px 40px">${listInner}${state.opt === "D" ? '<p class="fallback" style="margin-top:16px">Option D has no rail on phone; it uses A’s “Jump to”.</p>' : ""}</div>`;
+  }
+  wrap.innerHTML = `<div class="stage ${D ? "" : "phone-stage"}"><div class="${D ? "desk-wrap" : ""}" style="${D ? "" : "max-width:100%"}"><div class="frame ${D ? "desk" : "phone"}" id="frame"><div class="scroller" id="scroller">${body}</div><div id="overlay" class="overlay" hidden></div></div></div></div>`;
+  root = document.getElementById("frame");
+  scroller = document.getElementById("scroller");
+  sizeFrame();
+  root.addEventListener("click", onClick);
+  root.addEventListener("keydown", onFrameKey);
+  scroller.addEventListener("scroll", () => requestAnimationFrame(spy), { passive: true });
+  if (state.opt === "D" && D) wireRail();
+  if (state.opt === "C") updateCollapseTools();
+  spy();
+}
+function sizeFrame() {
+  if (!root) return;
+  const top = root.getBoundingClientRect().top + scrollY;
+  const h = Math.max(560, Math.round(innerHeight - top - (innerWidth <= 500 ? 0 : 16)));
+  root.style.setProperty("--fh", `${desk() ? h : Math.min(h, 844)}px`);
+}
+addEventListener("resize", sizeFrame);
+
+// ---------- scrolling + scroll-spy ----------
+function stickyOffset() {
+  const sb = root.querySelector("#secbar, #pbar");
+  return (sb ? sb.offsetHeight : 0) + 8;
+}
+function relTop(el) { return el.getBoundingClientRect().top - scroller.getBoundingClientRect().top; }
+function jumpTo(key, { smooth = true } = {}) {
+  let el = root.querySelector(`[data-sec="${key}"]`) || root.querySelector(`[data-group="${key}"]`);
+  if (!el) return;
+  if (state.opt === "C") { // jumping into a collapsed part opens it
+    const s = SECTIONS.find((x) => x.id === key);
+    const changed = [key, s?.group.key].filter((k) => k && state.collapsed.delete(k)).length;
+    if (changed) { applyCollapsed(); saveCollapsed(); }
+  }
+  const top = scroller.scrollTop + relTop(el) - stickyOffset() + (el.matches("[data-group]") ? 16 : 0);
+  scroller.scrollTo({ top, behavior: smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto" });
+  const head = el.querySelector(".h2, .h3");
+  if (head) { head.setAttribute("tabindex", "-1"); head.focus({ preventScroll: true }); }
+  state.current = SECTIONS.find((s) => s.id === key)?.id ?? GROUPS.find((g) => g.key === key)?.sections[0].id ?? state.current;
+  paintSpy();
+}
+function spy() {
+  if (!scroller) return;
+  const line = stickyOffset() + Math.max(24, Math.round(scroller.clientHeight * 0.25));
+  let cur = SECTIONS[0].id;
+  for (const el of root.querySelectorAll("[data-sec]")) {
+    if (el.closest("[data-group][data-collapsed]")) continue;
+    if (relTop(el) <= line) cur = el.dataset.sec; else break;
+  }
+  if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) {
+    const vis = [...root.querySelectorAll("[data-sec]")].filter((el) => !el.closest("[data-group][data-collapsed]") && relTop(el) < scroller.clientHeight);
+    if (vis.length && relTop(vis[vis.length - 1]) > line) cur = vis[vis.length - 1].dataset.sec;
+  }
+  state.current = cur;
+  paintSpy();
+  const sb = root.querySelector("#secbar");
+  if (sb) sb.classList.toggle("stuck", relTop(sb) <= 0.5 && scroller.scrollTop > 0);
+}
+function paintSpy() {
+  const s = SECTIONS.find((x) => x.id === state.current);
+  root.querySelectorAll("[data-oa]").forEach((b) => { const on = b.dataset.oa === s.id; b.classList.toggle("on", on); on ? b.setAttribute("aria-current", "location") : b.removeAttribute("aria-current"); });
+  root.querySelectorAll("[data-oa-grp]").forEach((li) => { const on = li.dataset.oaGrp === s.group.key; li.classList.toggle("cur", on); li.querySelector(".oa-secs").inert = !on; });
+  root.querySelectorAll("[data-rail]").forEach((a) => { const on = a.dataset.rail === s.id; a.classList.toggle("on", on); on ? a.setAttribute("aria-current", "location") : a.removeAttribute("aria-current"); });
+  const p = root.querySelector("#sbP"), t = root.querySelector("#sbS");
+  if (p) { p.innerHTML = grpName(s.group); t.innerHTML = secName(s); root.querySelector("#sbBtn").setAttribute("aria-label", `Jump to section. Now: ${s.group.heading}, ${s.name}`); }
+}
+
+// ---------- selection (desktop pane / phone sheet) ----------
+function select(id, { fromKey = false } = {}) {
+  state.selected = id;
+  root.querySelectorAll(".row.sel").forEach((r) => { r.classList.remove("sel"); r.removeAttribute("aria-current"); });
+  const grid = root.querySelector("#grid"), pane = root.querySelector("#pane");
+  if (!id) { grid?.classList.remove("open"); if (pane) pane.innerHTML = ""; return; }
+  const c = ALL.find((x) => x.id === id);
+  const r = root.querySelector(`#row-${CSS.escape(id)}`);
+  r?.classList.add("sel"); r?.setAttribute("aria-current", "true");
+  grid.classList.add("open");
+  pane.innerHTML = detail(c);
+  if (fromKey && r) {
+    r.focus({ preventScroll: true });
+    requestAnimationFrame(() => ensureVisible(r));
+  }
+}
+function ensureVisible(el) {
+  const t = relTop(el), off = stickyOffset(), h = el.offsetHeight, ch = scroller.clientHeight;
+  if (t < off) scroller.scrollTop += t - off;
+  else if (t + h > ch) scroller.scrollTop += t + h - ch + 8;
+}
+function visible(id) { const r = root.querySelector(`#row-${CSS.escape(id)}`); return r && !r.closest("[data-collapsed]"); }
+function step(dir) {
+  const ids = ALL.map((c) => c.id);
+  let i = state.selected ? ids.indexOf(state.selected) : (dir > 0 ? -1 : ids.length);
+  for (i += dir; i >= 0 && i < ids.length; i += dir) if (visible(ids[i])) return select(ids[i], { fromKey: true });
+}
+function stepSection(dir) {
+  const vis = SECTIONS.filter((s) => !(state.opt === "C" && (state.collapsed.has(s.group.key))));
+  const i = vis.findIndex((s) => s.id === state.current);
+  const n = vis[Math.min(vis.length - 1, Math.max(0, i + dir))];
+  if (n) jumpTo(n.id);
+}
+
+// ---------- overlays ----------
+function openSheet(html, { label }) {
+  const o = root.querySelector("#overlay");
+  o.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${label}">${html}</div>`;
+  o.hidden = false;
+  o._return = document.activeElement;
+  o.querySelector(".sheet [tabindex='-1'], .sheet .ol-s.on, .sheet button")?.focus();
+}
+function closeSheet() {
+  const o = root.querySelector("#overlay");
+  if (o.hidden) return false;
+  o.hidden = true; o.innerHTML = "";
+  o._return?.focus?.({ preventScroll: true });
+  return true;
+}
+function openContestSheet(c) {
+  openSheet(`<div class="sh"><div><p class="muted" style="font-size:14px;line-height:20px">${grpName(c.sec.group)} › ${secName(c.sec)}</p><h2 tabindex="-1" style="outline:none">${esc(c.title)}</h2></div><button type="button" class="xbtn" data-act="close-sheet" aria-label="Close">${ICON.x}</button></div><div class="sb">${placeholder(c)}</div>`, { label: c.title });
+}
+function openJumpSheet() {
+  openSheet(`<div class="sh"><div><h2>Jump to</h2></div><button type="button" class="xbtn" data-act="close-sheet" aria-label="Close">${ICON.x}</button></div><div class="sb">${outlineList({ kind: "sheet" })}</div>`, { label: "Jump to" });
+}
+function toggleMenu(force) {
+  const m = root.querySelector("#menu"), b = root.querySelector("#sbBtn");
+  if (!m) return false;
+  const open = force ?? m.hidden;
+  if (!open && m.hidden) return false;
+  m.hidden = !open; b.setAttribute("aria-expanded", String(open));
+  if (open) {
+    m.innerHTML = outlineList({ kind: "menu" });
+    m.querySelectorAll("button").forEach((x) => x.setAttribute("role", "menuitem"));
+    const on = m.querySelector(".ol-s.on");
+    on?.focus({ preventScroll: true });
+    if (on) m.scrollTop = on.offsetTop - m.clientHeight / 2 + 20;
+  } else b.focus({ preventScroll: true });
+  return true;
+}
+
+// ---------- C: collapse ----------
+function applyCollapsed() {
+  root.querySelectorAll("[data-group], [data-sec]").forEach((el) => {
+    const k = el.dataset.group ?? el.dataset.sec;
+    const c = state.collapsed.has(k);
+    c ? el.setAttribute("data-collapsed", "") : el.removeAttribute("data-collapsed");
+    const body = el.querySelector(":scope > .body"); if (body) body.inert = c;
+    el.querySelector(":scope > .hd .tog")?.setAttribute("aria-expanded", String(!c));
+  });
+  updateCollapseTools();
+  requestAnimationFrame(spy);
+}
+function updateCollapseTools() {
+  const allSecs = SECTIONS.every((s) => state.collapsed.has(s.id)) && GROUPS.every((g) => !state.collapsed.has(g.key));
+  root.querySelector('[data-act="collapse-all"]')?.toggleAttribute("disabled", allSecs);
+  root.querySelector('[data-act="expand-all"]')?.toggleAttribute("disabled", state.collapsed.size === 0);
+}
+function setCollapsed(k, on) {
+  on ? state.collapsed.add(k) : state.collapsed.delete(k);
+  applyCollapsed(); saveCollapsed();
+}
+
+// ---------- D: rail scrubbing ----------
+function wireRail() {
+  const rail = root.querySelector("#rail");
+  let dragging = false, last = null;
+  const at = (e) => document.elementFromPoint(e.clientX, e.clientY)?.closest?.("[data-rail]");
+  rail.addEventListener("pointerdown", (e) => { const a = at(e); if (!a) return; dragging = true; rail.setPointerCapture(e.pointerId); last = a.dataset.rail; jumpTo(last, { smooth: false }); e.preventDefault(); });
+  rail.addEventListener("pointermove", (e) => { if (!dragging) return; const a = at(e); if (a && a.dataset.rail !== last) { last = a.dataset.rail; jumpTo(last, { smooth: false }); } });
+  const end = () => { dragging = false; };
+  rail.addEventListener("pointerup", end); rail.addEventListener("pointercancel", end);
+  rail.addEventListener("click", (e) => e.preventDefault());
+}
+
+// ---------- events ----------
+function onClick(e) {
+  const t = e.target;
+  const rowEl = t.closest("[data-id]");
+  if (rowEl) {
+    e.preventDefault();
+    const c = ALL.find((x) => x.id === rowEl.dataset.id);
+    if (desk()) select(state.selected === c.id ? null : c.id);
+    else openContestSheet(c);
+    return;
+  }
+  const tog = t.closest("[data-toggle]");
+  if (tog) { const k = tog.dataset.toggle; setCollapsed(k, !state.collapsed.has(k)); return; }
+  const os = t.closest("[data-open-sec]");
+  if (os) { jumpTo(os.dataset.openSec); return; }
+  const j = t.closest("[data-jump]");
+  if (j) {
+    if (state.opt === "D" && desk() && j.closest("#rail")) return; // handled by pointer events
+    e.preventDefault();
+    const inSheet = closeSheet();
+    if (state.opt === "B") toggleMenu(false);
+    requestAnimationFrame(() => jumpTo(j.dataset.jump, { smooth: !inSheet }));
+    return;
+  }
+  if (t.closest("#sbBtn")) { toggleMenu(); return; }
+  const act = t.closest("[data-act]")?.dataset.act;
+  if (act === "close-pane") { const id = state.selected; select(null); root.querySelector(`#row-${CSS.escape(id)}`)?.focus({ preventScroll: true }); }
+  else if (act === "close-sheet") closeSheet();
+  else if (act === "open-jump") openJumpSheet();
+  else if (act === "collapse-all") { GROUPS.forEach((g) => state.collapsed.delete(g.key)); SECTIONS.forEach((s) => state.collapsed.add(s.id)); applyCollapsed(); saveCollapsed(); }
+  else if (act === "expand-all") { state.collapsed.clear(); applyCollapsed(); saveCollapsed(); }
+  if (state.opt === "B" && !t.closest("#menu")) toggleMenu(false);
+}
+function onFrameKey(e) {
+  // Arrow keys inside the B menu / A-D sheet move between items.
+  const list = e.target.closest("#menu, .sheet .sb");
+  if (list && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    const items = [...list.querySelectorAll("button")];
+    const i = items.indexOf(e.target);
+    items[Math.max(0, Math.min(items.length - 1, i + (e.key === "ArrowDown" ? 1 : -1)))]?.focus();
+    e.preventDefault(); e.stopPropagation(); return;
+  }
+  // C: ← / → on a heading.
+  const tog = e.target.closest("[data-toggle]");
+  if (tog && (e.key === "ArrowLeft" || e.key === "ArrowRight")) { setCollapsed(tog.dataset.toggle, e.key === "ArrowLeft"); e.preventDefault(); e.stopPropagation(); }
+}
+document.addEventListener("keydown", (e) => {
+  if (!root || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.closest?.("input, textarea, .chrome")) return;
+  if (e.key === "Escape") { if (toggleMenu(false) || closeSheet()) return; if (state.selected) { const id = state.selected; select(null); root.querySelector(`#row-${CSS.escape(id)}`)?.focus({ preventScroll: true }); } return; }
+  if (!desk() || e.target.closest?.("#menu, #overlay")) return;
+  const k = e.key;
+  if (k === "ArrowDown" || k === "j") { step(1); e.preventDefault(); }
+  else if (k === "ArrowUp" || k === "k") { step(-1); e.preventDefault(); }
+  else if ((state.opt === "A" || state.opt === "D") && (k === "[" || k === "]")) { stepSection(k === "]" ? 1 : -1); e.preventDefault(); }
+  else if (state.opt === "B" && k === "g") { toggleMenu(true); e.preventDefault(); }
+  else if (state.opt === "C" && (k === "[" || k === "]")) { stepSection(k === "]" ? 1 : -1); e.preventDefault(); }
+});
+
+applyTheme();
+render();
+})();
+</script>
+</body>
+</html>
