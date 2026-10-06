@@ -25,7 +25,6 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
   return d && contest ? { ...d, contest, electionId: p.election } : null;
 }
 
-// Every published guide's entry for the contest; search copy never depends on a visitor's filters.
 function allRows(d: NonNullable<Awaited<ReturnType<typeof load>>>) {
   const { guides, files } = ballotViewProps(d);
   return activeEntries(d.contest.id, guides, files, EMPTY);

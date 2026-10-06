@@ -2,11 +2,7 @@ import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { tally } from "./score";
 
-// Search titles, descriptions and the answer sentence on contest pages. Every count comes from
-// tally() over all published guides; the visitor's filters never reach these strings.
-
 const PAGE_WHO = "San Francisco voter guides";
-// Descriptions have 160 characters; the short form keeps room for the runner-up.
 const SHORT_WHO = "SF voter guides";
 const READ_MORE = "See every guide's endorsement and reasons.";
 const MAX_DESCRIPTION = 160;
@@ -14,13 +10,11 @@ const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
 
 const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
-// "Prop B" / "Prop 1" for propositions, otherwise the ballot title.
 function measureLabel(c: Contest): string {
   if (c.title === "Regional Measure RTM") return "Regional Transit Measure";
   return c.title.replace(/^Proposition\b/, "Prop");
 }
 
-// The name people search for. Measures carry their place (SF or CA); offices put the district first.
 export function officeName(c: Contest): string {
   if (c.kind === "retention") {
     return c.title.replace(/^Supreme Court Associate Justice\b/, "Justice").replace(/\s*\(\d+ justices\)$/, "");
@@ -39,7 +33,7 @@ export function officeName(c: Contest): string {
     .replace(/, District /, " District ");
 }
 
-// Everything after the first name, minus nicknames, initials and suffixes: "Autumn Brown Garibay" -> "Brown Garibay".
+// Everything after the first name, not the last token: "Autumn Brown Garibay" -> "Brown Garibay".
 export function familyName(name: string): string {
   const tokens = name
     .replace(/\([^)]*\)|["“”][^"“”]*["“”]/g, " ")
@@ -50,19 +44,16 @@ export function familyName(name: string): string {
   return rest.length ? rest.join(" ") : (tokens[0] ?? name);
 }
 
-// The measure as a sentence names it: "Prop B", "the Regional Transit Measure", "retaining Justice …".
 function measureObject(c: Contest): string {
   if (c.kind === "retention") return `retaining ${officeName(c).replace(/^1st District Court of Appeal$/, "the 1st District Court of Appeal justices")}`;
   const label = measureLabel(c);
   return label.startsWith("Prop") ? label : `the ${label}`;
 }
 
-// The office as a sentence names it: the ballot title, with "U.S." for "United States".
 const officeInSentence = (c: Contest) => c.title.replace(/^United States /, "U.S. ");
 
 const ranked = (c: Contest, rows: Row[]) => c.rankedChoice && c.seats === 1 && rows.some((r) => r.entry.ranked);
 
-// Titles aim for MAX_TITLE characters: an ending is shortened only when the full one runs past it.
 const MAX_TITLE = 80;
 const fit = (head: string, endings: string[]) => {
   const titles = endings.map((e) => `${head}: ${e}`);
@@ -94,7 +85,6 @@ export function contestTitle(c: Contest, rows: Row[]): string {
   return fit(head, [`${t.leader} leads ${t.count} of ${t.total}`, `${t.leader} leads`]);
 }
 
-// The plain answer, without the date. Shorter levels drop the runner-up (1), then the office (2).
 function answer(c: Contest, rows: Row[], level: 0 | 1 | 2 = 0, WHO = PAGE_WHO): string {
   const office = level === 2 ? "" : ` for ${officeInSentence(c)}`;
   const t = tally(c, rows.map((r) => r.entry));
@@ -121,7 +111,6 @@ function answer(c: Contest, rows: Row[], level: 0 | 1 | 2 = 0, WHO = PAGE_WHO): 
   return level === 0 ? `${lead}; ${next.count} ${next.count === 1 ? "endorses" : "endorse"} ${next.name}` : lead;
 }
 
-// The sentence at the top of a contest page.
 export function answerSentence(c: Contest, rows: Row[], asOf: string | null): string {
   return `${answer(c, rows)}${asOf ? `, as of ${asOf}` : ""}.`;
 }

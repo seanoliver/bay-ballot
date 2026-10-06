@@ -56,7 +56,6 @@ export function ContestDetail({
   pending: string | null;
   heading?: "h1" | "h2" | false;
   titleId?: string;
-  // A plain-text answer under the title (the contest page).
   answer?: string;
   slots?: Slots;
   pageLink?: boolean;
