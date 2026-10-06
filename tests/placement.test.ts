@@ -262,4 +262,16 @@ describe("quotes under a letter shared across areas", () => {
     const q = { text: "Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year.", source: page.url };
     expect(misplacedUnder(q, "redwood-city-measure-e", [page], ballot.contests)).toBeNull();
   });
+  it("flags an SF Measure I reason extracted under Half Moon Bay Measure I", () => {
+    const page: Page = {
+      url: "https://bayrisingaction.org/voterguide/", kind: "html",
+      text: [
+        "Yes on Prop I: Ensure Luxury Real Estate Tax is Spent on Affordable Housing",
+        "San Francisco faces an affordable housing crisis. Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.",
+      ].join("\n"),
+    };
+    const q = { text: "Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.", source: page.url };
+    expect(misplacedUnder(q, "half-moon-bay-measure-i", [page], ballot.contests)).toBe("prop-i");
+    expect(misplacedUnder(q, "prop-i", [page], ballot.contests)).toBeNull();
+  });
 });

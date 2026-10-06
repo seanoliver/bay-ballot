@@ -35,7 +35,7 @@ const sameDistrict = (a: Contest, b: Contest) =>
   a.id !== b.id && a.jurisdiction.name === b.jurisdiction.name && a.jurisdiction.district === b.jurisdiction.district;
 const nearPlace = (place: string, body: string) => [`${ciWords(place)}[^\\n]{0,40}?${body}`, `${body}[^\\n]{0,40}?${ciWords(place)}`];
 
-function measurePatterns(c: Contest, siblings: Contest[]): string[] {
+function measurePatterns(c: Contest, siblings: Contest[], sharedBare: boolean): string[] {
   const m = c.title.match(MEASURE_TITLE);
   if (!m) return [];
   const [, place, word, id] = m;
@@ -44,8 +44,9 @@ function measurePatterns(c: Contest, siblings: Contest[]): string[] {
   if (!siblings.some((s) => s.id !== c.id && measureLetter(s) === id)) return [`(?:${PROP_WORD}|${yesNo})\\s*${letter}`];
   // Every contest sharing the letter keeps the bare marker, so an unqualified heading carries all their ids.
   const bare = `(?:${ci("measure")}|${yesNo})\\s*${letter}`;
-  if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`, bare];
-  return place ? [...nearPlace(place, bare), bare] : [bare];
+  const shared = sharedBare ? [bare] : [];
+  if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`, ...shared];
+  return place ? [...nearPlace(place, bare), ...shared] : shared;
 }
 
 function districtPatterns(c: Contest): string[] {
@@ -76,11 +77,11 @@ function districtPatterns(c: Contest): string[] {
   }
 }
 
-export function contestMarkers(c: Contest, siblings: Contest[] = []): RegExp[] {
+export function contestMarkers(c: Contest, siblings: Contest[] = [], { sharedBare = true }: { sharedBare?: boolean } = {}): RegExp[] {
   const out: string[] = [];
   if (c.kind === "measure") {
     if (c.id === "rtm") out.push("RTM", `${ci("regional")}\\s+(?:${ci("transit")}\\s+)?${ci("measure")}`);
-    else out.push(...measurePatterns(c, siblings));
+    else out.push(...measurePatterns(c, siblings, sharedBare));
   } else {
     const dp = c.jurisdiction.district ? districtPatterns(c) : [];
     const place = c.jurisdiction.within?.length === 1 ? c.jurisdiction.within[0].name : null;
@@ -163,7 +164,7 @@ export function misplacedUnder(quote: KeptQuote, contestId: string, pages: Page[
   const page = pages.find((p) => p.url === quote.source);
   if (!page) return null;
   const own = contests.find((c) => c.id === contestId);
-  if (own && contestMarkers(own, contests).some((re) => re.test(quote.text))) return null;
+  if (own && contestMarkers(own, contests, { sharedBare: false }).some((re) => re.test(quote.text))) return null;
   const { norm, map } = normalizeWithMap(page.text);
   const q = normalizeWithMap(quote.text).norm;
   if (!q) return null;
