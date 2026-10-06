@@ -1,7 +1,22 @@
 guide: sf-parents-action
 election: 2026-11
-status: pending
+status: published
 source: https://sfparentaction.org/endorsements-2026-nov/
+archived:
+  - source: https://sfparentaction.org/endorsements-2026-nov/
+    snapshot: https://web.archive.org/web/20261005222249/https://sfparentaction.org/endorsements-2026-nov/
 fetchedAt: 2026-10-05
 hasReasoning: true
-picks: {}
+picks:
+  board-of-education:
+    pick:
+      - Autumn Brown Garibay
+      - Phil Kim
+      - Alida Fisher
+    quotes:
+      - text: Her positions demonstrate that she is committed to improving student outcomes across SFUSD's broad student population and that she fully supports our teachers.
+        source: https://sfparentaction.org/endorsements-2026-nov/
+      - text: He has a strong record of increasing student instruction time in core subjects, supporting teachers, and pushing for a responsible district budget.
+        source: https://sfparentaction.org/endorsements-2026-nov/
+      - text: She has been a genuinely strong board member, and with critical work still underway, we believe she has earned another term.
+        source: https://sfparentaction.org/endorsements-2026-nov/

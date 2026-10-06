@@ -2,29 +2,129 @@ guide: sf-chronicle
 election: 2026-11
 status: published
 source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+archived:
+  - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+    snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks:
-  us-rep-11: { pick: ["Scott Wiener"] }
-  lt-governor: { pick: ["Fiona Ma"] }
-  secretary-of-state: { pick: ["Shirley N. Weber"] }
-  controller: { pick: ["Malia M. Cohen"] }
-  treasurer: { pick: ["Eleni Kounalakis"] }
-  attorney-general: { pick: ["Rob Bonta"] }
-  insurance-commissioner: { pick: ["Ben Allen"] }
-  superintendent: { pick: ["Richard Barrera"] }
-  prop-1: { pick: Y }
-  prop-3: { pick: Y }
-  prop-37: { pick: Y }
-  prop-38: { pick: N }
-  prop-41: { pick: N }
-  prop-42: { pick: N }
-  prop-44: { pick: N }
-  rtm: { pick: Y }
-  prop-a: { pick: Y }
-  prop-b: { pick: N }
-  prop-c: { pick: Y }
-  prop-d: { pick: Y }
-  prop-e: { pick: Y }
-  prop-g: { pick: N }
-  prop-h: { pick: Y }
+  lt-governor:
+    pick:
+      - Fiona Ma
+    quotes:
+      - text: Given the ramblings of her opponent, we cautiously recommend Ma for lieutenant governor.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+    quotes:
+      - text: The need for steady and trustworthy leadership from our secretary of state cannot be understated.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Shirley Weber’s breadth of experience, willingness to do the right thing and fierce advocacy for voting rights make her the strongest candidate.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  controller:
+    pick:
+      - Malia M. Cohen
+    quotes:
+      - text: Overall, we think Cohen has made enough progress to merit another term.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+    quotes:
+      - text: With her thorough grasp of the treasurer’s complex duties and the political gravitas to get things done, Eleni Kounalakis deserves your vote.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  attorney-general:
+    pick:
+      - Rob Bonta
+    quotes:
+      - text: In our endorsement interview, incumbent Rob Bonta’s calm, clear and concise grasp of the complexities and nuances of California law — honed through more than eight years in the state Assembly — surpassed that of most of the current gubernatorial candidates.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+    quotes:
+      - text: Electing a rash insurance commissioner could reverse that progress and cause the market to implode.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Ben Allen has what it takes to hold insurers accountable and regulate their market conduct while also fostering the conditions necessary to keep the market stable.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Richard Barrera is an increasingly rare California progressive who brings all parties to the table, a skill that the new state superintendent of public instruction will need as the role of the office changes.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-1:
+    pick: Y
+    quotes:
+      - text: Befitting the broad consensus on California’s affordability crisis, Prop 1 has no formal opposition.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-3:
+    pick: Y
+    quotes:
+      - text: Amid a dystopian federal climate under Trump, California can’t afford to further reduce ongoing funds for schools and healthcare programs.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-37:
+    pick: Y
+    quotes:
+      - text: Prop 37 promises to make it easier for middle-class Californians to enter homeownership.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-38:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+    quotes:
+      - text: And you don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-44:
+    pick: N
+  rtm:
+    pick: Y
+    quotes:
+      - text: The Bay Area does not work without consistent, reliable, well-functioning public transit.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-a:
+    pick: Y
+    quotes:
+      - text: Prop A would clean up San Francisco’s bloated charter to better serve city residents.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-b:
+    pick: N
+    quotes:
+      - text: But good intentions do not automatically make a good institution — and Prop B is set up to fail.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Prop C will not solve San Francisco’s housing crisis, but it is part of a concerted and thoughtful city-directed effort to stem the bleeding.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-d:
+    pick: Y
+    quotes:
+      - text: Prop D contains many essential fixes that voters will need to ratify one way or another.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-e:
+    pick: Y
+    quotes:
+      - text: San Francisco has little to lose and much to gain by professionalizing the way it does business.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-g:
+    pick: N
+    quotes:
+      - text: The editorial board endorsed a yes vote on Prop K in 2024, and we still believe that Sunset Dunes offers San Francisco the opportunity to build a transformative public space.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-h:
+    pick: Y
+    quotes:
+      - text: Proposition H would help stem the bleeding.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/

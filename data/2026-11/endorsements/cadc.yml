@@ -1,7 +1,187 @@
 guide: cadc
 election: 2026-11
-status: pending
-source: https://www.sfcadc.org/endorsements  # page also lists Mar/Apr 2026 slates; extract only "November 2026 Recommendations"
+status: published
+source: https://www.sfcadc.org/endorsements # page also lists Mar/Apr 2026 slates; extract only "November 2026 Recommendations"
+archived:
+  - source: https://www.sfcadc.org/endorsements
+    snapshot: https://web.archive.org/web/20261005220914/https://www.sfcadc.org/endorsements
 fetchedAt: 2026-10-05
 hasReasoning: true
-picks: {}
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  controller:
+    pick:
+      - Malia M. Cohen
+  attorney-general:
+    pick:
+      - Rob Bonta
+  assessor:
+    pick:
+      - Joaquín Torres
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-10:
+    pick:
+      - Theo Ellington
+      - Dionjay (DJ) Brookter
+    ranked: true
+  board-of-education:
+    pick:
+      - Phil Kim
+      - Virginia Cheung
+      - Laurance Lee
+  college-board:
+    pick:
+      - Jeremy Lee
+      - Elijah Ball
+  prop-2:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 2 because setting aside more revenue during strong economic years can help California withstand future downturns without imposing a new tax.
+        source: https://www.sfcadc.org/endorsements
+  prop-3:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 3 because these rates have been in place for many years and generate substantial funding for schools and other public services; allowing them to expire could result in a significant revenue loss.
+        source: https://www.sfcadc.org/endorsements
+  prop-4:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 4 because public financing can reduce candidates' dependence on wealthy donors and special interests, and San Francisco already has experience with such a system.
+        source: https://www.sfcadc.org/endorsements
+  prop-5:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 5 because the existing process can allow a replacement candidate with substantially less than majority support to take office and can turn recalls into partisan alternative elections.
+        source: https://www.sfcadc.org/endorsements
+      - text: The committee concluded that simplifying the process would create a more orderly method for handling vacancies following a successful recall.
+        source: https://www.sfcadc.org/endorsements
+  prop-37:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 37 because it can expand homeownership for middle-income families while encouraging construction of additional housing.
+        source: https://www.sfcadc.org/endorsements
+      - text: Unlike ordinary General Obligation bonds, the bonds are intended to be repaid through the homebuyers' loans rather than directly from the state General Fund, which was an important factor in the committee's support.
+        source: https://www.sfcadc.org/endorsements
+  prop-38:
+    pick: N
+    quotes:
+      - text: CADC recognizes the importance of medical research but opposes Prop. 38 because the state would incur approximately $500 million annually in debt service for about 25 years while the financial and medical returns remain uncertain.
+        source: https://www.sfcadc.org/endorsements
+  prop-39:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. 39 because citizenship is already required to vote and California already uses voter-registration and signature-verification systems.
+        source: https://www.sfcadc.org/endorsements
+      - text: The committee concluded that the additional requirements could create unnecessary barriers for eligible voters while imposing potentially substantial new state and local administrative costs.
+        source: https://www.sfcadc.org/endorsements
+  prop-40:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. 40 because taxing unrealized wealth and difficult-to-value assets could be administratively complicated and could encourage high-income residents and entrepreneurs to relocate, potentially reducing California's future income-tax base.
+        source: https://www.sfcadc.org/endorsements
+      - text: The committee also objected to exempting the new revenue from the state's constitutional spending limit.
+        source: https://www.sfcadc.org/endorsements
+  prop-41:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 41 because new taxes should remain subject to established spending controls and accountability requirements.
+        source: https://www.sfcadc.org/endorsements
+  prop-42:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. 42 because it establishes a constitutional limit against new wealth or asset taxes and retroactive taxation.
+        source: https://www.sfcadc.org/endorsements
+  prop-43:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. 43 because it would make it substantially harder for local communities to approve taxes for services they choose to fund.
+        source: https://www.sfcadc.org/endorsements
+  prop-44:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. 44 because members questioned whether a rigid statewide 90% requirement adequately accounts for administrative and operational costs.
+        source: https://www.sfcadc.org/endorsements
+  prop-45:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. 45 because the committee was concerned that accelerating review and restricting alternatives could weaken meaningful environmental protections.
+        source: https://www.sfcadc.org/endorsements
+  rtm:
+    pick: Y
+    quotes:
+      - text: CADC supports RTM because public transit needs stable funding to maintain essential service, therefore, a broadly based sales tax spreads the cost across the general population, and is more equitable than Prop H which primarily place the transit-funding burden on property owners.
+        source: https://www.sfcadc.org/endorsements
+  prop-a:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. A because San Francisco has accumulated numerous overlapping, inactive or duplicative bodies that can diffuse responsibility and consume staff resources.
+        source: https://www.sfcadc.org/endorsements
+      - text: The committee favored clearer lines of accountability and a more streamlined government structure while recognizing the counterargument that commissions provide independent public oversight.
+        source: https://www.sfcadc.org/endorsements
+  prop-b:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. B because the measure creates the institutional framework without identifying a secure source for the substantial capitalization needed to establish the bank.
+        source: https://www.sfcadc.org/endorsements
+      - text: Members were concerned about financial risk and committing the City to a banking structure before its funding and long-term viability were clear.
+        source: https://www.sfcadc.org/endorsements
+  prop-d:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. D because it would effectively eliminate grassroots volunteer signature-gathering as a practical path to the ballot, leaving well-funded campaigns better able to qualify measures by paying professional petition circulators—currently around $18 per signature.
+        source: https://www.sfcadc.org/endorsements
+      - text: CADC has led all five successful grassroots recall campaigns that qualified for the ballot through voter signatures and believes ordinary residents must retain a meaningful and affordable way to petition their government and bring measures directly to voters.
+        source: https://www.sfcadc.org/endorsements
+  prop-e:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. E because members believe San Francisco's contracting and procurement system can be unnecessarily slow and fragmented and that clearer centralized responsibility can improve efficiency and accountability.
+        source: https://www.sfcadc.org/endorsements
+  prop-f:
+    pick: N
+    quotes:
+      - text: CADC recognizes the goal of making the Mayor more accountable for department performance, but is concerned about weakening independent oversight.
+        source: https://www.sfcadc.org/endorsements
+      - text: Having already supported Prop. A to streamline commissions and Prop. E to expand the City Administrator's authority and streamline contracting, CADC believes Prop. F goes a step too far by further reducing existing checks and balances.
+        source: https://www.sfcadc.org/endorsements
+  prop-g:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. G as a balanced approach that preserves the corridor for recreation while restoring weekday transportation access for working families, seniors, people with disabilities and others who rely on vehicles.
+        source: https://www.sfcadc.org/endorsements
+  prop-h:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. H because San Francisco voters are simultaneously being asked to approve a regional transit sales tax that would also provide substantial new funding to Muni.
+        source: https://www.sfcadc.org/endorsements
+      - text: The committee believed SFMTA should demonstrate greater cost control and accountability before property owners and some renters are asked to shoulder another dedicated tax, particularly one that increases with inflation.
+        source: https://www.sfcadc.org/endorsements
+  prop-i:
+    pick: N
+    quotes:
+      - text: CADC opposes Prop. I because the measure would restrict future use of volatile transfer-tax revenue and reduce the City's flexibility to respond to changing budget needs.
+        source: https://www.sfcadc.org/endorsements
+  prop-j:
+    pick: Y
+    quotes:
+      - text: CADC supports Prop. J because the majority concluded that large lenders and investors taking ownership of major properties should not automatically receive a transfer-tax exemption unavailable in an ordinary sale and that such properties should contribute to City revenues.
+        source: https://www.sfcadc.org/endorsements

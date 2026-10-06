@@ -1,7 +1,101 @@
 guide: sf-gop
 election: 2026-11
-status: pending
+status: published
 source: https://sfgop.org/nov-2026-endorsements
+archived:
+  - source: https://sfgop.org/nov-2026-endorsements
+    snapshot: https://web.archive.org/web/20261005222129/https://sfgop.org/nov-2026-endorsements
 fetchedAt: 2026-10-05
 hasReasoning: true
-picks: {}
+picks:
+  supervisor-2:
+    pick:
+      - Nicholas Berg
+    quotes:
+      - text: Nick has spent his career actually running things - including managing budgets, buildings, and teams across San Francisco's neighborhoods.
+        source: https://sfgop.org/nov-2026-endorsements
+  supervisor-4:
+    pick:
+      - Alan Wong
+    quotes:
+      - text: In Districts 4 and 6, we recommend Alan Wong and Matt Dorsey as the candidates best positioned to stand up for safe streets, functional government, and the everyday concerns of residents.
+        source: https://sfgop.org/nov-2026-endorsements
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: In Districts 4 and 6, we recommend Alan Wong and Matt Dorsey as the candidates best positioned to stand up for safe streets, functional government, and the everyday concerns of residents.
+        source: https://sfgop.org/nov-2026-endorsements
+  board-of-education:
+    pick:
+      - Laurance Lee
+      - Phil Kim
+      - Tim Tung
+    quotes:
+      - text: "Our public schools should focus on outcomes: reading, math, and preparing kids for real opportunity."
+        source: https://sfgop.org/nov-2026-endorsements
+  college-board:
+    pick:
+      - Elijah Ball
+  board-of-equalization-2:
+    pick:
+      - John Pimentel
+    quotes:
+      - text: Taxpayers deserve a watchdog, not a rubber stamp.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-a:
+    pick: Y
+    quotes:
+      - text: Streamlines our bloated City Charter and reins in the tangle of oversight committees that diffuse responsibility.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-b:
+    pick: N
+    quotes:
+      - text: San Francisco's municipal government lacks the competence, integrity, and incentives to run a bank.
+        source: https://sfgop.org/nov-2026-endorsements
+      - text: We believe they would make lending decisions based on cronyism - not risk.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-c:
+    pick: N
+  prop-d:
+    pick: N
+    quotes:
+      - text: Prop D would quadruple the signatures required to place a citizen initiative on the ballot — from 2% to 8% of registered voters.
+        source: https://sfgop.org/nov-2026-endorsements
+      - text: The initiative process belongs to the people, not the politicians.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-e:
+    pick: Y
+    quotes:
+      - text: When city services fail, voters should know exactly who is responsible.
+        source: https://sfgop.org/nov-2026-endorsements
+      - text: Prop E strengthens the executive branch's authority over city government so that accountability sits where voters can reach it - at the ballot box.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-f:
+    pick: Y
+    quotes:
+      - text: Today, the Mayor can hire and fire only a small fraction of department heads; the rest answer to unelected commissions.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-g:
+    pick: Y
+    quotes:
+      - text: Westside families were promised a compromise and got a road closure.
+        source: https://sfgop.org/nov-2026-endorsements
+      - text: Prop G restores weekday vehicle access to the Upper Great Highway while preserving weekend recreation.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-h:
+    pick: N
+    quotes:
+      - text: Fix SFMTA's management before asking homeowners for more money.
+        source: https://sfgop.org/nov-2026-endorsements
+  prop-i:
+    pick: N
+  prop-j:
+    pick: N
+  rtm:
+    pick: N
+    quotes:
+      - text: San Franciscans already pay among the highest sales taxes in California.
+        source: https://sfgop.org/nov-2026-endorsements
+      - text: We shouldn't be paying twice the rate of Santa Clara or San Mateo residents for the same regional systems.
+        source: https://sfgop.org/nov-2026-endorsements

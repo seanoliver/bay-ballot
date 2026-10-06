@@ -1,7 +1,79 @@
 guide: sf-rising-action
 election: 2026-11
-status: pending
+status: published
 source: https://www.sfrisingaction.org/election/november-3-2026-general-election/
+extraSources:
+  - https://www.sfrisingaction.org/election/november-3-2026-general-election/page/2/
+  - https://www.sfrisingaction.org/election/november-3-2026-general-election/page/3/
+  - https://www.sfrisingaction.org/election/november-3-2026-general-election/page/4/
+archived:
+  - source: https://www.sfrisingaction.org/election/november-3-2026-general-election/
+    snapshot: https://web.archive.org/web/20261005222401/https://www.sfrisingaction.org/election/november-3-2026-general-election/
 fetchedAt: 2026-10-05
 hasReasoning: true
-picks: {}
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+  supervisor-8:
+    pick:
+      - Michael T. Nguyen
+      - Gary McCoy
+  board-of-education:
+    pick:
+      - Reina Tello
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  prop-a:
+    pick: N
+  prop-b:
+    pick: Y
+    quotes:
+      - text: Our SF tax dollars are currently invested in JP Morgan Chase and for too long, wealthy shareholders have profited off of our investments.
+        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/2/
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+  prop-e:
+    pick: N
+  prop-f:
+    pick: N
+  prop-h:
+    pick: Y
+    quotes:
+      - text: From the Presidio to the Bayview, the Muni connects the vibrant neighborhoods of San Francisco.
+        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/3/
+  prop-i:
+    pick: Y
+    quotes:
+      - text: As AI and big tech corporations push our communities out of SF, we need more housing that everyone can afford.
+        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/3/
+  prop-j:
+    pick: Y
+  rtm:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+    quotes:
+      - text: We are facing a growing wealth gap in California.
+        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/4/
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+    quotes:
+      - text: Billionaires and big tech corporations, like Salesforce and Airbnb, in San Francisco already don’t pay their fair share of taxes.
+        source: https://www.sfrisingaction.org/election/november-3-2026-general-election/page/4/
+  prop-45:
+    pick: N

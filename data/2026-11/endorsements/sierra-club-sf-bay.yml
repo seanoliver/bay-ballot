@@ -1,8 +1,130 @@
 guide: sierra-club-sf-bay
 election: 2026-11
-status: pending
+status: published
 source: https://www.sierraclub.org/sfbay/2026-endorsements
+extraSources:
+  - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
 fetchedAt: 2026-10-05
 hasReasoning: true
-picks: {}
+picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: Senator Scott Wiener, with his prolific legislative history and bold, detailed agenda, is the climate champion we need.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Sen. Wiener has championed numerous Sierra Club priorities over his 9 years in the California Senate.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Critically, Wiener has jumped into the fray three times in three years to save the Bay Area’s public transit systems from financial collapse, including authoring the law that authorized the Connect Bay Area regional funding measure.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  superintendent:
+    pick:
+      - Richard Barrera
+  bart-8:
+    pick:
+      - Sara Barz
+    quotes:
+      - text: Few first-time candidates for any office arrive this prepared.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Barz is a transit professional who has worked inside the San Francisco County Transportation Authority, the City of Oakland, and the Metropolitan Transportation Commission, and now works as a transit product manager.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+    quotes:
+      - text: In 2025, Sherrill voted with the Sierra Club on every vote where the Club took a public position.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Where San Francisco builds and how its buildings run are central to the Club's climate work, and Sherrill has been a reliable vote on both.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: In just his first 18 months Supervisor Sherrill has built up a strong environmental record, and the Sierra Club is excited to help him extend that into a second term.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: Many of the key questions central to climate change in San Francisco get answered first in District 6, and Supervisor Dorsey has been addressing them well.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: On the Club's 2024 legislative scorecard he supported the Sierra Club position on 9 of 11 votes and ballot measures, tied with district 7 Supervisor Melgar for the second-highest score on the Board.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Dorsey pairs a strong environmental record with a race in which he faces no significant opposition.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-8:
+    pick:
+      - Gary McCoy
+    quotes:
+      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: McCoy has a long history of support for sustainable streets and transportation projects.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: McCoy backs the Safer, Better 17th Street proposal including the parking removal it requires, and wants the D8 segments of the Biking and Rolling Plans’ North Star network completed by 2030.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-10:
+    pick:
+      - J.R. Eppler
+      - Theo Ellington
+    ranked: true
+    quotes:
+      - text: J.R. Eppler is our first choice because his record and positions best align with the Sierra Club.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Eppler has also supported building the kind of transit-oriented housing that allows more residents to access the district’s schools, shops, and parks without a car.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Ellington has also backed several environmental transportation and housing priorities.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  prop-1:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Building homes in San Francisco is a climate issue.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: If passed, it would expand the Housing Trust Fund from $52 million to $125 million a year and extend it for thirty years, dedicating more than $3 billion to building and preserving affordable housing in San Francisco.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  prop-g:
+    pick: N
+    quotes:
+      - text: The ballot measure is a park removal.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: A dune system cannot be restored two days a week.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: Y
