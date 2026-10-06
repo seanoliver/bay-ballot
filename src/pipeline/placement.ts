@@ -42,10 +42,10 @@ function measurePatterns(c: Contest, siblings: Contest[]): string[] {
   const letter = escapeRegExp(id);
   const yesNo = `(?:${ci("yes")}|${ci("no")})\\s+${ci("on")}`;
   if (!siblings.some((s) => s.id !== c.id && measureLetter(s) === id)) return [`(?:${PROP_WORD}|${yesNo})\\s*${letter}`];
-  // An unprefixed "Proposition" is SF's own: SF guides never name their city.
-  if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`];
+  // Every contest sharing the letter keeps the bare marker, so an unqualified heading carries all their ids.
   const bare = `(?:${ci("measure")}|${yesNo})\\s*${letter}`;
-  return place ? nearPlace(place, bare) : [bare];
+  if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`, bare];
+  return place ? [...nearPlace(place, bare), bare] : [bare];
 }
 
 function districtPatterns(c: Contest): string[] {
@@ -55,8 +55,9 @@ function districtPatterns(c: Contest): string[] {
   switch (c.jurisdiction.name) {
     case "Supervisor": {
       const sup = `${ci("supervisor")}s?`;
-      // A bare "District 8" / "D8" means a supervisor race on SF guides.
-      return [`(?:${ciWords("board of")}\\s+)?${sup},?\\s*${d}`, `${d}(?:,?\\s*${sup})?`];
+      const named = `(?:${ciWords("board of")}\\s+)?${sup},?\\s*${d}`;
+      // A bare "District 8" / "D8" means a supervisor race only on SF guides; elsewhere it is usually a council seat.
+      return c.jurisdiction.within?.[0]?.name === "San Francisco" ? [named, `${d}(?:,?\\s*${sup})?`] : [named, `${d},?\\s*${sup}`];
     }
     case "Assembly":
       return [`(?:${ci("state")}\\s+)?${ci("assembly")},?\\s*${d}`, `AD-?\\s*${n}`];

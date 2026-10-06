@@ -195,16 +195,22 @@ describe("markers across places", () => {
     for (const t of ["Measure Q — Yes", "Yes on Q", "Half Moon Bay Measure Q"]) expect(marks(hmbQ, [hmbQ, mpP], t)).toBe(true);
     expect(marks(school, [school], "Measure X: Yes")).toBe(true);
   });
-  it("needs the place when two measures share a letter", () => {
-    const sibs = [mpP, scP];
-    expect(marks(mpP, sibs, "Measure P")).toBe(false);
+  it("marks every contest that shares a letter on an unqualified heading, and only the named one on a qualified heading", () => {
+    const sibs = [mpP, scP, hmbQ];
+    const page = (heading: string): Page => ({
+      url: "https://g.org/m", kind: "html",
+      text: ["Half Moon Bay Measure Q: Yes", "Farmworkers need homes.", "", heading, "Voters should decide this one carefully."].join("\n"),
+    });
+    const q = { text: "Voters should decide this one carefully.", source: "https://g.org/m" };
+    expect(misplacedUnder(q, "menlo-park-measure-p", [page("Measure P: Yes")], sibs)).toBeNull();
+    expect(misplacedUnder(q, "san-carlos-measure-p", [page("Measure P: Yes")], sibs)).toBeNull();
+    expect(misplacedUnder(q, "menlo-park-measure-p", [page("San Carlos Measure P: No")], sibs)).toBe("san-carlos-measure-p");
     expect(marks(mpP, sibs, "Menlo Park Measure P: Yes")).toBe(true);
     expect(marks(mpP, sibs, "Measure P (Menlo Park)")).toBe(true);
-    expect(marks(mpP, sibs, "San Carlos Measure P")).toBe(false);
   });
-  it("keeps an SF proposition's bare marker when a measure shares its letter", () => {
+  it("gives an SF proposition both its Prop marker and the shared bare marker", () => {
     expect(marks(sfP, [sfP, mpP], "Prop P")).toBe(true);
-    expect(marks(sfP, [sfP, mpP], "Measure P")).toBe(false);
+    expect(marks(sfP, [sfP, mpP], "Measure P")).toBe(true);
     expect(marks(mpP, [sfP, mpP], "Menlo Park Measure P")).toBe(true);
   });
   it("finds council districts, and qualifies a district number shared across counties", () => {
@@ -213,6 +219,8 @@ describe("markers across places", () => {
     expect(marks(smSup5, [smSup5, sfSup5], "District 5")).toBe(false);
     expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
     expect(marks(smSup5, [smSup5], "Supervisor, District 5")).toBe(true);
+    expect(marks(smSup5, [smSup5], "District 5 - Margo Meiman")).toBe(false);
+    expect(marks(sfSup5, [sfSup5], "District 5")).toBe(true);
   });
   it("places a quote under the right city's Measure P", () => {
     const page: Page = {
@@ -222,5 +230,36 @@ describe("markers across places", () => {
     const q = { text: "San Carlos voters should keep the current height limits.", source: "https://g.org/e" };
     expect(misplacedUnder(q, "menlo-park-measure-p", [page], [mpP, scP])).toBe("san-carlos-measure-p");
     expect(misplacedUnder(q, "san-carlos-measure-p", [page], [mpP, scP])).toBeNull();
+  });
+});
+
+describe("quotes under a letter shared across areas", () => {
+  it("keeps Greenbelt's Sunset Dunes reason under SF Prop G", () => {
+    const page: Page = {
+      url: "https://www.greenbelt.org/voter-guide-26/", kind: "html",
+      text: [
+        "Vote No on Proposition 43 to Keep Citizen-Led Tax Measures Accessible",
+        "Greenbelt Alliance opposes Proposition 43’s goal to raise the threshold for citizen-initiated local special tax measures.",
+        "Read More »",
+        "Vote No on Measure G to Keep Sunset Dunes Park Open in San Francisco",
+        "Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.",
+      ].join("\n"),
+    };
+    const q = { text: "Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.", source: page.url };
+    expect(misplacedUnder(q, "prop-g", [page], ballot.contests)).toBeNull();
+  });
+  it("keeps Bay Rising's renter reason under Redwood City Measure E", () => {
+    const page: Page = {
+      url: "https://bayrisingaction.org/voterguide/", kind: "html",
+      text: [
+        "Yes on Prop I: Ensure Luxury Real Estate Tax is Spent on Affordable Housing",
+        "San Francisco faces an affordable housing crisis that is displacing thousands of people from the city.",
+        "REDWOOD CITY, SAN MATEO COUNTY",
+        "Yes on Measure E: Stabilize Rents and Protect Against Unjust Evictions",
+        "Half of Redwood City residents are renters. Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year.",
+      ].join("\n"),
+    };
+    const q = { text: "Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year.", source: page.url };
+    expect(misplacedUnder(q, "redwood-city-measure-e", [page], ballot.contests)).toBeNull();
   });
 });
