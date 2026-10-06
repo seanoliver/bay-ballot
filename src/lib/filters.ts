@@ -11,7 +11,7 @@ export type Filters = {
 export const EMPTY: Filters = { off: [], whyOnly: false };
 
 // What the ballot view needs about a guide and its published file (keeps client props small).
-export type GuideInfo = Pick<Guide, "id" | "name" | "type">;
+export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
 export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
 
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
@@ -151,14 +151,14 @@ export type GuideGroup = { type: GuideType; heading: string; guides: GuideInfo[]
 
 const fold = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-// Published guides grouped by type; `query` filters by name (case- and accent-insensitive).
+// Published guides grouped by type; `query` filters by name or short name (case- and accent-insensitive).
 // Headings count the whole type so the checkbox reads the same while searching.
 export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>, query: string): GuideGroup[] {
   const q = fold(query.trim());
   const out: GuideGroup[] = [];
   for (const [type, label] of Object.entries(TYPE_LABELS) as [GuideType, string][]) {
     const ofType = guides.filter((g) => g.type === type && files[g.id]);
-    const matching = ofType.filter((g) => fold(g.name).includes(q));
+    const matching = ofType.filter((g) => fold(g.name).includes(q) || fold(g.shortName ?? "").includes(q));
     if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, guides: matching });
   }
   return out;

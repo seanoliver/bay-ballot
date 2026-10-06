@@ -34,7 +34,7 @@ export function ballotViewProps(d: ElectionData) {
   const published = publishedGuides(d.guides, d.endorsements);
   return {
     ballot: d.ballot,
-    guides: published.map(({ id, name, type }): GuideInfo => ({ id, name, type })),
+    guides: published.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type })),
     files: publishedFiles(d.endorsements),
     pending: pendingNote(pendingGuides(d.guides, d.endorsements)),
   };

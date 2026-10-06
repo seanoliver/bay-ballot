@@ -156,7 +156,9 @@ function RankedPopover({ rows }: { rows: Row[] }) {
         <ul className="space-y-2">
           {rankedDetails(rows).map((r) => (
             <li key={r.guideName}>
-              <p className="font-medium">{r.guideName}</p>
+              <p className="font-medium" title={r.guideName}>
+                {r.short}
+              </p>
               <ol className="list-decimal pl-5 text-muted-foreground">
                 {r.order.map((name) => (
                   <li key={name}>{name}</li>

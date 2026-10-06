@@ -49,6 +49,7 @@ export function ContestDetail({
   titleId,
   slots,
   pageLink = true,
+  shortNames = true,
   action,
 }: {
   election: string;
@@ -59,6 +60,8 @@ export function ContestDetail({
   titleId?: string;
   slots?: Slots;
   pageLink?: boolean;
+  // Short guide names in the WHO lists (the contest page lists full names).
+  shortNames?: boolean;
   // Sits at the header's top-right (the desktop pane's close button).
   action?: ReactNode;
 }) {
@@ -98,7 +101,7 @@ export function ContestDetail({
         <section aria-label="Who endorses">
           <ul className="space-y-2.5">
             {who.map((w) => (
-              <WhoLine key={w.key} row={w} />
+              <WhoLine key={w.key} row={w} short={shortNames} />
             ))}
           </ul>
         </section>
@@ -133,7 +136,7 @@ function Label({ tone, children }: { tone: BarTone; children: ReactNode }) {
   );
 }
 
-function WhoLine({ row }: { row: WhoRow }) {
+function WhoLine({ row, short }: { row: WhoRow; short: boolean }) {
   const [all, setAll] = useState(false);
   const names = all ? [...row.shown, ...row.hidden] : row.shown;
   return (
@@ -143,8 +146,8 @@ function WhoLine({ row }: { row: WhoRow }) {
       </Label>{" "}
       {names.map((g, i) => (
         <span key={g.id}>
-          <Link href={`/guides/${g.id}`} className={`${TAP} underline-offset-2 hover:underline`}>
-            {g.name}
+          <Link href={`/guides/${g.id}`} title={g.name} className={`${TAP} underline-offset-2 hover:underline`}>
+            {short ? g.short : g.name}
           </Link>
           {g.rank !== null ? <span className="whitespace-nowrap text-xs text-muted-foreground"> (ranked #{g.rank})</span> : null}
           {i < names.length - 1 ? ", " : " "}

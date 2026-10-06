@@ -1,5 +1,5 @@
 import { candidateSlots, slotTone, type BarTone, type Slots } from "./bar";
-import { groupByPick, reasons, sourceLink, type PickGroup } from "./display";
+import { displayName, groupByPick, reasons, sourceLink, type PickGroup } from "./display";
 import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { tally } from "./score";
@@ -7,7 +7,7 @@ import { tally } from "./score";
 // The contest detail reads WHO (every guide, by pick) then WHY (only the quotes there are).
 
 // `rank` is set only in ranked-choice contests, where a guide's order matters.
-export type WhoGuide = { id: string; name: string; rank: number | null };
+export type WhoGuide = { id: string; name: string; short: string; rank: number | null };
 // `shown` first, `hidden` behind a "+N more" disclosure.
 export type WhoRow = { key: string; label: string; count: number; tone: BarTone; shown: WhoGuide[]; hidden: WhoGuide[] };
 export type ReasonQuote = { text: string; href: string };
@@ -36,7 +36,7 @@ export function whoRows(contest: Contest, rows: Row[], slots?: Slots): WhoRow[] 
     const rest = group.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
     const all = [...quoted, ...rest].map((r): WhoGuide => {
       const at = contest.rankedChoice && r.entry.ranked && Array.isArray(r.entry.pick) ? r.entry.pick.indexOf(group.key) : -1;
-      return { id: r.guide.id, name: r.guide.name, rank: at >= 0 ? at + 1 : null };
+      return { id: r.guide.id, name: r.guide.name, short: displayName(r.guide, { short: true }), rank: at >= 0 ? at + 1 : null };
     });
     return { key: group.key, label: group.label, count: group.rows.length, tone, shown: all.slice(0, WHO_SHOWN), hidden: all.slice(WHO_SHOWN) };
   });

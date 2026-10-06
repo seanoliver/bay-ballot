@@ -15,7 +15,7 @@ const row = (name: string, pick: Entry["pick"], quotes: Entry["quotes"] = [], op
 });
 
 describe("whoRows", () => {
-  const g = (name: string, rank: number | null = null) => ({ id: name.toLowerCase().replace(/\s+/g, "-"), name, rank });
+  const g = (name: string, rank: number | null = null) => ({ id: name.toLowerCase().replace(/\s+/g, "-"), name, short: name, rank });
   it("measures: Yes then No; quoted guides first (in Reasons order), then the rest A–Z; no list-only tags", () => {
     const rows = [row("Zed", "Y"), row("Quoted Two", "Y", [q("b")]), row("Alpha", "Y", [], { list: true }), row("Quoted One", "Y", [q("a")]), row("Nope", "N")];
     const out = whoRows(measure, rows);
@@ -49,6 +49,14 @@ describe("whoRows", () => {
   it("no rank tag outside ranked-choice contests", () => {
     const plain = { ...race, rankedChoice: false } as Contest;
     expect(whoRows(plain, [row("A", ["Scott Wiener"], [], { ranked: true })])[0].shown[0].rank).toBeNull();
+  });
+  it("carries the short name for display, sorting by full name", () => {
+    const pov = { ...row("San Francisco League of Pissed Off Voters", "Y"), guide: { id: "pov", name: "San Francisco League of Pissed Off Voters", shortName: "Pissed Off Voters", type: "club" as const } };
+    const [yes] = whoRows(measure, [pov, row("Milk Club", "Y")]);
+    expect(yes.shown.map((x) => [x.name, x.short])).toEqual([
+      ["Milk Club", "Milk Club"],
+      ["San Francisco League of Pissed Off Voters", "Pissed Off Voters"],
+    ]);
   });
   it("no picks, no rows", () => {
     expect(whoRows(measure, [])).toEqual([]);

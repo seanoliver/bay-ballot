@@ -50,6 +50,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
           heading="h1"
           slots={candidateSlots(contest, rows.map((r) => r.entry))}
           pageLink={false}
+          shortNames={false}
         />
       </Card>
     </div>

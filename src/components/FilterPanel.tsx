@@ -22,6 +22,7 @@ import {
   type GuideInfo,
   type PickFile,
 } from "@/lib/filters";
+import { displayName } from "@/lib/display";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
 
@@ -184,8 +185,8 @@ function TypeGroup({
             <li key={g.id}>
               <label className="flex min-h-10 cursor-pointer items-center gap-3 py-1 pr-3 pl-10 text-sm">
                 <Checkbox checked={isGuideOn(f, g.id)} onCheckedChange={() => onChange(toggleGuide(f, g.id))} />
-                <span>
-                  {g.name}
+                <span title={g.name}>
+                  {displayName(g, { short: true })}
                   {files[g.id].hasReasoning ? null : <span className="text-xs text-muted-foreground"> · list only</span>}
                 </span>
               </label>

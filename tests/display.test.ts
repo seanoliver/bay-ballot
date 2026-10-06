@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, topPicks } from "@/lib/display";
+import { displayName, groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -138,8 +138,8 @@ describe("rankedDetails", () => {
       row("G3", e(["X", "Y"], true)),
     ];
     expect(rankedDetails(rows)).toEqual([
-      { guideName: "G1", order: ["Gary McCoy", "Michael T. Nguyen"] },
-      { guideName: "G3", order: ["X", "Y"] },
+      { guideName: "G1", short: "G1", order: ["Gary McCoy", "Michael T. Nguyen"] },
+      { guideName: "G3", short: "G3", order: ["X", "Y"] },
     ]);
   });
   it("empty when none ranked", () => {
@@ -177,5 +177,17 @@ describe("sourceLink", () => {
   it("falls back to the live url when no snapshot matches or nothing is archived", () => {
     expect(sourceLink({ archived }, "https://g.org/c")).toBe("https://g.org/c");
     expect(sourceLink({}, "https://g.org/a")).toBe("https://g.org/a");
+  });
+});
+
+describe("displayName", () => {
+  const long = { name: "San Francisco League of Pissed Off Voters", shortName: "Pissed Off Voters" };
+  it("short: the short name when there is one", () => {
+    expect(displayName(long, { short: true })).toBe("Pissed Off Voters");
+    expect(displayName({ name: "SPUR" }, { short: true })).toBe("SPUR");
+  });
+  it("full name otherwise", () => {
+    expect(displayName(long)).toBe("San Francisco League of Pissed Off Voters");
+    expect(displayName(long, { short: false })).toBe("San Francisco League of Pissed Off Voters");
   });
 });

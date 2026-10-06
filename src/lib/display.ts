@@ -12,7 +12,7 @@ export type Headline = {
 
 export type PickGroup = { key: string; label: string; tone: "yes" | "no" | "candidate"; rows: Row[] };
 export type TopPick = { name: string; count: number; total: number };
-export type RankedDetail = { guideName: string; order: string[] };
+export type RankedDetail = { guideName: string; short: string; order: string[] };
 
 // Multi-seat races have no single winner, so they never read as "Split"; topPicks lists the names.
 export function headline(t: Tally, seats = 1): Headline {
@@ -69,7 +69,7 @@ export function rankedDetails(rows: Row[]): RankedDetail[] {
   const out: RankedDetail[] = [];
   for (const r of rows) {
     if (r.entry.ranked && Array.isArray(r.entry.pick)) {
-      out.push({ guideName: r.guide.name, order: r.entry.pick });
+      out.push({ guideName: r.guide.name, short: displayName(r.guide, { short: true }), order: r.entry.pick });
     }
   }
   return out;
@@ -155,3 +155,8 @@ export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contes
   return `${city ?? ballot.title} · ${formatDate(ballot.date)}`;
 }
 
+
+// Short names (when a guide has one) go where space is tight; the full name everywhere else.
+export function displayName(g: { name: string; shortName?: string }, { short = false }: { short?: boolean } = {}): string {
+  return short ? (g.shortName ?? g.name) : g.name;
+}

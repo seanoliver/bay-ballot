@@ -193,6 +193,11 @@ describe("guideGroups", () => {
     const { examiner: _, ...rest } = clubFiles;
     expect(guideGroups(clubs, rest, "").map((x) => x.type)).toEqual(["club", "civic"]);
   });
+  it("search matches the short name too", () => {
+    const gs = [{ id: "pov", name: "San Francisco League of Pissed Off Voters", shortName: "POV", type: "club" }] as GuideInfo[];
+    expect(guideGroups(gs, { pov: clubFiles.milk }, "pov").map((x) => x.guides.map((y) => y.id))).toEqual([["pov"]]);
+    expect(guideGroups(gs, { pov: clubFiles.milk }, "league").map((x) => x.guides.map((y) => y.id))).toEqual([["pov"]]);
+  });
   it("filters by name, case- and accent-insensitively, dropping empty groups", () => {
     expect(guideGroups(clubs, clubFiles, "MILK").map((x) => [x.type, x.guides.map((y) => y.id)])).toEqual([["club", ["milk"]]]);
     const accented = [{ id: "ce", name: "Café Coalición", type: "civic" }] as GuideInfo[];
