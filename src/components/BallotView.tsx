@@ -19,7 +19,9 @@ import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
 const DESKTOP = "(min-width: 1024px)";
-const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
+// self-start: a grid item stretches to the row (the whole list), which made the sticky box a full
+// viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
+const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 const EXIT_MS = 150;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

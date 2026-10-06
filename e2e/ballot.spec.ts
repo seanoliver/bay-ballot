@@ -51,6 +51,48 @@ test.describe("desktop detail pane", () => {
     await expect(page).toHaveURL(new RegExp(`${href}$`));
   });
 
+  // The pane's card stays stuck at the top until its own bottom meets the end of the list, then
+  // leaves with the footer. A short card must not scroll away while there is room below it.
+  for (const [name, query, expand] of [
+    ["short", "?c=governor", false],
+    ["long", "?c=prop-b", true],
+  ] as const) {
+    test(`a ${name} pane stays put until it meets the footer`, async ({ page }) => {
+      await openBallot(page, query);
+      const pane = page.locator("section[aria-labelledby='detail-title']");
+      await expect(pane).toBeVisible();
+      if (expand) {
+        // Each button relabels itself once open, so keep opening the first one left.
+        const more = pane.getByRole("button", { name: /^All reasons/ });
+        while ((await more.count()) > 0) await more.first().click();
+      }
+      const footer = page.getByRole("contentinfo");
+      // The card as seen: a long card scrolls inside the sticky box, so clip it to that box.
+      const box = pane.locator("xpath=..");
+      const rects = async () => {
+        const [c, b, f] = await Promise.all([pane.boundingBox(), box.boundingBox(), footer.boundingBox()]);
+        return { top: Math.max(c!.y, b!.y), bottom: Math.min(c!.y + c!.height, b!.y + b!.height), footerTop: f!.y };
+      };
+      const viewport = page.viewportSize()!.height;
+      const bottom = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+
+      // Stuck position, well above the footer.
+      await page.evaluate((to) => window.scrollTo(0, to), bottom - 1200);
+      const stuckTop = (await rects()).top;
+      // Step down to the page bottom: while the box's bottom has room above the footer, it stays stuck.
+      for (let y = bottom - 600; y <= bottom; y += 100) {
+        await page.evaluate((to) => window.scrollTo(0, to), y);
+        const r = await rects();
+        if (r.footerTop - r.bottom > 60 && r.bottom - r.top < viewport) expect(r.top).toBeCloseTo(stuckTop, 0);
+      }
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      // At the bottom the box either never reached the footer (still stuck) or sits a gutter above it.
+      const end = await rects();
+      expect(end.footerTop - end.bottom).toBeGreaterThanOrEqual(0);
+      if (Math.abs(end.top - stuckTop) > 1) expect(end.footerTop - end.bottom).toBeLessThan(120);
+    });
+  }
+
   test("the close button closes the pane and drops the selection", async ({ page }) => {
     await openBallot(page, "?c=prop-b");
     const pane = page.getByRole("region", { name: "Proposition B" });
