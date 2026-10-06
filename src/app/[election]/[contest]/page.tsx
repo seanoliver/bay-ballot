@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ContestDetail } from "@/components/ContestDetail";
 import { FRAME, READING } from "@/components/frame";
 import { Card } from "@/components/ui/card";
+import { contestArea, placeName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import { dataAsOf } from "@/lib/display";
 import { answerSentence, contestDescription, contestTitle } from "@/lib/seo-copy";
@@ -36,9 +37,9 @@ export async function generateMetadata({ params }: PageProps<"/[election]/[conte
   const rows = allRows(d);
   return {
     // The search title already names the site's subject; the " · Bay Ballot" suffix would cut it off.
-    title: { absolute: contestTitle(d.contest, rows, d.ballot.date) },
+    title: { absolute: contestTitle(d.contest, rows, d.ballot.date, placeName(contestArea(d.contest, d.areas))) },
     alternates: { canonical: `/${d.electionId}/${d.contest.id}` },
-    description: contestDescription(d.contest, rows),
+    description: contestDescription(d.contest, rows, placeName(contestArea(d.contest, d.areas))),
   };
 }
 
@@ -65,7 +66,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
           slots={candidateSlots(contest, rows.map((r) => r.entry))}
           pageLink={false}
           shortNames={false}
-          answer={answerSentence(contest, rows, dataAsOf(d.endorsements))}
+          answer={answerSentence(contest, rows, dataAsOf(d.endorsements), placeName(contestArea(contest, d.areas)))}
         />
       </Card>
     </div>

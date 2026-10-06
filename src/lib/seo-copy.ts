@@ -1,10 +1,10 @@
+import type { PlaceName } from "./areas";
 import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { topPicks } from "./display";
 import { tally } from "./score";
+import { mostPositions } from "./share";
 
-const PAGE_WHO = "San Francisco voter guides";
-const SHORT_WHO = "SF voter guides";
 const READ_MORE = "See every guide's endorsement and reasons.";
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
 
@@ -15,14 +15,14 @@ function measureLabel(c: Contest): string {
   return c.title.replace(/^Proposition\b/, "Prop");
 }
 
-export function officeName(c: Contest): string {
+export function officeName(c: Contest, place: PlaceName): string {
   if (c.kind === "retention") {
     return c.title.replace(/^Supreme Court Associate Justice\b/, "Justice").replace(/\s*\(\d+ justices\)$/, "");
   }
   if (c.kind === "measure") {
     const label = measureLabel(c);
     if (!label.startsWith("Prop")) return label;
-    return `${c.jurisdiction.level === "state" ? "CA" : "SF"} ${label}`;
+    return `${c.jurisdiction.level === "state" ? "CA" : place.short} ${label}`;
   }
   const t = c.title;
   const sup = t.match(/^Board of Supervisors, District (\d+)$/);
@@ -44,8 +44,8 @@ export function familyName(name: string): string {
   return rest.length ? rest.join(" ") : (tokens[0] ?? name);
 }
 
-function measureObject(c: Contest): string {
-  if (c.kind === "retention") return `retaining ${officeName(c).replace(/^1st District Court of Appeal$/, "the 1st District Court of Appeal justices")}`;
+function measureObject(c: Contest, place: PlaceName): string {
+  if (c.kind === "retention") return `retaining ${officeName(c, place).replace(/^1st District Court of Appeal$/, "the 1st District Court of Appeal justices")}`;
   const label = measureLabel(c);
   return label.startsWith("Prop") ? label : `the ${label}`;
 }
@@ -78,11 +78,11 @@ const fit = (heads: string[], endings: string[]) => {
 const monthYear = (iso: string) =>
   new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", year: "numeric" });
 
-export function contestTitle(c: Contest, rows: Row[], ballotDate: string): string {
+export function contestTitle(c: Contest, rows: Row[], ballotDate: string, place: PlaceName): string {
   const when = monthYear(ballotDate);
   const t = tally(c, rows.map((r) => r.entry));
   if (t.kind === "measure") {
-    const head = [`${officeName(c)} endorsements (${when})`];
+    const head = [`${officeName(c, place)} endorsements (${when})`];
     if (t.verdict === "none") return fit(head, []);
     if (t.verdict === "split") return fit(head, [`guides split ${t.yes}–${t.no}`]);
     const side = t.verdict === "Y" ? "Yes" : "No";
@@ -91,12 +91,12 @@ export function contestTitle(c: Contest, rows: Row[], ballotDate: string): strin
     return fit(head, [`${n} ${plural(t.total, "guide", "guides")} ${plural(k, "says", "say")} ${side}`, `${n} ${plural(k, "says", "say")} ${side}`]);
   }
   if (c.seats > 1) {
-    const head = [`SF ${officeName(c)} endorsements (${when})`, `${officeName(c)} endorsements (${when})`];
+    const head = [`${place.short} ${officeName(c, place)} endorsements (${when})`, `${officeName(c, place)} endorsements (${when})`];
     if (t.counts.length === 0) return fit(head, []);
     const top = topPicks(t, c.seats).map((x) => familyName(x.name));
     return fit(head, [`${top.join(", ")} lead`, `${top[0]} leads`]);
   }
-  const head = [`${officeName(c)} endorsements (SF, ${when})`, `${officeName(c)} endorsements (${when})`];
+  const head = [`${officeName(c, place)} endorsements (${place.short}, ${when})`, `${officeName(c, place)} endorsements (${when})`];
   if (t.counts.length === 0) return fit(head, []);
   if (t.counts.length === 1) {
     const { name, count } = t.counts[0];
@@ -110,16 +110,17 @@ export function contestTitle(c: Contest, rows: Row[], ballotDate: string): strin
   return fit(head, [`${t.leader} leads ${t.count} of ${t.total}`, `${familyName(t.leader)} leads ${t.count} of ${t.total}`, `${familyName(t.leader)} leads`]);
 }
 
-function answer(c: Contest, rows: Row[], level: 0 | 1 | 2 = 0, WHO = PAGE_WHO): string {
+function answer(c: Contest, rows: Row[], level: 0 | 1 | 2, place: PlaceName, { short = false }: { short?: boolean } = {}): string {
+  const WHO = `${short ? place.short : place.name} voter guides`;
   const office = level === 2 ? "" : ` for ${officeInSentence(c)}`;
   const t = tally(c, rows.map((r) => r.entry));
   const one = WHO.replace(/s$/, "");
   const who = (n: number) => plural(n, one, WHO);
   if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return `No ${one} has taken a position yet`;
   if (t.kind === "measure") {
-    if (t.verdict === "split") return `${WHO} split ${t.yes}–${t.no} on ${measureObject(c)}`;
+    if (t.verdict === "split") return `${WHO} split ${t.yes}–${t.no} on ${measureObject(c, place)}`;
     const k = Math.max(t.yes, t.no);
-    return `${k} of ${t.total} ${who(t.total)} ${plural(k, "recommends", "recommend")} ${t.verdict === "Y" ? "Yes" : "No"} on ${measureObject(c)}`;
+    return `${k} of ${t.total} ${who(t.total)} ${plural(k, "recommends", "recommend")} ${t.verdict === "Y" ? "Yes" : "No"} on ${measureObject(c, place)}`;
   }
   if (c.seats > 1) {
     const top = topPicks(t, c.seats);
@@ -143,15 +144,32 @@ function answer(c: Contest, rows: Row[], level: 0 | 1 | 2 = 0, WHO = PAGE_WHO): 
   return level === 0 && !secondTied ? `${lead}; ${next.count} ${plural(next.count, "endorses", "endorse")} ${next.name}` : lead;
 }
 
-export function answerSentence(c: Contest, rows: Row[], asOf: string | null): string {
-  return `${answer(c, rows)}${asOf ? `, as of ${asOf}` : ""}.`;
+export function answerSentence(c: Contest, rows: Row[], asOf: string | null, place: PlaceName): string {
+  return `${answer(c, rows, 0, place)}${asOf ? `, as of ${asOf}` : ""}.`;
 }
 
-export function contestDescription(c: Contest, rows: Row[]): string {
+export function contestDescription(c: Contest, rows: Row[], place: PlaceName): string {
   for (const level of [0, 1, 2] as const) {
-    const d = `${answer(c, rows, level, SHORT_WHO)}. ${READ_MORE}`;
+    const d = `${answer(c, rows, level, place, { short: true })}. ${READ_MORE}`;
     if (d.length <= MAX_DESCRIPTION) return d;
   }
-  const text = clip(answer(c, rows, 2, SHORT_WHO), MAX_DESCRIPTION - READ_MORE.length - 2);
+  const text = clip(answer(c, rows, 2, place, { short: true }), MAX_DESCRIPTION - READ_MORE.length - 2);
   return `${text}${text.endsWith("…") ? " " : ". "}${READ_MORE}`;
+}
+
+const SEE_ALL = "See every contest side by side.";
+
+export function areaTitle(place: PlaceName, ballotDate: string): string {
+  return clip(`${place.name} endorsements (${monthYear(ballotDate)})`, MAX_TITLE);
+}
+
+export function areaDescription(place: PlaceName, contests: Contest[], rowsFor: (id: string) => Row[]): string {
+  const c = mostPositions(contests, rowsFor);
+  const rows = c ? rowsFor(c.id) : [];
+  if (!c || rows.length === 0) return `What ${place.name} voter guides recommend. ${SEE_ALL}`;
+  for (const short of [false, true]) {
+    const d = `${answer(c, rows, 1, place, { short })}. ${SEE_ALL}`;
+    if (d.length <= MAX_DESCRIPTION) return d;
+  }
+  return `${clip(answer(c, rows, 2, place, { short: true }), MAX_DESCRIPTION - SEE_ALL.length - 2)}. ${SEE_ALL}`;
 }
