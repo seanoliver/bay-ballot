@@ -1,25 +1,18 @@
-import type { Ballot, Contest, EndorsementFile, Entry, Guide, GuideType } from "./schema";
+import type { EndorsementFile, Entry, Guide, GuideType } from "./schema";
 
 // `off` holds published guide ids the reader turned off; it is the only guide state.
+// District filters were removed; an address lookup replaces them later. Old URLs may still carry
+// sup/ad/cd/bart params; they are ignored and dropped on the next filter change.
 export type Filters = {
   off: string[];
   whyOnly: boolean;
-  districts: Record<string, string>;
 };
 
-export const EMPTY: Filters = { off: [], whyOnly: false, districts: {} };
+export const EMPTY: Filters = { off: [], whyOnly: false };
 
 // What the ballot view needs about a guide and its published file (keeps client props small).
 export type GuideInfo = Pick<Guide, "id" | "name" | "type">;
 export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
-
-// URL param -> jurisdiction name. Order here is the serialization order.
-const DISTRICT_PARAMS: Record<string, string> = {
-  sup: "Supervisor",
-  ad: "Assembly",
-  cd: "Congress",
-  bart: "BART",
-};
 
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
 const parseList = (v: string | null) => uniqSorted((v ?? "").split(",").map((s) => s.trim()).filter(Boolean));
@@ -30,33 +23,23 @@ export function toQuery(f: Filters): string {
   const off = uniqSorted(f.off);
   if (off.length) p.set("off", off.join(","));
   if (f.whyOnly) p.set("why", "1");
-  for (const [param, name] of Object.entries(DISTRICT_PARAMS)) {
-    const v = f.districts[name];
-    if (v) p.set(param, v);
-  }
   return p.toString();
 }
 
 // Old URLs may carry `offtypes`; those expand to the ids of `guides` with those types.
 export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []): Filters {
   const p = new URLSearchParams(q);
-  const districts: Record<string, string> = {};
-  for (const [param, name] of Object.entries(DISTRICT_PARAMS)) {
-    const v = p.get(param);
-    if (v) districts[name] = v;
-  }
   const offTypes = parseList(p.get("offtypes"));
   const fromTypes = guides.filter((g) => offTypes.includes(g.type)).map((g) => g.id);
   return {
     off: uniqSorted([...parseList(p.get("off")), ...fromTypes]),
     whyOnly: p.get("why") === "1",
-    districts,
   };
 }
 
 export function hasFilterParams(q: string): boolean {
   const p = new URLSearchParams(q);
-  return ["off", "offtypes", "why", ...Object.keys(DISTRICT_PARAMS)].some((k) => p.has(k));
+  return ["off", "offtypes", "why"].some((k) => p.has(k));
 }
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
@@ -94,12 +77,6 @@ export function publishedFiles(ends: Record<string, EndorsementFile>): Record<st
   return out;
 }
 
-export function visibleContest(c: Contest, f: Pick<Filters, "districts">): boolean {
-  if (c.jurisdiction.level !== "district") return true;
-  const chosen = f.districts[c.jurisdiction.name];
-  return chosen === undefined || chosen === c.jurisdiction.district;
-}
-
 // A published guide counts toward tallies unless it's turned off, or is list-only under whyOnly.
 function isCounted(f: Filters, id: string, file: PickFile): boolean {
   return isGuideOn(f, id) && !(f.whyOnly && !file.hasReasoning);
@@ -126,59 +103,24 @@ export function countedLabel({ counted, published }: { counted: number; publishe
   return `${counted} of ${published} ${published === 1 ? "guide" : "guides"} counted`;
 }
 
-// Filterable district types (those with a URL param) -> the districts on this ballot, numerically sorted.
-export function districtOptions(ballot: Pick<Ballot, "contests">): Record<string, string[]> {
-  const out: Record<string, string[]> = {};
-  for (const name of Object.values(DISTRICT_PARAMS)) {
-    const ds = ballot.contests
-      .filter((c) => c.jurisdiction.level === "district" && c.jurisdiction.name === name && c.jurisdiction.district)
-      .map((c) => c.jurisdiction.district as string);
-    if (ds.length) out[name] = [...new Set(ds)].sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
-  }
-  return out;
-}
-
-export type DistrictSelect = { name: string; items: { value: string | null; label: string }[] };
-
-export function districtSelect(ballot: Pick<Ballot, "contests">): DistrictSelect[] {
-  return Object.entries(districtOptions(ballot)).map(([name, ds]) => ({
-    name,
-    items: [{ value: null, label: "All" }, ...ds.map((d) => ({ value: d, label: `District ${d}` }))],
-  }));
-}
-
-export function setDistrict(f: Filters, name: string, value: string | null): Filters {
-  const districts = { ...f.districts };
-  if (value === null) delete districts[name];
-  else districts[name] = value;
-  return { ...f, districts };
-}
-
-// Drops anything a stale URL or stored value could carry that this election doesn't have.
-export function sanitizeFilters(f: Filters, ballot: Pick<Ballot, "contests">, guides: Pick<Guide, "id">[]): Filters {
+// Drops guide ids a stale URL or stored value could carry that this election doesn't have.
+export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
-  const opts = districtOptions(ballot);
-  const districts: Record<string, string> = {};
-  for (const [name, v] of Object.entries(f.districts)) {
-    if (opts[name]?.includes(v)) districts[name] = v;
-  }
-  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, districts };
+  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly };
 }
 
 // Filter params in the URL win; otherwise the filters last saved on this device.
 export function initialFilters({
   query,
   stored,
-  ballot,
   guides,
 }: {
   query: string;
   stored: string | null;
-  ballot: Pick<Ballot, "contests">;
   guides: Pick<Guide, "id" | "type">[];
 }): Filters {
   const raw = hasFilterParams(query) ? query : (stored ?? "");
-  return sanitizeFilters(fromQuery(raw, guides), ballot, guides);
+  return sanitizeFilters(fromQuery(raw, guides), guides);
 }
 
 // Plural labels in display order. Kept here (not derived from the zod enum) so client code doesn't pull in zod.

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cardDescription, sections } from "@/lib/display";
-import { activeEntries, EMPTY, visibleContest, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { isPlainClick, pickSelected } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
@@ -34,21 +34,21 @@ type Props = {
 // Filters and the selected contest (?c=) live in the URL. The server (and hydration) render with no
 // filters and the first contest selected; the client applies URL/stored state right after.
 export function BallotView({ election, subtitle, ballot, guides, files, pending }: Props) {
-  const { filters, setFilters } = useBallotFilters({ ballot, guides, keep: ["c"] });
+  const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
   const paneRef = useRef<HTMLDivElement>(null);
 
-  const visible = sections(ballot.contests.filter((c) => visibleContest(c, filters)));
+  const visible = sections(ballot.contests);
   const all = visible.flatMap((s) => s.contests);
   const selectedId = pickSelected(all.map((c) => c.id), requested);
   const current = all.find((c) => c.id === selectedId);
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
   // Candidate colors come from every published guide, so a filter never repaints a candidate.
   const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
-  const filterProps = { filters, onChange: setFilters, ballot, guides, files };
+  const filterProps = { filters, onChange: setFilters, guides, files };
 
   // A new selection starts the detail pane at its top.
   useEffect(() => {

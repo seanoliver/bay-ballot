@@ -7,16 +7,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import {
   countedLabel,
-  districtSelect,
   EMPTY,
   filterSummary,
   guideGroups,
   isGuideOn,
-  setDistrict,
   toggleGuide,
   toggleTypeGroup,
   typeState,
@@ -25,14 +22,12 @@ import {
   type GuideInfo,
   type PickFile,
 } from "@/lib/filters";
-import type { Ballot } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
 
 type Props = {
   filters: Filters;
   onChange: (f: Filters) => void;
-  ballot: Ballot;
   guides: GuideInfo[];
   files: Record<string, PickFile>;
 };
@@ -80,7 +75,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
   );
 }
 
-function FilterControls({ filters: f, onChange, ballot, guides, files }: Props) {
+function FilterControls({ filters: f, onChange, guides, files }: Props) {
   return (
     <>
       <Section title="Show">
@@ -95,7 +90,6 @@ function FilterControls({ filters: f, onChange, ballot, guides, files }: Props) 
         </Toggle>
       </Section>
       <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
-      <DistrictSelects filters={f} onChange={onChange} ballot={ballot} />
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
         Reset filters
       </Button>
@@ -112,7 +106,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function GuideChecklist({ filters: f, onChange, guides, files }: Omit<Props, "ballot">) {
+function GuideChecklist({ filters: f, onChange, guides, files }: Props) {
   const [query, setQuery] = useState("");
   const groups = guideGroups(guides, files, query);
   const searching = query.trim() !== "";
@@ -160,7 +154,7 @@ function TypeGroup({
   onChange,
   guides,
   files,
-}: { group: GuideGroup; searching: boolean } & Omit<Props, "ballot">) {
+}: { group: GuideGroup; searching: boolean } & Props) {
   const [expanded, setExpanded] = useState(false);
   const state = typeState(group.type, f, guides);
   // Searching expands every group that has a match; the chevron then has nothing to collapse.
@@ -200,35 +194,5 @@ function TypeGroup({
         </ul>
       </CollapsibleContent>
     </Collapsible>
-  );
-}
-
-function DistrictSelects({ filters: f, onChange, ballot }: Pick<Props, "filters" | "onChange" | "ballot">) {
-  const selects = districtSelect(ballot);
-  if (selects.length === 0) return null;
-  return (
-    <Section title="Districts">
-      {selects.map(({ name, items }) => (
-        <div key={name} className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">{name}</span>
-          <Select<string | null>
-            items={items}
-            value={f.districts[name] ?? null}
-            onValueChange={(v) => onChange(setDistrict(f, name, v))}
-          >
-            <SelectTrigger aria-label={`${name} district`} className="h-10 min-w-36 data-[size=default]:h-10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {items.map((it) => (
-                <SelectItem key={it.label} value={it.value} className="min-h-10">
-                  {it.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      ))}
-    </Section>
   );
 }

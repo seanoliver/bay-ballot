@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
-import type { Ballot } from "@/lib/schema";
 
 const STORAGE_KEY = "bb-filters";
 const CHANGE_EVENT = "bb-filters-change";
@@ -50,10 +49,10 @@ export function useQuery(): string {
 
 // Filters live in the URL, falling back to the last filters saved on this device. `keep` names
 // non-filter params (like a selected contest) that survive a filter change.
-export function useBallotFilters({ ballot, guides, keep = [] }: { ballot: Ballot; guides: GuideInfo[]; keep?: string[] }) {
+export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
   const query = useQuery();
   const stored = useSyncExternalStore(subscribe, readStored, () => null);
-  const filters = useMemo(() => initialFilters({ query, stored, ballot, guides }), [query, stored, ballot, guides]);
+  const filters = useMemo(() => initialFilters({ query, stored, guides }), [query, stored, guides]);
   const keepKey = keep.join(",");
 
   const setFilters = useCallback(

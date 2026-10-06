@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  activeEntries, countedLabel, districtOptions, districtSelect, filterSummary, fromQuery, guideGroups, hasFilterParams,
-  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, setDistrict, toggleGuide, toggleTypeGroup, toQuery,
-  typeState, visibleContest, pendingGuides, EMPTY,
+  activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
+  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
+  typeState, pendingGuides, EMPTY,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
-import type { Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
+import type { EndorsementFile, Guide } from "@/lib/schema";
 
 const guides = [
   { id: "a", name: "A", type: "advocacy" }, { id: "b", name: "B", type: "club" }, { id: "c", name: "C", type: "newspaper" },
@@ -19,7 +19,7 @@ const files = publishedFiles(ends);
 
 describe("query string", () => {
   it("round-trips", () => {
-    const f = { off: ["b"], whyOnly: true, districts: { Supervisor: "8" } };
+    const f = { off: ["b"], whyOnly: true };
     expect(fromQuery(toQuery(f))).toEqual(f);
   });
   it("EMPTY round-trips to empty string and back", () => {
@@ -27,10 +27,7 @@ describe("query string", () => {
     expect(fromQuery("")).toEqual(EMPTY);
   });
   it("parses the documented URL format", () => {
-    expect(fromQuery("?off=pov,sf-dems&why=1&sup=8&ad=17&cd=11&bart=8")).toEqual({
-      off: ["pov", "sf-dems"], whyOnly: true,
-      districts: { Supervisor: "8", Assembly: "17", Congress: "11", BART: "8" },
-    });
+    expect(fromQuery("?off=pov,sf-dems&why=1")).toEqual({ off: ["pov", "sf-dems"], whyOnly: true });
   });
   it("expands legacy offtypes into the ids of guides of those types", () => {
     const gs = [{ id: "m", type: "club" }, { id: "n", type: "club" }, { id: "s", type: "civic" }] as GuideInfo[];
@@ -41,18 +38,20 @@ describe("query string", () => {
     expect(fromQuery("foo=1&utm_source=x&off=")).toEqual(EMPTY);
     expect(fromQuery("why=0").whyOnly).toBe(false);
   });
-  it("keeps district values not on the ballot as-is (sanitize drops them)", () => {
-    expect(fromQuery("sup=99").districts).toEqual({ Supervisor: "99" });
+  it("ignores legacy district params (sup, ad, cd, bart) and drops them from the next query", () => {
+    const f = fromQuery("off=a&sup=8&ad=17&cd=11&bart=8");
+    expect(f).toEqual({ off: ["a"], whyOnly: false });
+    expect(toQuery(f)).toBe("off=a");
   });
   it("dedupes ids", () => {
     expect(fromQuery("off=a,b,a").off).toEqual(["a", "b"]);
     expect(toQuery({ ...EMPTY, off: ["a", "a"] })).toBe("off=a");
   });
   it("produces deterministic output with sorted lists and no offtypes", () => {
-    const a = toQuery({ off: ["z", "a"], whyOnly: true, districts: { BART: "8", Supervisor: "2" } });
-    const b = toQuery({ off: ["a", "z"], whyOnly: true, districts: { Supervisor: "2", BART: "8" } });
+    const a = toQuery({ off: ["z", "a"], whyOnly: true });
+    const b = toQuery({ off: ["a", "z"], whyOnly: true });
     expect(a).toBe(b);
-    expect(a).toBe("off=a%2Cz&why=1&sup=2&bart=8");
+    expect(a).toBe("off=a%2Cz&why=1");
   });
 });
 
@@ -82,65 +81,10 @@ describe("activeEntries", () => {
   });
 });
 
-describe("visibleContest", () => {
-  it("hides district contests that don't match the chosen district", () => {
-    const c = { jurisdiction: { level: "district", name: "Supervisor", district: "2" } } as Contest;
-    expect(visibleContest(c, { districts: {} })).toBe(true);
-    expect(visibleContest(c, { districts: { Supervisor: "8" } })).toBe(false);
-  });
-  it("shows matching district contests and ignores non-district ones", () => {
-    const d8 = { jurisdiction: { level: "district", name: "Supervisor", district: "8" } } as Contest;
-    const st = { jurisdiction: { level: "state", name: "California" } } as Contest;
-    const ad = { jurisdiction: { level: "district", name: "Assembly", district: "17" } } as Contest;
-    const d = { districts: { Supervisor: "8" } };
-    expect(visibleContest(d8, d)).toBe(true);
-    expect(visibleContest(st, d)).toBe(true);
-    expect(visibleContest(ad, d)).toBe(true);
-  });
-});
-
 describe("pendingGuides", () => {
   it("lists pending guides: no file or status pending", () => {
     expect(pendingGuides(guides, ends).map((g) => g.id)).toEqual(["c"]);
     expect(pendingGuides(guides, { a: ends.a }).map((g) => g.id)).toEqual(["b", "c"]);
-  });
-});
-
-const dc = (name: string, district: string) =>
-  ({ id: `${name}-${district}`.toLowerCase(), jurisdiction: { level: "district", name, district } }) as Contest;
-const ballot = {
-  contests: [
-    { id: "gov", jurisdiction: { level: "state", name: "California" } } as Contest,
-    dc("Supervisor", "10"), dc("Supervisor", "2"), dc("Supervisor", "8"),
-    dc("Assembly", "19"), dc("Assembly", "17"),
-    dc("BART", "8"),
-    dc("Board of Equalization", "2"),
-  ],
-} as Ballot;
-
-describe("districtOptions", () => {
-  it("lists districts on the ballot per filterable district type, numerically sorted", () => {
-    expect(districtOptions(ballot)).toEqual({ Supervisor: ["2", "8", "10"], Assembly: ["17", "19"], BART: ["8"] });
-  });
-  it("dedupes repeated districts", () => {
-    expect(districtOptions({ contests: [dc("Supervisor", "8"), dc("Supervisor", "8")] } as Ballot)).toEqual({ Supervisor: ["8"] });
-  });
-});
-
-describe("districtSelect", () => {
-  it("gives each district type an 'All' item plus one item per district", () => {
-    expect(districtSelect({ contests: [dc("Supervisor", "8"), dc("Supervisor", "2"), dc("BART", "8")] } as Ballot)).toEqual([
-      { name: "Supervisor", items: [{ value: null, label: "All" }, { value: "2", label: "District 2" }, { value: "8", label: "District 8" }] },
-      { name: "BART", items: [{ value: null, label: "All" }, { value: "8", label: "District 8" }] },
-    ]);
-  });
-});
-
-describe("setDistrict", () => {
-  it("sets a district and clears it with null, leaving others", () => {
-    const f = setDistrict({ ...EMPTY, districts: { BART: "8" } }, "Supervisor", "8");
-    expect(f.districts).toEqual({ BART: "8", Supervisor: "8" });
-    expect(setDistrict(f, "Supervisor", null).districts).toEqual({ BART: "8" });
   });
 });
 
@@ -149,30 +93,27 @@ const info: GuideInfo[] = [
 ];
 
 describe("sanitizeFilters", () => {
-  it("keeps known guide ids and districts", () => {
-    const f = { off: ["a"], whyOnly: true, districts: { Supervisor: "8" } };
-    expect(sanitizeFilters(f, ballot, info)).toEqual(f);
+  it("keeps known guide ids", () => {
+    const f = { off: ["a"], whyOnly: true };
+    expect(sanitizeFilters(f, info)).toEqual(f);
   });
-  it("drops unknown guide ids and districts not on the ballot", () => {
-    const f = { off: ["a", "nope"], whyOnly: false, districts: { Supervisor: "99", Assembly: "17", Congress: "11", Mars: "1" } };
-    expect(sanitizeFilters(f, ballot, info)).toEqual({ off: ["a"], whyOnly: false, districts: { Assembly: "17" } });
+  it("drops unknown guide ids", () => {
+    expect(sanitizeFilters({ off: ["a", "nope"], whyOnly: false }, info)).toEqual({ off: ["a"], whyOnly: false });
   });
 });
 
 describe("initialFilters", () => {
   it("prefers filter params in the URL over stored filters", () => {
-    expect(initialFilters({ query: "why=1", stored: "off=a", ballot, guides: info })).toEqual({ ...EMPTY, whyOnly: true });
+    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true });
   });
   it("uses stored filters when the URL has no filter params", () => {
-    expect(initialFilters({ query: "utm_source=x", stored: "off=a&sup=8", ballot, guides: info })).toEqual({
-      ...EMPTY, off: ["a"], districts: { Supervisor: "8" },
-    });
+    expect(initialFilters({ query: "utm_source=x", stored: "off=a&sup=8", guides: info })).toEqual({ ...EMPTY, off: ["a"] });
   });
   it("is EMPTY with nothing in the URL or storage", () => {
-    expect(initialFilters({ query: "", stored: null, ballot, guides: info })).toEqual(EMPTY);
+    expect(initialFilters({ query: "", stored: null, guides: info })).toEqual(EMPTY);
   });
   it("sanitizes and expands legacy offtypes", () => {
-    expect(initialFilters({ query: "offtypes=club&off=zzz", stored: null, ballot, guides: info }).off).toEqual(["b"]);
+    expect(initialFilters({ query: "offtypes=club&off=zzz", stored: null, guides: info }).off).toEqual(["b"]);
   });
 });
 
@@ -194,7 +135,7 @@ describe("filterSummary and countedLabel", () => {
 describe("hasFilterParams", () => {
   it("is true when any filter param is present, including legacy offtypes", () => {
     expect(hasFilterParams("why=1")).toBe(true);
-    expect(hasFilterParams("?sup=8")).toBe(true);
+    expect(hasFilterParams("?sup=8")).toBe(false);
     expect(hasFilterParams("off=")).toBe(true);
     expect(hasFilterParams("offtypes=club")).toBe(true);
   });
