@@ -49,6 +49,7 @@ export function ContestDetail({
   titleId,
   slots,
   pageLink = true,
+  action,
 }: {
   election: string;
   contest: Contest;
@@ -58,6 +59,8 @@ export function ContestDetail({
   titleId?: string;
   slots?: Slots;
   pageLink?: boolean;
+  // Sits at the header's top-right (the desktop pane's close button).
+  action?: ReactNode;
 }) {
   const description = cardDescription(contest);
   const official = officialLink(contest);
@@ -69,16 +72,19 @@ export function ContestDetail({
     <div className="space-y-6">
       <div>
         {heading ? (
-          <>
-            <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
-            <Title
-              id={titleId}
-              tabIndex={titleId ? -1 : undefined}
-              className={cn("mt-1 leading-tight font-semibold outline-none", heading === "h1" ? "text-2xl font-bold" : "text-xl")}
-            >
-              {contest.title}
-            </Title>
-          </>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
+              <Title
+                id={titleId}
+                tabIndex={titleId ? -1 : undefined}
+                className={cn("mt-1 leading-tight font-semibold outline-none", heading === "h1" ? "text-2xl font-bold" : "text-xl")}
+              >
+                {contest.title}
+              </Title>
+            </div>
+            {action}
+          </div>
         ) : null}
         {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
         <p className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">

@@ -6,7 +6,12 @@ export function isPlainClick(e: ClickLike): boolean {
   return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.defaultPrevented;
 }
 
-// The contest to show: the requested one if it is on screen, else the first.
-export function pickSelected(ids: string[], requested: string | null): string | undefined {
-  return requested !== null && ids.includes(requested) ? requested : ids[0];
+// The contest to show in the desktop pane: the requested one if it's on the ballot, else none (pane closed).
+export function pickSelected(ids: string[], requested: string | null): string | null {
+  return requested !== null && ids.includes(requested) ? requested : null;
+}
+
+// Clicking the selected contest again closes the pane.
+export function toggleSelection(current: string | null, clicked: string): string | null {
+  return current === clicked ? null : clicked;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isPlainClick, pickSelected } from "@/lib/links";
+import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 
 const click = (over: Partial<Parameters<typeof isPlainClick>[0]> = {}) => ({
   button: 0,
@@ -32,11 +32,21 @@ describe("pickSelected", () => {
   it("keeps a requested contest that is on screen", () => {
     expect(pickSelected(ids, "prop-b")).toBe("prop-b");
   });
-  it("falls back to the first when none is requested or it is filtered away", () => {
-    expect(pickSelected(ids, null)).toBe("prop-a");
-    expect(pickSelected(ids, "sup-2")).toBe("prop-a");
+  it("nothing selected when none is requested", () => {
+    expect(pickSelected(ids, null)).toBeNull();
   });
-  it("nothing to select on an empty ballot", () => {
-    expect(pickSelected([], "prop-b")).toBeUndefined();
+  it("nothing selected when the requested contest isn't on the ballot", () => {
+    expect(pickSelected(ids, "sup-2")).toBeNull();
+    expect(pickSelected([], "prop-b")).toBeNull();
+  });
+});
+
+describe("toggleSelection", () => {
+  it("selects a different contest", () => {
+    expect(toggleSelection("prop-a", "prop-b")).toBe("prop-b");
+    expect(toggleSelection(null, "prop-b")).toBe("prop-b");
+  });
+  it("clicking the selected contest again closes it", () => {
+    expect(toggleSelection("prop-b", "prop-b")).toBeNull();
   });
 });

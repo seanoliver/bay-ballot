@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { ChevronRight, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cardDescription, sections } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
-import { isPlainClick, pickSelected } from "@/lib/links";
+import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { ContestDetail } from "./ContestDetail";
@@ -44,7 +45,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
   const visible = sections(ballot.contests);
   const all = visible.flatMap((s) => s.contests);
   const selectedId = pickSelected(all.map((c) => c.id), requested);
-  const current = all.find((c) => c.id === selectedId);
+  const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
   // Candidate colors come from every published guide, so a filter never repaints a candidate.
   const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
@@ -56,39 +57,74 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
   }, [selectedId]);
 
   // Rows are real links to the contest page; a plain click selects instead (modified clicks open the link).
+  // Desktop: clicking the selected row again closes the pane. Phone: a tap always opens the sheet.
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
-    setRequested(c.id);
-    setAnnounce(`Showing ${c.title}`);
-    if (!window.matchMedia(DESKTOP).matches) setSheetOpen(true);
+    if (window.matchMedia(DESKTOP).matches) {
+      const next = toggleSelection(selectedId, c.id);
+      setRequested(next);
+      setAnnounce(next ? `Showing ${c.title}` : "Details closed");
+    } else {
+      setRequested(c.id);
+      setSheetOpen(true);
+    }
+  };
+
+  // Closing the pane drops ?c and puts focus back on the row that was selected.
+  const closePane = () => {
+    if (selectedId === null) return;
+    const row = document.getElementById(`row-d-${selectedId}`);
+    setRequested(null);
+    setAnnounce("Details closed");
+    row?.focus();
+  };
+
+  // Escape closes the pane from the list or the pane, but not while a popover inside them handles it.
+  const onEscape = (e: KeyboardEvent) => {
+    if (e.key !== "Escape" || selectedId === null || !window.matchMedia(DESKTOP).matches) return;
+    const t = e.target as Element;
+    if (t.closest("[data-slot=popover-content]") || t.getAttribute("aria-expanded") === "true") return;
+    closePane();
   };
 
   return (
-    <div className={cn(FRAME, "lg:grid lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6")}>
+    // Two columns until a contest is selected, then three.
+    <div
+      className={cn(
+        FRAME,
+        "lg:grid lg:gap-6",
+        current ? "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)]" : "lg:grid-cols-[17rem_minmax(0,1fr)]",
+      )}
+    >
+      <p aria-live="polite" className="sr-only">
+        {announce}
+      </p>
       {/* Filters need JS; without it the page is the full ballot and rows link to contest pages. */}
       <noscript>
         <style>{".js-only{display:none!important}"}</style>
       </noscript>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
-      <div className="min-w-0 pb-10">
+      <div className="min-w-0 pb-10" onKeyDown={onEscape}>
         <div className="pt-0.5 pb-1 lg:pt-4">
           <h1 className="text-sm text-muted-foreground">{subtitle}</h1>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
           </noscript>
-          <a
-            href="#detail-title"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("detail-title")?.focus();
-            }}
-            className="sr-only rounded-md bg-background px-3 py-2 text-sm font-medium underline max-lg:hidden focus:not-sr-only focus:mt-2 focus:inline-block focus:outline-3 focus:outline-ring"
-          >
-            Skip to details
-          </a>
+          {current ? (
+            <a
+              href="#detail-title"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("detail-title")?.focus();
+              }}
+              className="sr-only rounded-md bg-background px-3 py-2 text-sm font-medium underline max-lg:hidden focus:not-sr-only focus:mt-2 focus:inline-block focus:outline-3 focus:outline-ring"
+            >
+              Skip to details
+            </a>
+          ) : null}
         </div>
         {visible.map((s) => (
           <section key={s.name} aria-label={s.name}>
@@ -111,16 +147,25 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
         ))}
       </div>
 
-      <div ref={paneRef} className={PANE}>
-        <p aria-live="polite" className="sr-only">
-          {announce}
-        </p>
-        {current ? (
+      {current ? (
+        <div ref={paneRef} className={PANE} onKeyDown={onEscape}>
           <section aria-labelledby="detail-title" className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
-            <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} titleId="detail-title" slots={slotsFor(current)} />
+            <ContestDetail
+              election={election}
+              contest={current}
+              rows={rowsFor(current.id)}
+              pending={pending}
+              titleId="detail-title"
+              slots={slotsFor(current)}
+              action={
+                <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
+                  <X aria-hidden="true" className="size-5" />
+                </Button>
+              }
+            />
           </section>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
@@ -190,7 +235,7 @@ function ContestRow({
         )}
       >
         <h3 className="text-[15px] leading-snug font-semibold">
-          <a href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
+          <a id={`row-d-${contest.id}`} href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
             {contest.title}
           </a>
         </h3>
