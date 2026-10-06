@@ -29,6 +29,25 @@ function namePatterns(candidate: string): string[] {
   return firstForms.map((f) => `${f}\\.?(?:\\s+\\S+){0,2}?\\s+${last}`);
 }
 
+const MEASURE_TITLE = /^(?:(.+?)\s+)?(Proposition|Measure)\s+(\w+)$/;
+const measureLetter = (c: Contest) => (c.kind === "measure" && c.id !== "rtm" ? (c.title.match(MEASURE_TITLE)?.[3] ?? null) : null);
+const sameDistrict = (a: Contest, b: Contest) =>
+  a.id !== b.id && a.jurisdiction.name === b.jurisdiction.name && a.jurisdiction.district === b.jurisdiction.district;
+const nearPlace = (place: string, body: string) => [`${ciWords(place)}[^\\n]{0,40}?${body}`, `${body}[^\\n]{0,40}?${ciWords(place)}`];
+
+function measurePatterns(c: Contest, siblings: Contest[]): string[] {
+  const m = c.title.match(MEASURE_TITLE);
+  if (!m) return [];
+  const [, place, word, id] = m;
+  const letter = escapeRegExp(id);
+  const yesNo = `(?:${ci("yes")}|${ci("no")})\\s+${ci("on")}`;
+  if (!siblings.some((s) => s.id !== c.id && measureLetter(s) === id)) return [`(?:${PROP_WORD}|${yesNo})\\s*${letter}`];
+  // An unprefixed "Proposition" is SF's own: SF guides never name their city.
+  if (word === "Proposition" && !place) return [`(?:${ci("proposition")}|${ci("prop")}\\.?)\\s*${letter}`];
+  const bare = `(?:${ci("measure")}|${yesNo})\\s*${letter}`;
+  return place ? nearPlace(place, bare) : [bare];
+}
+
 function districtPatterns(c: Contest): string[] {
   const n = c.jurisdiction.district;
   if (!n) return [];
@@ -47,19 +66,25 @@ function districtPatterns(c: Contest): string[] {
       return [`BART(?:\\s+${ci("board")})?(?:\\s+${ciWords("of directors")})?,?\\s*${d}`];
     case "Board of Equalization":
       return [`(?:${ciWords("board of equalization")}|BOE),?\\s*${d}`];
+    case "City Council":
+      return [`(?:${ci("city")}\\s+)?${ci("council")}(?:${ci("member")})?,?\\s*${d}`];
+    case "State Senate":
+      return [`(?:${ci("state")}\\s+)?${ci("senate")},?\\s*${d}`, `SD-?\\s*${n}`];
     default:
       return [];
   }
 }
 
-export function contestMarkers(c: Contest): RegExp[] {
+export function contestMarkers(c: Contest, siblings: Contest[] = []): RegExp[] {
   const out: string[] = [];
   if (c.kind === "measure") {
-    const id = c.title.match(/^Proposition\s+(\w+)$/)?.[1];
-    if (id) out.push(`(?:${PROP_WORD}|(?:${ci("yes")}|${ci("no")})\\s+${ci("on")})\\s*${escapeRegExp(id)}`);
     if (c.id === "rtm") out.push("RTM", `${ci("regional")}\\s+(?:${ci("transit")}\\s+)?${ci("measure")}`);
+    else out.push(...measurePatterns(c, siblings));
   } else {
-    if (c.jurisdiction.district) out.push(...districtPatterns(c));
+    const dp = c.jurisdiction.district ? districtPatterns(c) : [];
+    const place = c.jurisdiction.within?.length === 1 ? c.jurisdiction.within[0].name : null;
+    const qualify = place !== null && siblings.some((s) => sameDistrict(s, c));
+    if (dp.length) out.push(...(qualify ? dp.flatMap((p) => nearPlace(place, p)) : dp));
     else out.push(asHeading(ciWords(c.title)));
     if (c.id === "lt-governor") out.push(asHeading(`${ci("lt")}\\.?\\s+${ci("gov")}(?:${ci("ernor")})?`));
     if (c.id === "assessor") out.push(asHeading(ci("assessor")));
@@ -97,7 +122,7 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
 
   const found: { start: number; end: number; id: string; line: number }[] = [];
   for (const c of contests) {
-    for (const re of contestMarkers(c)) {
+    for (const re of contestMarkers(c, contests)) {
       for (const m of text.matchAll(new RegExp(re.source, `${re.flags}g`))) {
         const li = lineIndex(m.index);
         const line = lines[li];
@@ -137,7 +162,7 @@ export function misplacedUnder(quote: KeptQuote, contestId: string, pages: Page[
   const page = pages.find((p) => p.url === quote.source);
   if (!page) return null;
   const own = contests.find((c) => c.id === contestId);
-  if (own && contestMarkers(own).some((re) => re.test(quote.text))) return null;
+  if (own && contestMarkers(own, contests).some((re) => re.test(quote.text))) return null;
   const { norm, map } = normalizeWithMap(page.text);
   const q = normalizeWithMap(quote.text).norm;
   if (!q) return null;

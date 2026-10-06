@@ -167,3 +167,60 @@ describe("misplacedUnder", () => {
     expect(misplacedUnder(quote(dunes.text, "https://other.org/"), "rtm", [abundant], contests)).toBeNull();
   });
 });
+
+describe("markers across places", () => {
+  const measure = (id: string, title: string, j: Contest["jurisdiction"]) =>
+    ({ id, section: "S", title, kind: "measure", candidates: [], seats: 1, rankedChoice: false, jurisdiction: j }) as Contest;
+  const race = (id: string, title: string, j: Contest["jurisdiction"]) =>
+    ({ id, section: "S", title, kind: "candidate", candidates: ["Ann Lee", "Bo Diaz"], seats: 1, rankedChoice: false, jurisdiction: j }) as Contest;
+  const mpP = measure("menlo-park-measure-p", "Menlo Park Measure P", { level: "city", name: "Menlo Park" });
+  const scP = measure("san-carlos-measure-p", "San Carlos Measure P", { level: "city", name: "San Carlos" });
+  const hmbQ = measure("half-moon-bay-measure-q", "Half Moon Bay Measure Q", { level: "city", name: "Half Moon Bay" });
+  const sfP = measure("prop-p", "Proposition P", { level: "city", name: "San Francisco" });
+  const school = measure("sequoia-uhsd-measure-x", "Sequoia Union High School District Measure X", {
+    level: "district", name: "Sequoia Union High School District", district: "at-large", within: [{ level: "county", name: "San Mateo" }],
+  });
+  const rc2 = race("redwood-city-council-2", "Redwood City Council, District 2", {
+    level: "district", name: "City Council", district: "2", within: [{ level: "city", name: "Redwood City" }],
+  });
+  const smSup5 = race("san-mateo-county-supervisor-5", "San Mateo County Board of Supervisors, District 5", {
+    level: "district", name: "Supervisor", district: "5", within: [{ level: "county", name: "San Mateo" }],
+  });
+  const sfSup5 = race("supervisor-5", "Board of Supervisors, District 5", {
+    level: "district", name: "Supervisor", district: "5", within: [{ level: "county", name: "San Francisco" }],
+  });
+  const marks = (c: Contest, siblings: Contest[], text: string) => contestMarkers(c, siblings).some((re) => re.test(text));
+
+  it("finds a local measure by its letter when no sibling shares it", () => {
+    for (const t of ["Measure Q — Yes", "Yes on Q", "Half Moon Bay Measure Q"]) expect(marks(hmbQ, [hmbQ, mpP], t)).toBe(true);
+    expect(marks(school, [school], "Measure X: Yes")).toBe(true);
+  });
+  it("needs the place when two measures share a letter", () => {
+    const sibs = [mpP, scP];
+    expect(marks(mpP, sibs, "Measure P")).toBe(false);
+    expect(marks(mpP, sibs, "Menlo Park Measure P: Yes")).toBe(true);
+    expect(marks(mpP, sibs, "Measure P (Menlo Park)")).toBe(true);
+    expect(marks(mpP, sibs, "San Carlos Measure P")).toBe(false);
+  });
+  it("keeps an SF proposition's bare marker when a measure shares its letter", () => {
+    expect(marks(sfP, [sfP, mpP], "Prop P")).toBe(true);
+    expect(marks(sfP, [sfP, mpP], "Measure P")).toBe(false);
+    expect(marks(mpP, [sfP, mpP], "Menlo Park Measure P")).toBe(true);
+  });
+  it("finds council districts, and qualifies a district number shared across counties", () => {
+    expect(marks(rc2, [rc2], "City Council District 2")).toBe(true);
+    expect(marks(rc2, [rc2], "Council, District 2")).toBe(true);
+    expect(marks(smSup5, [smSup5, sfSup5], "District 5")).toBe(false);
+    expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
+    expect(marks(smSup5, [smSup5], "Supervisor, District 5")).toBe(true);
+  });
+  it("places a quote under the right city's Measure P", () => {
+    const page: Page = {
+      url: "https://g.org/e", kind: "html",
+      text: ["Menlo Park Measure P: Yes", "Menlo Park needs the homes this measure allows.", "", "San Carlos Measure P: No", "San Carlos voters should keep the current height limits."].join("\n"),
+    };
+    const q = { text: "San Carlos voters should keep the current height limits.", source: "https://g.org/e" };
+    expect(misplacedUnder(q, "menlo-park-measure-p", [page], [mpP, scP])).toBe("san-carlos-measure-p");
+    expect(misplacedUnder(q, "san-carlos-measure-p", [page], [mpP, scP])).toBeNull();
+  });
+});
