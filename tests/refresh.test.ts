@@ -7,7 +7,9 @@ import { parse } from "yaml";
 import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
 import type { Fetched } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
+import { pagePath } from "@/pipeline/refresh";
 import { exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
+import { resultJson } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 
 const ELECTION = "2026-11";
@@ -114,7 +116,7 @@ describe("runRefresh", () => {
     const file = parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8"));
     expect(Object.keys(file.picks)).toEqual(["prop-b", "prop-c"]);
     const stored = fs.readFileSync(path.join(root, ELECTION, "pages", "alpha", `${sourceSlug(url("alpha"))}.txt`), "utf8");
-    expect(stored).toBe(normalizePageText(PAGE("alpha", "x")));
+    expect(stored).toBe(normalizePageText(PAGE("alpha", "October 6, 2026")));
   });
 
   it("extracts on a relevant change but skips verify when the picks come back the same", async () => {
@@ -132,6 +134,21 @@ describe("runRefresh", () => {
     const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
     const r = results[0] as Extract<GuideResult, { status: "changed" }>;
     expect(r.held.map((h) => h.contestId)).toEqual(["prop-c"]);
+    expect(exitCodeFor(results)).toBe(2);
+  });
+
+  it("exits 2 when the verifier skips a pick (held as unverified)", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const skip = { messages: { stream: vi.fn((req: { model: string }) => ({
+      finalMessage: async () => ({
+        stop_reason: "end_turn", stop_details: null,
+        usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+        content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? { ...verifyOut(false), picks: [verifyOut(false).picks[0]] } : extractOut) }],
+      }),
+    })) } } as unknown as ExtractClient;
+    const results = await runRefresh(deps(skip, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
+    const r = results[0] as Extract<GuideResult, { status: "changed" }>;
+    expect(r.held).toEqual([expect.objectContaining({ contestId: "prop-c", reason: "unverified" })]);
     expect(exitCodeFor(results)).toBe(2);
   });
 
@@ -208,5 +225,65 @@ describe("seedPages", () => {
     const results = await runRefresh(deps(client, fetcher(pages)), { root, election: ELECTION });
     expect(results.map((r) => r.status)).toEqual(["unchanged", "unchanged"]);
     expect(stream).not.toHaveBeenCalled();
+  });
+});
+
+describe("shrunk guides", () => {
+  // Five picks before; the model returns one, so the guide "shrinks" and is not written.
+  const fivePicks = (root: string) => {
+    const p = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace("picks:\n", "picks:\n  prop-c:\n    pick: Y\n  prop-d:\n    pick: Y\n  prop-e:\n    pick: Y\n  prop-f:\n    pick: Y\n"));
+  };
+  const page = PAGE("alpha", "x").replace("No on Prop B", "Strong No on Prop B");
+
+  it("reports a shrunk guide with its page hash, stores no page text, and exits 2", async () => {
+    const root = setup(["alpha"]);
+    fivePicks(root);
+    const before = fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8");
+    const { client } = fakeClient(sameOut);
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(results[0]).toMatchObject({ status: "shrunk", pageHash: expect.stringMatching(/^[0-9a-f]{64}$/) });
+    expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(before);
+    expect(exitCodeFor(results)).toBe(2);
+    expect(resultJson(results, 2).shrunk).toEqual([{ id: "alpha", pageHash: (results[0] as { pageHash: string }).pageHash }]);
+  });
+
+  it("skips re-extracting a shrunk guide whose pages haven't changed since it was reported", async () => {
+    const root = setup(["alpha"]);
+    fivePicks(root);
+    const first = fakeClient(sameOut);
+    const [r1] = await runRefresh(deps(first.client, fetcher({ alpha: page })), { root, election: ELECTION });
+    const hash = (r1 as { pageHash: string }).pageHash;
+    const second = fakeClient(sameOut);
+    const results = await runRefresh(deps(second.client, fetcher({ alpha: page })), { root, election: ELECTION, shrunkSkip: { alpha: hash } });
+    expect(second.stream).not.toHaveBeenCalled();
+    expect(results[0]).toMatchObject({ status: "shrunk-skipped", pageHash: hash });
+    expect(exitCodeFor(results)).toBe(2);
+    expect(summarize(results, { date: "2026-10-07" })).toContain("alpha: shrunk earlier, pages unchanged since; not re-extracted");
+  });
+
+  it("re-extracts a shrunk guide once its pages change again", async () => {
+    const root = setup(["alpha"]);
+    fivePicks(root);
+    const { client, stream } = fakeClient(sameOut);
+    await runRefresh(deps(client, fetcher({ alpha: `${page}\nYes on Prop H: Muni` })), { root, election: ELECTION, shrunkSkip: { alpha: "0".repeat(64) } });
+    expect(stream).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("resultJson", () => {
+  it("lists extracted, deferred, failed and shrunk guides", () => {
+    const results: GuideResult[] = [
+      { id: "a", status: "failed", error: "HTTP 503" },
+      { id: "b", status: "deferred" },
+      { id: "c", status: "shrunk-skipped", pageHash: "f".repeat(64) },
+    ];
+    expect(resultJson(results, 1)).toEqual({
+      exitCode: 1,
+      extracted: [],
+      deferred: ["b"],
+      failed: [{ id: "a", error: "HTTP 503" }],
+      shrunk: [{ id: "c", pageHash: "f".repeat(64) }],
+    });
   });
 });

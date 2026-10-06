@@ -28,8 +28,16 @@ describe("normalizePageText", () => {
     );
     expect(t).toBe("No on Prop G");
   });
-  it("collapses whitespace and drops duplicate and empty lines", () => {
-    expect(normalizePageText("  Yes   on A \n\n\nYes on A\nNo on B  ")).toBe("Yes on A\nNo on B");
+  it("collapses whitespace and drops empty lines but keeps duplicates and order", () => {
+    expect(normalizePageText("  Yes   on A \n\n\nYes on A\nNo on B  ")).toBe("Yes on A\nYes on A\nNo on B");
+    expect(normalizePageText("Prop A\nYES\nProp B\nYES")).toBe("Prop A\nYES\nProp B\nYES");
+  });
+  it("keeps the text of an 'Updated …' line, minus the date", () => {
+    expect(normalizePageText("Updated Oct 5: we now recommend No on Prop G")).toBe("Updated : we now recommend No on Prop G");
+  });
+  it("keeps a boilerplate-looking line that carries a verdict or names a contest", () => {
+    expect(normalizePageText("Yes - sign up to volunteer for Prop B")).toBe("Yes - sign up to volunteer for Prop B");
+    expect(normalizePageText("Subscribe for our Prop C explainer")).toBe("Subscribe for our Prop C explainer");
   });
 });
 
@@ -67,8 +75,49 @@ describe("relevantChange", () => {
     }
   });
   it("accepts extra aliases", () => {
-    expect(relevantChange(page, `${page}\nDJB`, ballot)).toBe(false);
-    expect(relevantChange(page, `${page}\nDJB`, ballot, { "Dionjay (DJ) Brookter": ["DJB"] })).toBe(true);
+    const line = "DJB will host a phone bank Saturday afternoon";
+    expect(relevantChange(page, `${page}\n${line}`, ballot)).toBe(false);
+    expect(relevantChange(page, `${page}\n${line}`, ballot, { "Dionjay (DJ) Brookter": ["DJB"] })).toBe(true);
+  });
+});
+
+describe("relevantChange: real pick changes the gate must see", () => {
+  const measures = (verdicts: [string, string][]) =>
+    ["Ballot measures", ...verdicts.flatMap(([title, v]) => [title, v]), "Paid for by the club"].join("\n");
+  const A = "Proposition A - Charter Changes";
+  const B = "Proposition B - Public Bank";
+  const C = "Proposition C - Contributions to the Housing Fund";
+
+  it("sees a bare verdict flip under its heading", () => {
+    const old = measures([[A, "YES"], [B, "YES"], [C, "YES"]]);
+    const next = measures([[A, "YES"], [B, "YES"], [C, "NO"]]);
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("sees two measures' verdicts swap", () => {
+    const old = measures([[A, "YES"], [B, "NO"]]);
+    const next = measures([[A, "NO"], [B, "YES"]]);
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("sees an 'Updated …' line that changes a recommendation", () => {
+    const old = measures([[A, "YES"]]);
+    const next = `Updated Oct 5: we now recommend No on Prop G\n${old}`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("sees a verdict change inside a line that also says 'sign up'", () => {
+    const old = `${B}\nYes - sign up to volunteer\nThanks for reading`;
+    const next = `${B}\nNo - sign up to volunteer\nThanks for reading`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
+  });
+  it("ignores a long line that only moved or lost a duplicate copy (rotating related-story widgets)", () => {
+    const title = "Editorial: SF school board recommendations";
+    const old = `${title}\nBy the editors\nWe back three candidates.\nMore stories\nNeurologists beg seniors: stop doing this now\n${title}\nHealth Weekly`;
+    const next = `${title}\nBy the editors\nWe back three candidates.\nMore stories\nOne common item ended years of dog scratching\nHealth Weekly`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("irrelevant");
+  });
+  it("sees a short label change under a contest heading", () => {
+    const old = `${C}\nNo position\nThanks for reading`;
+    const next = `${C}\nStrong yes\nThanks for reading`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
   });
 });
 
@@ -84,7 +133,7 @@ describe("storedText and pageGate", () => {
   it("classifies new, same, irrelevant and relevant pages", () => {
     expect(pageGate(null, "Yes on A", ballot)).toBe("new");
     expect(pageGate("Yes on Prop A", "Yes on Prop A", ballot)).toBe("same");
-    expect(pageGate("Yes on Prop A\nPicnic Friday", "Yes on Prop A\nPicnic Sunday", ballot)).toBe("irrelevant");
+    expect(pageGate("Yes on Prop A\nJoin us for the club picnic in the park", "Yes on Prop A\nJoin us for the club potluck in the park", ballot)).toBe("irrelevant");
     expect(pageGate("Yes on Prop A", "No on Prop A", ballot)).toBe("relevant");
   });
 });

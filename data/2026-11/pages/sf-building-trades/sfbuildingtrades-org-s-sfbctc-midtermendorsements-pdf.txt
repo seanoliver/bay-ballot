@@ -55,6 +55,8 @@ B
 Establishing a Municipal
 Finance Corporation
 Public Bank
+NO
+POSITION
 E
 City Administrator’s
 Authority and Changes
@@ -70,19 +72,35 @@ YES
 C
 Contributions to the
 Housing Fund
+YES
+YES
 F
 Changes to Executive
 Branch Management
+YES
 ✓
+✓
+YES
 H
 Parcel Tax to Fund Public
 Muni Operations
+NO
 J
 Removal of Foreclosure
 Tax Exemption for Real
+Property Transfer Tax
+✓
 x
 RTM
 Public Transit
 Revenue Measure
 District Proposition
+YES
+✓
+YES
+✓
+YES
+✓
 The above endorsements are current as of . Additional endorsements may be added to this list before the election.
+✓
+✓

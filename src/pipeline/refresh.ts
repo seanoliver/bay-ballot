@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
@@ -23,13 +24,16 @@ export type RefreshDeps = {
 export type RefreshOptions = {
   root: string;
   election: string;
-  ids?: string[];
+  ids?: string[]; // default: every guide with an endorsement file
   browser?: boolean;
   archive?: boolean;
-  force?: boolean;
-  forceExtract?: boolean;
+  force?: boolean; // accept a result that empties or halves the picks
+  forceExtract?: boolean; // extract even when no page changed
   verify?: boolean; // default true
-  maxChanged?: number;
+  maxChanged?: number; // budget guard: extract at most this many guides per run
+  // Guides reported as shrunk earlier, with the hash of their pages then. If the pages still
+  // hash the same, the guide is not re-extracted (no model call); it stays reported.
+  shrunkSkip?: Record<string, string>;
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -39,11 +43,12 @@ export type GuideResult =
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
   | { id: string; status: "failed"; error: string }
-  | { id: string; status: "shrunk"; message: string; notes: string[] }
+  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string }
+  | { id: string; status: "shrunk-skipped"; pageHash: string }
   | {
       id: string;
       status: "changed";
-      dataChanged: boolean;
+      dataChanged: boolean; // the endorsement file changed (something new to publish)
       diff: string[];
       notes: string[];
       held: HeldPick[];
@@ -97,7 +102,7 @@ async function refreshGuide(
   for (const url of urls) {
     const fetched = await deps.fetchSource(url, { browser });
     const p = pagePath(opts.root, opts.election, id, url);
-    const stored = storedText(fetched);
+    const stored = storedText(fetched, { ballot: data.ballot });
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(readStored(p), stored, data.ballot) });
   }
 
@@ -107,6 +112,8 @@ async function refreshGuide(
     for (const p of pages) writeStored(p.path, p.stored);
     return { id, status: "unchanged" };
   }
+  const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
+  if (!opts.forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
 
@@ -114,7 +121,7 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, data.ballot, guide, sources);
   const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
   const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
-  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes };
+  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash };
 
   let archived: ArchivedSource[] | undefined;
   if (opts.archive && deps.archiveUrl) {
@@ -140,6 +147,7 @@ async function refreshGuide(
     usage: { extract: usage },
   };
 
+  // Verify only what this run changed; an unchanged file was verified before.
   if (opts.verify !== false && !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) {
     const v = await verify(deps.client, data.ballot, guide, next, sources);
     const applied = applyVerdicts(next, v.output);
@@ -165,6 +173,10 @@ async function refreshGuide(
   return result;
 }
 
+/**
+ * Re-check each guide's pages and extract (then verify) only guides whose pages changed in a
+ * way that could matter. A run where nothing relevant changed makes no model calls.
+ */
 export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promise<GuideResult[]> {
   const log = deps.log ?? (() => {});
   const data = loadElection(opts.root, opts.election);
@@ -200,6 +212,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
       return [r.message, ...r.notes.map((n) => `  ! ${n}`)].join("\n");
+    case "shrunk-skipped":
+      return `${r.id}: shrunk earlier, pages unchanged since; not re-extracted`;
     case "changed":
       return [
         `${r.id}: ${r.dataChanged ? "changed" : "re-extracted, no data change"}`,
@@ -212,7 +226,8 @@ function describe(r: GuideResult): string {
 
 const showPick = (p: HeldPick["pick"]) => (Array.isArray(p) ? p.join(" / ") : p);
 
-// USD per million tokens.
+// $ per million tokens. Extraction: Claude Sonnet 5.5; verification: Claude Opus 5.5.
+// Cache writes are 1.25x input; cache reads $0.20.
 const RATES = {
   extract: { in: 2, out: 10, cacheWrite: 2.5, cacheRead: 0.2 },
   verify: { in: 4, out: 20, cacheWrite: 5, cacheRead: 0.2 },
@@ -233,12 +248,14 @@ export function costOf(results: GuideResult[]): number {
   );
 }
 
+/** 0 = clean, 1 = an error, 2 = something needs review (held picks or a shrunk result). */
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
-  if (results.some((r) => r.status === "shrunk" || (r.status === "changed" && r.held.length > 0))) return 2;
+  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && r.held.length > 0))) return 2;
   return 0;
 }
 
+/** Markdown summary of a refresh run, for the pull request body. */
 export function summarize(results: GuideResult[], { date }: { date: string }): string {
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
@@ -252,7 +269,7 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
     "",
     `| checked | unchanged | re-extracted | data changed | deferred | skipped | failed |`,
     `|---|---|---|---|---|---|---|`,
-    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length} |`,
+    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
     "",
     `Estimated model cost: $${costOf(results).toFixed(2)}`,
   ];
@@ -266,10 +283,10 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }
   }
-  const problems = [...by("failed"), ...by("shrunk")];
+  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
   if (problems.length) {
     lines.push("", "## Needs attention");
-    for (const r of problems) lines.push(`- ${r.status === "failed" ? `${r.id}: FAILED — ${r.error}` : r.status === "shrunk" ? r.message.replace(/^!!\s*/, "") : r.id}`);
+    for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
   }
   const deferred = by("deferred").map((r) => r.id);
   if (deferred.length) lines.push("", `Deferred (budget): ${deferred.join(", ")} — picked up by the next run.`);
@@ -280,6 +297,10 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
   return lines.join("\n") + "\n";
 }
 
+/**
+ * Fetch every extractable guide's sources and store their normalized text, with no model calls.
+ * Run once so the first scheduled refresh compares against today's pages, not an empty store.
+ */
 export async function seedPages(
   deps: RefreshDeps,
   opts: Pick<RefreshOptions, "root" | "election" | "ids" | "browser">,
@@ -293,7 +314,7 @@ export async function seedPages(
     let stored = 0;
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser })));
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot: data.ballot }));
         stored++;
       }
       out.push({ id, stored });
@@ -303,4 +324,23 @@ export async function seedPages(
     deps.log?.(`${id}: stored ${stored} page(s)${out.at(-1)?.error ? ` — FAILED: ${out.at(-1)?.error}` : ""}`);
   }
   return out;
+}
+
+export type ResultJson = {
+  exitCode: number;
+  extracted: string[];
+  deferred: string[];
+  failed: { id: string; error: string }[];
+  shrunk: { id: string; pageHash: string }[];
+};
+
+/** Machine-readable run result for the workflow: what was extracted, and what needs a person. */
+export function resultJson(results: GuideResult[], exitCode: number): ResultJson {
+  return {
+    exitCode,
+    extracted: results.filter((r) => r.status === "changed").map((r) => r.id),
+    deferred: results.filter((r) => r.status === "deferred").map((r) => r.id),
+    failed: results.flatMap((r) => (r.status === "failed" ? [{ id: r.id, error: r.error }] : [])),
+    shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
+  };
 }

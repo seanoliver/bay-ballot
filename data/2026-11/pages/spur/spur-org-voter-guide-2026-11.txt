@@ -9,59 +9,105 @@ Prop
 A
 Departments and Commission
 Vote YES
+Prop
 B
 Public Bank
 Vote NO
+Prop
 C
 Housing Trust Fund
+Vote YES
+Prop
 D
 Ballot Measure Process
+Vote YES
+Prop
 E
 City Administrator Duties
+Vote YES
+Prop
 F
 Executive Branch Management
+Vote YES
+Prop
 G
 Cars in Sunset Dunes
+Vote NO
+Prop
 H
 Muni Parcel Tax
+Vote YES
+Prop
 I
 Transfer Tax Set-Aside
+Vote NO
+Prop
 J
 Transfer Tax on Foreclosures
+Vote YES
 Oakland (OAK)
 Measure
 EE
 Governance Structure
+Vote YES
+Measure
 FF
+Transfer Tax on Foreclosures
+Vote YES
 Bay Area (BA)
+Prop
 RTM
 Regional Transit Sales Tax
+Vote YES
 California (CA)
+Prop
 1
 Affordable Housing Bond
+Vote YES
+Prop
 2
 Rainy Day Fund
+Vote YES
+Prop
 3
 High-Earner Income Tax Extension
+Vote YES
+Prop
 4
 Campaign Financing
+Vote YES
+Prop
 5
 Recall Process Reform
+Vote YES
+Prop
 37
 Homeowner Loans
+Vote YES
+Prop
 39
 California Voter ID
+Vote NO
+Prop
 40
 Billionaire Tax
 No Recommendation
+Prop
 41
 Audits of Special Taxes
+Vote NO
+Prop
 42
 Personal Property Taxes
+Vote NO
+Prop
 43
 Local Tax Threshold
+Vote NO
+Prop
 45
 Environmental Review (CEQA)
+No Recommendation
 SPUR Voter Guide Purpose and Process
 The SPUR Voter Guide aims to offer objective analysis and advise voters on which measures will deliver real solutions.
 For this election, SPUR analyzed local, regional, and state measures related to our policy areas that will appear on San Francisco, San José, and Oakland ballots.

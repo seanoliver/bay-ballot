@@ -238,7 +238,10 @@ describe("partial ranking", () => {
 describe("held picks", () => {
   const held = { contestId: "prop-b", pick: "Y", reason: "wrong-pick", evidence: "The page says No on Prop B." };
   it("accepts held picks with a reason and evidence", () => {
-    const r = EndorsementFile.safeParse({ ...file, held: [held, { ...held, contestId: "sup-8", pick: ["A One"], reason: "old-election" }] });
+    const r = EndorsementFile.safeParse({
+      ...file,
+      held: [held, { ...held, contestId: "sup-8", pick: ["A One"], reason: "old-election" }, { ...held, contestId: "prop-c", reason: "unverified" }],
+    });
     expect(r.success).toBe(true);
   });
   it("rejects unknown reasons, bad ids and empty picks", () => {

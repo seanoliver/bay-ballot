@@ -71,7 +71,7 @@ export type ArchivedSource = z.infer<typeof ArchivedSource>;
 export const HeldPick = z.object({
   contestId: Slug,
   pick: Entry.shape.pick,
-  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election"]),
+  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified"]),
   evidence: z.string(),
 });
 export type HeldPick = z.infer<typeof HeldPick>;

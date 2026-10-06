@@ -4,15 +4,24 @@ Service Employees International Union
 Member Log In
 Search Menu
 SEIU 1021: Back to home
+Member Log In
 More options
 Header link
 Contact
 Read more
+Header link
 Become a Member
+Read more
 Social header
 Facebook
+Read more
+Social header
 Twitter
+Read more
+Social header
 Instagram
+Read more
+[SEIU 1021]
 Election Endorsements:
 Let’s elect pro-labor candidates and pass measures that help our communities!
 Post
@@ -80,6 +89,7 @@ Liz Ortega – District 20
 state senate
 Scott Sakakihara – District 10
 alameda county
+​Regional Transit Measure - Vote YES!
 Alameda City council
 ​Malia Vella - Mayor
 ALBANY CITY COUNCIL
@@ -142,6 +152,7 @@ contra costa county
 state assembly
 Buffy Wicks – District 14
 Rebecca Bauer-Kahan – District 16
+​Regional Transit Measure - Vote YES!
 RICHMOND MAYOR
 Claudia Jiménez
 El cerrito CITY COUNCIL
@@ -164,11 +175,13 @@ Local BALLOT MEASURE​
 City of San Pablo
 Measure S- Rent stabilization and tenant protection - Vote YES
 PENINSULA & SOUTH BAY
+state assembly
 Marc Berman – District 23
 Alex Lee – District 24
 Ash Kalra – District 25
 Patrick Ahrens – District 26
 SANTA CLARA COUNTY
+​Regional Transit Measure - Vote YES!
 ​SAN JOSE CITY COUNCIL​
 Peter Ortiz – District 5
 Gordon Chester - District 9
@@ -177,14 +190,17 @@ Erik Poicon - At large
 milpitas CITY COUNCIL​
 Seema Kanani - At large
 NORTH CENTRAL
+​U.S. HOUSE OF REPRESENTATIVES
 Ami Berra - Congressional District 3
 Mike Thompson - Congressional District 4
 Dr. Richard Pan – Congressional District 6
 Mai Vang - Congressional District 7
+state assembly
 Cecilia Aguiar-Curry - District 4
 Maggy Krell - District 6
 Amy Slavensky – District 7
 Lori Wilson – District 11
+state senate
 Angelique Ashby – District 8
 NAPA COUNTY
 Napa City council
@@ -197,6 +213,7 @@ Dr. Flojaune Cofer - District 1
 Oranit Limmaneeprasert - TA 2
 DUAL: Deborah Ortiz and Zima Creason – TA 6
 SOLANO COUNTY
+Board of Supervisors
 Michael Silva – District 4
 ​Fairfield CITY COUNCIL​
 Scott Tonneson- Mayor
@@ -260,6 +277,7 @@ Local ballot measures
 Measure K - Vote YES
 Measure L - Vote YES
 CENTRAL VALLEY
+state assembly
 Rhodesia Ransom - District 13
 SAN JOAQUIN COUNTY
 Tracy city council
@@ -289,3 +307,4 @@ Remember me
 Request new password
 Commands
 Support portal
+Log in

@@ -14,11 +14,15 @@ What a run does:
 
 Then the workflow:
 
-- **Nothing relevant changed:** no PR, no commit. Page-text drift (dates, banners) is discarded; it never counts as a change, so it does not need to be stored.
-- **Something changed:** it pushes `data/refresh-<date>-<run>`, opens a PR into `main` with the summary and a cc to Sean, then runs `validate`, `npm test` and `npm run build` itself (PRs opened by the workflow's token don't trigger other workflows).
-  - Clean (exit 0) and checks pass: squash-merged automatically; Vercel deploys `main`.
+- **Nothing relevant changed:** no commit. Page-text drift (dates, banners) is discarded; it never counts as a change, so it does not need to be stored.
+- **Something changed:** it commits to the single branch `data/refresh` and opens one PR into `main` with the summary and a cc to Sean. It then runs `validate`, `npm test` and `npm run build` itself, because PRs opened by the workflow's token don't trigger other workflows.
+  - Clean (exit 0), checks pass, and the PR is not labeled `needs-review`: squash-merged automatically, and Vercel deploys `main`.
   - Picks held or a result shrank (exit 2), or a check failed: the PR stays open with the `needs-review` label and a comment saying why.
   - Error (exit 1, e.g. a page failed to load): the run is marked failed. If anything else changed, its PR stays open too.
+- **One PR at a time:** while the refresh PR is open, each daily run starts from the `data/refresh` branch rather than `main`. Its stored page text and held picks are the baseline, so nothing is re-extracted twice. New changes are added as another commit, and the PR body is replaced with the latest summary plus a comment. Once a PR is labeled `needs-review` it is never auto-merged, even if a later run is clean; merge it by hand after review. If the PR is closed without merging, the next run deletes the leftover branch and starts again from `main`.
+
+- **Needs a person but nothing to commit:** an issue titled "Data refresh needs review" is opened, or updated if one is open, with the summary and a cc to Sean. Examples: a guide's picks shrank to under half, or a page failed to load. When a later run is clean, the issue is closed automatically.
+- **Shrunk guides:** the extraction is not written and the guide's page text is not stored. The issue keeps a hash of the guide's pages in a hidden `shrunk-state` comment. While that guide's pages hash the same, later runs report it as "shrunk earlier, pages unchanged since; not re-extracted" and make no model call. Once the page changes, it is re-extracted. To clear one by hand, fix the input, or delete its entry from the hidden comment.
 
 Nothing is ever pushed straight to `main`.
 

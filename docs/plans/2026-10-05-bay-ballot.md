@@ -1375,6 +1375,8 @@ Commit `docs: refresh runbook`.
 
 - **Address / ZIP filter (first post-launch item).** Replaces the district pickers, which were removed on 2026-10-05 as confusing. A visitor enters an address or ZIP; the site shows only contests on their ballot, using `Contest.jurisdiction` (kept in the data for this). ZIPs can span districts, so a ZIP that maps to several districts should ask for the street address.
 - **Guide and contest page layout.** Review layout and spacing on `/guides/<id>` and `/<election>/<contest>`; they reuse list and detail components and haven't had the design pass the main ballot view got.
+- **Guide favicons.** Show each guide's favicon next to its name in chips, lists and quote attributions. Fetch once with `bb` and commit the files (no hotlinking, so visitors' browsers never contact guide sites). Same size and treatment for every guide, with a monogram fallback when a guide has no usable icon.
+- **Agreement filter.** Show only unanimous contests (every guide with a position agrees), or only contested ones (leader under 60%, or a split). Computed from the guides currently counted, so it updates as guides are filtered. Sort by agreement as an option.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
 - District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
