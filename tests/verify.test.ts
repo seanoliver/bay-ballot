@@ -134,6 +134,17 @@ describe("verifierPrompt", () => {
       expect(prompt).toContain(c);
     }
   });
+  it("tells the auditor how quotes are displayed", () => {
+    expect(prompt).toContain(
+      'A quote is always shown under its contest and pick. "It" or "This measure" referring to that contest\'s measure, and "He" or "She" when the pick names a single candidate, are not not-standalone.',
+    );
+    expect(prompt).toContain(
+      "For a pick that names several candidates, a quote starting with He/She/His/Her is standalone only if the same quote names one of the endorsed candidates.",
+    );
+    expect(prompt).toContain(
+      "Mark not-substantive only when the sentence gives no reason at all; a fact cited as a reason for the position counts as a reason.",
+    );
+  });
   it("is deterministic for caching", () => expect(verifierPrompt(ballot)).toBe(prompt));
 });
 
