@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -9,6 +9,7 @@ import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
+import { navModel, sectionOf, spySection } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
+import { SectionNav } from "./SectionNav";
 import { useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
@@ -37,6 +39,7 @@ const subscribeDesktop = (onChange: () => void) => {
 };
 const isDesktop = () => window.matchMedia(DESKTOP).matches;
 const STEP_URL_MS = 250;
+const msFromNow = (ms: number) => performance.now() + ms;
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -66,6 +69,46 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
+  const nav = useMemo(() => navModel(groups), [groups]);
+  const [navSection, setNavSection] = useState<string | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
+  const [navStuck, setNavStuck] = useState(false);
+  const spyPausedUntil = useRef(0);
+  useEffect(() => {
+    let frame = 0;
+    const spy = () => {
+      frame = 0;
+      const bar = document.querySelector("[data-section-nav]");
+      const barBox = bar?.getBoundingClientRect();
+      setNavStuck(barBox !== undefined && barBox.top <= 0.5 && window.scrollY > 0);
+      if (performance.now() < spyPausedUntil.current) return;
+      const headings = nav.flatMap((p) => p.sections).map((x) => ({ id: x.id, top: document.getElementById(x.id)?.getBoundingClientRect().top ?? Infinity }));
+      const line = (barBox?.bottom ?? 0) + window.innerHeight * 0.25;
+      const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      setNavSection(spySection(headings, { line, atBottom, viewport: window.innerHeight }));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(spy);
+    };
+    spy();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [nav]);
+  const jumpTo = (id: string) => {
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    const bar = document.querySelector("[data-section-nav]");
+    const offset = (bar?.getBoundingClientRect().height ?? 0) + 8;
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    spyPausedUntil.current = msFromNow(smooth ? 1000 : 100);
+    window.scrollTo({ top: window.scrollY + heading.getBoundingClientRect().top - offset, behavior: smooth ? "smooth" : "auto" });
+    setNavSection(nav.find((p) => p.id === id)?.sections[0]?.id ?? id);
+  };
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, (id: string) => {
@@ -135,6 +178,10 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   };
 
   useBallotKeys((action: KeyAction) => {
+    if (action === "jump") {
+      setNavOpen(true);
+      return;
+    }
     // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
     if (!window.matchMedia(DESKTOP).matches) return false;
     if (action === "help") {
@@ -157,6 +204,8 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     setExiting(null);
     setStepped(id);
     stepWrite.push(id);
+    spyPausedUntil.current = msFromNow(200);
+    setNavSection(sectionOf(nav, id));
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
     row?.scrollIntoView({ block: "nearest" });
@@ -188,7 +237,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
         className="min-w-0 pb-10"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
-        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
+        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k g / Shift+?" : "ArrowDown ArrowUp") : undefined}
         data-keys="list"
         onKeyDown={onEscape}
       >
@@ -221,12 +270,15 @@ export function BallotView({ election, area, links, intro, groups, guides, files
             </a>
           ) : null}
         </div>
-        {groups.map((g) => (
+        <SectionNav places={nav} current={navSection} open={navOpen} stuck={navStuck} onOpenChange={setNavOpen} onJump={jumpTo} />
+        {groups.map((g, gi) => (
           <section key={g.key} aria-label={g.heading}>
-            <SectionHeading>{g.heading}</SectionHeading>
-            {g.sections.map((s) => (
+            <SectionHeading id={nav[gi].id}>{g.heading}</SectionHeading>
+            {g.sections.map((s, si) => (
               <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
-                <SectionHeading as="h3">{s.name}</SectionHeading>
+                <SectionHeading as="h3" id={nav[gi].sections[si].id}>
+                  {s.name}
+                </SectionHeading>
                 <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
                   {s.contests.map((c) => (
                     <li key={c.id}>

@@ -198,3 +198,19 @@ describe("trailing", () => {
     vi.useRealTimers();
   });
 });
+
+describe("section menu key", () => {
+  it("g opens the section menu, and counts as a single-key shortcut", () => {
+    expect(keyAction(key("g"), body)).toBe("jump");
+    expect(permits("jump", "g", "page", true)).toBe(true);
+    expect(permits("jump", "g", "list", true)).toBe(true);
+    expect(permits("jump", "g", "page", false)).toBe(false);
+    expect(permits("jump", "g", "filters", true)).toBe(false);
+  });
+  it("an open menu blocks shortcuts, and focus left in a closing one counts as the page", () => {
+    expect(OVERLAY).toContain("[role=menu]:not([data-closed])");
+    const at = (inside: string) => ({ tagName: "A", closest: (sel: string) => (sel.includes(inside) ? {} : null) });
+    expect(keyPlace(at("[role=menu]:not([data-closed])"), false)).toBe("overlay");
+    expect(keyPlace(at("[role=menu][data-closed]"), false)).toBe("page");
+  });
+});
