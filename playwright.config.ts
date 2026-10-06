@@ -1,7 +1,9 @@
-import { defineConfig, devices } from "@playwright/test";
+import fs from "node:fs";
+import { defineConfig, devices, webkit } from "@playwright/test";
 
 const PORT = Number(process.env.PORT ?? 3200);
 const BASE = `http://127.0.0.1:${PORT}`;
+const HAS_WEBKIT = fs.existsSync(webkit.executablePath());
 
 export default defineConfig({
   testDir: "e2e",
@@ -14,6 +16,7 @@ export default defineConfig({
     // Chromium, not WebKit: CI installs only Chromium.
     { name: "phone", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
+    ...(HAS_WEBKIT ? [{ name: "desktop-webkit", grep: /desktop keyboard/, use: { ...devices["Desktop Safari"], viewport: { width: 1440, height: 900 } } }] : []),
   ],
   webServer: {
     command: `npm run build && npx next start -p ${PORT}`,

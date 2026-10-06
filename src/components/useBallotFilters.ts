@@ -36,7 +36,12 @@ function subscribe(onChange: () => void) {
 
 // Not router.replace: that refetches from the server and scrolls.
 function replaceQuery(q: string) {
-  window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
+  // Safari throws SecurityError past 100 replaceState calls in 30 seconds.
+  try {
+    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
+  } catch {
+    return;
+  }
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 

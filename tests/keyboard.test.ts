@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { isTypingTarget, keyAction, keyPlace, keyTarget, OVERLAY, permits, readSingleKeys, stepSelection, writeSingleKeys } from "@/lib/keyboard";
+import { describe, expect, it, vi } from "vitest";
+import { isTypingTarget, keyAction, keyPlace, keyTarget, OVERLAY, permits, readSingleKeys, stepSelection, trailing, writeSingleKeys } from "@/lib/keyboard";
 
 const key = (k: string, mods: Partial<{ metaKey: boolean; ctrlKey: boolean; altKey: boolean; shiftKey: boolean; defaultPrevented: boolean }> = {}) => ({
   key: k,
@@ -169,5 +169,32 @@ describe("round 2", () => {
     expect(readSingleKeys(broken)).toBe(true);
     expect(() => writeSingleKeys(broken, false)).not.toThrow();
     expect(readSingleKeys(null)).toBe(true);
+  });
+});
+
+describe("trailing", () => {
+  it("a held sweep writes once, with the last value, after the pause", () => {
+    vi.useFakeTimers();
+    const run = vi.fn();
+    const t = trailing(250, run);
+    for (let i = 0; i < 52; i++) {
+      t.push(`c${i}`);
+      vi.advanceTimersByTime(30);
+    }
+    expect(run).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(run).toHaveBeenCalledWith("c51");
+    vi.useRealTimers();
+  });
+  it("cancel drops the pending write", () => {
+    vi.useFakeTimers();
+    const run = vi.fn();
+    const t = trailing(250, run);
+    t.push("a");
+    t.cancel();
+    vi.advanceTimersByTime(1000);
+    expect(run).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 });

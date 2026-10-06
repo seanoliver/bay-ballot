@@ -298,6 +298,32 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
+  test("a fast sweep of the whole list writes the URL only a few times", async ({ page }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { __replaces: number };
+      w.__replaces = 0;
+      const orig = history.replaceState.bind(history);
+      history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+        w.__replaces += 1;
+        return orig(...args);
+      };
+    });
+    await openBallot(page);
+    const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
+    for (let i = 0; i < ids.length; i++) await page.keyboard.press("ArrowDown");
+    await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
+    const writes = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
+    expect(writes - before).toBeLessThan(10);
+  });
+
+  test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
+    await openBallot(page);
+    await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k / Shift+?");
+  });
+
   test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
     await page.keyboard.press("Shift+?");
@@ -314,11 +340,17 @@ test.describe("desktop keyboard", () => {
     await expect(dialog).toBeHidden();
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp");
     await page.reload();
     const button = page.getByRole("button", { name: "Keyboard shortcuts" });
     await button.click();
     await expect(dialog).toBeVisible();
     await expect(toggle).not.toBeChecked();
+    await expect(dialog.getByText("Search guides (off)")).toBeVisible();
+    await expect(dialog.getByText("Show these shortcuts (off)")).toBeVisible();
+    await dialog.getByText("Single-key shortcuts (j, k, /, and ?)").click();
+    await expect(toggle).toBeChecked();
+    await expect(dialog.getByText("Search guides", { exact: true })).toBeVisible();
   });
 
   test("in the detail pane arrows don't switch contests but j does", async ({ page }) => {

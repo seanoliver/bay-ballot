@@ -1,8 +1,8 @@
 "use client";
 
-import { useId } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "cn";
 
 const SHORTCUTS: [string[], string][] = [
   [["↓", "j"], "Next contest"],
@@ -11,6 +11,8 @@ const SHORTCUTS: [string[], string][] = [
   [["/"], "Search guides"],
   [["?"], "Show these shortcuts"],
 ];
+
+const isSingle = (k: string) => k.length === 1 && /[a-z/?]/.test(k);
 
 export function ShortcutsDialog({
   open,
@@ -23,7 +25,6 @@ export function ShortcutsDialog({
   singleKeys: boolean;
   onSingleKeysChange: (on: boolean) => void;
 }) {
-  const label = useId();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
@@ -31,23 +32,36 @@ export function ShortcutsDialog({
           <DialogTitle>Keyboard shortcuts</DialogTitle>
         </DialogHeader>
         <dl className="space-y-2 text-sm">
-          {SHORTCUTS.map(([keys, label]) => (
-            <div key={label} className="flex items-center justify-between gap-4">
-              <dt className="flex gap-1">
-                {keys.map((k) => (
-                  <kbd key={k} className="min-w-6 rounded border border-border bg-muted px-1.5 text-center font-sans text-xs leading-6">
-                    {k}
-                  </kbd>
-                ))}
-              </dt>
-              <dd>{label}</dd>
-            </div>
-          ))}
+          {SHORTCUTS.map(([keys, action]) => {
+            const off = !singleKeys && keys.every(isSingle);
+            return (
+              <div key={action} className={cn("flex items-center justify-between gap-4", off && "text-muted-foreground")}>
+                <dt className="flex gap-1">
+                  {keys.map((k) => {
+                    const keyOff = !singleKeys && isSingle(k);
+                    return (
+                      <kbd
+                        key={k}
+                        className={cn(
+                          "min-w-6 rounded border border-border bg-muted px-1.5 text-center font-sans text-xs leading-6",
+                          keyOff && "line-through opacity-60",
+                        )}
+                      >
+                        {k}
+                        {keyOff && !off ? <span className="sr-only"> (off)</span> : null}
+                      </kbd>
+                    );
+                  })}
+                </dt>
+                <dd>{off ? `${action} (off)` : action}</dd>
+              </div>
+            );
+          })}
         </dl>
-        <div className="flex items-center justify-between gap-4 border-t border-border pt-3 text-sm">
-          <span id={label}>Single-key shortcuts (j, k, /, and ?)</span>
-          <Switch aria-labelledby={label} checked={singleKeys} onCheckedChange={onSingleKeysChange} />
-        </div>
+        <label className="flex cursor-pointer items-center justify-between gap-4 border-t border-border pt-3 text-sm">
+          <span>Single-key shortcuts (j, k, /, and ?)</span>
+          <Switch checked={singleKeys} onCheckedChange={onSingleKeysChange} />
+        </label>
       </DialogContent>
     </Dialog>
   );

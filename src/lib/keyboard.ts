@@ -71,3 +71,20 @@ export function writeSingleKeys(storage: StorageLike | null, on: boolean): void 
     else storage?.setItem(SINGLE_KEYS, "off");
   } catch {}
 }
+
+export function trailing<T>(ms: number, run: (value: T) => void): { push: (value: T) => void; cancel: () => void } {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return {
+    push(value) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = undefined;
+        run(value);
+      }, ms);
+    },
+    cancel() {
+      clearTimeout(timer);
+      timer = undefined;
+    },
+  };
+}

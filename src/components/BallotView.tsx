@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { cardDescription, sections } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
-import { stepSelection, type KeyAction } from "@/lib/keyboard";
+import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,7 @@ const subscribeDesktop = (onChange: () => void) => {
   return () => mq.removeEventListener("change", onChange);
 };
 const isDesktop = () => window.matchMedia(DESKTOP).matches;
+const STEP_URL_MS = 250;
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -60,7 +61,15 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
 
   const visible = sections(ballot.contests);
   const all = visible.flatMap((s) => s.contests);
-  const selectedId = pickSelected(all.map((c) => c.id), requested);
+  const [stepped, setStepped] = useState<string | null>(null);
+  const [stepWrite] = useState(() =>
+    trailing(STEP_URL_MS, (id: string) => {
+      setRequested(id);
+      setStepped(null);
+    }),
+  );
+  useEffect(() => stepWrite.cancel, [stepWrite]);
+  const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
@@ -85,6 +94,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     } else {
       setExiting(null);
     }
+    stepWrite.cancel();
+    setStepped(null);
     setRequested(next);
   };
 
@@ -136,7 +147,11 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     }
     const id = stepSelection(all.map((c) => c.id), selectedId, action);
     if (id === null) return false;
-    select(id);
+    setAnimate(true);
+    clearTimeout(exitTimer.current);
+    setExiting(null);
+    setStepped(id);
+    stepWrite.push(id);
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
     row?.scrollIntoView({ block: "nearest" });
@@ -168,6 +183,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         className="min-w-0 pb-10"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
+        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
         data-keys="list"
         onKeyDown={onEscape}
       >
@@ -211,7 +227,6 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
                     rows={rowsFor(c.id)}
                     slots={slotsFor(c)}
                     selected={c.id === selectedId}
-                    keyshortcuts={singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp"}
                     onClick={(e) => onRowClick(e, c)}
                   />
                 </li>
@@ -293,7 +308,6 @@ function ContestRow({
   rows,
   slots,
   selected,
-  keyshortcuts,
   onClick,
 }: {
   href: string;
@@ -301,7 +315,6 @@ function ContestRow({
   rows: Row[];
   slots: Slots;
   selected: boolean;
-  keyshortcuts: string;
   onClick: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const description = cardDescription(contest);
@@ -328,7 +341,6 @@ function ContestRow({
             href={href}
             onClick={onClick}
             aria-current={selected ? "true" : undefined}
-            aria-keyshortcuts={keyshortcuts}
             className={ROW_LINK}
           >
             {contest.title}
