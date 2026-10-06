@@ -75,7 +75,7 @@ export function pickReasons(side: Side, rows: Row[], contest: Contest): { top: S
 
 export function resultHeadline(contest: Contest, rows: Row[]): ResultHeadline {
   const t = tally(contest, rows.map((r) => r.entry));
-  const none: ResultHeadline = { lead: "No picks yet", tone: "none", detail: "" };
+  const none: ResultHeadline = { lead: "No endorsements yet", tone: "none", detail: "" };
   if (t.kind === "measure") {
     if (t.verdict === "none") return none;
     if (t.verdict === "split") return { lead: "Split", tone: "split", detail: guides(t.total) };

@@ -122,6 +122,6 @@ describe("resultHeadline", () => {
     expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["X"])])).toEqual({ lead: "X, Y", tone: "candidate", detail: "2 guides" });
   });
   it("no picks", () => {
-    expect(resultHeadline(measure, [])).toEqual({ lead: "No picks yet", tone: "none", detail: "" });
+    expect(resultHeadline(measure, [])).toEqual({ lead: "No endorsements yet", tone: "none", detail: "" });
   });
 });

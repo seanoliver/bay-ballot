@@ -9,7 +9,7 @@ export type BarSummary = { aria: string; caption: string };
 
 const SLOT_TONES = { 1: "c1", 2: "c2", 3: "c3", 4: "c4", other: "other" } as const;
 const MAX_SLOTS = 4;
-const EMPTY: BarSegment = { key: "none", label: "No picks yet", count: 0, pct: 100, tone: "empty" };
+const EMPTY: BarSegment = { key: "none", label: "No endorsements yet", count: 0, pct: 100, tone: "empty" };
 
 
 // Whole-number percents of `counts` that always sum to 100 (largest remainder).
@@ -93,7 +93,7 @@ const guidesOf = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 const single = (t: Tally, contest: Pick<Contest, "seats">) => t.kind === "candidate" && contest.seats === 1 && t.counts.length === 1;
 
 export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">): { aria: string } {
-  if (isEmpty(t)) return { aria: `${contest.title}: no picks yet` };
+  if (isEmpty(t)) return { aria: `${contest.title}: no endorsements yet` };
   if (t.kind === "measure") return { aria: `${contest.title}: ${t.yes} Yes, ${t.no} No` };
   if (contest.seats > 1) {
     return { aria: `${contest.title}: ${t.counts.slice(0, contest.seats).map((c) => `${c.name} ${c.count} of ${t.total}`).join(", ")}` };
@@ -106,7 +106,7 @@ export type LegendItem = { key: string; label: string; value: string; tone: BarT
 export type BarLegend = { lead: LegendItem | null; others: LegendItem[]; caption: string };
 
 export function barLegend(t: Tally, contest: Pick<Contest, "seats" | "candidates">, slots?: Slots): BarLegend {
-  if (isEmpty(t)) return { lead: null, others: [], caption: "No picks yet" };
+  if (isEmpty(t)) return { lead: null, others: [], caption: "No endorsements yet" };
   if (t.kind === "measure") {
     if (t.verdict === "split") return { lead: { key: "split", label: "Split", value: `${t.yes}–${t.no}`, tone: "split" }, others: [], caption: guidesOf(t.total) };
     const yes = t.verdict === "Y";
@@ -139,7 +139,7 @@ export function surname(name: string): string {
 }
 
 export function barShortParts(t: Tally, contest: Pick<Contest, "seats">): { label: string; value: string } {
-  if (isEmpty(t)) return { label: "No picks", value: "" };
+  if (isEmpty(t)) return { label: "None yet", value: "" };
   if (t.kind === "measure") {
     if (t.verdict === "split") return { label: "Split", value: "" };
     return { label: t.verdict === "Y" ? "Yes" : "No", value: `${t.pct}%` };

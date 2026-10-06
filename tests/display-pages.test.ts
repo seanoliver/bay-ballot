@@ -120,11 +120,11 @@ describe("electionIntro", () => {
   const pick = { pick: "Y", ranked: false, quotes: [] } as Entry;
   it("titles the city's ballot and counts guides, contests and picks", () => {
     const files = { a: { hasReasoning: true, picks: { gov: pick, "prop-a": pick } }, b: { hasReasoning: false, picks: { gov: pick } } };
-    expect(electionIntro(ballot, files)).toEqual({ title: "San Francisco ballot", line: "November 3, 2026 · 2 guides · 2 contests · 3 picks" });
+    expect(electionIntro(ballot, files)).toEqual({ title: "San Francisco ballot", line: "November 3, 2026 · 2 guides · 2 contests · 3 endorsements" });
   });
   it("ignores picks for contests not on the ballot, and singularizes", () => {
     const files = { a: { hasReasoning: true, picks: { gov: pick, stale: pick } } };
-    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, files).line).toBe("November 3, 2026 · 1 guide · 1 contest · 1 pick");
+    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, files).line).toBe("November 3, 2026 · 1 guide · 1 contest · 1 endorsement");
   });
   it("falls back to the ballot title without a city contest", () => {
     expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, {}).title).toBe("San Francisco General Election");

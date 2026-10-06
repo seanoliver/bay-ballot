@@ -8,7 +8,7 @@ test("ballot page has the header, logo, intro and footer", async ({ page }) => {
   await expect(home).toBeVisible();
   await expect(home.locator("svg")).toHaveAttribute("aria-hidden", "true");
   await expect(page.getByRole("banner").getByRole("link", { name: "About" })).toBeVisible();
-  await expect(page.getByText(/November 3, 2026 · \d+ guides · \d+ contests · \d+ picks/)).toBeVisible();
+  await expect(page.getByText(/November 3, 2026 · \d+ guides · \d+ contests · \d+ endorsements/)).toBeVisible();
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText("Made with ❤️ in San Francisco by")).toBeVisible();
   await expect(footer.getByRole("link", { name: "Sean Oliver" })).toHaveAttribute("href", "https://seanoliver.dev");
@@ -20,12 +20,12 @@ test("the reasons filter goes into the URL and survives a reload", async ({ page
   await openBallot(page);
   if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
   const dialogOrPage = isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
-  await dialogOrPage.getByRole("checkbox", { name: "Only guides that explain their picks" }).click();
+  await dialogOrPage.getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
   await expect(page).toHaveURL(/[?&]why=1/);
   await page.reload();
   await expect(page).toHaveURL(/[?&]why=1/);
   if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
-  await expect(dialogOrPage.getByRole("checkbox", { name: "Only guides that explain their picks" })).toBeChecked();
+  await expect(dialogOrPage.getByRole("checkbox", { name: "Only guides that explain their endorsements" })).toBeChecked();
 });
 
 test.describe("desktop detail pane", () => {
@@ -110,7 +110,7 @@ test.describe("phone sheet", () => {
     await page.goto(`${BALLOT}?off=sf-gop`);
     const filters = page.getByRole("button", { name: /Filters/ });
     const sheet = page.getByRole("dialog", { name: "Filters" });
-    const why = sheet.getByRole("checkbox", { name: "Only guides that explain their picks" });
+    const why = sheet.getByRole("checkbox", { name: "Only guides that explain their endorsements" });
 
     await filters.click();
     await why.click();
