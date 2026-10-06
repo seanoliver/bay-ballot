@@ -19,7 +19,9 @@ import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
 const DESKTOP = "(min-width: 1024px)";
-const PANE = "hidden lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
+const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
+const EXIT_MS = 150;
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 type Props = {
   election: string;
@@ -37,11 +39,17 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
   const paneRef = useRef<HTMLDivElement>(null);
+  // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
+  const [animate, setAnimate] = useState(false);
+  // The contest still drawn while its pane fades out; it's inert, then unmounted after EXIT_MS.
+  const [exiting, setExiting] = useState<Contest | null>(null);
+  const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const visible = sections(ballot.contests);
   const all = visible.flatMap((s) => s.contests);
   const selectedId = pickSelected(all.map((c) => c.id), requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
+  const shown = current ?? exiting ?? undefined;
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
   // EMPTY, not `filters`: a filter must never repaint a candidate.
   const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
@@ -51,12 +59,27 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     paneRef.current?.scrollTo({ top: 0 });
   }, [selectedId]);
 
+  useEffect(() => () => clearTimeout(exitTimer.current), []);
+
+  // Desktop selection changes go through here so opening and closing animate.
+  const select = (next: string | null) => {
+    setAnimate(true);
+    clearTimeout(exitTimer.current);
+    if (next === null && current && !reducedMotion()) {
+      setExiting(current);
+      exitTimer.current = setTimeout(() => setExiting(null), EXIT_MS);
+    } else {
+      setExiting(null);
+    }
+    setRequested(next);
+  };
+
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
     if (window.matchMedia(DESKTOP).matches) {
       const next = toggleSelection(selectedId, c.id);
-      setRequested(next);
+      select(next);
       setAnnounce(next ? `Showing ${c.title}` : "Details closed");
     } else {
       setRequested(c.id);
@@ -67,7 +90,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const closePane = () => {
     if (selectedId === null) return;
     const row = document.getElementById(`row-d-${selectedId}`);
-    setRequested(null);
+    select(null);
     setAnnounce("Details closed");
     row?.focus();
   };
@@ -83,8 +106,10 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     <div
       className={cn(
         FRAME,
-        "lg:grid lg:gap-6",
-        current ? "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)]" : "lg:grid-cols-[17rem_minmax(0,1fr)]",
+        // Always three tracks; the pane's track grows from 0fr so the list's width can transition.
+        "lg:grid lg:gap-x-6",
+        current ? "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)]" : "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,0fr)]",
+        animate && "lg:transition-[grid-template-columns] lg:duration-200 lg:ease-out motion-reduce:transition-none",
       )}
     >
       <p aria-live="polite" className="sr-only">
@@ -95,7 +120,14 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       </noscript>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
-      <div className={cn("min-w-0 pb-10", !current && "lg:max-w-3xl")} onKeyDown={onEscape}>
+      <div
+        className={cn(
+          "min-w-0 pb-10",
+          current ? "lg:max-w-full" : "lg:max-w-3xl",
+          animate && "lg:transition-[max-width] lg:duration-200 lg:ease-out motion-reduce:transition-none",
+        )}
+        onKeyDown={onEscape}
+      >
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
@@ -137,16 +169,28 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         ))}
       </div>
 
-      {current ? (
-        <div ref={paneRef} className={PANE} onKeyDown={onEscape}>
+      {shown ? (
+        <div
+          ref={paneRef}
+          // Slides and fades in on open (from @starting-style), out on close; inert while it leaves.
+          className={cn(
+            PANE,
+            "min-w-0",
+            animate && "lg:transition-[opacity,translate] lg:duration-200 lg:ease-out lg:starting:translate-x-4 lg:starting:opacity-0",
+            animate && "motion-reduce:transition-none",
+            !current && "lg:translate-x-4 lg:opacity-0 lg:duration-150",
+          )}
+          inert={!current}
+          onKeyDown={onEscape}
+        >
           <section aria-labelledby="detail-title" className="rounded-xl bg-card p-6 ring-1 ring-foreground/10">
             <ContestDetail
               election={election}
-              contest={current}
-              rows={rowsFor(current.id)}
+              contest={shown}
+              rows={rowsFor(shown.id)}
               pending={pending}
               titleId="detail-title"
-              slots={slotsFor(current)}
+              slots={slotsFor(shown)}
               action={
                 <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
                   <X aria-hidden="true" className="size-5" />
