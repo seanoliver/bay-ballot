@@ -41,6 +41,17 @@ describe("readChangelog", () => {
       ["2026-10-05-a.yml", "A"],
     ]);
   });
+  it("same day: a higher --N suffix is newer, compared as a number, before the name", () => {
+    const f = (name: string) => [name, "date: 2026-10-07\ntype: data\ntitle: t\n"];
+    const root = dir(Object.fromEntries([f("2026-10-07-refresh-a.yml"), f("2026-10-07-refresh-a--2.yml"), f("2026-10-07-refresh-a--10.yml"), f("2026-10-07-refresh-a--3.yml"), f("2026-10-07-refresh-b.yml")]));
+    expect(readChangelog(root).entries.map((x) => x.file)).toEqual([
+      "2026-10-07-refresh-a--10.yml",
+      "2026-10-07-refresh-a--3.yml",
+      "2026-10-07-refresh-a--2.yml",
+      "2026-10-07-refresh-b.yml",
+      "2026-10-07-refresh-a.yml",
+    ]);
+  });
   it("reports invalid files instead of throwing", () => {
     const root = dir({ "2026-10-06-bad.yml": "date: 2026-10-06\ntype: feature\ntitle: x\n", "2026-10-06-junk.yml": "date: [" });
     const { entries, errors } = readChangelog(root);
@@ -57,6 +68,10 @@ describe("validateChangelog", () => {
   const f = (file: string, date: string) => ({ ...e(date), file });
   it("passes well-named files dated today or earlier", () => {
     expect(validateChangelog([f("2026-10-06-launch.yml", "2026-10-06")], "2026-10-06")).toEqual([]);
+  });
+  it("accepts a --N suffix and rejects other double hyphens", () => {
+    expect(validateChangelog([f("2026-10-06-refresh-growsf--2.yml", "2026-10-06")], "2026-10-06")).toEqual([]);
+    expect(validateChangelog([f("2026-10-06-refresh--growsf.yml", "2026-10-06")], "2026-10-06")).toEqual(["changelog/2026-10-06-refresh--growsf.yml: name must be <YYYY-MM-DD>-<slug>.yml"]);
   });
   it("flags future dates, names that don't follow <date>-<slug>.yml or don't match the entry date, and duplicates", () => {
     expect(validateChangelog([f("2026-10-07-x.yml", "2026-10-07")], "2026-10-06")).toEqual(["changelog/2026-10-07-x.yml: dated 2026-10-07, in the future"]);
