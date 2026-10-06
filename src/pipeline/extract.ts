@@ -52,7 +52,7 @@ const MAX_TOKENS = 64000;
 const MAX_QUOTES = 3;
 const NOTE_QUOTE_CHARS = 80;
 
-/** No clock or per-guide text: the prompt must stay byte-identical across guides to hit the cache. */
+/** No clock or per-guide text: the prompt must stay byte-identical across guides with the same areas to hit the cache. */
 export function systemPrompt(ballot: Ballot): string {
   const contests = ballot.contests.map((c) => ({
     id: c.id,

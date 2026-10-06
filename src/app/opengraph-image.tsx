@@ -4,7 +4,7 @@ import { exampleShare } from "@/components/share/data";
 import { shareFonts } from "@/components/share/fonts";
 import { Lines, MUTED, run, SIZE, ShareFrame } from "@/components/share/ShareFrame";
 
-export const alt = "Bay Ballot: every San Francisco voter guide in one place, November 3, 2026";
+export const alt = "Bay Ballot: every Bay Area voter guide in one place, November 3, 2026";
 export const size = SIZE;
 export const contentType = "image/png";
 
@@ -15,7 +15,7 @@ export default async function Image() {
       <ShareFrame>
         <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
           <Lines
-            text="Every San Francisco voter guide in one place · November 3, 2026"
+            text="Every Bay Area voter guide in one place · November 3, 2026"
             maxChars={32}
             maxLines={2}
             style={{ fontSize: 54, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.15 }}

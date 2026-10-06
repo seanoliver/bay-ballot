@@ -13,8 +13,8 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "Bay Ballot — every SF voter guide in one place",
-  description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
+  title: "Bay Ballot — every Bay Area voter guide in one place",
+  description: "What Bay Area voter guides recommend for each contest, side by side, with quotes that link to their source.",
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/" },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),

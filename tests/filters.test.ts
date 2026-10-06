@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  filterQuery,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
   typeState, pendingGuides, EMPTY,
@@ -210,5 +211,13 @@ describe("guideGroups", () => {
   });
   it("returns nothing when no guide matches", () => {
     expect(guideGroups(clubs, clubFiles, "zzz")).toEqual([]);
+  });
+});
+
+describe("filterQuery", () => {
+  it("keeps only the params that change the filters, so selecting a contest doesn't rebuild them", () => {
+    expect(filterQuery("?off=sf-gop&c=prop-b&offc=san-mateo&why=1", ["c", "offc"])).toBe("off=sf-gop&why=1");
+    expect(filterQuery("?c=prop-b", ["c", "offc"])).toBe(filterQuery("?c=prop-c", ["c", "offc"]));
+    expect(filterQuery("", ["c"])).toBe("");
   });
 });

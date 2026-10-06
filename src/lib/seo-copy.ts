@@ -47,7 +47,7 @@ export function familyName(name: string): string {
 function measureObject(c: Contest, place: PlaceName, { named = false }: { named?: boolean } = {}): string {
   if (c.kind === "retention") return `retaining ${officeName(c, place).replace(/^1st District Court of Appeal$/, "the 1st District Court of Appeal justices")}`;
   const label = measureLabel(c);
-  if (!label.startsWith("Prop")) return `the ${label}`;
+  if (!label.startsWith("Prop")) return /\bMeasure [A-Z]+$/.test(label) ? label : `the ${label}`;
   return named && c.jurisdiction.level !== "state" ? officeName(c, place) : label;
 }
 

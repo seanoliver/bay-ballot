@@ -21,15 +21,19 @@ import {
   type GuideInfo,
   type PickFile,
 } from "@/lib/filters";
+import { hiddenCountiesLabel, type CountyOption } from "@/lib/counties";
 import { displayName } from "@/lib/display";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
+
+export type CountyControl = { options: CountyOption[]; off: string[]; saved: string[]; onToggle: (id: string) => void; onShowAll: () => void };
 
 type Props = {
   filters: Filters;
   onChange: (f: Filters) => void;
   guides: GuideInfo[];
   files: Record<string, PickFile>;
+  counties?: CountyControl;
 };
 
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
@@ -57,7 +61,10 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
         <SlidersHorizontal aria-hidden="true" className="text-muted-foreground" />
         <span className="text-left">
           <span className="font-semibold">Filters</span>
-          <span className="text-muted-foreground"> · {countedLabel(filterSummary(props.filters, props.guides, props.files))}</span>
+          <span className="text-muted-foreground">
+            {" · "}
+            {[countedLabel(filterSummary(props.filters, props.guides, props.files)), hiddenCountiesLabel(props.counties?.off.length ?? 0)].filter(Boolean).join(" · ")}
+          </span>
         </span>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85dvh] gap-0 rounded-t-2xl">
@@ -72,7 +79,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
   );
 }
 
-function FilterControls({ filters: f, onChange, guides, files }: Props) {
+function FilterControls({ filters: f, onChange, guides, files, counties }: Props) {
   return (
     <>
       <Section title="Show">
@@ -81,11 +88,35 @@ function FilterControls({ filters: f, onChange, guides, files }: Props) {
           Only guides that explain their endorsements
         </label>
       </Section>
+      {counties ? <CountyChecklist {...counties} /> : null}
       <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
         Reset filters
       </Button>
     </>
+  );
+}
+
+function CountyChecklist({ options, off, saved, onToggle, onShowAll }: CountyControl) {
+  return (
+    <Section title="Counties">
+      {options.map((o) => (
+        <label key={o.id} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+          <Checkbox checked={!off.includes(o.id)} onCheckedChange={() => onToggle(o.id)} />
+          {o.name}
+        </label>
+      ))}
+      <Button
+        variant="link"
+        className="h-10 px-0 text-sm underline aria-disabled:cursor-default aria-disabled:no-underline aria-disabled:opacity-50"
+        aria-disabled={saved.length === 0}
+        onClick={() => {
+          if (saved.length) onShowAll();
+        }}
+      >
+        All counties
+      </Button>
+    </Section>
   );
 }
 

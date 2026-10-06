@@ -189,6 +189,10 @@ test("every page names its canonical URL on bayballot.com", async ({ page }) => 
   }
 });
 
+async function pauseClock(page: Page) {
+  await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
+}
+
 test.describe("desktop keyboard", () => {
   test.skip(({ isMobile }) => isMobile, "desktop only");
 
@@ -246,15 +250,18 @@ test.describe("desktop keyboard", () => {
     await expect(box).toBeFocused();
   });
 
-  test("after clicking pane text, arrows scroll the pane", async ({ page }) => {
+  test("after clicking pane text, arrows are left to the browser", async ({ page, browserName }) => {
     await openBallot(page, "?c=us-rep-11");
     const pane = page.locator("[data-keys=pane]");
     await pane.locator("p").filter({ visible: true }).first().click();
     await expect.poll(() => page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    const prevented = await page.evaluate(() => !window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", cancelable: true })));
+    expect(prevented).toBe(false);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
-    await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    // WebKit doesn't scroll an inner scroller from the keyboard after a click on text.
+    if (browserName === "chromium") await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   });
 
   test("after clicking filter text, arrows do nothing", async ({ page }) => {
@@ -298,7 +305,109 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
-  test("a fast sweep of the whole list writes the URL only a few times", async ({ page }) => {
+  test("holding ArrowDown through the whole list writes the URL once, on release", async ({ page }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { __calls: number };
+      w.__calls = 0;
+      const native = History.prototype.replaceState;
+      History.prototype.replaceState = function (...args: Parameters<History["replaceState"]>) {
+        w.__calls += 1;
+        return native.apply(this, args);
+      };
+    });
+    await page.clock.install();
+    await openBallot(page);
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+    await pauseClock(page);
+    const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const before = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
+    for (let i = 0; i < ids.length; i++) await page.keyboard.down("ArrowDown");
+    await page.keyboard.up("ArrowDown");
+    await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
+    const calls = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
+    expect(calls - before).toBe(2);
+  });
+
+  test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
+    await openBallot(page);
+    await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k g / Shift+?");
+  });
+
+
+  test("a step is written on keyup, so a reload right after keeps it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("ArrowDown");
+    await page.reload();
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("leaving the page mid-hold writes the step, so Back restores it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.down("ArrowDown");
+    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await page.goto("/about");
+    await page.keyboard.up("ArrowDown");
+    await page.goBack();
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("following a pane link mid-hold lands on the guide, and Back returns to the stepped contest", async ({ page }) => {
+    await page.route(/\/guides\//, async (route) => {
+      await new Promise((r) => setTimeout(r, 1000));
+      await route.continue();
+    });
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.down("ArrowDown");
+    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    const link = page.locator("[data-keys=pane] a[href^='/guides/']").first();
+    const href = (await link.getAttribute("href"))!;
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: 10_000 });
+    await page.keyboard.up("ArrowDown");
+    await page.waitForTimeout(400);
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    await page.goBack();
+    await expect(page).toHaveURL(/\/2026-11\?c=us-rep-15$/);
+  });
+
+  test("arrows every 260ms and a filter every 520ms for 15 seconds stay under the browser's history limit", async ({ page }) => {
+    test.setTimeout(90_000);
+    // Underneath Next's own wrapper, like the browser: more than 100 calls in 10 seconds throws.
+    await page.addInitScript(() => {
+      const calls: number[] = [];
+      const native = History.prototype.replaceState;
+      History.prototype.replaceState = function (...args: Parameters<History["replaceState"]>) {
+        const now = performance.now();
+        while (calls.length && now - calls[0] > 10_000) calls.shift();
+        calls.push(now);
+        if (calls.length > 100) throw new DOMException("Attempt to use history.replaceState() more than 100 times per 10 seconds", "SecurityError");
+        return native.apply(this, args);
+      };
+    });
+    const errors = watchErrors(page);
+    await openBallot(page, "?c=us-rep-11");
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+    await page.locator("#row-d-us-rep-11").focus();
+    const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" });
+    const started = Date.now();
+    for (let i = 0; Date.now() - started < 15_000; i++) {
+      const at = Date.now();
+      await page.keyboard.press(i % 2 ? "ArrowUp" : "ArrowDown");
+      if (i % 2) await box.evaluate((el: HTMLElement) => el.click(), undefined, { timeout: 2_000 });
+      await page.waitForTimeout(Math.max(0, 260 - (Date.now() - at)));
+    }
+    expect(errors).toEqual([]);
+    const selected = (await page.locator("[id^=row-d-][aria-current=true]").getAttribute("id"))!.replace("row-d-", "");
+    const checked = (await box.getAttribute("aria-checked")) === "true";
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${selected}(&|$)`), { timeout: 15_000 });
+    await expect.poll(() => new URL(page.url()).searchParams.get("why") === "1", { timeout: 15_000 }).toBe(checked);
+    expect(errors).toEqual([]);
+  });
+
+  test("tapping arrows every 150ms for 15 seconds stays within the history rate limit", async ({ page, browserName }) => {
+    test.setTimeout(60_000);
     await page.addInitScript(() => {
       const w = window as unknown as { __replaces: number };
       w.__replaces = 0;
@@ -308,20 +417,39 @@ test.describe("desktop keyboard", () => {
         return orig(...args);
       };
     });
-    await openBallot(page);
-    const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const errors = watchErrors(page);
+    await openBallot(page, "?c=us-rep-11");
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
-    for (let i = 0; i < ids.length; i++) await page.keyboard.press("ArrowDown");
-    await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
-    await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
-    const writes = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
-    expect(writes - before).toBeLessThan(10);
+    const started = Date.now();
+    for (let i = 0; i < 100; i++) {
+      await page.keyboard.press(i % 2 ? "ArrowUp" : "ArrowDown");
+      await page.waitForTimeout(150);
+    }
+    const ms = Date.now() - started;
+    await page.waitForTimeout(400);
+    expect(errors).toEqual([]);
+    await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    const writes = (await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces)) - before;
+    if (browserName === "chromium") expect(writes).toBeLessThanOrEqual(2 * Math.ceil(ms / 250) + 2);
   });
 
-  test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
+
+  test("Enter on the open contest moves into its details; a click still closes it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.locator("#row-d-us-rep-11").focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator("#detail-title")).toBeFocused();
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await page.locator("#row-d-us-rep-11").click();
+    await expect(page).not.toHaveURL(/[?&]c=/);
+  });
+
+  test("the Keyboard shortcuts button is there with single keys on", async ({ page }) => {
     await openBallot(page);
-    await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
-    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k g / Shift+?");
+    await page.getByRole("button", { name: "Keyboard shortcuts" }).click();
+    await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
   });
 
   test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {
@@ -361,6 +489,47 @@ test.describe("desktop keyboard", () => {
     await page.keyboard.press("j");
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
   });
+});
+
+test("resizing to a phone drops a stepped contest that was never written", async ({ page, isMobile }) => {
+  test.skip(isMobile, "starts on desktop");
+  await page.clock.install();
+  await openBallot(page, "?c=us-rep-11");
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  await pauseClock(page);
+  await page.keyboard.down("ArrowDown");
+  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("region", { name: "Contests" })).toHaveCount(0);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  await page.clock.runFor(1000);
+  await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+  await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+});
+
+test("a phone tap drops a stepped contest that was never written", async ({ page, isMobile }) => {
+  test.skip(isMobile, "starts on desktop");
+  await page.clock.install();
+  await openBallot(page, "?c=us-rep-11");
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  await pauseClock(page);
+  await page.keyboard.down("ArrowDown");
+  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  // Phone width for the click handler's one check only, so the resize reset can't be what clears it.
+  await page.evaluate(() => {
+    let phone = false;
+    const real = window.matchMedia.bind(window);
+    window.matchMedia = (q: string) => {
+      if (!phone || q !== "(min-width: 1024px)") return real(q);
+      phone = false;
+      return { ...real(q), matches: false } as MediaQueryList;
+    };
+    document.getElementById("row-d-governor")!.addEventListener("click", () => (phone = true));
+  });
+  await page.locator("#row-d-governor").click();
+  await expect(page).toHaveURL(/[?&]c=governor/);
+  await expect(page.locator("#row-d-governor")).toHaveAttribute("aria-current", "true");
 });
 
 test.describe("phone keyboard", () => {
@@ -421,7 +590,7 @@ test.describe("section nav", () => {
     await openBallot(page);
     await bar(page).click();
     await expect(menu(page)).toBeVisible();
-    await expect(menu(page).getByRole("menuitem", { name: /^California\s*31$/ })).toBeVisible();
+    await expect(menu(page).getByRole("menuitem", { name: /^California\s*\d+$/ })).toBeVisible();
     await menu(page).getByRole("menuitem", { name: /^Judicial/ }).click();
     const heading = page.locator("#section-state-judicial");
     await expect(heading).toBeFocused();
@@ -437,6 +606,22 @@ test.describe("section nav", () => {
     await menu(page).getByRole("menuitem", { name: /^Local candidates/ }).click();
     await expect(page.locator("#section-county-san-francisco-local-candidates")).toBeFocused();
   });
+
+  for (const path of [BALLOT, `${BALLOT}/san-mateo`]) {
+    test(`on ${path} the menu lists every place on the page, and every item has a heading to jump to`, async ({ page }) => {
+      await page.goto(path);
+      const places = await page.locator("[data-keys=list] h2").allTextContents();
+      expect(places).toContain("San Mateo County");
+      await bar(page).click();
+      const items = menu(page).getByRole("menuitem");
+      const hrefs = await items.evaluateAll((els) => els.map((e) => e.getAttribute("href")!));
+      expect(await page.evaluate((ids) => ids.filter((h) => !document.querySelector(h)), hrefs)).toEqual([]);
+      for (const place of places) await expect(menu(page).getByRole("menuitem", { name: new RegExp(`^${place}\\s*\\d+$`) })).toHaveCount(1);
+      await menu(page).getByRole("menuitem", { name: /^Redwood City\s*\d+$/ }).click();
+      await expect(page.locator("#place-city-redwood-city")).toBeFocused();
+      await expect(bar(page)).toHaveAccessibleName(/^Jump to a section\. Now: Redwood City, /);
+    });
+  }
 
   test("with reduced motion the jump is instant", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -464,17 +649,20 @@ test.describe("desktop keyboard section nav", () => {
     await page.keyboard.press("g");
     await expect(menu.getByRole("menuitem", { name: /^Federal/ })).toBeFocused();
     await page.keyboard.press("ArrowDown");
-    await expect(menu.getByRole("menuitem", { name: /^State\s*11$/ })).toBeFocused();
+    await expect(menu.getByRole("menuitem", { name: /^State\s*\d+$/ })).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.locator("#section-state-state")).toBeFocused();
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, State");
   });
 
   test("stepping with j across a section boundary updates the bar", async ({ page }) => {
-    await openBallot(page, "?c=us-rep-15");
+    await openBallot(page);
+    const ids = await page.locator("[aria-label='California: Federal'] a[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const firstState = await page.locator("[aria-label='California: State'] a[id^=row-d-]").first().getAttribute("id");
+    await openBallot(page, `?c=${ids.at(-1)}`);
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
     await page.keyboard.press("j");
-    await expect(page).toHaveURL(/[?&]c=governor/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${firstState!.replace("row-d-", "")}`));
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, State");
   });
 
@@ -501,12 +689,190 @@ test.describe("phone section nav", () => {
     const nav = page.locator("[data-section-nav]");
     const [f, n] = [(await filters.boundingBox())!, (await nav.boundingBox())!];
     expect(n.y).toBeGreaterThanOrEqual(f.y + f.height);
-    await page.mouse.wheel(0, 2000);
+    await page.evaluate(() => window.scrollBy(0, 2000));
     await expect.poll(async () => Math.round((await nav.boundingBox())!.y)).toBe(0);
     await nav.getByRole("button").tap();
     await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).tap();
     await expect(page.locator("#place-county-san-francisco")).toBeFocused();
     await expect(nav.getByRole("button")).toHaveAccessibleName(/^Jump to a section\. Now: San Francisco, /);
+  });
+});
+
+test.describe("pages without the filter column", () => {
+  for (const url of ["/2026-11/us-rep-11", "/guides/growsf", "/about", "/changelog"]) {
+    test(`${url} centers its content at the list's reading width`, async ({ page, isMobile }) => {
+      await page.goto(url);
+      const column = page.locator("[data-page-column]");
+      const box = (await column.boundingBox())!;
+      const width = page.viewportSize()!.width;
+      if (isMobile) {
+        expect(box.x).toBe(16);
+        expect(Math.round(box.width)).toBe(width - 32);
+      } else {
+        expect(Math.round(box.width)).toBe(768);
+        expect(Math.abs(box.x - (width - box.x - box.width))).toBeLessThanOrEqual(1);
+      }
+    });
+  }
+});
+
+test.describe("guide page rows", () => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`the row focus outline has at least 3:1 contrast against the card (${colorScheme})`, async ({ page, isMobile }) => {
+      test.skip(isMobile, "keyboard");
+      await page.emulateMedia({ colorScheme });
+      await page.goto("/guides/growsf");
+      const first = page.locator("ul a[href^='/2026-11/']").first();
+      await first.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      const ratio = await first.evaluate((el) => {
+        const row = el.closest("li")!;
+        const card = getComputedStyle(row.closest("ul")!).backgroundColor;
+        const page = getComputedStyle(document.body).backgroundColor;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = 1;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const paint = (...colors: string[]) => {
+          ctx.clearRect(0, 0, 1, 1);
+          for (const c of colors) {
+            ctx.fillStyle = c;
+            ctx.fillRect(0, 0, 1, 1);
+          }
+          return [...ctx.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+        };
+        const lum = (rgb: number[]) => {
+          const [r, g, b] = rgb.map((v) => {
+            const c = v / 255;
+            return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+          });
+          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const bg = paint(page, card);
+        const fg = paint(page, card, getComputedStyle(row).outlineColor);
+        const [hi, lo] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+        return (hi + 0.05) / (lo + 0.05);
+      });
+      expect(ratio).toBeGreaterThanOrEqual(3);
+    });
+  }
+
+  test("at 320px the chevron stays with the pick and a district number stays with its title", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone width");
+    await page.setViewportSize({ width: 320, height: 700 });
+    await page.goto("/guides/growsf");
+    const lines = await page.locator("ul a[href^='/2026-11/']").evaluateAll((links) =>
+      links.map((a) => {
+        const lineOf = (node: Node, start: number, end: number) => {
+          const r = document.createRange();
+          r.setStart(node, start);
+          r.setEnd(node, end);
+          return Math.round(r.getClientRects()[0].top);
+        };
+        const texts: Text[] = [];
+        const walk = document.createTreeWalker(a.closest("li")!, NodeFilter.SHOW_TEXT);
+        while (walk.nextNode()) if ((walk.currentNode as Text).data.trim()) texts.push(walk.currentNode as Text);
+        const chevron = texts.find((t) => t.data.trim() === "›" || t.data.endsWith("›"))!;
+        const pick = texts[texts.indexOf(chevron) - 1] ?? chevron;
+        const title = texts[0];
+        const m = title.data.match(/(\S+)\s(\d+)$/);
+        return {
+          chevronWithPick: chevron === pick || lineOf(chevron, chevron.data.length - 1, chevron.data.length) === lineOf(pick, pick.data.trimEnd().length - 1, pick.data.trimEnd().length),
+          numberWithTitle: !m || lineOf(title, title.data.length - m[2].length, title.data.length) === lineOf(title, m.index!, m.index! + 1 + m[1].length - 1),
+        };
+      }),
+    );
+    expect(lines.every((l) => l.chevronWithPick)).toBe(true);
+    expect(lines.every((l) => l.numberWithTitle)).toBe(true);
+  });
+
+  test("a row's link names the contest and the guide's pick", async ({ page }) => {
+    await page.goto("/guides/growsf");
+    await expect(page.getByRole("link", { name: /^Governor:? Xavier Becerra$/ })).toBeVisible();
+  });
+
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`a keyboard-focused contest row shows a focus outline (${colorScheme})`, async ({ page, isMobile }) => {
+      test.skip(isMobile, "keyboard");
+      await page.emulateMedia({ colorScheme });
+      await page.goto("/guides/growsf");
+      const first = page.locator("main ul a, ul a[href^='/2026-11/']").first();
+      await first.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      await expect(first).toBeFocused();
+      const outline = await first.evaluate((el) => {
+        const row = el.closest("li") ?? el;
+        const styles = [getComputedStyle(el), getComputedStyle(row)];
+        return styles.map((s) => [s.outlineStyle, s.outlineWidth]);
+      });
+      expect(outline.some(([style, width]) => style !== "none" && width !== "0px")).toBe(true);
+    });
+  }
+});
+
+test.describe("phone history budget", () => {
+  test.skip(({ isMobile }) => !isMobile, "phone only");
+
+  // Underneath Next's wrapper, like the browser: more than 100 push/replace calls in 10 seconds throws.
+  const limitHistory = (page: Page) =>
+    page.addInitScript(() => {
+      const w = window as unknown as { __calls: number[] };
+      w.__calls = [];
+      for (const name of ["pushState", "replaceState"] as const) {
+        const native = History.prototype[name];
+        History.prototype[name] = function (...args: Parameters<History["replaceState"]>) {
+          const now = performance.now();
+          w.__calls.push(now);
+          if (w.__calls.filter((t) => now - t < 10_000).length > 100) throw new DOMException(`Attempt to use history.${name}() more than 100 times per 10 seconds`, "SecurityError");
+          return native.apply(this, args);
+        };
+      }
+    });
+  const busiestWindow = (page: Page) =>
+    page.evaluate(() => {
+      const calls = (window as unknown as { __calls: number[] }).__calls;
+      return Math.max(0, ...calls.map((t) => calls.filter((u) => u >= t && u - t < 10_000).length));
+    });
+
+  test("opening and closing a contest sheet several times a second stays under the history limit", async ({ page, browserName }) => {
+    test.setTimeout(60_000);
+    await limitHistory(page);
+    const errors = watchErrors(page);
+    await openBallot(page);
+    const sheet = page.getByRole("dialog", { name: "Governor" });
+    const started = Date.now();
+    let cycles = 0;
+    while (Date.now() - started < 12_000) {
+      await contestRow(page, "Governor").tap({ timeout: 2_000 });
+      await expect(sheet).toBeVisible({ timeout: 2_000 });
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden({ timeout: 2_000 });
+      cycles += 1;
+    }
+    expect(cycles / 12).toBeGreaterThanOrEqual(3);
+    expect(errors).toEqual([]);
+    if (browserName === "chromium") expect(await busiestWindow(page)).toBeLessThanOrEqual(90);
+  });
+
+  test("a sheet opened while a write is pending keeps that write when it closes", async ({ page }) => {
+    test.setTimeout(60_000);
+    await openBallot(page);
+    await page.getByRole("button", { name: /Filters/ }).click();
+    const filters = page.getByRole("dialog");
+    const why = filters.getByRole("checkbox", { name: "Only guides that explain their endorsements" });
+    for (let i = 0; i < 51; i++) await why.evaluate((el: HTMLElement) => el.click());
+    await expect(why).toBeChecked();
+    await page.keyboard.press("Escape");
+    await expect(filters).toBeHidden();
+    await contestRow(page, "Governor").tap();
+    const sheet = page.getByRole("dialog", { name: "Governor" });
+    await expect(sheet).toBeVisible();
+    await page.waitForTimeout(11_000);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect.poll(() => new URL(page.url()).searchParams.get("why"), { timeout: 12_000 }).toBe("1");
+    await expect(page).toHaveURL(/[?&]c=governor/);
   });
 });
 

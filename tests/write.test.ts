@@ -16,6 +16,18 @@ const picks: Record<string, Entry> = {
 };
 
 describe("nextFile", () => {
+  it("never writes a quote listed in rejectedQuotes, however its spacing or apostrophes differ, and keeps the list", () => {
+    const rejected = [{ text: "Rep. Mullin has served in this seat since 2022.", reason: "not substantive (audit 2026-10-06)" }];
+    const src = "https://g.org/a";
+    const withQuotes = {
+      "us-rep-15": { pick: ["Kevin Mullin"], ranked: false, quotes: [{ text: "Rep.  Mullin has served in this seat since 2022.", source: src }, { text: "Mullin’s record on climate is strong.", source: src }] },
+    } as Record<string, Entry>;
+    const n = nextFile({ ...prev, rejectedQuotes: rejected }, withQuotes, true, "2026-10-05");
+    expect(n.picks["us-rep-15"].quotes.map((q) => q.text)).toEqual(["Mullin’s record on climate is strong."]);
+    expect(n.rejectedQuotes).toEqual(rejected);
+    const back = EndorsementFile.parse(parse(toYaml(n)));
+    expect(back.rejectedQuotes).toEqual(rejected);
+  });
   it("publishes new picks and keeps the file's settings", () => {
     const n = nextFile(prev, picks, true, "2026-10-05");
     expect(n).toMatchObject({

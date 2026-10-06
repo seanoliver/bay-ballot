@@ -1,26 +1,37 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { FILTERS_KEY, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { FILTERS_KEY, filterQuery, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { historyBudget } from "@/lib/history-budget";
 
 export const CHANGE_EVENT = "bb-filters-change";
 
-function readStored(): string | null {
+function readKey(key: string): string | null {
   try {
-    return window.localStorage.getItem(FILTERS_KEY);
+    return window.localStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
-function writeStored(q: string) {
+function writeKey(key: string, v: string) {
   try {
-    window.localStorage.setItem(FILTERS_KEY, q);
+    window.localStorage.setItem(key, v);
   } catch {
   }
 }
 
-const readQuery = () => window.location.search;
+// Counted in browser history calls, which throw past 100 in 10 seconds: Next adds a replaceState after each of our writes and after every popstate.
+export const HISTORY_BUDGET = historyBudget({ max: 90, windowMs: 10_000 });
+const WRITE_COST = 2;
+if (typeof window !== "undefined") window.addEventListener("popstate", () => HISTORY_BUDGET.note(1));
+let pending: { path: string; search: string } | null = null;
+
+export function currentSearch(): string {
+  return pending && pending.path === window.location.pathname ? pending.search : window.location.search;
+}
+
+const readQuery = currentSearch;
 
 function subscribe(onChange: () => void) {
   window.addEventListener("popstate", onChange);
@@ -33,14 +44,19 @@ function subscribe(onChange: () => void) {
   };
 }
 
-// Not router.replace: that refetches from the server and scrolls.
-function replaceQuery(q: string) {
-  // Safari throws when replaceState is called too often; a throw must not break the caller.
+function writePending() {
+  const p = pending;
+  pending = null;
+  if (!p || p.path !== window.location.pathname) return;
   try {
-    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
-  } catch {
-    return;
-  }
+    window.history.replaceState(null, "", p.search || p.path);
+  } catch {}
+}
+
+// Not router.replace: that refetches from the server and scrolls.
+export function replaceQuery(q: string): void {
+  pending = { path: window.location.pathname, search: q ? `?${q}` : "" };
+  HISTORY_BUDGET.run(writePending, WRITE_COST);
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
@@ -50,16 +66,17 @@ export function useQuery(): string {
 
 export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
   const query = useQuery();
-  const stored = useSyncExternalStore(subscribe, readStored, () => null);
-  const filters = useMemo(() => initialFilters({ query, stored, guides }), [query, stored, guides]);
+  const stored = useSyncExternalStore(subscribe, () => readKey(FILTERS_KEY), () => null);
   const keepKey = keep.join(",");
+  const relevant = filterQuery(query, keepKey ? keepKey.split(",") : []);
+  const filters = useMemo(() => initialFilters({ query: relevant, stored, guides }), [relevant, stored, guides]);
 
   const setFilters = useCallback(
     (f: Filters) => {
       const q = toQuery(f);
-      writeStored(q);
+      writeKey(FILTERS_KEY, q);
       const p = new URLSearchParams(q);
-      const current = new URLSearchParams(window.location.search);
+      const current = new URLSearchParams(currentSearch());
       for (const k of keepKey ? keepKey.split(",") : []) {
         const v = current.get(k);
         if (v !== null) p.set(k, v);
@@ -76,12 +93,30 @@ export function useQueryParam(name: string): [string | null, (v: string | null) 
   const value = new URLSearchParams(query).get(name);
   const set = useCallback(
     (v: string | null) => {
-      const p = new URLSearchParams(window.location.search);
+      const p = new URLSearchParams(currentSearch());
       if (v === null) p.delete(name);
       else p.set(name, v);
       replaceQuery(p.toString());
     },
     [name],
+  );
+  return [value, set];
+}
+
+export function useStoredParam(name: string, storageKey: string): [string | null, (v: string) => void] {
+  const query = useQuery();
+  const stored = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
+  const p = new URLSearchParams(query);
+  const value = p.has(name) ? p.get(name) : stored;
+  const set = useCallback(
+    (v: string) => {
+      writeKey(storageKey, v);
+      const q = new URLSearchParams(currentSearch());
+      if (v) q.set(name, v);
+      else q.delete(name);
+      replaceQuery(q.toString());
+    },
+    [name, storageKey],
   );
   return [value, set];
 }

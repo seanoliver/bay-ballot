@@ -1,0 +1,4 @@
+date: 2026-10-06
+type: fix
+title: Contest, guide, About, and changelog pages are centered, at the same width as the ballot list
+pr: 31

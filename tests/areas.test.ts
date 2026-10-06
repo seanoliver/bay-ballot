@@ -63,9 +63,10 @@ describe("areaLinks", () => {
 describe("placeGroups", () => {
   const all = [mpP, propB, prop1, smL, rc2, sup8, rep15, rtm, smX, sccA];
   const groups = placeGroups(all, areas);
-  it("puts California first, then each county in areas.yml order with its cities after it", () => {
+  it("puts California first, then the regional measure, then each county in areas.yml order with its cities after it", () => {
     expect(groups.map((g) => [g.heading, g.sections.flatMap((s) => s.contests.map((x) => x.id))])).toEqual([
-      ["California", ["prop-1", "us-rep-15", "rtm"]],
+      ["California", ["prop-1", "us-rep-15"]],
+      ["Bay Area", ["rtm"]],
       ["San Francisco", ["prop-b", "supervisor-8"]],
       ["San Mateo County", ["san-mateo-county-measure-l"]],
       ["Menlo Park", ["menlo-park-measure-p"]],
@@ -75,7 +76,7 @@ describe("placeGroups", () => {
     ]);
   });
   it("records each group's county for the county filter", () => {
-    expect(groups.map((g) => g.county)).toEqual([null, "San Francisco", "San Mateo", "San Mateo", "San Mateo", "San Mateo", "Santa Clara"]);
+    expect(groups.map((g) => g.county)).toEqual([null, null, "San Francisco", "San Mateo", "San Mateo", "San Mateo", "San Mateo", "Santa Clara"]);
   });
   it("keeps sections in first-appearance order inside a group", () => {
     const a = { ...prop1, id: "a", section: "State" };
