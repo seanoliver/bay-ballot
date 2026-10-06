@@ -8,7 +8,6 @@ export type ChangelogItem = ChangelogEntry & { file: string };
 
 const NAME = /^(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.yml$/i;
 
-// One entry per file in <root>/changelog/, newest first (then filename, descending).
 export function readChangelog(root: string): { entries: ChangelogItem[]; errors: string[] } {
   const dir = path.join(root, "changelog");
   if (!fs.existsSync(dir)) return { entries: [], errors: [] };
