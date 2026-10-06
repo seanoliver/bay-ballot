@@ -25,6 +25,7 @@ describe("ballotViewProps", () => {
         { id: "p", name: "P", type: "club", description: "", homepage: "https://p.org", areas: ["sf"] },
       ],
       endorsements: { g: { ...file(), source: "https://g.org/a" }, p: { ...file(), guide: "p", status: "pending" } },
+      areas: [],
     } as ElectionData;
     expect(ballotViewProps(d)).toEqual({
       ballot: d.ballot,

@@ -13,7 +13,7 @@ describe("systemPrompt", () => {
 
   it("limits extraction to this election", () => {
     expect(prompt).toContain(
-      "Extract only endorsements for the San Francisco General Election on 2026-11-03; ignore every other election.",
+      "Extract only endorsements for the Bay Area General Election on 2026-11-03; ignore every other election.",
     );
   });
 

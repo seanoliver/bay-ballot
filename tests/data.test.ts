@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { loadElection, validateElection, type ElectionData } from "@/lib/data";
 import type { EndorsementFile, Entry } from "@/lib/schema";
+import { SF, SM } from "./fixtures/areas";
 
 const root = path.join(process.cwd(), "tests/fixtures/data");
 
@@ -21,6 +22,7 @@ function base(): ElectionData {
     },
     guides: [{ id: "g", name: "G", description: "", type: "civic", homepage: "https://g.org/", areas: ["sf"] }],
     endorsements: {},
+    areas: [SF],
   };
 }
 function withFile(
@@ -35,11 +37,41 @@ function withFile(
 const e = (pick: Entry["pick"]): Entry => ({ pick, ranked: false, quotes: [] });
 
 describe("data", () => {
+  it("requires every contest to be in an area, and districts to say where they are", () => {
+    const d = base();
+    const m = d.ballot.contests[0];
+    d.ballot.contests.push({ ...m, id: "far", jurisdiction: { level: "city", name: "Atlantis" } });
+    d.ballot.contests.push({ ...m, id: "dist", jurisdiction: { level: "district", name: "Supervisor", district: "1" } });
+    d.ballot.contests.push({
+      ...m, id: "wide",
+      jurisdiction: { level: "district", name: "Water Board", district: "1", within: [{ level: "county", name: "San Francisco" }, { level: "city", name: "San Francisco" }] },
+    });
+    expect(validateElection(d).errors).toEqual([
+      "dist: district jurisdiction requires within",
+      "wide: a local district must be within one place",
+      "far: in no area (check its jurisdiction and data/areas.yml)",
+      "dist: in no area (check its jurisdiction and data/areas.yml)",
+    ]);
+  });
+  it("fails when an area id collides with a contest id", () => {
+    const d = base();
+    d.ballot.contests.push({ ...d.ballot.contests[0], id: "sf" });
+    expect(validateElection(d).errors).toEqual(["area 'sf' collides with contest 'sf': both would be /2026-11/sf"]);
+  });
+  it("checks guide areas and that each pick is in one of them", () => {
+    const d = base();
+    d.areas.push(SM);
+    d.ballot.contests.push({ ...d.ballot.contests[0], id: "mp-p", jurisdiction: { level: "city", name: "Menlo Park" } });
+    d.guides.push({ ...d.guides[0], id: "x", areas: ["nowhere"] });
+    const r = validateElection(withFile(d, { "mp-p": e("Y"), "prop-b": e("N") }));
+    expect(r.errors).toEqual(["x: unknown area 'nowhere'", "g/mp-p: contest is outside the guide's areas (sf)"]);
+  });
   it("loads an election", () => {
     const d = loadElection(root, "2026-11");
     expect(d.ballot.contests).toHaveLength(2);
     expect(d.guides.map((g) => g.id)).toEqual(["growsf"]);
     expect(d.endorsements.growsf.status).toBe("published");
+    expect(d.areas.map((a) => a.id)).toEqual(["sf"]);
   });
   it("reports unknown contests as errors and fuzzy names as warnings", () => {
     const r = validateElection(loadElection(root, "2026-11"));
@@ -73,6 +105,8 @@ describe("data", () => {
       "board: duplicate candidate 'A One'",
       "duplicate contest id 'board'",
       "board: district jurisdiction requires a district",
+      "board: district jurisdiction requires within",
+      "board: in no area (check its jurisdiction and data/areas.yml)",
     ]);
   });
   it("warns on too many names and pending files with picks", () => {
@@ -140,6 +174,7 @@ describe("loadElection failures", () => {
     return dir;
   }
   const ballot = fs.readFileSync(path.join(root, "2026-11/ballot.yml"), "utf8");
+  const areas = fs.readFileSync(path.join(root, "areas.yml"), "utf8");
   it("throws with the path on schema errors", () => {
     const dir = tmp({ "2026-11/ballot.yml": "election: nope\n" });
     expect(() => loadElection(dir, "2026-11")).toThrow(/2026-11\/ballot\.yml/);
@@ -166,10 +201,15 @@ describe("loadElection failures", () => {
     expect(() => loadElection(dir, "2026-11")).toThrow(/b\.yml/);
   });
   it("throws on non-.yml entries but ignores dotfiles", () => {
-    const ok = { "2026-11/ballot.yml": ballot, "guides/.gitkeep": "", "guides/.DS_Store": "" };
+    const ok = { "2026-11/ballot.yml": ballot, "areas.yml": areas, "guides/.gitkeep": "", "guides/.DS_Store": "" };
     expect(() => loadElection(tmp(ok), "2026-11")).not.toThrow();
     expect(() => loadElection(tmp({ ...ok, "guides/growsf.yaml": guide("growsf") }), "2026-11")).toThrow(/growsf\.yaml/);
     expect(() => loadElection(tmp({ ...ok, "2026-11/endorsements/notes.txt": "x" }), "2026-11")).toThrow(/notes\.txt/);
+  });
+  it("throws with the path when areas.yml is missing or has a duplicate id", () => {
+    expect(() => loadElection(tmp({ "2026-11/ballot.yml": ballot }), "2026-11")).toThrow(/areas\.yml/);
+    const dup = `areas:\n${areas.split("areas:\n")[1]}${areas.split("areas:\n")[1]}`;
+    expect(() => loadElection(tmp({ "2026-11/ballot.yml": ballot, "areas.yml": dup }), "2026-11")).toThrow(/duplicate area id 'sf'/);
   });
   it("throws when ballot election differs from directory", () => {
     const dir = tmp({ "2026-06/ballot.yml": ballot });
