@@ -1,5 +1,6 @@
 import type { Row } from "./filters";
 import type { Contest } from "./schema";
+import { topPicks } from "./display";
 import { tally } from "./score";
 
 const PAGE_WHO = "San Francisco voter guides";
@@ -85,51 +86,61 @@ export function contestTitle(c: Contest, rows: Row[], ballotDate: string): strin
     if (t.verdict === "none") return fit(head, []);
     if (t.verdict === "split") return fit(head, [`guides split ${t.yes}–${t.no}`]);
     const side = t.verdict === "Y" ? "Yes" : "No";
-    const n = `${Math.max(t.yes, t.no)} of ${t.total}`;
-    return fit(head, [`${n} guides say ${side}`, `${n} say ${side}`]);
+    const k = Math.max(t.yes, t.no);
+    const n = `${k} of ${t.total}`;
+    return fit(head, [`${n} ${plural(t.total, "guide", "guides")} ${plural(k, "says", "say")} ${side}`, `${n} ${plural(k, "says", "say")} ${side}`]);
   }
   if (c.seats > 1) {
     const head = [`SF ${officeName(c)} endorsements (${when})`, `${officeName(c)} endorsements (${when})`];
     if (t.counts.length === 0) return fit(head, []);
-    const top = t.counts.slice(0, c.seats).map((x) => familyName(x.name));
+    const top = topPicks(t, c.seats).map((x) => familyName(x.name));
     return fit(head, [`${top.join(", ")} lead`, `${top[0]} leads`]);
   }
   const head = [`${officeName(c)} endorsements (SF, ${when})`, `${officeName(c)} endorsements (${when})`];
   if (t.counts.length === 0) return fit(head, []);
   if (t.counts.length === 1) {
     const { name, count } = t.counts[0];
-    return fit(head, [`${count} ${plural(count, "guide endorses", "guides endorse")} ${name}`, name]);
+    return fit(head, [
+      `${count} ${plural(count, "guide endorses", "guides endorse")} ${name}`,
+      `${name} (${count} ${plural(count, "guide", "guides")})`,
+      `${count} ${plural(count, "backs", "back")} ${familyName(name)}`,
+    ]);
   }
   if (t.leader === null) return fit(head, ["guides split"]);
-  return fit(head, [`${t.leader} leads ${t.count} of ${t.total}`, `${t.leader} leads`]);
+  return fit(head, [`${t.leader} leads ${t.count} of ${t.total}`, `${familyName(t.leader)} leads ${t.count} of ${t.total}`, `${familyName(t.leader)} leads`]);
 }
 
 function answer(c: Contest, rows: Row[], level: 0 | 1 | 2 = 0, WHO = PAGE_WHO): string {
   const office = level === 2 ? "" : ` for ${officeInSentence(c)}`;
   const t = tally(c, rows.map((r) => r.entry));
-  if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return `No ${WHO.replace(/s$/, "")} has taken a position yet`;
+  const one = WHO.replace(/s$/, "");
+  const who = (n: number) => plural(n, one, WHO);
+  if (t.total === 0 || (t.kind === "candidate" && t.counts.length === 0)) return `No ${one} has taken a position yet`;
   if (t.kind === "measure") {
     if (t.verdict === "split") return `${WHO} split ${t.yes}–${t.no} on ${measureObject(c)}`;
-    return `${Math.max(t.yes, t.no)} of ${t.total} ${WHO} recommend ${t.verdict === "Y" ? "Yes" : "No"} on ${measureObject(c)}`;
+    const k = Math.max(t.yes, t.no);
+    return `${k} of ${t.total} ${who(t.total)} ${plural(k, "recommends", "recommend")} ${t.verdict === "Y" ? "Yes" : "No"} on ${measureObject(c)}`;
   }
   if (c.seats > 1) {
-    const top = t.counts.slice(0, c.seats);
-    return `Most-endorsed: ${top.map((x, i) => (i === 0 ? `${x.name} (${x.count} of ${t.total} guides)` : `${x.name} (${x.count})`)).join(", ")}`;
+    const top = topPicks(t, c.seats);
+    if (level === 2) return `Most-endorsed: ${top.map((x, i) => (i === 0 ? `${x.name} (${x.count} of ${t.total} ${plural(t.total, "guide", "guides")})` : `${x.name} (${x.count})`)).join(", ")}`;
+    return `Most-endorsed for ${officeInSentence(c)} by ${t.total} ${who(t.total)}: ${top.map((x) => `${x.name} (${x.count})`).join(", ")}`;
   }
   if (t.counts.length === 1) {
     const only = t.counts[0];
     const first = firstChoice(c, rows, only.name) ? " as first choice" : "";
     const rest = othersNamed(rows, only.name) ? "" : "; none endorse another candidate";
-    return `${only.count} ${only.count === 1 ? `${WHO.replace(/s$/, "")} endorses` : `${WHO} endorse`} ${only.name}${first}${office}${rest}`;
+    return `${only.count} ${only.count === 1 ? `${one} endorses` : `${WHO} endorse`} ${only.name}${first}${office}${rest}`;
   }
   if (t.leader === null) {
     const names = t.tied.length === 2 ? t.tied.join(" and ") : `${t.tied.slice(0, -1).join(", ")}, and ${t.tied.at(-1)}`;
     return `${WHO} split between ${names}${office}, with ${t.counts[0].count} each`;
   }
   const first = firstChoice(c, rows, t.leader) ? " as first choice" : "";
-  const lead = `${t.count} of ${t.total} ${WHO} endorse ${t.leader}${first}${office}`;
+  const lead = `${t.count} of ${t.total} ${who(t.total)} ${plural(t.count, "endorses", "endorse")} ${t.leader}${first}${office}`;
   const next = t.counts[1];
-  return level === 0 ? `${lead}; ${next.count} ${next.count === 1 ? "endorses" : "endorse"} ${next.name}` : lead;
+  const secondTied = t.counts.filter((x) => x.count === next.count).length > 1;
+  return level === 0 && !secondTied ? `${lead}; ${next.count} ${plural(next.count, "endorses", "endorse")} ${next.name}` : lead;
 }
 
 export function answerSentence(c: Contest, rows: Row[], asOf: string | null): string {
@@ -141,5 +152,6 @@ export function contestDescription(c: Contest, rows: Row[]): string {
     const d = `${answer(c, rows, level, SHORT_WHO)}. ${READ_MORE}`;
     if (d.length <= MAX_DESCRIPTION) return d;
   }
-  return `${clip(answer(c, rows, 2, SHORT_WHO), MAX_DESCRIPTION - READ_MORE.length - 1)} ${READ_MORE}`;
+  const text = clip(answer(c, rows, 2, SHORT_WHO), MAX_DESCRIPTION - READ_MORE.length - 2);
+  return `${text}${text.endsWith("…") ? " " : ". "}${READ_MORE}`;
 }

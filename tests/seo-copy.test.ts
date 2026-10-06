@@ -72,10 +72,10 @@ describe("contestTitle", () => {
   });
   it("long titles fall back to shorter endings, ending as short as needed", () => {
     const supt = contest({ title: "Superintendent of Public Instruction", kind: "candidate", jurisdiction: { level: "state", name: "California" } });
-    expect(contestTitle(supt, many(14, ["Richard Barrera"]), NOV)).toBe("Superintendent of Public Instruction endorsements (Nov 2026): Richard Barrera");
+    expect(contestTitle(supt, many(14, ["Richard Barrera"]), NOV)).toBe("Superintendent of Public Instruction endorsements (Nov 2026): 14 back Barrera");
     const boeq = contest({ title: "Board of Equalization, District 2", kind: "candidate" });
     expect(contestTitle(boeq, [...many(9, ["Sally J. Lieber"]), ...many(5, ["Other Person"])], NOV)).toBe(
-      "Board of Equalization District 2 endorsements (Nov 2026): Sally J. Lieber leads",
+      "Board of Equalization District 2 endorsements (Nov 2026): Lieber leads 9 of 14",
     );
   });
     it("multi-seat: the top names by family name", () => {
@@ -116,7 +116,7 @@ describe("answerSentence", () => {
   it("multi-seat", () => {
     const rows = [...many(17, ["Phil Kim"]), ...many(12, ["Tim Tung"]), ...many(11, ["Autumn Brown Garibay"])];
     expect(answerSentence(boe, rows, AS_OF)).toBe(
-      "Most-endorsed: Phil Kim (17 of 40 guides), Tim Tung (12), Autumn Brown Garibay (11), as of October 5, 2026.",
+      "Most-endorsed for Board of Education by 40 San Francisco voter guides: Phil Kim (17), Tim Tung (12), Autumn Brown Garibay (11), as of October 5, 2026.",
     );
   });
   it("no positions", () => {
@@ -146,8 +146,13 @@ describe("every contest on the current ballot", () => {
     const { guides, files } = ballotViewProps(d);
     for (const c of d.ballot.contests) {
       const rows = activeEntries(c.id, guides, files, EMPTY);
-      expect(contestDescription(c, rows).length, c.id).toBeLessThanOrEqual(MAX_DESCRIPTION);
-      expect(contestTitle(c, rows, d.ballot.date).length, c.id).toBeLessThanOrEqual(MAX_TITLE);
+      const description = contestDescription(c, rows);
+      expect(description.length, c.id).toBeLessThanOrEqual(MAX_DESCRIPTION);
+      expect(description, c.id).toMatch(/(\. |… )See every guide's endorsement and reasons\.$/);
+      const title = contestTitle(c, rows, d.ballot.date);
+      expect(title.length, c.id).toBeLessThanOrEqual(MAX_TITLE);
+      const ending = title.split(": ")[1];
+      if (ending !== undefined) expect(ending, c.id).toMatch(/\d|split|lead/);
     }
   });
 });
@@ -186,5 +191,50 @@ describe("review fixes", () => {
     const rows = many(3, ["Gary McCoy", "Michael T. Nguyen"], true);
     expect(answerSentence(sup8, rows, AS_OF)).not.toContain("none endorse another candidate");
     expect(answerSentence(governor, many(3, ["Xavier Becerra"]), AS_OF)).toContain("none endorse another candidate");
+  });
+});
+
+describe("edge cases", () => {
+  const supt = contest({ title: "Superintendent of Public Instruction", kind: "candidate", jurisdiction: { level: "state", name: "California" } });
+  it("a title never ends in a bare name", () => {
+    expect(contestTitle(supt, many(1, ["Richard Barrera"]), NOV)).toBe("Superintendent of Public Instruction endorsements (Nov 2026): 1 backs Barrera");
+    const long = contest({ title: "Superintendent of Public Instruction and Schools", kind: "candidate" });
+    expect(contestTitle(long, many(14, ["Richard Barrera"]), NOV)).toBe("Superintendent of Public Instruction and Schools endorsements (SF, Nov 2026)");
+  });
+  it("multi-seat keeps candidates tied for the last seat", () => {
+    const rows = [...many(5, ["Phil Kim"]), ...many(4, ["Tim Tung"]), ...many(3, ["Ann Lee"]), ...many(3, ["Bo Park"]), row(["Cy Out"])];
+    expect(contestTitle(boe, rows, NOV)).toBe("SF Board of Education endorsements (Nov 2026): Kim, Tung, Lee, Park lead");
+    expect(answerSentence(boe, rows, AS_OF)).toBe(
+      "Most-endorsed for Board of Education by 16 San Francisco voter guides: Phil Kim (5), Tim Tung (4), Ann Lee (3), Bo Park (3), as of October 5, 2026.",
+    );
+  });
+  it("drops the runner-up clause when second place is tied", () => {
+    const rows = [...many(5, ["Scott Wiener"]), ...many(2, ["Connie Chan"]), ...many(2, ["Saikat Chakrabarti"])];
+    expect(answerSentence(usRep, rows, AS_OF)).toBe("5 of 9 San Francisco voter guides endorse Scott Wiener for U.S. Representative, District 11, as of October 5, 2026.");
+  });
+  it("singular counts", () => {
+    expect(contestTitle(propB, many(1, "Y"), NOV)).toBe("SF Prop B endorsements (Nov 2026): 1 of 1 guide says Yes");
+    expect(contestTitle(propB, [...many(1, "Y"), ...many(2, "N")], NOV)).toBe("SF Prop B endorsements (Nov 2026): 2 of 3 guides say No");
+    expect(contestTitle(governor, many(1, ["Xavier Becerra"]), NOV)).toBe("Governor endorsements (SF, Nov 2026): 1 guide endorses Xavier Becerra");
+    expect(answerSentence(propB, many(1, "Y"), AS_OF)).toBe("1 of 1 San Francisco voter guide recommends Yes on Prop B, as of October 5, 2026.");
+    expect(answerSentence(usRep, [...many(2, ["Scott Wiener"]), row(["Connie Chan"])], AS_OF)).toBe(
+      "2 of 3 San Francisco voter guides endorse Scott Wiener for U.S. Representative, District 11; 1 endorses Connie Chan, as of October 5, 2026.",
+    );
+    expect(answerSentence(boe, [row(["Phil Kim", "Tim Tung", "Ann Lee"])], AS_OF)).toBe(
+      "Most-endorsed for Board of Education by 1 San Francisco voter guide: Ann Lee (1), Phil Kim (1), Tim Tung (1), as of October 5, 2026.",
+    );
+  });
+  it("multi-seat descriptions name the contest and SF voter guides when they fit", () => {
+    const rows = [...many(17, ["Phil Kim"]), ...many(12, ["Tim Tung"]), ...many(11, ["Autumn Brown Garibay"])];
+    expect(contestDescription(boe, rows)).toBe(
+      "Most-endorsed for Board of Education by 40 SF voter guides: Phil Kim (17), Tim Tung (12), Autumn Brown Garibay (11). See every guide's endorsement and reasons.",
+    );
+  });
+  it("a clipped description ends in an ellipsis, then where to read more", () => {
+    const long = (x: string) => `${x} Bartholomew-Alexandrovich Montgomery-Wellington the Third`;
+    const office = contest({ title: "Superintendent of Public Instruction and Other Very Long Office Words", kind: "candidate", seats: 3 });
+    const d = contestDescription(office, [...many(3, [long("A")]), ...many(2, [long("B")]), ...many(1, [long("C")])]);
+    expect(d).toMatch(/… See every guide's endorsement and reasons\.$/);
+    expect(d.length).toBeLessThanOrEqual(MAX_DESCRIPTION);
   });
 });
