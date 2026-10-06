@@ -41,6 +41,11 @@ describe("relevantChange", () => {
     const next = `Posted October 6, 2026\n5 minutes ago\n40 comments\n${page}\nThis site uses cookies. Accept all`;
     expect(relevantChange(old, next, ballot)).toBe(false);
   });
+  it("ignores breadcrumb navigation that flips between fetches", () => {
+    const a = `You are here: Home Endorsements\n${page}`;
+    const b = `You are here: Home Endorsements endorsements\n${page}`;
+    expect(relevantChange(a, b, ballot)).toBe(false);
+  });
   it("ignores whitespace-only changes and reordering", () => {
     expect(relevantChange(page, page.replace(/ /g, "  "), ballot)).toBe(false);
   });

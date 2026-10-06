@@ -25,7 +25,7 @@ const RELATIVE_LINE =
   /^(?:(?:last\s+)?updated|posted|published|edited)\b|\b(?:\d+|an?|a few)\s+(?:seconds?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\s+ago\b|^(?:just now|yesterday|today)$/i;
 const COUNTER = /\b\d[\d,.]*\s*[kKmM]?\s+(?:comments?|shares?|likes?|views?|followers?|retweets?|reposts?|reactions?|replies)\b/g;
 const BOILERPLATE =
-  /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content/i;
+  /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content|^you are here\b|^breadcrumbs?\b/i;
 const MAX_BOILERPLATE_LINE = 200;
 
 /** Page text with dates, relative times, counters and boilerplate removed; whitespace collapsed; duplicate lines dropped. */
