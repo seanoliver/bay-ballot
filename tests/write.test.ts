@@ -68,6 +68,17 @@ describe("nextFile", () => {
     expect(nextFile({ ...prev, archived: gone }, picks, true, "2026-10-05", fresh).archived).toEqual(fresh);
   });
 
+  it("keeps a hold while extraction returns the same pick, and drops it when the pick changes", () => {
+    const held = [{ contestId: "prop-c", pick: "N" as const, reason: "wrong-pick" as const, evidence: "Page says Yes on C." }];
+    const same = nextFile({ ...prev, held }, picks, true, "2026-10-05");
+    expect(same.held).toEqual(held);
+    expect(same.picks["prop-c"]).toBeUndefined();
+    const changed = { ...picks, "prop-c": { pick: "Y" as const, ranked: false, quotes: [] } };
+    const n = nextFile({ ...prev, held }, changed, true, "2026-10-05");
+    expect(n.held).toBeUndefined();
+    expect(n.picks["prop-c"].pick).toBe("Y");
+  });
+
   it("keeps manual", () => {
     expect(nextFile({ ...prev, manual: true }, picks, true, "2026-10-05").manual).toBe(true);
   });
@@ -105,6 +116,13 @@ describe("toYaml", () => {
     const raw = parse(y) as { picks: Record<string, { pick: unknown }> };
     expect(raw.picks["prop-b"].pick).toBe("Y");
     expect(raw.picks["prop-c"].pick).toBe("N");
+  });
+
+  it("writes held after hasReasoning and before picks", () => {
+    const f = { ...file, held: [{ contestId: "prop-c", pick: "N" as const, reason: "wrong-pick" as const, evidence: "Page says Yes on C." }] };
+    const keys = toYaml(f).split("\n").filter((l) => /^[a-zA-Z]/.test(l)).map((l) => l.split(":")[0]);
+    expect(keys.slice(-3)).toEqual(["hasReasoning", "held", "picks"]);
+    expect(EndorsementFile.parse(parse(toYaml(f)))).toEqual(f);
   });
 
   it("does not wrap long lines", () => {

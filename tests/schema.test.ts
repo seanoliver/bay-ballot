@@ -234,3 +234,16 @@ describe("partial ranking", () => {
     expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y"], ranked: true, rankedCount: 1.5 } } }).success).toBe(false);
   });
 });
+
+describe("held picks", () => {
+  const held = { contestId: "prop-b", pick: "Y", reason: "wrong-pick", evidence: "The page says No on Prop B." };
+  it("accepts held picks with a reason and evidence", () => {
+    const r = EndorsementFile.safeParse({ ...file, held: [held, { ...held, contestId: "sup-8", pick: ["A One"], reason: "old-election" }] });
+    expect(r.success).toBe(true);
+  });
+  it("rejects unknown reasons, bad ids and empty picks", () => {
+    expect(EndorsementFile.safeParse({ ...file, held: [{ ...held, reason: "meh" }] }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, held: [{ ...held, contestId: "Prop B" }] }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, held: [{ ...held, pick: [] }] }).success).toBe(false);
+  });
+});

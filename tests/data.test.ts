@@ -98,6 +98,13 @@ describe("data", () => {
     const unranked = validateElection(withFile(structuredClone(d), { sup: { ...e(["A One", "B Two"]), rankedCount: 1 } }));
     expect(unranked.errors).toEqual(["g/sup: rankedCount set on an unranked pick"]);
   });
+  it("requires held picks to reference real contests", () => {
+    const held = [{ contestId: "prop-zz", pick: "Y" as const, reason: "wrong-pick" as const, evidence: "x" }];
+    const r = validateElection(withFile(base(), {}, { status: "pending", held }));
+    expect(r.errors).toEqual(["g: held pick for unknown contest 'prop-zz'"]);
+    const ok = validateElection(withFile(base(), {}, { status: "pending", held: [{ ...held[0], contestId: "prop-b" }] }));
+    expect(ok.errors).toEqual([]);
+  });
   it("does not warn on ranked picks beyond seats", () => {
     const d = base();
     d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: true, jurisdiction: juris });

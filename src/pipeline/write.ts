@@ -24,6 +24,13 @@ export function nextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
+  // A held pick stays held (and out of `picks`) while extraction keeps returning it unchanged;
+  // a different pick for that contest drops the hold and goes back through verification.
+  const held = (prev.held ?? []).filter((h) => picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick));
+  if (held.length) {
+    picks = { ...picks };
+    for (const h of held) delete picks[h.contestId];
+  }
   // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
   const unchanged = isDeepStrictEqual(prev.picks, picks);
   return {
@@ -38,6 +45,7 @@ export function nextFile(
     archived: archived ? mergeArchived(prev, archived) : prev.archived,
     fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
+    held: held.length ? held : undefined,
     picks,
   };
 }
@@ -60,7 +68,7 @@ export function shrinkWarning(
 
 const KEY_ORDER = [
   "guide", "election", "status", "source", "extraSources", "fetchWith", "manual",
-  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "picks",
+  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 
 /** An entry without its schema defaults (ranked: false, quotes: []), so files stay short. */
