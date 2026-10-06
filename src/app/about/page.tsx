@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ExternalLink } from "@/components/ExternalLink";
 import { FRAME, READING } from "@/components/frame";
 
-export const metadata: Metadata = { title: "About · Bay Ballot" };
+export const metadata: Metadata = { title: "About · Bay Ballot", alternates: { canonical: "/about" } };
 
 const REPO = "https://github.com/seanoliver/bay-ballot";
 const LINK = "underline underline-offset-2";

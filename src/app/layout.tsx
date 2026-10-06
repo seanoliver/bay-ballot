@@ -6,15 +6,18 @@ import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SITE } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bayballot.com"),
+  metadataBase: new URL(SITE),
   title: "Bay Ballot — every SF voter guide in one place",
   description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
   twitter: { card: "summary_large_image" },
+  // A default; every page sets its own canonical path.
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

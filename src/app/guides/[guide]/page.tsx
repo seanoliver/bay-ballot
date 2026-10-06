@@ -32,7 +32,7 @@ async function load(params: PageProps<"/guides/[guide]">["params"]) {
 
 export async function generateMetadata({ params }: PageProps<"/guides/[guide]">): Promise<Metadata> {
   const d = await load(params);
-  return d ? { title: `${d.guide.name} · Bay Ballot` } : {};
+  return d ? { title: `${d.guide.name} · Bay Ballot`, alternates: { canonical: `/guides/${d.guide.id}` } } : {};
 }
 
 export default async function GuidePage({ params }: PageProps<"/guides/[guide]">) {
