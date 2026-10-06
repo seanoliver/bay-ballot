@@ -1,113 +1,95 @@
 import { describe, expect, it } from "vitest";
-import { reasonSections, resultHeadline, whoRows } from "@/lib/detail";
+import { detailSides, pickReasons, resultHeadline, type Side } from "@/lib/detail";
 import type { Row } from "@/lib/filters";
-import type { Contest, Entry } from "@/lib/schema";
+import type { Contest, Entry, GuideType } from "@/lib/schema";
 
 const measure = { id: "prop-b", title: "Proposition B", kind: "measure", seats: 1, candidates: [], rankedChoice: false } as unknown as Contest;
 const race = { id: "sup-8", title: "Supervisor, District 8", kind: "candidate", seats: 1, candidates: ["Connie Chan", "Scott Wiener"], rankedChoice: true } as unknown as Contest;
 const board = { id: "boe", title: "Board of Education", kind: "candidate", seats: 3, candidates: [], rankedChoice: false } as unknown as Contest;
 
 const q = (text: string, source = "https://g.org/a") => ({ text, source });
-const row = (name: string, pick: Entry["pick"], quotes: Entry["quotes"] = [], opts: { ranked?: boolean; list?: boolean; archived?: { source: string; snapshot: string }[] } = {}): Row => ({
-  guide: { id: name.toLowerCase().replace(/\s+/g, "-"), name, type: "club" },
+type Opts = { ranked?: boolean; list?: boolean; archived?: { source: string; snapshot: string }[]; type?: GuideType; short?: string };
+const row = (name: string, pick: Entry["pick"], quotes: Entry["quotes"] = [], opts: Opts = {}): Row => ({
+  guide: { id: name.toLowerCase().replace(/\s+/g, "-"), name, type: opts.type ?? "club", ...(opts.short ? { shortName: opts.short } : {}) },
   entry: { pick, ranked: opts.ranked ?? false, quotes },
   file: { hasReasoning: !opts.list, picks: {}, ...(opts.archived ? { archived: opts.archived } : {}) },
 });
 
-describe("whoRows", () => {
-  const g = (name: string, rank: number | null = null) => ({ id: name.toLowerCase().replace(/\s+/g, "-"), name, short: name, rank });
-  it("measures: Yes then No; quoted guides first (in Reasons order), then the rest A–Z; no list-only tags", () => {
-    const rows = [row("Zed", "Y"), row("Quoted Two", "Y", [q("b")]), row("Alpha", "Y", [], { list: true }), row("Quoted One", "Y", [q("a")]), row("Nope", "N")];
-    const out = whoRows(measure, rows);
-    expect(out.map((r) => [r.key, r.label, r.count, r.tone])).toEqual([
-      ["Y", "Yes", 4, "yes"],
-      ["N", "No", 1, "no"],
+describe("detailSides", () => {
+  it("measures: Yes then No, empty sides dropped; quoted guides first (row order), then A–Z", () => {
+    const rows = [row("Zed", "Y"), row("Quoted Two", "Y", [q("b")]), row("Alpha", "Y", [], { list: true, short: "Al" }), row("Quoted One", "Y", [q("a")])];
+    const { sides, others } = detailSides(measure, rows);
+    expect(sides.map((s) => [s.key, s.label, s.count, s.tone])).toEqual([["Y", "Yes", 4, "yes"]]);
+    expect(sides[0].guides.map((g) => [g.name, g.short, g.quoted])).toEqual([
+      ["Quoted Two", "Quoted Two", true],
+      ["Quoted One", "Quoted One", true],
+      ["Alpha", "Al", false],
+      ["Zed", "Zed", false],
     ]);
-    expect(out[0].shown).toEqual([g("Quoted Two"), g("Quoted One"), g("Alpha"), g("Zed")]);
-    expect(out[0].hidden).toEqual([]);
+    expect(others).toEqual([]);
   });
-  it("list-only quotes don't count as quoted", () => {
-    const rows = [row("B", "Y"), row("A", "Y", [q("hidden")], { list: true })];
-    expect(whoRows(measure, rows)[0].shown.map((x) => x.name)).toEqual(["A", "B"]);
+  it("list-only guides' quotes are not shown and don't mark the chip quoted", () => {
+    const { sides } = detailSides(measure, [row("A", "Y", [q("hidden")], { list: true })]);
+    expect(sides[0].guides[0].quoted).toBe(false);
+    expect(sides[0].quotes).toEqual([]);
   });
-  it("shows the first four and hides the rest", () => {
-    const rows = ["F", "E", "D", "C", "B", "A"].map((n) => row(n, "Y"));
-    const [yes] = whoRows(measure, rows);
-    expect(yes.shown.map((x) => x.name)).toEqual(["A", "B", "C", "D"]);
-    expect(yes.hidden.map((x) => x.name)).toEqual(["E", "F"]);
-    expect(yes.count).toBe(6);
+  it("quotes carry the guide, its type and the archived link", () => {
+    const rows = [row("A", "N", [q("Bad.", "https://a.org/p")], { type: "newspaper", archived: [{ source: "https://a.org/p", snapshot: "https://web.archive.org/x" }] })];
+    expect(detailSides(measure, rows).sides[0].quotes).toEqual([
+      { guideId: "a", guideName: "A", type: "newspaper", text: "Bad.", href: "https://web.archive.org/x" },
+    ]);
   });
-  it("candidates: bar order, slot tone; ranked guides carry their rank in ranked-choice contests", () => {
-    const rows = [row("A", ["Scott Wiener", "Connie Chan"], [], { ranked: true }), row("B", ["Scott Wiener"]), row("C", ["Connie Chan"])];
-    const out = whoRows(race, rows);
-    expect(out.map((r) => [r.label, r.count, r.tone])).toEqual([
+  it("candidates: one side per name in bar order with its slot tone", () => {
+    const rows = [row("A", ["Scott Wiener"]), row("B", ["Scott Wiener"]), row("C", ["Connie Chan"])];
+    expect(detailSides(race, rows).sides.map((s) => [s.label, s.count, s.tone])).toEqual([
       ["Scott Wiener", 2, "c2"],
       ["Connie Chan", 1, "c1"],
     ]);
-    expect(out[0].shown[0]).toEqual(g("A", 1));
   });
-  it("a name beyond a partial ranking gets no rank tag", () => {
-    const multi = { ...race, seats: 2 } as Contest;
-    const partial = { ...row("A", ["Scott Wiener", "Connie Chan"], [], { ranked: true }), entry: { pick: ["Scott Wiener", "Connie Chan"], ranked: true, rankedCount: 1, quotes: [] } };
-    const out = whoRows(multi, [partial]);
-    expect(out.map((r) => [r.label, r.shown[0].rank])).toEqual([
-      ["Connie Chan", null],
-      ["Scott Wiener", 1],
-    ]);
-  });
-  it("no rank tag outside ranked-choice contests", () => {
-    const plain = { ...race, rankedChoice: false } as Contest;
-    expect(whoRows(plain, [row("A", ["Scott Wiener"], [], { ranked: true })])[0].shown[0].rank).toBeNull();
-  });
-  it("carries the short name for display, sorting by full name", () => {
-    const pov = { ...row("San Francisco League of Pissed Off Voters", "Y"), guide: { id: "pov", name: "San Francisco League of Pissed Off Voters", shortName: "Pissed Off Voters", type: "club" as const } };
-    const [yes] = whoRows(measure, [pov, row("Milk Club", "Y")]);
-    expect(yes.shown.map((x) => [x.name, x.short])).toEqual([
-      ["Milk Club", "Milk Club"],
-      ["San Francisco League of Pissed Off Voters", "Pissed Off Voters"],
-    ]);
-  });
-  it("no picks, no rows", () => {
-    expect(whoRows(measure, [])).toEqual([]);
+  it("multi-seat: the top `seats` names are sides; the rest are others", () => {
+    const rows = [row("A", ["W", "X", "Y", "Z"]), row("B", ["W", "X", "Y"]), row("C", ["W", "X"]), row("D", ["W"])];
+    const { sides, others } = detailSides(board, rows);
+    expect(sides.map((s) => [s.label, s.count])).toEqual([["W", 4], ["X", 3], ["Y", 2]]);
+    expect(others.map((s) => [s.label, s.count])).toEqual([["Z", 1]]);
   });
 });
 
-describe("reasonSections", () => {
-  it("measures: Reasons for, then against; only sections with quotes; list-only quotes ignored", () => {
+describe("pickReasons", () => {
+  const side = (contest: Contest, rows: Row[], key: string): Side => detailSides(contest, rows).sides.find((s) => s.key === key) as Side;
+  it("one quote per guide, up to two, the rest behind 'All reasons'", () => {
+    const rows = [row("A", "Y", [q("a1"), q("a2")]), row("B", "Y", [q("b1")]), row("C", "Y", [q("c1")])];
+    const { top, rest } = pickReasons(side(measure, rows, "Y"), rows, measure);
+    expect(top.map((x) => x.text)).toEqual(["a1", "b1"]);
+    expect(rest.map((x) => x.text)).toEqual(["a2", "c1"]);
+  });
+  it("prefers different guide types", () => {
     const rows = [
-      row("A", "Y", [q("Good."), q("Also good.")]),
-      row("B", "Y", []),
-      row("C", "N", [q("Hidden.")], { list: true }),
+      row("A", "Y", [q("a1")], { type: "club" }),
+      row("B", "Y", [q("b1")], { type: "club" }),
+      row("C", "Y", [q("c1")], { type: "newspaper" }),
     ];
-    expect(reasonSections(measure, rows)).toEqual([
-      {
-        key: "Y",
-        title: "Reasons for",
-        tone: "yes",
-        items: [{ guideId: "a", guideName: "A", quotes: [{ text: "Good.", href: "https://g.org/a" }, { text: "Also good.", href: "https://g.org/a" }] }],
-        hidden: 1,
-      },
-    ]);
+    expect(pickReasons(side(measure, rows, "Y"), rows, measure).top.map((x) => x.guideName)).toEqual(["A", "C"]);
   });
-  it("Reasons against uses the No guides", () => {
-    expect(reasonSections(measure, [row("A", "N", [q("Bad.")])]).map((s) => s.title)).toEqual(["Reasons against"]);
+  it("prefers quotes of 200 characters or fewer, then shorter", () => {
+    const long = "x".repeat(201);
+    const rows = [row("A", "Y", [q(long)], { type: "club" }), row("B", "Y", [q("medium length quote")], { type: "union" }), row("C", "Y", [q("short")], { type: "civic" })];
+    expect(pickReasons(side(measure, rows, "Y"), rows, measure).top.map((x) => x.guideName)).toEqual(["C", "B"]);
   });
-  it("candidates: one section per backed candidate in bar order; source links prefer the archive", () => {
+  it("within a guide, picks its best quote", () => {
+    const rows = [row("A", "Y", [q("y".repeat(250)), q("short one")])];
+    expect(pickReasons(side(measure, rows, "Y"), rows, measure).top.map((x) => x.text)).toEqual(["short one"]);
+  });
+  it("attacks on rivals rank after quotes about the side's own candidate", () => {
     const rows = [
-      row("A", ["Scott Wiener"], [q("Wiener wins.", "https://a.org/p")], { archived: [{ source: "https://a.org/p", snapshot: "https://web.archive.org/x" }] }),
-      row("B", ["Scott Wiener"]),
-      row("C", ["Connie Chan"], [q("Chan cares.")]),
+      row("A", ["Scott Wiener"], [q("Connie Chan is wrong for the job.")], { type: "club" }),
+      row("B", ["Scott Wiener"], [q("Wiener gets bills passed, unlike Chan.")], { type: "union" }),
+      row("C", ["Scott Wiener"], [q("A proven legislator.")], { type: "civic" }),
     ];
-    const out = reasonSections(race, rows);
-    expect(out.map((s) => [s.title, s.tone])).toEqual([
-      ["Why guides back Scott Wiener", "c2"],
-      ["Why guides back Connie Chan", "c1"],
-    ]);
-    expect(out[0].items[0].quotes[0].href).toBe("https://web.archive.org/x");
-    expect(out[0].hidden).toBe(0);
+    expect(pickReasons(side(race, rows, "Scott Wiener"), rows, race).top.map((x) => x.guideName)).toEqual(["C", "B"]);
   });
-  it("no quotes anywhere: no sections", () => {
-    expect(reasonSections(board, [row("A", ["X", "Y"])])).toEqual([]);
+  it("no quotes: nothing", () => {
+    const rows = [row("A", "Y")];
+    expect(pickReasons(side(measure, rows, "Y"), rows, measure)).toEqual({ top: [], rest: [] });
   });
 });
 
@@ -115,25 +97,25 @@ describe("resultHeadline", () => {
   const ys = (n: number) => Array.from({ length: n }, (_, i) => row(`Y${i}`, "Y"));
   const ns = (n: number) => Array.from({ length: n }, (_, i) => row(`N${i}`, "N"));
   it("measure verdict", () => {
-    expect(resultHeadline(measure, [...ys(5), ...ns(1)])).toEqual({ lead: "Yes", tone: "yes", detail: "5 of 6 guides · 83%" });
-    expect(resultHeadline(measure, [...ys(1), ...ns(2)])).toEqual({ lead: "No", tone: "no", detail: "2 of 3 guides · 67%" });
+    expect(resultHeadline(measure, [...ys(5), ...ns(1)])).toEqual({ lead: "Yes 83%", tone: "yes", detail: "6 guides" });
+    expect(resultHeadline(measure, [...ys(1), ...ns(2)])).toEqual({ lead: "No 67%", tone: "no", detail: "3 guides" });
   });
   it("measure split", () => {
-    expect(resultHeadline(measure, [...ys(3), ...ns(3)])).toEqual({ lead: "Split", tone: "split", detail: "3 Yes · 3 No" });
+    expect(resultHeadline(measure, [...ys(3), ...ns(3)])).toEqual({ lead: "Split", tone: "split", detail: "6 guides" });
   });
   it("candidate leader", () => {
     const rows = [row("A", ["Scott Wiener"]), row("B", ["Scott Wiener"]), row("C", ["Scott Wiener"]), row("D", ["Connie Chan"])];
-    expect(resultHeadline(race, rows)).toEqual({ lead: "Scott Wiener", tone: "candidate", detail: "3 of 4 guides · 75%" });
+    expect(resultHeadline(race, rows)).toEqual({ lead: "Scott Wiener 75%", tone: "candidate", detail: "4 guides" });
   });
   it("candidate tie", () => {
     expect(resultHeadline(race, [row("A", ["Scott Wiener"]), row("B", ["Connie Chan"])])).toEqual({
       lead: "Split",
       tone: "split",
-      detail: "Connie Chan, Scott Wiener · 1 each",
+      detail: "2 guides",
     });
   });
   it("multi-seat", () => {
-    expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["X"])])).toEqual({ lead: "Most endorsed", tone: "candidate", detail: "2 guides" });
+    expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["X"])])).toEqual({ lead: "X, Y", tone: "candidate", detail: "2 guides" });
   });
   it("no picks", () => {
     expect(resultHeadline(measure, [])).toEqual({ lead: "No picks yet", tone: "none", detail: "" });

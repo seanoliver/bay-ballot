@@ -26,11 +26,13 @@ type Props = {
   count?: boolean;
   // "detail": the primary chart, a step thicker than the list bars.
   size?: "list" | "detail";
+  // false: the bar alone (the contest detail draws its own legend).
+  legend?: boolean;
   className?: string;
 };
 
 // A contest's result at a glance. The math lives in lib/bar; this only draws it.
-export function VerdictBar({ contest, rows, variant = "full", slots, count = true, size = "list", className }: Props) {
+export function VerdictBar({ contest, rows, variant = "full", slots, count = true, size = "list", legend: showLegend = true, className }: Props) {
   const t = tally(contest, rows.map((r) => r.entry));
   const segments = barSegments(t, contest, slots);
   const summary = barSummary(t, contest);
@@ -91,6 +93,14 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
     );
   }
 
+  if (!showLegend) {
+    return (
+      <div className={cn("mt-2", className)}>
+        <Stack segments={segments} aria={summary.aria} className={size === "detail" ? "h-3" : "h-2"} />
+      </div>
+    );
+  }
+
   return (
     <div className={cn("mt-2", className)}>
       <Stack segments={segments} aria={summary.aria} className={size === "detail" ? "h-3" : "h-2"} />
@@ -118,7 +128,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
   );
 }
 
-function Swatch({ tone }: { tone: BarTone | "split" }) {
+export function Swatch({ tone }: { tone: BarTone | "split" }) {
   return <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", tone === "split" ? "bg-split" : FILL[tone])} />;
 }
 
@@ -144,7 +154,7 @@ function Stack({ segments, aria, className }: { segments: BarSegment[]; aria: st
   );
 }
 
-function RankedPopover({ rows }: { rows: Row[] }) {
+export function RankedPopover({ rows }: { rows: Row[] }) {
   return (
     <Popover>
       <PopoverTrigger

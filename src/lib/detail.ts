@@ -1,78 +1,99 @@
-import { candidateSlots, slotTone, type BarTone, type Slots } from "./bar";
-import { displayName, groupByPick, reasons, sourceLink, type PickGroup } from "./display";
+import { candidateSlots, slotTone, surname, type BarTone, type Slots } from "./bar";
+import { displayName, groupByPick, reasons, sourceLink } from "./display";
 import type { Row } from "./filters";
-import type { Contest } from "./schema";
+import type { Contest, GuideType } from "./schema";
 import { tally } from "./score";
 
-// The contest detail reads WHO (every guide, by pick) then WHY (only the quotes there are).
+// The contest detail: one block per side (Yes/No, or each candidate in bar order), each with its
+// guides as chips and its strongest reasons.
 
-// `rank` is set only in ranked-choice contests, where a guide's order matters.
-export type WhoGuide = { id: string; name: string; short: string; rank: number | null };
-// `shown` first, `hidden` behind a "+N more" disclosure.
-export type WhoRow = { key: string; label: string; count: number; tone: BarTone; shown: WhoGuide[]; hidden: WhoGuide[] };
-export type ReasonQuote = { text: string; href: string };
-export type ReasonItem = { guideId: string; guideName: string; quotes: ReasonQuote[] };
-// `hidden`: quotes beyond each guide's first, revealed by a "+N more" disclosure.
-export type ReasonSection = { key: string; title: string; tone: BarTone; items: ReasonItem[]; hidden: number };
+export type SideGuide = { id: string; name: string; short: string; type: GuideType; quoted: boolean };
+export type SideQuote = { guideId: string; guideName: string; type: GuideType; text: string; href: string };
+export type Side = { key: string; label: string; tone: BarTone; count: number; guides: SideGuide[]; quotes: SideQuote[] };
 export type ResultHeadline = { lead: string; tone: "yes" | "no" | "split" | "candidate" | "none"; detail: string };
 
-const WHO_SHOWN = 4;
 const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-// Pick groups in bar order (Yes then No; candidates leader first) with their tone. `slots` should come
-// from unfiltered data (candidateSlots) so colors match the bar; without it, from these rows.
-function toned(contest: Contest, rows: Row[], slots?: Slots): { group: PickGroup; tone: BarTone }[] {
+// Sides in bar order. Multi-seat races: the top `seats` names are sides, the rest `others`.
+// Within a side, guides that gave reasons come first (row order), then the rest A-Z.
+// `slots` should come from unfiltered data (candidateSlots) so colors match the bar.
+export function detailSides(contest: Contest, rows: Row[], slots?: Slots): { sides: Side[]; others: Side[] } {
   const colors = slots ?? candidateSlots(contest, rows.map((r) => r.entry));
-  return groupByPick(contest, rows).map((group) => ({
-    group,
-    tone: group.tone === "candidate" ? slotTone(colors, group.key) : group.tone,
-  }));
-}
-
-// Guides quoted under Reasons lead (same order as there), then the rest alphabetically.
-export function whoRows(contest: Contest, rows: Row[], slots?: Slots): WhoRow[] {
-  return toned(contest, rows, slots).map(({ group, tone }) => {
-    const quoted = group.rows.filter((r) => reasons(r).length > 0);
-    const rest = group.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
-    const all = [...quoted, ...rest].map((r): WhoGuide => {
-      const at = contest.rankedChoice && r.entry.ranked && Array.isArray(r.entry.pick) ? r.entry.pick.indexOf(group.key) : -1;
-      // Names past a partial ranking (rankedCount) were endorsed but not ranked.
-      const ranked = at >= 0 && at < (r.entry.rankedCount ?? Infinity);
-      return { id: r.guide.id, name: r.guide.name, short: displayName(r.guide, { short: true }), rank: ranked ? at + 1 : null };
-    });
-    return { key: group.key, label: group.label, count: group.rows.length, tone, shown: all.slice(0, WHO_SHOWN), hidden: all.slice(WHO_SHOWN) };
+  const all = groupByPick(contest, rows).map((g): Side => {
+    const quoted = g.rows.filter((r) => reasons(r).length > 0);
+    const rest = g.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
+    return {
+      key: g.key,
+      label: g.label,
+      tone: g.tone === "candidate" ? slotTone(colors, g.key) : g.tone,
+      count: g.rows.length,
+      guides: [...quoted, ...rest].map((r) => ({
+        id: r.guide.id,
+        name: r.guide.name,
+        short: displayName(r.guide, { short: true }),
+        type: r.guide.type,
+        quoted: quoted.includes(r),
+      })),
+      quotes: quoted.flatMap((r) =>
+        reasons(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source) })),
+      ),
+    };
   });
+  const top = contest.kind === "candidate" && contest.seats > 1 ? contest.seats : all.length;
+  return { sides: all.slice(0, top), others: all.slice(top) };
 }
 
-export function reasonSections(contest: Contest, rows: Row[], slots?: Slots): ReasonSection[] {
-  const out: ReasonSection[] = [];
-  for (const { group, tone } of toned(contest, rows, slots)) {
-    const items: ReasonItem[] = [];
-    for (const r of group.rows) {
-      const qs = reasons(r);
-      if (qs.length) {
-        items.push({ guideId: r.guide.id, guideName: r.guide.name, quotes: qs.map((q) => ({ text: q.text, href: sourceLink(r.file, q.source) })) });
-      }
+const SHORT = 200;
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const mentions = (text: string, name: string) =>
+  [name, surname(name)].some((n) => new RegExp(`\\b${escape(n)}\\b`, "i").test(text));
+
+// Up to two reasons for a side, by rule: one quote per guide; quotes about the side's own candidate,
+// or naming no rival, before attacks on rivals; different guide types first; then quotes of 200
+// characters or fewer, shorter first. `rest` is every other quote, in data order.
+export function pickReasons(side: Side, rows: Row[], contest: Contest): { top: SideQuote[]; rest: SideQuote[] } {
+  const rivals =
+    contest.kind === "candidate"
+      ? [...new Set([...contest.candidates, ...rows.flatMap((r) => (Array.isArray(r.entry.pick) ? r.entry.pick : []))])].filter((n) => n !== side.key)
+      : [];
+  const attack = (q: SideQuote) => !mentions(q.text, side.key) && rivals.some((n) => mentions(q.text, n));
+  const score = (q: SideQuote) => [attack(q) ? 1 : 0, q.text.length > SHORT ? 1 : 0, q.text.length];
+  const better = (a: SideQuote, b: SideQuote) => {
+    const [x, y] = [score(a), score(b)];
+    for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i];
+    return 0;
+  };
+
+  const bestPerGuide = side.guides
+    .map((g) => side.quotes.filter((q) => q.guideId === g.id))
+    .filter((qs) => qs.length > 0)
+    .map((qs) => [...qs].sort(better)[0]);
+  const ranked = [...bestPerGuide].sort(better);
+
+  const top: SideQuote[] = [];
+  const types = new Set<GuideType>();
+  for (const q of ranked) {
+    if (top.length < 2 && !types.has(q.type)) {
+      top.push(q);
+      types.add(q.type);
     }
-    if (!items.length) continue;
-    const title =
-      group.tone === "candidate" ? `Why guides back ${group.label}` : group.key === "Y" ? "Reasons for" : "Reasons against";
-    out.push({ key: group.key, title, tone, items, hidden: items.reduce((n, i) => n + i.quotes.length - 1, 0) });
   }
-  return out;
+  for (const q of ranked) if (top.length < 2 && !top.includes(q)) top.push(q);
+  return { top, rest: side.quotes.filter((q) => !top.includes(q)) };
 }
 
+// The header line: the one number (winner's or leader's share) and the guide total.
 export function resultHeadline(contest: Contest, rows: Row[]): ResultHeadline {
   const t = tally(contest, rows.map((r) => r.entry));
   const none: ResultHeadline = { lead: "No picks yet", tone: "none", detail: "" };
   if (t.kind === "measure") {
     if (t.verdict === "none") return none;
-    if (t.verdict === "split") return { lead: "Split", tone: "split", detail: `${t.yes} Yes · ${t.no} No` };
+    if (t.verdict === "split") return { lead: "Split", tone: "split", detail: guides(t.total) };
     const yes = t.verdict === "Y";
-    return { lead: yes ? "Yes" : "No", tone: yes ? "yes" : "no", detail: `${Math.max(t.yes, t.no)} of ${guides(t.total)} · ${t.pct}%` };
+    return { lead: `${yes ? "Yes" : "No"} ${t.pct}%`, tone: yes ? "yes" : "no", detail: guides(t.total) };
   }
   if (t.counts.length === 0) return none;
-  if (contest.seats > 1) return { lead: "Most endorsed", tone: "candidate", detail: guides(t.total) };
-  if (t.leader === null) return { lead: "Split", tone: "split", detail: `${t.tied.join(", ")} · ${t.counts[0].count} each` };
-  return { lead: t.leader, tone: "candidate", detail: `${t.count} of ${guides(t.total)} · ${t.pct}%` };
+  if (contest.seats > 1) return { lead: t.counts.slice(0, contest.seats).map((c) => c.name).join(", "), tone: "candidate", detail: guides(t.total) };
+  if (t.leader === null) return { lead: "Split", tone: "split", detail: guides(t.total) };
+  return { lead: `${t.leader} ${t.pct}%`, tone: "candidate", detail: guides(t.total) };
 }
