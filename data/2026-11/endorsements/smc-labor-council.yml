@@ -1,0 +1,12 @@
+guide: smc-labor-council
+election: 2026-11
+status: pending
+source: https://www.sanmateolaborcouncil.org/endorsements
+extraSources:
+  - https://www.sanmateolaborcouncil.org/s/2026G-SMC-Ballot-Measure-Endorsements.docx
+  - https://www.sanmateolaborcouncil.org/s/SMCLC-2026G-Endorsements_Slate-Card.docx
+  - https://www.sanmateolaborcouncil.org/s/2026G-State-and-Federal-Endorsements.docx
+fetchedAt: 2026-10-06
+hasReasoning: false
+manual: true # picks are Word documents; extract skips this guide
+picks: {}

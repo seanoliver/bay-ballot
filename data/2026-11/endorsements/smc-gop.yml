@@ -1,0 +1,9 @@
+guide: smc-gop
+election: 2026-11
+status: pending
+source: https://smgop.org/s/SMGOP-November-2026-Election-Guide.pdf
+extraSources:
+  - https://smgop.org/voter-guide
+fetchedAt: 2026-10-06
+hasReasoning: false
+picks: {}

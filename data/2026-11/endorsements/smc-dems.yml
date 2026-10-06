@@ -1,0 +1,11 @@
+guide: smc-dems
+election: 2026-11
+status: pending
+source: https://www.smcdems.org/
+extraSources:
+  - https://assets.nationbuilder.com/smcdcc/pages/116/attachments/original/1788916751/unnamed.png
+allowForeignSources: true
+fetchedAt: 2026-10-06
+hasReasoning: false
+manual: true # slate is a single PNG image on the homepage; extract skips this guide
+picks: {}
