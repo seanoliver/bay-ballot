@@ -308,11 +308,15 @@ test.describe("desktop keyboard", () => {
         return orig(...args);
       };
     });
+    await page.clock.install();
     await openBallot(page);
     const ids = (await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")))).slice(0, 50);
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
+    // A paused clock makes the sweep "fast" however slow the machine is; the debounce fires only after it.
+    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
     for (let i = 0; i < ids.length; i++) await page.keyboard.press("ArrowDown");
     await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
+    await page.clock.runFor(1000);
     await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
     const writes = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
     expect(writes - before).toBeLessThan(10);
