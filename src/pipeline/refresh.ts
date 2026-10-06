@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { EndorsementFile, type ArchivedSource, type Guide, type HeldPick } from "@/lib/schema";
+import { guideChangelogEntry, prependChangelog } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
@@ -191,7 +192,24 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
     log(describe(r));
     results.push(r);
   }
+  writeChangelog(deps, opts, data, results);
   return results;
+}
+
+// One visitor-facing entry per guide whose data changed, written to data/changelog.yml so it ships
+// in the same refresh commit. Held picks aren't announced; a rerun with no change adds nothing.
+function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, before: ElectionData, results: GuideResult[]): void {
+  const changed = results.filter((r) => r.status === "changed" && r.dataChanged).map((r) => r.id);
+  if (changed.length === 0) return;
+  const after = loadElection(opts.root, opts.election);
+  const entries = changed.flatMap((id) => {
+    const guide = after.guides.find((g) => g.id === id);
+    const e = guide
+      ? guideChangelogEntry({ guideName: guide.name, before: before.endorsements[id], after: after.endorsements[id], contests: after.ballot.contests, date: deps.today() })
+      : null;
+    return e ? [e] : [];
+  });
+  prependChangelog(path.join(opts.root, "changelog.yml"), entries);
 }
 
 function describe(r: GuideResult): string {

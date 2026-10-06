@@ -128,6 +128,25 @@ describe("runRefresh", () => {
     expect(results[0]).toMatchObject({ status: "changed", dataChanged: false, diff: [] });
   });
 
+  it("writes one changelog entry per changed guide, and nothing when a rerun changes nothing", async () => {
+    const root = setup(["alpha"]);
+    const changelog = path.join(root, "changelog.yml");
+    const { client } = fakeClient(extractOut);
+    const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(parse(fs.readFileSync(changelog, "utf8"))).toEqual([{ date: "2026-10-06", type: "data", title: "ALPHA endorsed Yes on Prop C" }]);
+    const after = fs.readFileSync(changelog, "utf8");
+    await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(fs.readFileSync(changelog, "utf8")).toBe(after);
+  });
+
+  it("does not announce a held pick", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const { client } = fakeClient(extractOut, { held: true });
+    await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
+    expect(fs.existsSync(path.join(root, "changelog.yml"))).toBe(false);
+  });
+
   it("holds unconfirmed picks and exits 2", async () => {
     const root = setup(["alpha"], { stored: false });
     const { client } = fakeClient(extractOut, { held: true });
