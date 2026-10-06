@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { BALLOT, contestRow, openBallot } from "./helpers";
+import { BALLOT, contestRow, isPhone, openBallot } from "./helpers";
 
 test("the Bay Area list groups contests by place and the picker opens an area", async ({ page }) => {
   await openBallot(page);
@@ -97,4 +97,69 @@ test("arrow keys walk the SF page in its grouped order", async ({ page, isMobile
   await page.keyboard.press("ArrowDown");
   await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf\\?c=us-rep-15$`));
   await expect(page.locator("#row-d-us-rep-15")).toBeFocused();
+});
+
+const guideCount = async (page: import("@playwright/test").Page, path: string) => {
+  await page.goto(path);
+  const line = await page.getByText(/November 3, 2026 · \d+ guides? ·/).textContent();
+  return Number(line!.match(/· (\d+) guides? ·/)![1]);
+};
+
+test("each area page counts only its own guides", async ({ page }) => {
+  const all = await guideCount(page, BALLOT);
+  const sf = await guideCount(page, `${BALLOT}/sf`);
+  const sm = await guideCount(page, `${BALLOT}/san-mateo`);
+  expect(sf).toBeLessThan(all);
+  expect(sm).toBeLessThan(all);
+  expect(sf + sm).toBeGreaterThanOrEqual(all);
+});
+
+test("the San Mateo page shows state and San Mateo contests only", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-mateo`);
+  await expect(page).toHaveTitle("San Mateo County endorsements (Nov 2026)");
+  await expect(page.getByRole("heading", { level: 1, name: "San Mateo County ballot" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "California", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Francisco", exact: true })).toHaveCount(0);
+  await expect(contestRow(page, "Proposition B")).toHaveCount(0);
+});
+
+test("the Bay Area list shows both counties, with the regional measure in its own group", async ({ page }) => {
+  await openBallot(page);
+  await expect(page.getByRole("region", { name: "Bay Area", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Francisco", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toBeVisible();
+});
+
+test("the Counties filter hides a county's contests, keeps statewide ones, and persists", async ({ page }, info) => {
+  await openBallot(page);
+  const open = async () => {
+    if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
+    return isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
+  };
+  let panel = await open();
+  await panel.getByRole("group", { name: "Counties" }).getByRole("checkbox", { name: "San Mateo", exact: true }).click();
+  await expect(page).toHaveURL(/[?&]offc=san-mateo/);
+  if (isPhone(info)) await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "California", exact: true })).toBeVisible();
+  await page.goto(BALLOT);
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  panel = await open();
+  await panel.getByRole("button", { name: "All counties" }).click();
+  if (isPhone(info)) await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toBeVisible();
+});
+
+test("area pages have no Counties filter", async ({ page }, info) => {
+  test.skip(isPhone(info), "the sidebar is the same component on phone");
+  await page.goto(`${BALLOT}/san-mateo`);
+  await expect(page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" })).toHaveCount(0);
+});
+
+test("a San Mateo measure page names its place and links back to the San Mateo list", async ({ page }) => {
+  await page.goto(`${BALLOT}/menlo-park-measure-p`);
+  await expect(page.getByRole("heading", { level: 1, name: "Menlo Park Measure P" })).toBeVisible();
+  await expect(page).toHaveTitle(/^Menlo Park Measure P endorsements \(Nov 2026\)/);
+  await expect(page.getByRole("link", { name: "San Mateo County ballot" })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
 });
