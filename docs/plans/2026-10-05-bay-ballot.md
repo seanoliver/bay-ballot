@@ -1036,11 +1036,27 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 
 **Step 3:** `npm run validate` until `data OK`.
 
-**Step 4:** **Sean reviews `git diff data/`** and commits. Do not commit extraction output without his review.
+**Step 4 (revised 2026-10-05):** independent Opus verification replaces Sean's manual review (see Task 12b). Commit after verification issues are fixed or held.
 
 ---
 
 # Phase 2 — Site (target: Fri 2026-10-16)
+
+### Task 12b: Independent verification (`bb verify`), replacing human data review
+
+**Why (2026-10-05):** 900+ picks is too much to review by hand. Sean replaced the human review gate with an independent AI check. The one-off audit of the first batch used three fresh Opus subagents; this task makes the same check part of the pipeline.
+
+**Behavior:** `npm run bb -- verify <guide...> | --all` (and `extract` runs it automatically unless `--no-verify`):
+1. For each guide, re-fetch its source and extra pages (same fetch path as extract).
+2. Send the page text (and PDFs as documents) plus the guide's already-extracted picks and quotes to `claude-opus-5-5` in a separate request with its own system prompt ("You are auditing someone else's extraction. For each pick and quote, say whether the page supports it."). It never sees the extraction prompt. Structured output per pick: `{ contestId, verdict: "confirmed" | "wrong" | "not-found" | "old-election", evidence }`; per quote: `{ verdict: "confirmed" | "not-found" | "wrong-contest" | "not-own-words" | "not-substantive" }`; plus `missing: [{ contestId, pick, evidence }]`.
+3. Picks not `confirmed` are removed from the file and recorded under `held: [{ contestId, pick, reason, evidence }]` (schema + tests first), so they are not published but stay visible. Unconfirmed quotes are dropped. `missing` items are reported only, never auto-added.
+4. Print a per-guide summary; exit non-zero if any guide had held picks, so a daily run surfaces them.
+
+**Tests (TDD):** the pure merge step `applyVerdicts(file, verdicts)`; the request shape against a fake client (model opus-5-5, cache_control on the system prompt, page blocks, no extraction prompt text); stop-reason handling like `extract`.
+
+**Runbook:** the daily loop becomes `extract --all --archive` (which verifies), then `validate`, then commit. Sean is pinged only when picks are held.
+
+---
 
 ### Task 13: Ballot state helpers
 
