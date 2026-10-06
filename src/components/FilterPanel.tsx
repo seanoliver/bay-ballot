@@ -26,7 +26,6 @@ import { displayName } from "@/lib/display";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
 
-// `off` is what this view hides; `saved` is the visitor's setting, which a linked contest can override for one view.
 export type CountyControl = { options: CountyOption[]; off: string[]; saved: string[]; onToggle: (id: string) => void; onShowAll: () => void };
 
 type Props = {
