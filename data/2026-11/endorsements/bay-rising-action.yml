@@ -7,6 +7,15 @@ archived:
     snapshot: https://web.archive.org/web/20261006195712/https://bayrisingaction.org/voterguide/
 fetchedAt: 2026-10-06
 hasReasoning: true
+rejectedQuotes:
+  - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
+    reason: "descriptive: says what the measure does (audit 2026-10-06)"
+  - text: Ninety percent (90%) of the funds would go to healthcare, and 10% to food assistance or education.
+    reason: descriptive, and "the funds" refers back (audit 2026-10-06)
+  - text: At the same time, 87% of multi-family rental units in Redwood City are owned by corporations and real estate trusts rather than small landlords.
+    reason: "does not stand alone: opens with a connector (audit 2026-10-06)"
+  - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
+    reason: "does not stand alone: refers back to the previous sentence (audit 2026-10-06)"
 picks:
   prop-1:
     pick: Y
