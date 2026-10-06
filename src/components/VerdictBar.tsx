@@ -48,7 +48,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
 
   if (variant === "inline") {
     return (
-      <div className={cn("flex w-28 shrink-0 flex-col items-end gap-1", className)}>
+      <div className={cn("flex w-24 shrink-0 flex-col items-end gap-1", className)}>
         {multi ? (
           <div role="img" aria-label={summary.aria} className="flex w-full flex-col gap-0.5">
             {segments.map((s) => (

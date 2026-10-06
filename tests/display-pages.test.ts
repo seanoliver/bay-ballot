@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cardDescription, contestHeadline, electionSubtitle, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, electionIntro, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Ballot, Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -110,14 +110,23 @@ describe("cardDescription", () => {
   });
 });
 
-describe("electionSubtitle", () => {
-  const withJ = (level: string, name: string) => ({ jurisdiction: { level, name } }) as Contest;
-  it("names the city on the ballot and the election day", () => {
-    const b = { title: "San Francisco General Election", date: "2026-11-03", contests: [withJ("state", "California"), withJ("city", "San Francisco")] } as Ballot;
-    expect(electionSubtitle(b)).toBe("San Francisco · November 3, 2026");
+describe("electionIntro", () => {
+  const withJ = (id: string, level: string, name: string) => ({ id, jurisdiction: { level, name } }) as Contest;
+  const ballot = {
+    title: "San Francisco General Election",
+    date: "2026-11-03",
+    contests: [withJ("gov", "state", "California"), withJ("prop-a", "city", "San Francisco")],
+  } as Ballot;
+  const pick = { pick: "Y", ranked: false, quotes: [] } as Entry;
+  it("titles the city's ballot and counts guides, contests and picks", () => {
+    const files = { a: { hasReasoning: true, picks: { gov: pick, "prop-a": pick } }, b: { hasReasoning: false, picks: { gov: pick } } };
+    expect(electionIntro(ballot, files)).toEqual({ title: "San Francisco ballot", line: "November 3, 2026 · 2 guides · 2 contests · 3 picks" });
+  });
+  it("ignores picks for contests not on the ballot, and singularizes", () => {
+    const files = { a: { hasReasoning: true, picks: { gov: pick, stale: pick } } };
+    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, files).line).toBe("November 3, 2026 · 1 guide · 1 contest · 1 pick");
   });
   it("falls back to the ballot title without a city contest", () => {
-    const b = { title: "Special Election", date: "2026-06-02", contests: [withJ("state", "California")] } as Ballot;
-    expect(electionSubtitle(b)).toBe("Special Election · June 2, 2026");
+    expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, {}).title).toBe("San Francisco General Election");
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cardDescription, sections } from "@/lib/display";
@@ -19,11 +19,11 @@ import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
 const DESKTOP = "(min-width: 1024px)";
-const PANE = "hidden lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-4";
+const PANE = "hidden lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 
 type Props = {
   election: string;
-  subtitle: string;
+  intro: { title: string; line: string };
   ballot: Ballot;
   guides: GuideInfo[];
   files: Record<string, PickFile>;
@@ -34,7 +34,7 @@ type Props = {
 // rows; a row opens its details in a bottom sheet, and filters open in another.
 // Filters and the selected contest (?c=) live in the URL. The server (and hydration) render with no
 // filters and the first contest selected; the client applies URL/stored state right after.
-export function BallotView({ election, subtitle, ballot, guides, files, pending }: Props) {
+export function BallotView({ election, intro, ballot, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   const [sheetOpen, setSheetOpen] = useHistorySheet();
@@ -108,8 +108,9 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
 
       {/* Without the pane the list keeps a reading width instead of stretching bars across the screen. */}
       <div className={cn("min-w-0 pb-10", !current && "lg:max-w-3xl")} onKeyDown={onEscape}>
-        <div className="pt-0.5 pb-1 lg:pt-4">
-          <h1 className="text-sm text-muted-foreground">{subtitle}</h1>
+        <div className="pt-4 pb-1 lg:pt-6">
+          <h1 className="text-xl font-semibold">{intro.title}</h1>
+          <p className="text-sm text-muted-foreground">{intro.line}</p>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -195,6 +196,9 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
   );
 }
 
+// "District 15" never breaks before its number.
+const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
+
 // The link's ::after covers the whole row, so a tap anywhere selects; the ranked "*" sits above it.
 const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
 const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
@@ -217,15 +221,14 @@ function ContestRow({
   const description = cardDescription(contest);
   return (
     <>
-      {/* Phone: title left (wraps, never cut), mini bar and short result right. */}
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-2 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
+      {/* Phone: title left (wraps, never cut; two lines fit the longest titles), mini bar and short result right. */}
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
         <h3 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
-            {contest.title}
+            {keepNumber(contest.title)}
           </a>
         </h3>
         <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
-        <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
       </div>
       {/* Desktop: title over the full bar; the selected row is marked for sight and for AT. */}
       <div

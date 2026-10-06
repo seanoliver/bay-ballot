@@ -149,10 +149,22 @@ export function monthYear(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
 }
 
-// "San Francisco · November 3, 2026": the city on the ballot (else the ballot title) and election day.
-export function electionSubtitle(ballot: Pick<Ballot, "title" | "date" | "contests">): string {
+const counted = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+// The ballot page intro: "San Francisco ballot" and "November 3, 2026 · 36 guides · 52 contests · 914 picks".
+// `files` holds published files only; picks count entries for contests on this ballot.
+export function electionIntro(
+  ballot: Pick<Ballot, "title" | "date" | "contests">,
+  files: Record<string, Pick<EndorsementFile, "picks">>,
+): { title: string; line: string } {
   const city = ballot.contests.find((c) => c.jurisdiction.level === "city")?.jurisdiction.name;
-  return `${city ?? ballot.title} · ${formatDate(ballot.date)}`;
+  const ids = new Set(ballot.contests.map((c) => c.id));
+  const guides = Object.values(files);
+  const picks = guides.reduce((n, f) => n + Object.keys(f.picks).filter((id) => ids.has(id)).length, 0);
+  return {
+    title: city ? `${city} ballot` : ballot.title,
+    line: [formatDate(ballot.date), counted(guides.length, "guide"), counted(ballot.contests.length, "contest"), counted(picks, "pick")].join(" · "),
+  };
 }
 
 
