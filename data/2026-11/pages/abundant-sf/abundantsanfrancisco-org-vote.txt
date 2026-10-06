@@ -6,9 +6,11 @@ View EndorsementsDownload Cheat Sheet
 Endorsements
 Congress
 [Scott Wiener]
+[Scott Wiener]
 Congress District 11
 Scott Wiener
 SF board of supervisors
+[Stephen Sherrill]
 [Stephen Sherrill]
 District 2 Supervisor
 Stephen Sherrill
@@ -23,24 +25,31 @@ District 10 Supervisor
 Theo Ellington
 SF board of Education
 [Phil Kim]
+[Phil Kim]
 Board of Education
 Phil Kim
 [Autumn Brown Garibay]
+Board of Education
 Autumn Brown Garibay
 [Tim Tung]
+Board of Education
 Tim Tung
 SF City College
+[Elijah Ball]
 [Elijah Ball]
 City College
 Elijah Ball
 [Erwin Tam]
+City College
 Erwin Tam
 [Monroe Lace]
+City College
 Monroe Lace
 [Ruth Ferguson]
 City College - Partial Term
 Ruth Ferguson
 State Legislature
+[Matt Haney]
 [Matt Haney]
 Assembly District 17
 Matt Haney
@@ -49,10 +58,13 @@ Assembly District 19
 Catherine Stefani
 BART Board of Directors
 [Sara Barz]
+[Sara Barz]
 BART Board
 Sara Barz
 Board of Equalization
 [Portrait of John Pimentel]
+[Portrait of John Pimentel]
+Board of Equalization
 John Pimentel
 Ballot Measures
 RTM
@@ -78,6 +90,7 @@ Changes to Real Property Transfer Tax
 PROP J
 Real Property Transfer Tax Foreclosure Exemption
 Read more
+Share with your network
 Share with your network
 Download Cheat Sheet
 [JFK Prominade]

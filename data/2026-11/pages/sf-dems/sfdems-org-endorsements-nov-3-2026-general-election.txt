@@ -2,6 +2,9 @@
 [San Francisco Democratic Party]
 Donate
 Open Menu Close Menu
+[San Francisco Democratic Party]
+Donate
+Open Menu Close Menu
 General Election Voter Guide
 Written By Bobak Esfandiari
 Federal & State Candidates*
@@ -61,5 +64,6 @@ Go to a Polling Place: If you prefer to vote in person, polling places will be o
 Voters can register and then vote at their county’s elections office, polling place, or vote centers up until on Election Day. Click here for more information on Same-Day Registration.
 Track Your Ballot: Sign-up at WheresMyBallot.sos.ca.gov to receive automated notifications about your ballot by email, text (SMS), or voice call.
 Bobak Esfandiari
+Next
 Next
 Primary Election Voter Guide

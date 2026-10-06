@@ -25,16 +25,33 @@ If Prop. 3 Passes
 If Prop. 3 Is Rejected
 $371,001–$446,000
 10.3%
+10.3%
 9.3%
 $446,001–$743,000
 11.3%
+11.3%
+9.3%
 Above $743,000
 12.3%
+12.3%
+9.3%
 Joint/Other Filer Income Tax Rates Under Prop. 3
 Taxable Income (brackets adjusted annually for inflation)
+Marginal Tax Rate (now through 2030)
+If Prop. 3 Passes
+If Prop. 3 Is Rejected
 $743,001–$892,000
+10.3%
+10.3%
+9.3%
 $892,001–$1.5 million
+11.3%
+11.3%
+9.3%
 Above $1.5 million
+12.3%
+12.3%
+9.3%
 Source: Legislative Analyst’s Office, A.G. File No. 2025-016
 Prop. 98 requires California to provide a minimum level of funding for K–12 schools and community colleges each year, based on state revenues, economic growth, and student enrollment. Local property taxes also contribute to the Prop. 98 minimum. Together, these requirements typically direct about 40% of General Fund revenues to education.3
 Of the education funding, 89% goes to K–12 schools and 11% to community colleges. None of the funding can be used for administrative costs. After meeting education requirements, revenues go to debt service and the rainy day fund; 50% of remaining funds, capped at $2 billion annually, may support Medi-Cal children’s and family health services.

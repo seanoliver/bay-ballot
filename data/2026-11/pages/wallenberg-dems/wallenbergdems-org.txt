@@ -9,6 +9,7 @@ Account
 My Account
 Sign out
 Sign In
+My Account
 info@wallenbergdems.org
 [Raoul Wallenberg Jewish Democratic Club]
 Promoting action on issues of concern to the Jewish community.
@@ -103,6 +104,10 @@ Who was Raoul Wallenberg?
 Raoul Wallenberg was a Swedish architect, businessman, diplomat, and humanitarian. He is widely celebrated for his successful efforts to rescue tens of thousands to about one hundred thousand Jews in Nazi-occupied Hungary during the Holocaust from Hungarian Fascists and the Nazis during the later stages of World War II. While serving as Sweden's special envoy in Budapest between July and , Wallenberg issued protective passports and sheltered Jews in buildings designated as Swedish territory saving tens of thousands of lives.
 On , during the Siege of Budapest by the Red Army, Wallenberg was detained by Soviet authorities on suspicion of espionage and subsequently disappeared. He was later reported to have died on , while imprisoned in the Lubyanka, a building located in Moscow, Russia, housing both the KGB headquarters and its affiliated prison. The motives behind Wallenberg's arrest and imprisonment by the Soviet government, along with questions surrounding the circumstances of his death and his possible ties to US intelligence, remain mysterious and are the subject of continued speculation.
 Source: Wikipedia
+About
+News
+Join
 EndorsementsMockUp
+Contact
 Powered by
 DeclineAccept

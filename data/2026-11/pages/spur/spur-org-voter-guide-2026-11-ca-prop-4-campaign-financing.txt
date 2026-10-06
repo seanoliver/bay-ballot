@@ -32,6 +32,8 @@ Full grants
 Statewide offices, legislature
 Connecticut
 2005
+Full grants
+Statewide offices, legislature
 Florida
 1986
 Small donor multiple match
@@ -42,6 +44,7 @@ Small donor single match
 Statewide offices, legislature, county offices
 Maine
 1996
+Full grants
 Governor, legislature
 Maryland
 1974
@@ -49,23 +52,35 @@ Small donor progressive match
 Governor
 Massachusetts
 1975
+Small donor single match
+Statewide offices
 Michigan
 1976
 Small donor multiple match and partial grants
+Governor
 Minnesota
+1974
 Partial grants and refunds
+Statewide offices, legislature
 New Jersey
+1974
 Multiple match
+Governor
 New Mexico
 2003
+Full grants
 Statewide judicial offices, district judges
 New York
 2020
+Small donor progressive match
+Statewide offices, legislature
 Rhode Island
 1988
 Progressive match
+Statewide offices
 Vermont
 1997
+Full grants
 Governor, lieutenant governor
 Source: Brennan Center for Justice
 Evidence suggests public campaign financing can lead to more small-dollar donors, greater donor diversity, and a broader range of people running for office. A 2022 University of Washington study found that in the two election cycles since Seattle implemented its program, the number of donors per race increased by 350%. Donations of less than $200 increased by 270%, and the number of candidates rose by 86%. A separate analysis also found that some residents were almost 12 times more likely to vote if they participated in the program, and low-income Seattleites and people of color were more likely to use their vouchers than they were to give a cash donation.4
