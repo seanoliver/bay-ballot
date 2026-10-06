@@ -1,0 +1,4 @@
+date: 2026-10-06
+type: fix
+title: Multi-seat races in search results name a single leader only when that candidate is ahead
+pr: 22
