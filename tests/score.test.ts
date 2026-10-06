@@ -83,3 +83,11 @@ describe("countedNames", () => {
     expect(countedNames(board, e(["A", "B", "C"], true))).toEqual(["A", "B", "C"]);
   });
 });
+
+describe("tally with partial ranking", () => {
+  it("still counts only the #1 name of a partially ranked pick", () => {
+    const partial: Entry = { pick: ["A", "B", "C"], ranked: true, rankedCount: 1, quotes: [] };
+    const t = cand(tally(race, [partial]));
+    expect(t.counts.map((c) => [c.name, c.count])).toEqual([["A", 1]]);
+  });
+});

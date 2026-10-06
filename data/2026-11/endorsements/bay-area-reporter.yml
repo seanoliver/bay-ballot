@@ -1,0 +1,144 @@
+guide: bay-area-reporter
+election: 2026-11
+status: published
+source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+extraSources:
+  - https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  - https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
+  - https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+  - https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+fetchWith: browser
+fetchedAt: 2026-10-05
+hasReasoning: true
+picks:
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+    ranked: true
+    quotes:
+      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Nguyen impressed us with his commitment to social housing.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: Overall, Dorsey has been effective on the Board of Supervisors.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-10:
+    pick:
+      - Theo Ellington
+    quotes:
+      - text: Overall, we think Ellington would be a good supervisor.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-4:
+    pick:
+      - Alan Wong
+    quotes:
+      - text: But Wong is listening to his constituents, and that’s a priority for a district supervisor.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  prop-a:
+    pick: Y
+    quotes:
+      - text: The city’s charter - i.e. governing document - is in need of a redo, and Prop A is a start.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-b:
+    pick: N
+    quotes:
+      - text: In short, we don’t see a need for a public bank with its encompassing bureaucratic infrastructure in San Francisco right now.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: The city has set up enough programs that offer similar services.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Speaking of the Housing Trust Fund, voters can renew this important program through 2058 and increase the annual funding for affordable housing to $125 million.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-d:
+    pick: Y
+  prop-e:
+    pick: Y
+    quotes:
+      - text: However, on balance, the city’s contracting system is in need of fixing.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-f:
+    pick: N
+    quotes:
+      - text: The mayor already has power over city departments.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-g:
+    pick: N
+    quotes:
+      - text: The park is there; the city controller’s office estimates it would cost millions of dollars to remove it and reconstruct the roadway, along with an annual cost of about $1.4 million.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-h:
+    pick: Y
+    quotes:
+      - text: Reliable public transportation is critical as San Francisco continues its economic recovery post COVID.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: A reliable Muni will help San Francisco workers and residents, as well as visitors who bring in tourist dollars.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-i:
+    pick: Y
+    quotes:
+      - text: The reality, however, is that San Francisco needs more affordable housing, and Prop I is one way to help fund that.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  prop-j:
+    pick: Y
+  rtm:
+    pick: Y
+    quotes:
+      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  board-of-education:
+    pick:
+      - Phil Kim
+      - Ryan Hazelton
+      - Alida Fisher
+    quotes:
+      - text: We think Hazelton is a solid choice for the school board and recommend him in the race.
+        source: https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
+      - text: Fisher’s correct that achieving a balanced budget is a major milestone for the district and that the work is not finished.
+        source: https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
+  college-board:
+    pick:
+      - Elijah Ball
+      - Monroe Lace
+      - Erwin Tam
+    quotes:
+      - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
+        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+      - text: Overall, Tam has financial skills that would be beneficial to the college district.
+        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  lt-governor:
+    pick:
+      - Fiona Ma
+    quotes:
+      - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+      - text: Ma, a certified public accountant, has been an effective state treasurer.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+    quotes:
+      - text: Kounalakis has an MBA and the business background to perform the duties.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations

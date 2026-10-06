@@ -51,6 +51,23 @@ describe("nextFile", () => {
     expect(nextFile(same, moreQuotes, true, "2026-10-05").fetchedAt).toBe("2026-10-05");
   });
 
+  it("replaces the snapshot for a re-archived source and keeps the others", () => {
+    const src = prev.source!;
+    const extra = prev.extraSources![0];
+    const old = [
+      { source: src, snapshot: `https://web.archive.org/web/20260512000000/${src}` },
+      { source: extra, snapshot: `https://web.archive.org/web/20260512000000/${extra}` },
+    ];
+    const fresh = [{ source: src, snapshot: `https://web.archive.org/web/20261005000000/${src}` }];
+    expect(nextFile({ ...prev, archived: old }, picks, true, "2026-10-05", fresh).archived).toEqual([fresh[0], old[1]]);
+  });
+
+  it("drops snapshots for sources the file no longer lists", () => {
+    const gone = [{ source: "https://www.spur.org/old-page", snapshot: "https://web.archive.org/web/1/https://www.spur.org/old-page" }];
+    const fresh = [{ source: prev.source!, snapshot: `https://web.archive.org/web/20261005000000/${prev.source}` }];
+    expect(nextFile({ ...prev, archived: gone }, picks, true, "2026-10-05", fresh).archived).toEqual(fresh);
+  });
+
   it("keeps manual", () => {
     expect(nextFile({ ...prev, manual: true }, picks, true, "2026-10-05").manual).toBe(true);
   });
@@ -63,6 +80,13 @@ describe("toYaml", () => {
 
   it("round-trips through the schema", () => {
     expect(EndorsementFile.parse(parse(toYaml(file)))).toEqual(file);
+  });
+
+  it("round-trips rankedCount", () => {
+    const f = { ...file, picks: { "supervisor-d8": { pick: ["Gary McCoy", "Michael Nguyen"], ranked: true, rankedCount: 1, quotes: [] } } };
+    const y = toYaml(f);
+    expect(y).toContain("rankedCount: 1");
+    expect(EndorsementFile.parse(parse(y))).toEqual(f);
   });
 
   it("writes keys in a stable order", () => {

@@ -2,15 +2,82 @@ guide: lwv-sf
 election: 2026-11
 status: published
 source: https://lwvsf.org/ballot-recommendations
+archived:
+  - source: https://lwvsf.org/ballot-recommendations
+    snapshot: https://web.archive.org/web/20261005221630/https://lwvsf.org/ballot-recommendations
 fetchedAt: 2026-10-05
 hasReasoning: true
 picks:
-  prop-a: { pick: N }
-  prop-b: { pick: Y }
-  prop-c: { pick: Y }
-  prop-d: { pick: N }
-  prop-e: { pick: N }
-  prop-f: { pick: N }
-  prop-h: { pick: Y }
-  prop-i: { pick: Y }
-  prop-j: { pick: Y }
+  prop-a:
+    pick: N
+    quotes:
+      - text: The League of Women Voters of San Francisco strongly opposes Proposition A because it strips too much power from the people and hands it to City Hall, and that’s not good government.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Once commissions move into regular City government code, Supervisors can usually change or eliminate them without a vote by the people.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: It lets most commissions stop publishing annual reports, one of the few ways people can see what our government is doing for our community so we can hold it accountable.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-b:
+    pick: Y
+    quotes:
+      - text: A public bank keeps municipal dollars working for the public good rather than funneling fees and interest to big for-profit banks.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: The proposition comes with a comprehensive plan for how the public bank would be run, with strong governance and guardrails to limit risk, and no spending requirement.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Proposition C is exactly the kind of government funding for affordable housing the League of Women Voters supports because we believe a decent place to live should be possible for San Franciscans at all income levels.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: The proposition would require the city government to put more money into the Housing Trust Fund, slowly raising that amount from today's $52 million to $125 million each year, without raising taxes.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-d:
+    pick: N
+    quotes:
+      - text: Proposition D locks regular people out of elections and gives power to whoever can buy their way onto the ballot.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Signature initiatives are the only way most San Franciscans have to put an issue on the ballot when their elected officials refuse to act.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Proposition D puts an expensive paywall on our ballot process, one few San Franciscans can afford.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-e:
+    pick: N
+    quotes:
+      - text: Proposition E hands a lot more power to an unelected official, with little accountability to match.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: The City Administrator is appointed, not elected, and can’t be recalled by voters.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: A decade in office, with vastly expanded authority over how the government spends billions of dollars, is a lot of power with too few checks against abuse.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-f:
+    pick: N
+    quotes:
+      - text: Proposition F hands the Mayor sweeping new power over our government and removes many checks and balances.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Also concerning, the proposition strips the Police Commission’s authority to remove the Chief of Police, leaving that power with the Mayor alone.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: This undermines the commission’s oversight of the police.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-h:
+    pick: Y
+    quotes:
+      - text: Muni is running out of money and faces service cuts that would affect all San Franciscans, even people who don’t take public transit.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: This will increase traffic, drag down the city’s economy, and make it harder to get to work, school, and everywhere in between.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: This aligns with our positions on progressive tax structures and adequate revenue to maintain government services.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-i:
+    pick: Y
+    quotes:
+      - text: San Francisco needs a dedicated, reliable source of money for affordable housing, and Proposition I delivers one without increasing taxes.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Because this proposition only affects property transfers of $10 million or more, the majority of San Franciscans won’t pay a dime.
+        source: https://lwvsf.org/ballot-recommendations
+  prop-j:
+    pick: Y
+    quotes:
+      - text: Proposition J ends a tax break that has let big real estate lenders off the hook for years.
+        source: https://lwvsf.org/ballot-recommendations
+      - text: Proposition J is the kind of progressive, equitable, and necessary taxation the League of Women Voters supports.
+        source: https://lwvsf.org/ballot-recommendations

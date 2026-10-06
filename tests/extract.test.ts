@@ -1,6 +1,7 @@
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { extract, pagesFor, systemPrompt, toEntries, type ExtractClient, type ExtractOutput } from "@/pipeline/extract";
+import { z } from "zod";
+import { extract, ExtractOutput, pagesFor, systemPrompt, toEntries, type ExtractClient } from "@/pipeline/extract";
 import { loadElection } from "@/lib/data";
 import type { Contest, Guide } from "@/lib/schema";
 import type { Page } from "@/pipeline/quotes";
@@ -44,6 +45,27 @@ describe("systemPrompt", () => {
     expect(prompt).toMatch(/Only contests with rankedChoice true can be ranked/);
   });
 
+  it("asks for quotes that give reasons, not announcements", () => {
+    expect(prompt).toContain(
+      "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
+    );
+  });
+
+  it("explains partial ranking", () => {
+    expect(prompt).toContain("If only some names are ranked, list ranked names first and set rankedCount");
+  });
+
+  it("asks for quotes that stand alone", () => {
+    expect(prompt).toContain(
+      "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
+    );
+  });
+
+  it("uses only schema keywords structured outputs accept (no integer bounds)", () => {
+    const json = JSON.stringify(z.toJSONSchema(ExtractOutput));
+    expect(json).not.toMatch(/"(minimum|maximum|exclusiveMinimum|exclusiveMaximum)"/);
+  });
+
   it("marks ranked-choice contests in the contest JSON", () => {
     expect(prompt).toContain('"id":"supervisor-8","title":"Board of Supervisors, District 8","kind":"candidate"');
     expect(prompt).toMatch(/"id":"supervisor-8"[^}]*"rankedChoice":true/);
@@ -68,6 +90,7 @@ const contests: Contest[] = [
   contest({ id: "supervisor-d8", kind: "candidate", rankedChoice: true, candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"] }),
   contest({ id: "assessor-plain", kind: "candidate", candidates: ["Jane Doe", "John Roe"] }),
   contest({ id: "school-board", kind: "candidate", seats: 3, rankedChoice: true, candidates: ["A One", "B Two", "C Three"] }),
+  contest({ id: "public-defender", kind: "candidate", candidates: ["Mano Raju"], aliases: { "Mano Raju": ["Manohar Raju"] } }),
 ];
 
 const pages: Page[] = [
@@ -80,6 +103,7 @@ const pick = (p: Partial<ModelPick> & Pick<ModelPick, "contestId">): ModelPick =
   vote: null,
   candidates: [],
   ranked: false,
+  rankedCount: null,
   quotes: [],
   note: null,
   ...p,
@@ -87,6 +111,12 @@ const pick = (p: Partial<ModelPick> & Pick<ModelPick, "contestId">): ModelPick =
 const run = (...picks: ModelPick[]) => toEntries({ hasReasoning: true, picks }, contests, pages);
 
 describe("toEntries", () => {
+  it("resolves a contest alias to the official name and notes it", () => {
+    const r = run(pick({ contestId: "public-defender", candidates: ["Manohar Raju"] }));
+    expect(r.picks["public-defender"]).toEqual({ pick: ["Mano Raju"], ranked: false, quotes: [] });
+    expect(r.notes).toEqual(["public-defender: 'Manohar Raju' -> 'Mano Raju'"]);
+  });
+
   it("maps a measure pick", () => {
     const r = run(pick({ contestId: "prop-b", vote: "N" }));
     expect(r.picks["prop-b"]).toEqual({ pick: "N", ranked: false, quotes: [] });
@@ -132,6 +162,49 @@ describe("toEntries", () => {
     expect(toEntries(out, contests, pg, { ownNames: ["SPUR"] }).picks["prop-b"].quotes).toEqual([
       { text: q, source: "https://a.org/g" },
     ]);
+  });
+
+  it("keeps a partial ranking reported by the model", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1 }));
+    expect(r.picks["supervisor-d8"]).toEqual({
+      pick: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1, quotes: [],
+    });
+  });
+  it("drops a rankedCount that covers every name or is out of range", () => {
+    const all = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 2 }));
+    expect(all.picks["supervisor-d8"]).toEqual({ pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, quotes: [] });
+    const zero = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 0 }));
+    expect(zero.picks["supervisor-d8"].rankedCount).toBeUndefined();
+    const frac = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1.5 }));
+    expect(frac.picks["supervisor-d8"].rankedCount).toBeUndefined();
+  });
+
+  it("never ranks a single-name pick", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy"], ranked: true }));
+    expect(r.picks["supervisor-d8"]).toEqual({ pick: ["Gary McCoy"], ranked: false, quotes: [] });
+    expect(r.notes).toEqual([]);
+  });
+
+  it("drops quotes that sit under another contest's heading", () => {
+    const pg: Page[] = [{
+      url: "https://g.org/",
+      kind: "html",
+      text: "Yes on RTM\nTransit funding keeps the whole region moving every day.\nNo on Prop G\nReopening the road would increase congestion on the west side and hurt local businesses.",
+    }];
+    const q1 = "Transit funding keeps the whole region moving every day.";
+    const q2 = "Reopening the road would increase congestion on the west side and hurt local businesses.";
+    const out = { hasReasoning: true, picks: [pick({ contestId: "rtm", vote: "Y", quotes: [q1, q2] })] };
+    const r = toEntries(out, ballot.contests, pg);
+    expect(r.picks.rtm.quotes).toEqual([{ text: q1, source: "https://g.org/" }]);
+    expect(r.notes).toContain(`rtm: dropped quote (wrong-contest, under prop-g): "${q2.slice(0, 80)}…"`);
+  });
+
+  it("drops quotes that lean on an earlier sentence", () => {
+    const pg: Page[] = [{ url: "https://g.org/", kind: "html", text: "Prop B\nWe oppose Prop B. This will only make the deficit worse for years." }];
+    const out = { hasReasoning: true, picks: [pick({ contestId: "prop-b", vote: "N", quotes: ["This will only make the deficit worse for years."] })] };
+    const r = toEntries(out, contests, pg);
+    expect(r.picks["prop-b"].quotes).toEqual([]);
+    expect(r.notes).toContain('prop-b: dropped quote (not-standalone): "This will only make the deficit worse for years."');
   });
 
   it("notes and skips unknown contests", () => {

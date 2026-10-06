@@ -37,6 +37,7 @@ contests:
     title: Secretary of State
     kind: candidate
     candidates: [Shirley N. Weber, Donald P. (Don) Wagner]
+    aliases: { Shirley N. Weber: [Shirley Webber] }
     jurisdiction: { level: state, name: California }
   - id: controller
     section: State
@@ -114,6 +115,7 @@ contests:
     kind: candidate
     seats: 3
     candidates: [Autumn Brown Garibay, Virginia Cheung, Alida Fisher, Ryan Hazelton, Phil Kim, Laurance Lee, Reina Tello, Tim Tung]
+    aliases: { Phil Kim: [Philip Kim, Phillip Kim], Laurance Lee: [Laurence Lee] }
     jurisdiction: { level: city, name: San Francisco }
   - id: college-board
     section: Local candidates
@@ -149,6 +151,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Mano Raju]
+    aliases: { Mano Raju: [Manohar Raju] }
     jurisdiction: { level: city, name: San Francisco }
   - id: supervisor-2
     section: Local candidates
@@ -156,6 +159,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Nicholas Berg, Guy McCoy, Monthanus Ratanapakdee, Stephen Sherrill]
+    aliases: { Stephen Sherrill: [Stephen Sherill] }
     jurisdiction: { level: district, name: Supervisor, district: "2" }
   - id: supervisor-4
     section: Local candidates
@@ -177,6 +181,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
+    aliases: { Michael T. Nguyen: [Michael Trung Nguyen] }
     jurisdiction: { level: district, name: Supervisor, district: "8" }
   - id: supervisor-10
     section: Local candidates
@@ -194,6 +199,7 @@ contests:
       - Jamo Muhammad
       - Jessica Pessecow
       - Shawn M. Richard
+    aliases: { Dionjay (DJ) Brookter: [Dion-Jay Brookter] }
     jurisdiction: { level: district, name: Supervisor, district: "10" }
 
   # ---------- State propositions ----------

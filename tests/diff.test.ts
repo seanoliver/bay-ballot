@@ -41,3 +41,11 @@ describe("summaryLine", () => {
     expect(summaryLine("spur", before, after, ["n1", "n2"])).toBe("spur: 3 picks (+1 ~1 -1), 6 quotes, 2 notes");
   });
 });
+
+describe("partial ranking in diffs", () => {
+  it("shows how many names are ranked", () => {
+    const before = { "sup-10": e(["A One", "B Two", "C Three"], { ranked: true }) };
+    const after = { "sup-10": { ...e(["A One", "B Two", "C Three"], { ranked: true }), rankedCount: 1 } };
+    expect(diffPicks(before, after)).toEqual(["~ sup-10: A One / B Two / C Three (ranked) -> A One / B Two / C Three (ranked 1)"]);
+  });
+});

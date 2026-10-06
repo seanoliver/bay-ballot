@@ -8,9 +8,9 @@
 
 **Tech Stack:** Next.js (App Router) + TypeScript + Tailwind, `zod`, `yaml` (v2, YAML 1.2), `@anthropic-ai/sdk` (`claude-sonnet-5-5`), `cheerio`, `tsx`, Vitest, Playwright, Vercel.
 
-**Design doc:** `~/cortex/wiki/side-projects/active/bay-ballot/2026-10-05-bay-ballot-design.md`
+**Design doc:** the design doc (kept in the author's notes)
 
-**Seed data:** `~/cortex/drafts/sf-nov-2026-guides.md` (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
+**Seed data:** an initial research file (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
 
 ---
 
@@ -589,7 +589,7 @@ curl -L -o data/2026-11/sources/SF-Voter-Pamphlet-Nov2026.pdf https://media.api.
 ```
 Also save the CA SoS certified candidate list (`https://elections.cdn.sos.ca.gov/statewide-elections/2026-general/cert-list-candidates.pdf`).
 
-**Step 2:** Write `ballot.yml` covering every contest in `~/cortex/drafts/sf-nov-2026-guides.md`. Rules:
+**Step 2:** Write `ballot.yml` covering every contest from the initial research file. Rules:
 - IDs: `us-rep-11`, `us-rep-15`, `governor`, `lt-governor`, `secretary-of-state`, `controller`, `treasurer`, `attorney-general`, `insurance-commissioner`, `board-of-equalization-2`, `superintendent`, `assembly-17`, `assembly-19`, `supreme-court-groban`, `supreme-court-evans`, `court-of-appeal-1`, `supervisor-2/4/6/8/10`, `board-of-education`, `college-board`, `college-board-partial`, `bart-8`, `assessor`, `public-defender`, `prop-1` … `prop-45`, `rtm`, `prop-a` … `prop-j`.
 - Candidate names exactly as in the SoS certified list / SF candidate list.
 - Measures: `description` = the official one-line title, `link` = `https://voterguide.sos.ca.gov/propositions/<n>/` for state props, the sf.gov measure page for local ones.
@@ -1036,11 +1036,27 @@ Expected: no differences in picks (quotes will be new). Repeat for `spur` and `l
 
 **Step 3:** `npm run validate` until `data OK`.
 
-**Step 4:** **Sean reviews `git diff data/`** and commits. Do not commit extraction output without his review.
+**Step 4 (revised 2026-10-05):** independent Opus verification replaces Sean's manual review (see Task 12b). Commit after verification issues are fixed or held.
 
 ---
 
 # Phase 2 — Site (target: Fri 2026-10-16)
+
+### Task 12b: Independent verification (`bb verify`), replacing human data review
+
+**Why (2026-10-05):** 900+ picks is too much to review by hand. Sean replaced the human review gate with an independent AI check. The one-off audit of the first batch used three fresh Opus subagents; this task makes the same check part of the pipeline.
+
+**Behavior:** `npm run bb -- verify <guide...> | --all` (and `extract` runs it automatically unless `--no-verify`):
+1. For each guide, re-fetch its source and extra pages (same fetch path as extract).
+2. Send the page text (and PDFs as documents) plus the guide's already-extracted picks and quotes to `claude-opus-5-5` in a separate request with its own system prompt ("You are auditing someone else's extraction. For each pick and quote, say whether the page supports it."). It never sees the extraction prompt. Structured output per pick: `{ contestId, verdict: "confirmed" | "wrong" | "not-found" | "old-election", evidence }`; per quote: `{ verdict: "confirmed" | "not-found" | "wrong-contest" | "not-own-words" | "not-substantive" }`; plus `missing: [{ contestId, pick, evidence }]`.
+3. Picks not `confirmed` are removed from the file and recorded under `held: [{ contestId, pick, reason, evidence }]` (schema + tests first), so they are not published but stay visible. Unconfirmed quotes are dropped. `missing` items are reported only, never auto-added.
+4. Print a per-guide summary; exit non-zero if any guide had held picks, so a daily run surfaces them.
+
+**Tests (TDD):** the pure merge step `applyVerdicts(file, verdicts)`; the request shape against a fake client (model opus-5-5, cache_control on the system prompt, page blocks, no extraction prompt text); stop-reason handling like `extract`.
+
+**Runbook:** the daily loop becomes `extract --all --archive` (which verifies), then `validate`, then commit. Sean is pinged only when picks are held.
+
+---
 
 ### Task 13: Ballot state helpers
 
@@ -1357,7 +1373,8 @@ Commit `docs: refresh runbook`.
 
 ## Out of scope for launch (fast-follows)
 
+- **Address / ZIP filter (first post-launch item).** Replaces the district pickers, which were removed on 2026-10-05 as confusing. A visitor enters an address or ZIP; the site shows only contests on their ballot, using `Contest.jurisdiction` (kept in the data for this). ZIPs can span districts, so a ZIP that maps to several districts should ask for the street address.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
-- Address / ZIP lookup and the district map.
+- District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
 - Automated `discover` via web search.

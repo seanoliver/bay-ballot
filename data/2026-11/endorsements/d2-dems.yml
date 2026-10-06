@@ -1,0 +1,26 @@
+guide: d2-dems
+election: 2026-11
+status: published
+source: https://d2dems.com/news/november-2026-endorsements # slate is a single image (D2 Dems Endorsement Slate.png); no page text
+fetchedAt: 2026-10-05
+hasReasoning: false
+manual: true # picks hand-entered from the slate image; extract skips this guide
+picks:
+  us-rep-11: { pick: ["Scott Wiener"] }
+  assembly-17: { pick: ["Matt Haney"] }
+  assembly-19: { pick: ["Catherine Stefani"] }
+  board-of-education: { pick: ["Phil Kim", "Tim Tung"] }
+  college-board: { pick: ["Monroe Lace", "Erwin Tam", "Elijah Ball"] }
+  college-board-partial: { pick: ["Ruth Ferguson"] }
+  bart-8: { pick: ["Sara Barz"] }
+  assessor: { pick: ["Joaquín Torres"] }
+  supervisor-2: { pick: ["Stephen Sherrill"] }
+  rtm: { pick: Y }
+  prop-a: { pick: Y }
+  prop-b: { pick: N }
+  prop-c: { pick: Y }
+  prop-d: { pick: Y }
+  prop-e: { pick: Y }
+  prop-f: { pick: Y }
+  prop-h: { pick: Y }
+  prop-i: { pick: N }

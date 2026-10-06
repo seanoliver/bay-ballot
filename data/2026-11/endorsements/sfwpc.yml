@@ -1,7 +1,131 @@
 guide: sfwpc
 election: 2026-11
-status: pending
-source: https://sfwpc.org/endorsements-of-candidates-for-november-2026-election/  # ballot measures on a separate page: https://sfwpc.org/endorsements-of-ballot-measures-for-november-2026-election/
+status: published
+source: https://sfwpc.org/endorsements-of-candidates-for-november-2026-election/
+extraSources:
+  - https://sfwpc.org/endorsements-of-ballot-measures-for-november-2026-election/
+archived:
+  - source: https://sfwpc.org/endorsements-of-candidates-for-november-2026-election/
+    snapshot: https://web.archive.org/web/20261005222732/https://sfwpc.org/endorsements-of-candidates-for-november-2026-election/
+  - source: https://sfwpc.org/endorsements-of-ballot-measures-for-november-2026-election/
+    snapshot: https://web.archive.org/web/20261005230725/https://sfwpc.org/endorsements-of-ballot-measures-for-november-2026-election/
 fetchedAt: 2026-10-05
-hasReasoning: true
-picks: {}
+hasReasoning: false
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  board-of-education:
+    pick:
+      - Phil Kim
+      - Alida Fisher
+      - Autumn Brown Garibay
+  college-board:
+    pick:
+      - Monroe Lace
+      - Bunny McFadden
+      - Jeremy Lee
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  bart-8:
+    pick:
+      - Sara Barz
+  assessor:
+    pick:
+      - Joaquín Torres
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-8:
+    pick:
+      - Gary McCoy
+  supervisor-10:
+    pick:
+      - Theo Ellington
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: Y
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  prop-a:
+    pick: Y
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+  prop-e:
+    pick: N
+  prop-f:
+    pick: N
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: Y
+  prop-j:
+    pick: Y

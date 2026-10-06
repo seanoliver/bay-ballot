@@ -1,9 +1,17 @@
 const LETTER_MAP: Record<string, string> = { ł: "l", ø: "o", ß: "ss", đ: "d", æ: "ae" };
 
 const SUFFIXES = new Set(["jr", "sr", "ii", "iii", "iv"]);
+const TITLES = new Set([
+  "dr", "mr", "mrs", "ms", "mx", "rev", "hon", "judge", "justice", "supervisor", "assemblymember",
+  "senator", "rep", "mayor", "councilmember", "commissioner", "director",
+]);
+const isInitial = (t: string) => [...t].length === 1;
 
 // Single-character tokens are initials, which the input may omit but never contradict or add.
-// Generational suffixes (Jr., III) are dropped from both sides.
+// Generational suffixes (Jr., III) are dropped from both sides, as are leading titles ("Dr.",
+// "Supervisor") when a first and last name follow. A hyphen inside a word joins it on both sides
+// ("Dion-Jay" = "Dionjay", "Smith-Jones" = "Smith–Jones"), so a hyphenated surname still never
+// equals the same words spaced apart.
 function tokenize(s: string): { names: string[]; initials: string[] } {
   const tokens = s
     .normalize("NFD")
@@ -11,10 +19,13 @@ function tokenize(s: string): { names: string[]; initials: string[] } {
     .toLowerCase()
     .replace(/[łøßđæ]/g, (c) => LETTER_MAP[c])
     .replace(/[.'‘’"“”`]/g, "")
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/(?<=[\p{L}\p{N}])[-‐‑‒–—](?=[\p{L}\p{N}])/gu, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
     .split(/\s+/)
     .filter((t) => t && !SUFFIXES.has(t));
-  const isInitial = (t: string) => [...t].length === 1;
+  while (tokens.length > 0 && TITLES.has(tokens[0]) && tokens.slice(1).filter((t) => !isInitial(t)).length >= 2) {
+    tokens.shift();
+  }
   return {
     names: tokens.filter((t) => !isInitial(t)),
     initials: tokens.filter(isInitial),
@@ -64,11 +75,21 @@ function compatible(input: string, candidate: string): boolean {
   );
 }
 
+/** Alternate spellings a guide may print, keyed by official ballot name. */
+export type Aliases = Record<string, string[]>;
+
+/**
+ * The official candidate `input` refers to. Anything but an exact match is fuzzy, so the
+ * caller notes it for review; that includes a hit on one of the contest's `aliases`.
+ */
 export function matchName(
   input: string,
   candidates: string[],
+  aliases: Aliases = {},
 ): { name: string; fuzzy: boolean } | null {
   if (candidates.includes(input)) return { name: input, fuzzy: false };
-  const hits = candidates.filter((c) => compatible(input, c));
+  const hits = candidates.filter(
+    (c) => compatible(input, c) || (aliases[c] ?? []).some((alt) => compatible(input, alt)),
+  );
   return hits.length === 1 ? { name: hits[0], fuzzy: true } : null;
 }

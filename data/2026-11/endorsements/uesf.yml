@@ -1,7 +1,47 @@
 guide: uesf
 election: 2026-11
-status: pending
-source: https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf  # PDF (has text); slate also summarized at https://uesf.org/our-work/political-action/
+status: published
+source: https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf # PDF (has text); slate also summarized at https://uesf.org/our-work/political-action/
+archived:
+  - source: https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf
+    snapshot: https://web.archive.org/web/20261005224153/https://uesf.org/wp-content/uploads/2026/09/UESF-Voter-Guide-PDF-Print.pdf
 fetchedAt: 2026-10-05
-hasReasoning: false
-picks: {}
+hasReasoning: true
+manual: true # hand-edited after review 2026-10-05; extract skips this guide
+picks:
+  prop-3:
+    pick: Y
+  board-of-education:
+    pick:
+      - Reina Tello
+      - Ryan Hazelton
+      - Virginia Cheung
+  college-board:
+    pick:
+      - Jeremy Lee
+      - Bunny McFadden
+      - Leah LaCroix
+  prop-i:
+    pick: Y
+  prop-b:
+    pick: Y
+  prop-d:
+    pick: N
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+      - Darshini Patel
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
+      - Deandra Bryant
+    ranked: true
+    rankedCount: 1 # "#1 Brookter"; Eppler and Bryant unranked
+  us-rep-11:
+    pick:
+      - Connie Chan
+  superintendent:
+    pick:
+      - Richard Barrera

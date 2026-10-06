@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { Ballot, EndorsementFile, Guide } from "@/lib/schema";
+import { Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 describe("schemas", () => {
   it("parses a guide", () => {
@@ -197,6 +197,21 @@ describe("extraction bookkeeping fields", () => {
   });
 });
 
+describe("contest aliases", () => {
+  const base = {
+    id: "supervisor-8", section: "Local", title: "D8", kind: "candidate",
+    candidates: ["Michael T. Nguyen"], jurisdiction: { level: "district", name: "Supervisor", district: "8" },
+  };
+  it("accepts aliases keyed by an official candidate", () => {
+    const c = Contest.parse({ ...base, aliases: { "Michael T. Nguyen": ["Michael Trung Nguyen"] } });
+    expect(c.aliases).toEqual({ "Michael T. Nguyen": ["Michael Trung Nguyen"] });
+  });
+  it("rejects an alias keyed by a name that is not a candidate", () => {
+    expect(() => Contest.parse({ ...base, aliases: { "Mike Nguyen": ["Michael Trung Nguyen"] } })).toThrow();
+  });
+});
+
+
 describe("Guide shortName", () => {
   const base = { id: "league", name: "San Francisco League of Pissed Off Voters", description: "d", type: "advocacy", homepage: "https://example.org/" };
   it("accepts an optional short name", () => {
@@ -205,5 +220,17 @@ describe("Guide shortName", () => {
   });
   it("rejects a blank short name", () => {
     expect(Guide.safeParse({ ...base, shortName: "  " }).success).toBe(false);
+  });
+});
+
+describe("partial ranking", () => {
+  it("accepts a positive integer rankedCount", () => {
+    const r = EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y", "Z"], ranked: true, rankedCount: 1 } } });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.picks.a.rankedCount).toBe(1);
+  });
+  it("rejects zero or fractional rankedCount", () => {
+    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y"], ranked: true, rankedCount: 0 } } }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y"], ranked: true, rankedCount: 1.5 } } }).success).toBe(false);
   });
 });
