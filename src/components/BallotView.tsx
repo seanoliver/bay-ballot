@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cardDescription, sections } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
+import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,10 @@ import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
+import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useBallotKeys } from "./useBallotKeys";
+import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
@@ -23,6 +27,13 @@ const DESKTOP = "(min-width: 1024px)";
 // viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
 const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
+const subscribeDesktop = (onChange: () => void) => {
+  const mq = window.matchMedia(DESKTOP);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+};
+const isDesktop = () => window.matchMedia(DESKTOP).matches;
+const STEP_URL_MS = 250;
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -37,6 +48,7 @@ type Props = {
 export function BallotView({ election, intro, ballot, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
+  const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
@@ -49,7 +61,15 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
 
   const visible = sections(ballot.contests);
   const all = visible.flatMap((s) => s.contests);
-  const selectedId = pickSelected(all.map((c) => c.id), requested);
+  const [stepped, setStepped] = useState<string | null>(null);
+  const [stepWrite] = useState(() =>
+    trailing(STEP_URL_MS, (id: string) => {
+      setRequested(id);
+      setStepped(null);
+    }),
+  );
+  useEffect(() => stepWrite.cancel, [stepWrite]);
+  const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
@@ -74,9 +94,13 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     } else {
       setExiting(null);
     }
+    stepWrite.cancel();
+    setStepped(null);
     setRequested(next);
   };
 
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [singleKeys, setSingleKeys] = useSingleKeys();
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
@@ -105,6 +129,34 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     closePane();
   };
 
+  useBallotKeys((action: KeyAction) => {
+    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
+    if (!window.matchMedia(DESKTOP).matches) return false;
+    if (action === "help") {
+      setShortcutsOpen(true);
+      return;
+    }
+    if (action === "close") {
+      if (selectedId === null) return false;
+      closePane();
+      return;
+    }
+    if (action === "search") {
+      document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
+      return;
+    }
+    const id = stepSelection(all.map((c) => c.id), selectedId, action);
+    if (id === null) return false;
+    setAnimate(true);
+    clearTimeout(exitTimer.current);
+    setExiting(null);
+    setStepped(id);
+    stepWrite.push(id);
+    const row = document.getElementById(`row-d-${id}`);
+    row?.focus({ preventScroll: true });
+    row?.scrollIntoView({ block: "nearest" });
+  }, { singleKeys });
+
   return (
     <div
       className={cn(
@@ -129,11 +181,23 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
 
       <div
         className="min-w-0 pb-10"
+        role={desktop ? "region" : undefined}
+        aria-label={desktop ? "Contests" : undefined}
+        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
+        data-keys="list"
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
+          <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
+            <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
+            {singleKeys ? null : (
+              <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
+                Keyboard shortcuts
+              </button>
+            )}
+          </div>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -175,6 +239,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       {shown ? (
         <div
           ref={paneRef}
+          data-keys="pane"
           // Slides and fades in on open (from @starting-style), out on close; inert while it leaves.
           className={cn(
             PANE,
@@ -202,6 +267,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
           </section>
         </div>
       ) : null}
+
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} singleKeys={singleKeys} onSingleKeysChange={setSingleKeys} />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
@@ -269,7 +336,13 @@ function ContestRow({
         )}
       >
         <h3 className="text-base font-semibold">
-          <a id={`row-d-${contest.id}`} href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
+          <a
+            id={`row-d-${contest.id}`}
+            href={href}
+            onClick={onClick}
+            aria-current={selected ? "true" : undefined}
+            className={ROW_LINK}
+          >
             {contest.title}
           </a>
         </h3>
