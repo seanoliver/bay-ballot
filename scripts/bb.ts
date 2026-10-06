@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import fs from "node:fs";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
+import { utcDay } from "../src/lib/changelog";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
 import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
@@ -19,7 +20,7 @@ import { parse as parseYaml } from "yaml";
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
-       npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--archive]
+       npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--baseline <data dir>] [--archive]
        npm run bb -- verify <guide...> | --all [--browser]
        npm run bb -- pages --seed [<guide...>]
        npm run bb -- discover
@@ -44,12 +45,12 @@ the command exits non-zero when anything is held.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
-const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state"];
+const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state", "--baseline"];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
 const REFRESH_BUDGET = 20;
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
-const today = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
+const today = () => utcDay();
 const endorsementPath = (id: string) => path.join(ROOT, ELECTION, "endorsements", `${id}.yml`);
 
 
@@ -171,6 +172,7 @@ async function runRefreshCmd(): Promise<void> {
     root: ROOT, election: ELECTION,
     browser: flag("--browser"), archive: flag("--archive"), maxChanged: REFRESH_BUDGET,
     shrunkSkip: readShrunkState(option("--shrunk-state")),
+    baseline: option("--baseline"),
   });
   const { errors } = validateElection(loadElection(ROOT, ELECTION));
   let md = summarize(results, { date: today() });

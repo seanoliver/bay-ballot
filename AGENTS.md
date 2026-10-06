@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Changelog
+
+Every PR that changes what visitors see or what data the site shows adds an entry in the same PR: one file, `data/changelog/<YYYY-MM-DD>-<slug>.yml`, holding `date`, `type` (`new`, `data` or `fix`), `title`, and optional `details` and `pr`. Internal-only changes (tests, CI, refactors, docs) don't.

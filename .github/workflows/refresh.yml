@@ -35,6 +35,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "main_sha=$(git rev-parse origin/main)" >> "$GITHUB_OUTPUT"
           # A fork can open a PR from its own data/refresh branch; never continue or merge that one.
           pr="$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository,headRepositoryOwner \
             --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')"
@@ -82,6 +83,13 @@ jobs:
               | sed -n 's/^<!-- shrunk-state: \(.*\) -->$/\1/p' > shrunk-state.json
           fi
 
+      - name: Extract main's data as the changelog baseline
+        if: steps.base.outputs.stop != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/main"
+          git archive "${{ steps.base.outputs.main_sha }}" data | tar -x -C "$RUNNER_TEMP/main"
+          test -d "$RUNNER_TEMP/main/data"
+
       - name: Refresh
         id: refresh
         if: steps.base.outputs.stop != 'true'
@@ -89,7 +97,7 @@ jobs:
           BAYBALLOT_ANTHROPIC_API_KEY: ${{ secrets.BAYBALLOT_ANTHROPIC_API_KEY }}
         run: |
           set +e
-          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json
+          npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json --baseline "$RUNNER_TEMP/main/data"
           echo "code=$?" >> "$GITHUB_OUTPUT"
 
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
