@@ -79,6 +79,11 @@ const fit = (heads: string[], endings: string[]) => {
 const monthYear = (iso: string) =>
   new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", year: "numeric" });
 
+function shortNames(names: string[]): string[] {
+  const family = names.map(familyName);
+  return family.map((f, i) => (family.indexOf(f) === family.lastIndexOf(f) ? f : names[i]));
+}
+
 export function contestTitle(c: Contest, rows: Row[], ballotDate: string, place: PlaceName): string {
   const when = monthYear(ballotDate);
   const t = tally(c, rows.map((r) => r.entry));
@@ -94,8 +99,10 @@ export function contestTitle(c: Contest, rows: Row[], ballotDate: string, place:
   if (c.seats > 1) {
     const head = [`${place.short} ${officeName(c, place)} endorsements (${when})`, `${officeName(c, place)} endorsements (${when})`];
     if (t.counts.length === 0) return fit(head, []);
-    const top = topPicks(t, c.seats).map((x) => familyName(x.name));
-    return fit(head, [`${top.join(", ")} lead`, `${top[0]} leads`]);
+    const names = shortNames(topPicks(t, c.seats).map((x) => x.name));
+    const strict = t.counts.length === 1 || t.counts[0].count > t.counts[1].count;
+    if (names.length === 1) return fit(head, [`${names[0]} leads`]);
+    return fit(head, [`${names.join(", ")} lead`, ...(strict ? [`${names[0]} leads`] : [])]);
   }
   const head = [`${officeName(c, place)} endorsements (${place.short}, ${when})`, `${officeName(c, place)} endorsements (${when})`];
   if (t.counts.length === 0) return fit(head, []);
@@ -116,7 +123,7 @@ function answer(
   rows: Row[],
   level: 0 | 1 | 2,
   place: PlaceName,
-  { short = false, named = false }: { short?: boolean; named?: boolean } = {},
+  { short = false, named = false, limit = Infinity }: { short?: boolean; named?: boolean; limit?: number } = {},
 ): string {
   const WHO = `${short ? place.short : place.name} voter guides`;
   const office = level === 2 ? "" : ` for ${officeInSentence(c)}`;
@@ -130,8 +137,10 @@ function answer(
     return `${k} of ${t.total} ${who(t.total)} ${plural(k, "recommends", "recommend")} ${t.verdict === "Y" ? "Yes" : "No"} on ${measureObject(c, place, { named })}`;
   }
   if (c.seats > 1) {
-    const top = topPicks(t, c.seats);
-    if (level === 2) return `Most-endorsed: ${top.map((x, i) => (i === 0 ? `${x.name} (${x.count} of ${t.total} ${plural(t.total, "guide", "guides")})` : `${x.name} (${x.count})`)).join(", ")}`;
+    const all = topPicks(t, c.seats);
+    const top = all.slice(0, limit);
+    const more = all.length > top.length ? `, and ${all.length - top.length} more` : "";
+    if (level === 2) return `Most-endorsed: ${top.map((x, i) => (i === 0 ? `${x.name} (${x.count} of ${t.total} ${plural(t.total, "guide", "guides")})` : `${x.name} (${x.count})`)).join(", ")}${more}`;
     return `Most-endorsed for ${officeInSentence(c)} by ${t.total} ${who(t.total)}: ${top.map((x) => `${x.name} (${x.count})`).join(", ")}`;
   }
   if (t.counts.length === 1) {
@@ -160,7 +169,14 @@ export function contestDescription(c: Contest, rows: Row[], place: PlaceName): s
     const d = `${answer(c, rows, level, place, { short: true })}. ${READ_MORE}`;
     if (d.length <= MAX_DESCRIPTION) return d;
   }
-  const text = clip(answer(c, rows, 2, place, { short: true }), MAX_DESCRIPTION - READ_MORE.length - 2);
+  const multi = c.kind === "candidate" && c.seats > 1;
+  if (multi) {
+    for (let limit = topPicks(tally(c, rows.map((r) => r.entry)), c.seats).length - 1; limit >= 1; limit--) {
+      const d = `${answer(c, rows, 2, place, { short: true, limit })}. ${READ_MORE}`;
+      if (d.length <= MAX_DESCRIPTION) return d;
+    }
+  }
+  const text = clip(answer(c, rows, 2, place, { short: true, limit: multi ? 1 : Infinity }), MAX_DESCRIPTION - READ_MORE.length - 2);
   return `${text}${text.endsWith("…") ? " " : ". "}${READ_MORE}`;
 }
 

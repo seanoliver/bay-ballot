@@ -6,7 +6,8 @@ import { ChangelogEntry } from "./schema";
 
 export type ChangelogItem = ChangelogEntry & { file: string };
 
-const NAME = /^(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.yml$/i;
+const NAME = /^(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*(?:--\d+)?\.yml$/i;
+const suffix = (file: string) => Number(file.match(/--(\d+)\.yml$/)?.[1] ?? 1);
 
 export function readChangelog(root: string): { entries: ChangelogItem[]; errors: string[] } {
   const dir = path.join(root, "changelog");
@@ -25,7 +26,7 @@ export function readChangelog(root: string): { entries: ChangelogItem[]; errors:
     if (r.success) entries.push({ ...r.data, file });
     else errors.push(`changelog/${file}: ${r.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ")}`);
   }
-  entries.sort((a, b) => b.date.localeCompare(a.date) || b.file.localeCompare(a.file));
+  entries.sort((a, b) => b.date.localeCompare(a.date) || suffix(b.file) - suffix(a.file) || b.file.localeCompare(a.file));
   return { entries, errors };
 }
 

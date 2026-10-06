@@ -235,8 +235,8 @@ describe("edge cases", () => {
   });
   it("a clipped description ends in an ellipsis, then where to read more", () => {
     const long = (x: string) => `${x} Bartholomew-Alexandrovich Montgomery-Wellington the Third`;
-    const office = contest({ title: "Superintendent of Public Instruction and Other Very Long Office Words", kind: "candidate", seats: 3 });
-    const d = contestDescription(office, [...many(3, [long("A")]), ...many(2, [long("B")]), ...many(1, [long("C")])], SF);
+    const office = contest({ title: "Superintendent of Public Instruction and Other Very Long Office Words", kind: "candidate" });
+    const d = contestDescription(office, [...many(3, [`${long("A")} ${long("A")}`]), ...many(2, [long("B")])], SF);
     expect(d).toMatch(/… See every guide's endorsement and reasons\.$/);
     expect(d.length).toBeLessThanOrEqual(MAX_DESCRIPTION);
   });
@@ -277,5 +277,31 @@ describe("area-aware copy", () => {
   });
   it("names a local measure's place when an area page describes it", () => {
     expect(areaDescription(SF, [propB, prop1], localHeavy)).toBe("20 of 20 San Francisco voter guides recommend Yes on SF Prop B. See every contest side by side.");
+  });
+});
+
+describe("multi-seat follow-ups", () => {
+  const board = contest({ title: "Community College Board", kind: "candidate", seats: 3 });
+  it("a single name leads, singular", () => {
+    expect(contestTitle(board, many(5, ["Phil Kim"]), NOV, SF)).toBe("SF Community College Board endorsements (Nov 2026): Kim leads");
+  });
+  it("one name 'leads' only when it is strictly ahead", () => {
+    const [a, b, c] = ["Ann Alexandrovich-Montgomery", "Bo Bartholomew-Wellington", "Cy Cunningham-Fitzgerald"];
+    const tied = [...many(3, [a]), ...many(3, [b]), ...many(1, [c])];
+    expect(contestTitle(board, tied, NOV, SF)).toBe("SF Community College Board endorsements (Nov 2026)");
+    const ahead = [...many(4, [a]), ...many(3, [b]), ...many(1, [c])];
+    expect(contestTitle(board, ahead, NOV, SF)).toBe("Community College Board endorsements (Nov 2026): Alexandrovich-Montgomery leads");
+  });
+  it("uses full names when family names collide", () => {
+    const rows = [...many(5, ["Ann Lee"]), ...many(4, ["Bo Lee"]), ...many(3, ["Phil Kim"])];
+    expect(contestTitle(board, rows, NOV, SF)).toBe("SF Community College Board endorsements (Nov 2026): Ann Lee, Bo Lee, Kim lead");
+  });
+  it("a long description drops whole names, never clipping one", () => {
+    const long = (x: string) => `${x} Bartholomew-Alexandrovich Montgomery-Wellington the Third`;
+    const office = contest({ title: "Superintendent of Public Instruction and Other Very Long Office Words", kind: "candidate", seats: 3 });
+    const d = contestDescription(office, [...many(3, [long("A")]), ...many(2, [long("B")]), ...many(1, [long("C")])], SF);
+    expect(d).not.toContain("…");
+    expect(d).toMatch(/\(\d+( of \d+ guides)?\)(, [^,]+ \(\d+\))*, and \d+ more\. See every guide's endorsement and reasons\.$/);
+    expect(d.length).toBeLessThanOrEqual(MAX_DESCRIPTION);
   });
 });

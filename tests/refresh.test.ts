@@ -129,16 +129,37 @@ describe("runRefresh", () => {
     expect(results[0]).toMatchObject({ status: "changed", dataChanged: false, diff: [] });
   });
 
+  it("without a baseline writes no changelog files, even on a rerun", async () => {
+    const root = setup(["alpha"]);
+    const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
+    await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION });
+    await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION, ids: ["alpha"] });
+    expect(fs.existsSync(path.join(root, "changelog"))).toBe(false);
+  });
+
+  it("refuses an unreadable baseline before writing any data", async () => {
+    const root = setup(["alpha"]);
+    const main = setup(["alpha"]);
+    fs.writeFileSync(path.join(main, ELECTION, "ballot.yml"), "contests: [");
+    const before = fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8");
+    const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
+    const f = fetcher({ alpha: page });
+    await expect(runRefresh(deps(fakeClient(extractOut).client, f), { root, election: ELECTION, baseline: main })).rejects.toThrow();
+    expect(f).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8")).toBe(before);
+  });
+
   it("writes one changelog file per changed guide, and a rerun changes nothing", async () => {
     const root = setup(["alpha"]);
+    const main = setup(["alpha"]);
     const dir = path.join(root, "changelog");
     const { client } = fakeClient(extractOut);
     const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
-    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, baseline: main });
     expect(fs.readdirSync(dir)).toEqual(["2026-10-06-refresh-alpha.yml"]);
     expect(parse(fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8"))).toEqual({ date: "2026-10-06", type: "data", title: "ALPHA endorsed Yes on Prop C" });
     const before = fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8");
-    await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION });
+    await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION, baseline: main });
     expect(fs.readdirSync(dir)).toEqual(["2026-10-06-refresh-alpha.yml"]);
     expect(fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8")).toBe(before);
   });
@@ -166,8 +187,9 @@ describe("runRefresh", () => {
 
   it("does not announce a held pick", async () => {
     const root = setup(["alpha"], { stored: false });
+    const main = setup(["alpha"], { stored: false });
     const { client } = fakeClient(extractOut, { held: true });
-    await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
+    await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION, baseline: main });
     expect(fs.existsSync(path.join(root, "changelog"))).toBe(false);
   });
 
