@@ -19,6 +19,8 @@ picks:
     quotes:
       - text: Wealthy donors and special interests continue to dominate election campaign spending.
         source: https://bayrisingaction.org/voterguide/
+      - text: Prop 4 would allow local governments the option to create systems that help candidates rely less on wealthy donors and public interests.
+        source: https://bayrisingaction.org/voterguide/
       - text: Money in politics sways our elections.
         source: https://bayrisingaction.org/voterguide/
   prop-5:
@@ -30,7 +32,7 @@ picks:
     quotes:
       - text: Prop 39 creates significant barriers to voting by prohibiting voting by mail or voting in person without disclosing or presenting a government-issued identification number.
         source: https://bayrisingaction.org/voterguide/
-      - text: Voter suppression tactics like requiring government-issued IDs at the polls or on mail-in ballots create unnecessary barriers to engage in our democracy.
+      - text: New hurdles to voting, like requiring you to write your personal ID number on your ballot, would make it easier to steal your identity and harder to protect your privacy.
         source: https://bayrisingaction.org/voterguide/
   prop-40:
     pick: Y
@@ -76,7 +78,7 @@ picks:
   prop-b:
     pick: Y
     quotes:
-      - text: Banks currently invest our public dollars in harmful industries like fossil fuels, tobacco, the military, and weapons manufacturing.
+      - text: Our tax dollars are currently invested in and make money for big, private banks and their private shareholders, instead of the people of San Francisco.
         source: https://bayrisingaction.org/voterguide/
       - text: A public bank would benefit San Franciscans by creating low-interest loans for city infrastructure and affordable housing, commercial loans through credit unions and community banks, and loans to drive community revitalization.
         source: https://bayrisingaction.org/voterguide/
@@ -85,6 +87,8 @@ picks:
   prop-d:
     pick: N
     quotes:
+      - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
+        source: https://bayrisingaction.org/voterguide/
       - text: Prop D would make it harder for voters to have their voices heard by increasing the number of signatures a measure needs to reach the ballot.
         source: https://bayrisingaction.org/voterguide/
   prop-e:
@@ -115,3 +119,8 @@ picks:
     pick: Y
   redwood-city-measure-e:
     pick: Y
+    quotes:
+      - text: Half of Redwood City residents, including over 70% of Latino and Black households, are renters who pay an average of almost $4,000 for a 2-bedroom home.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
+        source: https://bayrisingaction.org/voterguide/
