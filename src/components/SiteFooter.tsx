@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { dataAsOf } from "@/lib/display";
 import { election, latestElection } from "@/lib/site-data";
 import { ExternalLink } from "./ExternalLink";
@@ -31,7 +32,12 @@ export function SiteFooter() {
           </ExternalLink>
         </p>
         <p className="text-muted-foreground">Independent; not affiliated with any guide. Every quote links to its source.</p>
-        {asOf ? <p className="text-muted-foreground">Data as of {asOf}</p> : null}
+        <p className="text-muted-foreground">
+          {asOf ? `Data as of ${asOf} · ` : null}
+          <Link href="/changelog" className={LINK}>
+            Changelog
+          </Link>
+        </p>
       </div>
     </footer>
   );
