@@ -37,3 +37,5 @@ export function hiddenCountyOf(groups: PlaceGroup[], off: string[], contestId: s
   const id = countySlug(g.county);
   return off.includes(id) ? { id, name: g.county } : null;
 }
+
+export const hiddenCountiesLabel = (n: number) => (n === 0 ? "" : `${n} ${n === 1 ? "county" : "counties"} hidden`);

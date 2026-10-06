@@ -176,3 +176,19 @@ test("a shared link to a contest in a hidden county shows that county again and 
   await expect(page.locator("[aria-live=polite]").filter({ hasText: "Showing San Mateo contests for this link" })).toHaveCount(1);
   if (!isPhone(info)) await expect(page.getByRole("region", { name: "Menlo Park Measure P" })).toBeVisible();
 });
+
+test("the phone Filters button counts hidden counties, and All counties keeps focus once used", async ({ page }, info) => {
+  await page.goto("/about");
+  await page.evaluate(() => localStorage.setItem("bb-area", "bay-area"));
+  await page.goto(`${BALLOT}?offc=san-mateo`);
+  if (isPhone(info)) {
+    await expect(page.getByRole("button", { name: /1 county hidden/ })).toBeVisible();
+    await page.getByRole("button", { name: /Filters/ }).click();
+  }
+  const panel = isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
+  const all = panel.getByRole("button", { name: "All counties" });
+  await all.click();
+  await expect(all).toBeFocused();
+  await expect(all).toHaveAttribute("aria-disabled", "true");
+  await expect(page).not.toHaveURL(/offc=/);
+});

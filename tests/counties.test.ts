@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countyOptions, countySlug, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
+import { countyOptions, countySlug, hiddenCountiesLabel, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
 import { placeGroups } from "@/lib/areas";
 import { mpP, PA, prop1, propB, rtm, sccA, SF, SM, smL } from "./fixtures/areas";
 
@@ -38,5 +38,10 @@ describe("county filter", () => {
     expect(hiddenCountyOf(groups, ["santa-clara"], "menlo-park-measure-p")).toBeNull();
     expect(hiddenCountyOf(groups, ["san-mateo"], "prop-1")).toBeNull();
     expect(hiddenCountyOf(groups, ["san-mateo"], null)).toBeNull();
+  });
+  it("labels hidden counties for the phone Filters button", () => {
+    expect(hiddenCountiesLabel(0)).toBe("");
+    expect(hiddenCountiesLabel(1)).toBe("1 county hidden");
+    expect(hiddenCountiesLabel(2)).toBe("2 counties hidden");
   });
 });
