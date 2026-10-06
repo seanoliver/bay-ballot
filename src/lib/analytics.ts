@@ -1,7 +1,6 @@
 import type { BeforeSendEvent } from "@vercel/analytics";
 
-// Query params that could carry where someone lives or what they searched for. None exist today;
-// an address or ZIP lookup would add them, and they must never reach analytics.
+// An address or ZIP filter must never reach analytics: add its params here.
 const PRIVATE_PARAMS = new Set(["addr", "zip", "q"]);
 
 export function scrubUrl(url: string): string {
@@ -12,7 +11,6 @@ export function scrubUrl(url: string): string {
   return u.toString();
 }
 
-// Page views only, with private params removed.
 export function beforeSend(event: BeforeSendEvent): BeforeSendEvent | null {
   if (event.type !== "pageview") return null;
   return { ...event, url: scrubUrl(event.url) };
