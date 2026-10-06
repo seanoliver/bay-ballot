@@ -6,7 +6,6 @@ import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/fil
 const STORAGE_KEY = "bb-filters";
 const CHANGE_EVENT = "bb-filters-change";
 
-// Storage access can throw (private mode, blocked site data).
 function readStored(): string | null {
   try {
     return window.localStorage.getItem(STORAGE_KEY);

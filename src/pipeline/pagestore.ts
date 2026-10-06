@@ -17,7 +17,6 @@ const DATE_PATTERNS = [
   /\b\d{1,2}:\d{2}(?::\d{2})?\s*(?:[ap]\.?m\.?)?/gi, // 9:30 am, 21:30
   /\b\d{1,2}\s*[ap]\.?m\.?(?![a-z])/gi, // 9am, 9 p.m.
 ];
-// Lines that only report freshness: "3 hours ago", "Updated 5 minutes ago", "Last updated yesterday".
 const RELATIVE_LINE =
   /^(?:(?:last\s+)?updated|posted|published|edited)\b|\b(?:\d+|an?|a few)\s+(?:seconds?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\s+ago\b|^(?:just now|yesterday|today)$/i;
 const COUNTER = /\b\d[\d,.]*\s*[kKmM]?\s+(?:comments?|shares?|likes?|views?|followers?|retweets?|reposts?|reactions?|replies)\b/g;

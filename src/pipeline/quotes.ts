@@ -79,7 +79,6 @@ function isTooShort(quote: string, normQuote: string): boolean {
 }
 
 const SENTENCE_END = /[.!?。！？]/g;
-// we/our/us/my as the first or second word: "We think…", "From our writeup…".
 const FIRST_PERSON_OPENING = /^\s*(?:\S+\s+)?(we|our|us|my)\b/i;
 const ABBREVIATIONS = /\b(?:U\.S\.A\.|U\.S\.|Mrs\.|Mr\.|Ms\.|Dr\.|St\.|No\.(?=\s*\d)|Prop\.|Jr\.|Sr\.|vs\.|e\.g\.|i\.e\.)/gi;
 const hasPhrase = (t: string) => ATTRIBUTION_PHRASES.some((p) => t.toLowerCase().includes(p));
@@ -104,7 +103,6 @@ const mentions = (text: string, name: string) =>
 const speaksAsGuide = (span: string, ownNames: string[]) =>
   FIRST_PERSON_OPENING.test(span) || ownNames.some((n) => n.trim() !== "" && mentions(span, n.trim()));
 
-// A speech verb whose subject isn't the guide ("Chan writes", not "We wrote").
 const OTHERS_SPEECH_VERB = new RegExp(`(?<!\\b(?:we|i)\\s+)${SPEECH_VERB.source}`, "i");
 
 const isReportedSpeech = (sentence: string) => hasPhrase(sentence) || SPEECH_VERB.test(sentence);
@@ -121,7 +119,6 @@ export function isAttributedSpeech(
   const straightInside = (before.match(/"/g) ?? []).length % 2 === 1 && after.includes('"');
   if (curlyInside || straightInside) return true;
   const { current, previous: prevSentence } = sentencesBefore(before);
-  // "The Chamber writes:" introduces someone else's words; "From our writeup in June:" does not.
   const colonIntro =
     previous.trimEnd().endsWith(":") &&
     (!FIRST_PERSON_OPENING.test(previous) || hasPhrase(previous) || OTHERS_SPEECH_VERB.test(previous));
@@ -163,12 +160,10 @@ const ANNOUNCEMENTS = [
   /^we\s+(?:endorse|support|recommend|urge)\b/i,
   /^(?:please\s+)?(?:vote|re-?elect|elect)\b/i,
   /^(?:yes|no)\s+on\b/i,
-  // "Connie Chan for Congress!": a short slogan naming an office.
   /^(?:\S+\s+){0,6}for\s+(?:congress|supervisor|assembly|senate|governor|mayor|district|bart|school\s+board|board\s+of|d\d)\b[^.?]*!\s*$/i,
 ];
 const MAX_ANNOUNCEMENT_WORDS = 15;
 const THANKS = /^(?:thank\s+you|thanks)\b/i;
-// "to" counts only before a verb-like word: "to save Muni", not "to endorse" or "to everyone".
 const REASON =
   /\b(?:because|since|will|would|could|has|have|had|record|so\s+that|which|as\s+an?|for\s+(?:more|better|safer|cleaner|stronger|fewer|less|lower)|who\s+(?:has|have|will|would|is|was)|to\s+(?!(?:endorse|support|recommend|vote|announce|everyone|all|our|the|a|an|you|us|them)\b)[a-z]+)\b/i;
 

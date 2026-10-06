@@ -230,10 +230,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   );
 }
 
-// "District 15" never breaks before its number.
 const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
 
-// ::after stretches the link over the whole row.
 const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
 const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
 

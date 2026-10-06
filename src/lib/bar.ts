@@ -129,7 +129,6 @@ export function barLegend(t: Tally, contest: Pick<Contest, "seats" | "candidates
 
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
 
-// The last name for tight labels: nicknames ("DJ", "Manny") and generational suffixes are dropped.
 export function surname(name: string): string {
   const tokens = name
     .replace(/\([^)]*\)|["“”][^"“”]*["“”]/g, " ")

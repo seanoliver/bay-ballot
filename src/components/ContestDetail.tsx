@@ -232,7 +232,6 @@ function Chips({ guides, short }: { guides: SideGuide[]; short: boolean }) {
 function QuoteItem({ quote, tone }: { quote: SideQuote; tone: BarTone }) {
   return (
     <li className={cn("border-l-2 pl-4", BORDER[tone])}>
-      {/* The opening mark hangs outside the text edge. */}
       <blockquote className="measure text-base">
         <span className="-ml-[0.45ch]">“</span>
         {quote.text}”

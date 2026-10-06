@@ -36,7 +36,6 @@ function isSubsequence(sub: string[], full: string[]): boolean {
 
 type Tokens = ReturnType<typeof tokenize>;
 
-// A nickname in parentheses or double quotes: Dionjay (DJ) Brookter, Emanuel "Manny" Yekutiel.
 const NICKNAME = /\s*(?:\(([^)]*)\)|["“”]([^"“”]*)["“”])\s*/;
 
 function variants(candidate: string): Tokens[] {

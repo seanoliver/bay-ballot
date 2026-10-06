@@ -2,7 +2,6 @@ name: Daily data refresh
 
 on:
   schedule:
-    # 13:00 UTC: 6 am PDT, 5 am PST after Nov 1.
     - cron: "0 13 * * *"
   workflow_dispatch:
 

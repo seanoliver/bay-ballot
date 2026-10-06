@@ -16,7 +16,6 @@ export function nextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
-  // A held pick stays held while extraction returns it unchanged; a different pick goes back to verification.
   const held = (prev.held ?? []).filter((h) => picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick));
   if (held.length) {
     picks = { ...picks };

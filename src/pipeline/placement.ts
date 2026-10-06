@@ -3,7 +3,6 @@ import { normalizeWithMap, type KeptQuote, type Page } from "./quotes";
 
 const HEADING_CHARS = 40;
 const HEADING_LINE_MAX = 120;
-// A heading: a short line that is not a sentence ending in "." or a bracketed image caption.
 const isHeadingLine = (line: string) =>
   line.trim().length <= HEADING_LINE_MAX && !/\.\s*$/.test(line) && !/^\s*\[[^\]]*\]\s*$/.test(line);
 
@@ -13,7 +12,6 @@ const ci = (word: string) =>
   [...word].map((ch) => (/[a-z]/i.test(ch) ? `[${ch.toLowerCase()}${ch.toUpperCase()}]` : escapeRegExp(ch))).join("");
 const ciWords = (phrase: string) => phrase.trim().split(/\s+/).map(ci).join("\\s+");
 const bounded = (body: string) => new RegExp(`(?<![\\p{L}\\p{N}])(?:${body})(?![\\p{L}\\p{N}])`, "u");
-// An office title as a heading: followed by the end of the line or ":", "—", "-", ",", "(", "|".
 const asHeading = (body: string) => `${body}(?=[^\\S\\n]*(?:\\n|$|[:—–\\-,(|]))`;
 
 const PROP_WORD = `(?:${ci("proposition")}|${ci("prop")}\\.?|${ci("measure")})`;
@@ -28,7 +26,6 @@ function namePatterns(candidate: string): string[] {
   const firstForms = [tokens[0], ...(nick ? [nick[1] ?? nick[2]] : [])].map((f) =>
     escapeRegExp(f.replace(/\./g, "")).split("").join("\\.?"),
   );
-  // Up to two middle tokens between first and last ("Michael T. Nguyen", "Lisa Palagi Wynn").
   return firstForms.map((f) => `${f}\\.?(?:\\s+\\S+){0,2}?\\s+${last}`);
 }
 
@@ -109,7 +106,6 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
       }
     }
   }
-  // Overlapping matches go to the longest: "Lieutenant Governor" over "Governor".
   const kept = found.filter(
     (a) => !found.some((b) => b !== a && b.start <= a.start && b.end >= a.end && b.end - b.start > a.end - a.start),
   );
@@ -123,7 +119,6 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
     } else byLine.set(m.line, { end: m.end, ids: [m.id] });
   }
 
-  // Consecutive heading lines share one section ("Prop 41: …" / "Prop 42: …", then one write-up).
   const out: Marker[] = [];
   let prevLine = -2;
   for (const li of [...byLine.keys()].sort((a, b) => a - b)) {
