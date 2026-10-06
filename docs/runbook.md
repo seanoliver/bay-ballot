@@ -70,6 +70,6 @@ Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasRe
 ## Pending follow-ups
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
-- San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `ballot.yml` from the registrar roster in `data/2026-11/sources/` and re-extract that guide. Refresh doesn't add races on its own yet.
+- San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `ballot.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
 - Quotes dropped by hand on 2026-10-06 after the San Mateo audits (courage-california, lwv-ssmc, lwv-ncsmc, green-foothills, bay-rising-action) come back if `extract` re-runs those guides. Check their quotes after a re-extract.
 - Not yet published for San Mateo County as of 2026-10-06: The Almanac, Redwood City Pulse, Half Moon Bay Review, Coastsider (site down) and Mercury News local picks. Add them when they publish.
