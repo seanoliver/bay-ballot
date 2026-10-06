@@ -1,7 +1,7 @@
 import { sections, type Section } from "./display";
 import type { Area, Contest, Jurisdiction, Place } from "./schema";
 
-export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization"];
+export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization", "Court of Appeal"];
 
 export type PlaceName = { name: string; short: string };
 export const BAY_AREA: PlaceName = { name: "Bay Area", short: "Bay Area" };

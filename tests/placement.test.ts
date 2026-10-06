@@ -228,6 +228,18 @@ describe("markers across places", () => {
     expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
     expect(marks(sfSup5, [sfSup5], "District 5")).toBe(true);
   });
+  it("tells Court of Appeal districts apart, and keeps the bare name when only one is on the ballot", () => {
+    const coa = (n: string, county: string) =>
+      ({ id: `court-of-appeal-${n}`, section: "Judicial", title: `${n === "1" ? "1st" : "6th"} District Court of Appeal`, kind: "retention", candidates: [], seats: 1, rankedChoice: false,
+         jurisdiction: { level: "district", name: "Court of Appeal", district: n, within: [{ level: "county", name: county }] } }) as Contest;
+    const one = coa("1", "San Francisco");
+    const six = coa("6", "Santa Clara");
+    expect(marks(one, [one], "Court of Appeal: retain all")).toBe(true);
+    expect(marks(one, [one, six], "Court of Appeal")).toBe(false);
+    expect(marks(one, [one, six], "First District Court of Appeal")).toBe(true);
+    expect(marks(six, [one, six], "6th District Court of Appeal")).toBe(true);
+    expect(marks(six, [one, six], "Court of Appeal, Sixth District")).toBe(true);
+  });
   it("places a quote under the right city's Measure P", () => {
     const page: Page = {
       url: "https://g.org/e", kind: "html",

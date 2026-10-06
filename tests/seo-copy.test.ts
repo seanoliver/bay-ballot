@@ -243,6 +243,10 @@ describe("edge cases", () => {
 });
 
 describe("area-aware copy", () => {
+  it("names any Court of Appeal district's justices in the answer", () => {
+    const six = contest({ id: "court-of-appeal-6", title: "6th District Court of Appeal (5 justices)", kind: "retention", jurisdiction: { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] } });
+    expect(answerSentence(six, many(2, "Y"), AS_OF, BAY_AREA)).toBe("2 of 2 Bay Area voter guides recommend Yes on retaining the 6th District Court of Appeal justices, as of October 5, 2026.");
+  });
   const SM: PlaceName = { name: "San Mateo County", short: "San Mateo County" };
   const mpP = contest({ id: "menlo-park-measure-p", title: "Menlo Park Measure P", jurisdiction: { level: "city", name: "Menlo Park" } });
   const prop1Rows = () => [...many(12, "Y"), ...many(3, "N")];

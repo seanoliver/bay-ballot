@@ -125,7 +125,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: state, name: California }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
 
   # ---------- Local candidates ----------
   - id: board-of-education

@@ -84,3 +84,10 @@ describe("placeGroups", () => {
     expect(placeGroups([b, a], [SF])[0].sections.map((s) => s.name)).toEqual(["State propositions", "State"]);
   });
 });
+
+describe("Court of Appeal", () => {
+  it("lists a Court of Appeal district under California", () => {
+    const coa = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
+    expect(placeGroups([coa], [PA])[0].heading).toBe("California");
+  });
+});
