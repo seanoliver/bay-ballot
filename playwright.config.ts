@@ -12,7 +12,8 @@ export default defineConfig({
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: { baseURL: BASE, trace: "retain-on-failure" },
   projects: [
-    { name: "phone", use: { ...devices["iPhone 13"] } },
+    // iPhone 13 viewport, touch and user agent, run in Chromium (the only browser CI installs).
+    { name: "phone", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
   ],
   webServer: {
