@@ -53,6 +53,22 @@ describe("data", () => {
       "dist: in no area (check its jurisdiction and data/areas.yml)",
     ]);
   });
+  it("checks that a held pick is in one of the guide's areas", () => {
+    const d = base();
+    d.areas.push(SM);
+    d.ballot.contests.push({ ...d.ballot.contests[0], id: "mp-p", jurisdiction: { level: "city", name: "Menlo Park" } });
+    const held = [{ contestId: "mp-p", pick: "Y" as const, reason: "unverified" as const, evidence: "x" }];
+    expect(validateElection(withFile(d, {}, { held })).errors).toEqual(["g/mp-p: held pick is outside the guide's areas (sf)"]);
+  });
+  it("warns when a measure letter repeats within one area", () => {
+    const d = base();
+    d.areas.push(SM);
+    const m = d.ballot.contests[0];
+    d.ballot.contests.push({ ...m, id: "mp-p", title: "Menlo Park Measure P", jurisdiction: { level: "city", name: "Menlo Park" } });
+    d.ballot.contests.push({ ...m, id: "rc-p", title: "Redwood City Measure P", jurisdiction: { level: "city", name: "Redwood City" } });
+    d.ballot.contests.push({ ...m, id: "prop-p", title: "Proposition P", jurisdiction: { level: "city", name: "San Francisco" } });
+    expect(validateElection(d).warnings).toEqual(["san-mateo: measure letter P is on mp-p and rc-p; quotes under a bare \"Measure P\" heading count for both"]);
+  });
   it("fails when an area id collides with a contest id", () => {
     const d = base();
     d.ballot.contests.push({ ...d.ballot.contests[0], id: "sf" });

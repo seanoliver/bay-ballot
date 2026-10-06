@@ -3,7 +3,7 @@ import path from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
 import { AreasFile, Ballot, EndorsementFile, Guide, type Area } from "./schema";
-import { areasOf, STATE_DISTRICTS } from "./areas";
+import { areasOf, inArea, STATE_DISTRICTS } from "./areas";
 import { matchName } from "./names";
 
 export type ElectionData = {
@@ -102,6 +102,16 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
   for (const c of d.ballot.contests) {
     if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas.yml)`);
   }
+  for (const a of d.areas) {
+    const byLetter = new Map<string, string[]>();
+    for (const c of d.ballot.contests) {
+      const letter = c.kind === "measure" && c.jurisdiction.level !== "state" && c.id !== "rtm" ? c.title.match(/(?:Proposition|Measure)\s+(\w+)$/)?.[1] : undefined;
+      if (letter && inArea(c, a)) byLetter.set(letter, [...(byLetter.get(letter) ?? []), c.id]);
+    }
+    for (const [letter, ids] of byLetter) {
+      if (ids.length > 1) warnings.push(`${a.id}: measure letter ${letter} is on ${ids.join(" and ")}; quotes under a bare "Measure ${letter}" heading count for both`);
+    }
+  }
   const areaIds = new Set(d.areas.map((a) => a.id));
   for (const g of d.guides) {
     for (const a of g.areas) if (!areaIds.has(a)) errors.push(`${g.id}: unknown area '${a}'`);
@@ -115,8 +125,13 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if (e.status === "pending" && Object.keys(e.picks).length > 0) {
       warnings.push(`${id}: pending file has picks`);
     }
+    const guide = d.guides.find((g) => g.id === id);
     for (const h of e.held ?? []) {
-      if (!contests.has(h.contestId)) errors.push(`${id}: held pick for unknown contest '${h.contestId}'`);
+      const c = contests.get(h.contestId);
+      if (!c) errors.push(`${id}: held pick for unknown contest '${h.contestId}'`);
+      else if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {
+        errors.push(`${id}/${h.contestId}: held pick is outside the guide's areas (${guide.areas.join(", ")})`);
+      }
     }
     if (e.status === "published" && Object.keys(e.picks).length === 0) {
       warnings.push(`${id}: published file has no picks`);
@@ -128,7 +143,6 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
         continue;
       }
       const where = `${id}/${cid}`;
-      const guide = d.guides.find((g) => g.id === id);
       if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {
         errors.push(`${where}: contest is outside the guide's areas (${guide.areas.join(", ")})`);
       }
