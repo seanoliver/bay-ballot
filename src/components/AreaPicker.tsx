@@ -9,6 +9,7 @@ export function AreaPicker({ links }: { links: AreaLink[] }) {
         <Link
           key={l.href}
           href={l.href}
+          prefetch={false}
           aria-current={l.current ? "page" : undefined}
           className={cn(
             "inline-flex min-h-10 items-center rounded-full px-3 ring-1 ring-foreground/15",

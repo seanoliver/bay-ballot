@@ -76,3 +76,15 @@ test("a visitor whose first list page is /sf is never redirected from the Bay Ar
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
   await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
 });
+
+test("the area picker doesn't prefetch other list pages", async ({ page }) => {
+  const fetched: string[] = [];
+  page.on("request", (r) => {
+    if (new URL(r.url()).pathname.startsWith(`${BALLOT}/sf`)) fetched.push(r.url());
+  });
+  await openBallot(page);
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "San Francisco" }).hover();
+  await page.waitForLoadState("networkidle");
+  expect(fetched).toEqual([]);
+});
