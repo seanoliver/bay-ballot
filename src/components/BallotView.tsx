@@ -81,8 +81,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   };
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  // Desktop only; selection goes through select(), exactly as a click on a row does.
   useBallotKeys((action: KeyAction) => {
+    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
     if (!window.matchMedia(DESKTOP).matches) return false;
     if (action === "help") {
       setShortcutsOpen(true);
