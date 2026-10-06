@@ -1,0 +1,125 @@
+guide: smc-gop
+election: 2026-11
+status: published
+source: https://smgop.org/s/SMGOP-November-2026-Election-Guide.pdf
+extraSources:
+  - https://smgop.org/voter-guide
+archived:
+  - source: https://smgop.org/s/SMGOP-November-2026-Election-Guide.pdf
+    snapshot: https://web.archive.org/web/20261006195254/https://static1.squarespace.com/static/61b3f88ed47f01182bac0e3f/t/6ab5a40b013f811a08a9d29a/1790288907345/SMGOP+++November+2026+Election+Guide.pdf
+  - source: https://smgop.org/voter-guide
+    snapshot: https://web.archive.org/web/20261006195305/https://smgop.org/voter-guide
+fetchedAt: 2026-10-06
+hasReasoning: true
+picks:
+  governor:
+    pick:
+      - Steve Hilton
+  lt-governor:
+    pick:
+      - Gloria Romero
+  attorney-general:
+    pick:
+      - Michael E. Gates
+  secretary-of-state:
+    pick:
+      - Donald P. (Don) Wagner
+  treasurer:
+    pick:
+      - Jennifer Hawks
+  controller:
+    pick:
+      - Herb W Morgan
+  superintendent:
+    pick:
+      - Sonja Shaw
+  us-rep-15:
+    pick:
+      - Charles Hoelter
+  us-rep-16:
+    pick:
+      - Peter Sundin Soulé
+  assembly-19:
+    pick:
+      - Philip Louis Wing
+  assembly-21:
+    pick:
+      - Jabra J Muhawieh
+  assembly-23:
+    pick:
+      - David G. Johnson
+  smuhsd-trustee-area-3:
+    pick:
+      - Jennifer Jacobson
+  foster-city-council-1:
+    pick:
+      - Art Kiesel
+  san-carlos-council:
+    pick:
+      - Mark D. Iwanowski
+  prop-1:
+    pick: N
+  prop-2:
+    pick: N
+  prop-3:
+    pick: N
+  prop-4:
+    pick: N
+  prop-5:
+    pick: N
+  prop-37:
+    pick: N
+  prop-38:
+    pick: N
+  prop-39:
+    pick: Y
+  prop-40:
+    pick: N
+  prop-41:
+    pick: Y
+  prop-42:
+    pick: Y
+  prop-43:
+    pick: Y
+  prop-44:
+    pick: N
+  prop-45:
+    pick: Y
+  rtm:
+    pick: N
+  san-carlos-sd-measure-k:
+    pick: N
+  jefferson-uhsd-measure-m:
+    pick: N
+  burlingame-sd-measure-r:
+    pick: N
+  pacifica-sd-measure-t:
+    pick: N
+  smcccd-measure-v:
+    pick: N
+  smfcsd-measure-w:
+    pick: N
+  cabrillo-usd-measure-z:
+    pick: N
+  pacifica-measure-bb:
+    pick: N
+  burlingame-measure-d:
+    pick: N
+  redwood-city-measure-e:
+    pick: N
+  san-bruno-measure-ee:
+    pick: N
+  san-carlos-measure-g:
+    pick: N
+  san-mateo-measure-h:
+    pick: N
+  portola-valley-measure-n:
+    pick: N
+  east-palo-alto-measure-o:
+    pick: N
+  menlo-park-measure-p:
+    pick: Y
+  brisbane-measure-x:
+    pick: N
+  belmont-measure-y:
+    pick: N

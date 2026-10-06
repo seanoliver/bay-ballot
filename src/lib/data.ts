@@ -3,8 +3,9 @@ import path from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
 import { AreasFile, Ballot, EndorsementFile, Guide, type Area } from "./schema";
-import { areasOf, STATE_DISTRICTS } from "./areas";
+import { areasOf, inArea, STATE_DISTRICTS } from "./areas";
 import { matchName } from "./names";
+import { isRejected } from "./quote-key";
 
 export type ElectionData = {
   ballot: Ballot;
@@ -73,9 +74,10 @@ export function listElections(root: string): string[] {
   return fs.readdirSync(root).filter((d) => /^\d{4}-\d{2}$/.test(d)).sort();
 }
 
-export function validateElection(d: ElectionData): { errors: string[]; warnings: string[] } {
+export function validateElection(d: ElectionData): { errors: string[]; warnings: string[]; info: string[] } {
   const errors: string[] = [];
   const warnings: string[] = [];
+  const info: string[] = [];
   const contests = new Map<string, Ballot["contests"][number]>();
 
   for (const c of d.ballot.contests) {
@@ -102,6 +104,17 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
   for (const c of d.ballot.contests) {
     if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas.yml)`);
   }
+  for (const g of d.guides) {
+    const mine = d.areas.filter((a) => g.areas.includes(a.id));
+    const byLetter = new Map<string, string[]>();
+    for (const c of d.ballot.contests) {
+      const letter = c.kind === "measure" && c.jurisdiction.level !== "state" && c.id !== "rtm" ? c.title.match(/(?:Proposition|Measure)\s+(\w+)$/)?.[1] : undefined;
+      if (letter && mine.some((a) => inArea(c, a))) byLetter.set(letter, [...(byLetter.get(letter) ?? []), c.id]);
+    }
+    for (const [letter, ids] of byLetter) {
+      if (ids.length > 1) info.push(`${g.id}: measure letter ${letter} is on ${ids.join(" and ")}; a quote under a bare "Measure ${letter}" heading counts for each`);
+    }
+  }
   const areaIds = new Set(d.areas.map((a) => a.id));
   for (const g of d.guides) {
     for (const a of g.areas) if (!areaIds.has(a)) errors.push(`${g.id}: unknown area '${a}'`);
@@ -115,20 +128,25 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if (e.status === "pending" && Object.keys(e.picks).length > 0) {
       warnings.push(`${id}: pending file has picks`);
     }
+    const guide = d.guides.find((g) => g.id === id);
     for (const h of e.held ?? []) {
-      if (!contests.has(h.contestId)) errors.push(`${id}: held pick for unknown contest '${h.contestId}'`);
+      const c = contests.get(h.contestId);
+      if (!c) errors.push(`${id}: held pick for unknown contest '${h.contestId}'`);
+      else if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {
+        errors.push(`${id}/${h.contestId}: held pick is outside the guide's areas (${guide.areas.join(", ")})`);
+      }
     }
     if (e.status === "published" && Object.keys(e.picks).length === 0) {
       warnings.push(`${id}: published file has no picks`);
     }
     for (const [cid, entry] of Object.entries(e.picks)) {
+      for (const q of entry.quotes) if (isRejected(q.text, cid, e.rejectedQuotes ?? [])) errors.push(`${id}/${cid}: quote is in rejectedQuotes: "${q.text}"`);
       const c = contests.get(cid);
       if (!c) {
         errors.push(`${id}: unknown contest '${cid}'`);
         continue;
       }
       const where = `${id}/${cid}`;
-      const guide = d.guides.find((g) => g.id === id);
       if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {
         errors.push(`${where}: contest is outside the guide's areas (${guide.areas.join(", ")})`);
       }
@@ -162,5 +180,5 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       }
     }
   }
-  return { errors, warnings };
+  return { errors, warnings, info };
 }

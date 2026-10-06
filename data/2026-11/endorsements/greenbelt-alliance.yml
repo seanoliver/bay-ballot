@@ -1,0 +1,33 @@
+guide: greenbelt-alliance
+election: 2026-11
+status: published
+source: https://www.greenbelt.org/voter-guide-26/
+fetchWith: browser
+archived:
+  - source: https://www.greenbelt.org/voter-guide-26/
+    snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
+fetchedAt: 2026-10-06
+hasReasoning: true
+picks:
+  prop-45:
+    pick: N
+    quotes:
+      - text: Despite monumental CEQA reforms, California’s business lobby and sprawl developers are proposing a ballot initiative that would make far more radical changes to the law.
+        source: https://www.greenbelt.org/voter-guide-26/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Greenbelt Alliance opposes Proposition 43’s goal to raise the threshold for citizen-initiated local special tax measures, limiting voters’ ability to fund essential local services.
+        source: https://www.greenbelt.org/voter-guide-26/
+  prop-g:
+    pick: N
+  prop-h:
+    pick: Y
+  rtm:
+    pick: Y
+  san-mateo-county-measure-l:
+    pick: Y
+  half-moon-bay-measure-q:
+    pick: Y
+  menlo-park-measure-p:
+    pick: N

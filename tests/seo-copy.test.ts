@@ -256,6 +256,10 @@ describe("area-aware copy", () => {
     expect(answerSentence(prop1, prop1Rows(), AS_OF, SM)).toBe("12 of 15 San Mateo County voter guides recommend Yes on Prop 1, as of October 5, 2026.");
     expect(contestDescription(prop1, many(2, "Y"), BAY_AREA)).toBe("2 of 2 Bay Area voter guides recommend Yes on Prop 1. See every guide's endorsement and reasons.");
   });
+  it("puts no article before a lettered local measure, and keeps one for the regional measure", () => {
+    expect(answerSentence(mpP, many(3, "N"), AS_OF, SM)).toBe("3 of 3 San Mateo County voter guides recommend No on Menlo Park Measure P, as of October 5, 2026.");
+    expect(answerSentence(rtm, many(2, "Y"), AS_OF, BAY_AREA)).toBe("2 of 2 Bay Area voter guides recommend Yes on the Regional Transit Measure, as of October 5, 2026.");
+  });
   it("titles a local measure page with its place", () => {
     expect(contestTitle(mpP, many(3, "Y"), NOV, SM)).toBe("Menlo Park Measure P endorsements (Nov 2026): 3 of 3 guides say Yes");
   });

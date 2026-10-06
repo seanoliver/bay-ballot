@@ -15,6 +15,7 @@ import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costOf, exitCodeFor, resultJson, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
+import { guideBallot } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
@@ -71,7 +72,7 @@ async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[
 }
 
 async function verifyAndWrite(client: Anthropic, data: ElectionData, guide: Guide, file: EndorsementFile, sources: Source[]): Promise<void> {
-  const { output, usage } = await verify(client, data.ballot, guide, file, sources);
+  const { output, usage } = await verify(client, guideBallot(data.ballot, guide, data.areas), guide, file, sources);
   const r = applyVerdicts(file, output);
   const path_ = endorsementPath(guide.id);
   if (!isDeepStrictEqual(r.file, file)) fs.writeFileSync(path_, toYaml(EndorsementFile.parse(r.file), { previous: fs.readFileSync(path_, "utf8") }));

@@ -108,6 +108,7 @@ export const EndorsementFile = z.object({
   allowForeignSources: z.boolean().optional(),
   archived: z.array(ArchivedSource).optional(),
   held: z.array(HeldPick).optional(),
+  rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;

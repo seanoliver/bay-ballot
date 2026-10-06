@@ -1,0 +1,7 @@
+id: smdj
+name: San Mateo Daily Journal
+shortName: "Daily Journal"
+description: A daily newspaper covering San Mateo County, whose editorial board endorses in county, city and school races and local measures.
+type: newspaper
+homepage: https://www.smdailyjournal.com/
+areas: [san-mateo]

@@ -4,20 +4,26 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createHomeVisit } from "@/lib/home-redirect";
 
-const visit = createHomeVisit();
+const home = createHomeVisit();
 
-function localStore(): Storage | null {
+function storage(kind: "localStorage" | "sessionStorage"): Storage | null {
   try {
-    return window.localStorage;
+    return window[kind];
   } catch {
     return null;
   }
 }
 
+const stores = () => ({ local: storage("localStorage"), session: storage("sessionStorage") });
+
+export function markHomeVisit(area: string | null) {
+  home.mark(stores(), area);
+}
+
 export function useHomeRedirect({ election, area }: { election: string; area: string | null }) {
   const router = useRouter();
   useEffect(() => {
-    const target = visit(localStore(), { area, query: window.location.search });
+    const target = home.visit(stores(), { area, query: window.location.search });
     if (target) router.replace(`/${election}/${target}`);
   }, [election, area, router]);
 }

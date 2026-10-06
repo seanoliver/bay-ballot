@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
-import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
@@ -18,9 +19,9 @@ import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
-import { useHomeRedirect } from "./useHomeRedirect";
+import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
@@ -37,6 +38,13 @@ const subscribeDesktop = (onChange: () => void) => {
 };
 const isDesktop = () => window.matchMedia(DESKTOP).matches;
 const STEP_URL_MS = 250;
+// Focusable only while focused, so a click on the list's empty space still leaves focus on <body>.
+function focusTarget(el: HTMLElement | null): HTMLElement | null {
+  if (!el) return null;
+  el.tabIndex = -1;
+  el.addEventListener("blur", () => el.removeAttribute("tabindex"), { once: true });
+  return el;
+}
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -51,21 +59,32 @@ type Props = {
 };
 
 export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
-  const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
-  useHomeRedirect({ election, area });
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
+  const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
+  const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
+  const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
   const [requested, setRequested] = useQueryParam("c");
+  const view = useMemo(() => viewCounties(groups, offCounties, requested), [groups, offCounties, requested]);
+  const listed = useMemo(() => visibleGroups(groups, view.off), [groups, view.off]);
+  useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
+  const [announcedFor, setAnnouncedFor] = useState<string | null>(null);
+  if (view.revealed && requested !== announcedFor) {
+    setAnnouncedFor(requested);
+    setAnnounce(`Showing ${view.revealed.name} contests for this link`);
+  }
   const paneRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
   const [animate, setAnimate] = useState(false);
   // The contest still drawn while its pane fades out; it's inert, then unmounted after --motion-out.
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
+  const all = useMemo(() => listed.flatMap((g) => g.sections.flatMap((s) => s.contests)), [listed]);
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
@@ -108,10 +127,33 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
-  const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
+  const rowsById = useMemo(() => new Map(all.map((c) => [c.id, activeEntries(c.id, guides, files, filters)])), [all, guides, files, filters]);
+  const rowsFor = (id: string) => rowsById.get(id) ?? activeEntries(id, guides, files, filters);
   // EMPTY, not `filters`: a filter must never repaint a candidate.
-  const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
-  const filterProps = { filters, onChange: setFilters, guides, files };
+  const slotsById = useMemo(
+    () => new Map(all.map((c) => [c.id, candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry))])),
+    [all, guides, files],
+  );
+  const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const setOffCounties = (off: string[]) => {
+    markHomeVisit(area);
+    setOffParam(toCountiesParam(off));
+    const sel = stepped ?? requested;
+    if (sel !== null && hiddenCountyOf(groups, off, sel)) {
+      stepWrite.cancel();
+      setStepped(null);
+      setRequested(null);
+    }
+  };
+  const onToggleCounty = (id: string) => setOffCounties(view.revealed?.id === id ? offCounties : toggleCounty(offCounties, id));
+  const counties = showCountyFilter(options)
+    ? { options, off: view.off, saved: offCounties, onToggle: onToggleCounty, onShowAll: () => setOffCounties([]) }
+    : undefined;
+  const setFilters = (f: Filters) => {
+    markHomeVisit(area);
+    applyFilters(f);
+  };
+  const filterProps = { filters, onChange: setFilters, guides, files, counties };
 
   useEffect(() => {
     paneRef.current?.scrollTo({ top: 0 });
@@ -156,13 +198,24 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       setSheetOpen(true);
     }
   };
+  const rowClick = useRef(onRowClick);
+  useLayoutEffect(() => {
+    rowClick.current = onRowClick;
+  });
+  const onRowClickStable = useCallback((e: MouseEvent<HTMLAnchorElement>, c: Contest) => rowClick.current(e, c), []);
 
   const closePane = () => {
     if (selectedId === null) return;
     const row = document.getElementById(`row-d-${selectedId}`);
+    const hiding = view.revealed;
     select(null);
-    setAnnounce("Details closed");
-    row?.focus();
+    if (hiding) {
+      setAnnounce(`Details closed. ${hiding.name} contests hidden again`);
+      focusTarget(listRef.current)?.focus();
+    } else {
+      setAnnounce("Details closed");
+      row?.focus();
+    }
   };
 
   const onEscape = (e: KeyboardEvent) => {
@@ -223,7 +276,8 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
-        className="min-w-0 pb-10"
+        ref={listRef}
+        className="min-w-0 pb-10 outline-none"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
         aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
@@ -257,7 +311,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
             </a>
           ) : null}
         </div>
-        {groups.map((g) => (
+        {listed.map((g) => (
           <section key={g.key} aria-label={g.heading}>
             <SectionHeading>{g.heading}</SectionHeading>
             {g.sections.map((s) => (
@@ -272,7 +326,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
                         rows={rowsFor(c.id)}
                         slots={slotsFor(c)}
                         selected={c.id === selectedId}
-                        onClick={(e) => onRowClick(e, c)}
+                        onClick={onRowClickStable}
                       />
                     </li>
                   ))}
@@ -323,7 +377,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
           className="max-h-[85dvh] gap-0 rounded-t-2xl lg:hidden"
           initialFocus={sheetTitleRef}
           // Safari doesn't focus links on tap, so name the row to return focus to.
-          finalFocus={() => (current ? document.getElementById(`row-m-${current.id}`) : true)}
+          finalFocus={() => (current ? (document.getElementById(`row-m-${current.id}`) ?? focusTarget(listRef.current) ?? true) : true)}
         >
           {current ? (
             <>
@@ -349,7 +403,7 @@ const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
 const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
 const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
 
-function ContestRow({
+const ContestRow = memo(function ContestRow({
   href,
   contest,
   rows,
@@ -362,14 +416,14 @@ function ContestRow({
   rows: Row[];
   slots: Slots;
   selected: boolean;
-  onClick: (e: MouseEvent<HTMLAnchorElement>) => void;
+  onClick: (e: MouseEvent<HTMLAnchorElement>, c: Contest) => void;
 }) {
   const description = cardDescription(contest);
   return (
     <>
       <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
-          <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
+          <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
         </h4>
@@ -386,7 +440,7 @@ function ContestRow({
           <a
             id={`row-d-${contest.id}`}
             href={href}
-            onClick={onClick}
+            onClick={(e) => onClick(e, contest)}
             aria-current={selected ? "true" : undefined}
             className={ROW_LINK}
           >
@@ -398,4 +452,4 @@ function ContestRow({
       </div>
     </>
   );
-}
+});

@@ -1,0 +1,7 @@
+id: pa-daily-post
+name: Palo Alto Daily Post
+shortName: "Daily Post"
+description: A free daily newspaper covering Palo Alto and nearby cities, whose editorial board endorses in local races and measures.
+type: newspaper
+homepage: https://padailypost.com/
+areas: [san-mateo]

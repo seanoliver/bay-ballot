@@ -9,3 +9,29 @@ areas:
       - { level: state, name: California }
       - { level: county, name: San Francisco }
       - { level: city, name: San Francisco }
+  - id: san-mateo
+    name: San Mateo County
+    kind: county
+    jurisdictions:
+      - { level: state, name: California }
+      - { level: county, name: San Mateo }
+      - { level: city, name: Atherton }
+      - { level: city, name: Belmont }
+      - { level: city, name: Brisbane }
+      - { level: city, name: Burlingame }
+      - { level: city, name: Colma }
+      - { level: city, name: Daly City }
+      - { level: city, name: East Palo Alto }
+      - { level: city, name: Foster City }
+      - { level: city, name: Half Moon Bay }
+      - { level: city, name: Hillsborough }
+      - { level: city, name: Menlo Park }
+      - { level: city, name: Millbrae }
+      - { level: city, name: Pacifica }
+      - { level: city, name: Portola Valley }
+      - { level: city, name: Redwood City }
+      - { level: city, name: San Bruno }
+      - { level: city, name: San Carlos }
+      - { level: city, name: San Mateo }
+      - { level: city, name: South San Francisco }
+      - { level: city, name: Woodside }

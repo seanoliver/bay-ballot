@@ -154,3 +154,9 @@ export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>
   }
   return out;
 }
+
+export function filterQuery(query: string, ignore: string[]): string {
+  const p = new URLSearchParams(query);
+  for (const k of ignore) p.delete(k);
+  return p.toString();
+}

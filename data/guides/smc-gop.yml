@@ -1,0 +1,7 @@
+id: smc-gop
+name: San Mateo County Republican Party
+shortName: "SMC Republicans"
+description: The official Republican Party committee for San Mateo County.
+type: party
+homepage: https://smgop.org/
+areas: [san-mateo]
