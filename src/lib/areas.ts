@@ -1,7 +1,6 @@
 import { sections, type Section } from "./display";
 import type { Area, Contest, Jurisdiction, Place } from "./schema";
 
-// Districts drawn by the state: listed under California, never under a county.
 export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization"];
 
 export type PlaceName = { name: string; short: string };

@@ -16,7 +16,6 @@ import { ListPage, listMetadata } from "../list-page";
 
 export const dynamicParams = false;
 
-// Area pages share this segment with contests (one dynamic segment per level); validate rejects a collision.
 export function generateStaticParams() {
   return elections().flatMap((id) => {
     const d = election(id);
