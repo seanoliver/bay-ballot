@@ -591,6 +591,80 @@ test.describe("pages without the filter column", () => {
 
 test.describe("guide page rows", () => {
   for (const colorScheme of ["light", "dark"] as const) {
+    test(`the row focus outline has at least 3:1 contrast against the card (${colorScheme})`, async ({ page, isMobile }) => {
+      test.skip(isMobile, "keyboard");
+      await page.emulateMedia({ colorScheme });
+      await page.goto("/guides/growsf");
+      const first = page.locator("ul a[href^='/2026-11/']").first();
+      await first.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      const ratio = await first.evaluate((el) => {
+        const row = el.closest("li")!;
+        const card = getComputedStyle(row.closest("ul")!).backgroundColor;
+        const page = getComputedStyle(document.body).backgroundColor;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = 1;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const paint = (...colors: string[]) => {
+          ctx.clearRect(0, 0, 1, 1);
+          for (const c of colors) {
+            ctx.fillStyle = c;
+            ctx.fillRect(0, 0, 1, 1);
+          }
+          return [...ctx.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+        };
+        const lum = (rgb: number[]) => {
+          const [r, g, b] = rgb.map((v) => {
+            const c = v / 255;
+            return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+          });
+          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const bg = paint(page, card);
+        const fg = paint(page, card, getComputedStyle(row).outlineColor);
+        const [hi, lo] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+        return (hi + 0.05) / (lo + 0.05);
+      });
+      expect(ratio).toBeGreaterThanOrEqual(3);
+    });
+  }
+
+  test("at 320px the chevron stays with the pick and a district number stays with its title", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone width");
+    await page.setViewportSize({ width: 320, height: 700 });
+    await page.goto("/guides/growsf");
+    const lines = await page.locator("ul a[href^='/2026-11/']").evaluateAll((links) =>
+      links.map((a) => {
+        const lineOf = (node: Node, start: number, end: number) => {
+          const r = document.createRange();
+          r.setStart(node, start);
+          r.setEnd(node, end);
+          return Math.round(r.getClientRects()[0].top);
+        };
+        const texts: Text[] = [];
+        const walk = document.createTreeWalker(a.closest("li")!, NodeFilter.SHOW_TEXT);
+        while (walk.nextNode()) if ((walk.currentNode as Text).data.trim()) texts.push(walk.currentNode as Text);
+        const chevron = texts.find((t) => t.data.trim() === "›" || t.data.endsWith("›"))!;
+        const pick = texts[texts.indexOf(chevron) - 1] ?? chevron;
+        const title = texts[0];
+        const m = title.data.match(/(\S+)\s(\d+)$/);
+        return {
+          chevronWithPick: chevron === pick || lineOf(chevron, chevron.data.length - 1, chevron.data.length) === lineOf(pick, pick.data.trimEnd().length - 1, pick.data.trimEnd().length),
+          numberWithTitle: !m || lineOf(title, title.data.length - m[2].length, title.data.length) === lineOf(title, m.index!, m.index! + 1 + m[1].length - 1),
+        };
+      }),
+    );
+    expect(lines.every((l) => l.chevronWithPick)).toBe(true);
+    expect(lines.every((l) => l.numberWithTitle)).toBe(true);
+  });
+
+  test("a row's link names the contest and the guide's pick", async ({ page }) => {
+    await page.goto("/guides/growsf");
+    await expect(page.getByRole("link", { name: /^Governor:? Xavier Becerra$/ })).toBeVisible();
+  });
+
+  for (const colorScheme of ["light", "dark"] as const) {
     test(`a keyboard-focused contest row shows a focus outline (${colorScheme})`, async ({ page, isMobile }) => {
       test.skip(isMobile, "keyboard");
       await page.emulateMedia({ colorScheme });

@@ -6,7 +6,7 @@ import { PageColumn } from "@/components/PageColumn";
 import { ROW_FOCUS, ROW_LINK } from "@/components/row";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Badge } from "@/components/ui/badge";
-import { formatDate, guidePicks, monthYear, sourceLink } from "@/lib/display";
+import { formatDate, guidePicks, keepNumber, monthYear, sourceLink } from "@/lib/display";
 import { isPublished } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 import { election, latestElection } from "@/lib/site-data";
@@ -72,13 +72,17 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
           <SectionHeading>{ballot.title} endorsements</SectionHeading>
           <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
             {guidePicks(ballot.contests, file).map((p) => (
-              <li key={p.contest.id} className={cn("relative flex min-h-12 items-baseline justify-between gap-4 px-4 py-3 transition-colors hover:bg-muted/60", ROW_FOCUS)}>
-                <Link href={`/${id}/${p.contest.id}`} className={cn("min-w-0 font-medium", ROW_LINK)}>
-                  {p.contest.title}
+              <li key={p.contest.id} className={cn("relative flex min-h-12 items-baseline justify-between gap-4 px-4 py-3 transition-[background-color] hover:bg-muted/60", ROW_FOCUS)}>
+                <Link href={`/${id}/${p.contest.id}`} aria-label={`${p.contest.title}: ${p.label}`} className={cn("flex min-w-0 grow items-baseline justify-between gap-4", ROW_LINK)}>
+                  <span className="min-w-0 font-medium">{keepNumber(p.contest.title)}</span>
+                  <span className="max-w-1/2 text-right text-sm">
+                    {p.label}
+                    {"\u00a0"}
+                    <span aria-hidden="true" className="text-muted-foreground">
+                      ›
+                    </span>
+                  </span>
                 </Link>
-                <span className="max-w-1/2 text-right text-sm">
-                  {p.label} <span aria-hidden="true" className="text-muted-foreground">›</span>
-                </span>
               </li>
             ))}
           </ul>
