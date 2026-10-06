@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Toggle } from "@/components/ui/toggle";
 import {
   countedLabel,
   EMPTY,
@@ -37,9 +36,8 @@ type Props = {
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
   return (
     <aside aria-label="Filters" className={className}>
-      <p className="text-sm font-semibold">
-        Filters <span className="font-normal text-muted-foreground">· {countedLabel(filterSummary(props.filters, props.guides, props.files))}</span>
-      </p>
+      <p className="text-sm font-semibold">Filters</p>
+      <p className="text-sm text-muted-foreground">{countedLabel(filterSummary(props.filters, props.guides, props.files))}</p>
       <FilterControls {...props} />
     </aside>
   );
@@ -54,7 +52,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
         render={
           <Button
             variant="outline"
-            className={cn("h-auto min-h-12 justify-start gap-2 rounded-xl px-3.5 py-2.5 text-[15px] font-normal whitespace-normal", className)}
+            className={cn("h-auto min-h-12 justify-start gap-2 rounded-xl px-3.5 py-2.5 text-base font-normal whitespace-normal", className)}
           />
         }
       >
@@ -66,7 +64,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85dvh] gap-0 rounded-t-2xl">
         <SheetHeader className="pr-12 pb-0">
-          <SheetTitle className="text-lg">Filters</SheetTitle>
+          <SheetTitle className="text-xl font-semibold">Filters</SheetTitle>
         </SheetHeader>
         <div className="overflow-y-auto overscroll-contain px-4 pb-6">
           <FilterControls {...props} />
@@ -79,16 +77,12 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
 function FilterControls({ filters: f, onChange, guides, files }: Props) {
   return (
     <>
+      {/* One control idiom in the panel: a checkbox row, like the guide list. */}
       <Section title="Show">
-        <Toggle
-          variant="outline"
-          pressed={f.whyOnly}
-          onPressedChange={(on) => onChange({ ...f, whyOnly: on })}
-          className="h-auto min-h-10 rounded-full px-3.5 py-1.5 text-left text-sm font-normal whitespace-normal aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-background hover:aria-pressed:bg-foreground/85 hover:aria-pressed:text-background"
-        >
-          {f.whyOnly ? <Check aria-hidden="true" className="size-3.5" /> : null}
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+          <Checkbox checked={f.whyOnly} onCheckedChange={(on) => onChange({ ...f, whyOnly: on === true })} />
           Only guides that explain their picks
-        </Toggle>
+        </label>
       </Section>
       <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
@@ -101,8 +95,8 @@ function FilterControls({ filters: f, onChange, guides, files }: Props) {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div role="group" aria-label={title}>
-      <p className="mt-4 mb-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">{title}</p>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <p className="mt-6 mb-2 text-sm text-muted-foreground">{title}</p>
+      <div>{children}</div>
     </div>
   );
 }
@@ -113,7 +107,7 @@ function GuideChecklist({ filters: f, onChange, guides, files }: Props) {
   const searching = query.trim() !== "";
   return (
     <div role="group" aria-label="Guides">
-      <p className="mt-4 mb-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">Guides</p>
+      <p className="mt-6 mb-2 text-sm text-muted-foreground">Guides</p>
       {/* Our own clear button: the native one is hidden (it ignores the theme in dark mode). */}
       <div className="relative">
         <Input
@@ -169,7 +163,8 @@ function TypeGroup({
             indeterminate={state === "mixed"}
             onCheckedChange={() => onChange(toggleTypeGroup(f, group.type, guides))}
           />
-          {group.heading}
+          <span>{group.label}</span>
+          <span className="ml-auto text-sm font-normal text-muted-foreground tabular-nums">{group.count}</span>
         </label>
         <CollapsibleTrigger
           aria-label={`Show ${group.heading}`}

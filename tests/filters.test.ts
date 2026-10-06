@@ -183,10 +183,10 @@ describe("toggleTypeGroup", () => {
 describe("guideGroups", () => {
   it("groups published guides by type in a fixed order, with heading counts", () => {
     const g = guideGroups(clubs, clubFiles, "");
-    expect(g.map((x) => [x.type, x.heading, x.guides.map((y) => y.id)])).toEqual([
-      ["newspaper", "Newspapers (1)", ["examiner"]],
-      ["club", "Political clubs (2)", ["milk", "toklas"]],
-      ["civic", "Civic groups (1)", ["spur"]],
+    expect(g.map((x) => [x.type, x.heading, x.label, x.count, x.guides.map((y) => y.id)])).toEqual([
+      ["newspaper", "Newspapers (1)", "Newspapers", 1, ["examiner"]],
+      ["club", "Political clubs (2)", "Political clubs", 2, ["milk", "toklas"]],
+      ["civic", "Civic groups (1)", "Civic groups", 1, ["spur"]],
     ]);
   });
   it("leaves out guides without a published file and types with none", () => {

@@ -41,7 +41,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
           {ballot.title}
         </Link>
       </p>
-      <Card className="mt-3 gap-0 p-5 shadow-xs">
+      <Card className="mt-3 gap-0 p-6 shadow-xs">
         <ContestDetail
           election={electionId}
           contest={contest}

@@ -24,11 +24,13 @@ type Props = {
   slots?: Slots;
   // false where a headline above already states the guide count (the contest detail).
   count?: boolean;
+  // "detail": the primary chart, a step thicker than the list bars.
+  size?: "list" | "detail";
   className?: string;
 };
 
 // A contest's result at a glance. The math lives in lib/bar; this only draws it.
-export function VerdictBar({ contest, rows, variant = "full", slots, count = true, className }: Props) {
+export function VerdictBar({ contest, rows, variant = "full", slots, count = true, size = "list", className }: Props) {
   const t = tally(contest, rows.map((r) => r.entry));
   const segments = barSegments(t, contest, slots);
   const summary = barSummary(t, contest);
@@ -87,8 +89,8 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
 
   return (
     <div className={cn("mt-2", className)}>
-      <Stack segments={segments} aria={summary.aria} className="h-2.5" />
-      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
+      <Stack segments={segments} aria={summary.aria} className={size === "detail" ? "h-3" : "h-2"} />
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
         {segments[0].tone === "empty" ? (
           <span className="text-muted-foreground">No picks yet</span>
         ) : t.kind === "measure" ? (
@@ -131,7 +133,8 @@ function lead(t: Tally, segments: BarSegment[]): string {
 }
 
 function Track({ className, children }: { className?: string; children: ReactNode }) {
-  return <span className={cn("flex w-full overflow-hidden rounded-full bg-muted", className)}>{children}</span>;
+  // The empty track needs ink to show on a white card; dark mode's muted already contrasts.
+  return <span className={cn("flex w-full overflow-hidden rounded-full bg-foreground/[0.08] dark:bg-muted", className)}>{children}</span>;
 }
 
 function Stack({ segments, aria, className }: { segments: BarSegment[]; aria: string; className?: string }) {

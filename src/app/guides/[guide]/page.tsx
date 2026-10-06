@@ -43,8 +43,8 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   return (
     <div className={`${FRAME} ${READING} pt-4 pb-10`}>
       <Card className="gap-0 p-4 shadow-xs">
-        <h1 className="text-2xl leading-tight font-bold">{guide.name}</h1>
-        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+        <h1 className="text-2xl font-semibold">{guide.name}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <Badge variant="secondary" className="capitalize">
             {guide.type}
           </Badge>

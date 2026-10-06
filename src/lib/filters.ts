@@ -147,7 +147,8 @@ export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): 
   return { ...f, off: f.off.filter((id) => !ids.includes(id)) };
 }
 
-export type GuideGroup = { type: GuideType; heading: string; guides: GuideInfo[] };
+// `heading` is label plus count, for accessible names; the UI shows the count in its own column.
+export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
 
 const fold = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
@@ -159,7 +160,7 @@ export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>
   for (const [type, label] of Object.entries(TYPE_LABELS) as [GuideType, string][]) {
     const ofType = guides.filter((g) => g.type === type && files[g.id]);
     const matching = ofType.filter((g) => fold(g.name).includes(q) || fold(g.shortName ?? "").includes(q));
-    if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, guides: matching });
+    if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, label, count: ofType.length, guides: matching });
   }
   return out;
 }

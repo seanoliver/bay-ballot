@@ -72,16 +72,16 @@ export function ContestDetail({
   const why = reasonSections(contest, rows, slots);
   const Title = heading || "h2";
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{contest.section}</p>
+              <p className="text-sm text-muted-foreground">{contest.section}</p>
               <Title
                 id={titleId}
                 tabIndex={titleId ? -1 : undefined}
-                className={cn("mt-1 leading-tight font-semibold outline-none", heading === "h1" ? "text-2xl font-bold" : "text-xl")}
+                className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}
               >
                 {contest.title}
               </Title>
@@ -89,12 +89,12 @@ export function ContestDetail({
             {action}
           </div>
         ) : null}
-        {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
+        {description ? <p className="measure mt-1 text-sm text-muted-foreground">{description}</p> : null}
         <p className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
           <span className={cn("text-lg font-semibold", LEAD_TEXT[result.tone])}>{result.lead}</span>
           {result.detail ? <span className="text-sm text-muted-foreground tabular-nums">{result.detail}</span> : null}
         </p>
-        <VerdictBar contest={contest} rows={rows} slots={slots} count={false} className="mt-2" />
+        <VerdictBar contest={contest} rows={rows} slots={slots} count={false} size="detail" className="mt-2" />
       </div>
 
       {who.length ? (
@@ -140,7 +140,7 @@ function WhoLine({ row, short }: { row: WhoRow; short: boolean }) {
   const [all, setAll] = useState(false);
   const names = all ? [...row.shown, ...row.hidden] : row.shown;
   return (
-    <li className="text-sm leading-relaxed">
+    <li className="text-sm">
       <Label tone={row.tone}>
         {row.label} <span className="font-normal text-muted-foreground normal-case">· {row.count}</span>
       </Label>{" "}
@@ -174,13 +174,17 @@ function Reasons({ section }: { section: ReasonSection }) {
       <h3>
         <Label tone={section.tone}>{section.title}</Label>
       </h3>
-      <ul className="mt-3 space-y-4">
+      <ul className="mt-3 space-y-6">
         {section.items.map((item) =>
           (all ? item.quotes : item.quotes.slice(0, 1)).map((q, i) => (
-            <li key={`${item.guideId}-${i}`} className={cn("border-l-[3px] pl-3", BORDER[section.tone])}>
-              <blockquote className="text-[15px] leading-relaxed">“{q.text}”</blockquote>
-              <p className="mt-1 text-xs text-muted-foreground">
-                <Link href={`/guides/${item.guideId}`} className={`${TAP} font-medium text-foreground/80 underline-offset-2 hover:underline`}>
+            <li key={`${item.guideId}-${i}`} className={cn("border-l-2 pl-4", BORDER[section.tone])}>
+              {/* The opening mark hangs outside the text edge. */}
+              <blockquote className="measure text-base">
+                <span className="-ml-[0.45ch]">“</span>
+                {q.text}”
+              </blockquote>
+              <p className="mt-2 text-sm text-muted-foreground">
+                <Link href={`/guides/${item.guideId}`} className={`${TAP} font-medium text-foreground underline-offset-2 hover:underline`}>
                   {item.guideName}
                 </Link>
                 {" · "}

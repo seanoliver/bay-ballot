@@ -150,7 +150,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
 
       {current ? (
         <div ref={paneRef} className={PANE} onKeyDown={onEscape}>
-          <section aria-labelledby="detail-title" className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
+          <section aria-labelledby="detail-title" className="rounded-xl bg-card p-6 ring-1 ring-foreground/10">
             <ContestDetail
               election={election}
               contest={current}
@@ -179,7 +179,7 @@ export function BallotView({ election, subtitle, ballot, guides, files, pending 
           {current ? (
             <>
               <SheetHeader className="pr-12 pb-0">
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">{current.section}</p>
+                <p className="text-sm text-muted-foreground">{current.section}</p>
                 <SheetTitle ref={sheetTitleRef} tabIndex={-1} className="text-lg outline-none">
                   {current.title}
                 </SheetTitle>
@@ -218,8 +218,8 @@ function ContestRow({
   return (
     <>
       {/* Phone: title left (wraps, never cut), mini bar and short result right. */}
-      <div className={cn("relative flex min-h-14 items-center gap-3 py-2 pr-2 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
-        <h3 className="min-w-0 flex-1 text-[15px] leading-snug font-medium">
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-2 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
+        <h3 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
             {contest.title}
           </a>
@@ -235,12 +235,12 @@ function ContestRow({
           selected && "bg-muted shadow-[inset_3px_0_0_var(--foreground)]",
         )}
       >
-        <h3 className="text-[15px] leading-snug font-semibold">
+        <h3 className="text-base font-semibold">
           <a id={`row-d-${contest.id}`} href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
             {contest.title}
           </a>
         </h3>
-        {description ? <p className="truncate text-sm text-muted-foreground">{description}</p> : null}
+        {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         <VerdictBar contest={contest} rows={rows} slots={slots} />
       </div>
     </>
