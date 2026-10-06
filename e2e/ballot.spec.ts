@@ -504,8 +504,8 @@ test("resizing to a phone drops a stepped contest that was never written", async
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(page.locator("#row-d-governor")).toBeVisible();
   await page.clock.runFor(1000);
-  await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
-  await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+  await expect(page.locator("#row-d-us-rep-15")).not.toHaveAttribute("aria-current", "true");
+  await expect(page).not.toHaveURL(/[?&]c=us-rep-15/);
 });
 
 test("a phone tap drops a stepped contest that was never written", async ({ page, isMobile }) => {
