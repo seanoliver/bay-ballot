@@ -4,25 +4,34 @@ import fs from "node:fs";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
-import { EndorsementFile, type ArchivedSource, type Guide } from "../src/lib/schema";
+import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
-import { diffPicks, summaryLine } from "../src/pipeline/diff";
-import { extract, pagesFor, toEntries, type Source } from "../src/pipeline/extract";
+import type { Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
-import { nextFile, shrinkWarning, toYaml } from "../src/pipeline/write";
+import { toYaml } from "../src/pipeline/write";
+import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
-const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--no-verify]
+const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
+       npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--archive]
        npm run bb -- verify <guide...> | --all [--browser]
+       npm run bb -- pages --seed [<guide...>]
        npm run bb -- discover
        npm run bb -- check
        npm run bb -- review [--no-open]
+
+extract and refresh fetch each guide's pages and compare them with the stored page text
+(data/<election>/pages). Guides whose pages changed only in dates, banners or other text
+that names no contest are skipped with no model call; --force-extract re-extracts anyway.
+refresh checks every guide, extracts at most ${"$"}{REFRESH_BUDGET} changed guides, validates, and exits
+0 (clean), 2 (something held or needs review) or 1 (error). pages --seed stores today's page
+text without extracting.
 
 extract rewrites each guide's picks from its pages, overwriting hand edits to picks
 (mark hand-entered guides with 'manual: true' to skip them). --force accepts a result
@@ -35,11 +44,15 @@ the command exits non-zero when anything is held.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
+const VALUE_OPTIONS = ["--summary", "--result"];
+const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
+const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
+// The daily job extracts at most this many changed guides per run; the rest wait a day.
+const REFRESH_BUDGET = 20;
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const today = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
 const endorsementPath = (id: string) => path.join(ROOT, ELECTION, "endorsements", `${id}.yml`);
 
-const printNote = (n: string) => console.log(`${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`);
 
 type Totals = { guides: number; confirmed: number; held: number; quotes: number; missing: number; tokens: number[] };
 const totals: Totals = { guides: 0, confirmed: 0, held: 0, quotes: 0, missing: 0, tokens: [0, 0, 0, 0] };
@@ -91,64 +104,9 @@ function printVerifyTotals(): void {
   if (totals.held) console.log("Held picks are not published; see 'held:' in the endorsement files.");
 }
 
-async function extractOne(client: Anthropic, data: ElectionData, guideId: string): Promise<void> {
-  const guide = data.guides.find((g) => g.id === guideId);
-  if (!guide) throw new Error(`no guides/${guideId}.yml`);
-  const prev = data.endorsements[guideId];
-  if (!prev) throw new Error(`no endorsement file (run 'npm run bb -- discover')`);
-  if (prev.manual) return console.log(`${guideId}: skipped (manual)`);
-  const urls = sourcesFor(prev);
-  if (urls.length === 0) return console.log(`${guideId}: no source`);
-  const hostProblems = checkHosts(guide, prev);
-  if (hostProblems.length > 0) {
-    console.log(`${guideId}: skipped (source host check)`);
-    hostProblems.forEach((p) => console.log(`  ! ${p}`));
-    return;
-  }
-
-  const sources = await fetchAll(guideId, prev);
-
-  const { output, usage } = await extract(client, data.ballot, guide, sources);
-  const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
-
-  const shrunk = shrinkWarning(guideId, prev.picks, picks, { force: flag("--force") });
-  if (shrunk) {
-    console.log(`\n${shrunk}`);
-    notes.forEach(printNote);
-    return;
-  }
-
-  let archived: ArchivedSource[] | undefined;
-  if (flag("--archive")) {
-    const snaps: ArchivedSource[] = [];
-    for (const url of urls) {
-      const snapshot = await archiveUrl(url);
-      if (snapshot) snaps.push({ source: url, snapshot });
-      else console.warn(`${guideId}: warning: could not archive ${url}`);
-    }
-    if (snaps.length > 0) archived = snaps;
-  }
-
-  const next = EndorsementFile.parse(nextFile(prev, picks, output.hasReasoning, today(), archived));
-  const file = endorsementPath(guideId);
-  fs.writeFileSync(file, toYaml(next, { previous: fs.readFileSync(file, "utf8") }));
-
-  console.log(`\n${summaryLine(guideId, prev.picks, picks, notes)}`);
-  console.log(
-    `${guideId}  cache_read=${usage.cache_read_input_tokens ?? 0} cache_write=${usage.cache_creation_input_tokens ?? 0} in=${usage.input_tokens} out=${usage.output_tokens}`,
-  );
-  diffPicks(prev.picks, picks).forEach((l) => console.log(`  ${l}`));
-  notes.forEach(printNote);
-
-  // Only re-verify what this run changed; an unchanged file was already verified.
-  if (!flag("--no-verify") && !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) {
-    await verifyAndWrite(client, data, guide, next, sources);
-  }
-}
-
 async function runVerify(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
-  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : args.filter((a) => !a.startsWith("--"));
+  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : positional();
   if (ids.length === 0) {
     console.log(USAGE);
     process.exitCode = 1;
@@ -178,24 +136,74 @@ async function runVerify(): Promise<void> {
   console.log("\nReview with: git diff data/");
 }
 
+function refreshDeps(): RefreshDeps {
+  return {
+    client: makeClient(resolveApiKey(".env.local")),
+    fetchSource,
+    archiveUrl: (url) => archiveUrl(url),
+    today,
+    log: (line) => console.log(line),
+  };
+}
+
+function totalsLine(results: GuideResult[]): string {
+  const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk")} need attention. Estimated model cost $${costOf(results).toFixed(2)}.`;
+}
+
 async function runExtract(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
-  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : args.filter((a) => !a.startsWith("--"));
+  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : positional();
   if (ids.length === 0) {
     console.log(USAGE);
     process.exitCode = 1;
     return;
   }
-  const client = makeClient(resolveApiKey(".env.local"));
-  for (const id of ids) {
-    try {
-      await extractOne(client, data, id);
-    } catch (e) {
-      console.error(`${id}: FAILED — ${errMsg(e)}`);
-    }
+  const results = await runRefresh(refreshDeps(), {
+    root: ROOT, election: ELECTION, ids,
+    browser: flag("--browser"), archive: flag("--archive"), force: flag("--force"),
+    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"),
+  });
+  console.log(`\n${totalsLine(results)}\nReview with: git diff data/`);
+  process.exitCode = exitCodeFor(results);
+}
+
+/** The daily job: re-check every guide, extract and verify only relevant changes, validate, summarize. */
+async function runRefreshCmd(): Promise<void> {
+  const results = await runRefresh(refreshDeps(), {
+    root: ROOT, election: ELECTION,
+    browser: flag("--browser"), archive: flag("--archive"), maxChanged: REFRESH_BUDGET,
+  });
+  const { errors } = validateElection(loadElection(ROOT, ELECTION));
+  let md = summarize(results, { date: today() });
+  if (errors.length) md += `\n## Validation errors\n\n${errors.map((e) => `- ${e}`).join("\n")}\n`;
+  const code = errors.length ? 1 : exitCodeFor(results);
+  const summaryPath = option("--summary");
+  if (summaryPath) fs.writeFileSync(summaryPath, md);
+  const resultPath = option("--result");
+  if (resultPath) {
+    const ids = (s: GuideResult["status"]) => results.filter((r) => r.status === s).map((r) => r.id);
+    fs.writeFileSync(
+      resultPath,
+      JSON.stringify({ exitCode: code, extracted: ids("changed"), deferred: ids("deferred"), failed: ids("failed") }, null, 2),
+    );
   }
-  printVerifyTotals();
-  console.log("\nReview with: git diff data/");
+  console.log(`\n${totalsLine(results)}`);
+  errors.forEach((e) => console.error(`ERROR ${e}`));
+  process.exitCode = code;
+}
+
+async function runPages(): Promise<void> {
+  if (!flag("--seed")) {
+    console.log(USAGE);
+    process.exitCode = 1;
+    return;
+  }
+  const deps: RefreshDeps = { client: { messages: { stream: () => { throw new Error("no model calls when seeding"); } } } as unknown as RefreshDeps["client"], fetchSource, today, log: (l) => console.log(l) };
+  const out = await seedPages(deps, { root: ROOT, election: ELECTION, browser: flag("--browser"), ids: positional().length ? positional() : undefined });
+  const failed = out.filter((o) => o.error);
+  console.log(`\nStored pages for ${out.length - failed.length} guide(s); ${failed.length} failed.`);
+  if (failed.length) process.exitCode = 1;
 }
 
 function runDiscover(): void {
@@ -259,7 +267,10 @@ function runReview(): void {
 }
 
 async function main(): Promise<void> {
+  if (flag("--help") || flag("-h")) return console.log(USAGE);
   if (cmd === "extract") await runExtract();
+  else if (cmd === "refresh") await runRefreshCmd();
+  else if (cmd === "pages") await runPages();
   else if (cmd === "verify") await runVerify();
   else if (cmd === "discover") runDiscover();
   else if (cmd === "check") runCheck();
