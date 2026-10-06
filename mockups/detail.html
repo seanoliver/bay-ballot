@@ -13,9 +13,10 @@
   B  Sides with reasons        (organized by pick: who + why per side)
   C  Who / Why tabs            (organized by question)
   D  Hybrid                    (B's sides + a compact by-type strip under the bar)
+  E  Tabs, roomier             (C's tabs; Who = strip + short-name columns; Why = one column + side toggle)
   Data: generated from bay-ballot/data/2026-11 (published guides only). Every quote below is
   verbatim from the endorsement YAML, linked to its archived snapshot when one exists.
-  URL params: ?opt=A|B|C|D&c=prop-b|prop-c|us-rep-11|board-of-education&vp=desktop|phone&theme=light|dark
+  URL params: ?opt=A|B|C|D|E&c=prop-b|prop-c|us-rep-11|board-of-education&vp=desktop|phone&theme=light|dark&tab=who|why&seg=<side key>
 -->
 <style>
 :root {
@@ -208,6 +209,23 @@ svg.qm { width: 12px; height: 12px; box-sizing: content-box; fill: currentColor;
 .sheet .strip-grid { gap: 12px; }
 .strip-grid .l1 .tl { min-width: 0; }
 .reasons-h { font-size: 14px; line-height: 20px; font-weight: 600; margin: 0; }
+
+
+/* ---------- option E: tabs, roomy why ---------- */
+.segs { display: flex; flex-wrap: wrap; background: var(--track); border-radius: 8px; padding: 2px; gap: 2px; }
+.segs button { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 14px; line-height: 20px; cursor: pointer; color: var(--muted); white-space: nowrap; }
+.segs button[aria-pressed="true"] { background: var(--card); color: var(--fg); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+.segs .n { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.why-list { display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.why-list > li { display: grid; gap: 12px; }
+.why-list .more { border: 0; background: none; padding: 10px 0; margin: -10px 0 -10px 18px; font-size: 14px; line-height: 20px; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--chip-line); justify-self: start; }
+.why-list .more:hover { color: var(--fg); text-decoration-color: currentColor; }
+.why-list .extra { display: grid; gap: 16px; padding-top: 4px; margin: 0; padding: 0; list-style: none; }
+.e-who { display: grid; gap: 24px; }
+.e-who .glist li .qm { margin-left: 0; display: inline; padding-left: 4px; }
+.e-who .glist li .nm { flex: 1; }
+.sheet .e-who .cols { gap: 12px; }
+.sheet .e-who .glist li { gap: 6px; }
 
 /* footer + key */
 .foot { display: grid; gap: 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
@@ -494,6 +512,56 @@ function typeStrip(m) {
 }
 function optionD(m) { return optionB(m); }
 
+
+// ---------- option E: C's tabs; Who gets D's strip, Why is one roomy column ----------
+let eSeg = null; // remembered across contests when the key exists there (Y/N carry across measures)
+function eSegments(m) {
+  if (m.c.kind === "measure") return m.sides.map((s) => ({ key: s.key, label: s.key === "Y" ? "For" : "Against", tone: null, guides: s.guides }));
+  if (!m.multi) return m.sides.map((s) => ({ key: s.key, label: s.label, short: s.short, tone: s.tone, guides: s.guides }));
+  const top = m.sides.slice(0, m.c.seats).map((s) => ({ key: s.key, label: s.short, tone: s.tone, guides: s.guides }));
+  const rest = new Set(m.sides.slice(m.c.seats).map((s) => s.key));
+  return [...top, { key: "__others", label: "Others", tone: "other", guides: m.rows.filter((r) => r.picks.some((p) => rest.has(p))) }];
+}
+// keep the quote mark glued to the last word so it never wraps alone
+const nameWithMark = (n) => { const i = n.lastIndexOf(" "); return `${esc(n.slice(0, i + 1))}<span style="white-space:nowrap">${esc(n.slice(i + 1))}<span class="qm">${QM}</span></span>`; };
+function optionE(m, vp) {
+  const nq = m.rows.reduce((n, r) => n + r.quotes.length, 0);
+  const tabs = `<div class="tabs" role="tablist" aria-label="Detail view">
+    <button role="tab" aria-selected="${cTab === "who"}" data-tab="who">Who<span class="n">${m.total} guides</span></button>
+    <button role="tab" aria-selected="${cTab === "why"}" data-tab="why">Why<span class="n">${nq} reasons</span></button></div>`;
+  let body;
+  if (cTab === "who") {
+    let list;
+    if (m.multi) {
+      const slates = {};
+      const rank = (p) => m.sides.findIndex((s) => s.key === p);
+      for (const r of m.rows) { const k = [...r.picks].sort((a, b) => rank(a) - rank(b)).join("|"); (slates[k] ??= []).push(r); }
+      list = `<div class="slates">${Object.entries(slates).sort((a, b) => b[1].length - a[1].length).map(([k, gs]) => `<div class="slate-row"><div class="slate-h">${k.split("|").map((p) => `<span><i class="sw" style="background:${FILL[m.toneOf[p]]}"></i>${esc(surname(p))}</span>`).join("")}<span class="n">${plural(gs.length, "guide")}</span></div>
+        <ul class="chips">${gs.map((g) => chip(g)).join("")}</ul></div>`).join("")}</div>`;
+    } else {
+      list = `<div class="cols">${m.sides.map((s) => `<div class="col"><p class="col-h" style="border-color:${FILL[s.tone]}">${esc(vp === "phone" ? (s.short ?? s.label) : s.label)}<span class="n">${s.count}</span></p>
+        <ul class="glist">${s.guides.map((g) => `<li title="${esc(g.name)}, ${TYPE_ONE[g.type].toLowerCase()}"><span class="g">${glyph(g.type)}</span><span class="nm">${g.quotes.length ? nameWithMark(g.short) : esc(g.short)}</span></li>`).join("")}</ul></div>`).join("")}</div>`;
+    }
+    body = `<div class="e-who">${typeStrip(m)}${m.multi ? `<div class="sec" style="gap:12px"><p class="caption">Guides grouped by the slate they picked.</p>${list}</div>` : list}</div>`;
+  } else {
+    const segs = eSegments(m);
+    const lead = segs.reduce((a, b) => (b.guides.length > a.guides.length ? b : a), segs[0]);
+    const cur = segs.find((x) => x.key === eSeg) ?? lead;
+    const qcount = (sg) => sg.guides.reduce((n, g) => n + g.quotes.length, 0);
+    const ctl = `<div class="segs" role="group" aria-label="Whose reasons">${segs.map((sg) => `<button aria-pressed="${sg === cur}" data-seg="${esc(sg.key)}">${sg.tone ? `<i class="sw" style="background:${FILL[sg.tone]}"></i>` : ""}${esc(vp === "phone" && sg.short ? sg.short : sg.label)}<span class="n">(${qcount(sg)})</span></button>`).join("")}</div>`;
+    const tone = cur.tone ?? (cur.key === "Y" ? "yes" : "no");
+    const quoted = cur.guides.filter((g) => g.quotes.length);
+    const list = quoted.length ? `<ul class="why-list">${quoted.map((g) => {
+      const [first, ...more] = g.quotes.map((q) => ({ ...q, g }));
+      const opts = m.multi ? { slate: true, m } : {};
+      const id = "e" + uid++;
+      return `<li><ul class="quotes">${quote(first, tone, opts)}</ul>${more.length ? `<ul class="extra" id="${id}" hidden>${more.map((q) => quote(q, tone, opts)).join("")}</ul><button class="more" data-reveal="${id}">+${more.length} more from ${esc(g.short)}</button>` : ""}</li>`;
+    }).join("")}</ul>` : `<p class="empty">No guide on this side published reasons.</p>`;
+    body = `<div class="sec" style="gap:24px">${ctl}${list}</div>`;
+  }
+  return `<div class="sec">${tabs}<div role="tabpanel">${body}</div></div>`;
+}
+
 // ---------- option C: who / why tabs ----------
 let cTab = "who";
 function optionC(m, vp) {
@@ -529,6 +597,7 @@ function optionC(m, vp) {
 const OPTS = {
   A: ["Breakdown by guide type", "Organized by <b>who the guides are</b>. One row per guide type with its split and the guides in it, then reasons by side."],
   B: ["Sides with reasons", "Organized by <b>pick</b>. Each side gets its guides as chips and up to two reasons (one per guide, mixed types, chosen by rule, not ranked), with the rest behind “All reasons”."],
+  E: ["Tabs, roomier", "C's Who / Why tabs. <b>Who</b> opens with the by-type strip, then short-name columns (slates for multi-seat). <b>Why</b> is one full-width column with a toggle per side; the tab and side you pick stick as you switch contests."],
   D: ["Hybrid: sides + type strip", "B's per-side blocks, plus <b>one compact by-type strip</b> under the headline bar: each guide type's split on a shared scale (top 3 candidates for multi-seat races)."],
   C: ["Who / Why tabs", "Organized by <b>question</b>. A segmented control switches between who endorsed each side and the reasons they gave, side by side on desktop."],
 };
@@ -541,13 +610,14 @@ const state = {
   theme: qs.get("theme") ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
 };
 if (qs.get("tab")) cTab = qs.get("tab");
+if (qs.get("seg")) eSeg = qs.get("seg");
 
 function seg(id, opts, key) {
   document.getElementById(id).innerHTML = Object.entries(opts).map(([k, v]) => `<button aria-pressed="${state[key] === k}" data-k="${key}" data-v="${k}">${v}</button>`).join("");
 }
 function render() {
   document.documentElement.dataset.theme = state.theme;
-  seg("ctl-opt", { A: "A  By type", B: "B  Sides", C: "C  Who / Why", D: "D  Hybrid" }, "opt");
+  seg("ctl-opt", { A: "A  By type", B: "B  Sides", C: "C  Who / Why", D: "D  Hybrid", E: "E  Tabs, roomier" }, "opt");
   seg("ctl-c", CONTESTS, "c");
   seg("ctl-vp", { desktop: "Desktop pane", phone: "Phone sheet" }, "vp");
   seg("ctl-theme", { light: "Light", dark: "Dark" }, "theme");
@@ -555,17 +625,18 @@ function render() {
   const m = model(DATA.contests[state.c]);
   const phone = state.vp === "phone";
   uid = 0;
-  const body = state.opt === "A" ? optionA(m, state.vp) : state.opt === "B" ? optionB(m, state.vp) : state.opt === "D" ? optionD(m) : optionC(m, state.vp);
+  const body = state.opt === "A" ? optionA(m, state.vp) : state.opt === "B" ? optionB(m, state.vp) : state.opt === "D" ? optionD(m) : state.opt === "E" ? optionE(m, state.vp) : optionC(m, state.vp);
   const close = `<button class="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button>`;
   const sheetHead = phone ? `<div class="grab"></div><div class="d-head" style="margin-bottom:24px"><p class="eyebrow">${esc(m.c.section)}</p><h2 class="title">${esc(m.c.title)}</h2>${m.c.description ? `<p class="desc">${esc(m.c.description)}</p>` : ""}</div>` : "";
   document.getElementById("frame").innerHTML = `<div class="${phone ? "sheet" : "pane"}" id="panel">${close}${sheetHead}<div class="d">${header(m, { inSheet: phone })}${body}${footer(m)}</div></div>`;
-  const u = new URL(location); for (const [k, v] of Object.entries(state)) u.searchParams.set(k, v); u.searchParams.set("tab", cTab); history.replaceState(null, "", u);
+  const u = new URL(location); for (const [k, v] of Object.entries(state)) u.searchParams.set(k, v); u.searchParams.set("tab", cTab); if (eSeg) u.searchParams.set("seg", eSeg); history.replaceState(null, "", u);
 }
 document.addEventListener("click", (e) => {
   const b = e.target.closest("button");
   if (!b) return;
   if (b.dataset.k) { state[b.dataset.k] = b.dataset.v; render(); }
   else if (b.dataset.tab) { cTab = b.dataset.tab; render(); }
+  else if (b.dataset.seg) { eSeg = b.dataset.seg; render(); }
   else if (b.dataset.reveal) { document.getElementById(b.dataset.reveal).hidden = false; b.remove(); }
 });
 const tip = document.getElementById("tip");
