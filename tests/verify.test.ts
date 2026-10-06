@@ -98,10 +98,20 @@ describe("applyVerdicts", () => {
     ]);
   });
 
-  it("keeps a pick the verifier did not mention, with a note", () => {
+  it("holds a pick the verifier gave no verdict for", () => {
     const r = applyVerdicts(file, { ...allConfirmed, picks: allConfirmed.picks.slice(0, 2) });
-    expect(r.file.picks["supervisor-8"]).toBeDefined();
-    expect(r.notes).toContain("supervisor-8: no verdict from the verifier; kept");
+    expect(r.file.picks["supervisor-8"]).toBeUndefined();
+    expect(r.held).toEqual([
+      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "unverified", evidence: "The verifier returned no verdict for this pick." },
+    ]);
+  });
+
+  it("drops a quote the verifier gave no verdict for", () => {
+    const r = applyVerdicts(file, { ...allConfirmed, quotes: [allConfirmed.quotes[0]] });
+    expect(r.file.picks["prop-b"].quotes).toEqual([q("A public bank would cost the city hundreds of millions.")]);
+    expect(r.droppedQuotes).toEqual([
+      { contestId: "prop-b", text: "This will only make it worse.", reason: "unverified", evidence: "The verifier returned no verdict for this quote." },
+    ]);
   });
 
   it("ignores verdicts for contests or quotes that aren't in the file", () => {

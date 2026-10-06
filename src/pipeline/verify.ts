@@ -173,7 +173,9 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   for (const [contestId, entry] of Object.entries(file.picks)) {
     const v = out.picks.find((p) => p.contestId === contestId);
     if (!v) {
-      notes.push(`${contestId}: no verdict from the verifier; kept`);
+      // No verdict is not a confirmation: hold it rather than publish an unchecked pick.
+      held.push({ contestId, pick: entry.pick, reason: "unverified", evidence: "The verifier returned no verdict for this pick." });
+      delete picks[contestId];
       continue;
     }
     if (v.verdict === "confirmed") {
@@ -187,7 +189,11 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   for (const [contestId, entry] of Object.entries(picks)) {
     const keep = entry.quotes.filter((q, i) => {
       const v = out.quotes.find((x) => x.contestId === contestId && x.index === i + 1);
-      if (!v || v.verdict === "confirmed") return true;
+      if (!v) {
+        droppedQuotes.push({ contestId, text: q.text, reason: "unverified", evidence: "The verifier returned no verdict for this quote." });
+        return false;
+      }
+      if (v.verdict === "confirmed") return true;
       droppedQuotes.push({ contestId, text: q.text, reason: v.verdict, evidence: v.evidence });
       return false;
     });

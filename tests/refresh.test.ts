@@ -135,6 +135,21 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(2);
   });
 
+  it("exits 2 when the verifier skips a pick (held as unverified)", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const skip = { messages: { stream: vi.fn((req: { model: string }) => ({
+      finalMessage: async () => ({
+        stop_reason: "end_turn", stop_details: null,
+        usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+        content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? { ...verifyOut(false), picks: [verifyOut(false).picks[0]] } : extractOut) }],
+      }),
+    })) } } as unknown as ExtractClient;
+    const results = await runRefresh(deps(skip, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
+    const r = results[0] as Extract<GuideResult, { status: "changed" }>;
+    expect(r.held).toEqual([expect.objectContaining({ contestId: "prop-c", reason: "unverified" })]);
+    expect(exitCodeFor(results)).toBe(2);
+  });
+
   it("stops extracting after the budget and defers the rest without storing their pages", async () => {
     const root = setup(["alpha", "beta"], { stored: false });
     const { client } = fakeClient();
