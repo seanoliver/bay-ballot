@@ -10,7 +10,7 @@ const contest = (over: Partial<Contest>) =>
   ({ id: "x", section: "Local", title: "Proposition B", kind: "measure", seats: 1, candidates: [], rankedChoice: false, jurisdiction: { level: "city", name: "San Francisco" }, ...over }) as Contest;
 const propB = contest({ id: "prop-b", title: "Proposition B" });
 const prop1 = contest({ id: "prop-1", title: "Proposition 1", jurisdiction: { level: "state", name: "California" } });
-const rtm = contest({ id: "rtm", title: "Regional Measure RTM", jurisdiction: { level: "county", name: "Bay Area region" } });
+const rtm = contest({ id: "rtm", title: "Regional Measure RTM", jurisdiction: { level: "region", name: "Bay Area", within: [{ level: "county", name: "San Francisco" }] } });
 const groban = contest({ id: "supreme-court-groban", title: "Supreme Court Associate Justice Joshua Groban", kind: "retention", jurisdiction: { level: "state", name: "California" } });
 const usRep = contest({ id: "us-rep-11", title: "United States Representative, District 11", kind: "candidate", candidates: ["Connie Chan", "Scott Wiener"], jurisdiction: { level: "district", name: "Congress", district: "11" } });
 const sup8 = contest({ id: "supervisor-8", title: "Board of Supervisors, District 8", kind: "candidate", rankedChoice: true, jurisdiction: { level: "district", name: "Supervisor", district: "8" } });
@@ -267,5 +267,15 @@ describe("area-aware copy", () => {
     const rowsFor = (id: string) => (id === "prop-1" ? prop1Rows() : many(1, "Y"));
     expect(areaDescription(SM, [mpP, prop1], rowsFor)).toBe("12 of 15 San Mateo County voter guides recommend Yes on Prop 1. See every contest side by side.");
     expect(areaDescription(SM, [], () => [])).toBe("What San Mateo County voter guides recommend. See every contest side by side.");
+  });
+  const localHeavy = (id: string) => (id === "prop-b" ? many(20, "Y") : id === "rtm" ? many(18, "Y") : id === "prop-1" ? prop1Rows() : []);
+  it("describes the Bay Area list by a statewide contest, never a local or regional one", () => {
+    expect(areaDescription(BAY_AREA, [propB, rtm, prop1], localHeavy, { statewideOnly: true })).toBe(
+      "12 of 15 Bay Area voter guides recommend Yes on Prop 1. See every contest side by side.",
+    );
+    expect(areaDescription(BAY_AREA, [propB, rtm], localHeavy, { statewideOnly: true })).toBe("What Bay Area voter guides recommend. See every contest side by side.");
+  });
+  it("names a local measure's place when an area page describes it", () => {
+    expect(areaDescription(SF, [propB, prop1], localHeavy)).toBe("20 of 20 San Francisco voter guides recommend Yes on SF Prop B. See every contest side by side.");
   });
 });
