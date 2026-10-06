@@ -90,6 +90,23 @@ const deps = (client: ExtractClient, fetchSource: ReturnType<typeof fetcher>) =>
 });
 
 describe("runRefresh", () => {
+  it("doesn't write back a quote the file lists as rejected", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.appendFileSync(file, "rejectedQuotes:\n  - text: \"Yes on Prop C: we need more affordable housing in every neighborhood.\"\n    reason: not substantive\n");
+    const quoted: ExtractOutput = {
+      hasReasoning: true,
+      picks: [
+        extractOut.picks[0],
+        { ...extractOut.picks[1], quotes: ["Yes on Prop C: we need more affordable housing in every neighborhood."] },
+      ],
+    };
+    const { client } = fakeClient(quoted);
+    await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), { root, election: ELECTION, verify: false });
+    const after = parse(fs.readFileSync(file, "utf8"));
+    expect(after.picks["prop-c"].quotes ?? []).toEqual([]);
+    expect(after.rejectedQuotes).toHaveLength(1);
+  });
   it("offers the model only the contests in the guide's areas", async () => {
     const root = setup(["alpha"], { stored: false });
     const { client, stream } = fakeClient();

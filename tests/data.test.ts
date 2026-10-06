@@ -69,6 +69,11 @@ describe("data", () => {
     d.ballot.contests.push({ ...m, id: "prop-p", title: "Proposition P", jurisdiction: { level: "city", name: "San Francisco" } });
     expect(validateElection(d).warnings).toEqual(["san-mateo: measure letter P is on mp-p and rc-p; quotes under a bare \"Measure P\" heading count for both"]);
   });
+  it("fails when a pick quotes a rejected quote", () => {
+    const q = { text: "Prop B is a bad idea.", source: "https://g.org/a" };
+    const d = withFile(base(), { "prop-b": { ...e("N"), quotes: [q] } }, { rejectedQuotes: [{ text: "Prop B is a  bad idea.", reason: "not substantive" }] });
+    expect(validateElection(d).errors).toEqual(["g/prop-b: quote is in rejectedQuotes: \"Prop B is a bad idea.\""]);
+  });
   it("fails when an area id collides with a contest id", () => {
     const d = base();
     d.ballot.contests.push({ ...d.ballot.contests[0], id: "sf" });

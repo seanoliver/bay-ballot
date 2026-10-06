@@ -1,6 +1,7 @@
 import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
 import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
+import { quoteKey } from "@/lib/quote-key";
 import { sourcesFor } from "./sources";
 
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
@@ -21,6 +22,10 @@ export function nextFile(
     picks = { ...picks };
     for (const h of held) delete picks[h.contestId];
   }
+  const rejected = new Set((prev.rejectedQuotes ?? []).map((r) => quoteKey(r.text)));
+  if (rejected.size) {
+    picks = Object.fromEntries(Object.entries(picks).map(([id, e]) => [id, { ...e, quotes: e.quotes.filter((q) => !rejected.has(quoteKey(q.text))) }]));
+  }
   // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
   const unchanged = isDeepStrictEqual(prev.picks, picks);
   return {
@@ -36,6 +41,7 @@ export function nextFile(
     fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
     held: held.length ? held : undefined,
+    rejectedQuotes: prev.rejectedQuotes,
     picks,
   };
 }
@@ -54,7 +60,7 @@ export function shrinkWarning(
 
 const KEY_ORDER = [
   "guide", "election", "status", "source", "extraSources", "fetchWith", "manual",
-  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "picks",
+  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "rejectedQuotes", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 
 function compactEntry(e: Entry): Record<string, unknown> {
