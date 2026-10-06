@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/[election]/[conte
   const rows = allRows(d);
   return {
     // The search title already names the site's subject; the " · Bay Ballot" suffix would cut it off.
-    title: { absolute: contestTitle(d.contest, rows) },
+    title: { absolute: contestTitle(d.contest, rows, d.ballot.date) },
     alternates: { canonical: `/${d.electionId}/${d.contest.id}` },
     description: contestDescription(d.contest, rows),
   };
