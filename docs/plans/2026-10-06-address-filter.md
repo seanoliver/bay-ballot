@@ -4,7 +4,7 @@
 
 **Goal:** A visitor enters an SF address or ZIP and sees only the contests on their ballot; the address never leaves their browser, and only a short district code is remembered.
 
-**Architecture:** A `bb districts` build command joins DataSF's base addresses to DataSF's precinct polygons (point-in-polygon at build time), runs the design's cross-checks, and writes a static index to `public/districts/sf/` (precinct → districts, ZIP → precincts, street names, and one house-number-range file per street), which is committed. In the browser, a pure lookup module parses the input, fetches only `zips.json`, `streets.json`, `precincts.json` and the one street file it needs, and returns a district set. The set is stored as `?d=sf.s8.a17.c11.b8.e2` in the URL and in localStorage, and `onBallot()` filters contests by `Contest.jurisdiction`.
+**Architecture:** A `bb districts` build command joins DataSF's base addresses to DataSF's precinct polygons (point-in-polygon at build time), runs the design's cross-checks, and writes a static index to `public/districts/sf/` (precinct → districts, ZIP → precincts, street names, and house-number ranges grouped into up to 256 bucket files named by a hash of the street), which is committed. In the browser, a pure lookup module parses the input, fetches only `zips.json`, `streets.json`, `precincts.json` and the one bucket file it needs, and returns a district set. The set is stored as `?d=sf.s8.a17.c11.b8.e2` in the URL and in localStorage, and `onBallot()` filters contests by `Contest.jurisdiction`.
 
 **Tech Stack:** Next.js 16 (App Router) + React 19 + TypeScript, Tailwind v4, Base UI (`@base-ui/react` 1.8 `Autocomplete`) with the repo's shadcn wrappers, Vitest, Playwright, `tsx` CLI (`npm run bb`). New dev dependencies: `shapefile` + `@types/shapefile` (reads the Prop 50 shapefile). Point-in-polygon is a tested ray-casting implementation in this repo; no geo library.
 
@@ -15,15 +15,17 @@
 ## Read first
 
 - **Districted contests.** 11 of 52 contests have `jurisdiction.level: district`. `jurisdiction.name` is one of `Supervisor`, `Assembly`, `Congress`, `BART`, `Board of Equalization`, and `jurisdiction.district` is a string number (`"8"`). Every other contest (state, county, city) is on every SF ballot.
-- **District code.** `sf.s<sup>.a<assembly>.c<congress>.b<bart>.e<boe>`, always in that order, county prefix first. The design's example (`sf.s8.a17.c11.b8`) omits BOE; this plan includes `e2` so the code fully describes a precinct and generalizes to counties that span two BOE districts. The visible summary still omits BOE, as in the design ("Supervisor 8 · Assembly 17 · Congress 11 · BART 8").
-- **Verified source facts (2026-10-06).** Re-verify them in Task 11 before generating.
+- **District code.** `sf.s<sup>.a<assembly>.c<congress>.b<bart>.e<boe>`, always in that order, county prefix first, BOE included (`e2`; decided 2026-10-06). An address gives all five. A ZIP that resolves by itself gives only the districts that have a contest on this ballot (e.g. `sf.a17.c11.e2` for a ZIP split between Supervisor 1 and 3, neither of which has a race); a kind missing from a code means that kind has no contest for this visitor. Task 1 defines this precisely. The visible summary omits BOE, as in the design ("Supervisor 8 · Assembly 17 · Congress 11 · BART 8").
+- **ZIP rule (decided 2026-10-06).** A ZIP resolves by itself when every precinct in it gives the same set of on-ballot contests (compared with `ballotDistricts()`, not raw districts); otherwise the visitor is asked for the street.
+- **Verified source facts (2026-10-06).** Re-verify them in Task 10 before generating.
   - Addresses: Socrata JSON API `https://data.sf.gov/resource/3mea-di5p.json`, 224,394 rows. Fields used: `address_number` (string int), `address_number_suffix` (`A`, `B`, `½`, … ignored), `street_full_street_name` (`UTAH ST`, `03RD ST`, `04TH TI ST`, `BROADWAY`, `AVENUE B`), `zip_code` (27 values), `longitude`, `latitude` (WGS84 strings), `supervisor` (`"6"`).
   - Precincts: `https://data.sf.gov/api/geospatial/d6x4-hefw?method=export&format=GeoJSON`, 514 features, MultiPolygon in WGS84. Properties: `prec_2022` (id), `supe22`, `assemb22`, `cong22`, `bart22`, `boe22`.
   - Prop 50 (AB 604) congressional map: `https://statewidedatabase.org/pub/data/d25/AB604%202025-08-16.zip` (shapefile; `AB604.zip` on the same server is the block equivalency CSV, not the shapes). `.prj` is `GEOGCS["GCS_North_American_1983"…]`, i.e. lon/lat NAD83, so **no reprojection** is needed (NAD83 and WGS84 differ by about 1–2 m; the congress check is a per-precinct majority, so that can't flip it). The build refuses a projected `.prj` instead of guessing. District field: `DISTRICT` (character, `"1"`…`"52"`).
   - SF Elections voter lookup: `https://sfelections.org/tools/portal/` (title "Voter Portal", HTTP 200). The older `voterstatus.sfelections.org` host does not answer.
 - **Street names normalize the same way on both sides.** The build normalizes EAS names and the browser normalizes what the visitor typed with the same `normalizeStreet()`. Any rule is safe as long as it is applied to both; the risk is two real streets collapsing into one key (e.g. EAS has both `SIXTH ST` and `06TH ST`). The build handles that: a house number that lands in two precincts under one key is stored as ambiguous and looks up as "not found".
 - **Odd and even sides are separate.** Precinct lines often run down the middle of a street, so ranges are compressed per parity.
-- **Privacy.** The address lives only in React state inside `AddressBox`. Never write it to the URL, localStorage, analytics, or a log. Note: the browser does request `/districts/sf/streets/<street>.json`, so the street name (never the house number) reaches our own static host's access logs. That is inherent in the approved per-street layout; see "Open questions".
+- **Privacy.** The address lives only in React state inside `AddressBox`. Never write it to the URL, localStorage, analytics, or a log. Street files are bucketed (decided 2026-10-06): the browser requests `/districts/sf/streets/<bucket>.json`, where `<bucket>` is the first `BUCKET_CHARS` (2) hex characters of SHA-256 of the street slug, so each request covers several streets and our host's logs never name one. Analytics keeps only `off`, `offtypes`, `why`, `c` and `d`; the district code is sent with page views, the address never is.
+- **Hashing in the browser** uses `crypto.subtle`, which needs a secure context. `https://` and `http://127.0.0.1` / `localhost` (e2e and dev) both qualify.
 - **Client code must not import zod** (repo rule, see `src/lib/filters.ts`). Everything under `src/lib/` added here is plain TypeScript.
 - **Comments:** only when a comment prevents a specific wrong edit.
 - **Commands:** unit tests `npx vitest run tests/<file>.test.ts`; all unit tests `npm test`; types `npx next typegen && npx tsc --noEmit`; lint `npm run lint`; e2e `npx playwright test e2e/<file>.spec.ts` (builds the app first, about 2 minutes).
@@ -31,8 +33,8 @@
 ## Files (target)
 
 ```
-src/lib/districts.ts          district code, onBallot, summary text, initialDistricts, VOTER_PORTAL
-src/lib/address.ts            normalizeStreet, streetSlug, displayStreet, parseAddress, isZip, streetIndex, suggestStreets, findStreet
+src/lib/districts.ts          district code, onBallot, ballotDistricts, summary text, initialDistricts, VOTER_PORTAL
+src/lib/address.ts            normalizeStreet, streetSlug, streetBucket, displayStreet, parseAddress, isZip, streetIndex, suggestStreets, findStreet
 src/lib/ranges.ts             compressRanges, findPrecinct
 src/lib/address-lookup.ts     httpLookup (fetch + cache), resolveInput
 src/pipeline/geo.ts           point-in-polygon, bbox index
@@ -40,7 +42,7 @@ src/pipeline/district-sources.ts   download cache, DataSF + Prop 50 loaders
 src/pipeline/districts.ts     buildDistricts (join + checks + files), writeDistrictFiles, generateDistricts
 src/components/AddressBox.tsx
 src/components/useBallotFilters.ts  + useDistricts
-public/districts/sf/{precincts.json,streets.json,zips.json,streets/<slug>.json}   generated, committed
+public/districts/sf/{precincts.json,streets.json,zips.json,streets/<bucket>.json}   generated, committed
 tests/{districts,address,ranges,geo,district-sources,districts-build,district-data,address-lookup}.test.ts
 tests/fixtures/districts.ts
 e2e/address.spec.ts
@@ -54,6 +56,13 @@ e2e/address.spec.ts
 - Create: `src/lib/districts.ts`
 - Test: `tests/districts.test.ts`
 
+Definitions (the tests pin each one down):
+
+- **District code.** `<county>` followed by zero or more `.<letter><number>` parts in the fixed order `s` (Supervisor), `a` (Assembly), `c` (Congress), `b` (BART), `e` (Board of Equalization), at least one part, no repeats. An address lookup yields all five (`sf.s6.a17.c11.b9.e2`).
+- **A kind missing from a code** means "the visitor's district of this kind has no contest on this ballot", so contests of that kind are hidden. Only ZIP lookups produce such codes.
+- **`ballotDistricts(districts, contests)`** keeps kind K only when some contest on the ballot is for K and the visitor's district of K. Two precincts give the same contests exactly when their `ballotDistricts` are equal, so a ZIP resolves by itself when all its precincts have equal `ballotDistricts`, and its code is that trimmed set (Task 11).
+- **`onBallot`**: state, county and city contests always; a district contest of a kind this code doesn't know (e.g. a future "Water Board") always; otherwise only when the code has that kind with the same number.
+
 **Step 1: Write the failing test**
 
 ```ts
@@ -61,20 +70,26 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadElection } from "@/lib/data";
 import {
-  ballotLine, decodeDistricts, districtKind, districtSummary, encodeDistricts, initialDistricts, onBallot, splitBallot,
-  type DistrictSet,
+  ballotDistricts, ballotLine, decodeDistricts, districtKind, districtSummary, encodeDistricts, initialDistricts, onBallot,
+  splitBallot, type DistrictSet,
 } from "@/lib/districts";
 import type { Contest } from "@/lib/schema";
 
 const s8: DistrictSet = { county: "sf", districts: { supervisor: "8", assembly: "17", congress: "11", bart: "8", boe: "2" } };
+const trimmed: DistrictSet = { county: "sf", districts: { assembly: "17", congress: "11", boe: "2" } };
 const contest = (jurisdiction: Contest["jurisdiction"]) => ({ jurisdiction });
+const district = (name: string, d: string) => contest({ level: "district", name, district: d });
 
 describe("district code", () => {
   it("encodes in a fixed order with the county prefix", () => {
     expect(encodeDistricts(s8)).toBe("sf.s8.a17.c11.b8.e2");
   });
-  it("round-trips", () => {
+  it("encodes only the kinds it has", () => {
+    expect(encodeDistricts(trimmed)).toBe("sf.a17.c11.e2");
+  });
+  it("round-trips full and trimmed codes", () => {
     expect(decodeDistricts(encodeDistricts(s8))).toEqual(s8);
+    expect(decodeDistricts(encodeDistricts(trimmed))).toEqual(trimmed);
   });
   it("drops leading zeros", () => {
     expect(decodeDistricts("sf.s08.a17.c11.b8.e2")?.districts.supervisor).toBe("8");
@@ -83,9 +98,10 @@ describe("district code", () => {
     "",
     "sf",
     "la.s8.a17.c11.b8.e2",
-    "sf.s8.a17.c11.b8",
     "sf.a17.s8.c11.b8.e2",
+    "sf.s8.s9",
     "sf.s8.a17.c11.b8.e2.x1",
+    "sf.q1",
     "sf.sx.a17.c11.b8.e2",
     "sf.s8.a17.c11.b8.e2;alert(1)",
   ])("rejects %j", (code) => {
@@ -103,22 +119,43 @@ describe("onBallot", () => {
     expect(onBallot(contest({ level: "city", name: "San Francisco" }), s8)).toBe(true);
   });
   it("keeps a district contest only when the visitor's district matches", () => {
-    expect(onBallot(contest({ level: "district", name: "Supervisor", district: "8" }), s8)).toBe(true);
-    expect(onBallot(contest({ level: "district", name: "Supervisor", district: "6" }), s8)).toBe(false);
-    expect(onBallot(contest({ level: "district", name: "BART", district: "8" }), s8)).toBe(true);
-    expect(onBallot(contest({ level: "district", name: "Board of Equalization", district: "2" }), s8)).toBe(true);
+    expect(onBallot(district("Supervisor", "8"), s8)).toBe(true);
+    expect(onBallot(district("Supervisor", "6"), s8)).toBe(false);
+    expect(onBallot(district("BART", "8"), s8)).toBe(true);
+    expect(onBallot(district("Board of Equalization", "2"), s8)).toBe(true);
+  });
+  it("hides every contest of a kind the code leaves out", () => {
+    expect(onBallot(district("Supervisor", "6"), trimmed)).toBe(false);
+    expect(onBallot(district("BART", "8"), trimmed)).toBe(false);
+    expect(onBallot(district("Assembly", "17"), trimmed)).toBe(true);
   });
   it("keeps everything when no districts are set", () => {
-    expect(onBallot(contest({ level: "district", name: "Supervisor", district: "6" }), null)).toBe(true);
+    expect(onBallot(district("Supervisor", "6"), null)).toBe(true);
   });
   it("keeps a district contest of a kind it doesn't know", () => {
-    expect(onBallot(contest({ level: "district", name: "Water Board", district: "3" }), s8)).toBe(true);
+    expect(onBallot(district("Water Board", "3"), s8)).toBe(true);
+  });
+});
+
+describe("ballotDistricts", () => {
+  const contests = [district("Supervisor", "6"), district("Supervisor", "8"), district("Assembly", "17"), district("Assembly", "19"), district("BART", "8"), district("Board of Equalization", "2")];
+  it("keeps only the kinds whose district has a contest", () => {
+    expect(ballotDistricts({ supervisor: "1", assembly: "19", congress: "11", bart: "9", boe: "2" }, contests)).toEqual({ assembly: "19", boe: "2" });
+    expect(ballotDistricts(s8.districts, contests)).toEqual({ supervisor: "8", assembly: "17", bart: "8", boe: "2" });
+  });
+  it("makes precincts with the same contests equal", () => {
+    const sup1 = ballotDistricts({ supervisor: "1", assembly: "17", congress: "11", bart: "7", boe: "2" }, contests);
+    const sup3 = ballotDistricts({ supervisor: "3", assembly: "17", congress: "11", bart: "9", boe: "2" }, contests);
+    expect(sup1).toEqual(sup3);
   });
 });
 
 describe("text", () => {
   it("summarizes districts without the citywide BOE district", () => {
     expect(districtSummary(s8)).toBe("Supervisor 8 · Assembly 17 · Congress 11 · BART 8");
+  });
+  it("summarizes only the kinds a trimmed code has", () => {
+    expect(districtSummary(trimmed)).toBe("Assembly 17 · Congress 11");
   });
   it("counts contests shown and hidden", () => {
     expect(ballotLine({ shown: 41, hidden: 11 })).toBe("41 contests on your ballot · 11 others hidden");
@@ -158,6 +195,14 @@ describe("the Nov 2026 ballot", () => {
     ]);
     expect(shown).toHaveLength(45);
   });
+
+  it("trims a district with no race this year and keeps the same contests", () => {
+    const full = { supervisor: "6", assembly: "17", congress: "11", bart: "9", boe: "2" };
+    const trim = ballotDistricts(full, ballot.contests);
+    expect(trim).toEqual({ supervisor: "6", assembly: "17", congress: "11", boe: "2" });
+    const ids = (districts: DistrictSet["districts"]) => splitBallot(ballot.contests, { county: "sf", districts }).shown.map((c) => c.id);
+    expect(ids(trim)).toEqual(ids(full));
+  });
 });
 ```
 
@@ -183,24 +228,27 @@ export const KINDS = [
 
 export type DistrictKind = (typeof KINDS)[number]["kind"];
 export type Districts = Record<DistrictKind, string>;
-export type DistrictSet = { county: string; districts: Districts };
+export type DistrictSet = { county: string; districts: Partial<Districts> };
 
 export const COUNTIES: readonly string[] = ["sf"];
 export const VOTER_PORTAL = "https://sfelections.org/tools/portal/";
 
 export function encodeDistricts({ county, districts }: DistrictSet): string {
-  return [county, ...KINDS.map((k) => `${k.letter}${districts[k.kind]}`)].join(".");
+  return [county, ...KINDS.flatMap((k) => (districts[k.kind] === undefined ? [] : [`${k.letter}${districts[k.kind]}`]))].join(".");
 }
 
 export function decodeDistricts(code: string | null | undefined): DistrictSet | null {
   if (!code) return null;
   const [county, ...parts] = code.split(".");
-  if (!COUNTIES.includes(county) || parts.length !== KINDS.length) return null;
-  const districts = {} as Districts;
-  for (const [i, k] of KINDS.entries()) {
-    const m = /^([a-z])(\d{1,3})$/.exec(parts[i]);
-    if (!m || m[1] !== k.letter) return null;
-    districts[k.kind] = String(Number(m[2]));
+  if (!COUNTIES.includes(county) || parts.length === 0) return null;
+  const districts: Partial<Districts> = {};
+  let previous = -1;
+  for (const part of parts) {
+    const m = /^([a-z])(\d{1,3})$/.exec(part);
+    const i = m ? KINDS.findIndex((k) => k.letter === m[1]) : -1;
+    if (!m || i <= previous) return null;
+    districts[KINDS[i].kind] = String(Number(m[2]));
+    previous = i;
   }
   return { county, districts };
 }
@@ -224,8 +272,17 @@ export function splitBallot<C extends Pick<Contest, "jurisdiction">>(contests: C
   return { shown, hidden };
 }
 
+export function ballotDistricts(districts: Partial<Districts>, contests: Pick<Contest, "jurisdiction">[]): Partial<Districts> {
+  const out: Partial<Districts> = {};
+  for (const k of KINDS) {
+    const d = districts[k.kind];
+    if (d !== undefined && contests.some((c) => districtKind(c.jurisdiction) === k.kind && c.jurisdiction.district === d)) out[k.kind] = d;
+  }
+  return out;
+}
+
 export function districtSummary({ districts }: DistrictSet): string {
-  return KINDS.filter((k) => k.summary)
+  return KINDS.filter((k) => k.summary && districts[k.kind] !== undefined)
     .map((k) => `${k.label} ${districts[k.kind]}`)
     .join(" · ");
 }
@@ -263,13 +320,14 @@ git commit -m "feat(districts): district code and on-ballot predicate"
 - Create: `src/lib/address.ts`
 - Test: `tests/address.test.ts`
 
-Shared by the build (EAS names) and the browser (what the visitor typed).
+Shared by the build (EAS names) and the browser (what the visitor typed). `streetBucket()` names the bucket file a street's ranges live in; build and browser must hash identically, so it lives here too.
 
 **Step 1: Write the failing test**
 
 ```ts
 import { describe, expect, it } from "vitest";
-import { displayStreet, normalizeStreet, streetSlug } from "@/lib/address";
+import { createHash } from "node:crypto";
+import { BUCKET_CHARS, displayStreet, normalizeStreet, streetBucket, streetSlug } from "@/lib/address";
 
 describe("normalizeStreet", () => {
   it.each([
@@ -337,6 +395,14 @@ describe("displayStreet", () => {
     ["MRS JACKSON WAY", "Mrs Jackson Way"],
   ])("%j -> %j", (key, expected) => {
     expect(displayStreet(key)).toBe(expected);
+  });
+});
+
+describe("streetBucket", () => {
+  it("is the start of the slug's SHA-256, and matches Node's hash", async () => {
+    const expected = createHash("sha256").update("utah-st").digest("hex").slice(0, BUCKET_CHARS);
+    expect(await streetBucket("utah-st")).toBe(expected);
+    expect(await streetBucket("utah-st")).toMatch(new RegExp(`^[0-9a-f]{${BUCKET_CHARS}}$`));
   });
 });
 ```
@@ -428,6 +494,16 @@ export function streetSlug(key: string): string {
   return key.toLowerCase().replace(/ /g, "-");
 }
 
+export const BUCKET_CHARS = 2;
+
+export async function streetBucket(slug: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(slug));
+  return [...new Uint8Array(digest)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, BUCKET_CHARS);
+}
+
 export function displayStreet(key: string): string {
   return key
     .split(" ")
@@ -456,7 +532,7 @@ Expected: PASS.
 
 ```bash
 git add src/lib/address.ts tests/address.test.ts
-git commit -m "feat(address): street normalization shared by build and browser"
+git commit -m "feat(address): street normalization and buckets shared by build and browser"
 ```
 
 ---
@@ -667,7 +743,7 @@ git commit -m "feat(address): street suggestions and matching"
 - Create: `src/lib/ranges.ts`
 - Test: `tests/ranges.test.ts`
 
-A street file is `{ odd: Range[], even: Range[] }` where `Range = [lo, hi, precinct | null]`. Consecutive known numbers on one side that share a precinct collapse into one range. A number found in two precincts (two buildings, or two EAS streets that normalize to one key) becomes `null`: the lookup says "not found" rather than guess. A number between two known numbers of the same range takes that range's precinct; a number outside every range is not found.
+A street's ranges are `{ odd: Range[], even: Range[] }` where `Range = [lo, hi, precinct | null]`. Consecutive known numbers on one side that share a precinct collapse into one range. A number found in two precincts (two buildings, or two EAS streets that normalize to one key) becomes `null`: the lookup says "not found" rather than guess. A number between two known numbers of the same range takes that range's precinct; a number outside every range is not found.
 
 **Step 1: Write the failing test**
 
@@ -1191,21 +1267,21 @@ git commit -m "feat(districts): cached loaders for DataSF addresses, precincts a
 - Create: `tests/fixtures/districts.ts`
 - Test: `tests/districts-build.test.ts`
 
-`buildDistricts()` is pure: it takes parsed sources and the ballot's contests and returns the files to write plus a list of errors. Checks (each an error, so nothing is written):
+`buildDistricts()` is pure (async only because `streetBucket` hashes with `crypto.subtle`): it takes parsed sources and the ballot's contests and returns the files to write plus a list of errors. Checks (each an error, so nothing is written):
 
 1. Every address with coordinates falls in a precinct.
 2. Each address's Supervisor district from the precinct join equals the `supervisor` in the address file (rows without one are not compared).
 3. Every precinct's districts are in the county's expected sets (SF: Supervisor 1–11, Assembly 17/19, Congress 11/15, BART 7/8/9, BOE 2).
 4. Every districted contest on the ballot is reachable: some precinct that holds an address has that district.
 5. Congress from the precinct file matches the Prop 50 map for every precinct that holds an address: the Prop 50 district containing most of a sample of its addresses (up to 25) must equal `cong22`. Sampling keeps the check fast; the statewide district polygons are large.
-6. Every street file is at most `MAX_STREET_FILE_BYTES` (16 KB).
+6. Every bucket file is at most `MAX_BUCKET_GZIP_BYTES` (16 KB) gzipped. The limit can be lowered per call (`maxBucketGzipBytes`) so the test can exercise it.
 
 Output, all JSON with a trailing newline, keys sorted for stable diffs:
 
 - `precincts.json`: `{ "<precinct>": { supervisor, assembly, congress, bart, boe } }`
 - `streets.json`: display names, natural order
 - `zips.json`: `{ "<zip>": ["<precinct>", …] }`
-- `streets/<slug>.json`: `{ odd: Range[], even: Range[] }`
+- `streets/<bucket>.json`: `{ "<slug>": { odd: Range[], even: Range[] }, … }`, every street whose `streetBucket(slug)` is `<bucket>`
 
 **Step 1: Write the fixture**
 
@@ -1263,15 +1339,17 @@ export const contests: Pick<Contest, "id" | "jurisdiction">[] = [
 
 ```ts
 import { describe, expect, it } from "vitest";
-import { buildDistricts, MAX_STREET_FILE_BYTES, type BuildInput } from "@/pipeline/districts";
+import { streetBucket } from "@/lib/address";
+import { buildDistricts, type BuildInput } from "@/pipeline/districts";
 import { addr, addresses, congress, contests, county, precincts } from "./fixtures/districts";
 
 const input: BuildInput = { county, addresses, precincts, congress, contests };
 const parse = (files: Map<string, string>, name: string) => JSON.parse(files.get(name) ?? "null");
+const bucketOf = async (slug: string) => `streets/${await streetBucket(slug)}.json`;
 
 describe("buildDistricts", () => {
-  it("writes the four kinds of file from clean sources", () => {
-    const r = buildDistricts(input);
+  it("writes the index files and street buckets from clean sources", async () => {
+    const r = await buildDistricts(input);
     expect(r.errors).toEqual([]);
     expect(parse(r.files, "precincts.json")).toEqual({
       "1101": { supervisor: "1", assembly: "19", congress: "15", bart: "8", boe: "2" },
@@ -1279,52 +1357,53 @@ describe("buildDistricts", () => {
     });
     expect(parse(r.files, "streets.json")).toEqual(["3rd St", "Main St"]);
     expect(parse(r.files, "zips.json")).toEqual({ "94110": ["1101", "1102"], "94130": ["1102"] });
-    expect(parse(r.files, "streets/main-st.json")).toEqual({ odd: [[101, 103, "1101"], [105, 105, "1102"]], even: [[100, 102, "1101"]] });
-    expect(parse(r.files, "streets/3rd-st.json")).toEqual({ odd: [[1, 1, "1102"]], even: [] });
-    expect([...r.files.keys()].sort()).toEqual(["precincts.json", "streets.json", "streets/3rd-st.json", "streets/main-st.json", "zips.json"]);
+    const main = await bucketOf("main-st");
+    const third = await bucketOf("3rd-st");
+    expect(parse(r.files, main)["main-st"]).toEqual({ odd: [[101, 103, "1101"], [105, 105, "1102"]], even: [[100, 102, "1101"]] });
+    expect(parse(r.files, third)["3rd-st"]).toEqual({ odd: [[1, 1, "1102"]], even: [] });
+    expect([...r.files.keys()].sort()).toEqual([...new Set(["precincts.json", "streets.json", "zips.json", main, third])].sort());
     expect(r.files.get("zips.json")?.endsWith("\n")).toBe(true);
     expect(r.stats).toMatchObject({ addresses: 6, precincts: 2, streets: 2, zips: 2 });
   });
 
-  it("fails on an address outside every precinct", () => {
-    const r = buildDistricts({ ...input, addresses: [...addresses, addr(7, "MAIN ST", 5)] });
+  it("fails on an address outside every precinct", async () => {
+    const r = await buildDistricts({ ...input, addresses: [...addresses, addr(7, "MAIN ST", 5)] });
     expect(r.errors).toEqual([expect.stringMatching(/^addresses outside every precinct: 1\n {2}7 MAIN ST/)]);
   });
 
-  it("fails when an address's own Supervisor district disagrees with its precinct", () => {
-    const r = buildDistricts({ ...input, addresses: [...addresses, addr(9, "MAIN ST", 0.5, { supervisor: "2" })] });
+  it("fails when an address's own Supervisor district disagrees with its precinct", async () => {
+    const r = await buildDistricts({ ...input, addresses: [...addresses, addr(9, "MAIN ST", 0.5, { supervisor: "2" })] });
     expect(r.errors).toEqual([expect.stringMatching(/Supervisor district disagrees with their precinct: 1\n {2}9 MAIN ST: address file says 2, precinct 1101 says 1/)]);
   });
 
-  it("does not compare addresses that carry no Supervisor district", () => {
-    expect(buildDistricts({ ...input, addresses: [...addresses, addr(9, "MAIN ST", 0.5, { supervisor: null })] }).errors).toEqual([]);
+  it("does not compare addresses that carry no Supervisor district", async () => {
+    expect((await buildDistricts({ ...input, addresses: [...addresses, addr(9, "MAIN ST", 0.5, { supervisor: null })] })).errors).toEqual([]);
   });
 
-  it("fails on a district the county doesn't have", () => {
-    const r = buildDistricts({ ...input, county: { ...county, expected: { ...county.expected, assembly: ["17"] } } });
+  it("fails on a district the county doesn't have", async () => {
+    const r = await buildDistricts({ ...input, county: { ...county, expected: { ...county.expected, assembly: ["17"] } } });
     expect(r.errors).toEqual([expect.stringMatching(/precincts with an unknown district: 1\n {2}1101: assembly 19/)]);
   });
 
-  it("fails when a districted contest can't be reached from any address", () => {
-    const r = buildDistricts({ ...input, contests: [...contests, { id: "supervisor-4", jurisdiction: { level: "district", name: "Supervisor", district: "4" } }] });
+  it("fails when a districted contest can't be reached from any address", async () => {
+    const r = await buildDistricts({ ...input, contests: [...contests, { id: "supervisor-4", jurisdiction: { level: "district", name: "Supervisor", district: "4" } }] });
     expect(r.errors).toEqual([expect.stringMatching(/districted contests no address can reach: 1\n {2}supervisor-4/)]);
   });
 
-  it("fails when the precinct file's congress district disagrees with the Prop 50 map", () => {
+  it("fails when the precinct file's congress district disagrees with the Prop 50 map", async () => {
     const swapped = [{ ...congress[0], district: "11" }, { ...congress[1], district: "15" }];
-    const r = buildDistricts({ ...input, congress: swapped });
+    const r = await buildDistricts({ ...input, congress: swapped });
     expect(r.errors).toEqual([expect.stringMatching(/disagrees with the Prop 50 map: 2\n {2}1101: precinct file 15, Prop 50 11/)]);
   });
 
-  it("fails on a street file over the size limit", () => {
-    const zigzag = Array.from({ length: 4000 }, (_, i) => addr(i * 2 + 1, "LONG ST", i % 2 ? 0.5 : 1.5));
-    const r = buildDistricts({ ...input, addresses: [...addresses, ...zigzag] });
-    expect(r.errors).toEqual([expect.stringMatching(new RegExp(`street files over ${MAX_STREET_FILE_BYTES} bytes: 1\\n {2}streets/long-st.json`))]);
+  it("fails on a bucket file over the gzipped size limit", async () => {
+    const r = await buildDistricts({ ...input, maxBucketGzipBytes: 40 });
+    expect(r.errors).toEqual([expect.stringMatching(/^bucket files over 40 bytes gzipped: [12]\n {2}streets\/[0-9a-f]+\.json: \d+ bytes/)]);
   });
 
-  it("lists at most 20 examples per error", () => {
+  it("lists at most 20 examples per error", async () => {
     const outside = Array.from({ length: 25 }, (_, i) => addr(i, "MAIN ST", 9));
-    const [error] = buildDistricts({ ...input, addresses: [...addresses, ...outside] }).errors;
+    const [error] = (await buildDistricts({ ...input, addresses: [...addresses, ...outside] })).errors;
     expect(error.split("\n")).toHaveLength(21);
     expect(error).toMatch(/^addresses outside every precinct: 25 \(first 20\)/);
   });
@@ -1341,9 +1420,10 @@ Expected: FAIL with `Failed to resolve import "@/pipeline/districts"`.
 `src/pipeline/districts.ts`:
 
 ```ts
-import { displayStreet, normalizeStreet, streetSlug } from "@/lib/address";
+import { gzipSync } from "node:zlib";
+import { displayStreet, normalizeStreet, streetBucket, streetSlug } from "@/lib/address";
 import { districtKind, KINDS, type DistrictKind } from "@/lib/districts";
-import { compressRanges, type NumberedPoint } from "@/lib/ranges";
+import { compressRanges, type NumberedPoint, type StreetFile } from "@/lib/ranges";
 import type { Contest } from "@/lib/schema";
 import type { AddressRow, CongressDistrict, Precinct } from "./district-sources";
 import { makeIndex } from "./geo";
@@ -1355,8 +1435,9 @@ export type BuildInput = {
   precincts: Precinct[];
   congress: CongressDistrict[];
   contests: Pick<Contest, "id" | "jurisdiction">[];
+  maxBucketGzipBytes?: number;
 };
-export type BuildStats = { addresses: number; precincts: number; streets: number; zips: number; bytes: number };
+export type BuildStats = { addresses: number; precincts: number; streets: number; buckets: number; zips: number; bytes: number };
 export type BuildResult = { files: Map<string, string>; errors: string[]; stats: BuildStats };
 
 const numbers = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => String(a + i));
@@ -1364,7 +1445,7 @@ export const SF: County = {
   id: "sf",
   expected: { supervisor: numbers(1, 11), assembly: ["17", "19"], congress: ["11", "15"], bart: ["7", "8", "9"], boe: ["2"] },
 };
-export const MAX_STREET_FILE_BYTES = 16 * 1024;
+export const MAX_BUCKET_GZIP_BYTES = 16 * 1024;
 const CONGRESS_SAMPLE = 25;
 const MAX_LISTED = 20;
 
@@ -1378,7 +1459,14 @@ function listed(label: string, items: string[]): string[] {
   return [[head, ...items.slice(0, MAX_LISTED).map((i) => `  ${i}`)].join("\n")];
 }
 
-export function buildDistricts({ county, addresses, precincts, congress, contests }: BuildInput): BuildResult {
+export async function buildDistricts({
+  county,
+  addresses,
+  precincts,
+  congress,
+  contests,
+  maxBucketGzipBytes = MAX_BUCKET_GZIP_BYTES,
+}: BuildInput): Promise<BuildResult> {
   const byId = new Map(precincts.map((p) => [p.id, p]));
   const locate = makeIndex(precincts.map((p) => ({ geometry: p.geometry, value: p.id })));
   const locateCongress = makeIndex(congress.map((c) => ({ geometry: c.geometry, value: c.district })));
@@ -1438,11 +1526,17 @@ export function buildDistricts({ county, addresses, precincts, congress, contest
   files.set("precincts.json", json(sortedObject(precincts.map((p): [string, Precinct["districts"]] => [p.id, p.districts]))));
   files.set("streets.json", json([...streets.keys()].map(displayStreet).sort(natural)));
   files.set("zips.json", json(sortedObject([...zips].map(([zip, ids]): [string, string[]] => [zip, [...ids].sort(natural)]))));
+  const buckets = new Map<string, Record<string, StreetFile>>();
+  for (const [key, points] of [...streets].sort(([a], [b]) => natural(a, b))) {
+    const slug = streetSlug(key);
+    const name = `streets/${await streetBucket(slug)}.json`;
+    buckets.set(name, { ...buckets.get(name), [slug]: compressRanges(points) });
+  }
   const tooBig: string[] = [];
-  for (const [key, points] of streets) {
-    const name = `streets/${streetSlug(key)}.json`;
-    const body = json(compressRanges(points));
-    if (body.length > MAX_STREET_FILE_BYTES) tooBig.push(`${name}: ${body.length} bytes`);
+  for (const [name, bucket] of [...buckets].sort(([a], [b]) => a.localeCompare(b))) {
+    const body = json(bucket);
+    const gzipped = gzipSync(body).length;
+    if (gzipped > maxBucketGzipBytes) tooBig.push(`${name}: ${gzipped} bytes`);
     files.set(name, body);
   }
 
@@ -1452,23 +1546,23 @@ export function buildDistricts({ county, addresses, precincts, congress, contest
     ...listed("precincts with an unknown district", unknown),
     ...listed("districted contests no address can reach", unreachable),
     ...listed("precincts whose congress district disagrees with the Prop 50 map", congressMismatch),
-    ...listed(`street files over ${MAX_STREET_FILE_BYTES} bytes`, tooBig),
+    ...listed(`bucket files over ${maxBucketGzipBytes} bytes gzipped`, tooBig),
   ];
   const bytes = [...files.values()].reduce((n, f) => n + f.length, 0);
-  return { files, errors, stats: { addresses: placed, precincts: precincts.length, streets: streets.size, zips: zips.size, bytes } };
+  return { files, errors, stats: { addresses: placed, precincts: precincts.length, streets: streets.size, buckets: buckets.size, zips: zips.size, bytes } };
 }
 ```
 
 **Step 5: Run test to verify it passes**
 
 Run: `npx vitest run tests/districts-build.test.ts`
-Expected: PASS. If the size-limit test passes without an error, the zigzag street compressed below 16 KB: raise the address count in the test, not the limit.
+Expected: PASS.
 
 **Step 6: Commit**
 
 ```bash
 git add src/pipeline/districts.ts tests/fixtures/districts.ts tests/districts-build.test.ts
-git commit -m "feat(districts): build the address index with the design's cross-checks"
+git commit -m "feat(districts): build the bucketed address index with the design's cross-checks"
 ```
 
 ---
@@ -1482,7 +1576,7 @@ git commit -m "feat(districts): build the address index with the design's cross-
 
 **Step 1: Write the failing test**
 
-Append to `tests/districts-build.test.ts` (add `fs`, `os`, `path`, `afterEach` imports and `generateDistricts, writeDistrictFiles` to the districts import):
+Append to `tests/districts-build.test.ts` (add `fs`, `os`, `path`, `afterEach` imports and `generateDistricts, writeDistrictFiles` to the districts import; `streetBucket` is already imported):
 
 ```ts
 describe("generateDistricts", () => {
@@ -1499,14 +1593,15 @@ describe("generateDistricts", () => {
     congress: async () => congress,
   });
 
-  it("writes every file and removes stale street files when clean", async () => {
+  it("writes every file and removes stale bucket files when clean", async () => {
     const out = outDir();
     fs.mkdirSync(path.join(out, "streets"), { recursive: true });
-    fs.writeFileSync(path.join(out, "streets", "gone-st.json"), "{}");
+    fs.writeFileSync(path.join(out, "streets", "stale.json"), "{}");
     const r = await generateDistricts({ county, sources: sources(), contests, outDir: out });
     expect(r.errors).toEqual([]);
     expect(r.skipped).toBe(3);
-    expect(fs.readdirSync(path.join(out, "streets")).sort()).toEqual(["3rd-st.json", "main-st.json"]);
+    const expected = [...new Set([await streetBucket("3rd-st"), await streetBucket("main-st")])].map((b) => `${b}.json`).sort();
+    expect(fs.readdirSync(path.join(out, "streets")).sort()).toEqual(expected);
     expect(JSON.parse(fs.readFileSync(path.join(out, "zips.json"), "utf8"))).toEqual({ "94110": ["1101", "1102"], "94130": ["1102"] });
   });
 
@@ -1556,7 +1651,7 @@ export async function generateDistricts({
   outDir: string;
 }): Promise<BuildResult & { skipped: number }> {
   const [{ rows, skipped }, precincts, congress] = await Promise.all([sources.addresses(), sources.precincts(), sources.congress()]);
-  const result = buildDistricts({ county, addresses: rows, precincts, congress, contests });
+  const result = await buildDistricts({ county, addresses: rows, precincts, congress, contests });
   if (result.errors.length === 0) writeDistrictFiles(outDir, result.files);
   return { ...result, skipped };
 }
@@ -1602,7 +1697,7 @@ async function runDistricts(): Promise<void> {
     outDir: path.join(process.cwd(), "public", "districts", SF.id),
   });
   const s = r.stats;
-  console.log(`${s.addresses} addresses placed (${r.skipped} rows skipped), ${s.precincts} precincts, ${s.streets} streets, ${s.zips} ZIPs, ${Math.round(s.bytes / 1024)} KB`);
+  console.log(`${s.addresses} addresses placed (${r.skipped} rows skipped), ${s.precincts} precincts, ${s.streets} streets in ${s.buckets} buckets, ${s.zips} ZIPs, ${Math.round(s.bytes / 1024)} KB`);
   r.errors.forEach((e) => console.error(`ERROR ${e}`));
   if (r.errors.length) {
     console.error("Nothing written.");
@@ -1639,7 +1734,7 @@ git commit -m "feat(bb): districts command writes public/districts/sf"
 ### Task 10: Generate and commit the SF data
 
 **Files:**
-- Create (generated): `public/districts/sf/precincts.json`, `public/districts/sf/streets.json`, `public/districts/sf/zips.json`, `public/districts/sf/streets/*.json`
+- Create (generated): `public/districts/sf/precincts.json`, `public/districts/sf/streets.json`, `public/districts/sf/zips.json`, `public/districts/sf/streets/<bucket>.json`
 - Test: `tests/district-data.test.ts`
 
 **Step 1: Re-verify the source schemas (they are external and can change)**
@@ -1664,59 +1759,77 @@ Expected: `200 https://sfelections.org/tools/portal/` and `<title>Voter Portal`.
 **Step 3: Run the build**
 
 Run: `npm run bb -- districts`
-Expected (first run downloads about 60 MB into `.cache/districts/`): a line like `2243xx addresses placed (N rows skipped), 514 precincts, ~2000 streets, 27 ZIPs, ~1500 KB` and `Wrote public/districts/sf/`.
+Expected (first run downloads about 60 MB into `.cache/districts/`): a line like `2243xx addresses placed (N rows skipped), 514 precincts, ~2000 streets in 256 buckets, 27 ZIPs, ~1500 KB` and `Wrote public/districts/sf/`.
 
 If it prints `ERROR` lines, do not loosen a check. Read the examples:
 - *outside every precinct*: look at the coordinates; addresses on the Farallones or piers may fall outside the precinct file. Report back to Sean before excluding anything.
 - *Supervisor district disagrees*: compare the precinct file date (2023-09-13) with the address file; a handful near boundaries may mean the precinct file is stale. Report back with the list.
 - *Prop 50*: means the precinct file's `cong22` no longer matches the Prop 50 map for SF; the build must not ship until that's resolved.
+- *bucket files over 16384 bytes gzipped*: with about 1.5 MB of ranges in 256 buckets this is not expected (about 6 KB raw per bucket on average). If it happens, set `BUCKET_CHARS = 3` in `src/lib/address.ts` (4,096 buckets), re-run `npx vitest run tests/address.test.ts`, and rebuild. Don't raise the limit.
 
 **Step 4: Inspect the output**
 
 ```bash
 du -sh public/districts/sf && ls public/districts/sf/streets | wc -l
-ls -S public/districts/sf/streets | head -3 | xargs -I{} wc -c public/districts/sf/streets/{}
-head -c 300 public/districts/sf/streets/utah-st.json; echo
-node -e '
-const fs = require("fs"); const d = "public/districts/sf/";
-const p = JSON.parse(fs.readFileSync(d + "precincts.json")); const z = JSON.parse(fs.readFileSync(d + "zips.json"));
-for (const [zip, ids] of Object.entries(z)) {
-  const sets = new Set(ids.map((id) => JSON.stringify(p[id])));
-  console.log(zip, sets.size === 1 ? "ONE " + [...sets][0] : sets.size + " sets");
-}'
+for f in $(ls -S public/districts/sf/streets | head -3); do echo "$f $(wc -c < public/districts/sf/streets/$f) bytes, $(gzip -9c public/districts/sf/streets/$f | wc -c) gzipped"; done
+npx tsx -e '
+import fs from "node:fs";
+import { streetBucket } from "./src/lib/address";
+import { loadElection } from "./src/lib/data";
+import { ballotDistricts } from "./src/lib/districts";
+const dir = "public/districts/sf/";
+const read = (f: string) => JSON.parse(fs.readFileSync(dir + f, "utf8"));
+(async () => {
+  console.log("utah-st", JSON.stringify(read(`streets/${await streetBucket("utah-st")}.json`)["utah-st"]).slice(0, 200));
+  const { ballot } = loadElection("data", "2026-11");
+  const p = read("precincts.json");
+  for (const [zip, ids] of Object.entries(read("zips.json")) as [string, string[]][]) {
+    const sets = new Set(ids.map((id) => JSON.stringify(ballotDistricts(p[id], ballot.contests))));
+    console.log(zip, sets.size === 1 ? `ONE ${[...sets][0]}` : `${sets.size} contest sets`);
+  }
+})();'
 ```
 
-Expected: total size about 1–2 MB in roughly 2,000 street files; the largest street file well under 16 KB; Utah St's file has odd and even ranges. The ZIP listing shows which ZIPs resolve on their own (as of 2026-10-06, the seven ZIPs with a single Supervisor district are 94104, 94108, 94111, 94123, 94129, 94130, 94133; other districts can still split them). Pick one ZIP marked `ONE` for the e2e tests (prefer 94130), and note its districts. Confirm 94103 shows more than one set.
+Expected: total size about 1–2 MB in up to 256 bucket files; the largest bucket a few KB gzipped (limit 16 KB); Utah St has odd and even ranges. The ZIP listing shows which ZIPs resolve on their own under the contest-set rule. As of 2026-10-06, seven ZIPs have a single Supervisor district (94104, 94108, 94111, 94123, 94129, 94130, 94133), and more may resolve because odd Supervisor districts and BART 7/9 have no race. Pick one ZIP marked `ONE` for the e2e tests (prefer 94130) and note its trimmed districts. Confirm 94103 shows more than one contest set.
 
 **Step 5: Write the committed-data test**
 
-`tests/district-data.test.ts` (replace `UNAMBIGUOUS_ZIP` and its expected districts with what Step 4 printed):
+`tests/district-data.test.ts` (replace `UNAMBIGUOUS_ZIP` if Step 4 picked another):
 
 ```ts
 import fs from "node:fs";
 import path from "node:path";
+import { gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
-import { normalizeStreet, streetSlug } from "@/lib/address";
+import { normalizeStreet, streetBucket, streetSlug } from "@/lib/address";
 import { loadElection } from "@/lib/data";
-import { districtKind, type Districts } from "@/lib/districts";
+import { ballotDistricts, districtKind, type Districts } from "@/lib/districts";
 import { findPrecinct, type StreetFile } from "@/lib/ranges";
-import { MAX_STREET_FILE_BYTES } from "@/pipeline/districts";
+import { MAX_BUCKET_GZIP_BYTES } from "@/pipeline/districts";
 
 const dir = path.join(process.cwd(), "public/districts/sf");
 const read = <T>(f: string): T => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")) as T;
 const precincts = read<Record<string, Districts>>("precincts.json");
 const zips = read<Record<string, string[]>>("zips.json");
 const streets = read<string[]>("streets.json");
+const buckets = fs.readdirSync(path.join(dir, "streets"));
+const { ballot } = loadElection(path.join(process.cwd(), "data"), "2026-11");
 const UNAMBIGUOUS_ZIP = "94130";
 
 describe("committed SF district data", () => {
-  it("has exactly one file per street in streets.json", () => {
-    const expected = streets.map((s) => `${streetSlug(normalizeStreet(s))}.json`).sort();
-    expect(fs.readdirSync(path.join(dir, "streets")).sort()).toEqual(expected);
+  it("puts every street in streets.json in its bucket, and nothing else", async () => {
+    const expected = new Map<string, string[]>();
+    for (const s of streets) {
+      const slug = streetSlug(normalizeStreet(s));
+      const file = `${await streetBucket(slug)}.json`;
+      expected.set(file, [...(expected.get(file) ?? []), slug].sort());
+    }
+    const actual = new Map(buckets.map((f): [string, string[]] => [f, Object.keys(read<Record<string, StreetFile>>(`streets/${f}`)).sort()]));
+    expect(actual).toEqual(expected);
   });
 
-  it("keeps every street file under the size limit", () => {
-    const big = fs.readdirSync(path.join(dir, "streets")).filter((f) => fs.statSync(path.join(dir, "streets", f)).size > MAX_STREET_FILE_BYTES);
+  it("keeps every bucket under the gzipped size limit", () => {
+    const big = buckets.filter((f) => gzipSync(fs.readFileSync(path.join(dir, "streets", f))).length > MAX_BUCKET_GZIP_BYTES);
     expect(big).toEqual([]);
   });
 
@@ -1727,7 +1840,6 @@ describe("committed SF district data", () => {
   });
 
   it("reaches every districted contest on the ballot", () => {
-    const { ballot } = loadElection(path.join(process.cwd(), "data"), "2026-11");
     const used = [...new Set(Object.values(zips).flat())].map((id) => precincts[id]);
     const unreachable = ballot.contests.filter((c) => {
       const kind = districtKind(c.jurisdiction);
@@ -1736,13 +1848,14 @@ describe("committed SF district data", () => {
     expect(unreachable.map((c) => c.id)).toEqual([]);
   });
 
-  it("resolves 128 Utah St to Supervisor 6, Assembly 17, Congress 11, BART 9", () => {
-    const precinct = findPrecinct(read<StreetFile>("streets/utah-st.json"), 128);
+  it("resolves 128 Utah St to Supervisor 6, Assembly 17, Congress 11, BART 9", async () => {
+    const utah = read<Record<string, StreetFile>>(`streets/${await streetBucket("utah-st")}.json`)["utah-st"];
+    const precinct = findPrecinct(utah, 128);
     expect(precinct && precincts[precinct]).toEqual({ supervisor: "6", assembly: "17", congress: "11", bart: "9", boe: "2" });
   });
 
-  it(`resolves ${UNAMBIGUOUS_ZIP} to one district set and 94103 to several`, () => {
-    const sets = (zip: string) => new Set(zips[zip].map((id) => JSON.stringify(precincts[id])));
+  it(`gives every address in ${UNAMBIGUOUS_ZIP} the same contests, and not in 94103`, () => {
+    const sets = (zip: string) => new Set(zips[zip].map((id) => JSON.stringify(ballotDistricts(precincts[id], ballot.contests))));
     expect(sets(UNAMBIGUOUS_ZIP).size).toBe(1);
     expect(sets("94103").size).toBeGreaterThan(1);
   });
@@ -1752,16 +1865,16 @@ describe("committed SF district data", () => {
 **Step 6: Run it**
 
 Run: `npx vitest run tests/district-data.test.ts`
-Expected: PASS. A failure in "exactly one file per street" means `normalizeStreet(displayStreet(key)) !== key` for some EAS name: add that name to the idempotence test in `tests/address.test.ts`, fix `normalizeStreet`/`displayStreet`, rebuild, and re-run.
+Expected: PASS. A failure in "puts every street … in its bucket" usually means `normalizeStreet(displayStreet(key)) !== key` for some EAS name: add that name to the idempotence test in `tests/address.test.ts`, fix `normalizeStreet`/`displayStreet`, rebuild, and re-run.
 
 **Step 7: Commit (data separately from code, so the diff stays reviewable)**
 
 ```bash
 git add public/districts/sf tests/district-data.test.ts
-git commit -m "data: SF address district index for Nov 2026 (<N> streets, <size>)"
+git commit -m "data: SF address district index for Nov 2026 (<N> streets in <B> buckets, <size>)"
 ```
 
-Fill `<N>` and `<size>` from Step 4. Expected size: about 1–2 MB, about 2,000 files.
+Fill `<N>`, `<B>` and `<size>` from Step 4. Expected size: about 1–2 MB in up to 259 files (256 buckets plus three index files).
 
 ---
 ### Task 11: Client lookup module
@@ -1770,72 +1883,94 @@ Fill `<N>` and `<size>` from Step 4. Expected size: about 1–2 MB, about 2,000 
 - Create: `src/lib/address-lookup.ts`
 - Test: `tests/address-lookup.test.ts`
 
-Fetches each file at most once per page load (promises cached per URL; a failed fetch is dropped from the cache so a retry refetches). A ZIP resolves when all its precincts share one district set; otherwise the visitor is asked for the street. Every miss is `not-found`; network failures throw so the UI can say "try again".
+Fetches each file at most once per page load (promises cached per URL; a failed fetch is dropped from the cache so a retry refetches). `street(slug)` fetches the street's bucket (`streets/<streetBucket(slug)>.json`) and picks the street out of it, so the request never names the street.
+
+ZIP rule: compute `ballotDistricts()` for each of the ZIP's precincts against the ballot's contests. If they are all equal, every address in the ZIP has the same contests, and the result is that trimmed set (the code carries only districts with a contest). Otherwise the visitor is asked for the street. A trimmed set with no districts at all can't be encoded, so it also asks for the street (not possible in SF, where every precinct has an Assembly and a Congress race). An address always gives the precinct's full districts. Every miss is `not-found`; network failures throw so the UI can say "try again".
 
 **Step 1: Write the failing test**
 
 ```ts
 import { describe, expect, it, vi } from "vitest";
+import { streetBucket } from "@/lib/address";
 import { httpLookup, resolveInput } from "@/lib/address-lookup";
+import type { Contest } from "@/lib/schema";
 
 const s6 = { supervisor: "6", assembly: "17", congress: "11", bart: "9", boe: "2" };
 const s9 = { supervisor: "9", assembly: "17", congress: "11", bart: "9", boe: "2" };
+const s7 = { supervisor: "7", assembly: "17", congress: "11", bart: "7", boe: "2" };
+const contests = (
+  [["Supervisor", "6"], ["Assembly", "17"], ["Congress", "11"], ["BART", "8"], ["Board of Equalization", "2"]] as const
+).map(([name, district]): Pick<Contest, "jurisdiction"> => ({ jurisdiction: { level: "district", name, district } }));
+const opts = { contests };
+
 const files: Record<string, unknown> = {
-  "/districts/sf/precincts.json": { "7613": s6, "7614": s6, "7916": s9 },
-  "/districts/sf/zips.json": { "94130": ["7613", "7614"], "94103": ["7613", "7916"] },
+  "/districts/sf/precincts.json": { "7613": s6, "7614": s6, "7916": s9, "7917": s7 },
+  "/districts/sf/zips.json": { "94130": ["7613", "7614"], "94103": ["7613", "7916"], "94129": ["7916", "7917"] },
   "/districts/sf/streets.json": ["19th Ave", "19th St", "Ghost St", "Utah St"],
-  "/districts/sf/streets/utah-st.json": { odd: [[101, 129, "7613"], [131, 131, null]], even: [[100, 140, "7916"]] },
+  [`/districts/sf/streets/${await streetBucket("utah-st")}.json`]: {
+    "utah-st": { odd: [[101, 129, "7613"], [131, 131, null]], even: [[100, 140, "7916"]] },
+  },
 };
 const fakeFetch = () => vi.fn(async (url: string) => (url in files ? Response.json(files[url]) : new Response("not found", { status: 404 })));
 const lookup = () => httpLookup({ fetch: fakeFetch() });
-const resolved = (districts: typeof s6) => ({ kind: "resolved", set: { county: "sf", districts } });
+const resolved = (districts: Record<string, string>) => ({ kind: "resolved", set: { county: "sf", districts } });
 const notFound = { kind: "not-found" };
 
-describe("resolveInput", () => {
-  it("resolves a ZIP whose precincts share one district set", async () => {
-    expect(await resolveInput("94130", lookup())).toEqual(resolved(s6));
+describe("resolveInput: ZIPs", () => {
+  it("resolves a ZIP whose addresses all have the same contests, keeping only districts with a contest", async () => {
+    expect(await resolveInput("94130", lookup(), opts)).toEqual(resolved({ supervisor: "6", assembly: "17", congress: "11", boe: "2" }));
   });
-  it("asks for the street when a ZIP spans district sets", async () => {
-    expect(await resolveInput(" 94103 ", lookup())).toEqual({ kind: "ambiguous-zip", zip: "94103" });
+  it("resolves a ZIP whose precincts differ only in districts with no contest", async () => {
+    expect(await resolveInput("94129", lookup(), opts)).toEqual(resolved({ assembly: "17", congress: "11", boe: "2" }));
+  });
+  it("asks for the street when the ZIP's addresses have different contests", async () => {
+    expect(await resolveInput(" 94103 ", lookup(), opts)).toEqual({ kind: "ambiguous-zip", zip: "94103" });
+  });
+  it("asks for the street when nothing districted is on the ballot", async () => {
+    expect(await resolveInput("94130", lookup(), { contests: [] })).toEqual({ kind: "ambiguous-zip", zip: "94130" });
   });
   it("does not find a ZIP outside the county", async () => {
-    expect(await resolveInput("94601", lookup())).toEqual(notFound);
+    expect(await resolveInput("94601", lookup(), opts)).toEqual(notFound);
   });
-  it("resolves an address on either side of the street", async () => {
-    expect(await resolveInput("129 Utah St", lookup())).toEqual(resolved(s6));
-    expect(await resolveInput("128 Utah St", lookup())).toEqual(resolved(s9));
+});
+
+describe("resolveInput: addresses", () => {
+  it("resolves either side of the street to the precinct's full districts", async () => {
+    expect(await resolveInput("129 Utah St", lookup(), opts)).toEqual(resolved(s6));
+    expect(await resolveInput("128 Utah St", lookup(), opts)).toEqual(resolved(s9));
   });
   it("ignores suffix, unit, city and ZIP", async () => {
-    expect(await resolveInput("127A Utah Street #4, San Francisco, CA 94103", lookup())).toEqual(resolved(s6));
+    expect(await resolveInput("127A Utah Street #4, San Francisco, CA 94103", lookup(), opts)).toEqual(resolved(s6));
   });
   it("accepts a street without its type when the name is unique", async () => {
-    expect(await resolveInput("129 Utah", lookup())).toEqual(resolved(s6));
+    expect(await resolveInput("129 Utah", lookup(), opts)).toEqual(resolved(s6));
   });
   it.each(["131 Utah St", "199 Utah St", "10 19th", "1 Nowhere St", "Utah St", "5 Ghost St", ""])("does not find %j", async (input) => {
-    expect(await resolveInput(input, lookup())).toEqual(notFound);
+    expect(await resolveInput(input, lookup(), opts)).toEqual(notFound);
   });
 });
 
 describe("httpLookup", () => {
-  it("fetches each file once", async () => {
+  it("fetches each file once and never names the street", async () => {
     const fetch = fakeFetch();
     const l = httpLookup({ fetch });
-    await resolveInput("129 Utah St", l);
-    await resolveInput("101 Utah St", l);
+    await resolveInput("129 Utah St", l, opts);
+    await resolveInput("101 Utah St", l, opts);
     const urls = fetch.mock.calls.map(([u]) => u);
-    expect(urls.filter((u) => u.endsWith("utah-st.json"))).toHaveLength(1);
-    expect(urls.filter((u) => u.endsWith("streets.json"))).toHaveLength(1);
+    expect(urls.filter((u) => u.includes("/streets/"))).toHaveLength(1);
+    expect(urls.filter((u) => u.endsWith("/streets.json"))).toHaveLength(1);
+    expect(urls.filter((u) => /utah/i.test(u))).toEqual([]);
   });
   it("refetches after a failure", async () => {
     const ok = fakeFetch();
     let calls = 0;
     const fetch = vi.fn(async (url: string) => (++calls === 1 ? Promise.reject(new Error("offline")) : ok(url)));
     const l = httpLookup({ fetch });
-    await expect(resolveInput("94130", l)).rejects.toThrow("offline");
-    expect(await resolveInput("94130", l)).toEqual(resolved(s6));
+    await expect(resolveInput("94130", l, opts)).rejects.toThrow("offline");
+    expect((await resolveInput("94130", l, opts)).kind).toBe("resolved");
   });
   it("throws when a required file is missing", async () => {
-    await expect(resolveInput("94130", httpLookup({ base: "/districts/la", fetch: fakeFetch() }))).rejects.toThrow("/districts/la/zips.json");
+    await expect(resolveInput("94130", httpLookup({ base: "/districts/la", fetch: fakeFetch() }), opts)).rejects.toThrow("/districts/la/zips.json");
   });
 });
 ```
@@ -1850,9 +1985,10 @@ Expected: FAIL with `Failed to resolve import "@/lib/address-lookup"`.
 `src/lib/address-lookup.ts`:
 
 ```ts
-import { findStreet, isZip, parseAddress, streetIndex, streetSlug } from "./address";
-import { encodeDistricts, type Districts, type DistrictSet } from "./districts";
+import { findStreet, isZip, parseAddress, streetBucket, streetIndex, streetSlug } from "./address";
+import { ballotDistricts, encodeDistricts, type Districts, type DistrictSet } from "./districts";
 import { findPrecinct, type StreetFile } from "./ranges";
+import type { Contest } from "./schema";
 
 export type Lookup = {
   zips(): Promise<Record<string, string[]>>;
@@ -1895,23 +2031,28 @@ export function httpLookup({
     zips: () => required("zips.json"),
     precincts: () => required("precincts.json"),
     streets: () => required("streets.json"),
-    street: (slug) => load(`streets/${slug}.json`),
+    street: async (slug) => (await load<Record<string, StreetFile>>(`streets/${await streetBucket(slug)}.json`))?.[slug] ?? null,
   };
 }
 
-export async function resolveInput(input: string, lookup: Lookup, county = "sf"): Promise<Resolution> {
+export async function resolveInput(
+  input: string,
+  lookup: Lookup,
+  { contests, county = "sf" }: { contests: Pick<Contest, "jurisdiction">[]; county?: string },
+): Promise<Resolution> {
   const text = input.trim();
   if (isZip(text)) {
     const ids = (await lookup.zips())[text] ?? [];
     const table = await lookup.precincts();
-    const sets = new Map<string, Districts>();
+    const sets = new Map<string, Partial<Districts>>();
     for (const id of ids) {
-      const districts = table[id];
-      if (districts) sets.set(encodeDistricts({ county, districts }), districts);
+      if (!table[id]) continue;
+      const trimmed = ballotDistricts(table[id], contests);
+      sets.set(encodeDistricts({ county, districts: trimmed }), trimmed);
     }
     if (sets.size === 0) return NOT_FOUND;
-    if (sets.size > 1) return { kind: "ambiguous-zip", zip: text };
     const [districts] = sets.values();
+    if (sets.size > 1 || Object.keys(districts).length === 0) return { kind: "ambiguous-zip", zip: text };
     return { kind: "resolved", set: { county, districts } };
   }
   const parsed = parseAddress(text);
@@ -1978,7 +2119,7 @@ test("a district code in the URL hides other districts' contests, through filter
 });
 
 test("an invalid district code shows every contest", async ({ page }) => {
-  await openBallot(page, "?d=sf.s99");
+  await openBallot(page, "?d=sf.q1");
   await expect(contestRow(page, "Board of Supervisors, District 8")).toBeVisible();
 });
 ```
@@ -2073,7 +2214,7 @@ States, all inside one `<section aria-label="Your ballot">`:
 | State | Shows |
 |---|---|
 | empty | "Address or ZIP code" combobox + Find |
-| ZIP resolved / address resolved | "Supervisor 6 · Assembly 17 · Congress 11 · BART 9 · Change", "These are your districts, not your sample ballot." + "Confirm with SF Elections" |
+| ZIP resolved / address resolved | "Supervisor 6 · Assembly 17 · Congress 11 · BART 9 · Change" (a ZIP result lists only districts with a contest, e.g. "Assembly 17 · Congress 11"), "These are your districts, not your sample ballot." + "Confirm with SF Elections" |
 | ZIP ambiguous | "94103 covers more than one district. Enter your street address." + "Street address" combobox with street autocomplete (focused) |
 | not found | "We couldn't find that address." + "Look it up with SF Elections" |
 | data failed to load | "Couldn't load district data. Try again." |
@@ -2107,8 +2248,8 @@ const VOTER_PORTAL = "https://sfelections.org/tools/portal/";
 test("an unambiguous ZIP fills in the ballot", async ({ page }) => {
   await openBallot(page);
   await findBallot(page, UNAMBIGUOUS_ZIP);
-  await expect(ballotBox(page).getByText(/^Supervisor \d+ · Assembly \d+ · Congress \d+ · BART \d+/)).toBeVisible();
-  await expect(page).toHaveURL(/[?&]d=sf\.s\d+\.a\d+\.c\d+\.b\d+\.e2/);
+  await expect(ballotBox(page).getByText(/^(Supervisor|Assembly) \d+ · /)).toBeVisible();
+  await expect(page).toHaveURL(/[?&]d=sf(\.[sacbe]\d+)+(&|$)/);
   await expect(ballotBox(page).getByRole("link", { name: "Confirm with SF Elections" })).toHaveAttribute("href", VOTER_PORTAL);
 });
 
@@ -2181,6 +2322,7 @@ import { Input } from "@/components/ui/input";
 import { streetIndex, suggestStreets } from "@/lib/address";
 import { httpLookup, resolveInput } from "@/lib/address-lookup";
 import { districtSummary, VOTER_PORTAL, type DistrictSet } from "@/lib/districts";
+import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
 
@@ -2192,10 +2334,12 @@ type Status = "idle" | "busy" | "not-found" | "error";
 
 export function AddressBox({
   set,
+  contests,
   onChange,
   className,
 }: {
   set: DistrictSet | null;
+  contests: Pick<Contest, "jurisdiction">[];
   onChange: (set: DistrictSet | null) => void;
   className?: string;
 }) {
@@ -2216,7 +2360,7 @@ export function AddressBox({
     if (!value.trim() || status === "busy") return;
     setStatus("busy");
     try {
-      const r = await resolveInput(value, lookup);
+      const r = await resolveInput(value, lookup, { contests });
       if (r.kind === "resolved") {
         setText("");
         setZip(null);
@@ -2377,7 +2521,7 @@ export function FilterSidebar({ className, top, ...props }: Props & { className?
 ```tsx
       <FilterSidebar
         {...filterProps}
-        top={<AddressBox set={districtSet} onChange={onDistricts} className="mb-6" />}
+        top={<AddressBox set={districtSet} contests={ballot.contests} onChange={onDistricts} className="mb-6" />}
         className={cn(PANE, "js-only lg:pr-2")}
       />
 ```
@@ -2385,7 +2529,7 @@ export function FilterSidebar({ className, top, ...props }: Props & { className?
 - Phone, directly above `<FiltersSheet … />` (line 135):
 
 ```tsx
-          <AddressBox set={districtSet} onChange={onDistricts} className="js-only mt-3 lg:hidden" />
+          <AddressBox set={districtSet} contests={ballot.contests} onChange={onDistricts} className="js-only mt-3 lg:hidden" />
 ```
 
 **Step 5: Run tests and checks**
@@ -2476,7 +2620,7 @@ git commit -m "feat(ballot): contests-on-your-ballot header with Show all"
 **Precondition:** PR #13 (`feat: analytics, sitemap, robots, canonical URLs`) is merged into `main`. It landed as `6307935` on 2026-10-06; check with `gh pr view 13 --json state` (expect `MERGED`). If it isn't merged, skip to Task 16 and come back.
 
 **Files:**
-- Modify: `src/lib/analytics.ts` (from #13: denylist `PRIVATE_PARAMS` → allowlist)
+- Modify: `src/lib/analytics.ts` (from #13: denylist `PRIVATE_PARAMS` → allowlist `off`, `offtypes`, `why`, `c`, `d`; decided 2026-10-06: `d` stays in page views)
 - Modify: `tests/analytics.test.ts` (from #13)
 - Modify: `next.config.ts` (referrer policy header)
 - Modify: `src/app/about/page.tsx` (Privacy section from #13)
@@ -2558,6 +2702,7 @@ test("pages set a strict referrer policy", async ({ page }) => {
 test("the About page says addresses stay in the browser", async ({ page }) => {
   await page.goto("/about");
   await expect(page.getByText("Addresses and ZIP codes you enter stay in your browser.")).toBeVisible();
+  await expect(page.getByText("Page views may include the districts you picked, never your address.")).toBeVisible();
 });
 ```
 
@@ -2585,6 +2730,7 @@ export default nextConfig;
 ```tsx
             <li>
               Addresses and ZIP codes you enter stay in your browser. Only the resulting districts are saved, in the page link and on this device.
+              Page views may include the districts you picked, never your address.
             </li>
 ```
 
@@ -2607,7 +2753,7 @@ git commit -m "feat(privacy): analytics param allowlist, referrer policy, addres
 **Files:**
 - Test: `e2e/address.spec.ts` (append)
 
-Covered so far: unambiguous ZIP, ambiguous ZIP → street, not found, Change, Show all, URL code through filter changes and reload, placement, referrer, About. This task adds: a resolved address survives a reload and a visit without `?d=`, and the address never reaches the URL, storage, or any request except its own street file.
+Covered so far: unambiguous ZIP, ambiguous ZIP → street, not found, Change, Show all, URL code through filter changes and reload, placement, referrer, About. This task adds: a resolved address survives a reload and a visit without `?d=`, and the address never reaches the URL, storage, or any request (the street lookup fetches a hash bucket, not a named file).
 
 **Step 1: Write the tests**
 
@@ -2625,7 +2771,7 @@ test("the result survives a reload and a visit without the code", async ({ page 
   expect(errors).toEqual([]);
 });
 
-test("the address never reaches the URL, storage, or any request but its street file", async ({ page }) => {
+test("the address never reaches the URL, storage, or any request", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (r) => requests.push(r.url()));
   await openBallot(page);
@@ -2637,8 +2783,8 @@ test("the address never reaches the URL, storage, or any request but its street 
   expect(stored).not.toMatch(/utah|128/i);
   expect(await page.evaluate(() => localStorage.getItem("bb-districts"))).toBe(UTAH);
 
-  const mentions = [...new Set(requests.filter((u) => /utah/i.test(u)).map((u) => new URL(u).pathname))];
-  expect(mentions).toEqual(["/districts/sf/streets/utah-st.json"]);
+  expect(requests.filter((u) => /utah/i.test(u))).toEqual([]);
+  expect(requests.some((u) => /^\/districts\/sf\/streets\/[0-9a-f]+\.json$/.test(new URL(u).pathname))).toBe(true);
   expect(requests.filter((u) => /[?&/=]128\b|%23/.test(new URL(u).pathname + new URL(u).search))).toEqual([]);
 });
 ```
@@ -2675,7 +2821,7 @@ git commit -m "test(e2e): address filter persistence and privacy"
 ```markdown
 ## District data (address filter)
 
-The "Your ballot" box looks addresses up in `public/districts/sf/`, a static index built from three sources and committed to the repo. Nothing is looked up at run time; the address never leaves the visitor's browser (only the street file for their street is requested from our own host).
+The "Your ballot" box looks addresses up in `public/districts/sf/`, a static index built from three sources and committed to the repo. Nothing is looked up at run time; the address never leaves the visitor's browser. Street ranges are grouped into up to 256 bucket files named by a hash of the street, so the one request a lookup makes for street data doesn't name the street.
 
 **Rebuild** when a source changes: SF Elections publishes new precincts, a new election adds districted contests to `data/<election>/ballot.yml`, or before each election to pick up new addresses (DataSF updates addresses nightly; a monthly rebuild during the season is plenty).
 
@@ -2700,11 +2846,11 @@ If DataSF renames a column, the build fails on the first missing field. Update t
 - *precincts with an unknown district*: a district outside the expected sets in `SF` (`src/pipeline/districts.ts`). Update the sets only if SF's districts really changed.
 - *districted contests no address can reach*: a contest in `ballot.yml` whose district no SF precinct has. Usually a typo in `jurisdiction`.
 - *congress district disagrees with the Prop 50 map*: the precinct file's `cong22` no longer matches the Prop 50 map. Don't ship until resolved.
-- *street files over 16384 bytes*: one street's ranges grew past the limit. Check the street; raise `MAX_STREET_FILE_BYTES` only deliberately.
+- *bucket files over 16384 bytes gzipped*: a bucket of streets grew past the limit. Set `BUCKET_CHARS = 3` in `src/lib/address.ts` (4,096 buckets) and rebuild; don't raise `MAX_BUCKET_GZIP_BYTES`.
 
 **Spot check** after a rebuild: on the ballot page, enter `128 Utah St` (expect Supervisor 6 · Assembly 17 · Congress 11 · BART 9) and `94103` (expect it to ask for the street). The not-found message links to SF Elections' Voter Portal, `https://sfelections.org/tools/portal/`; if that page moves, update `VOTER_PORTAL` in `src/lib/districts.ts`.
 
-**Privacy rules** to keep when changing this feature: the address stays in `AddressBox` state; only the district code (`?d=sf.s6.a17.c11.b9.e2`, localStorage `bb-districts`) is stored; analytics keeps only the params listed in `src/lib/analytics.ts`.
+**Privacy rules** to keep when changing this feature: the address stays in `AddressBox` state; only the district code (`?d=sf.s6.a17.c11.b9.e2`, localStorage `bb-districts`) is stored; analytics keeps only the params listed in `src/lib/analytics.ts` (`off`, `offtypes`, `why`, `c`, `d`).
 ```
 
 **Step 2: Commit**
@@ -2753,12 +2899,17 @@ git commit -m "docs(changelog): address filter"
 
 ---
 
-## Open questions and risks
+## Decisions (Sean, 2026-10-06)
 
-- **BOE in the district code.** The plan's code includes `e2` (`sf.s8.a17.c11.b8.e2`); the design's example omits it. Including it keeps the code a full description of a precinct and handles counties split between BOE districts. The visible summary omits BOE, as designed. Sean to confirm.
-- **Street name in requests.** Fetching `/districts/sf/streets/<slug>.json` tells our static host (Vercel access logs) the street, never the house number. That follows the approved per-street layout. If that's not acceptable, bucket streets into ~64 files by a hash of the slug; the lookup API in Task 11 stays the same.
-- **ZIP ambiguity is by full district set.** A ZIP whose precincts differ only in a district with no contest this year (e.g. Supervisor 1 vs 3, or BART 7 vs 9) still asks for the street. Comparing only the districts that change the ballot would resolve more ZIPs, but needs a rule for which code to store. Kept to the design's "one district set → done".
+- **Street files are bucketed** by the first 2 hex characters of SHA-256 of the street slug (up to 256 files, each at most 16 KB gzipped, tested in Tasks 8 and 10). Requests never name a street. Lookup API unchanged.
+- **Analytics keeps `d`.** Allowlist: `off`, `offtypes`, `why`, `c`, `d`; everything else is dropped, and the address is never sent. The About page says page views may include the districts you picked, never your address.
+- **ZIP rule compares contests, not districts.** A ZIP resolves by itself when every precinct in it gives the same on-ballot contests, and its code carries only the districts that have a contest (`ballotDistricts`, Task 1).
+- **BOE stays in the code** (`e2`).
+
+## Risks
+
 - **Precinct file is dated 2023-09-13.** If SF Elections redrew precincts for Nov 2026, the Supervisor cross-check is the first place it will show. Task 10 says to stop and report rather than loosen a check.
 - **Normalization collisions.** EAS has both `SIXTH ST` and `06TH ST`, which normalize to one key. Overlapping numbers become ambiguous and show "not found" with the SF Elections link; non-overlapping numbers merge. The build output doesn't count these yet; if it matters, add a stat in Task 8.
+- **Trimmed ZIP codes summarize fewer districts.** A ZIP result such as `sf.a17.c11.e2` shows "Assembly 17 · Congress 11" with no Supervisor or BART. That is accurate (neither has a race for that ZIP) but may read as incomplete; check it in the Task 13 walkthrough.
 - **Base UI Autocomplete keyboard behavior** (ArrowDown highlights the first option, Enter on it fires `item-press`, clicking Find with the popup open) is from reading 1.8.0's source; Task 13's e2e test is the check.
-- **Analytics keeps `d`.** Per the design ("every query parameter except the known filter ones is dropped"), the district code is sent with page views. It is coarse (districts, not precincts), but Sean may prefer to drop it too.
+- **`crypto.subtle` needs a secure context.** Production (https), dev and e2e (`localhost` / `127.0.0.1`) qualify; a plain-http LAN preview would not.
