@@ -4,7 +4,7 @@ import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
 import { matchName, type Aliases } from "@/lib/names";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
-import { verifyQuotes, type Page } from "./quotes";
+import { standsAlone, verifyQuotes, type Page } from "./quotes";
 
 export const ExtractOutput = z.object({
   hasReasoning: z
@@ -88,6 +88,7 @@ export function systemPrompt(ballot: Ballot): string {
     "Quotes:",
     "- Each quote must be a complete sentence copied character-for-character from the pages.",
     "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
+    "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
     "- Quotes must be in the organization's own voice. Never quote text it attributes to opponents, critics, candidates or anyone else.",
     "- Never paraphrase, summarize, shorten or combine sentences.",
     "- At most 3 quotes per pick. If the pages give no reasons for a pick, return an empty quotes array.",
@@ -172,6 +173,10 @@ export function toEntries(
     const verified = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
     for (const d of verified.dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
     const kept = verified.kept.filter((q) => {
+      if (!standsAlone(q.text, c, { names: Array.isArray(pick) ? pick : [] })) {
+        notes.push(`${c.id}: dropped quote (not-standalone): "${clip(q.text)}"`);
+        return false;
+      }
       const other = misplacedUnder(q, c.id, pages, contests);
       if (other) notes.push(`${c.id}: dropped quote (wrong-contest, under ${other}): "${clip(q.text)}"`);
       return !other;

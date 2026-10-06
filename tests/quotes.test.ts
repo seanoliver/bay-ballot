@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { isSubstantive, verifyQuotes, type Page } from "@/pipeline/quotes";
+import { isSubstantive, standsAlone, verifyQuotes, type Page } from "@/pipeline/quotes";
+import type { Contest } from "@/lib/schema";
 import { htmlToText } from "@/pipeline/fetch";
 
 const html = (text: string, url = "https://a.org/guide"): Page => ({ url, text, kind: "html" });
@@ -312,6 +313,42 @@ describe("isSubstantive", () => {
   it("drops announcements in verifyQuotes with reason not-substantive", () => {
     const q = "We are proud to endorse Connie Chan for Congress!";
     expect(verifyQuotes([q], [html(`Congress\n${q}`)]).dropped).toEqual([{ quote: q, reason: "not-substantive" }]);
+  });
+});
+
+describe("standsAlone", () => {
+  const juris = { level: "city" as const, name: "San Francisco" };
+  const propD = { id: "prop-d", section: "S", title: "Proposition D", kind: "measure", candidates: [], seats: 1, rankedChoice: false, jurisdiction: juris } as Contest;
+  const rtm = { ...propD, id: "rtm", title: "Regional Measure RTM" } as Contest;
+  const boe = { ...propD, id: "board-of-education", title: "Board of Education", kind: "candidate", seats: 3, candidates: ["Ryan Hazelton", "Reina Tello", "Virginia Cheung"] } as Contest;
+  const bart = { ...propD, id: "bart-8", title: "BART Board, District 8", kind: "candidate", candidates: ["Sara Barz"] } as Contest;
+
+  it.each([
+    ["This is a common-sense reform measure.", propD],
+    ["He would be a good addition to the school board.", boe],
+    ["It also gives you someone to hold responsible.", propD],
+    ["This will only make it worse.", propD],
+    ["This would increase congestion, make it more expensive for people to get to work, and hurt our economy.", rtm],
+    ["Their plan leaves the district without a voice on the board.", boe],
+    ["such a reform is overdue in this city and long promised.", propD],
+  ] as const)("drops %s", (q, c) => expect(standsAlone(q, c)).toBe(false));
+
+  it.each([
+    ["This measure is critical to saving Bay Area public transit for the whole region.", rtm],
+    ["This proposition fixes a broken ballot process that lets anyone place measures.", propD],
+    ["These measures are designed to sabotage the billionaire tax.", propD],
+    ["It is why Prop D matters: fewer frivolous measures on the ballot.", propD],
+    ["He has run Hazelton's own nonprofit budget for a decade.", boe],
+    ["Sunset Dunes park is already one of the most visited parks on the west coast.", propD],
+    ["Barz has spent her career on exactly that.", bart],
+  ] as const)("keeps %s", (q, c) => expect(standsAlone(q, c)).toBe(true));
+
+  it("lets he/she/his/her stand for the only endorsed candidate", () => {
+    const q = "She supports building more housing near BART stations for riders.";
+    expect(standsAlone(q, bart, { names: ["Sara Barz"] })).toBe(true);
+    expect(standsAlone("He would be a good addition to the school board.", boe, { names: ["Ryan Hazelton", "Reina Tello"] })).toBe(false);
+    expect(standsAlone("They say the bond is costly and wasteful.", bart, { names: ["Sara Barz"] })).toBe(false);
+    expect(standsAlone("It is a costly stunt we cannot afford.", propD, { names: [] })).toBe(false);
   });
 });
 

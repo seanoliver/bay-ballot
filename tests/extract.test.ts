@@ -54,6 +54,12 @@ describe("systemPrompt", () => {
     expect(prompt).toContain("If only some names are ranked, list ranked names first and set rankedCount");
   });
 
+  it("asks for quotes that stand alone", () => {
+    expect(prompt).toContain(
+      "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
+    );
+  });
+
   it("marks ranked-choice contests in the contest JSON", () => {
     expect(prompt).toContain('"id":"supervisor-8","title":"Board of Supervisors, District 8","kind":"candidate"');
     expect(prompt).toMatch(/"id":"supervisor-8"[^}]*"rankedChoice":true/);
@@ -175,14 +181,22 @@ describe("toEntries", () => {
     const pg: Page[] = [{
       url: "https://g.org/",
       kind: "html",
-      text: "Yes on RTM\nTransit funding keeps the whole region moving every day.\nNo on Prop G\nThis would increase congestion, make it more expensive for people to get to work, and hurt our economy.",
+      text: "Yes on RTM\nTransit funding keeps the whole region moving every day.\nNo on Prop G\nReopening the road would increase congestion on the west side and hurt local businesses.",
     }];
     const q1 = "Transit funding keeps the whole region moving every day.";
-    const q2 = "This would increase congestion, make it more expensive for people to get to work, and hurt our economy.";
+    const q2 = "Reopening the road would increase congestion on the west side and hurt local businesses.";
     const out = { hasReasoning: true, picks: [pick({ contestId: "rtm", vote: "Y", quotes: [q1, q2] })] };
     const r = toEntries(out, ballot.contests, pg);
     expect(r.picks.rtm.quotes).toEqual([{ text: q1, source: "https://g.org/" }]);
     expect(r.notes).toContain(`rtm: dropped quote (wrong-contest, under prop-g): "${q2.slice(0, 80)}…"`);
+  });
+
+  it("drops quotes that lean on an earlier sentence", () => {
+    const pg: Page[] = [{ url: "https://g.org/", kind: "html", text: "Prop B\nWe oppose Prop B. This will only make the deficit worse for years." }];
+    const out = { hasReasoning: true, picks: [pick({ contestId: "prop-b", vote: "N", quotes: ["This will only make the deficit worse for years."] })] };
+    const r = toEntries(out, contests, pg);
+    expect(r.picks["prop-b"].quotes).toEqual([]);
+    expect(r.notes).toContain('prop-b: dropped quote (not-standalone): "This will only make the deficit worse for years."');
   });
 
   it("notes and skips unknown contests", () => {

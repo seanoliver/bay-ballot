@@ -1,3 +1,5 @@
+import type { Contest } from "@/lib/schema";
+
 export type Page = { url: string; text: string; kind: "html" | "pdf" };
 export type KeptQuote = { text: string; source: string };
 export type DropReason =
@@ -6,7 +8,8 @@ export type DropReason =
   | "crosses-boundary"
   | "attributed-speech"
   | "partial-sentence"
-  | "not-substantive";
+  | "not-substantive"
+  | "not-standalone";
 export type DroppedQuote = { quote: string; reason: DropReason };
 
 const MIN_WORDS = 5;
@@ -194,6 +197,44 @@ export function isSubstantive(text: string): boolean {
   if (t.split(/\s+/).length > MAX_ANNOUNCEMENT_WORDS) return true;
   if (!ANNOUNCEMENTS.some((re) => re.test(t))) return true;
   return REASON.test(t);
+}
+
+// A quote that opens with a pronoun or demonstrative leans on an earlier sentence ("This will
+// only make it worse."). "This measure" / "This proposition" refers to the contest itself.
+const ANAPHORIC_OPENING = /^\W*(?:this|that|it|these|those|he|she|they|his|her|their|such)\b/i;
+const SELF_REFERENCE = /^\W*(?:this|that|these|those)\s+(?:measures?|propositions?|props?|initiatives?|charter\s+amendments?|ballot\s+measures?)\b/i;
+const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
+
+function surnames(c: Contest): string[] {
+  return c.candidates
+    .map((n) => n.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " "))
+    .map((n) => n.split(/\s+/).filter((t) => t && !NAME_SUFFIX.test(t)).at(-1) ?? "")
+    .filter((t) => t.length > 1);
+}
+
+function namesSubject(text: string, c: Contest): boolean {
+  const bounded = (body: string, flags = "u") => new RegExp(`(?<![\\p{L}\\p{N}])(?:${body})(?![\\p{L}\\p{N}])`, flags);
+  if (c.kind === "measure") {
+    const id = c.id === "rtm" ? "RTM" : c.id.match(/^prop-(\w+)$/)?.[1];
+    if (!id) return false;
+    if (c.id === "rtm") return bounded("RTM|Regional\\s+(?:Transit\\s+)?Measure", "iu").test(text);
+    return bounded(`(?:Prop(?:osition)?\\.?|Measure)\\s*${id}`, "iu").test(text);
+  }
+  return surnames(c).some((s) => bounded(s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(text));
+}
+
+const PERSONAL_PRONOUN = /^\W*(?:he|she|his|her)\b/i;
+
+/**
+ * False for a quote that opens by pointing back at an earlier sentence and never names its
+ * subject. "He/She/His/Her" is fine when the pick endorses exactly one candidate, since the
+ * pronoun can only mean that person.
+ */
+export function standsAlone(text: string, contest: Contest, { names }: { names?: string[] } = {}): boolean {
+  const t = text.trim();
+  if (!ANAPHORIC_OPENING.test(t) || SELF_REFERENCE.test(t)) return true;
+  if (names?.length === 1 && PERSONAL_PRONOUN.test(t)) return true;
+  return namesSubject(t, contest);
 }
 
 /** Keep only quotes found word-for-word inside one segment of a page, publishing the page's own text. */
