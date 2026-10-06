@@ -419,3 +419,25 @@ test.describe("pages without the filter column", () => {
     });
   }
 });
+
+test.describe("guide page rows", () => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    test(`a keyboard-focused contest row shows a focus outline (${colorScheme})`, async ({ page, isMobile }) => {
+      test.skip(isMobile, "keyboard");
+      await page.emulateMedia({ colorScheme });
+      await page.goto("/guides/growsf");
+      const first = page.locator("main ul a, ul a[href^='/2026-11/']").first();
+      await first.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      await expect(first).toBeFocused();
+      const outline = await first.evaluate((el) => {
+        const row = el.closest("li") ?? el;
+        const styles = [getComputedStyle(el), getComputedStyle(row)];
+        return styles.map((s) => [s.outlineStyle, s.outlineWidth]);
+      });
+      expect(outline.some(([style, width]) => style !== "none" && width !== "0px")).toBe(true);
+    });
+  }
+});
+

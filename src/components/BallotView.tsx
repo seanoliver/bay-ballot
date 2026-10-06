@@ -16,6 +16,7 @@ import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
+import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
@@ -310,8 +311,6 @@ export function BallotView({ election, area, links, intro, groups, guides, files
 
 const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
 
-const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
-const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
 
 function ContestRow({
   href,
