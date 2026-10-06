@@ -46,6 +46,15 @@ describe("whoRows", () => {
     ]);
     expect(out[0].shown[0]).toEqual(g("A", 1));
   });
+  it("a name beyond a partial ranking gets no rank tag", () => {
+    const multi = { ...race, seats: 2 } as Contest;
+    const partial = { ...row("A", ["Scott Wiener", "Connie Chan"], [], { ranked: true }), entry: { pick: ["Scott Wiener", "Connie Chan"], ranked: true, rankedCount: 1, quotes: [] } };
+    const out = whoRows(multi, [partial]);
+    expect(out.map((r) => [r.label, r.shown[0].rank])).toEqual([
+      ["Connie Chan", null],
+      ["Scott Wiener", 1],
+    ]);
+  });
   it("no rank tag outside ranked-choice contests", () => {
     const plain = { ...race, rankedChoice: false } as Contest;
     expect(whoRows(plain, [row("A", ["Scott Wiener"], [], { ranked: true })])[0].shown[0].rank).toBeNull();

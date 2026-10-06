@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayName, groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, topPicks } from "@/lib/display";
+import { displayName, groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -130,6 +130,23 @@ describe("groupByPick", () => {
   });
 });
 
+describe("rankedDetails with partial ranking", () => {
+  it("splits a pick into its ranked first N and the unranked rest; tally is unchanged", () => {
+    const partial: Entry = { pick: ["Dionjay (DJ) Brookter", "J.R. Eppler", "Bryant"], ranked: true, rankedCount: 1, quotes: [] };
+    expect(rankedDetails([row("UESF", partial)])).toEqual([
+      { guideName: "UESF", short: "UESF", order: ["Dionjay (DJ) Brookter"], unranked: ["J.R. Eppler", "Bryant"] },
+    ]);
+    expect(tally(race, [partial])).toMatchObject({ leader: "Dionjay (DJ) Brookter", count: 1, total: 1 });
+  });
+});
+
+describe("rankedText", () => {
+  it("numbers the ranked names and lists the rest as unranked", () => {
+    expect(rankedText({ order: ["Brookter"], unranked: ["Eppler", "Bryant"] })).toBe("#1 Brookter · also Eppler, Bryant (unranked)");
+    expect(rankedText({ order: ["A", "B"], unranked: [] })).toBe("#1 A, #2 B");
+  });
+});
+
 describe("rankedDetails", () => {
   it("returns ranked orders in rows order", () => {
     const rows = [
@@ -138,8 +155,8 @@ describe("rankedDetails", () => {
       row("G3", e(["X", "Y"], true)),
     ];
     expect(rankedDetails(rows)).toEqual([
-      { guideName: "G1", short: "G1", order: ["Gary McCoy", "Michael T. Nguyen"] },
-      { guideName: "G3", short: "G3", order: ["X", "Y"] },
+      { guideName: "G1", short: "G1", order: ["Gary McCoy", "Michael T. Nguyen"], unranked: [] },
+      { guideName: "G3", short: "G3", order: ["X", "Y"], unranked: [] },
     ]);
   });
   it("empty when none ranked", () => {

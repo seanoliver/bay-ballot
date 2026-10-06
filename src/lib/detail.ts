@@ -36,7 +36,9 @@ export function whoRows(contest: Contest, rows: Row[], slots?: Slots): WhoRow[] 
     const rest = group.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
     const all = [...quoted, ...rest].map((r): WhoGuide => {
       const at = contest.rankedChoice && r.entry.ranked && Array.isArray(r.entry.pick) ? r.entry.pick.indexOf(group.key) : -1;
-      return { id: r.guide.id, name: r.guide.name, short: displayName(r.guide, { short: true }), rank: at >= 0 ? at + 1 : null };
+      // Names past a partial ranking (rankedCount) were endorsed but not ranked.
+      const ranked = at >= 0 && at < (r.entry.rankedCount ?? Infinity);
+      return { id: r.guide.id, name: r.guide.name, short: displayName(r.guide, { short: true }), rank: ranked ? at + 1 : null };
     });
     return { key: group.key, label: group.label, count: group.rows.length, tone, shown: all.slice(0, WHO_SHOWN), hidden: all.slice(WHO_SHOWN) };
   });

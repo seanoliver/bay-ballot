@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { barLegend, barSegments, barShortParts, barSummary, winnerTone, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
-import { contestHeadline, rankedDetails } from "@/lib/display";
+import { contestHeadline, rankedDetails, rankedText } from "@/lib/display";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import type { Row } from "@/lib/filters";
 import { tally, type Tally } from "@/lib/score";
@@ -161,11 +161,7 @@ function RankedPopover({ rows }: { rows: Row[] }) {
               <p className="font-medium" title={r.guideName}>
                 {r.short}
               </p>
-              <ol className="list-decimal pl-5 text-muted-foreground">
-                {r.order.map((name) => (
-                  <li key={name}>{name}</li>
-                ))}
-              </ol>
+              <p className="text-muted-foreground">{rankedText(r)}</p>
             </li>
           ))}
         </ul>

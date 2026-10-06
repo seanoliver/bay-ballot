@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
+  // Shared links always point at the production site, never a preview deployment.
+  metadataBase: new URL("https://bayballot.com"),
   title: "Bay Ballot — every SF voter guide in one place",
   description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
 };
