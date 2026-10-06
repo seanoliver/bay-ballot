@@ -12,10 +12,7 @@ export function useHistorySheet(): [boolean, (open: boolean) => void] {
     const { state: next, effect } = sheetStep(state.current, event);
     state.current = next;
     setOpenState(next.open);
-    if (effect?.type === "push") {
-      HISTORY_BUDGET.note();
-      window.history.pushState(null, "", window.location.href);
-    }
+    if (effect?.type === "push") window.history.pushState(null, "", window.location.href);
     if (effect?.type === "back") window.history.back();
     if (effect?.type === "replace") replaceQuery(effect.search.replace(/^\?/, ""));
   }, []);
@@ -32,7 +29,11 @@ export function useHistorySheet(): [boolean, (open: boolean) => void] {
   }, [step]);
 
   const setOpen = useCallback(
-    (next: boolean) => step(next ? { type: "open", search: currentSearch() } : { type: "dismiss" }),
+    (next: boolean) => {
+      if (!next) return step({ type: "dismiss" });
+      const push = !state.current.open && HISTORY_BUDGET.tryNote(2);
+      step({ type: "open", search: window.location.search, latest: currentSearch(), push });
+    },
     [step],
   );
   return [open, setOpen];

@@ -61,3 +61,35 @@ describe("historyBudget", () => {
     expect(w).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("historyBudget costs", () => {
+  it("counts each write at its cost", () => {
+    const b = historyBudget({ max: 6, windowMs: 1000 });
+    const w = vi.fn();
+    for (let i = 0; i < 4; i++) b.run(w, 2);
+    expect(w).toHaveBeenCalledTimes(3);
+    vi.advanceTimersByTime(1000);
+    expect(w).toHaveBeenCalledTimes(4);
+  });
+  it("tryNote takes the cost only when it fits", () => {
+    const b = historyBudget({ max: 5, windowMs: 1000 });
+    expect(b.tryNote(2)).toBe(true);
+    expect(b.tryNote(2)).toBe(true);
+    expect(b.tryNote(2)).toBe(false);
+    b.note(1);
+    expect(b.tryNote(1)).toBe(false);
+    vi.advanceTimersByTime(1000);
+    expect(b.tryNote(2)).toBe(true);
+  });
+  it("a deferred write waits until its whole cost fits", () => {
+    const b = historyBudget({ max: 4, windowMs: 1000 });
+    b.note(1);
+    vi.advanceTimersByTime(500);
+    b.note(2);
+    const w = vi.fn();
+    b.run(w, 2);
+    expect(w).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(500);
+    expect(w).toHaveBeenCalledTimes(1);
+  });
+});

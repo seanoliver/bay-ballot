@@ -500,12 +500,12 @@ test("resizing to a phone drops a stepped contest that was never written", async
   await page.keyboard.down("ArrowDown");
   await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.locator("#row-m-governor")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Contests" })).toHaveCount(0);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator("#row-d-governor")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
   await page.clock.runFor(1000);
-  await expect(page.locator("#row-d-us-rep-15")).not.toHaveAttribute("aria-current", "true");
-  await expect(page).not.toHaveURL(/[?&]c=us-rep-15/);
+  await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+  await expect(page).toHaveURL(/[?&]c=us-rep-11/);
 });
 
 test("a phone tap drops a stepped contest that was never written", async ({ page, isMobile }) => {
@@ -570,3 +570,69 @@ test("the changelog is linked from the footer and lists entries by month", async
   await expect(launch).toBeVisible();
   await expect(launch).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
 });
+
+test.describe("phone history budget", () => {
+  test.skip(({ isMobile }) => !isMobile, "phone only");
+
+  // Underneath Next's wrapper, like the browser: more than 100 push/replace calls in 10 seconds throws.
+  const limitHistory = (page: Page) =>
+    page.addInitScript(() => {
+      const w = window as unknown as { __calls: number[] };
+      w.__calls = [];
+      for (const name of ["pushState", "replaceState"] as const) {
+        const native = History.prototype[name];
+        History.prototype[name] = function (...args: Parameters<History["replaceState"]>) {
+          const now = performance.now();
+          w.__calls.push(now);
+          if (w.__calls.filter((t) => now - t < 10_000).length > 100) throw new DOMException(`Attempt to use history.${name}() more than 100 times per 10 seconds`, "SecurityError");
+          return native.apply(this, args);
+        };
+      }
+    });
+  const busiestWindow = (page: Page) =>
+    page.evaluate(() => {
+      const calls = (window as unknown as { __calls: number[] }).__calls;
+      return Math.max(0, ...calls.map((t) => calls.filter((u) => u >= t && u - t < 10_000).length));
+    });
+
+  test("opening and closing a contest sheet several times a second stays under the history limit", async ({ page, browserName }) => {
+    test.setTimeout(60_000);
+    await limitHistory(page);
+    const errors = watchErrors(page);
+    await openBallot(page);
+    const sheet = page.getByRole("dialog", { name: "Governor" });
+    const started = Date.now();
+    let cycles = 0;
+    while (Date.now() - started < 12_000) {
+      await contestRow(page, "Governor").tap({ timeout: 2_000 });
+      await expect(sheet).toBeVisible({ timeout: 2_000 });
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden({ timeout: 2_000 });
+      cycles += 1;
+    }
+    expect(cycles / 12).toBeGreaterThanOrEqual(3);
+    expect(errors).toEqual([]);
+    if (browserName === "chromium") expect(await busiestWindow(page)).toBeLessThanOrEqual(90);
+  });
+
+  test("a sheet opened while a write is pending keeps that write when it closes", async ({ page }) => {
+    test.setTimeout(60_000);
+    await openBallot(page);
+    await page.getByRole("button", { name: /Filters/ }).click();
+    const filters = page.getByRole("dialog");
+    const why = filters.getByRole("checkbox", { name: "Only guides that explain their endorsements" });
+    for (let i = 0; i < 51; i++) await why.evaluate((el: HTMLElement) => el.click());
+    await expect(why).toBeChecked();
+    await page.keyboard.press("Escape");
+    await expect(filters).toBeHidden();
+    await contestRow(page, "Governor").tap();
+    const sheet = page.getByRole("dialog", { name: "Governor" });
+    await expect(sheet).toBeVisible();
+    await page.waitForTimeout(11_000);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect.poll(() => new URL(page.url()).searchParams.get("why"), { timeout: 12_000 }).toBe("1");
+    await expect(page).toHaveURL(/[?&]c=governor/);
+  });
+});
+

@@ -21,8 +21,10 @@ function writeStored(q: string) {
   }
 }
 
-// Next's replaceState wrapper makes a second browser call per write; browsers throw past 100 calls in 10 seconds.
-export const HISTORY_BUDGET = historyBudget({ max: 35, windowMs: 10_000 });
+// Counted in browser history calls, which throw past 100 in 10 seconds: Next adds a replaceState after each of our writes and after every popstate.
+export const HISTORY_BUDGET = historyBudget({ max: 90, windowMs: 10_000 });
+const WRITE_COST = 2;
+if (typeof window !== "undefined") window.addEventListener("popstate", () => HISTORY_BUDGET.note(1));
 let pending: { path: string; search: string } | null = null;
 
 export function currentSearch(): string {
@@ -54,7 +56,7 @@ function writePending() {
 // Not router.replace: that refetches from the server and scrolls.
 export function replaceQuery(q: string): void {
   pending = { path: window.location.pathname, search: q ? `?${q}` : "" };
-  HISTORY_BUDGET.run(writePending);
+  HISTORY_BUDGET.run(writePending, WRITE_COST);
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
