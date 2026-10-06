@@ -74,7 +74,7 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
@@ -126,6 +126,12 @@ contests:
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
     jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
+  - id: court-of-appeal-6
+    section: Judicial
+    title: 6th District Court of Appeal (5 justices)
+    kind: retention
+    description: "Retention of Charles E. Wilson II, Frederick S. Chung, Charles F. Adams, Allison Marston Danner, Daniel H. Bromberg."
+    jurisdiction: { level: district, name: Court of Appeal, district: "6", within: [{ level: county, name: Santa Clara }] }
 
   # ---------- Local candidates ----------
   - id: board-of-education
@@ -328,7 +334,7 @@ contests:
     kind: measure
     description: Regional Transit Measure
     link: https://www.sf.gov/qualified-ballot-measures
-    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
+    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
 
   # ---------- Local propositions ----------
   - id: prop-a
@@ -835,3 +841,86 @@ contests:
     kind: candidate
     candidates: [Eddie Flores]
     jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: South San Francisco }] }
+
+  # ---------- Santa Clara County (Palo Alto, Mountain View) ----------
+  - id: valley-water-7
+    section: School and special districts
+    title: Santa Clara Valley Water District, District 7
+    kind: candidate
+    candidates: [Pete Dailey, Rebecca Eisenberg]
+    jurisdiction: { level: district, name: Santa Clara Valley Water District, district: "7", within: [{ level: county, name: Santa Clara }] }
+  - id: mvwsd-trustee
+    section: School and special districts
+    title: Mountain View Whisman School District Board
+    kind: candidate
+    candidates: [Devon Conley, William Lambert, Sundar Subbarayan, Quintin Riis]
+    seats: 2
+    jurisdiction: { level: district, name: Mountain View Whisman School District, district: "at-large", within: [{ level: county, name: Santa Clara }] }
+  - id: los-altos-sd-trustee
+    section: School and special districts
+    title: Los Altos School District Board
+    kind: candidate
+    candidates: [David Poll, Bryan Harvey Johnson, Vaishali "Shali" Sirkay, Brandon Stroy]
+    seats: 3
+    jurisdiction: { level: district, name: Los Altos School District, district: "at-large", within: [{ level: county, name: Santa Clara }] }
+  - id: el-camino-healthcare-measure-s
+    section: School and special districts
+    title: El Camino Healthcare District Measure S
+    kind: measure
+    description: "Term limits for District Directors"
+    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    jurisdiction: { level: district, name: El Camino Healthcare District, district: "at-large", within: [{ level: county, name: Santa Clara }] }
+  - id: palo-alto-council
+    section: Local candidates
+    title: Palo Alto City Council
+    kind: candidate
+    candidates: [Brian Hamachek, Bryna Chang, Ed Lauing, Yu "Yudy" Deng, Raymond L. Goins, Gary Gechlik, Vicki Veenker, Henry Etzkowitz]
+    seats: 3
+    jurisdiction: { level: city, name: Palo Alto }
+  - id: palo-alto-measure-j
+    section: Local measures
+    title: Palo Alto Measure J
+    kind: measure
+    description: "Community Safety/Services Measure (1/2 cent sales tax)"
+    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    jurisdiction: { level: city, name: Palo Alto }
+  - id: pausd-trustee
+    section: School and special districts
+    title: Palo Alto Unified School District Board
+    kind: candidate
+    candidates: [Linda Henigin, Avery Wang, John Craig]
+    seats: 2
+    jurisdiction: { level: district, name: Palo Alto Unified School District, district: "at-large", within: [{ level: city, name: Palo Alto }] }
+  - id: mountain-view-council
+    section: Local candidates
+    title: Mountain View City Council
+    kind: candidate
+    candidates: [James Kuszmaul, Robert Cox, Erik Poicon, Silja Paymer, Samuel Ali, Alex Amoroso, Paul Donahue, IdaRose Sylvester]
+    seats: 3
+    jurisdiction: { level: city, name: Mountain View }
+  - id: mountain-view-measure-e
+    section: Local measures
+    title: Mountain View Measure E
+    kind: measure
+    description: "City Charter amendments (modernize provisions)"
+    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    jurisdiction: { level: city, name: Mountain View }
+  - id: mountain-view-measure-f
+    section: Local measures
+    title: Mountain View Measure F
+    kind: measure
+    description: "Transient occupancy tax increase"
+    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    jurisdiction: { level: city, name: Mountain View }
+  - id: mvla-trustee-area-3
+    section: School and special districts
+    title: Mountain View-Los Altos Union High School District, Trustee Area 3
+    kind: candidate
+    candidates: [Thida Cornes, Sanjay Dave, Catherine Vonnegut]
+    jurisdiction: { level: district, name: Mountain View-Los Altos Union High School District, district: "3", within: [{ level: city, name: Mountain View }] }
+  - id: fremont-uhsd-trustee-area-4
+    section: School and special districts
+    title: Fremont Union High School District, Trustee Area 4
+    kind: candidate
+    candidates: [Naomi Nakano-Matsumoto, Ilanit Eliaz]
+    jurisdiction: { level: district, name: Fremont Union High School District, district: "4", within: [{ level: city, name: Mountain View }] }

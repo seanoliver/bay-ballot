@@ -292,4 +292,27 @@ describe("quotes under a letter shared across areas", () => {
     expect(misplacedUnder(q, "half-moon-bay-measure-i", [page], ballot.contests)).toBe("prop-i");
     expect(misplacedUnder(q, "prop-i", [page], ballot.contests)).toBeNull();
   });
+  it("places quotes under Mountain View's Measure E and El Camino Healthcare's Measure S, not the other cities' E and S", () => {
+    const page: Page = {
+      url: "https://g.org/scc", kind: "html",
+      text: [
+        "Redwood City Measure E: Yes",
+        "Renters need stable rents.",
+        "",
+        "Mountain View Measure E: Yes",
+        "The charter should use gender-neutral language.",
+        "",
+        "El Camino Healthcare District Measure S: Yes",
+        "Term limits keep the board accountable.",
+        "",
+        "San Bruno Measure S: No",
+        "The housing rules are too loose.",
+      ].join("\n"),
+    };
+    const q = (text: string) => ({ text, source: page.url });
+    expect(misplacedUnder(q("The charter should use gender-neutral language."), "mountain-view-measure-e", [page], ballot.contests)).toBeNull();
+    expect(misplacedUnder(q("The charter should use gender-neutral language."), "redwood-city-measure-e", [page], ballot.contests)).toBe("mountain-view-measure-e");
+    expect(misplacedUnder(q("Term limits keep the board accountable."), "el-camino-healthcare-measure-s", [page], ballot.contests)).toBeNull();
+    expect(misplacedUnder(q("Term limits keep the board accountable."), "san-bruno-measure-s", [page], ballot.contests)).toBe("el-camino-healthcare-measure-s");
+  });
 });
