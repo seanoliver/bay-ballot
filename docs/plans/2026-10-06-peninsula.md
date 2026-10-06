@@ -8,6 +8,8 @@
 
 **Tech Stack:** Next.js 16 (App Router, static params), TypeScript, Tailwind, `zod` 4, `yaml` 2, Vitest, Playwright, the `npm run bb` pipeline (`@anthropic-ai/sdk`).
 
+> **Decision (Sean, 2026-10-06):** local candidate races (city, school, special district) go on the ballot only when at least one guide takes a position on them. Measures and county offices are always included. The daily refresh adds a race when a guide first covers it. Discovery output: `docs/investigations/2026-10-06-peninsula-guide-discovery.md`.
+
 ---
 
 ## Read first
