@@ -44,6 +44,7 @@ export function ContestDetail({
   pending,
   heading = "h2",
   titleId,
+  answer,
   slots,
   pageLink = true,
   shortNames = true,
@@ -55,6 +56,7 @@ export function ContestDetail({
   pending: string | null;
   heading?: "h1" | "h2" | false;
   titleId?: string;
+  answer?: string;
   slots?: Slots;
   pageLink?: boolean;
   shortNames?: boolean;
@@ -86,6 +88,7 @@ export function ContestDetail({
           </div>
         ) : null}
         {description ? <p className="measure mt-1 text-sm text-muted-foreground">{description}</p> : null}
+        {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
         <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className={cn("flex items-center text-lg font-semibold", LEAD_TEXT[result.tone])}>
             {result.lead}

@@ -24,6 +24,7 @@ export function sitemapEntries({
     ...elections.flatMap((e) => [`/${e.id}`, ...e.contests.map((c) => `/${e.id}/${c}`)]),
     ...guides.map((g) => `/guides/${g}`),
     "/about",
+    "/changelog",
   ];
   return paths.map((p) => ({ url: `${SITE}${p}`, lastModified }));
 }

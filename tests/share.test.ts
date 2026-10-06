@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { breakLines, mostPositions, shareCard, shareDescription, shortTitle } from "@/lib/share";
+import { breakLines, mostPositions, shareCard, shortTitle } from "@/lib/share";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -86,19 +86,6 @@ describe("shareCard", () => {
   it("no positions", () => {
     const card = shareCard(measure, []);
     expect(card).toMatchObject({ lead: null, leadTone: "none", sub: "No guide has taken a position yet", segments: [], legend: [] });
-  });
-});
-
-describe("shareDescription", () => {
-  it("states the result in one line", () => {
-    expect(shareDescription(shareCard(measure, [...many(16, "Y"), ...many(12, "N")]))).toBe("Prop B: Yes 57% of 28 SF voter guides");
-    expect(shareDescription(shareCard(race, [...many(15, ["Scott Wiener"]), ...many(12, ["Connie Chan"])]))).toBe(
-      "U.S. Rep., District 11: Scott Wiener 56% of 27 SF voter guides",
-    );
-    expect(shareDescription(shareCard(measure, [...many(3, "Y"), ...many(3, "N")]))).toBe("Prop B: split among 6 SF voter guides");
-    expect(shareDescription(shareCard(race, many(13, ["Scott Wiener"])))).toBe("U.S. Rep., District 11: Scott Wiener, endorsed by 13 SF voter guides");
-    expect(shareDescription(shareCard(board, [row(["W", "X", "Y"])]))).toBe("Board of Education: W, X, Y lead among 1 SF voter guide");
-    expect(shareDescription(shareCard(measure, []))).toBe("Prop B: no SF voter guide has taken a position yet");
   });
 });
 

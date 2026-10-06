@@ -1,0 +1,5 @@
+date: 2026-10-06
+type: new
+title: Bay Ballot counts page views without cookies
+details: It never records addresses or ZIP codes.
+pr: 13

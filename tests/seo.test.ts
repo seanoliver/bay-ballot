@@ -17,7 +17,7 @@ describe("sitemapEntries", () => {
   });
   const urls = entries.map((e) => e.url);
 
-  it("lists the election, every contest, every guide and /about, absolute on bayballot.com", () => {
+  it("lists the election, every contest, every guide, /about and /changelog, absolute on bayballot.com", () => {
     expect(urls).toEqual([
       "https://bayballot.com/2026-11",
       "https://bayballot.com/2026-11/prop-b",
@@ -25,6 +25,7 @@ describe("sitemapEntries", () => {
       "https://bayballot.com/guides/spur",
       "https://bayballot.com/guides/growsf",
       "https://bayballot.com/about",
+      "https://bayballot.com/changelog",
     ]);
   });
   it("never lists a preview host or the redirecting root", () => {

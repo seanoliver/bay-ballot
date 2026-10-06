@@ -1,0 +1,5 @@
+date: 2026-10-06
+type: new
+title: Each contest page opens with a one-line summary of how the guides split
+details: 'Search results show the same summary, for example "SF Prop B endorsements (Nov 2026): 16 of 28 guides say Yes".'
+pr: 17

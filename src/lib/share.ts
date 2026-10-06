@@ -79,17 +79,6 @@ export function shareCard(contest: Contest, rows: Row[], slots?: Slots): ShareCa
   return { ...base, segments, legend, lead: `${t.leader} ${t.pct}%`, leadTone: "candidate", sub: `${t.count} of ${guides(t.total)}` };
 }
 
-const sfGuides = (n: number) => `${n} SF voter ${n === 1 ? "guide" : "guides"}`;
-
-export function shareDescription(card: ShareCard): string {
-  const head = `${card.title}: `;
-  if (card.lead === null) return `${head}no SF voter guide has taken a position yet`;
-  if (card.multi) return `${head}${card.seats.map((s) => s.label).join(", ")} lead among ${sfGuides(card.total)}`;
-  if (card.leadTone === "split") return `${head}split among ${sfGuides(card.total)}`;
-  if (card.segments.length === 1 && card.leadTone === "candidate") return `${head}${card.lead}, endorsed by ${sfGuides(card.total)}`;
-  return `${head}${card.lead} of ${sfGuides(card.total)}`;
-}
-
 export function mostPositions<C extends { id: string }>(contests: C[], rowsFor: (id: string) => Row[]): C | undefined {
   let best: C | undefined;
   let most = -1;
