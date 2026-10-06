@@ -114,7 +114,11 @@ describe("resultHeadline", () => {
       detail: "2 guides",
     });
   });
-  it("multi-seat", () => {
+  it("a single endorsed candidate: no share, and says there are no other endorsements", () => {
+    const rows = [row("A", ["Scott Wiener"]), row("B", ["Scott Wiener"]), row("C", ["Scott Wiener"])];
+    expect(resultHeadline(race, rows)).toEqual({ lead: "Scott Wiener", tone: "candidate", detail: "3 guides, no other endorsements" });
+  });
+    it("multi-seat", () => {
     expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["X"])])).toEqual({ lead: "X, Y", tone: "candidate", detail: "2 guides" });
   });
   it("no picks", () => {

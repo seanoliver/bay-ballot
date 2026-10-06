@@ -84,6 +84,7 @@ export function resultHeadline(contest: Contest, rows: Row[]): ResultHeadline {
   }
   if (t.counts.length === 0) return none;
   if (contest.seats > 1) return { lead: t.counts.slice(0, contest.seats).map((c) => c.name).join(", "), tone: "candidate", detail: guides(t.total) };
+  if (t.counts.length === 1) return { lead: t.counts[0].name, tone: "candidate", detail: `${guides(t.counts[0].count)}, no other endorsements` };
   if (t.leader === null) return { lead: "Split", tone: "split", detail: guides(t.total) };
   return { lead: `${t.leader} ${t.pct}%`, tone: "candidate", detail: guides(t.total) };
 }
