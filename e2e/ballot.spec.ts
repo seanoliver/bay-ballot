@@ -189,6 +189,14 @@ test("every page names its canonical URL on bayballot.com", async ({ page }) => 
   }
 });
 
+test("a contest page has a search title and a plain answer sentence", async ({ page }) => {
+  await page.goto(`${BALLOT}/prop-b`);
+  await expect(page).toHaveTitle(/^SF Prop B endorsements \(Nov 2026\)(: (\d+ of \d+ guides say (Yes|No)|guides split \d+–\d+))?$/);
+  await expect(
+    page.getByText(/^(\d+ of \d+ San Francisco voter guides recommend (Yes|No)|San Francisco voter guides split \d+–\d+) on Prop B, as of \w+ \d+, \d{4}\.$/),
+  ).toBeVisible();
+});
+
 test("the changelog is linked from the footer and lists entries by month", async ({ page }) => {
   await page.goto(BALLOT);
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "Changelog" })).toHaveAttribute("href", "/changelog");
