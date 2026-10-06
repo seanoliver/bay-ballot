@@ -64,17 +64,32 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
-      if (window.location.pathname !== path) return;
-      if (setRequested(id)) setStepped(null);
+      if (window.location.pathname !== path || !window.matchMedia(DESKTOP).matches) return;
+      const written = setRequested(id);
+      if (written) setStepped(null);
+      return written;
     }),
   );
   useEffect(() => {
     const flush = () => stepWrite.flush();
-    window.addEventListener("keyup", flush);
+    const flushIfDue = () => stepWrite.flushIfDue();
+    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null;
+    // Capture phase, so the write lands before a Link starts a client-side navigation.
+    const onClick = (e: globalThis.MouseEvent) => {
+      if (leaving(e.target)) flush();
+    };
+    const onEnter = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Enter" && leaving(document.activeElement)) flush();
+    };
+    window.addEventListener("keyup", flushIfDue);
     window.addEventListener("pagehide", flush);
+    window.addEventListener("click", onClick, true);
+    window.addEventListener("keydown", onEnter, true);
     return () => {
-      window.removeEventListener("keyup", flush);
+      window.removeEventListener("keyup", flushIfDue);
       window.removeEventListener("pagehide", flush);
+      window.removeEventListener("click", onClick, true);
+      window.removeEventListener("keydown", onEnter, true);
       stepWrite.cancel();
     };
   }, [stepWrite]);

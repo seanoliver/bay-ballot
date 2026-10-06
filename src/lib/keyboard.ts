@@ -72,27 +72,35 @@ export function writeSingleKeys(storage: StorageLike | null, on: boolean): void 
   } catch {}
 }
 
-export function trailing<T>(ms: number, run: (value: T) => void): { push: (value: T) => void; cancel: () => void; flush: () => void } {
+type Trailing<T> = { push: (value: T) => void; cancel: () => void; flush: () => void; flushIfDue: () => void };
+
+// `run` returning false keeps the value pending for the next flush.
+export function trailing<T>(ms: number, run: (value: T) => boolean | void): Trailing<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let pending: { value: T } | null = null;
-  const fire = () => {
+  let lastWrite = -Infinity;
+  const write = () => {
     clearTimeout(timer);
     timer = undefined;
     const p = pending;
-    pending = null;
-    if (p) run(p.value);
+    if (!p) return;
+    lastWrite = Date.now();
+    if (run(p.value) !== false && pending === p) pending = null;
   };
   return {
     push(value) {
       pending = { value };
       clearTimeout(timer);
-      timer = setTimeout(fire, ms);
+      timer = setTimeout(write, ms);
     },
     cancel() {
       clearTimeout(timer);
       timer = undefined;
       pending = null;
     },
-    flush: fire,
+    flush: write,
+    flushIfDue() {
+      if (pending && Date.now() - lastWrite >= ms) write();
+    },
   };
 }

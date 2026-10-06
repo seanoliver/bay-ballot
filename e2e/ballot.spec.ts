@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
 
 test("ballot page has the header, logo, intro and footer", async ({ page }) => {
@@ -369,16 +369,54 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
   });
 
-  test("following a pane link mid-hold leaves ?c= off the next page", async ({ page }) => {
+  test("following a pane link mid-hold lands on the guide, and Back returns to the stepped contest", async ({ page }) => {
+    await page.route(/\/guides\//, async (route) => {
+      await new Promise((r) => setTimeout(r, 1000));
+      await route.continue();
+    });
     await openBallot(page, "?c=us-rep-11");
     await page.keyboard.down("ArrowDown");
     await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
-    await page.locator("[data-keys=pane] a[href^='/guides/']").first().click();
-    await expect(page).toHaveURL(/\/guides\/[^?]+$/);
+    const link = page.locator("[data-keys=pane] a[href^='/guides/']").first();
+    const href = (await link.getAttribute("href"))!;
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: 10_000 });
     await page.keyboard.up("ArrowDown");
     await page.waitForTimeout(400);
-    await expect(page).toHaveURL(/\/guides\/[^?]+$/);
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    await page.goBack();
+    await expect(page).toHaveURL(/\/2026-11\?c=us-rep-15$/);
   });
+
+  test("tapping arrows every 150ms for 15 seconds stays within the history rate limit", async ({ page, browserName }) => {
+    test.setTimeout(60_000);
+    await page.addInitScript(() => {
+      const w = window as unknown as { __replaces: number };
+      w.__replaces = 0;
+      const orig = history.replaceState.bind(history);
+      history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+        w.__replaces += 1;
+        return orig(...args);
+      };
+    });
+    const errors = watchErrors(page);
+    await openBallot(page, "?c=us-rep-11");
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+    const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
+    const started = Date.now();
+    for (let i = 0; i < 100; i++) {
+      await page.keyboard.press(i % 2 ? "ArrowUp" : "ArrowDown");
+      await page.waitForTimeout(150);
+    }
+    const ms = Date.now() - started;
+    await page.waitForTimeout(400);
+    expect(errors).toEqual([]);
+    await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    const writes = (await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces)) - before;
+    if (browserName === "chromium") expect(writes).toBeLessThanOrEqual(2 * Math.ceil(ms / 250) + 2);
+  });
+
 
   test("Enter on the open contest moves into its details; a click still closes it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
@@ -435,9 +473,7 @@ test.describe("desktop keyboard", () => {
   });
 });
 
-test("a step left unwritten on desktop doesn't override a tap after resizing to a phone", async ({ page, isMobile }) => {
-  test.skip(isMobile, "starts on desktop");
-  await openBallot(page, "?c=us-rep-11");
+async function failWrites(page: Page) {
   await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
   await page.evaluate(() => {
     const orig = history.replaceState.bind(history);
@@ -446,12 +482,41 @@ test("a step left unwritten on desktop doesn't override a tap after resizing to 
       return orig(...args);
     };
   });
+}
+
+test("resizing to a phone drops a stepped contest that was never written", async ({ page, isMobile }) => {
+  test.skip(isMobile, "starts on desktop");
+  await openBallot(page, "?c=us-rep-11");
+  await failWrites(page);
   await page.keyboard.press("ArrowDown");
   await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
   await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
   await page.setViewportSize({ width: 390, height: 844 });
-  await contestRow(page, "Governor").click();
-  await expect(page.getByRole("dialog").getByRole("heading", { name: "Governor" })).toBeVisible();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator("#row-d-us-rep-11")).toHaveAttribute("aria-current", "true");
+});
+
+test("a phone tap drops a stepped contest that was never written", async ({ page, isMobile }) => {
+  test.skip(isMobile, "starts on desktop");
+  await openBallot(page, "?c=us-rep-11");
+  await failWrites(page);
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
+  // Phone width for the click handler's one check only, so the resize reset can't be what clears it.
+  await page.evaluate(() => {
+    let phone = false;
+    const real = window.matchMedia.bind(window);
+    window.matchMedia = (q: string) => {
+      if (!phone || q !== "(min-width: 1024px)") return real(q);
+      phone = false;
+      return { ...real(q), matches: false } as MediaQueryList;
+    };
+    document.getElementById("row-d-governor")!.addEventListener("click", () => (phone = true));
+  });
+  await page.locator("#row-d-governor").click();
+  await expect(page).toHaveURL(/[?&]c=governor/);
+  await expect(page.locator("#row-d-governor")).toHaveAttribute("aria-current", "true");
 });
 
 test.describe("phone keyboard", () => {
