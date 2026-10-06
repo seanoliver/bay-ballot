@@ -12,6 +12,7 @@ import type { Fetched } from "./fetch";
 import { pageGate, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchMode, sourcesFor } from "./sources";
 import { applyVerdicts, verify, type VerifyOutput } from "./verify";
+import { guideBallot } from "./scope";
 import { nextFile, shrinkWarning, toYaml } from "./write";
 
 export type RefreshDeps = {
@@ -91,6 +92,7 @@ async function refreshGuide(
   const log = deps.log ?? (() => {});
   const id = guide.id;
   const prev = data.endorsements[id];
+  const ballot = guideBallot(data.ballot, guide, data.areas);
   if (prev.manual) return { id, status: "skipped", reason: "manual" };
   const urls = sourcesFor(prev);
   if (urls.length === 0) return { id, status: "skipped", reason: "no source" };
@@ -102,8 +104,8 @@ async function refreshGuide(
   for (const url of urls) {
     const fetched = await deps.fetchSource(url, { browser });
     const p = pagePath(opts.root, opts.election, id, url);
-    const stored = storedText(fetched, { ballot: data.ballot });
-    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(readStored(p), stored, data.ballot) });
+    const stored = storedText(fetched, { ballot });
+    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(readStored(p), stored, ballot) });
   }
 
   const relevant = opts.forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
@@ -118,8 +120,8 @@ async function refreshGuide(
   budget.left--;
 
   const sources = pages.map((p) => p.source);
-  const { output, usage } = await extract(deps.client, data.ballot, guide, sources);
-  const { picks, notes } = toEntries(output, data.ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
+  const { output, usage } = await extract(deps.client, ballot, guide, sources);
+  const { picks, notes } = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
   const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
   if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash };
 
@@ -149,7 +151,7 @@ async function refreshGuide(
 
   const hasHeld = (next.held ?? []).length > 0;
   if (opts.verify !== false && ((!isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) || hasHeld)) {
-    const v = await verify(deps.client, data.ballot, guide, next, sources);
+    const v = await verify(deps.client, ballot, guide, next, sources);
     const applied = applyVerdicts(next, v.output);
     next = EndorsementFile.parse(applied.file);
     result.held = applied.held;
@@ -322,11 +324,13 @@ export async function seedPages(
   for (const id of opts.ids ?? Object.keys(data.endorsements).sort()) {
     const file = data.endorsements[id];
     if (!file || file.manual || sourcesFor(file).length === 0) continue;
+    const guide = data.guides.find((g) => g.id === id);
+    const ballot = guide ? guideBallot(data.ballot, guide, data.areas) : data.ballot;
     const browser = fetchMode(file, Boolean(opts.browser)) === "browser";
     let stored = 0;
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot: data.ballot }));
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot }));
         stored++;
       }
       out.push({ id, stored });
