@@ -38,6 +38,13 @@ const subscribeDesktop = (onChange: () => void) => {
 };
 const isDesktop = () => window.matchMedia(DESKTOP).matches;
 const STEP_URL_MS = 250;
+// Focusable only while focused, so a click on the list's empty space still leaves focus on <body>.
+function focusTarget(el: HTMLElement | null): HTMLElement | null {
+  if (!el) return null;
+  el.tabIndex = -1;
+  el.addEventListener("blur", () => el.removeAttribute("tabindex"), { once: true });
+  return el;
+}
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -70,6 +77,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     setAnnounce(`Showing ${view.revealed.name} contests for this link`);
   }
   const paneRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
   const [animate, setAnimate] = useState(false);
   // The contest still drawn while its pane fades out; it's inert, then unmounted after --motion-out.
@@ -199,9 +207,15 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const closePane = () => {
     if (selectedId === null) return;
     const row = document.getElementById(`row-d-${selectedId}`);
+    const hiding = view.revealed;
     select(null);
-    setAnnounce("Details closed");
-    row?.focus();
+    if (hiding) {
+      setAnnounce(`Details closed. ${hiding.name} contests hidden again`);
+      focusTarget(listRef.current)?.focus();
+    } else {
+      setAnnounce("Details closed");
+      row?.focus();
+    }
   };
 
   const onEscape = (e: KeyboardEvent) => {
@@ -262,7 +276,8 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
-        className="min-w-0 pb-10"
+        ref={listRef}
+        className="min-w-0 pb-10 outline-none"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
         aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
@@ -362,7 +377,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
           className="max-h-[85dvh] gap-0 rounded-t-2xl lg:hidden"
           initialFocus={sheetTitleRef}
           // Safari doesn't focus links on tap, so name the row to return focus to.
-          finalFocus={() => (current ? document.getElementById(`row-m-${current.id}`) : true)}
+          finalFocus={() => (current ? (document.getElementById(`row-m-${current.id}`) ?? focusTarget(listRef.current) ?? true) : true)}
         >
           {current ? (
             <>

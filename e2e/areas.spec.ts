@@ -235,3 +235,26 @@ test("toggling another county while one is revealed keeps the revealed one in th
   await expect.poll(() => page.evaluate(() => localStorage.getItem("bb-counties"))).toBe("san-francisco,san-mateo");
   await expect.poll(() => new URL(page.url()).searchParams.get("offc")).toBe("san-francisco,san-mateo");
 });
+
+test("closing a contest from a hidden county keeps focus on the page and says the county is hidden again", async ({ page }, info) => {
+  await page.goto("/about");
+  await page.evaluate(() => {
+    localStorage.setItem("bb-counties", "san-mateo");
+    localStorage.setItem("bb-area", "bay-area");
+  });
+  await page.goto(`${BALLOT}?c=menlo-park-measure-p`);
+  await expect(contestRow(page, "Menlo Park Measure P")).toBeVisible();
+  if (isPhone(info)) {
+    await contestRow(page, "Menlo Park Measure P").tap();
+    const sheet = page.getByRole("dialog", { name: "Menlo Park Measure P" });
+    await expect(sheet).toBeVisible();
+    await sheet.getByRole("button", { name: "Close" }).click();
+    await expect(sheet).toBeHidden();
+    await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
+    return;
+  }
+  await page.getByRole("button", { name: "Close details" }).click();
+  await expect(contestRow(page, "Menlo Park Measure P")).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
+  await expect(page.locator("[aria-live=polite]").filter({ hasText: "San Mateo contests hidden again" })).toHaveCount(1);
+});
