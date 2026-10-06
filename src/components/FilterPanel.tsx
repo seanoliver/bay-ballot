@@ -21,12 +21,13 @@ import {
   type GuideInfo,
   type PickFile,
 } from "@/lib/filters";
-import { hiddenCountiesLabel, toggleCounty, type CountyOption } from "@/lib/counties";
+import { hiddenCountiesLabel, type CountyOption } from "@/lib/counties";
 import { displayName } from "@/lib/display";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
 
-export type CountyControl = { options: CountyOption[]; off: string[]; onChange: (off: string[]) => void };
+// `off` is what this view hides; `saved` is the visitor's setting, which a linked contest can override for one view.
+export type CountyControl = { options: CountyOption[]; off: string[]; saved: string[]; onToggle: (id: string) => void; onShowAll: () => void };
 
 type Props = {
   filters: Filters;
@@ -97,21 +98,21 @@ function FilterControls({ filters: f, onChange, guides, files, counties }: Props
   );
 }
 
-function CountyChecklist({ options, off, onChange }: CountyControl) {
+function CountyChecklist({ options, off, saved, onToggle, onShowAll }: CountyControl) {
   return (
     <Section title="Counties">
       {options.map((o) => (
         <label key={o.id} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
-          <Checkbox checked={!off.includes(o.id)} onCheckedChange={() => onChange(toggleCounty(off, o.id))} />
+          <Checkbox checked={!off.includes(o.id)} onCheckedChange={() => onToggle(o.id)} />
           {o.name}
         </label>
       ))}
       <Button
         variant="link"
         className="h-10 px-0 text-sm underline aria-disabled:cursor-default aria-disabled:no-underline aria-disabled:opacity-50"
-        aria-disabled={off.length === 0}
+        aria-disabled={saved.length === 0}
         onClick={() => {
-          if (off.length) onChange([]);
+          if (saved.length) onShowAll();
         }}
       >
         All counties

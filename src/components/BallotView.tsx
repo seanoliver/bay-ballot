@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
+import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -137,7 +137,10 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       setRequested(null);
     }
   };
-  const counties = showCountyFilter(options) ? { options, off: view.off, onChange: setOffCounties } : undefined;
+  const onToggleCounty = (id: string) => setOffCounties(view.revealed?.id === id ? offCounties : toggleCounty(offCounties, id));
+  const counties = showCountyFilter(options)
+    ? { options, off: view.off, saved: offCounties, onToggle: onToggleCounty, onShowAll: () => setOffCounties([]) }
+    : undefined;
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);

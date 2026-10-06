@@ -220,3 +220,18 @@ test("a revealed county is for this view only; the saved preference stays", asyn
   await page.goto(BALLOT);
   await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
 });
+
+test("toggling another county while one is revealed keeps the revealed one in the saved setting", async ({ page }, info) => {
+  await page.goto("/about");
+  await page.evaluate(() => {
+    localStorage.setItem("bb-counties", "san-mateo");
+    localStorage.setItem("bb-area", "bay-area");
+  });
+  await page.goto(`${BALLOT}?c=menlo-park-measure-p`);
+  await expect(contestRow(page, "Menlo Park Measure P")).toBeVisible();
+  if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
+  const panel = isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
+  await panel.getByRole("group", { name: "Counties" }).getByRole("checkbox", { name: "San Francisco", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("bb-counties"))).toBe("san-francisco,san-mateo");
+  await expect.poll(() => new URL(page.url()).searchParams.get("offc")).toBe("san-francisco,san-mateo");
+});
