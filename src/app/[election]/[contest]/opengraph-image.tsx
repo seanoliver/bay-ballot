@@ -4,7 +4,7 @@ import { areaShare, contestShare } from "@/components/share/data";
 import { shareFonts } from "@/components/share/fonts";
 import { SIZE, ShareFrame } from "@/components/share/ShareFrame";
 
-export const alt = "How Bay Area voter guides split, side by side";
+export const alt = "How voter guides split, side by side";
 export const size = SIZE;
 export const contentType = "image/png";
 

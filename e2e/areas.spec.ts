@@ -42,3 +42,11 @@ test("a returning visitor with saved filters lands on the SF page once", async (
   await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
 });
+
+test("share image alt text names no place on contest and area pages", async ({ page }) => {
+  for (const path of [`${BALLOT}/prop-b`, `${BALLOT}/governor`, `${BALLOT}/sf`]) {
+    await page.goto(path);
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", "How voter guides split, side by side");
+    await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute("content", "How voter guides split, side by side");
+  }
+});
