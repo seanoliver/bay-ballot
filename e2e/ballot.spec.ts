@@ -188,3 +188,38 @@ test("every page names its canonical URL on bayballot.com", async ({ page }) => 
     await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", `https://bayballot.com${path}`);
   }
 });
+
+test.describe("desktop keyboard", () => {
+  test.skip(({ isMobile }) => isMobile, "desktop only");
+
+  test("arrow keys walk the list and keep the URL in step", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page.getByRole("region", { name: "United States Representative, District 15" })).toBeVisible();
+    await expect(page.locator("#row-d-us-rep-15")).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+  });
+
+  test("typing in the guide search doesn't move the selection; / focuses it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("/");
+    const search = page.getByRole("complementary", { name: "Filters" }).getByRole("searchbox", { name: "Search guides" });
+    await expect(search).toBeFocused();
+    await expect(search).toHaveValue("");
+    await page.keyboard.type("j");
+    await expect(search).toHaveValue("j");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+  });
+
+  test("? opens the shortcuts and Esc closes them", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("Shift+?");
+    const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  });
+});

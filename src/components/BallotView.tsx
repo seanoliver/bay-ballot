@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { cardDescription, sections } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
+import { stepSelection, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Ballot, Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,9 @@ import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
+import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useBallotKeys } from "./useBallotKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
@@ -77,6 +80,28 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     setRequested(next);
   };
 
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  // Desktop only; selection goes through select(), exactly as a click on a row does.
+  useBallotKeys((action: KeyAction) => {
+    if (!window.matchMedia(DESKTOP).matches) return false;
+    if (action === "help") {
+      setShortcutsOpen(true);
+      return;
+    }
+    if (action === "search") {
+      document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
+      return;
+    }
+    const id = stepSelection(all.map((c) => c.id), selectedId, action);
+    if (id === null) return;
+    const c = all.find((x) => x.id === id);
+    select(id);
+    setAnnounce(`Showing ${c?.title ?? id}`);
+    const row = document.getElementById(`row-d-${id}`);
+    row?.focus({ preventScroll: true });
+    row?.scrollIntoView({ block: "nearest" });
+  });
+
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
@@ -129,11 +154,17 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
 
       <div
         className="min-w-0 pb-10"
+        role="region"
+        aria-label="Contests"
+        aria-keyshortcuts="ArrowDown ArrowUp j k / Shift+?"
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
+          <p className="hidden text-sm text-muted-foreground lg:block" aria-hidden="true">
+            ↑↓ to browse · ? for shortcuts
+          </p>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -202,6 +233,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
           </section>
         </div>
       ) : null}
+
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
