@@ -1,0 +1,202 @@
+import path from "node:path";
+import { describe, expect, it, vi } from "vitest";
+import { z } from "zod";
+import { loadElection } from "@/lib/data";
+import type { EndorsementFile, Guide } from "@/lib/schema";
+import { systemPrompt, type ExtractClient } from "@/pipeline/extract";
+import {
+  applyVerdicts,
+  verify,
+  VERIFY_MODEL,
+  verifierPrompt,
+  VerifyOutput,
+  type VerifyOutput as VerifyOutputT,
+} from "@/pipeline/verify";
+
+const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
+const guide: Guide = { id: "growsf", name: "GrowSF", description: "", type: "advocacy", homepage: "https://growsf.org/" };
+const src = "https://growsf.org/guide";
+const q = (text: string) => ({ text, source: src });
+
+const file: EndorsementFile = {
+  guide: "growsf",
+  election: "2026-11",
+  status: "published",
+  source: src,
+  fetchedAt: "2026-10-05",
+  hasReasoning: true,
+  picks: {
+    "prop-b": { pick: "N", ranked: false, quotes: [q("A public bank would cost the city hundreds of millions."), q("This will only make it worse.")] },
+    "prop-c": { pick: "Y", ranked: false, quotes: [] },
+    "supervisor-8": { pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, quotes: [] },
+  },
+};
+
+const allConfirmed: VerifyOutputT = {
+  picks: [
+    { contestId: "prop-b", verdict: "confirmed", evidence: "No on Prop B" },
+    { contestId: "prop-c", verdict: "confirmed", evidence: "Yes on C" },
+    { contestId: "supervisor-8", verdict: "confirmed", evidence: "#1 McCoy #2 Nguyen" },
+  ],
+  quotes: [
+    { contestId: "prop-b", index: 1, verdict: "confirmed", evidence: "" },
+    { contestId: "prop-b", index: 2, verdict: "confirmed", evidence: "" },
+  ],
+  missing: [],
+};
+
+describe("applyVerdicts", () => {
+  it("leaves a fully confirmed file unchanged", () => {
+    const r = applyVerdicts(file, allConfirmed);
+    expect(r.file).toEqual(file);
+    expect(r.held).toEqual([]);
+    expect(r.droppedQuotes).toEqual([]);
+    expect(r.confirmed).toBe(3);
+  });
+
+  it("holds unconfirmed picks and removes them from the published picks", () => {
+    const out: VerifyOutputT = {
+      ...allConfirmed,
+      picks: [
+        allConfirmed.picks[0],
+        { contestId: "prop-c", verdict: "wrong-pick", evidence: "The page says No on C." },
+        { contestId: "supervisor-8", verdict: "wrong-rank", evidence: "Dual endorsement, not ranked." },
+      ],
+    };
+    const r = applyVerdicts(file, out);
+    expect(Object.keys(r.file.picks)).toEqual(["prop-b"]);
+    expect(r.file.held).toEqual([
+      { contestId: "prop-c", pick: "Y", reason: "wrong-pick", evidence: "The page says No on C." },
+      { contestId: "supervisor-8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "wrong-rank", evidence: "Dual endorsement, not ranked." },
+    ]);
+    expect(r.held).toHaveLength(2);
+    expect(r.confirmed).toBe(1);
+    expect(r.file.status).toBe("published");
+  });
+
+  it("marks the file pending when every pick is held, and keeps earlier holds", () => {
+    const earlier = { contestId: "prop-d", pick: "Y" as const, reason: "not-found" as const, evidence: "x" };
+    const one: EndorsementFile = { ...file, held: [earlier], picks: { "prop-c": file.picks["prop-c"] } };
+    const r = applyVerdicts(one, { picks: [{ contestId: "prop-c", verdict: "old-election", evidence: "June 2026 slate" }], quotes: [], missing: [] });
+    expect(r.file.picks).toEqual({});
+    expect(r.file.status).toBe("pending");
+    expect(r.file.held?.map((h) => h.contestId)).toEqual(["prop-d", "prop-c"]);
+  });
+
+  it("drops quotes that are not confirmed and notes why", () => {
+    const out: VerifyOutputT = {
+      ...allConfirmed,
+      quotes: [
+        { contestId: "prop-b", index: 1, verdict: "confirmed", evidence: "" },
+        { contestId: "prop-b", index: 2, verdict: "not-standalone", evidence: "'This' refers to the deficit." },
+      ],
+    };
+    const r = applyVerdicts(file, out);
+    expect(r.file.picks["prop-b"].quotes).toEqual([q("A public bank would cost the city hundreds of millions.")]);
+    expect(r.droppedQuotes).toEqual([
+      { contestId: "prop-b", text: "This will only make it worse.", reason: "not-standalone", evidence: "'This' refers to the deficit." },
+    ]);
+  });
+
+  it("keeps a pick the verifier did not mention, with a note", () => {
+    const r = applyVerdicts(file, { ...allConfirmed, picks: allConfirmed.picks.slice(0, 2) });
+    expect(r.file.picks["supervisor-8"]).toBeDefined();
+    expect(r.notes).toContain("supervisor-8: no verdict from the verifier; kept");
+  });
+
+  it("ignores verdicts for contests or quotes that aren't in the file", () => {
+    const r = applyVerdicts(file, {
+      picks: [...allConfirmed.picks, { contestId: "prop-z", verdict: "wrong-pick", evidence: "" }],
+      quotes: [...allConfirmed.quotes, { contestId: "prop-b", index: 9, verdict: "not-found", evidence: "" }],
+      missing: [],
+    });
+    expect(r.file).toEqual(file);
+  });
+
+  it("reports missing picks without adding them", () => {
+    const missing = [{ contestId: "prop-d", pick: "Y", evidence: "Yes on D" }];
+    const r = applyVerdicts(file, { ...allConfirmed, missing });
+    expect(r.missing).toEqual(missing);
+    expect(r.file.picks["prop-d"]).toBeUndefined();
+  });
+});
+
+describe("verifierPrompt", () => {
+  const prompt = verifierPrompt(ballot);
+  it("audits rather than extracts, and shares no text with the extraction prompt", () => {
+    expect(prompt).toContain("You are auditing someone else's extraction");
+    for (const line of systemPrompt(ballot).split("\n").filter((l) => l.length > 30 && !l.startsWith("["))) {
+      expect(prompt).not.toContain(line);
+    }
+  });
+  it("names every audit category", () => {
+    for (const c of ["wrong-pick", "wrong-rank", "not-found", "old-election", "wrong-contest", "not-own-words", "not-substantive", "not-standalone"]) {
+      expect(prompt).toContain(c);
+    }
+  });
+  it("is deterministic for caching", () => expect(verifierPrompt(ballot)).toBe(prompt));
+});
+
+describe("VerifyOutput schema", () => {
+  it("has no integer bounds (structured outputs reject them)", () => {
+    expect(JSON.stringify(z.toJSONSchema(VerifyOutput))).not.toMatch(/"(minimum|maximum|exclusiveMinimum|exclusiveMaximum)"/);
+  });
+});
+
+describe("verify", () => {
+  const usage = { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0 };
+  const fakeClient = (response: Record<string, unknown> = {}) => {
+    const finalMessage = vi.fn().mockResolvedValue({
+      stop_reason: "end_turn",
+      stop_details: null,
+      usage,
+      content: [{ type: "thinking", thinking: "" }, { type: "text", text: JSON.stringify(allConfirmed) }],
+      ...response,
+    });
+    const stream = vi.fn().mockReturnValue({ finalMessage });
+    return { client: { messages: { stream } } as unknown as ExtractClient, stream };
+  };
+  const sources = [
+    { url: "https://growsf.org/slate.pdf", fetched: { kind: "pdf" as const, base64: "JVBERi0=", text: "" } },
+    { url: src, fetched: { kind: "text" as const, text: "No on Prop B. A public bank would cost the city hundreds of millions." } },
+  ];
+
+  it("sends Opus with high effort, the cached audit prompt, the pages and the numbered extraction", async () => {
+    const { client, stream } = fakeClient();
+    const r = await verify(client, ballot, guide, file, sources);
+    expect(r).toEqual({ output: allConfirmed, usage });
+    const req = stream.mock.calls[0][0];
+    expect(VERIFY_MODEL).toBe("claude-opus-5-5");
+    expect(req.model).toBe("claude-opus-5-5");
+    expect(req.max_tokens).toBe(64000);
+    expect(req.thinking).toBeUndefined();
+    expect(req.tool_choice).toBeUndefined();
+    expect(req.output_config.effort).toBe("high");
+    expect(req.output_config.format.type).toBe("json_schema");
+    expect(req.system).toEqual([{ type: "text", text: verifierPrompt(ballot), cache_control: { type: "ephemeral" } }]);
+    const content = req.messages[0].content;
+    expect(content[0]).toEqual({
+      type: "document",
+      source: { type: "base64", media_type: "application/pdf", data: "JVBERi0=" },
+      title: "https://growsf.org/slate.pdf",
+    });
+    expect(content[1]).toEqual({ type: "text", text: `--- ${src} ---\nNo on Prop B. A public bank would cost the city hundreds of millions.` });
+    const audit = content.at(-1).text as string;
+    expect(audit).toContain("Organization: GrowSF (https://growsf.org/)");
+    expect(audit).toContain('"contestId":"prop-b"');
+    expect(audit).toContain('"index":2,"text":"This will only make it worse."');
+    expect(JSON.stringify(req)).not.toContain("Extract this organization's endorsements");
+  });
+
+  it("throws on refusal and on max_tokens before parsing", async () => {
+    await expect(verify(fakeClient({ stop_reason: "refusal", stop_details: { category: "cyber" } }).client, ballot, guide, file, sources)).rejects.toThrow(
+      "refused (category: cyber)",
+    );
+    await expect(verify(fakeClient({ stop_reason: "max_tokens" }).client, ballot, guide, file, sources)).rejects.toThrow("max_tokens");
+  });
+
+  it("rejects output that doesn't match the schema", async () => {
+    const bad = fakeClient({ content: [{ type: "text", text: '{"picks":[{"contestId":"prop-b","verdict":"maybe","evidence":""}],"quotes":[],"missing":[]}' }] });
+    await expect(verify(bad.client, ballot, guide, file, sources)).rejects.toThrow("did not match the schema");
+  });
+});

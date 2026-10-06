@@ -1,0 +1,202 @@
+import type Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
+import type { Ballot, EndorsementFile, Guide, HeldPick } from "@/lib/schema";
+import { pageBlocks, type ExtractClient, type Source } from "./extract";
+
+export const VERIFY_MODEL = "claude-opus-5-5";
+const MAX_TOKENS = 64000;
+
+const PICK_VERDICTS = ["confirmed", "wrong-pick", "wrong-rank", "not-found", "old-election"] as const;
+const QUOTE_VERDICTS = [
+  "confirmed",
+  "not-found",
+  "wrong-contest",
+  "not-own-words",
+  "not-substantive",
+  "not-standalone",
+  "old-election",
+] as const;
+
+// Plain numbers and strings only: structured outputs reject the bounds z.int() would emit.
+export const VerifyOutput = z.object({
+  picks: z.array(
+    z.object({
+      contestId: z.string(),
+      verdict: z.enum(PICK_VERDICTS),
+      evidence: z.string().describe("the page text that supports or contradicts the pick, quoted briefly"),
+    }),
+  ),
+  quotes: z.array(
+    z.object({
+      contestId: z.string(),
+      index: z.number().describe("the quote's number within its pick, starting at 1"),
+      verdict: z.enum(QUOTE_VERDICTS),
+      evidence: z.string(),
+    }),
+  ),
+  missing: z.array(
+    z.object({
+      contestId: z.string(),
+      pick: z.string().describe("the position the pages state, e.g. 'Y', 'N' or candidate names"),
+      evidence: z.string(),
+    }),
+  ),
+});
+export type VerifyOutput = z.infer<typeof VerifyOutput>;
+
+function outputFormat(): Anthropic.Messages.JSONOutputFormat {
+  const schema: Record<string, unknown> = { ...z.toJSONSchema(VerifyOutput) };
+  delete schema.$schema;
+  return { type: "json_schema", schema };
+}
+
+/** The auditor's system prompt. It never includes the extraction instructions, so the check is independent. */
+export function verifierPrompt(ballot: Ballot): string {
+  const contests = ballot.contests
+    .map((c) => {
+      const extra = c.kind === "candidate" ? ` — candidates: ${c.candidates.join("; ")}${c.rankedChoice ? " (ranked-choice)" : ""}` : "";
+      return `- ${c.id}: ${c.title} [${c.kind}]${extra}`;
+    })
+    .join("\n");
+  return [
+    "You are auditing someone else's extraction of one organization's voter-guide endorsements.",
+    `The election is the ${ballot.title} on ${ballot.date}. For each pick and quote, say whether the organization's pages support it.`,
+    "Judge only from the pages provided. Do not add, fix or re-extract anything; report what is wrong.",
+    "",
+    "Picks: give exactly one verdict per pick listed in the extraction.",
+    "- confirmed: the pages show this organization taking this position in this contest for this election.",
+    "- wrong-pick: the pages show a different position (other candidates, the opposite vote, or no position or neutral).",
+    "- wrong-rank: the names are right but the ranking is not (ranked when the page gives no order, unranked when it ranks them, a different order, or rankedCount wrong when only some names are ranked).",
+    "- not-found: the pages do not mention this organization's position in this contest at all.",
+    "- old-election: the position on the page is for a different election (an earlier primary or special election).",
+    "A Y on a measure means the organization supports it; N means it opposes it. A candidate pick lists the endorsed names; ranked means the page gives a rank order.",
+    "",
+    "Quotes: give exactly one verdict per quote, identified by contestId and its number.",
+    "- confirmed: the sentence appears on the pages, sits in this contest's section, is the organization's own words, and gives a reason for the pick that makes sense on its own.",
+    "- not-found: the sentence is not on the pages word for word.",
+    "- wrong-contest: the sentence is about a different contest than the pick it is attached to.",
+    "- not-own-words: the sentence is someone else's words (opponents, candidates, news coverage, another organization).",
+    "- not-substantive: it gives no reason (an announcement, slogan, call to vote, thanks, or background).",
+    "- not-standalone: shown alone it is unclear or misleading, e.g. it starts with This/It/He and depends on an earlier sentence, or reads as an argument for the other side.",
+    "- old-election: the sentence is about a different election.",
+    "",
+    "Missing: list positions the pages clearly state for contests on this ballot that the extraction has no pick for. Report only clear positions, not neutral ones.",
+    "",
+    "Evidence: quote the few words of page text that decided each verdict.",
+    "",
+    "Ballot contests:",
+    contests,
+  ].join("\n");
+}
+
+function auditText(guide: Guide, file: EndorsementFile): string {
+  const picks = Object.entries(file.picks).map(([contestId, e]) => ({
+    contestId,
+    pick: e.pick,
+    ...(Array.isArray(e.pick) ? { ranked: e.ranked, ...(e.rankedCount ? { rankedCount: e.rankedCount } : {}) } : {}),
+    quotes: e.quotes.map((q, i) => ({ index: i + 1, text: q.text, page: q.source })),
+  }));
+  return [
+    `Organization: ${guide.name} (${guide.homepage})`,
+    "Extraction to audit (JSON, one object per pick):",
+    ...picks.map((p) => JSON.stringify(p)),
+  ].join("\n");
+}
+
+function parseOutput(text: string): VerifyOutput {
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`verifier output did not match the schema: invalid JSON (${e instanceof Error ? e.message : String(e)})`);
+  }
+  const r = VerifyOutput.safeParse(json);
+  if (!r.success) {
+    const issue = r.error.issues[0];
+    throw new Error(`verifier output did not match the schema: ${issue.path.join(".") || "(root)"}: ${issue.message}`);
+  }
+  return r.data;
+}
+
+/**
+ * Ask a separate model to audit one guide's extracted picks and quotes against its pages.
+ * Opus 5.5 always thinks, so no `thinking` param is sent; effort is raised from its medium
+ * default. stop_reason is checked before parsing, as in `extract`.
+ */
+export async function verify(
+  client: ExtractClient,
+  ballot: Ballot,
+  guide: Guide,
+  file: EndorsementFile,
+  sources: Source[],
+): Promise<{ output: VerifyOutput; usage: Anthropic.Messages.Usage }> {
+  const res = await client.messages
+    .stream({
+      model: VERIFY_MODEL,
+      max_tokens: MAX_TOKENS,
+      system: [{ type: "text", text: verifierPrompt(ballot), cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: [...pageBlocks(sources), { type: "text", text: auditText(guide, file) }] }],
+      output_config: { effort: "high", format: outputFormat() },
+    })
+    .finalMessage();
+  if (res.stop_reason === "refusal") throw new Error(`refused (category: ${res.stop_details?.category ?? "none"})`);
+  if (res.stop_reason === "max_tokens") throw new Error("verifier output hit max_tokens before finishing");
+  const text = res.content.flatMap((b) => (b.type === "text" ? [b.text] : [])).join("");
+  return { output: parseOutput(text), usage: res.usage };
+}
+
+export type DroppedByVerifier = { contestId: string; text: string; reason: string; evidence: string };
+
+export type Applied = {
+  file: EndorsementFile;
+  confirmed: number;
+  held: HeldPick[];
+  droppedQuotes: DroppedByVerifier[];
+  missing: VerifyOutput["missing"];
+  notes: string[];
+};
+
+/**
+ * Apply the verifier's verdicts: unconfirmed picks move from `picks` to `held` (not published,
+ * still visible), unconfirmed quotes are dropped, missing picks are only reported.
+ */
+export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied {
+  const picks = { ...file.picks };
+  const held: HeldPick[] = [];
+  const droppedQuotes: DroppedByVerifier[] = [];
+  const notes: string[] = [];
+  let confirmed = 0;
+
+  for (const [contestId, entry] of Object.entries(file.picks)) {
+    const v = out.picks.find((p) => p.contestId === contestId);
+    if (!v) {
+      notes.push(`${contestId}: no verdict from the verifier; kept`);
+      continue;
+    }
+    if (v.verdict === "confirmed") {
+      confirmed++;
+      continue;
+    }
+    held.push({ contestId, pick: entry.pick, reason: v.verdict, evidence: v.evidence });
+    delete picks[contestId];
+  }
+
+  for (const [contestId, entry] of Object.entries(picks)) {
+    const keep = entry.quotes.filter((q, i) => {
+      const v = out.quotes.find((x) => x.contestId === contestId && x.index === i + 1);
+      if (!v || v.verdict === "confirmed") return true;
+      droppedQuotes.push({ contestId, text: q.text, reason: v.verdict, evidence: v.evidence });
+      return false;
+    });
+    if (keep.length !== entry.quotes.length) picks[contestId] = { ...entry, quotes: keep };
+  }
+
+  const allHeld = [...(file.held ?? []).filter((h) => !held.some((n) => n.contestId === h.contestId)), ...held];
+  const next: EndorsementFile = {
+    ...file,
+    status: Object.keys(picks).length > 0 ? file.status : "pending",
+    picks,
+    ...(allHeld.length ? { held: allHeld } : {}),
+  };
+  return { file: next, confirmed, held, droppedQuotes, missing: out.missing, notes };
+}
