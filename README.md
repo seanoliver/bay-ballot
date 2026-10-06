@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bay Ballot
 
-## Getting Started
+Bay Ballot shows every San Francisco voter guide's picks for the November 3, 2026 election side by side, at [bayballot.com](https://bayballot.com).
 
-First, run the development server:
+## Data and counting
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Each guide's picks live in YAML under `data/`. The site reads them at build time and renders static pages.
+- An extraction pipeline fetches each guide's published pages, pulls out picks and verbatim quotes with Claude, and archives the source pages.
+- Counts include only guides that took a position. A guide that ranks candidates counts toward its #1.
+
+## Development
+
+```sh
+npm install
+npm run dev        # http://localhost:3000
+npm test           # unit tests (Vitest)
+npm run validate   # checks every data file against the schema and the ballot
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data pipeline
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The pipeline needs `BAYBALLOT_ANTHROPIC_API_KEY` in `.env.local`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npm run bb -- discover                    # guides with no source for this election yet
+npm run bb -- extract <guide...>          # rewrite one or more guides' picks from their pages
+npm run bb -- extract --all --archive     # every guide, with web.archive.org snapshots
+npm run bb -- check                       # validate data, list manual guides and guides with no source
+npm run bb -- review                      # open a review page of all picks and quotes
+```
 
-## Learn More
+Add `--browser` to `extract` for pages that need JavaScript. `docs/runbook.md` has the refresh routine.
 
-To learn more about Next.js, take a look at the following resources:
+## Corrections
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No license yet.
