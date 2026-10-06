@@ -9,6 +9,10 @@
   --yes: #15803d;
   --no: #b91c1c;
   --split: #b45309;
+  /* --yes/--no are text colors (AA). Bars use these fills: distinguishable under deutan/protan
+     (Yes always draws first, with a 2px gap and a text label as secondary encoding). */
+  --yes-fill: #166534;
+  --no-fill: #e25c5c;
   /* Candidate slots: blue, magenta, violet, aqua (distinct under CVD; never the yes/no hues).
      Magenta and aqua are under 3:1 on white, so candidate colors always sit next to text labels. */
   --bar-1: #2a78d6;
@@ -70,6 +74,8 @@
   --color-yes: var(--yes);
   --color-no: var(--no);
   --color-split: var(--split);
+  --color-yes-fill: var(--yes-fill);
+  --color-no-fill: var(--no-fill);
   --color-bar-1: var(--bar-1);
   --color-bar-2: var(--bar-2);
   --color-bar-3: var(--bar-3);
@@ -118,6 +124,8 @@
   --yes: #4ade80;
   --no: #f87171;
   --split: #fbbf24;
+  --yes-fill: #13753a;
+  --no-fill: #e66262;
   --bar-1: #3987e5;
   --bar-2: #d55181;
   --bar-3: #9085e9;
