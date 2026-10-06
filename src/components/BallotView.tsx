@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -53,10 +53,10 @@ type Props = {
 
 export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
-  const options = area === null ? countyOptions(groups) : [];
+  const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
-  const offCounties = parseCounties(offParam, options);
-  const listed = visibleGroups(groups, offCounties);
+  const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
+  const listed = useMemo(() => visibleGroups(groups, offCounties), [groups, offCounties]);
   const counties = showCountyFilter(options) ? { options, off: offCounties, onChange: (off: string[]) => setOffParam(toCountiesParam(off)) } : undefined;
   useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
@@ -71,7 +71,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const all = listed.flatMap((g) => g.sections.flatMap((s) => s.contests));
+  const all = useMemo(() => listed.flatMap((g) => g.sections.flatMap((s) => s.contests)), [listed]);
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, (id: string) => {
@@ -83,9 +83,14 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
-  const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
+  const rowsById = useMemo(() => new Map(all.map((c) => [c.id, activeEntries(c.id, guides, files, filters)])), [all, guides, files, filters]);
+  const rowsFor = (id: string) => rowsById.get(id) ?? activeEntries(id, guides, files, filters);
   // EMPTY, not `filters`: a filter must never repaint a candidate.
-  const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const slotsById = useMemo(
+    () => new Map(all.map((c) => [c.id, candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry))])),
+    [all, guides, files],
+  );
+  const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
   const filterProps = { filters, onChange: setFilters, guides, files, counties };
 
   useEffect(() => {
@@ -124,6 +129,11 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       setSheetOpen(true);
     }
   };
+  const rowClick = useRef(onRowClick);
+  useLayoutEffect(() => {
+    rowClick.current = onRowClick;
+  });
+  const onRowClickStable = useCallback((e: MouseEvent<HTMLAnchorElement>, c: Contest) => rowClick.current(e, c), []);
 
   const closePane = () => {
     if (selectedId === null) return;
@@ -242,7 +252,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
                         rows={rowsFor(c.id)}
                         slots={slotsFor(c)}
                         selected={c.id === selectedId}
-                        onClick={(e) => onRowClick(e, c)}
+                        onClick={onRowClickStable}
                       />
                     </li>
                   ))}
@@ -319,7 +329,7 @@ const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
 const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
 const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
 
-function ContestRow({
+const ContestRow = memo(function ContestRow({
   href,
   contest,
   rows,
@@ -332,14 +342,14 @@ function ContestRow({
   rows: Row[];
   slots: Slots;
   selected: boolean;
-  onClick: (e: MouseEvent<HTMLAnchorElement>) => void;
+  onClick: (e: MouseEvent<HTMLAnchorElement>, c: Contest) => void;
 }) {
   const description = cardDescription(contest);
   return (
     <>
       <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
-          <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
+          <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
         </h4>
@@ -356,7 +366,7 @@ function ContestRow({
           <a
             id={`row-d-${contest.id}`}
             href={href}
-            onClick={onClick}
+            onClick={(e) => onClick(e, contest)}
             aria-current={selected ? "true" : undefined}
             className={ROW_LINK}
           >
@@ -368,4 +378,4 @@ function ContestRow({
       </div>
     </>
   );
-}
+});
