@@ -1,10 +1,39 @@
 guide: svgop
 election: 2026-11
-status: pending
-source: https://www.svgop.com/voter-guide
+status: published
+source: https://www.svgop.com/voter-guide # slate is a JPG card ("2026 General Election Endorsed Candidates"); no page text
 extraSources:
   - https://www.svgop.com/s/SVGOP-Endorsements-2026-General-Election.jpg
 fetchedAt: 2026-10-06
 hasReasoning: false
-manual: true # slate is a JPG image; extract skips this guide
-picks: {}
+manual: true # picks hand-entered from the slate image; extract skips this guide
+archived:
+  - source: https://www.svgop.com/voter-guide
+    snapshot: https://web.archive.org/web/20261006232314/https://svgop.com/voter-guide
+  - source: https://www.svgop.com/s/SVGOP-Endorsements-2026-General-Election.jpg
+    snapshot: https://web.archive.org/web/20261006232411/https://static1.squarespace.com/static/6785b4117fb4713248ac921c/t/6ac0a37ed7b0644dc4fe591f/1791009662259/SVGOP+Endorsements+2026+General+Election.jpg
+picks:
+  governor: { pick: ["Steve Hilton"] }
+  lt-governor: { pick: ["Gloria Romero"] }
+  secretary-of-state: { pick: ["Donald P. (Don) Wagner"] }
+  controller: { pick: ["Herb W Morgan"] }
+  treasurer: { pick: ["Jennifer Hawks"] }
+  attorney-general: { pick: ["Michael E. Gates"] }
+  us-rep-16: { pick: ["Peter Sundin Soulé"] }
+  assembly-23: { pick: ["David G. Johnson"] }
+  superintendent: { pick: ["Sonja Shaw"] }
+  prop-1: { pick: N }
+  prop-2: { pick: N }
+  prop-3: { pick: N }
+  prop-4: { pick: N }
+  prop-5: { pick: N }
+  prop-37: { pick: N }
+  prop-38: { pick: N }
+  prop-39: { pick: Y }
+  prop-40: { pick: N }
+  prop-41: { pick: Y }
+  prop-42: { pick: Y }
+  prop-43: { pick: Y }
+  prop-44: { pick: N }
+  prop-45: { pick: Y }
+  rtm: { pick: N }

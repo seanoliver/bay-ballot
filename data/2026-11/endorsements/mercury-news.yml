@@ -1,7 +1,22 @@
 guide: mercury-news
 election: 2026-11
-status: pending
+status: published
 source: https://www.mercurynews.com/opinion/endorsements/
+archived:
+  - source: https://www.mercurynews.com/opinion/endorsements/
+    snapshot: https://web.archive.org/web/20261006232819/https://www.mercurynews.com/opinion/endorsements/
 fetchedAt: 2026-10-06
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  lt-governor:
+    pick:
+      - Fiona Ma
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+    quotes:
+      - text: The challenges awaiting the state’s banker require a tested political and economic operator.
+        source: https://www.mercurynews.com/opinion/endorsements/
+  insurance-commissioner:
+    pick:
+      - Ben Allen

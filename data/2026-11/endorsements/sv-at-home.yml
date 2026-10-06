@@ -1,8 +1,66 @@
 guide: sv-at-home
 election: 2026-11
-status: pending
+status: published
 source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
 fetchWith: browser
+archived:
+  - source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+    snapshot: https://web.archive.org/web/20261006232555/https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
 fetchedAt: 2026-10-06
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  prop-1:
+    pick: Y
+    quotes:
+      - text: YES on Prop 1 means safe, affordable homes for California’s veterans, low-income seniors on fixed incomes, survivors of domestic violence and their families, at risk and foster youth, working families, & people with disabilities — with strict accountability, transparency, and WITHOUT RAISING TAXES.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  rtm:
+    pick: Y
+    quotes:
+      - text: The Regional Transit Measure will prevent cuts to service and invest in improvements to safety, cleanliness, convenience, and seamless integration of transit services.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+      - text: Affordable housing and transit go hand-in-hand.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Prop 43 takes power away from voters.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+      - text: Prop 43 would let 1/3rd of voters block funding measures supported by 2/3rds of voters.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+      - text: Prop 43 makes it harder for communities to fund critical services like police and fire departments, fix and repair local roads, staff our local schools, or backfill federal healthcare cuts.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  prop-4:
+    pick: Y
+    quotes:
+      - text: Public financing of elections will make it easier for our communities to elect people who are not personally very wealthy and who are not beholden to special interests.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+      - text: Prop 4 is a step in the right direction toward cleaner elections and more representative politics.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  mountain-view-measure-e:
+    pick: Y
+    quotes:
+      - text: Mountain View Charter Amendment includes non-controversial clean-up charter amendments that will improve Council meeting efficiency, align with state law, and modernize outdated language.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  mountain-view-measure-f:
+    pick: Y
+    quotes:
+      - text: Housing Dept. and Planning Dept. are both understaffed, so a hiring freeze would be particularly likely to slow down MV’s housing progress.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+      - text: Measure F also ensures that existing General Fund-support housing projects will continue without reduction or interruption.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  prop-39:
+    pick: N
+    quotes:
+      - text: Prop 39 is a voter suppression measure which will make it harder for people to vote — especially people who are lower income and/or renters.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop 42 would prohibit future wealth taxes.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Prop 45 promotes urban sprawl and environmentally damaging development, which SV@Home has consistently opposed.
+        source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/

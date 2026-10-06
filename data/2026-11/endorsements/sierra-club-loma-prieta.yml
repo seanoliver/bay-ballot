@@ -68,6 +68,16 @@ picks:
   east-palo-alto-council:
     pick:
       - Ruben Abrica
+  palo-alto-council:
+    pick:
+      - Ed Lauing
+      - Vicki Veenker
+      - Bryna Chang
+  mountain-view-council:
+    pick:
+      - Robert Cox
+      - Silja Paymer
+      - IdaRose Sylvester
   menlo-park-council-2:
     pick:
       - Drew Combs

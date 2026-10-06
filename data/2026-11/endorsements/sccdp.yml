@@ -1,7 +1,47 @@
 guide: sccdp
 election: 2026-11
-status: pending
+status: published
 source: https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
+archived:
+  - source: https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
+    snapshot: https://web.archive.org/web/20261006232307/https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
 fetchedAt: 2026-10-06
 hasReasoning: false
-picks: {}
+picks:
+  valley-water-7:
+    pick:
+      - Pete Dailey
+  mvwsd-trustee:
+    pick:
+      - Devon Conley
+  los-altos-sd-trustee:
+    pick:
+      - Bryan Harvey Johnson
+      - Vaishali "Shali" Sirkay
+      - Brandon Stroy
+  palo-alto-council:
+    pick:
+      - Yu "Yudy" Deng
+      - Vicki Veenker
+  palo-alto-measure-j:
+    pick: Y
+  pausd-trustee:
+    pick:
+      - Linda Henigin
+  mountain-view-council:
+    pick:
+      - Silja Paymer
+      - Erik Poicon
+      - IdaRose Sylvester
+  mountain-view-measure-e:
+    pick: Y
+  mountain-view-measure-f:
+    pick: Y
+  mvla-trustee-area-3:
+    pick:
+      - Thida Cornes
+  fremont-uhsd-trustee-area-4:
+    pick:
+      - Naomi Nakano-Matsumoto
+  rtm:
+    pick: Y

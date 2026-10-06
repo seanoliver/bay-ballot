@@ -875,6 +875,7 @@ contests:
     title: Palo Alto City Council
     kind: candidate
     candidates: [Brian Hamachek, Bryna Chang, Ed Lauing, Yu "Yudy" Deng, Raymond L. Goins, Gary Gechlik, Vicki Veenker, Henry Etzkowitz]
+    aliases: { Vicki Veenker: [Vicki Veener] }
     seats: 3
     jurisdiction: { level: city, name: Palo Alto }
   - id: palo-alto-measure-j
@@ -896,6 +897,7 @@ contests:
     title: Mountain View City Council
     kind: candidate
     candidates: [James Kuszmaul, Robert Cox, Erik Poicon, Silja Paymer, Samuel Ali, Alex Amoroso, Paul Donahue, IdaRose Sylvester]
+    aliases: { IdaRose Sylvester: [Ida Rose Sylvester] }
     seats: 3
     jurisdiction: { level: city, name: Mountain View }
   - id: mountain-view-measure-e
