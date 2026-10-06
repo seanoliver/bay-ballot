@@ -1,6 +1,17 @@
 import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
 import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
+import { sourcesFor } from "./sources";
+
+/**
+ * New snapshots replace older ones for the same source; snapshots for sources that weren't
+ * re-archived this run are kept, and ones for sources the file no longer lists are dropped.
+ */
+function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
+  const bySource = new Map((prev.archived ?? []).map((a) => [a.source, a]));
+  for (const a of fresh) bySource.set(a.source, a);
+  return sourcesFor(prev).flatMap((url) => bySource.get(url) ?? []);
+}
 
 /**
  * The endorsement file after an extraction run. Settings come from `prev`; picks and fetch facts
@@ -24,7 +35,7 @@ export function nextFile(
     fetchWith: prev.fetchWith,
     manual: prev.manual,
     allowForeignSources: prev.allowForeignSources,
-    archived: archived ?? prev.archived,
+    archived: archived ? mergeArchived(prev, archived) : prev.archived,
     fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
     picks,
