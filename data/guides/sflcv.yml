@@ -1,5 +1,6 @@
 id: sflcv
 name: San Francisco League of Conservation Voters
+shortName: "SF Conservation Voters"
 description: A San Francisco environmental organization that endorses candidates and ballot measures.
 type: advocacy
 homepage: https://www.sflcv.org/

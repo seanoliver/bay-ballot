@@ -11,6 +11,7 @@ export type GuideType = z.infer<typeof GuideType>;
 export const Guide = z.object({
   id: Slug,
   name: NonEmpty,
+  shortName: NonEmpty.optional(), // used where space is tight; full name everywhere else
   description: z.string(),
   type: GuideType,
   homepage: HttpUrl,

@@ -1,5 +1,6 @@
 id: blueprint-sf
 name: Blueprint SF
+shortName: "Blueprint SF"
 description: A San Francisco political organization, formerly TogetherSF, that publishes endorsements for city and state elections.
 type: advocacy
 homepage: https://www.sfblueprint.org/

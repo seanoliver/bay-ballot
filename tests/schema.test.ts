@@ -211,3 +211,14 @@ describe("contest aliases", () => {
   });
 });
 
+
+describe("Guide shortName", () => {
+  const base = { id: "league", name: "San Francisco League of Pissed Off Voters", description: "d", type: "advocacy", homepage: "https://example.org/" };
+  it("accepts an optional short name", () => {
+    expect(Guide.parse({ ...base, shortName: "Pissed Off Voters" }).shortName).toBe("Pissed Off Voters");
+    expect(Guide.parse(base).shortName).toBeUndefined();
+  });
+  it("rejects a blank short name", () => {
+    expect(Guide.safeParse({ ...base, shortName: "  " }).success).toBe(false);
+  });
+});

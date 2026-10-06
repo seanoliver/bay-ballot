@@ -1,5 +1,6 @@
 id: sf-green-party
 name: San Francisco Green Party
+shortName: "SF Green Party"
 description: The San Francisco county organization of the Green Party.
 type: party
 homepage: https://www.sfgreenparty.org/
