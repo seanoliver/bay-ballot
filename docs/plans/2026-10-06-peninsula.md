@@ -26,7 +26,7 @@
   - Its `districtKind()` reads only `jurisdiction.level`, `name` and `district`. The new `within` field and the `region` level don't change what it sees. RTM becomes `level: region`, and its `onBallot` already keeps every non-district contest.
   - It stores `?d=` and localStorage `bb-districts`. The saved-SF-state redirect (Task 11) reads `bb-districts`. The county filter (Task 19) adds `offc` to `useBallotFilters`'s `keep` list, and the address plan adds `d` to the same list. Whichever lands second merges the two lists.
   - "The address filter takes precedence" in the county group is the address plan's job. When it lands, it should show only the address's county as checked.
-- **Guide discovery output:** another agent is writing `/private/tmp/claude-501/-Users-seanoliver-cortex/26fbbe18-ea6d-4ef9-980a-8aab1aed24d6/scratchpad/peninsula-discovery.md`. Tasks 21 and 30 take their guide list from it. Don't hardcode guides from memory or from the older `docs/investigations/2026-10-06-bay-area-guide-discovery.md`; use that one only as a cross-check.
+- **Guide discovery output:** the discovery output is in `docs/investigations/2026-10-06-peninsula-guide-discovery.md`. Tasks 21 and 30 take their guide list from it. Don't hardcode guides from memory or from the older `docs/investigations/2026-10-06-bay-area-guide-discovery.md`; use that one only as a cross-check.
 
 ## Decisions this plan makes (the design was silent)
 
@@ -62,7 +62,7 @@ Expected: `MERGED` three times. If any is not merged, stop and ask Sean. Later t
 **Step 2: Rebase**
 
 ```bash
-cd /Users/seanoliver/code/projects/bay-ballot-peninsula
+cd bay-ballot  # the feat/peninsula worktree
 git fetch origin
 git rebase origin/main
 ```
@@ -1571,7 +1571,7 @@ Start only after Phase 1 is merged.
 **Files:** none
 
 ```bash
-cd /Users/seanoliver/code/projects/bay-ballot-peninsula
+cd bay-ballot  # the feat/peninsula worktree
 git fetch origin
 git switch -c feat/peninsula-san-mateo origin/main
 npm ci && npm test && npm run validate
@@ -2151,7 +2151,7 @@ git commit -m "data: San Mateo County area and Nov 2026 contests from the regist
 
 **Step 1: Read the discovery output**
 
-Read `/private/tmp/claude-501/-Users-seanoliver-cortex/26fbbe18-ea6d-4ef9-980a-8aab1aed24d6/scratchpad/peninsula-discovery.md`. If it is missing or still in progress, stop and tell the coordinator.
+Read `docs/investigations/2026-10-06-peninsula-guide-discovery.md`. If it is missing, stop and ask.
 
 Build a working list of guides that have published Nov 2026 picks in at least one San Mateo County contest, or statewide picks and an explicit San Mateo audience. Record each guide's id, type, homepage, source URL(s), whether the pages need a browser, whether it explains its picks, and its areas. Skip guides marked unverified or not yet published, and list them in the PR body as follow-ups.
 
