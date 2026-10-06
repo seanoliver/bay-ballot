@@ -3,13 +3,14 @@ import Link from "next/link";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { FRAME } from "@/components/frame";
+import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Bay Ballot",
-  description: "What San Francisco voter guides recommend, side by side.",
+  title: "Bay Ballot — every SF voter guide in one place",
+  description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -21,8 +22,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <header className="bg-background">
           <div className="border-b border-border bg-muted/40">
             <div className={`${FRAME} flex min-h-16 items-center justify-between gap-4`}>
+              {/* The mark is decorative; the wordmark is the link's name. Sized well above the 20px it was drawn at
+                  so its open grid holds its own next to the extra-bold wordmark. */}
               <Link href="/" className="inline-flex min-h-10 items-center gap-2 text-2xl font-extrabold tracking-tight">
-                {/* Logo mark goes here (TBD). */}
+                <Logo size={36} className="-my-2 -ml-1 shrink-0" />
                 Bay Ballot
               </Link>
               <nav aria-label="Site">
