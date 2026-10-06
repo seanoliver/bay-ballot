@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
   // A default; every page sets its own canonical path.
   alternates: { canonical: "/" },
+  // Fallback for Search Console if DNS verification isn't used; nothing is emitted when unset.
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
