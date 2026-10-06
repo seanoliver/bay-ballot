@@ -181,3 +181,10 @@ test("a published list-only guide still shows its badge and date", async ({ page
   await expect(page.getByText("List only")).toBeVisible();
   await expect(page.getByText(/· as of /)).toBeVisible();
 });
+
+test("every page names its canonical URL on bayballot.com", async ({ page }) => {
+  for (const path of [BALLOT, `${BALLOT}/prop-b`, "/guides/spur", "/about"]) {
+    await page.goto(path);
+    await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", `https://bayballot.com${path}`);
+  }
+});

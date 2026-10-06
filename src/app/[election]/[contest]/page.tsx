@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: PageProps<"/[election]/[conte
   const share = contestShare(d.electionId, d.contest.id);
   return {
     title: `${d.contest.title} · Bay Ballot`,
+    alternates: { canonical: `/${d.electionId}/${d.contest.id}` },
     ...(share ? { description: shareDescription(share.card) } : {}),
   };
 }

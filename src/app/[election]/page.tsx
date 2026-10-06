@@ -11,8 +11,9 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps<"/[election]">): Promise<Metadata> {
-  const d = election((await params).election);
-  return d ? { title: `${d.ballot.title} · Bay Ballot` } : {};
+  const id = (await params).election;
+  const d = election(id);
+  return d ? { title: `${d.ballot.title} · Bay Ballot`, alternates: { canonical: `/${id}` } } : {};
 }
 
 export default async function ElectionPage({ params }: PageProps<"/[election]">) {

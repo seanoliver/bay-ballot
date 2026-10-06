@@ -1,3 +1,4 @@
+import { latestFetchDay } from "./seo";
 import type { Ballot, Contest, EndorsementFile, Entry, Guide, Quote } from "./schema";
 import type { Row } from "./filters";
 import { countedNames, tally } from "./score";
@@ -173,10 +174,6 @@ export function rankedText(d: Pick<RankedDetail, "order" | "unranked">): string 
 }
 
 export function dataAsOf(ends: Record<string, Pick<EndorsementFile, "fetchedAt" | "status">>): string | null {
-  const days = Object.values(ends)
-    .filter((e) => e.status === "published")
-    .map((e) => e.fetchedAt.slice(0, 10))
-    .sort();
-  const last = days.at(-1);
+  const last = latestFetchDay(ends);
   return last ? formatDate(last) : null;
 }

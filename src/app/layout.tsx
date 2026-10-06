@@ -4,16 +4,20 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SITE } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bayballot.com"),
+  metadataBase: new URL(SITE),
   title: "Bay Ballot — every SF voter guide in one place",
   description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
   twitter: { card: "summary_large_image" },
+  alternates: { canonical: "/" },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -42,6 +46,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main>{children}</main>
         <SiteFooter />
+        {/* Not unconditional: off Vercel the script 404s and fails the e2e console-error checks. */}
+        {process.env.VERCEL ? <SiteAnalytics /> : null}
       </body>
     </html>
   );

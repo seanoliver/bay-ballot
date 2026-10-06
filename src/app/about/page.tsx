@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ExternalLink } from "@/components/ExternalLink";
 import { FRAME, READING } from "@/components/frame";
 
-export const metadata: Metadata = { title: "About · Bay Ballot" };
+export const metadata: Metadata = { title: "About · Bay Ballot", alternates: { canonical: "/about" } };
 
 const REPO = "https://github.com/seanoliver/bay-ballot";
 const LINK = "underline underline-offset-2";
@@ -54,6 +54,13 @@ export default function AboutPage() {
           <List>
             <li>Bay Ballot makes no endorsements of its own.</li>
             <li>It is not affiliated with any guide or campaign.</li>
+          </List>
+        </Section>
+
+        <Section title="Privacy">
+          <List>
+            <li>Bay Ballot counts page views with Vercel Web Analytics, which uses no cookies.</li>
+            <li>It never records addresses or ZIP codes.</li>
           </List>
         </Section>
 
