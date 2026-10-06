@@ -1,5 +1,6 @@
 id: sf-gop
 name: San Francisco Republican Party
+shortName: "SF Republican Party"
 description: The San Francisco Republican County Central Committee, the local Republican Party body.
 type: party
 homepage: https://sfgop.org/

@@ -1,5 +1,6 @@
 id: lwv-ca
 name: League of Women Voters of California
+shortName: "LWV California"
 description: The California state League of Women Voters, a nonpartisan organization that takes positions on statewide ballot measures and does not endorse candidates.
 type: civic
 homepage: https://lwvc.org/
