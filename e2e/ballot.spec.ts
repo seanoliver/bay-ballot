@@ -10,8 +10,11 @@ test("ballot page has the header, logo, intro and footer", async ({ page }) => {
   await expect(page.getByRole("banner").getByRole("link", { name: "About" })).toBeVisible();
   await expect(page.getByText(/November 3, 2026 · \d+ guides · \d+ contests · \d+ endorsements/)).toBeVisible();
   const footer = page.getByRole("contentinfo");
-  await expect(footer.getByText("Made with ❤️ in San Francisco by")).toBeVisible();
+  await expect(footer.getByText("Built and maintained in San Francisco by Sean Oliver")).toBeVisible();
   await expect(footer.getByRole("link", { name: "Sean Oliver" })).toHaveAttribute("href", "https://seanoliver.dev");
+  await expect(footer.getByRole("link", { name: "Fully open source on GitHub" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot");
+  await expect(footer.getByRole("link", { name: "Open an issue" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Edit on GitHub" })).toHaveCount(0);
   await expect(footer.getByText(/Data as of /)).toBeVisible();
   expect(errors).toEqual([]);
 });
