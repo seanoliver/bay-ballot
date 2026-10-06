@@ -68,12 +68,43 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
-    trailing(STEP_URL_MS, (id: string) => {
+    trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
+      if (window.location.pathname !== path || !window.matchMedia(DESKTOP).matches) return;
       setRequested(id);
       setStepped(null);
     }),
   );
-  useEffect(() => stepWrite.cancel, [stepWrite]);
+  useEffect(() => {
+    const flush = () => stepWrite.flush();
+    const flushIfDue = () => stepWrite.flushIfDue();
+    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null;
+    // Capture phase, so the write lands before a Link starts a client-side navigation.
+    const onClick = (e: globalThis.MouseEvent) => {
+      if (leaving(e.target)) flush();
+    };
+    const onEnter = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Enter" && leaving(document.activeElement)) flush();
+    };
+    window.addEventListener("keyup", flushIfDue);
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("click", onClick, true);
+    window.addEventListener("keydown", onEnter, true);
+    return () => {
+      window.removeEventListener("keyup", flushIfDue);
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("click", onClick, true);
+      window.removeEventListener("keydown", onEnter, true);
+      stepWrite.cancel();
+    };
+  }, [stepWrite]);
+  const [wasDesktop, setWasDesktop] = useState(desktop);
+  if (wasDesktop !== desktop) {
+    setWasDesktop(desktop);
+    if (!desktop) setStepped(null);
+  }
+  useEffect(() => {
+    if (!desktop) stepWrite.cancel();
+  }, [desktop, stepWrite]);
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
@@ -110,10 +141,17 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     if (!isPlainClick(e)) return;
     e.preventDefault();
     if (window.matchMedia(DESKTOP).matches) {
+      // detail 0: Enter on the link, not a mouse click.
+      if (e.detail === 0 && selectedId === c.id) {
+        document.getElementById("detail-title")?.focus();
+        return;
+      }
       const next = toggleSelection(selectedId, c.id);
       select(next);
       setAnnounce(next ? `Showing ${c.title}` : "Details closed");
     } else {
+      stepWrite.cancel();
+      setStepped(null);
       setRequested(c.id);
       setSheetOpen(true);
     }
@@ -156,7 +194,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     clearTimeout(exitTimer.current);
     setExiting(null);
     setStepped(id);
-    stepWrite.push(id);
+    stepWrite.push({ id, path: window.location.pathname });
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
     row?.scrollIntoView({ block: "nearest" });
@@ -197,11 +235,9 @@ export function BallotView({ election, area, links, intro, groups, guides, files
           <p className="text-sm text-muted-foreground">{intro.line}</p>
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
-            {singleKeys ? null : (
-              <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
-                Keyboard shortcuts
-              </button>
-            )}
+            <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
+              Keyboard shortcuts
+            </button>
           </div>
           <AreaPicker links={links} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />

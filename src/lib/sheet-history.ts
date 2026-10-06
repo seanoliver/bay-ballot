@@ -1,5 +1,5 @@
 export type SheetState = { open: boolean; pushed: boolean; openedWith?: string; latest?: string; restore?: string | null };
-export type SheetEvent = { type: "open"; search: string } | { type: "change"; search: string } | { type: "dismiss" } | { type: "popstate" };
+export type SheetEvent = { type: "open"; search: string; latest?: string; push?: boolean } | { type: "change"; search: string } | { type: "dismiss" } | { type: "popstate" };
 export type SheetEffect = { type: "push" } | { type: "back" } | { type: "replace"; search: string } | null;
 export const CLOSED: SheetState = { open: false, pushed: false };
 
@@ -9,7 +9,13 @@ export function sheetStep(state: SheetState, event: SheetEvent): { state: SheetS
   switch (event.type) {
     case "open":
       if (state.open) return { state, effect: null };
-      return { state: { open: true, pushed: true, openedWith: event.search, latest: event.search, restore: null }, effect: { type: "push" } };
+      {
+        const pushed = event.push ?? true;
+        return {
+          state: { open: true, pushed, openedWith: event.search, latest: event.latest ?? event.search, restore: null },
+          effect: pushed ? { type: "push" } : null,
+        };
+      }
     case "change":
       return state.open ? { state: { ...state, latest: event.search }, effect: null } : { state, effect: null };
     case "dismiss":

@@ -17,6 +17,7 @@ export default defineConfig({
     { name: "phone", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
     ...(HAS_WEBKIT ? [{ name: "desktop-webkit", grep: /desktop keyboard/, use: { ...devices["Desktop Safari"], viewport: { width: 1440, height: 900 } } }] : []),
+    ...(HAS_WEBKIT ? [{ name: "phone-webkit", grep: /phone history budget/, use: { ...devices["iPhone 13"] } }] : []),
   ],
   webServer: {
     command: `npm run build && npx next start -p ${PORT}`,
