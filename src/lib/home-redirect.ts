@@ -43,14 +43,20 @@ const writeTo = (store: KeyValueStore | null | undefined, key: string, value: st
 
 export function createHomeVisit() {
   let seenHere: string | null = null;
-  return ({ local, session }: HomeStores, { area, query }: { area: string | null; query: string }): string | null => {
-    const read = (key: string) => readFrom(local, key);
-    const seen = read(SEEN_KEY) ?? readFrom(session, SEEN_KEY) ?? seenHere;
-    const target =
-      area === null ? homeRedirect({ query, storedFilters: read(FILTERS_KEY), storedDistricts: read(DISTRICTS_KEY), seen }) : null;
-    if (query.replace(/^\?/, "") !== "") return target;
+  const mark = ({ local, session }: HomeStores, area: string | null) => {
     seenHere = area ?? "bay-area";
     if (!writeTo(local, SEEN_KEY, seenHere)) writeTo(session, SEEN_KEY, seenHere);
+  };
+  const visit = (stores: HomeStores, { area, query }: { area: string | null; query: string }): string | null => {
+    if (area !== null) {
+      mark(stores, area);
+      return null;
+    }
+    const read = (key: string) => readFrom(stores.local, key);
+    const seen = read(SEEN_KEY) ?? readFrom(stores.session, SEEN_KEY) ?? seenHere;
+    const target = homeRedirect({ query, storedFilters: read(FILTERS_KEY), storedDistricts: read(DISTRICTS_KEY), seen });
+    if (query.replace(/^\?/, "") === "") mark(stores, null);
     return target;
   };
+  return { visit, mark };
 }

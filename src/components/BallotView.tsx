@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, parseCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
-import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
@@ -21,7 +21,7 @@ import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
-import { useHomeRedirect } from "./useHomeRedirect";
+import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
@@ -52,12 +52,16 @@ type Props = {
 };
 
 export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
-  const { filters, setFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
   const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
   const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
   const listed = useMemo(() => visibleGroups(groups, offCounties), [groups, offCounties]);
-  const counties = showCountyFilter(options) ? { options, off: offCounties, onChange: (off: string[]) => setOffParam(toCountiesParam(off)) } : undefined;
+  const setOffCounties = (off: string[]) => {
+    markHomeVisit(area);
+    setOffParam(toCountiesParam(off));
+  };
+  const counties = showCountyFilter(options) ? { options, off: offCounties, onChange: setOffCounties } : undefined;
   useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
@@ -91,6 +95,10 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     [all, guides, files],
   );
   const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const setFilters = (f: Filters) => {
+    markHomeVisit(area);
+    applyFilters(f);
+  };
   const filterProps = { filters, onChange: setFilters, guides, files, counties };
 
   useEffect(() => {
