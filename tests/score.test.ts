@@ -68,3 +68,11 @@ describe("tally", () => {
     expect(tally(race, [])).toMatchObject({ kind: "candidate", total: 0, leader: null, pct: 0, split: false });
   });
 });
+
+describe("tally with partial ranking", () => {
+  it("still counts only the #1 name of a partially ranked pick", () => {
+    const partial: Entry = { pick: ["A", "B", "C"], ranked: true, rankedCount: 1, quotes: [] };
+    const t = cand(tally(race, [partial]));
+    expect(t.counts.map((c) => [c.name, c.count])).toEqual([["A", 1]]);
+  });
+});

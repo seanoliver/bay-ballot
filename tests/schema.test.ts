@@ -222,3 +222,15 @@ describe("Guide shortName", () => {
     expect(Guide.safeParse({ ...base, shortName: "  " }).success).toBe(false);
   });
 });
+
+describe("partial ranking", () => {
+  it("accepts a positive integer rankedCount", () => {
+    const r = EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y", "Z"], ranked: true, rankedCount: 1 } } });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.picks.a.rankedCount).toBe(1);
+  });
+  it("rejects zero or fractional rankedCount", () => {
+    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y"], ranked: true, rankedCount: 0 } } }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...file, picks: { a: { pick: ["X", "Y"], ranked: true, rankedCount: 1.5 } } }).success).toBe(false);
+  });
+});

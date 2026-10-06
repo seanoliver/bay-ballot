@@ -61,6 +61,8 @@ export type Quote = z.infer<typeof Quote>;
 export const Entry = z.object({
   pick: z.union([z.enum(["Y", "N"]), z.array(NonEmpty).min(1)]),
   ranked: z.boolean().default(false),
+  // Only the first N names are ranked; the rest are unranked co-endorsements ("#1 X, plus Y and Z").
+  rankedCount: z.number().int().positive().optional(),
   quotes: z.array(Quote).max(3).default([]),
 });
 export type Entry = z.infer<typeof Entry>;

@@ -18,6 +18,11 @@ export const ExtractOutput = z.object({
         .array(z.string())
         .describe("endorsed candidate names, in rank order if ranked; empty for measures"),
       ranked: z.boolean(),
+      rankedCount: z
+        .number()
+        .int()
+        .nullable()
+        .describe("when only the first N listed names are ranked and the rest are unranked co-endorsements, N; otherwise null"),
       quotes: z
         .array(z.string())
         .describe(
@@ -74,6 +79,7 @@ export function systemPrompt(ballot: Ballot): string {
     "- For a retention contest covering several judges where the organization's position is mixed (retain some, not others), do not give a Y or N: set vote to null and explain the position in note.",
     '- Ranked endorsements ("#1 X, #2 Y"): set ranked true and list candidates in rank order. Only contests with rankedChoice true can be ranked; elsewhere ranked is always false.',
     "- Dual endorsements without ranking: list both names with ranked false.",
+    '- If only some names are ranked, list ranked names first and set rankedCount to how many are ranked ("#1 X, plus Y and Z unranked": X, Y, Z with ranked true and rankedCount 1). Otherwise rankedCount is null.',
     "- Multi-seat races (seats greater than 1) list up to `seats` names and are never ranked.",
     "- Use note only when the position is unclear or partial; otherwise set it to null.",
     '- Image alt text in square brackets next to an item, such as "[YES]" or "[NO]", is a valid signal of the pick.',
@@ -178,7 +184,10 @@ export function toEntries(
       ranked = false;
     }
 
-    picks[c.id] = { pick, ranked, quotes: kept };
+    // rankedCount only matters when it leaves some names unranked.
+    const n = p.rankedCount;
+    const partial = ranked && Array.isArray(pick) && n !== null && n >= 1 && n < pick.length;
+    picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
   return { picks, notes };
 }

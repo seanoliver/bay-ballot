@@ -24,6 +24,11 @@ describe("buildReviewModel", () => {
     expect(m.guides[0].picks.map((p) => [p.contestTitle, p.label])).toEqual([["Prop B", "No"], ["Supervisor 8", "A"]]);
   });
 
+  it("numbers only the ranked names of a partially ranked pick", () => {
+    const m = buildReviewModel(ballot, [guide("g")], { g: file("g", { picks: { "sup-8": { pick: ["A", "B"], ranked: true, rankedCount: 1, quotes: [] } } }) }, {});
+    expect(m.guides[0].picks[0].label).toBe("1. A, B (unranked)");
+  });
+
   it("flags a guide that is new since the last commit", () => {
     const m = buildReviewModel(ballot, [guide("g")], { g: file("g", { picks: { "prop-b": { pick: "Y", ranked: false, quotes: [] } } }) }, {});
     expect(m.guides[0].flags).toContain("new");

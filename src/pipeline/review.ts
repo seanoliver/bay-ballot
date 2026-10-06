@@ -34,7 +34,12 @@ export type ReviewModel = {
 function pickLabel(entry: Entry): string {
   if (entry.pick === "Y") return "Yes";
   if (entry.pick === "N") return "No";
-  if (entry.ranked) return entry.pick.map((name, i) => `${i + 1}. ${name}`).join(", ");
+  if (entry.ranked) {
+    const n = entry.rankedCount ?? entry.pick.length;
+    const ranked = entry.pick.slice(0, n).map((name, i) => `${i + 1}. ${name}`);
+    const rest = entry.pick.slice(n);
+    return [...ranked, ...(rest.length ? [`${rest.join(", ")} (unranked)`] : [])].join(", ");
+  }
   return entry.pick.join(", ");
 }
 

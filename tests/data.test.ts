@@ -88,6 +88,16 @@ describe("data", () => {
     expect(r.errors).toEqual([]);
     expect(r.warnings).toEqual(["g: published file has no picks"]);
   });
+  it("checks rankedCount against the names and the ranked flag", () => {
+    const d = base();
+    d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two", "C Three"], seats: 1, rankedChoice: true, jurisdiction: juris });
+    const ok = validateElection(withFile(d, { sup: { ...e(["A One", "B Two", "C Three"]), ranked: true, rankedCount: 1 } }));
+    expect(ok.errors).toEqual([]);
+    const tooMany = validateElection(withFile(structuredClone(d), { sup: { ...e(["A One", "B Two"]), ranked: true, rankedCount: 3 } }));
+    expect(tooMany.errors).toEqual(["g/sup: rankedCount 3 exceeds 2 name(s)"]);
+    const unranked = validateElection(withFile(structuredClone(d), { sup: { ...e(["A One", "B Two"]), rankedCount: 1 } }));
+    expect(unranked.errors).toEqual(["g/sup: rankedCount set on an unranked pick"]);
+  });
   it("does not warn on ranked picks beyond seats", () => {
     const d = base();
     d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: true, jurisdiction: juris });

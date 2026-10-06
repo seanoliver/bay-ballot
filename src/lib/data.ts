@@ -117,6 +117,12 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       if (entry.ranked && !c.rankedChoice) {
         errors.push(`${where}: ranked pick on a contest without ranked-choice voting`);
       }
+      if (entry.rankedCount !== undefined) {
+        if (!entry.ranked) errors.push(`${where}: rankedCount set on an unranked pick`);
+        else if (entry.rankedCount > entry.pick.length) {
+          errors.push(`${where}: rankedCount ${entry.rankedCount} exceeds ${entry.pick.length} name(s)`);
+        }
+      }
       for (const name of entry.pick) {
         const m = matchName(name, c.candidates);
         if (!m) errors.push(`${where}: '${name}' is not a candidate`);

@@ -1,6 +1,7 @@
 import type { Entry } from "@/lib/schema";
 
-const show = (e: Entry) => (Array.isArray(e.pick) ? e.pick.join(" / ") + (e.ranked ? " (ranked)" : "") : e.pick);
+const rankNote = (e: Entry) => (e.ranked ? ` (ranked${e.rankedCount ? ` ${e.rankedCount}` : ""})` : "");
+const show = (e: Entry) => (Array.isArray(e.pick) ? e.pick.join(" / ") + rankNote(e) : e.pick);
 
 /** Human-readable changes between two pick sets: "+" added, "~" changed, "q" quote count, "-" removed. */
 export function diffPicks(before: Record<string, Entry>, after: Record<string, Entry>): string[] {

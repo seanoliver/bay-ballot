@@ -50,6 +50,10 @@ describe("systemPrompt", () => {
     );
   });
 
+  it("explains partial ranking", () => {
+    expect(prompt).toContain("If only some names are ranked, list ranked names first and set rankedCount");
+  });
+
   it("marks ranked-choice contests in the contest JSON", () => {
     expect(prompt).toContain('"id":"supervisor-8","title":"Board of Supervisors, District 8","kind":"candidate"');
     expect(prompt).toMatch(/"id":"supervisor-8"[^}]*"rankedChoice":true/);
@@ -87,6 +91,7 @@ const pick = (p: Partial<ModelPick> & Pick<ModelPick, "contestId">): ModelPick =
   vote: null,
   candidates: [],
   ranked: false,
+  rankedCount: null,
   quotes: [],
   note: null,
   ...p,
@@ -145,6 +150,19 @@ describe("toEntries", () => {
     expect(toEntries(out, contests, pg, { ownNames: ["SPUR"] }).picks["prop-b"].quotes).toEqual([
       { text: q, source: "https://a.org/g" },
     ]);
+  });
+
+  it("keeps a partial ranking reported by the model", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1 }));
+    expect(r.picks["supervisor-d8"]).toEqual({
+      pick: ["Gary McCoy", "Michael T. Nguyen", "Rafael Mandelman"], ranked: true, rankedCount: 1, quotes: [],
+    });
+  });
+  it("drops a rankedCount that covers every name or is out of range", () => {
+    const all = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 2 }));
+    expect(all.picks["supervisor-d8"]).toEqual({ pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, quotes: [] });
+    const zero = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 0 }));
+    expect(zero.picks["supervisor-d8"].rankedCount).toBeUndefined();
   });
 
   it("never ranks a single-name pick", () => {

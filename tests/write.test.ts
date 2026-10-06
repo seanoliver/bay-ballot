@@ -65,6 +65,13 @@ describe("toYaml", () => {
     expect(EndorsementFile.parse(parse(toYaml(file)))).toEqual(file);
   });
 
+  it("round-trips rankedCount", () => {
+    const f = { ...file, picks: { "supervisor-d8": { pick: ["Gary McCoy", "Michael Nguyen"], ranked: true, rankedCount: 1, quotes: [] } } };
+    const y = toYaml(f);
+    expect(y).toContain("rankedCount: 1");
+    expect(EndorsementFile.parse(parse(y))).toEqual(f);
+  });
+
   it("writes keys in a stable order", () => {
     const shuffled = Object.fromEntries(Object.entries(file).reverse()) as EndorsementFile;
     const keys = toYaml(shuffled).split("\n").filter((l) => /^[a-zA-Z]/.test(l)).map((l) => l.split(":")[0]);

@@ -54,7 +54,12 @@ const KEY_ORDER = [
 
 /** An entry without its schema defaults (ranked: false, quotes: []), so files stay short. */
 function compactEntry(e: Entry): Record<string, unknown> {
-  return { pick: e.pick, ...(e.ranked ? { ranked: true } : {}), ...(e.quotes.length ? { quotes: e.quotes } : {}) };
+  return {
+    pick: e.pick,
+    ...(e.ranked ? { ranked: true } : {}),
+    ...(e.rankedCount !== undefined ? { rankedCount: e.rankedCount } : {}),
+    ...(e.quotes.length ? { quotes: e.quotes } : {}),
+  };
 }
 
 function ordered(file: EndorsementFile): Record<string, unknown> {
