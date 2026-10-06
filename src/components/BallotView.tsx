@@ -4,12 +4,14 @@ import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { cardDescription, sections } from "@/lib/display";
+import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
-import type { Ballot, Contest } from "@/lib/schema";
+import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
@@ -27,14 +29,16 @@ const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).
 
 type Props = {
   election: string;
+  area: string | null;
+  links: AreaLink[];
   intro: { title: string; line: string };
-  ballot: Ballot;
+  groups: PlaceGroup[];
   guides: GuideInfo[];
   files: Record<string, PickFile>;
   pending: string | null;
 };
 
-export function BallotView({ election, intro, ballot, guides, files, pending }: Props) {
+export function BallotView({ election, links, intro, groups, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   const [sheetOpen, setSheetOpen] = useHistorySheet();
@@ -47,8 +51,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const visible = sections(ballot.contests);
-  const all = visible.flatMap((s) => s.contests);
+  const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
   const selectedId = pickSelected(all.map((c) => c.id), requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
@@ -134,6 +137,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
+          <AreaPicker links={links} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -151,23 +155,28 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
             </a>
           ) : null}
         </div>
-        {visible.map((s) => (
-          <section key={s.name} aria-label={s.name}>
-            <SectionHeading>{s.name}</SectionHeading>
-            <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-              {s.contests.map((c) => (
-                <li key={c.id}>
-                  <ContestRow
-                    href={`/${election}/${c.id}`}
-                    contest={c}
-                    rows={rowsFor(c.id)}
-                    slots={slotsFor(c)}
-                    selected={c.id === selectedId}
-                    onClick={(e) => onRowClick(e, c)}
-                  />
-                </li>
-              ))}
-            </ul>
+        {groups.map((g) => (
+          <section key={g.key} aria-label={g.heading}>
+            <SectionHeading>{g.heading}</SectionHeading>
+            {g.sections.map((s) => (
+              <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
+                <SectionHeading as="h3">{s.name}</SectionHeading>
+                <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                  {s.contests.map((c) => (
+                    <li key={c.id}>
+                      <ContestRow
+                        href={`/${election}/${c.id}`}
+                        contest={c}
+                        rows={rowsFor(c.id)}
+                        slots={slotsFor(c)}
+                        selected={c.id === selectedId}
+                        onClick={(e) => onRowClick(e, c)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </section>
         ))}
       </div>
@@ -254,11 +263,11 @@ function ContestRow({
   return (
     <>
       <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
-        <h3 className="min-w-0 flex-1 text-base font-medium">
+        <h4 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={onClick} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
-        </h3>
+        </h4>
         <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
       </div>
       <div
@@ -268,11 +277,11 @@ function ContestRow({
           selected && "bg-muted shadow-[inset_3px_0_0_var(--foreground)]",
         )}
       >
-        <h3 className="text-base font-semibold">
+        <h4 className="text-base font-semibold">
           <a id={`row-d-${contest.id}`} href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
             {contest.title}
           </a>
-        </h3>
+        </h4>
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         <VerdictBar contest={contest} rows={rows} slots={slots} />
       </div>
