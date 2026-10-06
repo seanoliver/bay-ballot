@@ -21,5 +21,5 @@ export default async function ElectionPage({ params }: PageProps<"/[election]">)
   const d = election(id);
   if (!d) notFound();
   const props = ballotViewProps(d);
-  return <BallotView election={id} intro={electionIntro(d.ballot, props.files)} {...props} />;
+  return <BallotView election={id} intro={electionIntro(d.ballot, props.files, { place: "San Francisco" })} {...props} />;
 }
