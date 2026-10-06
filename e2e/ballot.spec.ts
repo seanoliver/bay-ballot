@@ -246,6 +246,81 @@ test.describe("desktop keyboard", () => {
     await expect(box).toBeFocused();
   });
 
+  test("after clicking pane text, arrows scroll the pane", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    const pane = page.locator("[data-keys=pane]");
+    await pane.locator("p").filter({ visible: true }).first().click();
+    await expect.poll(() => page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  });
+
+  test("after clicking filter text, arrows do nothing", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.getByRole("complementary", { name: "Filters" }).getByText("Filters", { exact: true }).click();
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+  });
+
+  test("Escape closes the details when nothing has focus", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await expect(page.getByRole("region", { name: "United States Representative, District 11" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page).not.toHaveURL(/[?&]c=/);
+    await expect(page.getByRole("region", { name: "United States Representative, District 11" })).toBeHidden();
+  });
+
+  test("right after Escape closes the shortcuts, j works", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("Shift+?");
+    await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("an open popover blocks shortcuts", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.getByRole("button", { name: "Includes ranked endorsements — show order" }).filter({ visible: true }).first().click();
+    await expect(page.locator("[data-slot=popover-content]")).toBeVisible();
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+  });
+
+  test("k on the first contest leaves the key to the browser", async ({ page }) => {
+    await openBallot(page);
+    const first = (await page.locator("[id^=row-d-]").first().getAttribute("id"))!.replace("row-d-", "");
+    await openBallot(page, `?c=${first}`);
+    const prevented = await page.evaluate(() => !window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", cancelable: true })));
+    expect(prevented).toBe(false);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
+  });
+
+  test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("Shift+?");
+    const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
+    const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, /, and ?)" });
+    await expect(toggle).toBeChecked();
+    await toggle.click();
+    await expect(toggle).not.toBeChecked();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await page.keyboard.press("j");
+    await page.keyboard.press("Shift+?");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await expect(dialog).toBeHidden();
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await page.reload();
+    const button = page.getByRole("button", { name: "Keyboard shortcuts" });
+    await button.click();
+    await expect(dialog).toBeVisible();
+    await expect(toggle).not.toBeChecked();
+  });
+
   test("in the detail pane arrows don't switch contests but j does", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
     await page.locator("[data-keys=pane]").locator("a, button").first().focus();
@@ -253,5 +328,25 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
     await page.keyboard.press("j");
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+});
+
+test.describe("phone keyboard", () => {
+  test.skip(({ isMobile }) => !isMobile, "phone only");
+
+  test("arrows and j are left to the browser", async ({ page }) => {
+    await openBallot(page);
+    const prevented = await page.evaluate(() =>
+      ["ArrowDown", "j"].map((key) => !window.dispatchEvent(new KeyboardEvent("keydown", { key, cancelable: true }))),
+    );
+    expect(prevented).toEqual([false, false]);
+    await expect(page).not.toHaveURL(/[?&]c=/);
+  });
+
+  test("no shortcut hint, contest region or key hints", async ({ page }) => {
+    await openBallot(page);
+    await expect(page.getByText("↑↓ to browse")).toBeHidden();
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveCount(0);
+    await expect(page.locator("[aria-keyshortcuts]").filter({ visible: true })).toHaveCount(0);
   });
 });

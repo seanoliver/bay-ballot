@@ -1,6 +1,8 @@
 "use client";
 
+import { useId } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
 
 const SHORTCUTS: [string[], string][] = [
   [["↓", "j"], "Next contest"],
@@ -10,7 +12,18 @@ const SHORTCUTS: [string[], string][] = [
   [["?"], "Show these shortcuts"],
 ];
 
-export function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function ShortcutsDialog({
+  open,
+  onOpenChange,
+  singleKeys,
+  onSingleKeysChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  singleKeys: boolean;
+  onSingleKeysChange: (on: boolean) => void;
+}) {
+  const label = useId();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
@@ -31,6 +44,10 @@ export function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenC
             </div>
           ))}
         </dl>
+        <div className="flex items-center justify-between gap-4 border-t border-border pt-3 text-sm">
+          <span id={label}>Single-key shortcuts (j, k, /, and ?)</span>
+          <Switch aria-labelledby={label} checked={singleKeys} onCheckedChange={onSingleKeysChange} />
+        </div>
       </DialogContent>
     </Dialog>
   );

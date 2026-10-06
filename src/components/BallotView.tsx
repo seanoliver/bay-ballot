@@ -18,6 +18,7 @@ import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
+import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
@@ -88,27 +89,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   };
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  useBallotKeys((action: KeyAction) => {
-    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
-    if (!window.matchMedia(DESKTOP).matches) return false;
-    if (action === "help") {
-      setShortcutsOpen(true);
-      return;
-    }
-    if (action === "search") {
-      document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
-      return;
-    }
-    const id = stepSelection(all.map((c) => c.id), selectedId, action);
-    if (id === null) return false;
-    const c = all.find((x) => x.id === id);
-    select(id);
-    setAnnounce(`Showing ${c?.title ?? id}`);
-    const row = document.getElementById(`row-d-${id}`);
-    row?.focus({ preventScroll: true });
-    row?.scrollIntoView({ block: "nearest" });
-  });
-
+  const [singleKeys, setSingleKeys] = useSingleKeys();
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
@@ -137,6 +118,30 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     closePane();
   };
 
+  useBallotKeys((action: KeyAction) => {
+    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
+    if (!window.matchMedia(DESKTOP).matches) return false;
+    if (action === "help") {
+      setShortcutsOpen(true);
+      return;
+    }
+    if (action === "close") {
+      if (selectedId === null) return false;
+      closePane();
+      return;
+    }
+    if (action === "search") {
+      document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
+      return;
+    }
+    const id = stepSelection(all.map((c) => c.id), selectedId, action);
+    if (id === null) return false;
+    select(id);
+    const row = document.getElementById(`row-d-${id}`);
+    row?.focus({ preventScroll: true });
+    row?.scrollIntoView({ block: "nearest" });
+  }, { singleKeys });
+
   return (
     <div
       className={cn(
@@ -161,18 +166,22 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
 
       <div
         className="min-w-0 pb-10"
-        role="region"
-        aria-label="Contests"
-        aria-keyshortcuts={desktop ? "ArrowDown ArrowUp j k / Shift+?" : undefined}
+        role={desktop ? "region" : undefined}
+        aria-label={desktop ? "Contests" : undefined}
         data-keys="list"
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
-          <p className="js-only hidden text-sm text-muted-foreground lg:block" aria-hidden="true">
-            ↑↓ to browse · ? for shortcuts
-          </p>
+          <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
+            <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
+            {singleKeys ? null : (
+              <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
+                Keyboard shortcuts
+              </button>
+            )}
+          </div>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -202,6 +211,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
                     rows={rowsFor(c.id)}
                     slots={slotsFor(c)}
                     selected={c.id === selectedId}
+                    keyshortcuts={singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp"}
                     onClick={(e) => onRowClick(e, c)}
                   />
                 </li>
@@ -243,7 +253,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         </div>
       ) : null}
 
-      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} singleKeys={singleKeys} onSingleKeysChange={setSingleKeys} />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
@@ -283,6 +293,7 @@ function ContestRow({
   rows,
   slots,
   selected,
+  keyshortcuts,
   onClick,
 }: {
   href: string;
@@ -290,6 +301,7 @@ function ContestRow({
   rows: Row[];
   slots: Slots;
   selected: boolean;
+  keyshortcuts: string;
   onClick: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const description = cardDescription(contest);
@@ -311,7 +323,14 @@ function ContestRow({
         )}
       >
         <h3 className="text-base font-semibold">
-          <a id={`row-d-${contest.id}`} href={href} onClick={onClick} aria-current={selected ? "true" : undefined} className={ROW_LINK}>
+          <a
+            id={`row-d-${contest.id}`}
+            href={href}
+            onClick={onClick}
+            aria-current={selected ? "true" : undefined}
+            aria-keyshortcuts={keyshortcuts}
+            className={ROW_LINK}
+          >
             {contest.title}
           </a>
         </h3>
