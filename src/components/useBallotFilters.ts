@@ -4,7 +4,7 @@ import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
 
 const STORAGE_KEY = "bb-filters";
-const CHANGE_EVENT = "bb-filters-change";
+export const CHANGE_EVENT = "bb-filters-change";
 
 function readStored(): string | null {
   try {

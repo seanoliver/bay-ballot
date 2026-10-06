@@ -106,6 +106,35 @@ test.describe("desktop detail pane", () => {
 test.describe("phone sheet", () => {
   test.skip(({ isMobile }) => !isMobile, "phone only");
 
+  test("filters changed in the sheet stay in the URL after it closes", async ({ page }) => {
+    await page.goto(`${BALLOT}?off=sf-gop`);
+    const filters = page.getByRole("button", { name: /Filters/ });
+    const sheet = page.getByRole("dialog", { name: "Filters" });
+    const why = sheet.getByRole("checkbox", { name: "Only guides that explain their picks" });
+
+    await filters.click();
+    await why.click();
+    await expect(page).toHaveURL(/[?&]why=1/);
+    await sheet.getByRole("button", { name: "Close" }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page).toHaveURL(/[?&]why=1/);
+    await expect(page).toHaveURL(/[?&]off=sf-gop/);
+
+    await filters.click();
+    await expect(why).toBeChecked();
+    // Back closes the sheet and still keeps the filters.
+    await why.click();
+    await expect(page).not.toHaveURL(/[?&]why=1/);
+    await page.goBack();
+    await expect(sheet).toBeHidden();
+    await expect(page).not.toHaveURL(/[?&]why=1/);
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}`));
+
+    await page.reload();
+    await filters.click();
+    await expect(why).not.toBeChecked();
+  });
+
   test("tapping a contest opens its sheet and Back closes it", async ({ page }) => {
     await openBallot(page);
     await contestRow(page, "Proposition B").tap();
