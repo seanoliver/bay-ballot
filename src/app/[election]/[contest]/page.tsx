@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { ContestDetail } from "@/components/ContestDetail";
 import { FRAME, READING } from "@/components/frame";
 import { Card } from "@/components/ui/card";
+import { contestShare } from "@/components/share/data";
 import { candidateSlots } from "@/lib/bar";
+import { shareDescription } from "@/lib/share";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import { ballotViewProps, election, elections } from "@/lib/site-data";
 
@@ -25,7 +27,12 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
 
 export async function generateMetadata({ params }: PageProps<"/[election]/[contest]">): Promise<Metadata> {
   const d = await load(params);
-  return d ? { title: `${d.contest.title} · Bay Ballot` } : {};
+  if (!d) return {};
+  const share = contestShare(d.electionId, d.contest.id);
+  return {
+    title: `${d.contest.title} · Bay Ballot`,
+    ...(share ? { description: shareDescription(share.card) } : {}),
+  };
 }
 
 export default async function ContestPage({ params }: PageProps<"/[election]/[contest]">) {

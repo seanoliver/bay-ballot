@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://bayballot.com"),
   title: "Bay Ballot — every SF voter guide in one place",
   description: "What San Francisco's voter guides recommend for each contest, side by side, with quotes that link to their source.",
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
