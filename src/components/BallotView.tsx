@@ -63,7 +63,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const all = visible.flatMap((s) => s.contests);
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
-    trailing(STEP_URL_MS, (id: string) => {
+    trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
+      if (window.location.pathname !== path) return;
       if (setRequested(id)) setStepped(null);
     }),
   );
@@ -74,9 +75,17 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     return () => {
       window.removeEventListener("keyup", flush);
       window.removeEventListener("pagehide", flush);
-      flush();
+      stepWrite.cancel();
     };
   }, [stepWrite]);
+  const [wasDesktop, setWasDesktop] = useState(desktop);
+  if (wasDesktop !== desktop) {
+    setWasDesktop(desktop);
+    if (!desktop) setStepped(null);
+  }
+  useEffect(() => {
+    if (!desktop) stepWrite.cancel();
+  }, [desktop, stepWrite]);
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
@@ -122,6 +131,8 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       select(next);
       setAnnounce(next ? `Showing ${c.title}` : "Details closed");
     } else {
+      stepWrite.cancel();
+      setStepped(null);
       setRequested(c.id);
       setSheetOpen(true);
     }
@@ -164,7 +175,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     clearTimeout(exitTimer.current);
     setExiting(null);
     setStepped(id);
-    stepWrite.push(id);
+    stepWrite.push({ id, path: window.location.pathname });
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
     row?.scrollIntoView({ block: "nearest" });

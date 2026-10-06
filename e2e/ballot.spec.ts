@@ -246,15 +246,18 @@ test.describe("desktop keyboard", () => {
     await expect(box).toBeFocused();
   });
 
-  test("after clicking pane text, arrows scroll the pane", async ({ page }) => {
+  test("after clicking pane text, arrows are left to the browser", async ({ page, browserName }) => {
     await openBallot(page, "?c=us-rep-11");
     const pane = page.locator("[data-keys=pane]");
     await pane.locator("p").filter({ visible: true }).first().click();
     await expect.poll(() => page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    const prevented = await page.evaluate(() => !window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", cancelable: true })));
+    expect(prevented).toBe(false);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
-    await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    // WebKit doesn't scroll an inner scroller from the keyboard after a click on text.
+    if (browserName === "chromium") await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   });
 
   test("after clicking filter text, arrows do nothing", async ({ page }) => {
@@ -348,11 +351,32 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
   });
 
-  test("a step right before a reload is kept", async ({ page }) => {
+  test("a step is written on keyup, so a reload right after keeps it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
     await page.keyboard.press("ArrowDown");
     await page.reload();
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("leaving the page mid-hold writes the step, so Back restores it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.down("ArrowDown");
+    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await page.goto("/about");
+    await page.keyboard.up("ArrowDown");
+    await page.goBack();
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("following a pane link mid-hold leaves ?c= off the next page", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.down("ArrowDown");
+    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await page.locator("[data-keys=pane] a[href^='/guides/']").first().click();
+    await expect(page).toHaveURL(/\/guides\/[^?]+$/);
+    await page.keyboard.up("ArrowDown");
+    await page.waitForTimeout(400);
+    await expect(page).toHaveURL(/\/guides\/[^?]+$/);
   });
 
   test("Enter on the open contest moves into its details; a click still closes it", async ({ page }) => {
@@ -408,6 +432,24 @@ test.describe("desktop keyboard", () => {
     await page.keyboard.press("j");
     await expect(page).toHaveURL(/[?&]c=us-rep-15/);
   });
+});
+
+test("a step left unwritten on desktop doesn't override a tap after resizing to a phone", async ({ page, isMobile }) => {
+  test.skip(isMobile, "starts on desktop");
+  await openBallot(page, "?c=us-rep-11");
+  await page.evaluate(() => {
+    const orig = history.replaceState.bind(history);
+    history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+      if ((window as unknown as { __fail?: boolean }).__fail !== false) throw new DOMException("too many calls", "SecurityError");
+      return orig(...args);
+    };
+  });
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await contestRow(page, "Governor").click();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "Governor" })).toBeVisible();
 });
 
 test.describe("phone keyboard", () => {
