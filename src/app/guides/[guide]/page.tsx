@@ -47,7 +47,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
           <Badge variant="secondary" className="capitalize">
             {guide.type}
           </Badge>
-          {file && !file.hasReasoning ? <Badge variant="outline">List only</Badge> : null}
+          {isPublished(file) && !file.hasReasoning ? <Badge variant="outline">List only</Badge> : null}
         </div>
         {guide.description ? <p className="mt-3">{guide.description}</p> : null}
         <Separator className="my-3" />
@@ -63,7 +63,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
               </ExternalLink>
             </>
           ) : null}
-          {file ? <span className="text-muted-foreground"> · as of {formatDate(file.fetchedAt)}</span> : null}
+          {isPublished(file) ? <span className="text-muted-foreground"> · as of {formatDate(file.fetchedAt)}</span> : null}
         </p>
       </Card>
 
