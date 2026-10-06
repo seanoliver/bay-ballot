@@ -108,6 +108,12 @@ describe("relevantChange: real pick changes the gate must see", () => {
     const next = `${B}\nNo - sign up to volunteer\nThanks for reading`;
     expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("relevant");
   });
+  it("ignores a long line that only moved or lost a duplicate copy (rotating related-story widgets)", () => {
+    const title = "Editorial: SF school board recommendations";
+    const old = `${title}\nBy the editors\nWe back three candidates.\nMore stories\nNeurologists beg seniors: stop doing this now\n${title}\nHealth Weekly`;
+    const next = `${title}\nBy the editors\nWe back three candidates.\nMore stories\nOne common item ended years of dog scratching\nHealth Weekly`;
+    expect(pageGate(normalizePageText(old), normalizePageText(next), ballot)).toBe("irrelevant");
+  });
   it("sees a short label change under a contest heading", () => {
     const old = `${C}\nNo position\nThanks for reading`;
     const next = `${C}\nStrong yes\nThanks for reading`;

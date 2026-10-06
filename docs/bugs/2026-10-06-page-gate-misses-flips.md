@@ -42,7 +42,9 @@ Each case is a test in `tests/pagestore.test.ts` under "relevantChange: real pic
 ## Verification
 
 - The four reproduction tests and a short-label test pass. The existing tests that dates, counters, banners, whitespace and unrelated text stay "irrelevant" still pass.
-- Same-minute re-fetch after re-seeding: see the commit that re-seeds the page text.
+- Same-minute re-fetch after re-seeding: 31 guides "same" and 1 "irrelevant" (bay-area-reporter, whose pages carry a rotating ad and related-story widget).
+  - The first re-fetch flagged bay-area-reporter as relevant. Keeping duplicates exposed a second copy of an editorial's title inside the widget; it disappeared on re-fetch and contains "recommendations".
+  - Follow-up rule: a long line (more than 4 words, not a verdict) that still appears elsewhere in the other version only moved or lost a duplicate copy, so it does not count. Verdicts and short labels still count when they move, which keeps swaps visible.
 
 ## Recurrence guardrail
 

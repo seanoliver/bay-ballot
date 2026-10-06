@@ -146,6 +146,8 @@ const MAX_LABEL_WORDS = 4;
  * are compared in order (an LCS diff), so a flipped or swapped "YES"/"NO" shows up. A changed
  * line counts when it carries a verdict, an endorsement word, or a contest/candidate mention,
  * or when it is a short label (up to 4 words) within 3 lines below a contest or candidate line.
+ * A longer line that still appears in the other version (moved, or one duplicate copy gone)
+ * does not count.
  * Date, counter, boilerplate and whitespace changes never count.
  */
 export function relevantChange(oldText: string, newText: string, ballot: Ballot, aliases: Aliases = {}): boolean {
@@ -154,15 +156,22 @@ export function relevantChange(oldText: string, newText: string, ballot: Ballot,
   const b = normalizePageText(newText, { ballot }).split("\n");
   const { removed, added } = changedLines(a, b);
   const mentions = (line: string) => GENERIC_CONTEST.test(line) || markers.some((re) => re.test(line));
-  const relevant = (lines: string[], idx: number) => {
+  const inA = new Set(a);
+  const inB = new Set(b);
+  const relevant = (lines: string[], idx: number, other: Set<string>) => {
     const line = lines[idx];
     if (!line) return false;
+    // A long line still present in the other version only moved or lost a duplicate copy
+    // (rotating "related stories" widgets); its meaning doesn't depend on position. Verdicts
+    // and short labels do ("YES" under a different heading), so they still count.
+    const isLabel = VERDICT.test(line) || line.split(/\s+/).length <= MAX_LABEL_WORDS;
+    if (!isLabel && other.has(line)) return false;
     if (endorsementContent(line, markers)) return true;
     if (line.split(/\s+/).length > MAX_LABEL_WORDS) return false;
     for (let k = idx - 1; k >= Math.max(0, idx - CONTEXT_LINES); k--) if (mentions(lines[k])) return true;
     return false;
   };
-  return removed.some((i) => relevant(a, i)) || added.some((j) => relevant(b, j));
+  return removed.some((i) => relevant(a, i, inB)) || added.some((j) => relevant(b, j, inA));
 }
 
 export type Gate = "new" | "same" | "irrelevant" | "relevant";
