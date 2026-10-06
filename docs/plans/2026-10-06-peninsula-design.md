@@ -30,6 +30,10 @@ Area slugs and contest ids share the `/2026-11/<slug>` space; the build fails if
 
 An area is a named set of jurisdictions: `sf` = {state, county:San Francisco, city:San Francisco}; `palo-alto` = {state, county:Santa Clara, city:Palo Alto}; `san-mateo` = {state, county:San Mateo, every city in San Mateo County}. Areas live in `data/areas.yml` with their name, kind (city or county), and jurisdictions. A contest belongs to an area when its jurisdiction is one of the area's jurisdictions (districted contests count by their county or city).
 
+## County filter
+
+On the Bay Area list, the filter column gets a "Counties" group of checkboxes (San Francisco, San Mateo, Santa Clara), shown once more than one county has data. Unchecking a county hides its county, city and district contests; statewide contests always stay. It works like the guide-type groups: stored in the URL and on the device, with an "All counties" reset. On an area page the group is hidden, since the page is already one area. The address filter, when set, takes precedence and the group shows the address's county as the only one checked.
+
 ## Guides
 
 Each guide lists the areas it covers (`areas: [sf]`; SPUR might be `[sf, san-mateo]`). A guide's picks count on an area page only if the guide covers that area. The Bay Area list counts every guide.
