@@ -38,9 +38,9 @@ Share-image text is drawn as one run per line.
 ## Verification
 
 - `vitest` (`tests/share.test.ts`, `breakLines` cases), tsc, and `next build`.
-- Regenerated all images in `/private/tmp/bbshots/og/`.
+- Regenerated every share image (site-wide, measures, single- and multi-seat races, the no-positions fixture) and looked at each.
 - The tagline's word gaps now match Chrome rendering the same font and size within 1px: satori 15 19 13 14, Chrome 14 18 13 14.
-- Zoomed crops of the wordmark, tagline, description, lead line, and seat rows are in `/private/tmp/bbshots/og/zoom/`.
+- Checked zoomed crops of the wordmark, tagline, description, lead line, and seat rows.
 
 ## Guardrail
 
