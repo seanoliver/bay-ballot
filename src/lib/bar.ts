@@ -136,3 +136,9 @@ export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
   return t.leader === null ? "Split" : `${surname(t.leader)} ${t.pct}%`;
 }
 
+
+// The verdict a measure's text should wear: its winner (Yes always draws first, so never segment 0).
+export function winnerTone(t: Tally): "yes" | "no" | "split" | null {
+  if (t.kind !== "measure" || t.verdict === "none") return null;
+  return t.verdict === "Y" ? "yes" : t.verdict === "N" ? "no" : "split";
+}

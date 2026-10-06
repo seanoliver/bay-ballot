@@ -1,11 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { barSegments, barShort, barSummary, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
+import { barSegments, barShort, barSummary, winnerTone, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { contestHeadline, rankedDetails } from "@/lib/display";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import type { Row } from "@/lib/filters";
-import { tally } from "@/lib/score";
+import { tally, type Tally } from "@/lib/score";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { BAR_FILL } from "./tone";
@@ -13,6 +13,7 @@ import { BAR_FILL } from "./tone";
 const FILL = BAR_FILL;
 
 const TEXT: Partial<Record<BarTone, string>> = { yes: "text-yes", no: "text-no" };
+const VERDICT_TEXT = { yes: "text-yes", no: "text-no", split: "text-split" } as const;
 
 type Props = {
   contest: Contest;
@@ -56,7 +57,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
           <Stack segments={segments} aria={summary.aria} className="h-2" />
         )}
         <span className="flex max-w-full items-center">
-          <span className={cn("truncate text-xs font-medium tabular-nums", lead(segments))}>{barShort(t, contest)}</span>
+          <span className={cn("truncate text-xs font-medium tabular-nums", lead(t, segments))}>{barShort(t, contest)}</span>
           {ranked}
         </span>
       </div>
@@ -97,7 +98,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
             ) : (
               <>
                 {segments.map((s) => (
-                  <span key={s.key} className={cn("tabular-nums", TEXT[s.tone], s === segments[0] && "font-semibold")}>
+                  <span key={s.key} className={cn("tabular-nums", TEXT[s.tone], s.key === (t.kind === "measure" ? t.verdict : null) && "font-semibold")}>
                     {s.label}
                   </span>
                 ))}
@@ -122,10 +123,11 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
   );
 }
 
-function lead(segments: BarSegment[]): string {
-  const s = segments[0];
-  if (segments.length === 2 && s.pct === 50 && (s.tone === "yes" || s.tone === "no")) return "text-split";
-  return TEXT[s.tone] ?? (s.tone === "empty" ? "text-muted-foreground" : "");
+// Inline label color: a measure wears its winner's color; candidates stay foreground.
+function lead(t: Tally, segments: BarSegment[]): string {
+  const win = winnerTone(t);
+  if (win) return VERDICT_TEXT[win];
+  return segments[0].tone === "empty" ? "text-muted-foreground" : "";
 }
 
 function Track({ className, children }: { className?: string; children: ReactNode }) {

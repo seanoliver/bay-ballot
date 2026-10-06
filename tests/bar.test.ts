@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { barSegments, barShort, barSummary, candidateSlots, slotTone, surname } from "@/lib/bar";
+import { barSegments, barShort, barSummary, candidateSlots, slotTone, surname, winnerTone } from "@/lib/bar";
 import { tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -183,5 +183,18 @@ describe("slotTone", () => {
   it("maps slots to tones; unknown names are other", () => {
     const m = new Map<string, 1 | 2 | 3 | 4 | "other">([["A", 3], ["B", "other"]]);
     expect([slotTone(m, "A"), slotTone(m, "B"), slotTone(m, "C")]).toEqual(["c3", "other", "other"]);
+  });
+});
+
+describe("winnerTone", () => {
+  it("colors a measure by its winner, not the first segment", () => {
+    expect(winnerTone(tally(measure, [...ys(1), ...ns(5)]))).toBe("no");
+    expect(winnerTone(tally(measure, [...ys(5), ...ns(1)]))).toBe("yes");
+    expect(winnerTone(tally(measure, [...ys(3), ...ns(3)]))).toBe("split");
+    expect(winnerTone(tally(measure, ns(4)))).toBe("no");
+  });
+  it("none for empty measures and for candidate races", () => {
+    expect(winnerTone(tally(measure, []))).toBeNull();
+    expect(winnerTone(tally(race, [e(["A"])]))).toBeNull();
   });
 });
