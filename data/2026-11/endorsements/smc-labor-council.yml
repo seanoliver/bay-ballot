@@ -16,6 +16,8 @@ archived:
     snapshot: https://web.archive.org/web/20261006195652/https://static1.squarespace.com/static/6837833f9287a7226a61a889/t/6aac0763f00586778c3b25cc/1789658979359/2026G+SMC+Ballot+Measure+Endorsements.docx
   - source: https://www.sanmateolaborcouncil.org/s/SMCLC-2026G-Endorsements_Slate-Card.docx
     snapshot: https://web.archive.org/web/20261006195657/https://static1.squarespace.com/static/6837833f9287a7226a61a889/t/6aac0985ba187d6767429e88/1789659525935/SMCLC+2026G+Endorsements_Slate+Card.docx
+  - source: https://www.sanmateolaborcouncil.org/s/2026G-State-and-Federal-Endorsements.docx
+    snapshot: https://web.archive.org/web/20261006195725/https://static1.squarespace.com/static/6837833f9287a7226a61a889/t/6aac0a8df59f1c70c578aa78/1789659789888/2026G+State+and+Federal+Endorsements+.docx
 picks:
   us-rep-15: { pick: ["Kevin Mullin"] }
   assembly-19: { pick: ["Catherine Stefani"] }

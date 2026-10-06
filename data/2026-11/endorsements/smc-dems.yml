@@ -34,7 +34,7 @@ picks:
   menlo-park-council-1: { pick: ["Wonman Lee"] }
   menlo-park-council-2: { pick: ["Vamsi Velagapudi"] }
   menlo-park-council-4: { pick: ["Charlotte Reed"] }
-  pacifica-council-2: { pick: ["Christine Boles"] }
+  pacifica-council-2: { pick: ["Christine Boles"] } # the image says "Pacifica, District 1"; she runs in District 2 per the roster and the Labor Council
   pacifica-council-5: { pick: ["Sam Casillas"] }
   redwood-city-council-2: { pick: ["Chris Sturken"] }
   san-bruno-council-1: { pick: ["Kingsley Ma"] }
