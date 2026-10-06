@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { barSegments, barShort, barSummary, candidateSlots, slotTone, surname, winnerTone } from "@/lib/bar";
+import { barLegend, barSegments, barShort, barShortParts, barSummary, candidateSlots, slotTone, surname, winnerTone } from "@/lib/bar";
 import { tally } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -73,6 +73,11 @@ describe("barSegments: single-seat candidates", () => {
   it("exactly four names keeps all four", () => {
     expect(bar(race, [e(["A"]), e(["B"]), e(["C"]), e(["D"])]).map((s) => s.key)).toEqual(["A", "B", "C", "D"]);
   });
+  it("a lone candidate is drawn neutral (no rival to tell apart)", () => {
+    expect(bar(race, [e(["Xavier Becerra"]), e(["Xavier Becerra"])])).toEqual([
+      { key: "Xavier Becerra", label: "Xavier Becerra", count: 2, pct: 100, tone: "other" },
+    ]);
+  });
   it("no picks", () => {
     expect(bar(race, [])).toEqual([{ key: "none", label: "No picks yet", count: 0, pct: 100, tone: "empty" }]);
   });
@@ -93,31 +98,75 @@ describe("barSegments: multi-seat", () => {
 });
 
 describe("barSummary", () => {
-  it("measure: aria counts and visible guide count", () => {
-    expect(barSummary(tally(measure, [...ys(5), ...ns(1)]), measure)).toEqual({
-      aria: "Proposition B: 5 Yes, 1 No",
-      caption: "5 of 6 guides",
-    });
+  it("measure aria counts", () => {
+    expect(barSummary(tally(measure, [...ys(5), ...ns(1)]), measure).aria).toBe("Proposition B: 5 Yes, 1 No");
   });
-  it("measure split", () => {
-    expect(barSummary(tally(measure, [...ys(3), ...ns(3)]), measure)).toEqual({
-      aria: "Proposition B: 3 Yes, 3 No",
-      caption: "Split 3–3",
-    });
-  });
-  it("single-seat legend", () => {
+  it("single-seat aria lists every candidate", () => {
     const t = tally(race, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
-    expect(barSummary(t, race)).toEqual({
-      aria: "Supervisor, District 8: Scott Wiener 3, Connie Chan 1",
-      caption: "Scott Wiener 3 · Connie Chan 1",
-    });
+    expect(barSummary(t, race).aria).toBe("Supervisor, District 8: Scott Wiener 3, Connie Chan 1");
+  });
+  it("single-candidate aria says there are no other endorsements", () => {
+    expect(barSummary(tally(race, [e(["Xavier Becerra"]), e(["Xavier Becerra"])]), race).aria).toBe(
+      "Supervisor, District 8: Xavier Becerra 2, no other endorsements",
+    );
   });
   it("multi-seat lists each top name out of the total", () => {
     const t = tally(board, [e(["A", "B"]), e(["A"])]);
-    expect(barSummary(t, board)).toEqual({ aria: "Board of Education: A 2 of 2, B 1 of 2", caption: "2 guides" });
+    expect(barSummary(t, board).aria).toBe("Board of Education: A 2 of 2, B 1 of 2");
   });
   it("no picks", () => {
-    expect(barSummary(tally(measure, []), measure)).toEqual({ aria: "Proposition B: no picks yet", caption: "No picks yet" });
+    expect(barSummary(tally(measure, []), measure).aria).toBe("Proposition B: no picks yet");
+  });
+});
+
+describe("barLegend", () => {
+  it("measure: the winner's share leads, then one guide count; the loser's % isn't repeated", () => {
+    expect(barLegend(tally(measure, [...ys(1), ...ns(15)]), measure)).toEqual({
+      lead: { key: "N", label: "No", value: "94%", tone: "no" },
+      others: [],
+      caption: "15 of 16 guides",
+    });
+  });
+  it("measure split", () => {
+    expect(barLegend(tally(measure, [...ys(3), ...ns(3)]), measure)).toEqual({
+      lead: { key: "split", label: "Split", value: "3–3", tone: "split" },
+      others: [],
+      caption: "6 guides",
+    });
+  });
+  it("candidates: leader's share, others' counts, then the guide total", () => {
+    const t = tally(race, [...Array(15)].map(() => e(["Scott Wiener"])).concat([...Array(12)].map(() => e(["Connie Chan"]))));
+    expect(barLegend(t, race)).toEqual({
+      lead: { key: "Scott Wiener", label: "Scott Wiener", value: "56%", tone: "c1" },
+      others: [{ key: "Connie Chan", label: "Connie Chan", value: "12", tone: "c2" }],
+      caption: "27 guides",
+    });
+  });
+  it("a tie has no lead", () => {
+    const l = barLegend(tally(race, [e(["A"]), e(["B"])]), race);
+    expect(l.lead).toBeNull();
+    expect(l.others.map((o) => [o.label, o.value])).toEqual([["A", "1"], ["B", "1"]]);
+    expect(l.caption).toBe("Split · 2 guides");
+  });
+  it("a single candidate: no %, neutral, and says so", () => {
+    expect(barLegend(tally(race, [...Array(13)].map(() => e(["Xavier Becerra"]))), race)).toEqual({
+      lead: { key: "Xavier Becerra", label: "Xavier Becerra", value: "", tone: "other" },
+      others: [],
+      caption: "13 guides, no other endorsements",
+    });
+  });
+  it("no picks", () => {
+    expect(barLegend(tally(measure, []), measure)).toEqual({ lead: null, others: [], caption: "No picks yet" });
+  });
+});
+
+describe("barShortParts", () => {
+  it("splits the label (may truncate) from the number (never truncates)", () => {
+    expect(barShortParts(tally(measure, [...ys(5), ...ns(1)]), measure)).toEqual({ label: "Yes", value: "83%" });
+    const t = tally(race, [e(["Theo Ellington"]), e(["Theo Ellington"]), e(["X"])]);
+    expect(barShortParts(t, race)).toEqual({ label: "Ellington", value: "67%" });
+    expect(barShortParts(tally(race, [e(["Xavier Becerra"]), e(["Xavier Becerra"])]), race)).toEqual({ label: "Becerra", value: "· 2" });
+    expect(barShortParts(tally(board, [e(["A"])]), board)).toEqual({ label: "Top 3", value: "" });
   });
 });
 
@@ -127,6 +176,9 @@ describe("barShort", () => {
     expect(barShort(tally(measure, [...ys(1), ...ns(2)]), measure)).toBe("No 67%");
     expect(barShort(tally(measure, [...ys(3), ...ns(3)]), measure)).toBe("Split");
     expect(barShort(tally(measure, []), measure)).toBe("No picks");
+  });
+  it("a single candidate: surname and count, no %", () => {
+    expect(barShort(tally(race, [...Array(13)].map(() => e(["Xavier Becerra"]))), race)).toBe("Becerra · 13");
   });
   it("single-seat leader by surname and share of guides, or a tie", () => {
     const t = tally(race, [e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Scott Wiener"]), e(["Connie Chan"])]);
@@ -171,8 +223,11 @@ describe("candidateSlots", () => {
     expect(slotsOf(m)).toEqual({ D: 1, C: 2, B: 3, A: 4, E: "other" });
   });
   it("a ranked single-seat pick counts only its #1", () => {
-    const m = candidateSlots(ballot(["A", "B"]), [e(["B", "A"], true)]);
-    expect(slotsOf(m)).toEqual({ B: 1 });
+    const m = candidateSlots(ballot(["A", "B"]), [e(["B", "A"], true), e(["C"])]);
+    expect(slotsOf(m)).toEqual({ B: 1, C: 2 });
+  });
+  it("a lone endorsed candidate has no slot color (neutral)", () => {
+    expect(slotsOf(candidateSlots(ballot(["A", "B"]), [e(["A"]), e(["A"])]))).toEqual({ A: "other" });
   });
   it("no endorsements, no slots", () => {
     expect(candidateSlots(ballot(["A"]), []).size).toBe(0);

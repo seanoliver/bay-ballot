@@ -12,7 +12,6 @@ const SLOT_TONES = { 1: "c1", 2: "c2", 3: "c3", 4: "c4", other: "other" } as con
 const MAX_SLOTS = 4;
 const EMPTY: BarSegment = { key: "none", label: "No picks yet", count: 0, pct: 100, tone: "empty" };
 
-const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
 // Whole-number percents of `counts` that always sum to 100 (largest remainder).
 function percents(counts: number[]): number[] {
@@ -33,12 +32,15 @@ const isEmpty = (t: Tally) => t.total === 0 || (t.kind === "candidate" && t.coun
 // Color follows the candidate, never their rank: slots are assigned from the unfiltered counts, so a
 // filter that drops the leader doesn't repaint anyone. The top four by count get slots 1-4 in
 // ballot order (names not on the ballot list follow, by count then name); the rest are "other".
+// A race with a single endorsed candidate is neutral throughout.
 function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: CandidateCount[]): Slots {
   const order = (name: string) => {
     const i = contest.candidates.indexOf(name);
     return i === -1 ? Infinity : i;
   };
   const endorsed = counts.filter((c) => c.count > 0);
+  // A lone candidate has no rival to tell apart; a color would only suggest a contest.
+  if (endorsed.length === 1) return new Map([[endorsed[0].name, "other"]]);
   const byCount = [...endorsed].sort((a, b) => b.count - a.count || order(a.name) - order(b.name) || a.name.localeCompare(b.name, "en"));
   const kept = byCount.slice(0, MAX_SLOTS);
   const ranked = new Map(byCount.map((c, i) => [c.name, i]));
@@ -83,6 +85,10 @@ export function barSegments(t: Tally, contest: Pick<Contest, "seats" | "candidat
       tone: slotTone(colors, c.name),
     }));
   }
+  if (t.counts.length === 1) {
+    const c = t.counts[0];
+    return [{ key: c.name, label: c.name, count: c.count, pct: 100, tone: slotTone(colors, c.name) }];
+  }
   const named = t.counts.filter((c) => colors.get(c.name) !== undefined && colors.get(c.name) !== "other");
   const rest = t.counts.filter((c) => !named.includes(c));
   const parts = named.map((c) => ({ key: c.name, label: c.name, count: c.count, tone: slotTone(colors, c.name) }));
@@ -93,24 +99,45 @@ export function barSegments(t: Tally, contest: Pick<Contest, "seats" | "candidat
   return parts.map((p, i) => ({ ...p, pct: pct[i] }));
 }
 
-// The bar's accessible name (role="img") and the short visible caption beside it.
-export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">): BarSummary {
-  if (isEmpty(t)) return { aria: `${contest.title}: no picks yet`, caption: "No picks yet" };
+const guidesOf = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
+const single = (t: Tally, contest: Pick<Contest, "seats">) => t.kind === "candidate" && contest.seats === 1 && t.counts.length === 1;
+
+// The bar's accessible name (it is role="img").
+export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">): { aria: string } {
+  if (isEmpty(t)) return { aria: `${contest.title}: no picks yet` };
+  if (t.kind === "measure") return { aria: `${contest.title}: ${t.yes} Yes, ${t.no} No` };
+  if (contest.seats > 1) {
+    return { aria: `${contest.title}: ${t.counts.slice(0, contest.seats).map((c) => `${c.name} ${c.count} of ${t.total}`).join(", ")}` };
+  }
+  const names = t.counts.map((c) => `${c.name} ${c.count}`).join(", ");
+  return { aria: `${contest.title}: ${names}${t.counts.length === 1 ? ", no other endorsements" : ""}` };
+}
+
+export type LegendItem = { key: string; label: string; value: string; tone: BarTone | "split" };
+export type BarLegend = { lead: LegendItem | null; others: LegendItem[]; caption: string };
+
+// The line under a list bar, one grammar everywhere: the answer (winner's share, or the leader's),
+// then the rest as counts, then the guide total once. A single candidate gets no % (it isn't a contest).
+export function barLegend(t: Tally, contest: Pick<Contest, "seats" | "candidates">, slots?: Slots): BarLegend {
+  if (isEmpty(t)) return { lead: null, others: [], caption: "No picks yet" };
   if (t.kind === "measure") {
+    if (t.verdict === "split") return { lead: { key: "split", label: "Split", value: `${t.yes}–${t.no}`, tone: "split" }, others: [], caption: guidesOf(t.total) };
+    const yes = t.verdict === "Y";
     return {
-      aria: `${contest.title}: ${t.yes} Yes, ${t.no} No`,
-      caption: t.verdict === "split" ? `Split ${t.yes}–${t.no}` : `${Math.max(t.yes, t.no)} of ${guides(t.total)}`,
+      lead: { key: yes ? "Y" : "N", label: yes ? "Yes" : "No", value: `${t.pct}%`, tone: yes ? "yes" : "no" },
+      others: [],
+      caption: `${Math.max(t.yes, t.no)} of ${guidesOf(t.total)}`,
     };
   }
-  if (contest.seats > 1) {
-    const top = t.counts.slice(0, contest.seats);
-    return { aria: `${contest.title}: ${top.map((c) => `${c.name} ${c.count} of ${t.total}`).join(", ")}`, caption: guides(t.total) };
+  const segments = barSegments(t, contest, slots);
+  if (single(t, contest)) {
+    const c = t.counts[0];
+    return { lead: { key: c.name, label: c.name, value: "", tone: segments[0].tone }, others: [], caption: `${guidesOf(c.count)}, no other endorsements` };
   }
-  const named = t.counts.slice(0, MAX_SLOTS);
-  return {
-    aria: `${contest.title}: ${t.counts.map((c) => `${c.name} ${c.count}`).join(", ")}`,
-    caption: named.map((c) => `${c.name} ${c.count}`).join(" · ") + (t.counts.length > named.length ? " · …" : ""),
-  };
+  const items = segments.map((s): LegendItem => ({ key: s.key, label: s.label, value: String(s.count), tone: s.tone }));
+  if (t.leader === null) return { lead: null, others: items, caption: `Split · ${guidesOf(t.total)}` };
+  const [first, ...rest] = items;
+  return { lead: { ...first, value: `${t.pct}%` }, others: rest, caption: guidesOf(t.total) };
 }
 
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
@@ -125,15 +152,21 @@ export function surname(name: string): string {
   return tokens.at(-1) ?? name;
 }
 
-// A few words for the tightest rows: the measure verdict, the single-seat leader's share, or the seat count.
-export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
-  if (isEmpty(t)) return "No picks";
+// A few words for the tightest rows, split so the label can truncate and the number never does.
+export function barShortParts(t: Tally, contest: Pick<Contest, "seats">): { label: string; value: string } {
+  if (isEmpty(t)) return { label: "No picks", value: "" };
   if (t.kind === "measure") {
-    if (t.verdict === "split") return "Split";
-    return `${t.verdict === "Y" ? "Yes" : "No"} ${t.pct}%`;
+    if (t.verdict === "split") return { label: "Split", value: "" };
+    return { label: t.verdict === "Y" ? "Yes" : "No", value: `${t.pct}%` };
   }
-  if (contest.seats > 1) return `Top ${contest.seats}`;
-  return t.leader === null ? "Split" : `${surname(t.leader)} ${t.pct}%`;
+  if (contest.seats > 1) return { label: `Top ${contest.seats}`, value: "" };
+  if (single(t, contest)) return { label: surname(t.counts[0].name), value: `· ${t.counts[0].count}` };
+  return t.leader === null ? { label: "Split", value: "" } : { label: surname(t.leader), value: `${t.pct}%` };
+}
+
+export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
+  const { label, value } = barShortParts(t, contest);
+  return value ? `${label} ${value}` : label;
 }
 
 
@@ -142,3 +175,4 @@ export function winnerTone(t: Tally): "yes" | "no" | "split" | null {
   if (t.kind !== "measure" || t.verdict === "none") return null;
   return t.verdict === "Y" ? "yes" : t.verdict === "N" ? "no" : "split";
 }
+

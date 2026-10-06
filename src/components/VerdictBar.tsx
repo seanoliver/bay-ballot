@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { barSegments, barShort, barSummary, winnerTone, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
+import { barLegend, barSegments, barShortParts, barSummary, winnerTone, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { contestHeadline, rankedDetails } from "@/lib/display";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import type { Row } from "@/lib/filters";
@@ -12,8 +12,8 @@ import { BAR_FILL } from "./tone";
 
 const FILL = BAR_FILL;
 
-const TEXT: Partial<Record<BarTone, string>> = { yes: "text-yes", no: "text-no" };
-const VERDICT_TEXT = { yes: "text-yes", no: "text-no", split: "text-split" } as const;
+// Verdict color on text: only the measure lead wears it.
+const LEAD_TEXT: Partial<Record<BarTone | "split", string>> = { yes: "text-yes", no: "text-no", split: "text-split" };
 
 type Props = {
   contest: Contest;
@@ -34,6 +34,8 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
   const t = tally(contest, rows.map((r) => r.entry));
   const segments = barSegments(t, contest, slots);
   const summary = barSummary(t, contest);
+  const legend = barLegend(t, contest, slots);
+  const short = barShortParts(t, contest);
   const multi = t.kind === "candidate" && contest.seats > 1 && segments[0]?.tone !== "empty";
 
   const { headline } = contestHeadline(contest, rows);
@@ -46,7 +48,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
 
   if (variant === "inline") {
     return (
-      <div className={cn("flex w-24 shrink-0 flex-col items-end gap-1", className)}>
+      <div className={cn("flex w-28 shrink-0 flex-col items-end gap-1", className)}>
         {multi ? (
           <div role="img" aria-label={summary.aria} className="flex w-full flex-col gap-0.5">
             {segments.map((s) => (
@@ -58,9 +60,11 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
         ) : (
           <Stack segments={segments} aria={summary.aria} className="h-2" />
         )}
-        <span className="flex max-w-full items-center">
-          <span className={cn("truncate text-xs font-medium tabular-nums", lead(t, segments))}>{barShort(t, contest)}</span>
-          {ranked}
+        {/* The name may truncate; the number never does. The "*" keeps its tap area without taking width. */}
+        <span className={cn("flex max-w-full items-baseline text-sm font-medium", lead(t, segments))}>
+          <span className="truncate">{short.label}</span>
+          {short.value ? <span className="shrink-0 tabular-nums">&nbsp;{short.value}</span> : null}
+          {ranked ? <span className="-my-2.5 -mr-2.5 shrink-0">{ranked}</span> : null}
         </span>
       </div>
     );
@@ -71,18 +75,18 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
       <div className={cn("mt-2", className)}>
         <ul role="img" aria-label={summary.aria} className="space-y-1">
           {segments.map((s) => (
-            <li key={s.key} className="grid grid-cols-[minmax(0,1fr)_minmax(3rem,7rem)_2.5rem] items-center gap-2 text-sm">
+            <li key={s.key} className="grid grid-cols-[minmax(0,1fr)_minmax(3rem,7rem)_3.5rem] items-center gap-2 text-sm">
               <span className="truncate">{s.label}</span>
               <Track className="h-2">
                 <span className={FILL[s.tone]} style={{ width: `${s.pct}%` }} />
               </Track>
               <span className="text-right text-xs text-muted-foreground tabular-nums">
-                {s.count}/{t.total}
+                {s.count} of {t.total}
               </span>
             </li>
           ))}
         </ul>
-        {count ? <p className="mt-1 text-xs text-muted-foreground">Top {contest.seats} · {summary.caption}</p> : null}
+        {count ? <p className="mt-2 text-sm text-muted-foreground">Top {contest.seats} · {legend.caption}</p> : null}
       </div>
     );
   }
@@ -90,45 +94,38 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
   return (
     <div className={cn("mt-2", className)}>
       <Stack segments={segments} aria={summary.aria} className={size === "detail" ? "h-3" : "h-2"} />
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
-        {segments[0].tone === "empty" ? (
-          <span className="text-muted-foreground">No picks yet</span>
-        ) : t.kind === "measure" ? (
-          <>
-            {t.verdict === "split" ? (
-              <span className="font-semibold text-split">{summary.caption}</span>
-            ) : (
-              <>
-                {segments.map((s) => (
-                  <span key={s.key} className={cn("tabular-nums", TEXT[s.tone], s.key === (t.kind === "measure" ? t.verdict : null) && "font-semibold")}>
-                    {s.label}
-                  </span>
-                ))}
-                {count ? <span className="text-muted-foreground">{summary.caption}</span> : null}
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            {segments.map((s, i) => (
-              <span key={s.key} className={cn("inline-flex min-w-0 items-center gap-1.5", i === 0 && "font-semibold")}>
-                <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", FILL[s.tone])} />
-                <span className="truncate">{s.label}</span>
-                <span className="font-normal text-muted-foreground tabular-nums">{s.count}</span>
-                {i === 0 ? ranked : null}
-              </span>
-            ))}
-          </>
-        )}
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        {legend.lead ? (
+          <span className="inline-flex min-w-0 items-center gap-1.5 font-semibold">
+            {t.kind === "candidate" ? <Swatch tone={legend.lead.tone} /> : null}
+            <span className={cn("truncate", t.kind === "measure" && LEAD_TEXT[legend.lead.tone])}>
+              {legend.lead.label}
+              {legend.lead.value ? ` ${legend.lead.value}` : null}
+            </span>
+            {ranked}
+          </span>
+        ) : null}
+        {legend.others.map((o) => (
+          <span key={o.key} className="inline-flex min-w-0 items-center gap-1.5">
+            <Swatch tone={o.tone} />
+            <span className="truncate">{o.label}</span>
+            <span className="text-muted-foreground">{o.value}</span>
+          </span>
+        ))}
+        {count || !legend.lead ? <span className="text-muted-foreground">{legend.caption}</span> : null}
       </div>
     </div>
   );
 }
 
+function Swatch({ tone }: { tone: BarTone | "split" }) {
+  return <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", tone === "split" ? "bg-split" : FILL[tone])} />;
+}
+
 // Inline label color: a measure wears its winner's color; candidates stay foreground.
 function lead(t: Tally, segments: BarSegment[]): string {
   const win = winnerTone(t);
-  if (win) return VERDICT_TEXT[win];
+  if (win) return LEAD_TEXT[win] ?? "";
   return segments[0].tone === "empty" ? "text-muted-foreground" : "";
 }
 
