@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -26,6 +26,12 @@ const DESKTOP = "(min-width: 1024px)";
 // viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
 const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
+const subscribeDesktop = (onChange: () => void) => {
+  const mq = window.matchMedia(DESKTOP);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+};
+const isDesktop = () => window.matchMedia(DESKTOP).matches;
 const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--motion-out")) || 0;
 
 type Props = {
@@ -40,6 +46,7 @@ type Props = {
 export function BallotView({ election, intro, ballot, guides, files, pending }: Props) {
   const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
+  const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
@@ -93,7 +100,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       return;
     }
     const id = stepSelection(all.map((c) => c.id), selectedId, action);
-    if (id === null) return;
+    if (id === null) return false;
     const c = all.find((x) => x.id === id);
     select(id);
     setAnnounce(`Showing ${c?.title ?? id}`);
@@ -156,13 +163,14 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
         className="min-w-0 pb-10"
         role="region"
         aria-label="Contests"
-        aria-keyshortcuts="ArrowDown ArrowUp j k / Shift+?"
+        aria-keyshortcuts={desktop ? "ArrowDown ArrowUp j k / Shift+?" : undefined}
+        data-keys="list"
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
-          <p className="hidden text-sm text-muted-foreground lg:block" aria-hidden="true">
+          <p className="js-only hidden text-sm text-muted-foreground lg:block" aria-hidden="true">
             ↑↓ to browse · ? for shortcuts
           </p>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
@@ -206,6 +214,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       {shown ? (
         <div
           ref={paneRef}
+          data-keys="pane"
           // Slides and fades in on open (from @starting-style), out on close; inert while it leaves.
           className={cn(
             PANE,

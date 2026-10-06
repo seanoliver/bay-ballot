@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isTypingTarget, keyAction, stepSelection } from "@/lib/keyboard";
+import { isTypingTarget, keyAction, keyPlace, permits, stepSelection } from "@/lib/keyboard";
 
 const key = (k: string, mods: Partial<{ metaKey: boolean; ctrlKey: boolean; altKey: boolean; shiftKey: boolean; defaultPrevented: boolean }> = {}) => ({
   key: k,
@@ -72,5 +72,49 @@ describe("stepSelection", () => {
   });
   it("a selection that isn't listed starts over from the top", () => {
     expect(stepSelection(ids, "gone", "next")).toBe("a");
+  });
+});
+
+describe("keyPlace", () => {
+  const at = (tagName: string, inside: string[] = []) => ({ tagName, closest: (sel: string) => (inside.some((s) => sel.includes(s)) ? {} : null) });
+  it("an open overlay or a target inside one wins", () => {
+    expect(keyPlace(at("BODY"), true)).toBe("overlay");
+    expect(keyPlace(at("BUTTON", ["role=dialog"]), false)).toBe("overlay");
+    expect(keyPlace(at("BUTTON", ["role=alertdialog"]), false)).toBe("overlay");
+    expect(keyPlace(at("BUTTON", ["data-slot=popover-content"]), false)).toBe("overlay");
+  });
+  it("places body, the list, the detail pane, the filters and anything else", () => {
+    expect(keyPlace(at("BODY"), false)).toBe("page");
+    expect(keyPlace(null, false)).toBe("page");
+    expect(keyPlace(at("A", ["data-keys=list"]), false)).toBe("list");
+    expect(keyPlace(at("A", ["data-keys=pane", "data-keys=list"]), false)).toBe("pane");
+    expect(keyPlace(at("BUTTON", ["aria-label=Filters"]), false)).toBe("filters");
+    expect(keyPlace(at("A"), false)).toBe("other");
+  });
+});
+
+describe("permits", () => {
+  it("nothing works in an overlay or the filters", () => {
+    for (const place of ["overlay", "filters"] as const) {
+      for (const [action, k] of [["next", "j"], ["prev", "ArrowUp"], ["search", "/"], ["help", "?"]] as const) expect(permits(action, k, place)).toBe(false);
+    }
+  });
+  it("j/k and arrows browse from the page or the list only", () => {
+    expect(permits("next", "j", "page")).toBe(true);
+    expect(permits("next", "ArrowDown", "list")).toBe(true);
+    expect(permits("next", "j", "other")).toBe(false);
+    expect(permits("prev", "ArrowUp", "other")).toBe(false);
+  });
+  it("in the detail pane j/k browse but arrows scroll", () => {
+    expect(permits("next", "j", "pane")).toBe(true);
+    expect(permits("prev", "k", "pane")).toBe(true);
+    expect(permits("next", "ArrowDown", "pane")).toBe(false);
+    expect(permits("prev", "ArrowUp", "pane")).toBe(false);
+  });
+  it("/ and ? work anywhere else", () => {
+    for (const place of ["page", "list", "pane", "other"] as const) {
+      expect(permits("search", "/", place)).toBe(true);
+      expect(permits("help", "?", place)).toBe(true);
+    }
   });
 });

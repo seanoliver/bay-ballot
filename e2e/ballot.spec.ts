@@ -222,4 +222,36 @@ test.describe("desktop keyboard", () => {
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });
+
+  test("with the shortcuts open, j and / do nothing", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("Shift+?");
+    const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
+    await expect(dialog).toBeVisible();
+    const focused = () => page.evaluate(() => document.activeElement?.outerHTML);
+    const before = await focused();
+    await page.keyboard.press("j");
+    await page.keyboard.press("/");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    expect(await focused()).toBe(before);
+    await expect(dialog).toBeVisible();
+  });
+
+  test("j does nothing while a filter checkbox has focus", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox").first();
+    await box.focus();
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await expect(box).toBeFocused();
+  });
+
+  test("in the detail pane arrows don't switch contests but j does", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.locator("[data-keys=pane]").locator("a, button").first().focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
 });
