@@ -108,9 +108,13 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     <div
       className={cn(
         FRAME,
-        // Always three tracks; the pane's track grows from 0fr so the list's width can transition.
+        // Always three tracks, so the template interpolates when the pane opens or closes.
         "lg:grid lg:gap-x-6",
-        current ? "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1.15fr)]" : "lg:grid-cols-[17rem_minmax(0,1fr)_minmax(0,0fr)]",
+        // The list track is a length in both states (open: its 1 : 1.15 share of the space after the
+        // sidebar and gaps; closed: that space capped at 48rem), so it interpolates and eases into its cap.
+        current
+          ? "lg:grid-cols-[17rem_minmax(0,calc((100%-20rem)/2.15))_minmax(0,1fr)]"
+          : "lg:grid-cols-[17rem_minmax(0,min(48rem,calc(100%-20rem)))_minmax(0,1fr)]",
         animate && "lg:transition-[grid-template-columns] lg:duration-200 lg:ease-out motion-reduce:transition-none",
       )}
     >
@@ -123,11 +127,7 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
-        className={cn(
-          "min-w-0 pb-10",
-          current ? "lg:max-w-full" : "lg:max-w-3xl",
-          animate && "lg:transition-[max-width] lg:duration-200 lg:ease-out motion-reduce:transition-none",
-        )}
+        className="min-w-0 pb-10"
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
