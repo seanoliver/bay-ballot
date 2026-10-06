@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countyOptions, countySlug, hiddenCountiesLabel, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
+import { countyOptions, countySlug, hiddenCountiesLabel, hiddenCountyOf, viewCounties, parseCounties, showCountyFilter, toCountiesParam, toggleCounty, visibleGroups } from "@/lib/counties";
 import { placeGroups } from "@/lib/areas";
 import { mpP, PA, prop1, propB, rtm, sccA, SF, SM, smL } from "./fixtures/areas";
 
@@ -43,5 +43,10 @@ describe("county filter", () => {
     expect(hiddenCountiesLabel(0)).toBe("");
     expect(hiddenCountiesLabel(1)).toBe("1 county hidden");
     expect(hiddenCountiesLabel(2)).toBe("2 counties hidden");
+  });
+  it("shows a linked contest's county for this view without changing the saved set", () => {
+    expect(viewCounties(groups, ["san-mateo", "santa-clara"], "menlo-park-measure-p")).toEqual({ off: ["santa-clara"], revealed: { id: "san-mateo", name: "San Mateo" } });
+    expect(viewCounties(groups, ["san-mateo"], "prop-1")).toEqual({ off: ["san-mateo"], revealed: null });
+    expect(viewCounties(groups, ["san-mateo"], null)).toEqual({ off: ["san-mateo"], revealed: null });
   });
 });

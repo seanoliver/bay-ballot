@@ -39,3 +39,8 @@ export function hiddenCountyOf(groups: PlaceGroup[], off: string[], contestId: s
 }
 
 export const hiddenCountiesLabel = (n: number) => (n === 0 ? "" : `${n} ${n === 1 ? "county" : "counties"} hidden`);
+
+export function viewCounties(groups: PlaceGroup[], off: string[], contestId: string | null): { off: string[]; revealed: CountyOption | null } {
+  const revealed = hiddenCountyOf(groups, off, contestId);
+  return { off: revealed ? off.filter((x) => x !== revealed.id) : off, revealed };
+}

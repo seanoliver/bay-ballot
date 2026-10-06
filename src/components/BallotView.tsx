@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
+import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -56,27 +56,19 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
   const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
-  const listed = useMemo(() => visibleGroups(groups, offCounties), [groups, offCounties]);
-  const setOffCounties = (off: string[]) => {
-    markHomeVisit(area);
-    setOffParam(toCountiesParam(off));
-  };
-  const counties = showCountyFilter(options) ? { options, off: offCounties, onChange: setOffCounties } : undefined;
-  useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
+  const view = useMemo(() => viewCounties(groups, offCounties, requested), [groups, offCounties, requested]);
+  const listed = useMemo(() => visibleGroups(groups, view.off), [groups, view.off]);
+  useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
-  const revealed = hiddenCountyOf(groups, offCounties, requested);
-  const [revealedId, setRevealedId] = useState<string | null>(null);
-  if (revealed && revealed.id !== revealedId) {
-    setRevealedId(revealed.id);
-    setAnnounce(`Showing ${revealed.name} contests for this link`);
+  const [announcedFor, setAnnouncedFor] = useState<string | null>(null);
+  if (view.revealed && requested !== announcedFor) {
+    setAnnouncedFor(requested);
+    setAnnounce(`Showing ${view.revealed.name} contests for this link`);
   }
-  useEffect(() => {
-    if (revealed) setOffParam(toCountiesParam(offCounties.filter((x) => x !== revealed.id)));
-  }, [revealed, offCounties, setOffParam]);
   const paneRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
   const [animate, setAnimate] = useState(false);
@@ -104,6 +96,17 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     [all, guides, files],
   );
   const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const setOffCounties = (off: string[]) => {
+    markHomeVisit(area);
+    setOffParam(toCountiesParam(off));
+    const sel = stepped ?? requested;
+    if (sel !== null && hiddenCountyOf(groups, off, sel)) {
+      stepWrite.cancel();
+      setStepped(null);
+      setRequested(null);
+    }
+  };
+  const counties = showCountyFilter(options) ? { options, off: view.off, onChange: setOffCounties } : undefined;
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);

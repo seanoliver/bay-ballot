@@ -192,3 +192,31 @@ test("the phone Filters button counts hidden counties, and All counties keeps fo
   await expect(all).toHaveAttribute("aria-disabled", "true");
   await expect(page).not.toHaveURL(/offc=/);
 });
+
+test("hiding the county of the open contest hides it and clears the selection", async ({ page }, info) => {
+  await page.goto("/about");
+  await page.evaluate(() => localStorage.setItem("bb-area", "bay-area"));
+  await page.goto(`${BALLOT}?c=menlo-park-measure-p`);
+  await expect(contestRow(page, "Menlo Park Measure P")).toBeVisible();
+  if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
+  const panel = isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
+  await panel.getByRole("group", { name: "Counties" }).getByRole("checkbox", { name: "San Mateo", exact: true }).click();
+  await expect(page).not.toHaveURL(/[?&]c=/);
+  await expect(page).toHaveURL(/[?&]offc=san-mateo/);
+  if (isPhone(info)) await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  await expect(contestRow(page, "Menlo Park Measure P")).toHaveCount(0);
+});
+
+test("a revealed county is for this view only; the saved preference stays", async ({ page }) => {
+  await page.goto("/about");
+  await page.evaluate(() => {
+    localStorage.setItem("bb-counties", "san-mateo");
+    localStorage.setItem("bb-area", "bay-area");
+  });
+  await page.goto(`${BALLOT}?c=menlo-park-measure-p`);
+  await expect(contestRow(page, "Menlo Park Measure P")).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("bb-counties"))).toBe("san-mateo");
+  await page.goto(BALLOT);
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+});
