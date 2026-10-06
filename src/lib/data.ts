@@ -74,9 +74,10 @@ export function listElections(root: string): string[] {
   return fs.readdirSync(root).filter((d) => /^\d{4}-\d{2}$/.test(d)).sort();
 }
 
-export function validateElection(d: ElectionData): { errors: string[]; warnings: string[] } {
+export function validateElection(d: ElectionData): { errors: string[]; warnings: string[]; info: string[] } {
   const errors: string[] = [];
   const warnings: string[] = [];
+  const info: string[] = [];
   const contests = new Map<string, Ballot["contests"][number]>();
 
   for (const c of d.ballot.contests) {
@@ -103,14 +104,15 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
   for (const c of d.ballot.contests) {
     if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas.yml)`);
   }
-  for (const a of d.areas) {
+  for (const g of d.guides) {
+    const mine = d.areas.filter((a) => g.areas.includes(a.id));
     const byLetter = new Map<string, string[]>();
     for (const c of d.ballot.contests) {
       const letter = c.kind === "measure" && c.jurisdiction.level !== "state" && c.id !== "rtm" ? c.title.match(/(?:Proposition|Measure)\s+(\w+)$/)?.[1] : undefined;
-      if (letter && inArea(c, a)) byLetter.set(letter, [...(byLetter.get(letter) ?? []), c.id]);
+      if (letter && mine.some((a) => inArea(c, a))) byLetter.set(letter, [...(byLetter.get(letter) ?? []), c.id]);
     }
     for (const [letter, ids] of byLetter) {
-      if (ids.length > 1) warnings.push(`${a.id}: measure letter ${letter} is on ${ids.join(" and ")}; quotes under a bare "Measure ${letter}" heading count for both`);
+      if (ids.length > 1) info.push(`${g.id}: measure letter ${letter} is on ${ids.join(" and ")}; a quote under a bare "Measure ${letter}" heading counts for each`);
     }
   }
   const areaIds = new Set(d.areas.map((a) => a.id));
@@ -178,5 +180,5 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       }
     }
   }
-  return { errors, warnings };
+  return { errors, warnings, info };
 }
