@@ -341,7 +341,16 @@ describe("standsAlone", () => {
     ["He has run Hazelton's own nonprofit budget for a decade.", boe],
     ["Sunset Dunes park is already one of the most visited parks on the west coast.", propD],
     ["Barz has spent her career on exactly that.", bart],
+    ["This city’s ballots are choked with unnecessary ballot measures, many of which are imposed as bargaining chips.", propD],
+    ["This state's budget cannot absorb another unfunded mandate.", propD],
+    ["These elections are too important to leave to a handful of donors.", propD],
   ] as const)("keeps %s", (q, c) => expect(standsAlone(q, c)).toBe(true));
+
+  it("still drops a bare 'This is …' or 'This will …'", () => {
+    expect(standsAlone("This is a common-sense measure.", propD)).toBe(false);
+    expect(standsAlone("This will only make it worse.", propD)).toBe(false);
+    expect(standsAlone("This cityscape is changing fast for everyone.", propD)).toBe(false);
+  });
 
   it("lets he/she/his/her stand for the only endorsed candidate", () => {
     const q = "She supports building more housing near BART stations for riders.";
