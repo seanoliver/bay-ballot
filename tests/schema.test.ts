@@ -1,8 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
+import { Area, Ballot, Contest, EndorsementFile, Guide } from "@/lib/schema";
 
 describe("schemas", () => {
+  it("parses an area, a region and a district within a place", () => {
+    const a = Area.parse(parse(`
+id: san-mateo
+name: San Mateo County
+kind: county
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: San Mateo }
+`));
+    expect(a.jurisdictions).toHaveLength(2);
+    const c = (jurisdiction: unknown) => Contest.safeParse({ id: "x", section: "S", title: "X", kind: "measure", jurisdiction });
+    expect(c({ level: "region", name: "Bay Area", within: [{ level: "county", name: "San Francisco" }] }).success).toBe(true);
+    expect(c({ level: "district", name: "Supervisor", district: "8", within: [{ level: "county", name: "San Francisco" }] }).success).toBe(true);
+    expect(c({ level: "district", name: "Supervisor", district: "8", within: [{ level: "state", name: "California" }] }).success).toBe(false);
+  });
+
   it("requires a guide to name at least one area", () => {
     const base = { id: "g", name: "G", description: "", type: "club", homepage: "https://g.org/" };
     expect(Guide.safeParse(base).success).toBe(false);
