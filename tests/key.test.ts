@@ -10,8 +10,16 @@ const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "bb-key-"));
 afterEach(() => vi.unstubAllEnvs());
 
 describe("resolveApiKey", () => {
-  it("throws when the file is missing", () => {
+  it("throws when the file is missing and the env var is unset", () => {
+    vi.stubEnv("BAYBALLOT_ANTHROPIC_API_KEY", "");
+    vi.stubEnv("ANTHROPIC_API_KEY", "sk-work-key");
     expect(() => resolveApiKey(path.join(tmp(), ".env.local"))).toThrow(MSG);
+  });
+
+  it("uses BAYBALLOT_ANTHROPIC_API_KEY from the environment when the file is missing (CI)", () => {
+    vi.stubEnv("ANTHROPIC_API_KEY", "sk-work-key");
+    vi.stubEnv("BAYBALLOT_ANTHROPIC_API_KEY", "sk-from-ci");
+    expect(resolveApiKey(path.join(tmp(), ".env.local"))).toBe("sk-from-ci");
   });
 
   it("never falls back to ANTHROPIC_API_KEY", () => {

@@ -6,17 +6,18 @@ const VAR = "BAYBALLOT_ANTHROPIC_API_KEY";
 const MISSING = `Set ${VAR} in .env.local`;
 
 /**
- * Read the Bay Ballot API key from an env file. The shell's ANTHROPIC_API_KEY belongs to
- * another account, so this never falls back to process.env. Never log the return value.
+ * The Bay Ballot API key: from the env file when it exists (local runs), else from
+ * BAYBALLOT_ANTHROPIC_API_KEY in the environment (CI secrets). The shell's ANTHROPIC_API_KEY
+ * belongs to another account and is never used. Never log the return value.
  */
 export function resolveApiKey(envFilePath: string): string {
-  let contents: string;
+  let contents: string | null = null;
   try {
     contents = fs.readFileSync(envFilePath, "utf8");
   } catch {
-    throw new Error(MISSING);
+    contents = null;
   }
-  const key = parseEnv(contents)[VAR]?.trim();
+  const key = (contents === null ? process.env[VAR] : parseEnv(contents)[VAR])?.trim();
   if (!key) throw new Error(MISSING);
   return key;
 }
