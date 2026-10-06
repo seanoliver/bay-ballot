@@ -4,6 +4,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
+import { SiteFooter } from "@/components/SiteFooter";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         {/* Pages set their own width so bands (like the sticky filter bar) can span the screen. */}
         <main>{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

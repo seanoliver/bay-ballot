@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cardDescription, contestHeadline, electionIntro, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
+import { cardDescription, contestHeadline, dataAsOf, electionIntro, formatDate, guidePicks, monthYear, pickLabel, reasons, sections } from "@/lib/display";
 import { isPublished, publishedGuides } from "@/lib/filters";
 import type { Ballot, Contest, EndorsementFile, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -128,5 +128,18 @@ describe("electionIntro", () => {
   });
   it("falls back to the ballot title without a city contest", () => {
     expect(electionIntro({ ...ballot, contests: [ballot.contests[0]] }, {}).title).toBe("San Francisco General Election");
+  });
+});
+
+describe("dataAsOf", () => {
+  const f = (fetchedAt: string, status: "published" | "pending" = "published") => ({ fetchedAt, status });
+  it("is the latest fetch date among published guides, as a calendar date", () => {
+    expect(dataAsOf({ a: f("2026-10-01"), b: f("2026-10-04T22:15:00Z"), c: f("2026-09-30") })).toBe("October 4, 2026");
+  });
+  it("ignores pending guides", () => {
+    expect(dataAsOf({ a: f("2026-10-01"), b: f("2026-10-09", "pending") })).toBe("October 1, 2026");
+  });
+  it("null with nothing published", () => {
+    expect(dataAsOf({})).toBeNull();
   });
 });

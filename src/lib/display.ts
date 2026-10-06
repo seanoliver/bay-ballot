@@ -180,3 +180,13 @@ export function rankedText(d: Pick<RankedDetail, "order" | "unranked">): string 
   const ranked = d.order.map((name, i) => `#${i + 1} ${name}`).join(", ");
   return d.unranked.length ? `${ranked} · also ${d.unranked.join(", ")} (unranked)` : ranked;
 }
+
+// "Data as of": the most recent fetch among published guides, as a calendar date.
+export function dataAsOf(ends: Record<string, Pick<EndorsementFile, "fetchedAt" | "status">>): string | null {
+  const days = Object.values(ends)
+    .filter((e) => e.status === "published")
+    .map((e) => e.fetchedAt.slice(0, 10))
+    .sort();
+  const last = days.at(-1);
+  return last ? formatDate(last) : null;
+}
