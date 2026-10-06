@@ -5,7 +5,7 @@ import type { z } from "zod";
 import { AreasFile, Ballot, EndorsementFile, Guide, type Area } from "./schema";
 import { areasOf, inArea, STATE_DISTRICTS } from "./areas";
 import { matchName } from "./names";
-import { quoteKey } from "./quote-key";
+import { isRejected } from "./quote-key";
 
 export type ElectionData = {
   ballot: Ballot;
@@ -137,9 +137,8 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if (e.status === "published" && Object.keys(e.picks).length === 0) {
       warnings.push(`${id}: published file has no picks`);
     }
-    const rejected = new Set((e.rejectedQuotes ?? []).map((r) => quoteKey(r.text)));
     for (const [cid, entry] of Object.entries(e.picks)) {
-      for (const q of entry.quotes) if (rejected.has(quoteKey(q.text))) errors.push(`${id}/${cid}: quote is in rejectedQuotes: "${q.text}"`);
+      for (const q of entry.quotes) if (isRejected(q.text, cid, e.rejectedQuotes ?? [])) errors.push(`${id}/${cid}: quote is in rejectedQuotes: "${q.text}"`);
       const c = contests.get(cid);
       if (!c) {
         errors.push(`${id}: unknown contest '${cid}'`);

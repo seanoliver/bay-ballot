@@ -1,7 +1,7 @@
 import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
 import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
-import { quoteKey } from "@/lib/quote-key";
+import { isRejected } from "@/lib/quote-key";
 import { sourcesFor } from "./sources";
 
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
@@ -22,9 +22,9 @@ export function nextFile(
     picks = { ...picks };
     for (const h of held) delete picks[h.contestId];
   }
-  const rejected = new Set((prev.rejectedQuotes ?? []).map((r) => quoteKey(r.text)));
-  if (rejected.size) {
-    picks = Object.fromEntries(Object.entries(picks).map(([id, e]) => [id, { ...e, quotes: e.quotes.filter((q) => !rejected.has(quoteKey(q.text))) }]));
+  const rejected = prev.rejectedQuotes ?? [];
+  if (rejected.length) {
+    picks = Object.fromEntries(Object.entries(picks).map(([id, e]) => [id, { ...e, quotes: e.quotes.filter((q) => !isRejected(q.text, id, rejected)) }]));
   }
   // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
   const unchanged = isDeepStrictEqual(prev.picks, picks);
