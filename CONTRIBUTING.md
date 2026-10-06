@@ -33,6 +33,7 @@ picks:
 2. Most files are rewritten by the extraction pipeline. If you hand-edit picks, add `manual: true` to the file so the next run skips it.
 3. Run `npm run validate`. It must print `data OK`.
 4. Run `npm test`.
-5. Open a pull request with a link to the guide's page.
+5. If the change shows up on the site, add an entry at the top of `data/changelog.yml` (date, `type: new | data | fix`, a one-line title written for visitors). Changes to tests, CI or docs don't need one.
+6. Open a pull request with a link to the guide's page.
 
 You can also report a mistake with the [data correction form](https://github.com/seanoliver/bay-ballot/issues/new?template=data-correction.yml) or at corrections@bayballot.com.
