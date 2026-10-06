@@ -8,9 +8,9 @@
 
 **Tech Stack:** Next.js (App Router) + TypeScript + Tailwind, `zod`, `yaml` (v2, YAML 1.2), `@anthropic-ai/sdk` (`claude-sonnet-5-5`), `cheerio`, `tsx`, Vitest, Playwright, Vercel.
 
-**Design doc:** `~/cortex/wiki/side-projects/active/bay-ballot/2026-10-05-bay-ballot-design.md`
+**Design doc:** the design doc (kept in the author's notes)
 
-**Seed data:** `~/cortex/drafts/sf-nov-2026-guides.md` (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
+**Seed data:** an initial research file (6 guides, full ballot, sources) and the "2026 - General" tab of Sean's Voting sheet.
 
 ---
 
@@ -589,7 +589,7 @@ curl -L -o data/2026-11/sources/SF-Voter-Pamphlet-Nov2026.pdf https://media.api.
 ```
 Also save the CA SoS certified candidate list (`https://elections.cdn.sos.ca.gov/statewide-elections/2026-general/cert-list-candidates.pdf`).
 
-**Step 2:** Write `ballot.yml` covering every contest in `~/cortex/drafts/sf-nov-2026-guides.md`. Rules:
+**Step 2:** Write `ballot.yml` covering every contest from the initial research file. Rules:
 - IDs: `us-rep-11`, `us-rep-15`, `governor`, `lt-governor`, `secretary-of-state`, `controller`, `treasurer`, `attorney-general`, `insurance-commissioner`, `board-of-equalization-2`, `superintendent`, `assembly-17`, `assembly-19`, `supreme-court-groban`, `supreme-court-evans`, `court-of-appeal-1`, `supervisor-2/4/6/8/10`, `board-of-education`, `college-board`, `college-board-partial`, `bart-8`, `assessor`, `public-defender`, `prop-1` … `prop-45`, `rtm`, `prop-a` … `prop-j`.
 - Candidate names exactly as in the SoS certified list / SF candidate list.
 - Measures: `description` = the official one-line title, `link` = `https://voterguide.sos.ca.gov/propositions/<n>/` for state props, the sf.gov measure page for local ones.
