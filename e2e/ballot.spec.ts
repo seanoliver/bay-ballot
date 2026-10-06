@@ -330,7 +330,8 @@ test.describe("desktop keyboard", () => {
 
   test("a failed URL write keeps the stepped contest and retries on the next step", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
-    // After load, so the stub sits in front of Next's own replaceState wrapper.
+    // After hydration (the region role is client-only), so the stub sits in front of Next's own replaceState wrapper.
+    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     await page.evaluate(() => {
       const w = window as unknown as { __fail: boolean };
       w.__fail = true;
@@ -437,6 +438,7 @@ test.describe("desktop keyboard", () => {
 test("a step left unwritten on desktop doesn't override a tap after resizing to a phone", async ({ page, isMobile }) => {
   test.skip(isMobile, "starts on desktop");
   await openBallot(page, "?c=us-rep-11");
+  await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
   await page.evaluate(() => {
     const orig = history.replaceState.bind(history);
     history.replaceState = (...args: Parameters<History["replaceState"]>) => {
