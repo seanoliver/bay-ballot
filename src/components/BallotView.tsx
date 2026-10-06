@@ -195,7 +195,6 @@ export function BallotView({ election, area, links, intro, groups, guides, files
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
-          <AreaPicker links={links} />
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
             {singleKeys ? null : (
@@ -204,6 +203,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
               </button>
             )}
           </div>
+          <AreaPicker links={links} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
