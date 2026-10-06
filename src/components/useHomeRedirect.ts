@@ -2,12 +2,13 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DISTRICTS_KEY, homeRedirect, SEEN_KEY } from "@/lib/home-redirect";
-import { FILTERS_KEY } from "./useBallotFilters";
+import { createHomeVisit } from "@/lib/home-redirect";
 
-function read(key: string): string | null {
+const visit = createHomeVisit();
+
+function localStore(): Storage | null {
   try {
-    return window.localStorage.getItem(key);
+    return window.localStorage;
   } catch {
     return null;
   }
@@ -16,14 +17,7 @@ function read(key: string): string | null {
 export function useHomeRedirect({ election, area }: { election: string; area: string | null }) {
   const router = useRouter();
   useEffect(() => {
-    const target =
-      area === null
-        ? homeRedirect({ query: window.location.search, storedFilters: read(FILTERS_KEY), storedDistricts: read(DISTRICTS_KEY), seen: read(SEEN_KEY) })
-        : null;
-    try {
-      window.localStorage.setItem(SEEN_KEY, area ?? "bay-area");
-    } catch {
-    }
+    const target = visit(localStore(), { area, query: window.location.search });
     if (target) router.replace(`/${election}/${target}`);
   }, [election, area, router]);
 }

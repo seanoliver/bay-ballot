@@ -5,6 +5,8 @@ export type Filters = {
   whyOnly: boolean;
 };
 
+export const FILTERS_KEY = "bb-filters";
+
 export const EMPTY: Filters = { off: [], whyOnly: false };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;

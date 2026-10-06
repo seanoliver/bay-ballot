@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { FILTERS_KEY, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
 
-export const FILTERS_KEY = "bb-filters";
 export const CHANGE_EVENT = "bb-filters-change";
 
 function readStored(): string | null {
