@@ -18,7 +18,7 @@ What a run does:
 4. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
 5. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data.
    - The entry compares the guide against `main`. The workflow extracts `data/` from the `main` commit that the run merged into the refresh branch, and passes that directory as `--baseline`.
-   - On an open refresh PR, each guide's entry is rewritten on every run, and a change undone before merge leaves no entry.
+   - On an open refresh PR, a guide's entry is rewritten whenever that guide's data changes, and a change undone before merge leaves no entry.
    - A file already on `main` is never rewritten. A second run on the same day after a merge writes `<date>-refresh-<guide>-2.yml`, then `-3`.
    - An entry reads "GrowSF published endorsements for 12 contests" for a first publication. Otherwise it lists the guide's changes, separated by semicolons: two by name, the rest as a count. Held picks aren't announced.
    - To fix an entry's wording, edit the file on `main` after the refresh PR merges. A clean run merges itself, and an edit on an open refresh PR is overwritten the next time that guide changes.
