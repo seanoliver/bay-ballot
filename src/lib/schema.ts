@@ -95,3 +95,14 @@ export const EndorsementFile = z.object({
   picks: z.record(Slug, Entry).default({}),
 });
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
+
+// data/changelog.yml: what changed for visitors, newest first.
+export const ChangelogEntry = z.object({
+  date: z.iso.date(),
+  type: z.enum(["new", "data", "fix"]),
+  title: NonEmpty,
+  details: NonEmpty.optional(),
+  pr: z.number().int().positive().optional(),
+});
+export type ChangelogEntry = z.infer<typeof ChangelogEntry>;
+export const ChangelogFile = z.array(ChangelogEntry);
