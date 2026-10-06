@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { ContestDetail } from "@/components/ContestDetail";
 import { FRAME, READING } from "@/components/frame";
 import { Card } from "@/components/ui/card";
-import { contestShare } from "@/components/share/data";
 import { candidateSlots } from "@/lib/bar";
-import { shareDescription } from "@/lib/share";
+import { dataAsOf } from "@/lib/display";
+import { answerSentence, contestDescription, contestTitle } from "@/lib/seo-copy";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import { ballotViewProps, election, elections } from "@/lib/site-data";
 
@@ -25,14 +25,21 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
   return d && contest ? { ...d, contest, electionId: p.election } : null;
 }
 
+// Every published guide's entry for the contest; search copy never depends on a visitor's filters.
+function allRows(d: NonNullable<Awaited<ReturnType<typeof load>>>) {
+  const { guides, files } = ballotViewProps(d);
+  return activeEntries(d.contest.id, guides, files, EMPTY);
+}
+
 export async function generateMetadata({ params }: PageProps<"/[election]/[contest]">): Promise<Metadata> {
   const d = await load(params);
   if (!d) return {};
-  const share = contestShare(d.electionId, d.contest.id);
+  const rows = allRows(d);
   return {
-    title: `${d.contest.title} · Bay Ballot`,
+    // The search title already names the site's subject; the " · Bay Ballot" suffix would cut it off.
+    title: { absolute: contestTitle(d.contest, rows) },
     alternates: { canonical: `/${d.electionId}/${d.contest.id}` },
-    ...(share ? { description: shareDescription(share.card) } : {}),
+    description: contestDescription(d.contest, rows),
   };
 }
 
@@ -59,6 +66,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
           slots={candidateSlots(contest, rows.map((r) => r.entry))}
           pageLink={false}
           shortNames={false}
+          answer={answerSentence(contest, rows, dataAsOf(d.endorsements))}
         />
       </Card>
     </div>
