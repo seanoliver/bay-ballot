@@ -1,0 +1,103 @@
+name: Daily data refresh
+
+on:
+  schedule:
+    # 13:00 UTC = 6:00 am Pacific during daylight time (PDT). After clocks change on
+    # Nov 1 it runs at 5:00 am PST; Election Day is Nov 3, so that is left alone.
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install pdftotext
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Install Chromium for browser-fetched guides
+        run: npx playwright install --with-deps chromium
+
+      # Pages that changed only in dates, banners or text naming no contest are skipped
+      # with no model call, so a quiet day costs nothing.
+      - name: Refresh
+        id: refresh
+        env:
+          BAYBALLOT_ANTHROPIC_API_KEY: ${{ secrets.BAYBALLOT_ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          npm run bb -- refresh --summary summary.md --result result.json
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      # Open a PR only when endorsement data changed or a guide was re-extracted (its page
+      # text must be committed, or tomorrow's run would pay to re-extract it). Page-text
+      # drift alone (dates, banners) is discarded: it never counts as a relevant change.
+      - name: Decide whether to open a PR
+        id: changes
+        run: |
+          data_changed="$(git status --porcelain -- data/2026-11/endorsements)"
+          extracted="$(node -e "try { console.log(require('./result.json').extracted.length) } catch { console.log(0) }")"
+          if [ -z "$data_changed" ] && [ "$extracted" = "0" ]; then
+            git checkout -- data/
+            git clean -fdq -- data/
+            echo "open=false" >> "$GITHUB_OUTPUT"
+            echo "No relevant changes; no PR."
+          else
+            echo "open=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and open PR
+        id: pr
+        if: steps.changes.outputs.open == 'true'
+        run: |
+          branch="data/refresh-$(date -u +%F)-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data/
+          git commit -q -m "data: refresh $(date -u +%F)"
+          git push -q origin "$branch"
+          { cat summary.md; echo; echo "cc @seanoliver"; } > pr-body.md
+          gh pr create --base main --head "$branch" --title "data: refresh $(date -u +%F)" --body-file pr-body.md
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      # PRs opened with GITHUB_TOKEN don't trigger other workflows, so check them here.
+      - name: Validate, test and build
+        id: checks
+        if: steps.changes.outputs.open == 'true'
+        continue-on-error: true
+        run: npm run validate && npm test && npm run build
+
+      - name: Auto-merge a clean refresh
+        if: steps.changes.outputs.open == 'true' && steps.refresh.outputs.code == '0' && steps.checks.outcome == 'success'
+        run: gh pr merge "${{ steps.pr.outputs.branch }}" --squash --delete-branch
+
+      - name: Leave the PR open for review
+        if: steps.changes.outputs.open == 'true' && (steps.refresh.outputs.code != '0' || steps.checks.outcome != 'success')
+        run: |
+          gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
+          gh pr edit "${{ steps.pr.outputs.branch }}" --add-label needs-review
+          gh pr comment "${{ steps.pr.outputs.branch }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
+
+      - name: Fail the run on a refresh error
+        if: steps.refresh.outputs.code == '1'
+        run: exit 1
