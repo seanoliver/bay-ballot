@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, parseCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -18,7 +19,7 @@ import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { FRAME } from "./frame";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useQueryParam } from "./useBallotFilters";
+import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
@@ -51,7 +52,12 @@ type Props = {
 };
 
 export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
-  const { filters, setFilters } = useBallotFilters({ guides, keep: ["c"] });
+  const { filters, setFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
+  const options = area === null ? countyOptions(groups) : [];
+  const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
+  const offCounties = parseCounties(offParam, options);
+  const listed = visibleGroups(groups, offCounties);
+  const counties = showCountyFilter(options) ? { options, off: offCounties, onChange: (off: string[]) => setOffParam(toCountiesParam(off)) } : undefined;
   useHomeRedirect({ election, area });
   const [requested, setRequested] = useQueryParam("c");
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
@@ -65,7 +71,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const all = groups.flatMap((g) => g.sections.flatMap((s) => s.contests));
+  const all = listed.flatMap((g) => g.sections.flatMap((s) => s.contests));
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, (id: string) => {
@@ -80,7 +86,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const rowsFor = (id: string) => activeEntries(id, guides, files, filters);
   // EMPTY, not `filters`: a filter must never repaint a candidate.
   const slotsFor = (c: Contest) => candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
-  const filterProps = { filters, onChange: setFilters, guides, files };
+  const filterProps = { filters, onChange: setFilters, guides, files, counties };
 
   useEffect(() => {
     paneRef.current?.scrollTo({ top: 0 });
@@ -221,7 +227,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
             </a>
           ) : null}
         </div>
-        {groups.map((g) => (
+        {listed.map((g) => (
           <section key={g.key} aria-label={g.heading}>
             <SectionHeading>{g.heading}</SectionHeading>
             {g.sections.map((s) => (

@@ -5,17 +5,17 @@ import { FILTERS_KEY, initialFilters, toQuery, type Filters, type GuideInfo } fr
 
 export const CHANGE_EVENT = "bb-filters-change";
 
-function readStored(): string | null {
+function readKey(key: string): string | null {
   try {
-    return window.localStorage.getItem(FILTERS_KEY);
+    return window.localStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
-function writeStored(q: string) {
+function writeKey(key: string, v: string) {
   try {
-    window.localStorage.setItem(FILTERS_KEY, q);
+    window.localStorage.setItem(key, v);
   } catch {
   }
 }
@@ -50,14 +50,14 @@ export function useQuery(): string {
 
 export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
   const query = useQuery();
-  const stored = useSyncExternalStore(subscribe, readStored, () => null);
+  const stored = useSyncExternalStore(subscribe, () => readKey(FILTERS_KEY), () => null);
   const filters = useMemo(() => initialFilters({ query, stored, guides }), [query, stored, guides]);
   const keepKey = keep.join(",");
 
   const setFilters = useCallback(
     (f: Filters) => {
       const q = toQuery(f);
-      writeStored(q);
+      writeKey(FILTERS_KEY, q);
       const p = new URLSearchParams(q);
       const current = new URLSearchParams(window.location.search);
       for (const k of keepKey ? keepKey.split(",") : []) {
@@ -82,6 +82,24 @@ export function useQueryParam(name: string): [string | null, (v: string | null) 
       replaceQuery(p.toString());
     },
     [name],
+  );
+  return [value, set];
+}
+
+export function useStoredParam(name: string, storageKey: string): [string | null, (v: string) => void] {
+  const query = useQuery();
+  const stored = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
+  const p = new URLSearchParams(query);
+  const value = p.has(name) ? p.get(name) : stored;
+  const set = useCallback(
+    (v: string) => {
+      writeKey(storageKey, v);
+      const q = new URLSearchParams(window.location.search);
+      if (v) q.set(name, v);
+      else q.delete(name);
+      replaceQuery(q.toString());
+    },
+    [name, storageKey],
   );
   return [value, set];
 }

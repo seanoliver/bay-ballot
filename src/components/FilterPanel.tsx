@@ -21,15 +21,19 @@ import {
   type GuideInfo,
   type PickFile,
 } from "@/lib/filters";
+import { toggleCounty, type CountyOption } from "@/lib/counties";
 import { displayName } from "@/lib/display";
 import { cn } from "@/lib/utils";
 import { useHistorySheet } from "./useHistorySheet";
+
+export type CountyControl = { options: CountyOption[]; off: string[]; onChange: (off: string[]) => void };
 
 type Props = {
   filters: Filters;
   onChange: (f: Filters) => void;
   guides: GuideInfo[];
   files: Record<string, PickFile>;
+  counties?: CountyControl;
 };
 
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
@@ -72,7 +76,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
   );
 }
 
-function FilterControls({ filters: f, onChange, guides, files }: Props) {
+function FilterControls({ filters: f, onChange, guides, files, counties }: Props) {
   return (
     <>
       <Section title="Show">
@@ -81,11 +85,30 @@ function FilterControls({ filters: f, onChange, guides, files }: Props) {
           Only guides that explain their endorsements
         </label>
       </Section>
+      {counties ? <CountyChecklist {...counties} /> : null}
       <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
         Reset filters
       </Button>
     </>
+  );
+}
+
+function CountyChecklist({ options, off, onChange }: CountyControl) {
+  return (
+    <Section title="Counties">
+      {options.map((o) => (
+        <label key={o.id} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+          <Checkbox checked={!off.includes(o.id)} onCheckedChange={() => onChange(toggleCounty(off, o.id))} />
+          {o.name}
+        </label>
+      ))}
+      {off.length ? (
+        <Button variant="link" className="h-10 px-0 text-sm underline" onClick={() => onChange([])}>
+          All counties
+        </Button>
+      ) : null}
+    </Section>
   );
 }
 
