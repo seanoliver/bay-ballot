@@ -1,0 +1,63 @@
+guide: lwv-ssmc
+election: 2026-11
+status: published
+source: https://my.lwv.org/california/south-san-mateo-county/advocacy-action/vote-league
+archived:
+  - source: https://my.lwv.org/california/south-san-mateo-county/advocacy-action/vote-league
+    snapshot: https://web.archive.org/web/20261006195908/https://my.lwv.org/california/south-san-mateo-county/advocacy-action/vote-league
+fetchedAt: 2026-10-06
+hasReasoning: true
+rejectedQuotes:
+  - text: Prop 4 creates no program and spends no money by itself.
+    reason: "not the guide's own words: copied from LWV California (audit 2026-10-06)"
+  - text: Public financing can amplify small donors, broaden who can run, and reduce dependence on wealthy donors, with safeguards on public funds and stronger penalties for illegal foreign money.
+    reason: "not the guide's own words: copied from LWV California (audit 2026-10-06)"
+  - text: Prop 5 ends a system that can hand office to a replacement supported by only a small plurality.
+    reason: "not the guide's own words: copied from LWV California (audit 2026-10-06)"
+  - text: California already verifies voter identity.
+    reason: "not the guide's own words: copied from LWV California (audit 2026-10-06)"
+  - text: Prop 39 would add barriers to voting, expose sensitive information to identity theft, force rejections of valid ballots for clerical mismatches, rely on flawed citizenship data, and cost up to hundreds of millions yearly.
+    reason: "not the guide's own words: copied from LWV California (audit 2026-10-06)"
+  - text: Measure U will establish the Independent Redistricting Commission.
+    reason: "not substantive: describes the measure (audit 2026-10-06)"
+picks:
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: N
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  menlo-park-measure-p:
+    pick: N
+  portola-valley-measure-n:
+    pick: Y
+  san-mateo-county-measure-aa:
+    pick: Y
+  san-mateo-county-measure-j:
+    pick: Y
+  san-mateo-county-measure-l:
+    pick: Y
+  san-mateo-county-measure-u:
+    pick: Y

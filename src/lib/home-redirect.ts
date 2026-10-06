@@ -22,25 +22,41 @@ export function homeRedirect({
 
 export type KeyValueStore = Pick<Storage, "getItem" | "setItem">;
 
+export type HomeStores = { local: KeyValueStore | null; session?: KeyValueStore | null };
+
+const readFrom = (store: KeyValueStore | null | undefined, key: string) => {
+  try {
+    return store?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const writeTo = (store: KeyValueStore | null | undefined, key: string, value: string) => {
+  try {
+    store?.setItem(key, value);
+    return store != null;
+  } catch {
+    return false;
+  }
+};
+
 export function createHomeVisit() {
   let seenHere: string | null = null;
-  return (store: KeyValueStore | null, { area, query }: { area: string | null; query: string }): string | null => {
-    const read = (key: string) => {
-      try {
-        return store?.getItem(key) ?? null;
-      } catch {
-        return null;
-      }
-    };
-    const target =
-      area === null
-        ? homeRedirect({ query, storedFilters: read(FILTERS_KEY), storedDistricts: read(DISTRICTS_KEY), seen: read(SEEN_KEY) ?? seenHere })
-        : null;
+  const mark = ({ local, session }: HomeStores, area: string | null) => {
     seenHere = area ?? "bay-area";
-    try {
-      store?.setItem(SEEN_KEY, seenHere);
-    } catch {
+    if (!writeTo(local, SEEN_KEY, seenHere)) writeTo(session, SEEN_KEY, seenHere);
+  };
+  const visit = (stores: HomeStores, { area, query }: { area: string | null; query: string }): string | null => {
+    if (area !== null) {
+      mark(stores, area);
+      return null;
     }
+    const read = (key: string) => readFrom(stores.local, key);
+    const seen = read(SEEN_KEY) ?? readFrom(stores.session, SEEN_KEY) ?? seenHere;
+    const target = homeRedirect({ query, storedFilters: read(FILTERS_KEY), storedDistricts: read(DISTRICTS_KEY), seen });
+    if (query.replace(/^\?/, "") === "") mark(stores, null);
     return target;
   };
+  return { visit, mark };
 }

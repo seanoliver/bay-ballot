@@ -35,16 +35,16 @@ const store = (init: Record<string, string>, { failWrites = false }: { failWrite
 
 describe("createHomeVisit", () => {
   it("redirects once even when the marker can't be saved", () => {
-    const visit = createHomeVisit();
+    const { visit } = createHomeVisit();
     const s = store({ "bb-filters": "why=1" }, { failWrites: true });
-    expect(visit(s, { area: null, query: "" })).toBe("sf");
-    expect(visit(s, { area: "sf", query: "" })).toBeNull();
-    expect(visit(s, { area: null, query: "" })).toBeNull();
+    expect(visit({ local: s }, { area: null, query: "" })).toBe("sf");
+    expect(visit({ local: s }, { area: "sf", query: "" })).toBeNull();
+    expect(visit({ local: s }, { area: null, query: "" })).toBeNull();
   });
   it("never redirects a visitor whose first list page was /sf", () => {
     const s = store({ "bb-filters": "why=1" });
-    expect(createHomeVisit()(s, { area: "sf", query: "" })).toBeNull();
-    expect(createHomeVisit()(s, { area: null, query: "" })).toBeNull();
+    expect(createHomeVisit().visit({ local: s }, { area: "sf", query: "" })).toBeNull();
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "" })).toBeNull();
   });
   it("treats storage that throws on read as empty", () => {
     const broken: KeyValueStore = {
@@ -55,6 +55,38 @@ describe("createHomeVisit", () => {
         throw new Error("SecurityError");
       },
     };
-    expect(createHomeVisit()(broken, { area: null, query: "" })).toBeNull();
+    expect(createHomeVisit().visit({ local: broken }, { area: null, query: "" })).toBeNull();
+  });
+  it("doesn't mark a Bay Area visit from a shared link", () => {
+    const s = store({ "bb-filters": "why=1" });
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "?c=prop-b" })).toBeNull();
+    expect(s.getItem("bb-area")).toBeNull();
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "" })).toBe("sf");
+  });
+  it("remembers the visit in sessionStorage when localStorage can't be written", () => {
+    const local = store({ "bb-filters": "why=1" }, { failWrites: true });
+    const session = store({});
+    expect(createHomeVisit().visit({ local, session }, { area: null, query: "" })).toBe("sf");
+    expect(session.getItem("bb-area")).toBe("bay-area");
+    expect(createHomeVisit().visit({ local, session }, { area: null, query: "" })).toBeNull();
+  });
+  it("marks an area visit even from a shared link, so the Bay Area picker then stays", () => {
+    const s = store({ "bb-filters": "why=1" });
+    expect(createHomeVisit().visit({ local: s }, { area: "sf", query: "?c=prop-b" })).toBeNull();
+    expect(s.getItem("bb-area")).toBe("sf");
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "" })).toBeNull();
+  });
+  it("doesn't bounce a San Mateo visitor who set filters on a shared Bay Area link", () => {
+    const s = store({});
+    const home = createHomeVisit();
+    expect(home.visit({ local: s }, { area: null, query: "?c=menlo-park-measure-p" })).toBeNull();
+    s.setItem("bb-filters", "why=1");
+    home.mark({ local: s }, null);
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "" })).toBeNull();
+  });
+  it("doesn't bounce a San Mateo page visitor with filters", () => {
+    const s = store({ "bb-filters": "why=1" });
+    expect(createHomeVisit().visit({ local: s }, { area: "san-mateo", query: "" })).toBeNull();
+    expect(createHomeVisit().visit({ local: s }, { area: null, query: "" })).toBeNull();
   });
 });

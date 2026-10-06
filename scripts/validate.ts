@@ -18,7 +18,8 @@ for (const election of listElections(root)) {
     failed = true;
     continue;
   }
-  const { errors, warnings } = result;
+  const { errors, warnings, info } = result;
+  info.forEach((i) => console.log(`INFO  ${election} ${i}`));
   warnings.forEach((w) => console.warn(`WARN  ${election} ${w}`));
   errors.forEach((e) => console.error(`ERROR ${election} ${e}`));
   if (errors.length || warnings.length) failed = true;

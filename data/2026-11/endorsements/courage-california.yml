@@ -1,0 +1,140 @@
+guide: courage-california
+election: 2026-11
+status: published
+source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+archived:
+  - source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+    snapshot: https://web.archive.org/web/20261006200128/https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+fetchedAt: 2026-10-06
+hasReasoning: true
+rejectedQuotes:
+  - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
+    reason: "not substantive: tenure and vote share (audit 2026-10-06)"
+  - text: Rep. Liccardo has served in this congressional seat since 2024, when he was elected with over 58% of the vote.
+    reason: "not substantive: tenure and vote share (audit 2026-10-06)"
+  - text: Prior to Congress, Liccardo served as the Mayor of San Jose from 2015-2022, and as a member of the San Jose City Council from 2007-2015.
+    reason: "not substantive: résumé only (audit 2026-10-06)"
+  - text: Ma has been the California treasurer since 2019, when she was elected with 64% of the vote.
+    reason: "not substantive: tenure and vote share (audit 2026-10-06)"
+  - text: Kounalakis currently serves as California’s lieutenant governor, and was elected to that seat in 2018 with over 56% of the vote.
+    reason: "not substantive: tenure and vote share (audit 2026-10-06)"
+  - text: Barrera has been a member of the San Diego Unified School District Board of Education since 2008, and serves as its president.
+    reason: "not substantive: résumé only (audit 2026-10-06)"
+  - text: Federal funding has become increasingly unreliable during the current administration.
+    reason: "does not stand alone: no reference to Prop 2 (audit 2026-10-06)"
+  - text: California is already facing budget deficits, in part because of the deep cuts that Republicans enacted for health care and other critical services in H.R. 1 to subsidize massive tax breaks for the wealthy and corporations.
+    reason: "does not stand alone: background, not the reason (audit 2026-10-06)"
+picks:
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+    quotes:
+      - text: Mullin previously served as a state assemblymember from 2012-2022, and earned a lifetime 96 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  us-rep-16:
+    pick:
+      - Sam Liccardo
+  governor:
+    pick:
+      - Xavier Becerra
+    quotes:
+      - text: As attorney general, Becerra took the first Trump administration to court 122 times and won.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+    quotes:
+      - text: Based on our Courage Score analysis, Sec. Weber supported nearly all progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  controller:
+    pick:
+      - Malia M. Cohen
+    quotes:
+      - text: As chair of the San Francisco Employee Retirement System, she led the effort to divest from fossil fuels.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+    quotes:
+      - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: Based on our Courage Score analysis, he supported the most progressive bills that made it to a vote and earned the Courage Score All-Star designation three times.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+    quotes:
+      - text: As a member of the board, she has prioritized transparency and accountability, affordable housing, environmental protection, and veterans’ and homeowners’ services.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  assembly-21:
+    pick:
+      - Diane Papan
+  assembly-23:
+    pick:
+      - Marc Berman
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Berman supported most progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  superintendent:
+    pick:
+      - Richard Barrera
+  prop-1:
+    pick: Y
+    quotes:
+      - text: VOTING YES will create significant economic benefits across the state, including over 50,000 new construction jobs, and $1.3 billion in state and local tax revenue.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-2:
+    pick: Y
+    quotes:
+      - text: VOTING YES will allow the state to stabilize its savings and continue to protect critical services, like education and public safety, from unexpected cuts.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-3:
+    pick: Y
+    quotes:
+      - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING YES will prevent a significant loss of revenue as federal cuts impact the state and Californians for years.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+    quotes:
+      - text: VOTING YES will reform the process to potentially reduce the number of recall special elections and save taxpayer dollars.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+    quotes:
+      - text: National and state data continues to show that voter fraud is extremely rare, making up a fraction of a percentage point of overall voting in the United States.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING NO will prevent the state from disenfranchising a registered voter if they cannot produce a document on demand.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+    quotes:
+      - text: Estimates indicate that noncompliance fees could total $1.7 billion in the first year if Proposition 44 passes, and many FQHC clinics would likely be forced to close or substantially cut services as a result.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  prop-45:
+    pick: N
+    quotes:
+      - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo

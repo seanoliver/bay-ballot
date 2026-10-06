@@ -85,7 +85,7 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
 }
 
 function ballotMarkers(ballot: Ballot, aliases: Aliases): RegExp[] {
-  return [...ballot.contests.flatMap(contestMarkers), ...nameMarkers(ballot, aliases)];
+  return [...ballot.contests.flatMap((c) => contestMarkers(c, ballot.contests)), ...nameMarkers(ballot, aliases)];
 }
 
 export function changedLines(a: string[], b: string[]): { removed: number[]; added: number[] } {

@@ -1,0 +1,135 @@
+guide: bay-rising-action
+election: 2026-11
+status: published
+source: https://bayrisingaction.org/voterguide/
+archived:
+  - source: https://bayrisingaction.org/voterguide/
+    snapshot: https://web.archive.org/web/20261006195712/https://bayrisingaction.org/voterguide/
+fetchedAt: 2026-10-06
+hasReasoning: true
+rejectedQuotes:
+  - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
+    reason: "descriptive: says what the measure does (audit 2026-10-06)"
+  - text: Ninety percent (90%) of the funds would go to healthcare, and 10% to food assistance or education.
+    reason: descriptive, and "the funds" refers back (audit 2026-10-06)
+  - text: At the same time, 87% of multi-family rental units in Redwood City are owned by corporations and real estate trusts rather than small landlords.
+    reason: "does not stand alone: opens with a connector (audit 2026-10-06)"
+  - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
+    reason: "does not stand alone: refers back to the previous sentence (audit 2026-10-06)"
+picks:
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+    quotes:
+      - text: Wealthy donors and special interests continue to dominate election campaign spending.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Prop 4 would allow local governments the option to create systems that help candidates rely less on wealthy donors and public interests.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Money in politics sways our elections.
+        source: https://bayrisingaction.org/voterguide/
+  prop-5:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+    quotes:
+      - text: Prop 39 creates significant barriers to voting by prohibiting voting by mail or voting in person without disclosing or presenting a government-issued identification number.
+        source: https://bayrisingaction.org/voterguide/
+      - text: New hurdles to voting, like requiring you to write your personal ID number on your ballot, would make it easier to steal your identity and harder to protect your privacy.
+        source: https://bayrisingaction.org/voterguide/
+  prop-40:
+    pick: Y
+    quotes:
+      - text: Federal cuts will strip $100 billion from healthcare in California over the next five years—resulting in higher premiums and loss of coverage for millions of Californians.
+        source: https://bayrisingaction.org/voterguide/
+      - text: To stop the healthcare collapse in the state, Prop 40 would impose a one-time tax of up to 5% on taxpayers with covered assets over $1 billion, generating $100 billion in revenue over 5 years.
+        source: https://bayrisingaction.org/voterguide/
+  prop-41:
+    pick: N
+    quotes:
+      - text: Prop 41 requires audits on new spending, but goes beyond oversight by creating structural barriers to future voter-approved revenue measures.
+        source: https://bayrisingaction.org/voterguide/
+      - text: The combination of Prop 41 and Prop 42 would make it significantly more difficult to design and implement progressive revenue solutions to fund schools, healthcare, housing, and other public priorities.
+        source: https://bayrisingaction.org/voterguide/
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop 42 blocks new state taxes on personal property, including business interests, intellectual property, and financial assets—restricting California’s ability to ask the wealthiest individuals to contribute more toward public investments.
+        source: https://bayrisingaction.org/voterguide/
+      - text: The combination of Prop 41 and Prop 42 would make it significantly more difficult to design and implement progressive revenue solutions to fund schools, healthcare, housing, and other public priorities.
+        source: https://bayrisingaction.org/voterguide/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Under Prop 43, two-thirds of voters would need to approve local funding measures and taxes, allowing one-third of voters to overrule the majority and block funding for essential services.
+        source: https://bayrisingaction.org/voterguide/
+      - text: In practice, Prop 43 would make it nearly impossible to raise local revenue.
+        source: https://bayrisingaction.org/voterguide/
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+    quotes:
+      - text: "Without this funding, public transit services would be cut dramatically: MUNI would cut services by at least 30%, AC Transit would reduce service by 16%, and BART would close 15 stations and cut service by 70%."
+        source: https://bayrisingaction.org/voterguide/
+      - text: An investment in public transit is an investment in a thriving economy, clearer air, and a more affordable region.
+        source: https://bayrisingaction.org/voterguide/
+  prop-a:
+    pick: N
+  prop-b:
+    pick: Y
+    quotes:
+      - text: Our tax dollars are currently invested in and make money for big, private banks and their private shareholders, instead of the people of San Francisco.
+        source: https://bayrisingaction.org/voterguide/
+      - text: A public bank would benefit San Franciscans by creating low-interest loans for city infrastructure and affordable housing, commercial loans through credit unions and community banks, and loans to drive community revitalization.
+        source: https://bayrisingaction.org/voterguide/
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: N
+    quotes:
+      - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Prop D would make it harder for voters to have their voices heard by increasing the number of signatures a measure needs to reach the ballot.
+        source: https://bayrisingaction.org/voterguide/
+  prop-e:
+    pick: N
+    quotes:
+      - text: Prop E slashes the authority and community oversight provided by the city’s commissions and replaces it with more Deputy Mayors in a bloated executive branch of government.
+        source: https://bayrisingaction.org/voterguide/
+  prop-f:
+    pick: N
+    quotes:
+      - text: Prop F gives the Mayor more powers vis-à-vis the Board of Supervisors by raising the threshold for Board approval and amendments of contracts, increasing the Mayor’s authority over contracts, and extending the City Administrator’s term from 5 to 10 years.
+        source: https://bayrisingaction.org/voterguide/
+  prop-h:
+    pick: Y
+    quotes:
+      - text: After years of pandemic disruption and lost revenue, Muni is confronting a $307 million annual deficit—a shortfall so large it rivals the combined budgets of the city’s parks and library systems.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Resulting cuts to Muni would worsen SF’s congestion and gridlock, which is already ranked the 3rd-worst in any major US city.
+        source: https://bayrisingaction.org/voterguide/
+  prop-i:
+    pick: Y
+    quotes:
+      - text: San Francisco faces an affordable housing crisis that is displacing thousands of people from the city.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.
+        source: https://bayrisingaction.org/voterguide/
+  prop-j:
+    pick: Y
+  redwood-city-measure-e:
+    pick: Y
+    quotes:
+      - text: Half of Redwood City residents, including over 70% of Latino and Black households, are renters who pay an average of almost $4,000 for a 2-bedroom home.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
+        source: https://bayrisingaction.org/voterguide/

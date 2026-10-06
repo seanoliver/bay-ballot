@@ -53,6 +53,30 @@ describe("data", () => {
       "dist: in no area (check its jurisdiction and data/areas.yml)",
     ]);
   });
+  it("checks that a held pick is in one of the guide's areas", () => {
+    const d = base();
+    d.areas.push(SM);
+    d.ballot.contests.push({ ...d.ballot.contests[0], id: "mp-p", jurisdiction: { level: "city", name: "Menlo Park" } });
+    const held = [{ contestId: "mp-p", pick: "Y" as const, reason: "unverified" as const, evidence: "x" }];
+    expect(validateElection(withFile(d, {}, { held })).errors).toEqual(["g/mp-p: held pick is outside the guide's areas (sf)"]);
+  });
+  it("notes, per guide, a measure letter shared among the contests in its areas, without failing", () => {
+    const d = base();
+    d.areas.push(SM);
+    const m = d.ballot.contests[0];
+    d.ballot.contests.push({ ...m, id: "prop-p", title: "Proposition P", jurisdiction: { level: "city", name: "San Francisco" } });
+    d.ballot.contests.push({ ...m, id: "mp-p", title: "Menlo Park Measure P", jurisdiction: { level: "city", name: "Menlo Park" } });
+    d.guides.push({ ...d.guides[0], id: "both", areas: ["sf", "san-mateo"] });
+    const r = validateElection(d);
+    expect(r.info).toEqual(["both: measure letter P is on prop-p and mp-p; a quote under a bare \"Measure P\" heading counts for each"]);
+    expect(r.warnings).toEqual([]);
+    expect(r.errors).toEqual([]);
+  });
+  it("fails when a pick quotes a rejected quote", () => {
+    const q = { text: "Prop B is a bad idea.", source: "https://g.org/a" };
+    const d = withFile(base(), { "prop-b": { ...e("N"), quotes: [q] } }, { rejectedQuotes: [{ text: "Prop B is a  bad idea.", reason: "not substantive" }] });
+    expect(validateElection(d).errors).toEqual(["g/prop-b: quote is in rejectedQuotes: \"Prop B is a bad idea.\""]);
+  });
   it("fails when an area id collides with a contest id", () => {
     const d = base();
     d.ballot.contests.push({ ...d.ballot.contests[0], id: "sf" });

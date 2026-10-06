@@ -2038,7 +2038,7 @@ git commit -m "feat(counties): Counties group in the filter column on the Bay Ar
 
 **Files:**
 - Modify: `data/areas.yml`, `data/2026-11/ballot.yml`
-- Create: `data/2026-11/sources/SMC-Candidate-Roster-<MMDD>.pdf` (and the measure list, saved as PDF or text)
+- Create: `data/2026-11/sources/SMC-Candidate-Roster-<MMDD>.txt`, a redacted extract of the registrar roster (and the measure list as text). Never commit the roster PDF: it lists candidates' emails, phone numbers and addresses.
 - Test: `npm run validate`, `tests/placement.test.ts` (real data still loads)
 
 **Step 1: Write the failing check**
@@ -2082,10 +2082,10 @@ Then run `curl -s https://smcacre.gov/elections/november-3-2026-statewide-genera
 **Step 2: Gather the sources**
 
 ```bash
-curl -sL "https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf" -o data/2026-11/sources/SMC-Candidate-Roster-0903.pdf
-pdftotext -layout data/2026-11/sources/SMC-Candidate-Roster-0903.pdf /tmp/smc-roster.txt
+curl -sL "https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf" -o /tmp/smc-roster.pdf
+pdftotext -layout /tmp/smc-roster.pdf /tmp/smc-roster.txt
 ```
-Save the registrar's list of local measures (letter, jurisdiction, ballot question) from the election page as `data/2026-11/sources/SMC-Measures-Nov2026.pdf` (print to PDF). For state and federal districts that include San Mateo County, read `data/2026-11/sources/CA-Certified-Candidates-Nov2026.pdf`. Cross-check the finished list against https://www.kqed.org/voterguide/sanmateo.
+Commit only a redacted extract of the roster (contest, seats, on-ballot flag, and each candidate's name, party and ballot designation) as `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`, with the registrar URL at the top. Save the registrar's list of local measures (letter, jurisdiction, ballot question) from the election page as `data/2026-11/sources/SMC-Measures-Nov2026.pdf` (print to PDF). For state and federal districts that include San Mateo County, read `data/2026-11/sources/CA-Certified-Candidates-Nov2026.pdf`. Cross-check the finished list against https://www.kqed.org/voterguide/sanmateo.
 
 **Step 3: Add the contests**
 
@@ -2500,7 +2500,7 @@ Append to `data/areas.yml`:
 
 **Step 2: Sources**
 
-`vote.santaclaracounty.gov` blocks automated fetches. Ask Sean to download the registrar's candidate list and measure list for Nov 3, 2026 (or the sample ballots for a Palo Alto and a Mountain View precinct) into `data/2026-11/sources/`. Supplement with the City of Palo Alto and City of Mountain View clerk election pages. Cross-check against https://www.kqed.org/voterguide/santaclara.
+`vote.santaclaracounty.gov` blocks automated fetches. Ask Sean to download the registrar's candidate list and measure list for Nov 3, 2026 (or the sample ballots for a Palo Alto and a Mountain View precinct) into a temporary folder, and commit only a redacted text extract (no emails, phone numbers or addresses) to `data/2026-11/sources/`, with the registrar URL at the top. Supplement with the City of Palo Alto and City of Mountain View clerk election pages. Cross-check against https://www.kqed.org/voterguide/santaclara.
 
 **Step 3: Contests (only what Palo Alto and Mountain View voters see)**
 

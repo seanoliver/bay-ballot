@@ -61,10 +61,12 @@ function cityCounty(name: string, areas: Area[]): string | null {
 
 type Slot = { key: string; county: string | null; city: string | null };
 const STATE_SLOT: Slot = { key: "state", county: null, city: null };
+const REGION_SLOT: Slot = { key: "region", county: null, city: null };
 
 function slotOf(c: Contest, areas: Area[]): Slot {
   const j = c.jurisdiction;
-  if (j.level === "state" || j.level === "region") return STATE_SLOT;
+  if (j.level === "state") return STATE_SLOT;
+  if (j.level === "region") return REGION_SLOT;
   if (j.level === "district" && STATE_DISTRICTS.includes(j.name)) return STATE_SLOT;
   const p = j.level === "district" ? j.within?.[0] : { level: j.level, name: j.name };
   if (!p) return STATE_SLOT;
@@ -83,7 +85,7 @@ export function placeGroups(contests: Contest[], areas: Area[]): PlaceGroup[] {
     slots.set(slot.key, s);
   }
   const counties = [...new Set(areas.map(countyOf).filter((x): x is string => x !== null))];
-  const rank = (s: Slot) => (s.county === null ? -1 : counties.indexOf(s.county));
+  const rank = (s: Slot) => (s === STATE_SLOT ? -2 : s === REGION_SLOT ? -1 : counties.indexOf(s.county ?? ""));
   const ordered = [...slots.values()].sort(
     (a, b) =>
       rank(a.slot) - rank(b.slot) ||
@@ -92,7 +94,7 @@ export function placeGroups(contests: Contest[], areas: Area[]): PlaceGroup[] {
   );
   return ordered.map(({ slot, contests: cs }) => ({
     key: slot.key,
-    heading: slot.city ?? (slot.county === null ? "California" : consolidated(slot.county, areas) ? slot.county : `${slot.county} County`),
+    heading: slot === REGION_SLOT ? BAY_AREA.name : slot.city ?? (slot.county === null ? "California" : consolidated(slot.county, areas) ? slot.county : `${slot.county} County`),
     county: slot.county,
     sections: sections(cs),
   }));

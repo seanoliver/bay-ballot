@@ -27,7 +27,7 @@ export default function AboutPage() {
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
         <p className="mt-2 text-base">
-          Bay Ballot puts every San Francisco voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
+          Bay Ballot puts every San Francisco and San Mateo County voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
           time.
         </p>
 
@@ -36,6 +36,7 @@ export default function AboutPage() {
             <li>Only guides that took a position on a contest count toward it.</li>
             <li>A guide that ranks candidates counts toward its first choice.</li>
             <li>In races with more than one seat, each name a guide endorses counts.</li>
+            <li>An area&apos;s page counts only the guides that cover that area. The Bay Area list counts every guide.</li>
           </List>
         </Section>
 
