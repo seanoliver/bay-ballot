@@ -12,9 +12,10 @@
   A  Breakdown by guide type   (organized by who the guides are)
   B  Sides with reasons        (organized by pick: who + why per side)
   C  Who / Why tabs            (organized by question)
+  D  Hybrid                    (B's sides + a compact by-type strip under the bar)
   Data: generated from bay-ballot/data/2026-11 (published guides only). Every quote below is
   verbatim from the endorsement YAML, linked to its archived snapshot when one exists.
-  URL params: ?opt=A|B|C&c=prop-b|prop-c|us-rep-11|board-of-education&vp=desktop|phone&theme=light|dark
+  URL params: ?opt=A|B|C|D&c=prop-b|prop-c|us-rep-11|board-of-education&vp=desktop|phone&theme=light|dark
 -->
 <style>
 :root {
@@ -159,7 +160,7 @@ svg.qm { width: 12px; height: 12px; box-sizing: content-box; fill: currentColor;
 .side-h { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; font-weight: 600; margin: 0; }
 .side-h .n { margin-left: auto; font-size: 14px; line-height: 20px; font-weight: 400; color: var(--muted); }
 .side-h .sq { width: 12px; height: 12px; border-radius: 3px; }
-.side + .side { padding-top: 32px; border-top: 1px solid var(--line); }
+.side + .side { margin-top: 16px; padding-top: 32px; border-top: 1px solid var(--line); }
 .side .quotes { gap: 16px; }
 
 /* ---------- option C: tabs ---------- */
@@ -185,6 +186,28 @@ svg.qm { width: 12px; height: 12px; box-sizing: content-box; fill: currentColor;
 .slate-h span { display: inline-flex; align-items: center; gap: 6px; }
 .slate-h .n { font-weight: 400; color: var(--muted); margin-left: auto; }
 .slate-g { font-size: 14px; line-height: 20px; color: var(--fg2); margin: 0; }
+
+
+/* ---------- option D: compact by-type strip ---------- */
+.strip { display: grid; gap: 8px; }
+.strip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; margin: 0; padding: 0; list-style: none; }
+.strip-grid li { display: grid; gap: 4px; min-width: 0; }
+.strip-grid .l1 { display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; }
+.strip-grid .l1 .tl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip-grid .l1 .v { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.strip-grid .l1 .v.m { color: var(--muted); }
+.strip-grid .mb { display: flex; gap: 2px; height: 6px; }
+.strip-grid .mb > i { display: block; height: 100%; }
+.strip-grid .mb > i:first-child { border-radius: 3px 0 0 3px; }
+.strip-grid .mb > i:last-child { border-radius: 0 3px 3px 0; }
+.strip-grid .mb > i:only-child { border-radius: 3px; }
+.strip-grid .tri { display: flex; gap: 10px; font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; }
+.strip-grid .tri span { display: inline-flex; align-items: center; gap: 4px; }
+.strip-grid .tri .z { color: var(--muted); }
+.sheet .strip-grid .g { display: none !important; }
+.sheet .strip-grid { gap: 12px; }
+.strip-grid .l1 .tl { min-width: 0; }
+.reasons-h { font-size: 14px; line-height: 20px; font-weight: 600; margin: 0; }
 
 /* footer + key */
 .foot { display: grid; gap: 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
@@ -289,7 +312,7 @@ function model(c) {
 function header(m, { inSheet }) {
   const { c } = m;
   const head = inSheet ? "" : `<div class="d-head"><p class="eyebrow">${esc(c.section)}</p><h2 class="title">${esc(c.title)}</h2>${c.description ? `<p class="desc">${esc(c.description)}</p>` : ""}</div>`;
-  return head + `<div class="result">${m.multi ? multiResult(m) : singleResult(m)}</div>`;
+  return head + `<div class="result">${m.multi ? multiResult(m) : singleResult(m)}</div>` + (state.opt === "D" ? typeStrip(m) : "");
 }
 
 function singleResult(m) {
@@ -434,13 +457,42 @@ function optionB(m) {
     const rest = s.quotes.filter((q) => !top.some((t) => t.text === q.text && t.g.id === q.g.id));
     const chips = s.guides.map((g) => chip(g)).join("");
     const reasons = s.quotes.length
-      ? `<ul class="quotes">${top.map((q) => quote(q, s.tone)).join("")}</ul>${rest.length ? expandable(rest.map((q) => quote(q, s.tone)), 0, (n) => `All reasons (${s.quotes.length})`) : ""}`
+      ? `<p class="reasons-h">Reasons</p><ul class="quotes">${top.map((q) => quote(q, s.tone)).join("")}</ul>${rest.length ? expandable(rest.map((q) => quote(q, s.tone)), 0, (n) => `All reasons (${s.quotes.length})`) : ""}`
       : `<p class="empty">None of the ${plural(s.count, "guide")} that picked ${esc(s.short ?? s.label)} gave reasons.</p>`;
     return `<section class="side"><h3 class="side-h"><i class="sw sq" style="background:${FILL[s.tone]}"></i>${esc(s.label)}<span class="n">${plural(s.count, "guide")}</span></h3>
       <ul class="chips">${chips}</ul>${reasons}</section>`;
   }).join("");
   return `<div class="sec" style="gap:0">${blocks}</div>`;
 }
+
+
+// ---------- option D: B's sides + a compact by-type strip under the bar ----------
+const TYPE_STRIP = { newspaper: "Papers", party: "Parties", club: "Clubs", union: "Unions", advocacy: "Advocacy", civic: "Civic" };
+function typeStrip(m) {
+  const present = TYPES.filter((t) => m.rows.some((r) => r.type === t));
+  const per = present.map((t) => ({ t, gs: m.rows.filter((r) => r.type === t) }));
+  let cells;
+  if (!m.multi) {
+    const max = Math.max(...per.map((p) => p.gs.length));
+    cells = per.map(({ t, gs }) => {
+      const n = m.sides.map((s) => gs.filter((g) => g.picks.includes(s.key)).length);
+      const tipTxt = m.sides.map((s, i) => `${n[i]} ${s.short ?? s.label}`).join(", ");
+      const segs = m.sides.map((s, i) => n[i] ? `<i style="width:${(n[i] / max) * 100}%;background:${FILL[s.tone]}"></i>` : "").join("");
+      return `<li title="${TYPE_PLURAL[t]}: ${esc(tipTxt)}" data-tip="${TYPE_PLURAL[t]}: ${esc(tipTxt)}"><span class="l1"><span class="g" style="color:var(--muted);display:inline-flex">${glyph(t)}</span><span class="tl">${TYPE_STRIP[t]}</span><span class="v">${n.join("–")}</span></span><span class="mb">${segs}</span></li>`;
+    }).join("");
+  } else {
+    const top = m.sides.slice(0, m.c.seats);
+    cells = per.map(({ t, gs }) => {
+      const n = top.map((s) => gs.filter((g) => g.picks.includes(s.key)).length);
+      const tipTxt = top.map((s, i) => `${n[i]} ${s.short}`).join(", ") + ` of ${gs.length}`;
+      return `<li data-tip="${TYPE_PLURAL[t]}: ${esc(tipTxt)}"><span class="l1"><span class="g" style="color:var(--muted);display:inline-flex">${glyph(t)}</span><span class="tl">${TYPE_STRIP[t]}</span><span class="v m">${gs.length}</span></span>
+        <span class="tri">${top.map((s, i) => `<span${n[i] ? "" : ' class="z"'}><i class="sw" style="background:${FILL[s.tone]};width:8px;height:8px"></i>${n[i]}</span>`).join("")}</span></li>`;
+    }).join("");
+  }
+  const cap = m.multi ? `By guide type: guides backing the top ${m.c.seats}, out of each type's total` : `By guide type`;
+  return `<div class="strip"><p class="caption">${cap}</p><ul class="strip-grid">${cells}</ul></div>`;
+}
+function optionD(m) { return optionB(m); }
 
 // ---------- option C: who / why tabs ----------
 let cTab = "who";
@@ -476,7 +528,8 @@ function optionC(m, vp) {
 // ---------- render ----------
 const OPTS = {
   A: ["Breakdown by guide type", "Organized by <b>who the guides are</b>. One row per guide type with its split and the guides in it, then reasons by side."],
-  B: ["Sides with reasons", "Organized by <b>pick</b>. Each side gets its guides as chips and its two strongest reasons (one per guide, mixed types, rule-based), with the rest behind “All reasons”."],
+  B: ["Sides with reasons", "Organized by <b>pick</b>. Each side gets its guides as chips and up to two reasons (one per guide, mixed types, chosen by rule, not ranked), with the rest behind “All reasons”."],
+  D: ["Hybrid: sides + type strip", "B's per-side blocks, plus <b>one compact by-type strip</b> under the headline bar: each guide type's split on a shared scale (top 3 candidates for multi-seat races)."],
   C: ["Who / Why tabs", "Organized by <b>question</b>. A segmented control switches between who endorsed each side and the reasons they gave, side by side on desktop."],
 };
 const CONTESTS = { "prop-b": "Prop B (split)", "prop-c": "Prop C (near-unanimous)", "us-rep-11": "US Rep 11", "board-of-education": "Board of Ed (3 seats)" };
@@ -494,7 +547,7 @@ function seg(id, opts, key) {
 }
 function render() {
   document.documentElement.dataset.theme = state.theme;
-  seg("ctl-opt", { A: "A  By type", B: "B  Sides", C: "C  Who / Why" }, "opt");
+  seg("ctl-opt", { A: "A  By type", B: "B  Sides", C: "C  Who / Why", D: "D  Hybrid" }, "opt");
   seg("ctl-c", CONTESTS, "c");
   seg("ctl-vp", { desktop: "Desktop pane", phone: "Phone sheet" }, "vp");
   seg("ctl-theme", { light: "Light", dark: "Dark" }, "theme");
@@ -502,7 +555,7 @@ function render() {
   const m = model(DATA.contests[state.c]);
   const phone = state.vp === "phone";
   uid = 0;
-  const body = state.opt === "A" ? optionA(m, state.vp) : state.opt === "B" ? optionB(m, state.vp) : optionC(m, state.vp);
+  const body = state.opt === "A" ? optionA(m, state.vp) : state.opt === "B" ? optionB(m, state.vp) : state.opt === "D" ? optionD(m) : optionC(m, state.vp);
   const close = `<button class="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button>`;
   const sheetHead = phone ? `<div class="grab"></div><div class="d-head" style="margin-bottom:24px"><p class="eyebrow">${esc(m.c.section)}</p><h2 class="title">${esc(m.c.title)}</h2>${m.c.description ? `<p class="desc">${esc(m.c.description)}</p>` : ""}</div>` : "";
   document.getElementById("frame").innerHTML = `<div class="${phone ? "sheet" : "pane"}" id="panel">${close}${sheetHead}<div class="d">${header(m, { inSheet: phone })}${body}${footer(m)}</div></div>`;
