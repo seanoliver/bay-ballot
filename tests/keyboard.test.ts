@@ -198,3 +198,58 @@ describe("trailing", () => {
     vi.useRealTimers();
   });
 });
+
+describe("trailing flush", () => {
+  it("flush runs the pending write now, once", () => {
+    vi.useFakeTimers();
+    const run = vi.fn();
+    const t = trailing(250, run);
+    t.push("a");
+    t.push("b");
+    t.flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(run).toHaveBeenCalledWith("b");
+    vi.advanceTimersByTime(1000);
+    t.flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+});
+
+describe("trailing rate limit", () => {
+  it("taps 150ms apart with a flushIfDue on each keyup write at most once per 250ms, ending on the last value", () => {
+    vi.useFakeTimers();
+    const writes: [number, string][] = [];
+    const t = trailing(250, (v: string) => {
+      writes.push([Date.now(), v]);
+    });
+    const start = Date.now();
+    let last = "";
+    for (let i = 0; i < 100; i++) {
+      last = i % 2 ? "up" : "down";
+      t.push(`${last}${i}`);
+      t.flushIfDue();
+      vi.advanceTimersByTime(150);
+    }
+    vi.advanceTimersByTime(1000);
+    const gaps = writes.slice(1).map(([at], i) => at - writes[i][0]);
+    expect(Math.min(...gaps)).toBeGreaterThanOrEqual(250);
+    expect(writes.length).toBeLessThanOrEqual(Math.floor((Date.now() - start) / 250) + 1);
+    expect(writes.at(-1)?.[1]).toBe(`${last}99`);
+    vi.useRealTimers();
+  });
+  it("flushIfDue writes at once when the last write was long enough ago", () => {
+    vi.useFakeTimers();
+    const run = vi.fn();
+    const t = trailing(250, run);
+    t.push("a");
+    t.flushIfDue();
+    expect(run).toHaveBeenCalledWith("a");
+    t.push("b");
+    t.flushIfDue();
+    expect(run).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(250);
+    expect(run).toHaveBeenLastCalledWith("b");
+    vi.useRealTimers();
+  });
+});
