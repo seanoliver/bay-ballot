@@ -35,14 +35,15 @@ function subscribe(onChange: () => void) {
 }
 
 // Not router.replace: that refetches from the server and scrolls.
-function replaceQuery(q: string) {
+export function replaceQuery(q: string): boolean {
   // Safari throws when replaceState is called too often; a throw must not break the caller.
   try {
     window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname);
   } catch {
-    return;
+    return false;
   }
   window.dispatchEvent(new Event(CHANGE_EVENT));
+  return true;
 }
 
 export function useQuery(): string {
@@ -72,7 +73,7 @@ export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; k
   return { filters, setFilters };
 }
 
-export function useQueryParam(name: string): [string | null, (v: string | null) => void] {
+export function useQueryParam(name: string): [string | null, (v: string | null) => boolean] {
   const query = useQuery();
   const value = new URLSearchParams(query).get(name);
   const set = useCallback(
@@ -80,7 +81,7 @@ export function useQueryParam(name: string): [string | null, (v: string | null) 
       const p = new URLSearchParams(window.location.search);
       if (v === null) p.delete(name);
       else p.set(name, v);
-      replaceQuery(p.toString());
+      return replaceQuery(p.toString());
     },
     [name],
   );

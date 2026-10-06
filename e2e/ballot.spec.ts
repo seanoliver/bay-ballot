@@ -298,7 +298,7 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
-  test("a fast sweep of the whole list writes the URL only a few times", async ({ page }) => {
+  test("holding ArrowDown through the whole list writes the URL only a few times", async ({ page }) => {
     await page.addInitScript(() => {
       const w = window as unknown as { __replaces: number };
       w.__replaces = 0;
@@ -311,7 +311,8 @@ test.describe("desktop keyboard", () => {
     await openBallot(page);
     const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
-    for (let i = 0; i < ids.length; i++) await page.keyboard.press("ArrowDown");
+    for (let i = 0; i < ids.length; i++) await page.keyboard.down("ArrowDown");
+    await page.keyboard.up("ArrowDown");
     await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
     await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
     const writes = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
@@ -322,6 +323,52 @@ test.describe("desktop keyboard", () => {
     await openBallot(page);
     await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
     await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k / Shift+?");
+  });
+
+  test("a failed URL write keeps the stepped contest and retries on the next step", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    // After load, so the stub sits in front of Next's own replaceState wrapper.
+    await page.evaluate(() => {
+      const w = window as unknown as { __fail: boolean };
+      w.__fail = true;
+      const orig = history.replaceState.bind(history);
+      history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+        if (w.__fail) throw new DOMException("too many calls", "SecurityError");
+        return orig(...args);
+      };
+    });
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(500);
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await page.evaluate(() => ((window as unknown as { __fail: boolean }).__fail = false));
+    await page.keyboard.press("ArrowUp");
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("a step right before a reload is kept", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.keyboard.press("ArrowDown");
+    await page.reload();
+    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+  });
+
+  test("Enter on the open contest moves into its details; a click still closes it", async ({ page }) => {
+    await openBallot(page, "?c=us-rep-11");
+    await page.locator("#row-d-us-rep-11").focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator("#detail-title")).toBeFocused();
+    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await page.locator("#row-d-us-rep-11").click();
+    await expect(page).not.toHaveURL(/[?&]c=/);
+  });
+
+  test("the Keyboard shortcuts button is there with single keys on", async ({ page }) => {
+    await openBallot(page);
+    await page.getByRole("button", { name: "Keyboard shortcuts" }).click();
+    await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
   });
 
   test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {

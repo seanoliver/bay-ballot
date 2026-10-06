@@ -198,3 +198,20 @@ describe("trailing", () => {
     vi.useRealTimers();
   });
 });
+
+describe("trailing flush", () => {
+  it("flush runs the pending write now, once", () => {
+    vi.useFakeTimers();
+    const run = vi.fn();
+    const t = trailing(250, run);
+    t.push("a");
+    t.push("b");
+    t.flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(run).toHaveBeenCalledWith("b");
+    vi.advanceTimersByTime(1000);
+    t.flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+});

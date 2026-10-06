@@ -64,11 +64,19 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, (id: string) => {
-      setRequested(id);
-      setStepped(null);
+      if (setRequested(id)) setStepped(null);
     }),
   );
-  useEffect(() => stepWrite.cancel, [stepWrite]);
+  useEffect(() => {
+    const flush = () => stepWrite.flush();
+    window.addEventListener("keyup", flush);
+    window.addEventListener("pagehide", flush);
+    return () => {
+      window.removeEventListener("keyup", flush);
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [stepWrite]);
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
@@ -105,6 +113,11 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
     if (!isPlainClick(e)) return;
     e.preventDefault();
     if (window.matchMedia(DESKTOP).matches) {
+      // detail 0: Enter on the link, not a mouse click.
+      if (e.detail === 0 && selectedId === c.id) {
+        document.getElementById("detail-title")?.focus();
+        return;
+      }
       const next = toggleSelection(selectedId, c.id);
       select(next);
       setAnnounce(next ? `Showing ${c.title}` : "Details closed");
@@ -192,11 +205,9 @@ export function BallotView({ election, intro, ballot, guides, files, pending }: 
           <p className="text-sm text-muted-foreground">{intro.line}</p>
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
-            {singleKeys ? null : (
-              <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
-                Keyboard shortcuts
-              </button>
-            )}
+            <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>
+              Keyboard shortcuts
+            </button>
           </div>
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>

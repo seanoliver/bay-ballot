@@ -72,19 +72,27 @@ export function writeSingleKeys(storage: StorageLike | null, on: boolean): void 
   } catch {}
 }
 
-export function trailing<T>(ms: number, run: (value: T) => void): { push: (value: T) => void; cancel: () => void } {
+export function trailing<T>(ms: number, run: (value: T) => void): { push: (value: T) => void; cancel: () => void; flush: () => void } {
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let pending: { value: T } | null = null;
+  const fire = () => {
+    clearTimeout(timer);
+    timer = undefined;
+    const p = pending;
+    pending = null;
+    if (p) run(p.value);
+  };
   return {
     push(value) {
+      pending = { value };
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = undefined;
-        run(value);
-      }, ms);
+      timer = setTimeout(fire, ms);
     },
     cancel() {
       clearTimeout(timer);
       timer = undefined;
+      pending = null;
     },
+    flush: fire,
   };
 }
