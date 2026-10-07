@@ -1,6 +1,5 @@
 # Sources: data/2026-11/sources/ (SF DOE Voter Information Pamphlet N26 ballot worksheet;
 # CA SoS Certified List of Candidates 8/27/2026) and the SF DOE qualified-candidates page.
-# Statewide and regional contests only; each county's are in ballot/<county>.yml.
 # Section order follows the brief; within each section, contests follow the SF ballot worksheet.
 election: 2026-11
 title: Bay Area General Election

@@ -1,5 +1,4 @@
 # Sources: data/2026-11/sources/SF-Voter-Pamphlet-Nov2026.pdf (SF DOE ballot worksheet) and the SF DOE qualified-candidates page.
-# The SF ballot worksheet puts local candidates after the judicial races and local propositions after the regional measure.
 placement:
   Local candidates: Judicial
   Local propositions: Regional measures
