@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  filterQuery,
+  filterQuery, carryQuery, contestFiles, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
   typeState, pendingGuides, EMPTY,
@@ -219,5 +219,53 @@ describe("filterQuery", () => {
     expect(filterQuery("?off=sf-gop&c=prop-b&offc=san-mateo&why=1", ["c", "offc"])).toBe("off=sf-gop&why=1");
     expect(filterQuery("?c=prop-b", ["c", "offc"])).toBe(filterQuery("?c=prop-c", ["c", "offc"]));
     expect(filterQuery("", ["c"])).toBe("");
+  });
+});
+
+describe("positionGuides", () => {
+  it("lists the published guides with an entry for the contest, whatever the filters", () => {
+    const two = { ...files, d: { hasReasoning: true, picks: { y: { pick: "Y", ranked: false, quotes: [] } } } } as Record<string, PickFile>;
+    const gs = [...guides, { id: "d", name: "D", type: "civic" }] as GuideInfo[];
+    expect(positionGuides("x", gs, two).map((g) => g.id)).toEqual(["a", "b"]);
+    expect(positionGuides("y", gs, two).map((g) => g.id)).toEqual(["d"]);
+    expect(positionGuides("z", gs, two)).toEqual([]);
+  });
+});
+
+describe("contestFiles", () => {
+  it("keeps only the guides with a pick on the contest, and only that pick", () => {
+    const two = { ...files, d: { hasReasoning: true, picks: { y: { pick: "Y", ranked: false, quotes: [] } } } } as Record<string, PickFile>;
+    expect(contestFiles("x", two)).toEqual({
+      a: { hasReasoning: true, picks: { x: files.a.picks.x } },
+      b: { hasReasoning: false, picks: { x: files.b.picks.x } },
+    });
+  });
+});
+
+describe("revealGuides", () => {
+  it("turns the given guides back on and leaves other hidden guides off", () => {
+    expect(revealGuides({ off: ["a", "z"], whyOnly: false }, ["a", "b"], files)).toEqual({ off: ["z"], whyOnly: false });
+  });
+  it("drops the reasons-only filter only when it hides one of the given guides", () => {
+    expect(revealGuides({ off: [], whyOnly: true }, ["a", "b"], files)).toEqual(EMPTY);
+    expect(revealGuides({ off: ["b"], whyOnly: true }, ["a"], files)).toEqual({ off: ["b"], whyOnly: true });
+  });
+});
+
+describe("hiddenLabel", () => {
+  it("names how many guides are hidden", () => {
+    expect(hiddenLabel(1)).toBe("1 guide hidden");
+    expect(hiddenLabel(3)).toBe("3 guides hidden");
+  });
+});
+
+describe("carryQuery", () => {
+  it("keeps the filter params for a link to another page, and drops the rest", () => {
+    expect(carryQuery("?off=sf-gop&c=prop-b&why=1&offc=marin", ["off", "offtypes", "why", "offc"])).toBe("?off=sf-gop&why=1&offc=marin");
+    expect(carryQuery("?offtypes=club", ["off", "offtypes", "why"])).toBe("?offtypes=club");
+  });
+  it("is empty when there's nothing to carry", () => {
+    expect(carryQuery("?c=prop-b", ["off", "why"])).toBe("");
+    expect(carryQuery("", ["off"])).toBe("");
   });
 });

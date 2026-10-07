@@ -160,3 +160,30 @@ export function filterQuery(query: string, ignore: string[]): string {
   for (const k of ignore) p.delete(k);
   return p.toString();
 }
+
+export function positionGuides(contestId: string, guides: GuideInfo[], files: Record<string, PickFile>): GuideInfo[] {
+  return guides.filter((g) => files[g.id]?.picks[contestId]);
+}
+
+export function contestFiles(contestId: string, files: Record<string, PickFile>): Record<string, PickFile> {
+  const out: Record<string, PickFile> = {};
+  for (const [id, file] of Object.entries(files)) {
+    const entry = file.picks[contestId];
+    if (entry) out[id] = { ...file, picks: { [contestId]: entry } };
+  }
+  return out;
+}
+
+export function revealGuides(f: Filters, ids: string[], files: Record<string, PickFile>): Filters {
+  return { off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
+}
+
+export const hiddenLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} hidden`;
+
+export function carryQuery(search: string, keys: string[]): string {
+  const from = new URLSearchParams(search);
+  const p = new URLSearchParams();
+  for (const [k, v] of from) if (keys.includes(k)) p.append(k, v);
+  const q = p.toString();
+  return q ? `?${q}` : "";
+}
