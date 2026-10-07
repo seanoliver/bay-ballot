@@ -1,0 +1,70 @@
+guide: nbclc
+election: 2026-11
+status: published
+source: https://www.nbclc.org/2026endorsements # covers five counties; its statewide list is the California Labor Federation's PDF, not the council's own
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward
+  sonoma-county-board-of-education-2:
+    pick:
+      - Caitlin Quinn
+  san-rafael-council-3:
+    pick:
+      - Robert Sandoval
+  san-rafael-council-2:
+    pick:
+      - Eli Hill
+  fairfax-council:
+    pick:
+      - Susan Denise Adams
+      - Larry Bragman
+  san-anselmo-council:
+    pick:
+      - Steve Burdo
+      - Will Dittmar
+  novato-council-2:
+    pick:
+      - Rachel Farac
+  larkspur-council:
+    pick:
+      - Aaron Burnett
+      - Jeanne Friedel
+  corte-madera-council:
+    pick:
+      - Eli Beckman
+      - Ava Fruin
+      - Deborah E. Gallegos
+  novato-usd-trustee-area-4:
+    pick:
+      - Abbey Picus
+  marin-healthcare-measure-cc:
+    pick: Y
+  marin-county-measure-p:
+    pick: Y
+  san-rafael-measure-w:
+    pick: Y
+  miller-creek-sd-measure-n:
+    pick: Y
+  fairfax-measure-r:
+    pick: Y
+  larkspur-measure-s:
+    pick: Y
+  ross-measure-u:
+    pick: Y
+  san-anselmo-measure-v:
+    pick: Y
+  marin-csa-27-measure-y:
+    pick: Y
+  kentfield-fire-measure-bb:
+    pick: Y
+  sleepy-hollow-fire-measure-dd:
+    pick: Y

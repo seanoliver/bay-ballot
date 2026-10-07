@@ -1,7 +1,7 @@
 id: mercury-news
-name: The Mercury News
-shortName: "Mercury News"
-description: The daily newspaper of San Jose and the South Bay, whose editorial board endorses in statewide and local races.
+name: The Mercury News and Marin Independent Journal
+shortName: "Mercury News, Marin IJ"
+description: Two Bay Area News Group papers that share statewide endorsements; each paper's editorial board also endorses in its own local races.
 type: newspaper
 homepage: https://www.mercurynews.com/
-areas: [palo-alto, mountain-view]
+areas: [palo-alto, mountain-view, marin]
