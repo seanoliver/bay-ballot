@@ -199,7 +199,6 @@ jobs:
       SHA: ${{ needs.refresh.outputs.sha }}
       PR: ${{ needs.refresh.outputs.pr }}
     steps:
-      # Pushes made with GITHUB_TOKEN don't start push/pull_request workflows, but a workflow_dispatch does.
       - name: Run CI on the refresh branch
         id: ci
         continue-on-error: true
