@@ -47,7 +47,7 @@ Nothing is ever pushed straight to `main`.
 
 **When a PR is left open:** read the summary in the PR body.
 
-- **HELD** lines name the contest, the pick and the verifier's page evidence. If the pick is right, fix the input (a contest alias in `data/2026-11/ballot.yml`, more `extraSources`), or mark the guide `manual: true` and enter the pick by hand. A hold also clears when a later extraction returns a different pick for that contest, or when the guide's page changes again and the verifier, which re-checks held picks on every run that extracts the guide, now confirms it. Push the fix to the PR branch and merge.
+- **HELD** lines name the contest, the pick and the verifier's page evidence. If the pick is right, fix the input (a contest alias in `data/2026-11/ballot.yml` or `data/2026-11/ballot/<county>.yml`, more `extraSources`), or mark the guide `manual: true` and enter the pick by hand. A hold also clears when a later extraction returns a different pick for that contest, or when the guide's page changes again and the verifier, which re-checks held picks on every run that extracts the guide, now confirms it. Push the fix to the PR branch and merge.
 - **Shrunk** means a guide's picks dropped to under half (usually a page that failed to render). Check the page; re-run locally with `--browser` or `--force` if the drop is real.
 - **CI failed:** the PR comment links the CI run. Run `npm run validate` and `npm test` on the branch and fix what they report. If no CI run appeared within 2 minutes, the comment says so; rerun CI with `gh workflow run ci.yml --ref data/refresh`.
 
@@ -120,10 +120,28 @@ To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text`
 
 Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasReasoning`) is overwritten by the next `extract`. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.
 
+## Ballot and area files
+
+Each county's data lives in files of its own, so branches adding different counties don't touch the same file.
+
+- `data/2026-11/ballot.yml`: the election header and the contests every county shares: state offices and propositions, Congress, State Senate, Assembly, Board of Equalization and Court of Appeal districts (`STATE_DISTRICTS` in `src/lib/areas.ts`), and `level: region` measures.
+- `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
+- `data/areas/<area-id>.yml`: one area, with an `order` number. Areas are listed by `order` (then id), and that also sets the county order on the ballot pages.
+
+The site merges them: `ballot.yml`'s contests first, then each county file in area order. A county file's optional `placement:` maps one of its sections to a section of `ballot.yml`; those contests go right after that section instead of at the end. Only `san-francisco.yml` uses it, to keep the SF ballot worksheet's order.
+
+`npm run validate` fails on a contest id used twice (naming both files), a contest in the wrong file, a county file whose name matches no area's county, and an area file whose name differs from its id.
+
+To add a county (Contra Costa, Alameda, Marin):
+
+1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40). Two areas with the same `order` are sorted by id.
+2. Add `data/2026-11/ballot/<county-slug>.yml` (for example `contra-costa.yml`) holding every contest that belongs to that county.
+3. Edit `ballot.yml` only for a shared contest: a new Congress or Assembly district, or a district or regional measure that now lists the new county in `within`.
+
 ## Pending follow-ups
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
-- San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `ballot.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
+- San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `data/2026-11/ballot/san-mateo.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
 - palo-alto-forward's page has only one-line taglines and no quotable reasons, so `hasReasoning` is set to false by hand (2026-10-06). A re-extract can set it back; check it after one.
 - Santa Clara County contests come from sample ballots, not the registrar site: vote.santaclaracounty.gov and rovservices.sccgov.org block automated browsers. `data/2026-11/sources/SCC-Sample-Ballots-PA-MV.txt` lists the precincts and ballot styles sampled through the County Voter Information Guide (https://ca.omniballot.us/sites/06085/site/app/cvig/vg/info?pid=<precinct>). Omniballot throttles fast lookups, so sample one precinct at a time.
 - Not yet published for Palo Alto and Mountain View as of 2026-10-06: Palo Alto Weekly / Palo Alto Online, Mountain View Voice, and Mercury News local picks. LWV Los Altos-Mountain View and the Los Altos Town Crier have no Palo Alto or Mountain View positions yet.
