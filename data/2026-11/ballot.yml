@@ -6,6 +6,12 @@ title: Bay Area General Election
 date: 2026-11-03
 contests:
   # ---------- Federal ----------
+  - id: us-rep-2
+    section: Federal
+    title: United States Representative, District 2
+    kind: candidate
+    candidates: [Jared Huffman, Robin Littau]
+    jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }] }
   - id: us-rep-11
     section: Federal
     title: United States Representative, District 11
@@ -74,7 +80,19 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }] }
+  - id: state-senate-2
+    section: State
+    title: State Senate, District 2
+    kind: candidate
+    candidates: [Damon Connolly, Tief Gibbs]
+    jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }] }
+  - id: assembly-12
+    section: State
+    title: State Assembly, District 12
+    kind: candidate
+    candidates: [Jackie Elward, Eric Lucan]
+    jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
@@ -125,7 +143,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)
