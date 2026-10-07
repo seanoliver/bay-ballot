@@ -157,7 +157,7 @@ function refreshDeps({ model = true }: { model?: boolean } = {}): RefreshDeps {
 
 function totalsLine(results: GuideResult[]): string {
   const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
-  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost $${costOf(results).toFixed(2)}.`;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost $${costOf(results).toFixed(2)}.`;
 }
 
 async function runExtract(): Promise<void> {

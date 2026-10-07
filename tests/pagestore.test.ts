@@ -54,6 +54,10 @@ describe("relevantChange", () => {
     const b = `You are here: Home Endorsements endorsements\n${page}`;
     expect(relevantChange(a, b, ballot)).toBe(false);
   });
+  it("ignores an image whose alt text is just its file name", () => {
+    expect(relevantChange(`[endorsements-nov2026-teal.png]\n${page}`, page, ballot)).toBe(false);
+    expect(relevantChange(page, `${page}\n[Endorsement Slate 2026.JPEG]`, ballot)).toBe(false);
+  });
   it("ignores whitespace-only changes and reordering", () => {
     expect(relevantChange(page, page.replace(/ /g, "  "), ballot)).toBe(false);
   });
