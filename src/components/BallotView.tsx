@@ -22,7 +22,7 @@ import { FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
+import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
@@ -203,6 +203,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     applyFilters(f);
   };
   const filterProps = { filters, onChange: setFilters, guides, files, counties };
+  const carry = useCarriedQuery();
 
   useEffect(() => {
     paneRef.current?.scrollTo({ top: 0 });
@@ -383,7 +384,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
                   {s.contests.map((c) => (
                     <li key={c.id}>
                       <ContestRow
-                        href={`/${election}/${c.id}`}
+                        href={`/${election}/${c.id}${carry}`}
                         contest={c}
                         rows={rowsFor(c.id)}
                         slots={slotsFor(c)}

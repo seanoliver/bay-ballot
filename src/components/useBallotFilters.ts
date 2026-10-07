@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { FILTERS_KEY, filterQuery, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { COUNTIES_PARAM } from "@/lib/counties";
+import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
 export const CHANGE_EVENT = "bb-filters-change";
@@ -119,4 +120,11 @@ export function useStoredParam(name: string, storageKey: string): [string | null
     [name, storageKey],
   );
   return [value, set];
+}
+
+const CARRIED = ["off", "offtypes", "why", COUNTIES_PARAM];
+
+// For links to the list or a contest page: the filters in this URL go along, so a shared link keeps them.
+export function useCarriedQuery(): string {
+  return carryQuery(useQuery(), CARRIED);
 }
