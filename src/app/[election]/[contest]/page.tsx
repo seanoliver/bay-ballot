@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ContestDetail } from "@/components/ContestDetail";
-import { PageColumn } from "@/components/PageColumn";
+import { ContestView } from "@/components/ContestView";
 import { BAY_AREA, contestPlace } from "@/lib/areas";
-import { candidateSlots } from "@/lib/bar";
 import type { ElectionData } from "@/lib/data";
 import { dataAsOf } from "@/lib/display";
-import { activeEntries, EMPTY } from "@/lib/filters";
+import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
-import { answerSentence, contestDescription, contestTitle } from "@/lib/seo-copy";
+import { contestDescription, contestTitle } from "@/lib/seo-copy";
 import { ballotViewProps, election, elections } from "@/lib/site-data";
 import { ListPage, listMetadata } from "../list-page";
 
@@ -36,14 +33,15 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
 function contestView(d: ElectionData, contest: Contest) {
   const { guides, files, pending } = ballotViewProps(d);
   const { area, place } = contestPlace(contest, d.areas);
-  return { rows: activeEntries(contest.id, guides, files, EMPTY), pending, area, place };
+  return { guides, files, pending, area, place };
 }
 
 export async function generateMetadata({ params }: PageProps<"/[election]/[contest]">): Promise<Metadata> {
   const x = await load(params);
   if (!x) return {};
   if (x.kind === "area") return listMetadata(x.d, x.electionId, x.area);
-  const { rows, place } = contestView(x.d, x.contest);
+  const { guides, files, place } = contestView(x.d, x.contest);
+  const rows = activeEntries(x.contest.id, guides, files, EMPTY);
   return {
     // The search title already names the site's subject; the " · Bay Ballot" suffix would cut it off.
     title: { absolute: contestTitle(x.contest, rows, x.d.ballot.date, place) },
@@ -57,27 +55,18 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   if (!x) notFound();
   if (x.kind === "area") return <ListPage d={x.d} electionId={x.electionId} area={x.area} />;
   const { d, contest, electionId } = x;
-  const { rows, pending, area, place } = contestView(d, contest);
+  const { guides, files, pending, area, place } = contestView(d, contest);
   return (
-    <PageColumn>
-      <p className="text-sm">
-        <Link href={area ? `/${electionId}/${area.id}` : `/${electionId}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
-          {area ? place.name : BAY_AREA.name} ballot
-        </Link>
-      </p>
-      <section className="mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6">
-        <ContestDetail
-          election={electionId}
-          contest={contest}
-          rows={rows}
-          pending={pending}
-          heading="h1"
-          slots={candidateSlots(contest, rows.map((r) => r.entry))}
-          pageLink={false}
-          shortNames={false}
-          answer={answerSentence(contest, rows, dataAsOf(d.endorsements), place)}
-        />
-      </section>
-    </PageColumn>
+    <ContestView
+      election={electionId}
+      contest={contest}
+      guides={guides}
+      files={contestFiles(contest.id, files)}
+      pending={pending}
+      asOf={dataAsOf(d.endorsements)}
+      place={place}
+      area={area?.id ?? null}
+      back={{ href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` }}
+    />
   );
 }

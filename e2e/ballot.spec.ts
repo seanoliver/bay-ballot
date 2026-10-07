@@ -799,7 +799,7 @@ test.describe("phone section nav", () => {
 });
 
 test.describe("pages without the filter column", () => {
-  for (const url of ["/2026-11/us-rep-11", "/guides/growsf", "/about", "/changelog"]) {
+  for (const url of ["/guides/growsf", "/about", "/changelog"]) {
     test(`${url} centers its content at the list's reading width`, async ({ page, isMobile }) => {
       await page.goto(url);
       const column = page.locator("[data-page-column]");

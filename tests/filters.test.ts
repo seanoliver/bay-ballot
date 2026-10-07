@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  filterQuery,
+  filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
-  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
+  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
   typeState, pendingGuides, EMPTY,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
@@ -171,13 +171,12 @@ describe("typeState", () => {
   });
 });
 
-describe("toggleTypeGroup", () => {
-  it("turns every guide of the type off when all are on", () => {
-    expect(toggleTypeGroup({ ...EMPTY, off: ["spur"] }, "club", clubs).off).toEqual(["milk", "spur", "toklas"]);
+describe("setTypeGroup with all of a type on or off", () => {
+  it("turns every guide of the type off when all are on, keeping other types", () => {
+    expect(setTypeGroup({ ...EMPTY, off: ["spur"] }, "club", clubs, false).off).toEqual(["milk", "spur", "toklas"]);
   });
-  it("turns every guide of the type on when some or none are on", () => {
-    expect(toggleTypeGroup({ ...EMPTY, off: ["milk", "spur"] }, "club", clubs).off).toEqual(["spur"]);
-    expect(toggleTypeGroup({ ...EMPTY, off: ["milk", "toklas"] }, "club", clubs).off).toEqual([]);
+  it("turns every guide of the type on when none are on", () => {
+    expect(setTypeGroup({ ...EMPTY, off: ["milk", "toklas"] }, "club", clubs, true).off).toEqual([]);
   });
 });
 
@@ -219,5 +218,79 @@ describe("filterQuery", () => {
     expect(filterQuery("?off=sf-gop&c=prop-b&offc=san-mateo&why=1", ["c", "offc"])).toBe("off=sf-gop&why=1");
     expect(filterQuery("?c=prop-b", ["c", "offc"])).toBe(filterQuery("?c=prop-c", ["c", "offc"]));
     expect(filterQuery("", ["c"])).toBe("");
+  });
+});
+
+describe("positionGuides", () => {
+  it("lists the published guides with an entry for the contest, whatever the filters", () => {
+    const two = { ...files, d: { hasReasoning: true, picks: { y: { pick: "Y", ranked: false, quotes: [] } } } } as Record<string, PickFile>;
+    const gs = [...guides, { id: "d", name: "D", type: "civic" }] as GuideInfo[];
+    expect(positionGuides("x", gs, two).map((g) => g.id)).toEqual(["a", "b"]);
+    expect(positionGuides("y", gs, two).map((g) => g.id)).toEqual(["d"]);
+    expect(positionGuides("z", gs, two)).toEqual([]);
+  });
+});
+
+describe("contestFiles", () => {
+  it("keeps only the guides with a pick on the contest, and only that pick", () => {
+    const two = { ...files, d: { hasReasoning: true, picks: { y: { pick: "Y", ranked: false, quotes: [] } } } } as Record<string, PickFile>;
+    expect(contestFiles("x", two)).toEqual({
+      a: { hasReasoning: true, picks: { x: files.a.picks.x } },
+      b: { hasReasoning: false, picks: { x: files.b.picks.x } },
+    });
+  });
+});
+
+describe("contestFiles archived snapshots", () => {
+  it("keeps only the snapshots for this contest's quote sources", () => {
+    const q = (source: string) => ({ text: "t", source });
+    const f = {
+      g: {
+        hasReasoning: true,
+        picks: { x: { pick: "Y", ranked: false, quotes: [q("https://g.org/x")] }, y: { pick: "N", ranked: false, quotes: [q("https://g.org/y")] } },
+        archived: [{ source: "https://g.org/x", snapshot: "https://web.archive.org/x" }, { source: "https://g.org/y", snapshot: "https://web.archive.org/y" }],
+      },
+      h: { hasReasoning: true, picks: { x: { pick: "Y", ranked: false, quotes: [] } }, archived: [{ source: "https://h.org/y", snapshot: "https://web.archive.org/hy" }] },
+    } as unknown as Record<string, PickFile>;
+    expect(contestFiles("x", f)).toEqual({
+      g: { hasReasoning: true, picks: { x: f.g.picks.x }, archived: [{ source: "https://g.org/x", snapshot: "https://web.archive.org/x" }] },
+      h: { hasReasoning: true, picks: { x: f.h.picks.x } },
+    });
+  });
+});
+
+describe("setTypeGroup", () => {
+  const gs = [{ id: "m", type: "club" }, { id: "n", type: "club" }, { id: "s", type: "civic" }] as GuideInfo[];
+  it("turns every guide of the type off or on, whatever their state", () => {
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, false)).toEqual({ off: ["m", "n", "s"], whyOnly: false });
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, true)).toEqual({ off: ["s"], whyOnly: false });
+  });
+});
+
+describe("revealGuides", () => {
+  it("turns the given guides back on and leaves other hidden guides off", () => {
+    expect(revealGuides({ off: ["a", "z"], whyOnly: false }, ["a", "b"], files)).toEqual({ off: ["z"], whyOnly: false });
+  });
+  it("drops the reasons-only filter only when it hides one of the given guides", () => {
+    expect(revealGuides({ off: [], whyOnly: true }, ["a", "b"], files)).toEqual(EMPTY);
+    expect(revealGuides({ off: ["b"], whyOnly: true }, ["a"], files)).toEqual({ off: ["b"], whyOnly: true });
+  });
+});
+
+describe("hiddenLabel", () => {
+  it("names how many guides are hidden", () => {
+    expect(hiddenLabel(1)).toBe("1 guide hidden");
+    expect(hiddenLabel(3)).toBe("3 guides hidden");
+  });
+});
+
+describe("carryQuery", () => {
+  it("keeps the filter params for a link to another page, and drops the rest", () => {
+    expect(carryQuery("?off=sf-gop&c=prop-b&why=1&offc=marin", ["off", "offtypes", "why", "offc"])).toBe("?off=sf-gop&why=1&offc=marin");
+    expect(carryQuery("?offtypes=club", ["off", "offtypes", "why"])).toBe("?offtypes=club");
+  });
+  it("is empty when there's nothing to carry", () => {
+    expect(carryQuery("?c=prop-b", ["off", "why"])).toBe("");
+    expect(carryQuery("", ["off"])).toBe("");
   });
 });

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { FILTERS_KEY, filterQuery, initialFilters, toQuery, type Filters, type GuideInfo } from "@/lib/filters";
+import { COUNTIES_PARAM } from "@/lib/counties";
+import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
 export const CHANGE_EVENT = "bb-filters-change";
@@ -64,7 +65,7 @@ export function useQuery(): string {
   return useSyncExternalStore(subscribe, readQuery, () => "");
 }
 
-export function useBallotFilters({ guides, keep = [] }: { guides: GuideInfo[]; keep?: string[] }) {
+export function useBallotFilters({ guides, keep = [] }: { guides: FilterGuide[]; keep?: string[] }) {
   const query = useQuery();
   const stored = useSyncExternalStore(subscribe, () => readKey(FILTERS_KEY), () => null);
   const keepKey = keep.join(",");
@@ -119,4 +120,10 @@ export function useStoredParam(name: string, storageKey: string): [string | null
     [name, storageKey],
   );
   return [value, set];
+}
+
+const CARRIED = ["off", "offtypes", "why", COUNTIES_PARAM];
+
+export function useCarriedQuery(): string {
+  return carryQuery(useQuery(), CARRIED);
 }

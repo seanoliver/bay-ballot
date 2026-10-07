@@ -10,6 +10,7 @@ export const FILTERS_KEY = "bb-filters";
 export const EMPTY: Filters = { off: [], whyOnly: false };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
+export type FilterGuide = Pick<Guide, "id" | "type">;
 export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
 
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
@@ -134,10 +135,9 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
   return on === 0 ? "off" : "mixed";
 }
 
-export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): Filters {
+export function setTypeGroup(f: Filters, type: string, guides: FilterGuide[], on: boolean): Filters {
   const ids = guides.filter((g) => g.type === type).map((g) => g.id);
-  if (typeState(type, f, guides) === "on") return { ...f, off: uniqSorted([...f.off, ...ids]) };
-  return { ...f, off: f.off.filter((id) => !ids.includes(id)) };
+  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
 }
 
 export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
@@ -159,4 +159,34 @@ export function filterQuery(query: string, ignore: string[]): string {
   const p = new URLSearchParams(query);
   for (const k of ignore) p.delete(k);
   return p.toString();
+}
+
+export function positionGuides(contestId: string, guides: GuideInfo[], files: Record<string, PickFile>): GuideInfo[] {
+  return guides.filter((g) => files[g.id]?.picks[contestId]);
+}
+
+export function contestFiles(contestId: string, files: Record<string, PickFile>): Record<string, PickFile> {
+  const out: Record<string, PickFile> = {};
+  for (const [id, file] of Object.entries(files)) {
+    const entry = file.picks[contestId];
+    if (!entry) continue;
+    const { archived, ...rest } = file;
+    const kept = archived?.filter((a) => entry.quotes.some((q) => q.source === a.source));
+    out[id] = { ...rest, picks: { [contestId]: entry }, ...(kept?.length ? { archived: kept } : {}) };
+  }
+  return out;
+}
+
+export function revealGuides(f: Filters, ids: string[], files: Record<string, PickFile>): Filters {
+  return { off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
+}
+
+export const hiddenLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} hidden`;
+
+export function carryQuery(search: string, keys: string[]): string {
+  const from = new URLSearchParams(search);
+  const p = new URLSearchParams();
+  for (const [k, v] of from) if (keys.includes(k)) p.append(k, v);
+  const q = p.toString();
+  return q ? `?${q}` : "";
 }

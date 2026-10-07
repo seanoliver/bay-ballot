@@ -2,7 +2,7 @@ import path from "node:path";
 import { areaGuides, inArea, placeGroups } from "./areas";
 import { listElections, loadElection, type ElectionData } from "./data";
 import { pendingNote } from "./display";
-import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "./filters";
+import { pendingGuides, publishedFiles, publishedGuides, type FilterGuide, type GuideInfo } from "./filters";
 import type { Area } from "./schema";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
@@ -39,6 +39,8 @@ export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area 
     ballot: { ...d.ballot, contests },
     groups: placeGroups(contests, d.areas),
     guides: published.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type })),
+    // Every guide in the election, so filters on an area page don't forget guides hidden elsewhere.
+    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, type }): FilterGuide => ({ id, type })),
     files: Object.fromEntries(Object.entries(publishedFiles(d.endorsements)).filter(([id]) => ids.has(id))),
     pending: pendingNote(pendingGuides(inScope, d.endorsements)),
   };

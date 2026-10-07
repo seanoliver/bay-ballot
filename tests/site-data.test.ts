@@ -33,6 +33,7 @@ describe("ballotViewProps", () => {
       ballot: d.ballot,
       groups: [],
       guides: [{ id: "g", name: "G", type: "civic" }],
+      allGuides: [{ id: "g", type: "civic" }],
       files: { g: { hasReasoning: true, picks: {} } },
       pending: "1 guide hasn't published yet.",
     });
@@ -63,6 +64,7 @@ describe("ballotViewProps with an area", () => {
     const v = ballotViewProps(d, { area: SF });
     expect(v.ballot.contests.map((c) => c.id)).toEqual(["prop-1", "prop-b"]);
     expect(v.guides.map((g) => g.id)).toEqual(["s"]);
+    expect(v.allGuides.map((g) => g.id)).toEqual(["s", "m"]);
     expect(Object.keys(v.files)).toEqual(["s"]);
     expect(v.pending).toBe("1 guide hasn't published yet.");
     expect(v.groups.map((g) => g.heading)).toEqual(["California", "San Francisco"]);

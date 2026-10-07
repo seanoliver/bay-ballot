@@ -1,0 +1,5 @@
+date: 2026-10-07
+type: new
+title: Contest pages have the same Filters as the ballot list, and a filter set on one carries to the other
+details: A note like "3 guides hidden · Show all" says when filters hide guides on a contest, and contest pages now line up with the ballot list instead of being centered.
+pr: 45

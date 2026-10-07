@@ -12,6 +12,7 @@ import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
 import { BAR_FILL } from "./tone";
+import { useCarriedQuery } from "./useBallotFilters";
 import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
 
 // Inline links keep their line height but get a 40px-tall tap area.
@@ -280,6 +281,7 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
 }
 
 function Footer({ pending, official, page }: { pending: string | null; official: string | null; page: string | null }) {
+  const carry = useCarriedQuery();
   const parts = [
     pending ? <span key="p">{pending.replace(/\.$/, "")}</span> : null,
     official ? (
@@ -288,7 +290,7 @@ function Footer({ pending, official, page }: { pending: string | null; official:
       </ExternalLink>
     ) : null,
     page ? (
-      <Link key="c" href={page} className={`${TAP} underline underline-offset-2`}>
+      <Link key="c" href={`${page}${carry}`} className={`${TAP} underline underline-offset-2`}>
         Open contest page
       </Link>
     ) : null,
