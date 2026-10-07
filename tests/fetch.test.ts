@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchSource, htmlToText } from "@/pipeline/fetch";
+import { detectBlock, fetchSource, htmlToText } from "@/pipeline/fetch";
 
 describe("htmlToText", () => {
   it("drops scripts, styles and nav, keeps body text", () => {
@@ -103,5 +103,82 @@ describe("fetchSource (stubbed fetch)", () => {
   it("includes the URL when the network fails", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("fetch failed"); }));
     await expect(fetchSource("https://x.test/down")).rejects.toThrow(/https:\/\/x\.test\/down.*fetch failed/);
+  });
+});
+
+describe("detectBlock", () => {
+  const page = (title: string, body: string) => `<html><head><title>${title}</title></head><body>${body}</body></html>`;
+  it.each([
+    ["cloudflare challenge", page("Just a moment...", "<p>Enable JavaScript and cookies to continue</p>")],
+    ["cloudflare block", page("Attention Required! | Cloudflare", "<h1>Sorry, you have been blocked</h1>")],
+    ["akamai", page("Access Denied", "<h1>Access Denied</h1><p>You don't have permission to access this server. Reference #18.5c</p>")],
+    ["incapsula", page("", "<p>Request unsuccessful. Incapsula incident ID: 123</p>")],
+    ["perimeterx", page("Access to this page has been denied", "<p>Press &amp; Hold to confirm you are a human (and not a bot).</p>")],
+    ["datadome", page("", "<p>Please enable JS and disable any ad blocker</p>")],
+    ["distil", page("Pardon Our Interruption", "<p>As you were browsing something about your browser made us think you were a bot.</p>")],
+  ])("flags a %s page", (_name, html) => {
+    expect(detectBlock(html)).not.toBeNull();
+  });
+  it("leaves real pages alone, even ones that mention access or bots", () => {
+    const long = "We support Prop B because the public bank would expand access to credit. ".repeat(80);
+    expect(detectBlock(page("November endorsements", `<p>Access denied to voters is wrong.</p><p>${long}</p>`))).toBeNull();
+    expect(detectBlock(page("Our picks", "<h2>Prop A</h2><p>Yes</p>"))).toBeNull();
+  });
+});
+
+describe("fetchSource fallbacks", () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const stub = (body: string, status = 200) =>
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(body, { status, headers: { "content-type": "text/html" } })));
+  const challenge = "<html><head><title>Just a moment...</title></head><body>Enable JavaScript and cookies to continue</body></html>";
+  const real = "<html><body><h2>Prop B</h2><p>Vote No</p></body></html>";
+
+  it("retries a 403 in the browser and returns what the browser got", async () => {
+    stub("Forbidden", 403);
+    const browserFetch = vi.fn(async () => ({ status: 200, html: real }));
+    const attempts: unknown[] = [];
+    const r = await fetchSource("https://x.test/a", { browserFetch, onAttempt: (a) => attempts.push(a) });
+    expect(r).toEqual({ kind: "text", text: "Prop B\nVote No" });
+    expect(browserFetch).toHaveBeenCalledOnce();
+    expect(attempts).toEqual([
+      { via: "http", status: 403, bytes: 9, blocked: null },
+      { via: "browser", status: 200, bytes: real.length, blocked: null },
+    ]);
+  });
+
+  it.each([429, 503])("retries a %i in the browser", async (status) => {
+    stub("busy", status);
+    const browserFetch = vi.fn(async () => ({ status: 200, html: real }));
+    expect(await fetchSource("https://x.test/a", { browserFetch })).toEqual({ kind: "text", text: "Prop B\nVote No" });
+  });
+
+  it("retries a 200 bot challenge in the browser", async () => {
+    stub(challenge);
+    const browserFetch = vi.fn(async () => ({ status: 200, html: real }));
+    expect(await fetchSource("https://x.test/a", { browserFetch })).toEqual({ kind: "text", text: "Prop B\nVote No" });
+  });
+
+  it("fails when the browser is blocked too, instead of returning the challenge as content", async () => {
+    stub(challenge);
+    const browserFetch = vi.fn(async () => ({ status: 200, html: challenge }));
+    await expect(fetchSource("https://x.test/a", { browserFetch })).rejects.toThrow("https://x.test/a: blocked (cloudflare challenge) over http and browser");
+  });
+
+  it("reports both statuses when the browser also gets an error", async () => {
+    stub("Forbidden", 403);
+    const browserFetch = vi.fn(async () => ({ status: 403, html: "Forbidden" }));
+    await expect(fetchSource("https://x.test/a", { browserFetch })).rejects.toThrow("https://x.test/a -> HTTP 403 (browser: HTTP 403)");
+  });
+
+  it("does not retry a 404", async () => {
+    stub("nope", 404);
+    const browserFetch = vi.fn();
+    await expect(fetchSource("https://x.test/a", { browserFetch })).rejects.toThrow("HTTP 404");
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
+  it("checks pages fetched with the browser from the start too", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: challenge }));
+    await expect(fetchSource("https://x.test/a", { browser: true, browserFetch })).rejects.toThrow("blocked (cloudflare challenge)");
   });
 });
