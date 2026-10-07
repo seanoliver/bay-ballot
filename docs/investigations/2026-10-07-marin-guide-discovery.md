@@ -186,7 +186,7 @@ The county lists these as ON the ballot. Coverage counts guides from section 1 w
 | 39 | Richardson Bay Sanitary District | 3 | Fitzgerald, McIntosh, Walravens (all inc), John Turnacliff | GOP |
 | 40 | North Marin Water District, Division 5 | 1 | Marc Hunter Lewis, Laurie L. Williams | Dems |
 
-Breakdown: 3 county board of education, 2 cross-county (Sonoma-run), 7 school, 17 city/town (6 of them uncontested), 11 special district. **28 of 40 have at least one guide pick.**
+Breakdown: 3 county board of education, 2 cross-county (Sonoma-run), 7 school, 17 city/town (6 of them uncontested), 11 special district. **29 of 40 have at least one guide pick.**
 
 Not on the ballot (appointed in lieu, per the county): all of Marin Community College District (so NBCLC's College of Marin pick has no contest), San Rafael City Schools, MMWD Divisions 1, 3, 4, Novato D5 short term, Marin Healthcare D4, Mill Valley SD, Larkspur-Corte Madera SD, Kentfield SD, Ross Valley SD, Shoreline USD, Novato USD TA5 and TA6, and the other special-district seats: 54 contests in all, 33 of them special districts. The full list is in the source extract. There are no Board of Supervisors seats (D1 and D5 were decided in June).
 
@@ -219,7 +219,7 @@ Not on the ballot (appointed in lieu, per the county): all of Marin Community Co
 
 ### Totals
 
-3 new district contests (CD2, SD2, AD12) plus 2 widened (BOE 2, Court of Appeal 1). 40 local candidate contests (34 contested) and 20 local measures. If the San Mateo rule is kept (add a local race only when a guide covers it), that is **28 candidate contests and 12 measures**.
+3 new district contests (CD2, SD2, AD12) plus 2 widened (BOE 2, Court of Appeal 1). 40 local candidate contests (34 contested) and 20 local measures. If the San Mateo rule is kept (add a local race only when a guide covers it), that is **29 candidate contests and 12 measures**.
 
 ---
 
@@ -293,8 +293,100 @@ Unverified:
 - The Marin Dems' measure pages were read for P, N, W and CC; all say Yes.
 
 Decisions:
-1. **Which local contests to add.** All 40 candidate contests and 20 measures, or only the 28 and 12 that some guide covers (the San Mateo rule)?
+1. **Which local contests to add.** All 40 candidate contests and 20 measures, or only the 29 and 12 that some guide covers (the San Mateo rule)?
 2. **Cross-county contests** (Sonoma BOE TA2, Petaluma JUHSD TA3, SRJC Measure AB). They reach only a few Marin precincts. Only SEIU (Sonoma BOE) takes a position.
 3. **Indivisible Marin** as a guide. It is a local chapter of a national advocacy group with a substantive, reasoned PDF. The repo has no Indivisible guide yet.
 4. **mercury-news vs marin-ij** for statewide picks (see section 3).
 5. **Coordination with the Contra Costa and Alameda passes.** sierra-club-sf-bay, yimby-action, ca-wfp, seiu-1021, bay-rising-action, greenbelt-alliance, courage-california and lwv-ca will likely be widened by all three branches. Expect conflicts on each guide's `areas:` line, and widen each guide once with one `extract --force-extract` (see the runbook note on reviewing quote diffs).
+
+---
+
+## Decisions (2026-10-07)
+
+These supersede the proposals above where they differ. Implementation waits until the ballot split has merged.
+
+### Guides
+
+- **Inclusion rule:** any guide whose endorsements are clearly for Nov 3, 2026 is in, however few contests it covers.
+- **New Marin guides (5):**
+
+| id | Type | Source | Notes |
+|---|---|---|---|
+| marin-dems | party | https://marindemocrats.org/2026-november-election-endorsements/ | extraSources: `/measure-n-miller-creek-school-district/`, `/measure-p/`, `/measure-w-san-rafael-services/`, `/measure-cc-critical-care-for-marin/` (all on marindemocrats.org) |
+| marin-gop | party | https://maringop.org/2026/09/15/marin-gop-endorses/ | `manual: true`. Candidate picks are entered by hand from the two PNG cards; measure positions come from https://maringop.org/elections/endorsements/ |
+| nbclc | union | https://www.nbclc.org/2026endorsements | Skip the College of Marin pick (no contest) |
+| lwv-marin | civic | https://www.marinlwv.org/local-ballot-measure-recommendations | Measures only |
+| indivisible-marin | advocacy | https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf | PDF with a text layer. The repo has no closer type than advocacy |
+
+- **Marin IJ is not a separate guide.** It folds into `mercury-news`, which becomes one Bay Area News Group guide naming its papers (Mercury News, East Bay Times, Marin IJ). This supersedes the `marin-ij` proposal in sections 1 and 3 and decision 4 in section 5.
+
+### Shared guides: what each needs for Marin
+
+The team lead widens these once for all three counties. This branch does not edit them.
+
+| Guide | Add to `areas` | New `extraSources` | Notes |
+|---|---|---|---|
+| mercury-news | marin | The 15 IJ local and district editorials below | Leave out the IJ's Ma (9/28) and Allen (10/4) URLs: they are reprints of BANG statewide editorials the guide already has |
+| sierra-club-sf-bay | marin | none (same page covers Marin) | The page lists "Board of supervisors D1: Mary Sackett", which was decided in June; there is no contest for it |
+| yimby-action | marin | https://marinyimby.org/endorsements/endorsements/ca-state-assembly/ , https://marinyimby.org/endorsements/endorsements/statewide-offices/ , https://marinyimby.org/endorsements/endorsements/local-ballot-measures/ | Reasons for AD12, Ma, Allen, props 1, 37, 43 and Sausalito X. Local council picks come from the national page |
+| courage-california | marin | https://www.progressivevotersguide.com/california/2026/general/county/marin | No local races |
+| ca-wfp | marin | none | Marin picks: SD2, AD12, Larkspur Burnett |
+| seiu-1021 | marin | none | Marin picks: Novato D2/D4, Marin P, San Rafael W, Sonoma BOE TA2 |
+| bay-rising-action | marin | none | Marin pick: P |
+| greenbelt-alliance | marin | none | Marin pick: Sausalito X. Ignore the June Measure B item |
+| lwv-ca | marin | none | Manual; props only |
+
+IJ editorials to add to mercury-news:
+- https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
+- https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+- https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+- https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+- https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+- https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+- https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+- https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+- https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+- https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
+- https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+- https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+- https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+- https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+- https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+
+The IJ is still publishing; new editorials need adding as they appear.
+
+### Contests
+
+San Mateo rule: a local race or measure is added only where a guide takes a position. Cross-county contests follow the same rule, with `within` including Marin. That gives 3 new district contests, 2 widened, 29 candidate contests and 12 measures. Petaluma JUHSD TA3 and SRJC Measure AB have no guide position and are left out; Sonoma BOE TA2 (SEIU) is in.
+
+District: `us-rep-2`, `state-senate-2`, `assembly-12` (new, within Marin); add Marin to `within` on `board-of-equalization-2` and `court-of-appeal-1`. Do not add Marin to `rtm`.
+
+Proposed local ids (area-prefixed, following the existing `san-mateo-county-*`, `<city>-council-<n>`, `<city>-measure-<x>` and `<district>-trustee` patterns):
+
+| Kind | ids |
+|---|---|
+| County board of education | `marin-county-board-of-education-3`, `-5`, `-6` |
+| Cross-county | `sonoma-county-board-of-education-2` |
+| School | `tamalpais-uhsd-trustee`, `miller-creek-sd-trustee`, `novato-usd-trustee-area-4`, `reed-usd-trustee`, `sausalito-marin-city-sd-trustee` |
+| City/town | `corte-madera-council`, `fairfax-council`, `fairfax-clerk`, `larkspur-council`, `mill-valley-council`, `novato-council-2`, `novato-council-4`, `ross-council`, `san-anselmo-council`, `san-rafael-council-2`, `san-rafael-council-3`, `sausalito-council`, `tiburon-council` |
+| Special district | `marin-city-csd-director`, `marin-city-csd-director-short-term`, `southern-marin-fire-director`, `marin-healthcare-district-1`, `marin-healthcare-district-3`, `richardson-bay-sanitary-director`, `north-marin-water-district-5` |
+| Measures | `miller-creek-sd-measure-n`, `marin-county-measure-p`, `fairfax-measure-r`, `larkspur-measure-s`, `ross-measure-u`, `san-anselmo-measure-v`, `san-rafael-measure-w`, `sausalito-measure-x`, `marin-csa-27-measure-y`, `kentfield-fire-measure-bb`, `marin-healthcare-measure-cc`, `sleepy-hollow-fire-measure-dd` |
+
+Every Marin measure id carries its jurisdiction, so none can collide with `menlo-park-measure-p`, `east-palo-alto-measure-cc`, `smfcsd-measure-w`, `brisbane-measure-x` or the East Bay letters.
+
+### Name aliases found
+
+| Roster name (canonical) | Variant | Seen in |
+|---|---|---|
+| Joy Scully Koo | Joy Koo | marin-dems |
+| Nastassya Saad | Natassya Saad | marin-dems |
+| Leshawn Holcomb | LeShawn Holcomb | marin-dems |
+| Cristine Soto Deberry | Cristine Soto DeBerry | marin-dems |
+| Will Dittmar | William Dittmar | nbclc |
+| Clayton Hess | Dr. Clay Hess | marin-gop |
+| Dan Christian | Daniel Christian | IJ |
+| Sarah Margulies | Sarah Marguiles | IJ (one misspelling) |
+| Jill James Hoffman | "Huffman" (URL slug only) | IJ |
+| Abbey Picus | Abby Picus | older Sierra Club Marin pages |
+| Gabriella "Gabby" Solar, Elizabeth "Beth" Sutro | Gabby Solar, Beth Sutro | county roster nicknames |
+| Marilyn Nemzer, Curtis F. Robinson | "Marin County Office of Education - Area 5/6" | marin-dems (contest label, not a name) |
