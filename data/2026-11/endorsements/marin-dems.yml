@@ -1,12 +1,130 @@
 guide: marin-dems
 election: 2026-11
-status: pending
+status: published
 source: https://marindemocrats.org/2026-november-election-endorsements/
 extraSources:
   - https://marindemocrats.org/measure-n-miller-creek-school-district/
   - https://marindemocrats.org/measure-p/
   - https://marindemocrats.org/measure-w-san-rafael-services/
   - https://marindemocrats.org/measure-cc-critical-care-for-marin/
+archived:
+  - source: https://marindemocrats.org/2026-november-election-endorsements/
+    snapshot: https://web.archive.org/web/20261007194301/https://marindemocrats.org/2026-november-election-endorsements/
+  - source: https://marindemocrats.org/measure-n-miller-creek-school-district/
+    snapshot: https://web.archive.org/web/20261007194412/https://marindemocrats.org/measure-n-miller-creek-school-district/
+  - source: https://marindemocrats.org/measure-p/
+    snapshot: https://web.archive.org/web/20261007194431/https://marindemocrats.org/measure-p/
+  - source: https://marindemocrats.org/measure-cc-critical-care-for-marin/
+    snapshot: https://web.archive.org/web/20261007194513/https://marindemocrats.org/measure-cc-critical-care-for-marin/
 fetchedAt: 2026-10-07
-hasReasoning: false
-picks: {}
+hasReasoning: true
+picks:
+  us-rep-2:
+    pick:
+      - Jared Huffman
+    quotes:
+      - text: Congressman Huffman is fighting for lower costs, accountability, and a livable future, while producing tangible improvements for our communities -- including millions in new funding for local health clinics, affordable housing, and water supply and flood control projects.
+        source: https://marindemocrats.org/2026-november-election-endorsements/
+      - text: As Ranking Member of the Natural Resources Committee, Jared is leading the fight against offshore‑drilling, defending our public lands, and working to improve wildfire resilience.
+        source: https://marindemocrats.org/2026-november-election-endorsements/
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  corte-madera-council:
+    pick:
+      - Eli Beckman
+      - Ava Fruin
+  fairfax-council:
+    pick:
+      - Susan Denise Adams
+  larkspur-council:
+    pick:
+      - Stephanie Andre
+      - Aaron Burnett
+  novato-council-2:
+    pick:
+      - Rachel Farac
+  novato-council-4:
+    pick:
+      - Dan Christian
+  san-anselmo-council:
+    pick:
+      - Steve Burdo
+      - Will Dittmar
+  san-rafael-council-2:
+    pick:
+      - Eli Hill
+  san-rafael-council-3:
+    pick:
+      - Robert Sandoval
+  sausalito-council:
+    pick:
+      - Nastassya Saad
+      - Adrian Brinton
+  tiburon-council:
+    pick:
+      - Chuck Hornbrook
+      - Jack Ryan
+  marin-county-board-of-education-5:
+    pick:
+      - Marilyn Nemzer
+  marin-county-board-of-education-6:
+    pick:
+      - Curtis F. Robinson
+  miller-creek-sd-trustee:
+    pick:
+      - Megan Roberts Hutchinson
+      - Brad Honsberger
+  reed-union-sd-trustee:
+    pick:
+      - Mike Ghaffary
+      - Lina Godfrey
+      - Shelby Pasarell Tsai
+  sausalito-marin-city-sd-trustee:
+    pick:
+      - Leshawn Holcomb
+      - Alena Maunder
+  tamalpais-uhsd-trustee:
+    pick:
+      - Joy Scully Koo
+      - Brian A. Sutherland
+      - Valerie Wynn
+  fairfax-clerk:
+    pick:
+      - Bruce Ackerman
+  marin-city-csd-director:
+    pick:
+      - La Tanya J. Wiggins
+  marin-city-csd-director-short-term:
+    pick:
+      - Sarah Elizabeth Canson
+  north-marin-water-district-5:
+    pick:
+      - Laurie L. Williams
+  southern-marin-fire-director:
+    pick:
+      - Cristine Soto Deberry
+  miller-creek-sd-measure-n:
+    pick: Y
+    quotes:
+      - text: Most MCSD schools were built 60 to 70 years ago and need repairs and updates to meet current academic and safety standards.
+        source: https://marindemocrats.org/measure-n-miller-creek-school-district/
+  marin-county-measure-p:
+    pick: Y
+    quotes:
+      - text: Measure P is a voter-led solution that generates $12.5 million annually to expand access to high-quality, affordable preschool and child care for low- and middle-income families in Marin County.
+        source: https://marindemocrats.org/measure-p/
+      - text: Measure P ensures every dollar stays local.
+        source: https://marindemocrats.org/measure-p/
+  san-rafael-measure-w:
+    pick: Y
+    quotes:
+      - text: Measure W allows San Rafael to address critical needs now - before deferred maintenance becomes more expensive and harder to fix.
+        source: https://marindemocrats.org/measure-w-san-rafael-services/
+  marin-healthcare-measure-cc:
+    pick: Y
+    quotes:
+      - text: Measure CC ensures that we have access to life-saving medical care when we need it most.
+        source: https://marindemocrats.org/measure-cc-critical-care-for-marin/
+      - text: MarinHealth Medical Center is the only designated trauma center in Marin County — and a full-service community hospital providing emergency care, heart and stroke treatment, cancer care, surgery, and mental health services.
+        source: https://marindemocrats.org/measure-cc-critical-care-for-marin/

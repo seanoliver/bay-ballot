@@ -1,7 +1,87 @@
 guide: indivisible-marin
 election: 2026-11
-status: pending
+status: published
 source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf # linked from https://indivisiblemarin.org/indimarins-voters-guide
+extraSources:
+  - https://www.indivisiblemarin.org/s/Endorsement-of-Jackie-Elward-for-Assemblymember-in-AD-12-by-the-Indivisible-Marin-Steering-Committee.pdf
+archived:
+  - source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+    snapshot: https://web.archive.org/web/20261007194658/https://static1.squarespace.com/static/5949c7abb8a79b6e99b58d91/t/6ab21444b2241a1d0c998810/1790055492417/IndiMarin+Voting+Guide+for+California+2026+Midterms.pdf
+  - source: https://www.indivisiblemarin.org/s/Endorsement-of-Jackie-Elward-for-Assemblymember-in-AD-12-by-the-Indivisible-Marin-Steering-Committee.pdf
+    snapshot: https://web.archive.org/web/20261007194826/https://static1.squarespace.com/static/5949c7abb8a79b6e99b58d91/t/6aaf0236b3d76b3a3fd5bfb0/1789854262767/Endorsement+of+Jackie+Elward+for+Assemblymember+in+AD-12+by+the+Indivisible+Marin+Steering+Committee.pdf
 fetchedAt: 2026-10-07
-hasReasoning: false
-picks: {}
+hasReasoning: true
+rejectedQuotes:
+  - text: Assemblymember Connolly is a long term North Bay community and political leader.
+    reason: "not substantive: résumé only (review 2026-10-07)"
+    contestId: state-senate-2
+  - text: Recall elections would no longer include a question about who should fill the vacancy (generally won with a relatively small plurality of voters).
+    reason: "describes what the measure does; gives no reason (review 2026-10-07)"
+    contestId: prop-5
+  - text: Expanded and upgraded emergency room, intensive care, hospital, and other medical facilities to care for trauma, heart attack, stroke, and other patients and attract qualified doctors and nurses, with no funds for administrator salaries.
+    reason: "restates the ballot question; gives no reason (review 2026-10-07)"
+    contestId: marin-healthcare-measure-cc
+picks:
+  us-rep-2:
+    pick:
+      - Jared Huffman
+    quotes:
+      - text: Congressman Huffman is a seven-term incumbent with a very strong record supporting the interests of Californians in CA-02.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+      - text: He is an established congressional leader on environmental issues.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward
+  supreme-court-groban:
+    pick: Y
+    quotes:
+      - text: We have done a cursory internet review of all state Supreme Court and Appellate Justices on the ballot and have found no instances of significant, independently substantiated scandals or public judicial-discipline records.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+  supreme-court-evans:
+    pick: Y
+    quotes:
+      - text: We have done a cursory internet review of all state Supreme Court and Appellate Justices on the ballot and have found no instances of significant, independently substantiated scandals or public judicial-discipline records.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+  court-of-appeal-1:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: N
+    quotes:
+      - text: But Proposition 40's one-time, California-only wealth tax is a flawed mechanism.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+      - text: Extreme wealth is a national problem that calls for a durable national solution.
+        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  marin-county-measure-p:
+    pick: Y
+  marin-healthcare-measure-cc:
+    pick: Y

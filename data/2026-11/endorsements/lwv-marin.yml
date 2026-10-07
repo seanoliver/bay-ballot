@@ -1,7 +1,16 @@
 guide: lwv-marin
 election: 2026-11
-status: pending
+status: published
 source: https://www.marinlwv.org/local-ballot-measure-recommendations
+archived:
+  - source: https://www.marinlwv.org/local-ballot-measure-recommendations
+    snapshot: https://web.archive.org/web/20261007194620/https://www.marinlwv.org/local-ballot-measure-recommendations
 fetchedAt: 2026-10-07
 hasReasoning: false
-picks: {}
+picks:
+  marin-county-measure-p:
+    pick: Y
+  miller-creek-sd-measure-n:
+    pick: Y
+  marin-healthcare-measure-cc:
+    pick: Y
