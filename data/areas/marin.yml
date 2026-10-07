@@ -1,0 +1,18 @@
+id: marin
+name: Marin County
+kind: county
+order: 70
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Marin }
+  - { level: city, name: Belvedere }
+  - { level: city, name: Corte Madera }
+  - { level: city, name: Fairfax }
+  - { level: city, name: Larkspur }
+  - { level: city, name: Mill Valley }
+  - { level: city, name: Novato }
+  - { level: city, name: Ross }
+  - { level: city, name: San Anselmo }
+  - { level: city, name: San Rafael }
+  - { level: city, name: Sausalito }
+  - { level: city, name: Tiburon }
