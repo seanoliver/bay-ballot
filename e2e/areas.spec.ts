@@ -307,3 +307,21 @@ test("the Contra Costa page shows state and Contra Costa contests, and the Count
   const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
   await expect(group.getByRole("checkbox", { name: "Contra Costa", exact: true })).toBeChecked();
 });
+
+test("the San Jose page shows San Jose contests and no other city's", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-jose`);
+  await expect(page).toHaveTitle("San Jose endorsements (Nov 2026)");
+  await expect(page.getByRole("region", { name: "San Jose", exact: true })).toBeVisible();
+  await expect(contestRow(page, "San Jose City Council, District 5")).toBeVisible();
+  for (const other of ["Palo Alto", "Mountain View", "Cupertino"]) await expect(page.getByRole("region", { name: other, exact: true })).toHaveCount(0);
+  await expect(contestRow(page, "Mountain View Whisman School District Board")).toHaveCount(0);
+});
+
+test("the Santa Clara County page includes Palo Alto, Mountain View and San Jose", async ({ page }) => {
+  await page.goto(`${BALLOT}/santa-clara-county`);
+  await expect(page).toHaveTitle("Santa Clara County endorsements (Nov 2026)");
+  for (const place of ["Santa Clara County", "Cupertino", "Palo Alto", "Mountain View", "San Jose"]) {
+    await expect(page.getByRole("region", { name: place, exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+});
