@@ -924,7 +924,7 @@ test.describe("phone history budget", () => {
       for (const name of ["pushState", "replaceState"] as const) {
         const native = History.prototype[name];
         History.prototype[name] = function (...args: Parameters<History["replaceState"]>) {
-          const now = performance.now();
+          const now = Date.now();
           w.__calls.push(now);
           if (w.__calls.filter((t) => now - t < 10_000).length > 100) throw new DOMException(`Attempt to use history.${name}() more than 100 times per 10 seconds`, "SecurityError");
           return native.apply(this, args);
@@ -937,24 +937,22 @@ test.describe("phone history budget", () => {
       return Math.max(0, ...calls.map((t) => calls.filter((u) => u >= t && u - t < 10_000).length));
     });
 
-  test("opening and closing a contest sheet several times a second stays under the history limit", async ({ page, browserName }) => {
+  test("opening and closing a contest sheet many times within ten seconds stays under the history limit", async ({ page }) => {
     test.setTimeout(60_000);
     await limitHistory(page);
     const errors = watchErrors(page);
     await openBallot(page);
+    // Frozen Date.now puts every cycle in one 10-second window however slow the machine is; timers still run.
+    await page.clock.setFixedTime(Date.now());
     const sheet = page.getByRole("dialog", { name: "Governor" });
-    const started = Date.now();
-    let cycles = 0;
-    while (Date.now() - started < 12_000) {
-      await contestRow(page, "Governor").tap({ timeout: 2_000 });
-      await expect(sheet).toBeVisible({ timeout: 2_000 });
+    for (let i = 0; i < 40; i++) {
+      await contestRow(page, "Governor").tap({ timeout: 5_000 });
+      await expect(sheet).toBeVisible();
       await page.keyboard.press("Escape");
-      await expect(sheet).toBeHidden({ timeout: 2_000 });
-      cycles += 1;
+      await expect(sheet).toBeHidden();
+      expect(errors).toEqual([]);
     }
-    expect(cycles / 12).toBeGreaterThanOrEqual(3);
-    expect(errors).toEqual([]);
-    if (browserName === "chromium") expect(await busiestWindow(page)).toBeLessThanOrEqual(90);
+    expect(await busiestWindow(page)).toBeLessThanOrEqual(90);
   });
 
   test("a sheet opened while a write is pending keeps that write when it closes", async ({ page }) => {
