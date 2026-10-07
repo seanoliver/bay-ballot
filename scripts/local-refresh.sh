@@ -32,8 +32,8 @@ if [ -f "$LOG" ] && [ "$(wc -l < "$LOG")" -gt "$MAX_LOG_LINES" ]; then
   trimmed="$(tail -n $((MAX_LOG_LINES / 2)) "$LOG")"
   print -r -- "$trimmed" > "$LOG"
 fi
-# launchd already sends stdout and stderr to the log; a person running this sees it and logs it too.
-if [ -t 1 ]; then exec > >(tee -a "$LOG") 2>&1; fi
+# Under launchd the plist already sends stdout and stderr to the log.
+if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 log() { print -r -- "$(date '+%Y-%m-%d %H:%M:%S') $*"; }
 fail() { log "ERROR: $*"; exit 1; }

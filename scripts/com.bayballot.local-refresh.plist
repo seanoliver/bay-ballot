@@ -11,6 +11,11 @@
     <string>-lc</string>
     <string>__SCRIPT__</string>
   </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>BAYBALLOT_LAUNCHD</key>
+    <string>1</string>
+  </dict>
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
