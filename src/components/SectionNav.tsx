@@ -3,6 +3,7 @@
 import { Menu } from "@base-ui/react/menu";
 import { ChevronDownIcon } from "lucide-react";
 import { useRef, type MouseEvent } from "react";
+import { isPlainClick } from "@/lib/links";
 import { countLabel, type NavPlace } from "@/lib/section-nav";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function SectionNav({
   const here = all.find((s) => s.id === current) ?? all[0];
   if (!here) return null;
   const jump = (id: string) => (e: MouseEvent<HTMLAnchorElement>) => {
+    if (!isPlainClick(e)) return;
     e.preventDefault();
     jumped.current = id;
     onJump(id);

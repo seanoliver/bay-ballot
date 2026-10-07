@@ -699,6 +699,40 @@ test.describe("desktop keyboard section nav", () => {
     await expect(page.locator(`#${first}`)).toBeInViewport();
   });
 
+  test("a click on a row after a jump steps from that row", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    await page.locator("#row-d-treasurer").click();
+    await expect(page).toHaveURL(/[?&]c=treasurer/);
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=attorney-general/);
+  });
+
+  test("Shift+Tab never leaves the focused link under the bar", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Chromium");
+    await openBallot(page);
+    await page.locator("footer a").last().focus();
+    const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+    for (let i = 0; i < 30; i++) {
+      await page.keyboard.press("Shift+Tab");
+      const top = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement;
+        return el.closest("[data-keys=list]") && !el.closest("[data-section-nav]") ? el.getBoundingClientRect().top : null;
+      });
+      if (top !== null) expect(top).toBeGreaterThanOrEqual(await navBottom());
+    }
+  });
+
+  test("a modified click on a menu item is left to the browser", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    const item = page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ });
+    const prevented = await item.evaluate((el) => !el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true, ctrlKey: true })));
+    expect(prevented).toBe(false);
+  });
+
   test("k after a jump selects the last contest before that place", async ({ page }) => {
     await openBallot(page);
     await page.keyboard.press("g");

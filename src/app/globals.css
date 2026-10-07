@@ -217,6 +217,11 @@
   max-width: 62ch;
 }
 
+/* Taller than the sticky section bar, so focus, keyboard steps, jumps and #links never land under it. */
+html:has([data-section-nav]) {
+  scroll-padding-top: 4rem;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

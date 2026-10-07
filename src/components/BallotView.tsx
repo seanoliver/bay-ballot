@@ -121,6 +121,13 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     };
   }, [nav]);
   const jumpedTo = useRef<string | null>(null);
+  useEffect(() => {
+    const forget = (e: PointerEvent) => {
+      if (!(e.target instanceof Element && e.target.closest("[data-section-menu]"))) jumpedTo.current = null;
+    };
+    window.addEventListener("pointerdown", forget, true);
+    return () => window.removeEventListener("pointerdown", forget, true);
+  }, []);
   const jumpTo = (id: string) => {
     const heading = document.getElementById(id);
     if (!heading) return;
@@ -208,6 +215,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
 
   // Desktop selection changes go through here so opening and closing animate.
   const select = (next: string | null) => {
+    jumpedTo.current = null;
     setAnimate(true);
     clearTimeout(exitTimer.current);
     const out = motionOutMs();
@@ -227,6 +235,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
+    jumpedTo.current = null;
     if (window.matchMedia(DESKTOP).matches) {
       // detail 0: Enter on the link, not a mouse click.
       if (e.detail === 0 && selectedId === c.id) {
@@ -378,7 +387,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
                 </SectionHeading>
                 <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
                   {s.contests.map((c) => (
-                    <li key={c.id} className="scroll-mt-16">
+                    <li key={c.id}>
                       <ContestRow
                         href={`/${election}/${c.id}`}
                         contest={c}
