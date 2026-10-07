@@ -3,8 +3,9 @@ Source: https://ca.omniballot.us/sites/06085/site/app/cvig/vg/info?pid=<precinct
 Extract: precincts sampled, and each ballot style's county, district and city contests with candidates and ballot designations. Statewide contests and propositions are the same on every style and omitted.
 Precinct 0002010 (Ballot Type 2) lists Palo Alto City Council with Saratoga-area school contests; it looks like a registrar data artifact and its Saratoga contests are not on Bay Ballot.
 
-City of Mountain View | Ballot Type 65 | precincts sampled: 0003438
-City of Mountain View | Ballot Type 66 | precincts sampled: 0003402, 0003409, 0003425
+City of Mountain View | Ballot Type 65 | precincts sampled: 0003401, 0003419, 0003438, 0003439
+City of Mountain View | Ballot Type 66 | precincts sampled: 0003402, 0003407, 0003409, 0003410, 0003412, 0003422, 0003425, 0003440
+City of Mountain View | Ballot Type 67 | precincts sampled: 0003427, 0003431, 0003464
 City of Mountain View | Ballot Type 68 | precincts sampled: 0003495
 City of Mountain View | Ballot Type 69 | precincts sampled: 0003497
 City of Palo Alto | Ballot Type 1 | precincts sampled: 0002001, 0002002, 0002003, 0002005, 0002013, 0002019, 0002026, 0002030, 0002032, 0002035, 0002036, 0002049, 0002065, 0002120
@@ -128,6 +129,21 @@ City of Palo Alto | Ballot Type 6 | precincts sampled: 0002145
   For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice ALLISON MARSTON DANNER be elected to the office for the term provided by law?
   For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice DANIEL H. BROMBERG be elected to the office for the term provided by law?
   Mountain View Whisman School District / Governing Board Member (Vote for no more than Two): Devon Conley ; Incumbent ; William Lambert ; Incumbent ; Sundar Subbarayan ; Retired Tech Executive ; Quintin Riis ; Father
+  City of Mountain View / Member, City Council (Vote for no more than Three): James Kuszmaul ; Engineer ; Robert Cox ; Retired Software Engineer ; Erik Poicon ; Library Outreach Specialist ; Silja Paymer ; Teacher/Mother/Engineer ; Samuel Ali ; Alex Amoroso ; Army Reserve Officer ; Paul Donahue ; Engineer ; IdaRose Sylvester ; Entrepreneur/Educator
+  Santa Clara Valley Water District / Director, District 7 (Vote for One): Pete Dailey ; Member, Los Altos City Council ; Rebecca Eisenberg ; Incumbent
+  City of Mountain View / E: Shall the measure amending the City Charter to modernize provisions by replacing gender-specific terms with gender-neutral language; extending the time to take action to fill a council vacancy from 30 to 60 days; eliminating the requirement to read ordinances and resolutions in full; authorizing Council to establish qualifications for legislatively created boards, commissions, and committees; upda
+  El Camino Healthcare District / S: Shall the measure amending the Bylaws of the El Camino Healthcare District to limit District Directors to four four-year terms be adopted? Supporters: El Camino Healthcare District Board of Directors Opponents: None submitted.
+
+== Ballot Type 67
+  Member, State Board of Equalization, District 2 (Vote for One): John Pimentel ; Party Preference: Democratic ; Member, Board of Trustees, San Mateo County Community College District ; Sally J. Lieber ; Party Preference: Democratic ; Incumbent
+  District 16 (Vote for One): Peter Sundin Soulé ; Party Preference: Republican ; Investor ; Sam Liccardo ; Party Preference: Democratic ; United States Representative
+  District 23 (Vote for One): David G. Johnson ; Party Preference: Republican ; Small Business Owner ; Marc Berman ; Party Preference: Democratic ; State Assemblymember
+  For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice CHARLES E. WILSON II be elected to the office for the term provided by law?
+  For Associate Justice, Court of Appeal, Sixth District: Shall Superior Court Judge FREDERICK S. CHUNG be elected to the office for the term provided by law?
+  For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice CHARLES F. ADAMS be elected to the office for the term provided by law?
+  For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice ALLISON MARSTON DANNER be elected to the office for the term provided by law?
+  For Associate Justice, Court of Appeal, Sixth District: Shall Associate Justice DANIEL H. BROMBERG be elected to the office for the term provided by law?
+  Los Altos School District / Governing Board Member (Vote for no more than Three): David Poll ; Parent/Engineering Director ; Bryan Harvey Johnson ; Governing Board Member, Los Altos School District ; Vaishali "Shali" Sirkay ; Governing Board Member, Los Altos School District ; Brandon Stroy ; Appointed Incumbent
   City of Mountain View / Member, City Council (Vote for no more than Three): James Kuszmaul ; Engineer ; Robert Cox ; Retired Software Engineer ; Erik Poicon ; Library Outreach Specialist ; Silja Paymer ; Teacher/Mother/Engineer ; Samuel Ali ; Alex Amoroso ; Army Reserve Officer ; Paul Donahue ; Engineer ; IdaRose Sylvester ; Entrepreneur/Educator
   Santa Clara Valley Water District / Director, District 7 (Vote for One): Pete Dailey ; Member, Los Altos City Council ; Rebecca Eisenberg ; Incumbent
   City of Mountain View / E: Shall the measure amending the City Charter to modernize provisions by replacing gender-specific terms with gender-neutral language; extending the time to take action to fill a council vacancy from 30 to 60 days; eliminating the requirement to read ordinances and resolutions in full; authorizing Council to establish qualifications for legislatively created boards, commissions, and committees; upda
