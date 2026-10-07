@@ -2,6 +2,7 @@ guide: sf-chronicle
 election: 2026-11
 status: published
 source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/

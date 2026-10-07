@@ -2,6 +2,7 @@ guide: d11-dems
 election: 2026-11
 status: published
 source: https://www.sfd11dems.com/endorsements
+fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.sfd11dems.com/endorsements
     snapshot: https://web.archive.org/web/20261005220949/https://www.sfd11dems.com/endorsements

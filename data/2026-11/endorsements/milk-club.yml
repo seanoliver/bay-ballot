@@ -2,6 +2,7 @@ guide: milk-club
 election: 2026-11
 status: published
 source: https://www.milkclub.org/endorsements # page also links June 2026 / Nov 2024 slates; extract only "November 2026"
+fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.milkclub.org/endorsements
     snapshot: https://web.archive.org/web/20261005221701/https://www.milkclub.org/endorsements
