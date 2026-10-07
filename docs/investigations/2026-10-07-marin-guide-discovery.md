@@ -336,6 +336,21 @@ The team lead widens these once for all three counties. This branch does not edi
 | greenbelt-alliance | marin | none | Marin pick: Sausalito X. Ignore the June Measure B item |
 | lwv-ca | marin | none | Manual; props only |
 
+Multi-county guides created on the Contra Costa branch (checked 2026-10-07 for Marin picks). This branch does not create them:
+
+| Guide | Add `marin`? | Source page | Marin picks seen |
+|---|---|---|---|
+| 350-bay-area-action | Yes | https://350bayareaaction.org/electoral/endorsements-2026 (Marin County section) | AD12 Elward; Corte Madera Beckman; Fairfax Adams; Fairfax Clerk Ackerman; Larkspur Andre, Margulies; Novato D2 Farac; San Anselmo Burdo; San Rafael D3 Sandoval; Sausalito Hoffman, Cox. Its "Fairfax Measure J" item is from June and has no Nov contest |
+| envirovoters | Yes | https://envirovoters.org/2026-endorsements/ | CD2 Huffman, SD2 Connolly, AD12 Elward, BOE 2 Lieber. No Marin local picks |
+| eqca | Yes | https://www.eqca.org/our-endorsements/ | CD2 Huffman, SD2 Connolly, BOE 2 Lieber, Corte Madera Beckman. No AD12 pick |
+| pp-norcal-action | Yes | https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements | SD2 Connolly; San Rafael D2 Hill (Marin County section). No CD2 or AD12 pick |
+| unite-here-2 | Yes | https://www.unitehere2.org/2026/09/november-2026-election-endorsements/ | SD2 Connolly, AD12 Elward |
+| ifpte-21 | Optional | https://ifpte21.org/endorsements/ | BOE 2 Lieber only (a district contest that now includes Marin) |
+| east-bay-dsa | Optional | https://vote.eastbaydsa.org/simple-guide.html | Board of Equalization District 2 only |
+| lwv-bay-area | No | https://www.lwvbayarea.org/ | RTM only; Marin is not in the RTM |
+| bike-east-bay | No | https://bikeeastbay.org/election2026/ | None (mentions the Richmond-San Rafael Bridge, not a contest) |
+| ebho | No | https://ebho.org/2026-campaign-endorsements/ | None (Call Marin Home is only a forum co-presenter) |
+
 IJ editorials to add to mercury-news:
 - https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
 - https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
