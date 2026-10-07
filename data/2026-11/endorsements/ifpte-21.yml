@@ -1,0 +1,71 @@
+guide: ifpte-21
+election: 2026-11
+status: published
+source: https://ifpte21.org/endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  attorney-general:
+    pick:
+      - Rob Bonta
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: Y
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  ebmud-ward-7:
+    pick:
+      - Gary Wolff

@@ -1,0 +1,54 @@
+guide: contra-costa-gop
+election: 2026-11
+status: published
+source: https://cocorepublicans.org/ # homepage links "Download our voter guide & local recommendations" to two PNG images; no page text
+extraSources:
+  - https://irp.cdn-website.com/0af916fd/files/uploaded/combined_guide_2.png
+  - https://irp.cdn-website.com/0af916fd/files/uploaded/Local+Recommendations+-+Nov+2026-7f4e9d7b.png
+allowForeignSources: true
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # picks hand-entered from the two slate images; extract skips this guide
+picks:
+  us-rep-8: { pick: ["Rudy Recile"] }
+  us-rep-9: { pick: ["John McBride"] }
+  us-rep-10: { pick: ["Jeff Frese"] }
+  governor: { pick: ["Steve Hilton"] }
+  lt-governor: { pick: ["Gloria Romero"] }
+  secretary-of-state: { pick: ["Donald P. (Don) Wagner"] }
+  controller: { pick: ["Herb W Morgan"] }
+  treasurer: { pick: ["Jennifer Hawks"] }
+  attorney-general: { pick: ["Michael E. Gates"] }
+  insurance-commissioner: { pick: ["Ben Allen"] } # on the local recommendations image
+  assembly-15: { pick: ["Arthur Webb"] }
+  assembly-16: { pick: ["Joseph A. Rubay"] } # the image says "Joe Rubay"
+  superintendent: { pick: ["Sonja Shaw"] }
+  supreme-court-groban: { pick: N }
+  supreme-court-evans: { pick: N }
+  court-of-appeal-1: { pick: N } # "Judges: vote no on retention" lists every 1st District justice
+  prop-1: { pick: N }
+  prop-2: { pick: N }
+  prop-3: { pick: N }
+  prop-4: { pick: N }
+  prop-5: { pick: N }
+  prop-37: { pick: N }
+  prop-38: { pick: N }
+  prop-39: { pick: Y }
+  prop-40: { pick: N }
+  prop-41: { pick: Y }
+  prop-42: { pick: Y }
+  prop-43: { pick: Y }
+  prop-44: { pick: N }
+  prop-45: { pick: Y }
+  rtm: { pick: N }
+  cccd-ward-3: { pick: ["Allyse Tanovitz"] }
+  contra-costa-county-board-of-education-2: { pick: ["Pamela West"] }
+  danville-council: { pick: ["Pratima Sonavne"] }
+  acalanes-uhsd-area-1: { pick: ["Nithin Iyengar"] }
+  diablo-csd: { pick: ["Gregory R Lorenz", "Jessica Raefield"] }
+  antioch-council-4: { pick: ["Matty Mathews Alappat"] } # the image says "Antioch City Council"; he runs in District 4
+  brentwood-council-2: { pick: ["Tammy Zickuhr"] }
+  brentwood-council-4: { pick: ["Holley Bishop-Mello"] }
+  brentwood-usd: { pick: ["Oxsana Pajoluk", "Mark Anderson"] } # the image says "Mark Andersen"
+  liberty-uhsd-area-4: { pick: ["Tamara Weber"] }
+  knightsen-esd: { pick: ["Liesel Williams", "Erik M. Hansen"] }

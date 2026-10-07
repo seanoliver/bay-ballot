@@ -1,0 +1,45 @@
+guide: rossmoor-dems
+election: 2026-11
+status: published
+source: https://democratsofrossmoor.org/endorsements/
+archived:
+  - source: https://democratsofrossmoor.org/endorsements/
+    snapshot: https://web.archive.org/web/20261007194754/https://democratsofrossmoor.org/endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  walnut-creek-sd:
+    pick:
+      - Heidi Hernandez Gatty
+      - Eryn Holl King
+  contra-costa-county-board-of-education-2:
+    pick:
+      - Sarah Butler
+  acalanes-uhsd-measure-w:
+    pick: Y
+  walnut-creek-measure-t:
+    pick: Y
+  rtm:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N

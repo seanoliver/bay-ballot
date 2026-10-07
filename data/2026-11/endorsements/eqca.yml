@@ -1,0 +1,83 @@
+guide: eqca
+election: 2026-11
+status: published
+source: https://www.eqca.org/our-endorsements/
+archived:
+  - source: https://www.eqca.org/our-endorsements/
+    snapshot: https://web.archive.org/web/20261007195254/https://www.eqca.org/elections/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  us-rep-8:
+    pick:
+      - John Garamendi
+  us-rep-9:
+    pick:
+      - Josh Harder
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-11:
+    pick:
+      - Lori D Wilson
+  assembly-14:
+    pick:
+      - Buffy Wicks
+  assembly-15:
+    pick:
+      - Anamarie Avila Farias
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  superintendent:
+    pick:
+      - Richard Barrera
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  concord-council-3:
+    pick:
+      - Robyn Kuslits
+  el-cerrito-council:
+    pick:
+      - Gabe Quinto
+  san-ramon-council-4:
+    pick:
+      - Marisol Rubio

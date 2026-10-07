@@ -1,0 +1,49 @@
+guide: east-bay-dsa
+election: 2026-11
+status: published
+source: https://vote.eastbaydsa.org/simple-guide.html
+archived:
+  - source: https://vote.eastbaydsa.org/simple-guide.html
+    snapshot: https://web.archive.org/web/20261007195003/https://vote.eastbaydsa.org/simple-guide
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
+    quotes:
+      - text: On the City Council, Jiménez has been part of Richmond’s progressive governing bloc and helped secure the city’s $550 million settlement with Chevron.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  clayton-measure-n:
+    pick: Y
+    quotes:
+      - text: The funding for this measure would be exclusively earmarked for public landscaping, and could not be spent on other city services, such as police.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+      - text: Municipalities are and, under socialist governance, ought to be responsible for landscaping of parks, trails, and local areas.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  concord-measure-o:
+    pick: Y
+  richmond-measure-q:
+    pick: Y
+    quotes:
+      - text: The bond would exclusively be dedicated to long-needed fire station improvements, including a substantial portion of deferred maintenance.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  san-pablo-measure-s:
+    pick: Y
+    quotes:
+      - text: Put simply, this is a measure that would help protect tenants from abusive landlord practices.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  wccusd-measure-v:
+    pick: Y
+    quotes:
+      - text: Still, absent this tax, public schools in West Contra Costa County will be faced with challenging budget cuts to essential public programs for our youth, such as counseling and after-school programs, as well as potential threats to unionized public school employees.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+      - text: On balance, this measure is one that primarily maintains public schools and, to a less substantial degree, funds charter schools.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  acalanes-uhsd-measure-w:
+    pick: Y
+    quotes:
+      - text: Currently, the school district does not contain charter schools, so we find it unlikely that any of the revenue would be spent on charter schools.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  liberty-uhsd-measure-x:
+    pick: Y

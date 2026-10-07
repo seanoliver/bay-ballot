@@ -1,0 +1,52 @@
+guide: west-county-dems
+election: 2026-11
+status: published
+source: https://www.westcountydemocraticclub.com/endorsements
+archived:
+  - source: https://www.westcountydemocraticclub.com/endorsements
+    snapshot: https://web.archive.org/web/20261007194910/https://www.westcountydemocraticclub.com/endorsements
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  cccd-ward-1:
+    pick:
+      - Raquel Donoso
+  ebrpd-ward-7:
+    pick:
+      - Colin J. Coffey
+  el-cerrito-council:
+    pick:
+      - Gabe Quinto
+      - Carolyn Wysinger
+  hercules-council:
+    pick:
+      - John Delgado
+      - Dion Bailey
+  pinole-council:
+    pick:
+      - Truc "Christy" Lam-Julian
+      - Tina Brown
+      - Gabriel Sandoval
+  richmond-mayor:
+    pick:
+      - Ahmad Anderson
+  san-pablo-council:
+    pick:
+      - Anna Villalobos
+      - Rita Xavier
+  john-swett-usd:
+    pick:
+      - Samantha Watson-Alvarado
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  wccusd-measure-v:
+    pick: Y
+    quotes:
+      - text: Measure V renews the existing parcel tax supporting West Contra Costa Unified School District, protecting core academics, arts, and career technical programs while helping the district retain great teachers and maintain student mental health services.
+        source: https://www.westcountydemocraticclub.com/endorsements
+  prop-4:
+    pick: Y
+    quotes:
+      - text: Proposition 4, the Clean Money Proposition, works to get big money out of politics and restore trust in our elections.
+        source: https://www.westcountydemocraticclub.com/endorsements

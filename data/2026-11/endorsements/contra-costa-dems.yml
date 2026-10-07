@@ -1,0 +1,197 @@
+guide: contra-costa-dems
+election: 2026-11
+status: published
+source: https://contracostadems.com/endorsements/
+archived:
+  - source: https://contracostadems.com/endorsements/
+    snapshot: https://web.archive.org/web/20261007194431/https://contracostadems.com/endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  us-rep-8:
+    pick:
+      - John Garamendi
+  us-rep-9:
+    pick:
+      - Josh Harder
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  attorney-general:
+    pick:
+      - Rob Bonta
+  controller:
+    pick:
+      - Malia M. Cohen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-11:
+    pick:
+      - Lori D Wilson
+  assembly-14:
+    pick:
+      - Buffy Wicks
+  assembly-15:
+    pick:
+      - Anamarie Avila Farias
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  contra-costa-county-board-of-education-2:
+    pick:
+      - Sarah Butler
+  cccd-ward-3:
+    pick:
+      - Becca Barrett
+  ebrpd-ward-7:
+    pick:
+      - Colin J. Coffey
+  ebmud-ward-7:
+    pick:
+      - Gary Wolff
+  richmond-mayor:
+    pick:
+      - Ahmad Anderson
+  el-cerrito-council:
+    pick:
+      - Gabe Quinto
+      - Carolyn Wysinger
+  pinole-council:
+    pick:
+      - Gabriel Sandoval
+      - Truc "Christy" Lam-Julian
+  san-pablo-council:
+    pick:
+      - Caden Cotton-Blake
+      - Rita Xavier
+  cccd-ward-1:
+    pick:
+      - Cameron Sasai
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  danville-council:
+    pick:
+      - Denton Carlson
+  moraga-council:
+    pick:
+      - Kerry Hillis
+      - Alexis I. Mapel
+  orinda-council:
+    pick:
+      - Latika Malkani
+  san-ramon-council-2:
+    pick:
+      - Richard J. Adler
+  san-ramon-council-4:
+    pick:
+      - Marisol Rubio
+  acalanes-uhsd-area-1:
+    pick:
+      - Nithin Iyengar
+  orinda-usd:
+    pick:
+      - John Chabalko
+      - Edda Collins Coleman
+      - Katie Shogan
+  srvusd-area-5:
+    pick:
+      - Rachel Hurd
+  central-san-division-2:
+    pick:
+      - Michael Robert McGill
+  mofd-division-3:
+    pick:
+      - John Donnelly
+  mofd-division-4:
+    pick:
+      - Linda Stevens
+  antioch-council-1:
+    pick:
+      - Tamisha Torres-Walker
+  antioch-council-4:
+    pick:
+      - Monica E Wilson
+  liberty-uhsd-area-4:
+    pick:
+      - Hillary Fairbairn Pedrotti
+  brentwood-council-2:
+    pick:
+      - Kris Brand
+  brentwood-council-4:
+    pick:
+      - Stephanie Williams-Rogers
+  antioch-usd-area-5:
+    pick:
+      - Brandon Dawkins
+  oakley-union-esd-area-4:
+    pick:
+      - Isaiah B.N. Mateas
+  ironhouse-sanitary:
+    pick:
+      - Paschal Iwuh
+      - Kerry Harvey
+  walnut-creek-sd:
+    pick:
+      - Heidi Hernandez Gatty
+      - Eryn Holl King
+      - Geetha Ganti
+  clayton-council:
+    pick:
+      - Amy Callaghan
+  concord-council-1:
+    pick:
+      - Maria Bagley
+  concord-council-3:
+    pick:
+      - Robyn Kuslits
+  concord-council-5:
+    pick:
+      - Laura Nakamura
+  pleasant-hill-council-3:
+    pick:
+      - Zac Shess
+  mdusd-area-2:
+    pick:
+      - Jane Baulch-Enloe
+  mdusd-area-4:
+    pick:
+      - Brian Thomas Lawrence
+  hercules-council:
+    pick:
+      - Dion Bailey
+      - John Delgado
+  pittsburg-council:
+    pick:
+      - Dionne Adams
+      - Arlene Kobata
+      - Iztaccuauhtli Hector Gonzalez
+  pittsburg-city-clerk:
+    pick:
+      - Latoyya P. Ella Bordelon
+  john-swett-usd:
+    pick:
+      - Samantha Watson-Alvarado
+  ccwd-division-2:
+    pick:
+      - Allison Picard
+  rtm:
+    pick: Y
+  walnut-creek-measure-t:
+    pick: Y
+  acalanes-uhsd-measure-w:
+    pick: Y
+  liberty-uhsd-measure-x:
+    pick: Y
+  san-pablo-measure-s:
+    pick: Y
+  richmond-measure-q:
+    pick: Y
+  wccusd-measure-v:
+    pick: Y
+  concord-measure-o:
+    pick: Y

@@ -1,0 +1,29 @@
+guide: unite-here-2
+election: 2026-11
+status: published
+source: https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
+archived:
+  - source: https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
+    snapshot: https://web.archive.org/web/20261007195211/https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  lt-governor:
+    pick:
+      - Fiona Ma
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  prop-40:
+    pick: Y
+  rtm:
+    pick: Y
+  concord-council-5:
+    pick:
+      - Laura Nakamura
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez

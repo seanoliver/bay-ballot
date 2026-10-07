@@ -1,0 +1,18 @@
+guide: lwv-bay-area
+election: 2026-11
+status: published
+source: https://my.lwv.org/sites/default/files/2026_nov_regional_transit_measure_vwtl.pdf
+allowForeignSources: true
+archived:
+  - source: https://my.lwv.org/sites/default/files/2026_nov_regional_transit_measure_vwtl.pdf
+    snapshot: https://web.archive.org/web/20261007195838/https://my.lwv.org/sites/default/files/2026_nov_regional_transit_measure_vwtl.pdf
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  rtm:
+    pick: Y
+    quotes:
+      - text: Maintaining a connected transportation system benefits every community by supporting economic opportunity, reducing traffic congestion, improving mobility, and helping the region meet its climate goals.
+        source: https://my.lwv.org/sites/default/files/2026_nov_regional_transit_measure_vwtl.pdf
+      - text: The measure requires an independent oversight committee to confirm that revenues are distributed in accordance with the SB 63 expenditure plan.
+        source: https://my.lwv.org/sites/default/files/2026_nov_regional_transit_measure_vwtl.pdf
