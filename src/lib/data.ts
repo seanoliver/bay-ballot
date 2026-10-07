@@ -50,7 +50,6 @@ function loadAreas(root: string): Area[] {
   return loaded.sort((a, b) => a.order - b.order || a.id.localeCompare(b.id)).map((a) => Area.parse(a));
 }
 
-// ballot.yml holds the statewide and regional contests; ballot/<county>.yml holds one county's, merged in area order.
 function loadBallot(root: string, election: string, areas: Area[]): Ballot {
   const ballotFile = path.join(root, election, "ballot.yml");
   const ballot = readParsed(ballotFile, Ballot);
