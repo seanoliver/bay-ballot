@@ -65,29 +65,58 @@ const errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(
 
 // Bot walls and challenge pages. Matched only on short pages or the <title>, so a real page that
 // mentions "access denied" in passing is not mistaken for one.
+// Matched against the <title>, or the visible text of short pages only (scripts removed), so a
+// real page that mentions "access denied" in passing is not mistaken for a wall.
 const BLOCK_SIGNS: [string, RegExp][] = [
-  ["cloudflare challenge", /just a moment\.\.\.|enable javascript and cookies to continue|cf-chl-|challenge-platform/i],
+  ["cloudflare challenge", /just a moment\.\.\.|enable javascript and cookies to continue/i],
   ["cloudflare block", /attention required! \| cloudflare|sorry, you have been blocked/i],
   ["incapsula", /incapsula incident id|request unsuccessful\. incapsula/i],
-  ["perimeterx", /press (?:&|&amp;) hold to confirm you are a human|px-captcha/i],
-  ["datadome", /please enable js and disable any ad blocker|captcha-delivery\.com/i],
+  ["perimeterx", /press & hold to confirm you are a human/i],
+  ["datadome", /please enable js and disable any ad blocker/i],
   ["distil", /pardon our interruption/i],
   ["client challenge", /^\s*client challenge\s*$|a required part of this site couldn.t load/im],
   ["access denied", /^\s*access denied\s*$|you don'?t have permission to access .* on this server/im],
   ["bot check", /verify(?:ing)? (?:that )?you are (?:a )?human|are you a robot\?/i],
 ];
+// Markup only a challenge page carries. Real Cloudflare sites also load
+// /cdn-cgi/challenge-platform/scripts/jsd/main.js on every page, so that alone means nothing.
+const BLOCK_MARKUP: [string, RegExp][] = [
+  ["cloudflare challenge", /id=["']challenge-form["']|window\._cf_chl_opt|\/cdn-cgi\/challenge-platform\/h\//],
+  ["perimeterx", /px-captcha/],
+  ["datadome", /captcha-delivery\.com/],
+];
 const MAX_BLOCK_PAGE_TEXT = 1500;
+
+function visibleText(html: string): { title: string; text: string } {
+  const $ = cheerio.load(html);
+  const title = $("title").first().text().trim();
+  $("script, style, noscript, template").remove();
+  return { title, text: $("body").text().replace(/\s+/g, " ").trim() };
+}
 
 /** The kind of bot wall `html` is, or null for a real page. */
 export function detectBlock(html: string): string | null {
-  const $ = cheerio.load(html);
-  const title = $("title").first().text().trim();
-  const text = $("body").text().replace(/\s+/g, " ").trim();
+  const { title, text } = visibleText(html);
   const short = text.length <= MAX_BLOCK_PAGE_TEXT;
-  for (const [name, re] of BLOCK_SIGNS) {
-    if (re.test(title) || (short && (re.test(text) || re.test(html)))) return name;
-  }
+  for (const [name, re] of BLOCK_SIGNS) if (re.test(title) || (short && re.test(text))) return name;
+  for (const [name, re] of BLOCK_MARKUP) if (re.test(html)) return name;
   return null;
+}
+
+/** The status of the last main-frame navigation (a challenge that solves itself navigates again). */
+export function finalStatus(responses: { status: number; mainFrameNavigation: boolean }[], fallback: number): number {
+  return responses.filter((r) => r.mainFrameNavigation).at(-1)?.status ?? fallback;
+}
+
+/** Read the page, waiting out one navigation if the page moved while being read. */
+export async function contentAfterNavigation(content: () => Promise<string>, settle: () => Promise<void>): Promise<string> {
+  try {
+    return await content();
+  } catch (e) {
+    if (!/execution context was destroyed|navigating/i.test(errMsg(e))) throw e;
+    await settle();
+    return content();
+  }
 }
 
 export type FetchAttempt = { via: "http" | "browser"; status: number; bytes: number; blocked: string | null };
@@ -103,9 +132,16 @@ async function browserPage(url: string): Promise<{ status: number; html: string 
   const b = await chromium.launch();
   try {
     const page = await b.newPage({ userAgent: UA, locale: "en-US", extraHTTPHeaders: { "accept-language": "en-US,en;q=0.9" } });
+    const responses: { status: number; mainFrameNavigation: boolean }[] = [];
+    page.on("response", (r) => {
+      const req = r.request();
+      responses.push({ status: r.status(), mainFrameNavigation: req.isNavigationRequest() && req.frame() === page.mainFrame() });
+    });
     const res = await page.goto(url, { waitUntil: "load", timeout: 60_000 });
-    await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
-    return { status: res?.status() ?? 200, html: await page.content() };
+    const settle = () => page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
+    await settle();
+    const html = await contentAfterNavigation(() => page.content(), settle);
+    return { status: finalStatus(responses, res?.status() ?? 200), html };
   } finally {
     await b.close();
   }
@@ -163,9 +199,13 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
       const m = errMsg(e);
       throw new Error(httpFailure ? `${httpFailure} (browser: ${m})` : m.includes(url) ? m : `${url}: ${m}`);
     }
-    const blocked = r.status >= 400 ? null : detectBlock(r.html);
+    const blocked = detectBlock(r.html);
     report({ via: "browser", status: r.status, bytes: Buffer.byteLength(r.html), blocked });
-    if (r.status >= 400) throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
+    // An error status with a full, unblocked page means the wall let the browser through after the first response.
+    const realPage = !blocked && visibleText(r.html).text.length > MAX_BLOCK_PAGE_TEXT;
+    if (r.status >= 400 && !realPage) {
+      throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
+    }
     if (blocked) throw new Error(`${url}: blocked (${blocked})${httpFailure ? " over http and browser" : ""}`);
     return { kind: "text", text: htmlToText(r.html) };
   };

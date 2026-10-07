@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { detectBlock, fetchSource, htmlToText } from "@/pipeline/fetch";
+import * as cheerio from "cheerio";
+import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText } from "@/pipeline/fetch";
+
+const cheerioText = (html: string) => cheerio.load(html)("body").text().replace(/\s+/g, " ").trim();
 
 describe("htmlToText", () => {
   it("drops scripts, styles and nav, keeps body text", () => {
@@ -181,5 +184,70 @@ describe("fetchSource fallbacks", () => {
   it("checks pages fetched with the browser from the start too", async () => {
     const browserFetch = vi.fn(async () => ({ status: 200, html: challenge }));
     await expect(fetchSource("https://x.test/a", { browser: true, browserFetch })).rejects.toThrow("blocked (cloudflare challenge)");
+  });
+});
+
+describe("detectBlock on real pages with Cloudflare's script snippets", () => {
+  const slate = [
+    "<h1>November 2026 Endorsements</h1>",
+    "<ul>",
+    ...["Prop A: Yes", "Prop B: No", "Prop C: Yes", "Prop D: No", "Prop E: Yes", "Prop F: No", "Prop G: No", "Prop H: Yes",
+      "Supervisor, District 8: Gary McCoy", "Supervisor, District 10: J.R. Eppler", "Assessor: Joaquín Torres",
+      "Public Defender: Mano Raju", "Board of Education: Reina Tello, Ryan Hazelton, Virginia Cheung",
+      "Community College Board: Jeremy Lee, Bunny McFadden, Leah LaCroix"].map((l) => `<li>${l}</li>`),
+    "</ul><p>Our members voted on September 23 after candidate forums in every district of the city.</p>",
+  ].join("");
+  const jsd = `<script>(function(){var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.head.appendChild(a);})();</script>`;
+
+  it("ignores the JSD beacon on a short real slate page", () => {
+    const html = `<html><head><title>Endorsements</title></head><body>${slate}${jsd}</body></html>`;
+    const text = cheerioText(html);
+    expect(text.length).toBeGreaterThan(500);
+    expect(text.length).toBeLessThan(1500);
+    expect(detectBlock(html)).toBeNull();
+  });
+  it("does not let inline scripts make a page look like a wall", () => {
+    const html = `<html><head><title>Picks</title><script>var x = "verify you are human";</script></head><body>${slate}<noscript>Enable JavaScript and cookies to continue</noscript></body></html>`;
+    expect(detectBlock(html)).toBeNull();
+  });
+  it("still flags a real challenge by its specific markers", () => {
+    expect(detectBlock(`<html><body><form id="challenge-form" action="/x"></form></body></html>`)).toBe("cloudflare challenge");
+    expect(detectBlock(`<html><body><script>window._cf_chl_opt={cvId:'3'};</script></body></html>`)).toBe("cloudflare challenge");
+    expect(detectBlock(`<html><body><script src="/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1"></script></body></html>`)).toBe("cloudflare challenge");
+  });
+});
+
+describe("browser fallback trusts the final page", () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const realPage = `<html><body><h1>November 2026 Endorsements</h1>${"<p>We recommend Yes on Prop C because the city needs more affordable housing in every neighborhood.</p>".repeat(25)}</body></html>`;
+
+  it("accepts a real page even when the browser's first response was a 403", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("Forbidden", { status: 403, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 403, html: realPage }));
+    const r = await fetchSource("https://x.test/a", { browserFetch });
+    expect(r.kind).toBe("text");
+    expect(r.text).toContain("November 2026 Endorsements");
+  });
+});
+
+describe("browser helpers", () => {
+  it("uses the last main-frame navigation's status (challenge solved mid-load)", () => {
+    expect(finalStatus([{ status: 403, mainFrameNavigation: true }, { status: 204, mainFrameNavigation: false }, { status: 200, mainFrameNavigation: true }], 403)).toBe(200);
+    expect(finalStatus([{ status: 403, mainFrameNavigation: true }, { status: 200, mainFrameNavigation: false }], 403)).toBe(403);
+    expect(finalStatus([], 200)).toBe(200);
+  });
+  it("retries reading content when the page navigated underneath it", async () => {
+    let calls = 0;
+    const content = async () => {
+      calls++;
+      if (calls === 1) throw new Error("page.content: Execution context was destroyed, most likely because of a navigation");
+      return "<html>final</html>";
+    };
+    const settle = vi.fn(async () => {});
+    expect(await contentAfterNavigation(content, settle)).toBe("<html>final</html>");
+    expect(settle).toHaveBeenCalledOnce();
+  });
+  it("does not swallow other errors", async () => {
+    await expect(contentAfterNavigation(async () => { throw new Error("boom"); }, async () => {})).rejects.toThrow("boom");
   });
 });
