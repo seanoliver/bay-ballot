@@ -142,11 +142,18 @@ contests:
     candidates: [Anky van Deursen, Lynette Lee Eng]
     aliases: { Anky van Deursen: [Anky van Deurson], Lynette Lee Eng: [Lynette Eng] }
     jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Los Altos }] }
+  - id: los-altos-council-4
+    section: Local candidates
+    title: Los Altos City Council, District 4
+    kind: candidate
+    candidates: [Larry Lang]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Los Altos }] }
   - id: los-altos-hills-council
     section: Local candidates
     title: Los Altos Hills Town Council
     kind: candidate
     candidates: [Jim Waschura, Jasmeen Pombra, Indu Kadambi]
+    aliases: { Jasmeen Pombra: ["Jasmeen Pombra, MD", "Jasmeen Pombra MD"] }
     seats: 2
     jurisdiction: { level: city, name: Los Altos Hills }
   - id: los-gatos-council
@@ -234,6 +241,25 @@ contests:
     candidates: [Jeri Bromley, Ping Li, Bill Dalton, Glenn K. Hendricks]
     seats: 3
     jurisdiction: { level: city, name: Saratoga }
+  - id: sunnyvale-council-1
+    section: Local candidates
+    title: Sunnyvale City Council, District 1
+    kind: candidate
+    candidates: [Linda Sell]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Sunnyvale }] }
+  - id: sunnyvale-council-3
+    section: Local candidates
+    title: Sunnyvale City Council, District 3
+    kind: candidate
+    candidates: [Murali Srinivasan]
+    aliases: { Murali Srinivasan: [Murali Srinvasan] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Sunnyvale }] }
+  - id: sunnyvale-council-5
+    section: Local candidates
+    title: Sunnyvale City Council, District 5
+    kind: candidate
+    candidates: [Richard Mehlinger]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Sunnyvale }] }
   - id: santa-clara-county-board-of-education-7
     section: School and special districts
     title: Santa Clara County Board of Education, Trustee Area 7

@@ -278,7 +278,7 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
   - "Recommend against" counts as No on a measure and is ignored for candidates.
   - Its blanket "Yes on all school bond measures and parcel taxes" counts only for measures that are plainly school bonds or parcel taxes (Gilroy USD M, LGSUHSD N, Alum Rock O and P, Cambrian Q, Orchard R), each with the supporting quote.
   - Its Alameda picks are listed for central widening.
-- **Unopposed seats** stay out, even when printed and picked: Sunnyvale D1, D3, D5 and Los Altos D4. Only contested contests go on the ballot.
+- **Unopposed seats** printed on the Nov 3 ballot are included when a guide picks them (corrected 2026-10-07, following the San Mateo precedent of Redwood City D2 and South San Francisco D1): Sunnyvale D1, D3, D5 and Los Altos D4. Races decided in June aren't on the ballot and stay out.
 - **Equality California, California Environmental Voters and LWV Bay Area** are created by the Contra Costa branch. This branch only lists their Santa Clara needs.
 
 ## Data phase notes (2026-10-07)
