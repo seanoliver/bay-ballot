@@ -20,12 +20,12 @@ picks:
   secretary-of-state:
     pick:
       - Shirley N. Weber
-  attorney-general:
-    pick:
-      - Rob Bonta
   controller:
     pick:
       - Malia M. Cohen
+  attorney-general:
+    pick:
+      - Rob Bonta
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
@@ -140,6 +140,10 @@ picks:
       - Heidi Hernandez Gatty
       - Eryn Holl King
       - Geetha Ganti
+  walnut-creek-council:
+    pick:
+      - Cherise Marie Khaund
+      - Brendan Moran
   clayton-council:
     pick:
       - Amy Callaghan

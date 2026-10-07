@@ -1,5 +1,5 @@
 # Sources: data/2026-11/sources/CCC-Candidate-List-0827.txt and CCC-Measures-Nov2026.txt (Contra Costa County Elections).
-# Only contested November contests that at least one guide takes a position on; uncontested seats and seats decided in June are left out.
+# Only November contests that at least one guide takes a position on, including unopposed seats printed on the ballot; seats decided in June or not printed are left out.
 contests:
   - id: richmond-mayor
     section: Local candidates
@@ -151,6 +151,14 @@ contests:
     kind: candidate
     candidates: [Jeffrey Joh, Marisol Rubio]
     jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: San Ramon }] }
+  - id: walnut-creek-council
+    section: Local candidates
+    title: Walnut Creek City Council
+    kind: candidate
+    seats: 2
+    candidates: [Cherise Marie Khaund, Brendan Moran]
+    aliases: { Cherise Marie Khaund: [Cherise Khaund] }
+    jurisdiction: { level: city, name: Walnut Creek }
   - id: clayton-measure-m
     section: Local measures
     title: Clayton Measure M
