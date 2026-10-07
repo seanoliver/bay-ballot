@@ -1,0 +1,276 @@
+Marin County Elections Department, local candidates ON the ballot, November 3, 2026 General Election.
+Source: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-and-about-candidates-110326/local-candidates-ballot-110326 (list created 8/17/2026; retrieved 2026-10-07 in a browser, the site returns 403 to curl)
+Redacted extract: contest, seats, number of candidates who filed, and each candidate's name with an incumbent marker. Ballot designations, filing dates and all contact details are omitted. The county lists candidates in random order.
+State and federal contests are on the SoS certified list (CA-Certified-Candidates-Nov2026.pdf): CD2, SD2, AD12, BOE 2 and the 1st District Court of Appeal touch Marin.
+
+Marin County Board of Education Board of Education Member, Trustee Area 3 | vote for 1 | filed: 2
+    Cynthia Johanson Irish (incumbent)
+    Craig Stuart Adams
+
+Marin County Board of Education Board of Education Member, Trustee Area 5 | vote for 1 | filed: 2
+    Marilyn Nemzer (incumbent)
+    Avery Lieberman
+
+Marin County Board of Education Board of Education Member, Trustee Area 6 | vote for 1 | filed: 2
+    Curtis F. Robinson (incumbent)
+    James Goddard
+
+Sonoma County Board of Education Board of Education Member, Trustee Area 2 | vote for 1 | filed: 2
+    Jonathan Lenz
+    Caitlin Quinn
+
+Petaluma Joint Union High School District Governing Board Member, Trustee Area 3 | vote for 1 | filed: 2
+    John Garcia
+    Laura Holmes
+
+Tamalpais Union High School District Governing Board Member | vote for 3 | filed: 7
+    Cynthia C. Roenisch (incumbent)
+    Kevin C. Saavedra (incumbent)
+    Maria D. Sandoval
+    Joy Scully Koo
+    Brian A. Sutherland
+    Valerie Wynn
+    Leslie J. Harlander
+
+Miller Creek School District Governing Board Member | vote for 3 | filed: 5
+    Brad Honsberger (incumbent)
+    Megan Roberts Hutchinson (incumbent)
+    Caitlin McShane (incumbent)
+    Adam Compton
+    Matt Dance
+
+Lagunitas School District Governing Board Member | vote for 3 | filed: 4
+    Aaron Michelson (incumbent)
+    Charlotte Burger Troy
+    Ally Dukkers Wilson
+    David Cort
+
+Novato Unified School District Governing Board Member, Trustee Area 4 | vote for 1 | filed: 2
+    Abbey Picus (incumbent)
+    Francis Drouillard
+
+Reed Union School District Governing Board Member | vote for 3 | filed: 4
+    Mike Ghaffary (incumbent)
+    Shelby Pasarell Tsai (incumbent)
+    Krupa Antani
+    Lina Godfrey
+
+Ross School District Governing Board Member | vote for 3 | filed: 5
+    Darius Mozaffarian (incumbent)
+    Gabriella "Gabby" Solar
+    Elizabeth "Beth" Sutro
+    David Allen-Hughes
+    Brad Hill
+
+Sausalito Marin City School District Governing Board Member | vote for 3 | filed: 4
+    Lauren J. Walters (incumbent)
+    Leshawn Holcomb
+    Alena Maunder
+    Eduardo Vazquez
+
+City of Belvedere Member City Council | vote for 2 | filed: 2
+    Peter Mark (incumbent)
+    Jane Cooper
+
+Town of Corte Madera Member Town Council | vote for 3 | filed: 5
+    Eli Beckman (incumbent)
+    Pat Ravasio (incumbent)
+    David C. Bell
+    Ava Fruin
+    Deborah E. Gallegos
+
+Town of Fairfax Member Town Council | vote for 2 | filed: 6
+    Larry Bragman
+    Susan Denise Adams
+    Matt Da Cunha
+    Aubrey Harmon
+    Doug Kelly
+    Cheryl Scorza
+
+Town of Fairfax Town Clerk | vote for 1 | filed: 2
+    Deborah Benson
+    Bruce Ackerman
+
+Town of Fairfax Town Treasurer | vote for 1 | filed: 1
+    Talia Friedman (incumbent)
+
+City of Larkspur Member City Council | vote for 3 | filed: 7
+    Stephanie Andre (incumbent)
+    Sarah Margulies (incumbent)
+    Gareth Walter
+    Aaron Burnett
+    Spencer Doyle
+    Jeanne Friedel
+    Brian H. Jaffe
+
+City of Mill Valley Member City Council | vote for 2 | filed: 2
+    Stephen Burke (incumbent)
+    Max Perrey (incumbent)
+
+City of Novato Councilmember District 2 | vote for 1 | filed: 3
+    Rachel Farac (incumbent)
+    Mike Little
+    Bob Rasmussen
+
+City of Novato Councilmember District 4 | vote for 1 | filed: 4
+    Pat Eklund (incumbent)
+    Luiggino Galletto
+    Chris Carpiniello
+    Dan Christian
+
+Town of Ross Member Town Council | vote for 2 | filed: 4
+    Robert Herbst
+    Jeffrey Kuhn
+    Julie A McMillan
+    Paul J. Roesler
+
+Town of San Anselmo Member Town Council | vote for 2 | filed: 3
+    Steve Burdo (incumbent)
+    Philip Chigos
+    Will Dittmar
+
+Town of San Anselmo Town Clerk | vote for 1 | filed: 1
+    Cecily T. Wilson (incumbent)
+
+Town of San Anselmo Town Treasurer | vote for 1 | filed: 1
+    Lori J. Lopin
+
+City of San Rafael Councilmember District 2 | vote for 1 | filed: 1
+    Eli Hill
+
+City of San Rafael Councilmember District 3 | vote for 1 | filed: 2
+    Daryoush Davidi
+    Robert Sandoval
+
+City of Sausalito Member City Council | vote for 2 | filed: 4
+    Joan Cox (incumbent)
+    Jill James Hoffman (incumbent)
+    Nastassya Saad
+    Adrian Brinton
+
+Town of Tiburon Member Town Council | vote for 3 | filed: 5
+    Kathleen Defever
+    Alice Fredericks
+    Chuck Hornbrook
+    Jack Ryan
+    Faris Jafar
+
+Bel Marin Keys Community Services District Director | vote for 2 | filed: 3
+    Vincent P. Lattanzio (incumbent)
+    Steven Nash (incumbent)
+    Kevin Dugan
+
+Marin City Community Services District Director | vote for 3 | filed: 8
+    Kevin Douglas (incumbent)
+    Angela Haynes (incumbent)
+    Eboni McKinley
+    Royce McLemore
+    Derek Morgan
+    Capri M. Price
+    La Tanya J. Wiggins
+    Beatra Hall
+
+Marin City Community Services District Director - Short Term | vote for 1 | filed: 2
+    Sarah Elizabeth Canson (incumbent)
+    Terrie Harris Green
+
+Southern Marin Fire Protection District Director | vote for 4 | filed: 7
+    Kurt Chun (incumbent)
+    Cristine Soto Deberry (incumbent)
+    Peter Fleming (incumbent)
+    Thomas W. Perazzo (incumbent)
+    Eric Steinhofer
+    Amy Svendberg
+    Thomas Clark
+
+Marin Healthcare District Director, Division 1 | vote for 1 | filed: 2
+    Clayton Hess
+    Kendra Hoepper
+
+Marin Healthcare District Director, Division 3 | vote for 1 | filed: 2
+    Brian Su (incumbent)
+    Jonathan Goff
+
+Bolinas Community Public Utility District Director | vote for 3 | filed: 4
+    Andrew Alexander Green (incumbent)
+    Grace Godino (incumbent)
+    Mickey Murch
+    Nathan Siedman
+
+Strawberry Recreation District Director | vote for 3 | filed: 4
+    Sohrab Saghezchi (incumbent)
+    Peter Teese (incumbent)
+    Sarah G. Waterfield (incumbent)
+    David T. Morgenthaler
+
+Strawberry Recreation District Director - Short Term | vote for 1 | filed: 2
+    Doug Twillman (incumbent)
+    Aliza Hawkins
+
+Richardson Bay Sanitary District Director | vote for 3 | filed: 4
+    Mark Fitzgerald (incumbent)
+    Peter McIntosh (incumbent)
+    Patrick Walravens (incumbent)
+    John Turnacliff
+
+North Marin Water District Director, Division 5 | vote for 1 | filed: 2
+    Marc Hunter Lewis
+    Laurie L. Williams
+
+Local contests NOT on the ballot (uncontested or no filers; appointed in lieu of election per the county).
+Source: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-and-about-candidates-110326/local-candidates-not-ballot-110326 (retrieved 2026-10-07)
+
+    Marin Community College District Governing Board Member, Trustee Area 1
+    Marin Community College District Governing Board Member, Trustee Area 3
+    Marin Community College District Governing Board Member, Trustee Area 6
+    Marin Community College District Governing Board Member, Trustee Area 7 - Short Term
+    Sonoma County Junior College District Governing Board Member, Trustee Area 2
+    San Rafael City Schools Board of Education Governing Board Member, Trustee Area 5, Short Term
+    San Rafael City Schools Board of Education Governing Board Member, Trustee Area 2
+    San Rafael City Schools Board of Education Governing Board Member, Trustee Area 4
+    Bolinas-Stinson Union School District Governing Board Member
+    Kentfield School District Governing Board Member
+    Laguna Joint School District Governing Board Member
+    Larkspur-Corte Madera School District Governing Board Member
+    Mill Valley School District Governing Board Member
+    Nicasio School District Governing Board Member
+    Novato Unified School District Governing Board Member, Trustee Area 5
+    Novato Unified School District Governing Board Member, Trustee Area 6
+    Ross Valley School District Governing Board Member
+    Sausalito Marin City School District Governing Board Member - Short Term
+    Shoreline Unified School District Governing Board Member, Trustee Area 1
+    Shoreline Unified School District Governing Board Member, Trustee Area 2
+    City of Novato Councilmember District 5 - Short Term
+    Marinwood Community Services District Director
+    Muir Beach Community Services District Director
+    Tamalpais Community Services District Director
+    Tomales Village Community Services District Director
+    Bolinas Fire Protection District Director
+    Kentfield Fire Protection District Director
+    Novato Fire Protection District Director, District 4
+    Novato Fire Protection District Director, District 5
+    Sleepy Hollow Fire Protection District Director
+    Sleepy Hollow Fire Protection District Director - Short Term
+    Stinson Beach Fire Protection District Director
+    Stinson Beach Fire Protection District Director - Short Term
+    Tiburon Fire Protection District Director
+    Marin Healthcare District Director, Division 4
+    Inverness Public Utility District Director
+    Mesa Park Recreation District Director
+    Mesa Park Recreation District Director - Short Term
+    Marin Resource Conservation District Director
+    Homestead Valley Sanitary District Director
+    Homestead Valley Sanitary District Director - Short Term
+    Las Gallinas Valley Sanitary District Director
+    Novato Sanitary District Director, Division 2
+    Novato Sanitary District Director, Division 3
+    Novato Sanitary District Director, Division 5
+    Novato Sanitary District Director, Division 1 - Short Term
+    Sausalito-Marin City Sanitary District Director
+    Sausalito-Marin City Sanitary District Director - Short Term
+    Sanitary District No. 5 Director
+    Marin Municipal Water District Director Division 1
+    Marin Municipal Water District Director Division 3
+    Marin Municipal Water District Director Division 4
+    North Marin Water District Director, Division 1
+    Stinson Beach County Water District Director

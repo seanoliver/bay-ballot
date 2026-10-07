@@ -1,0 +1,85 @@
+Marin County Elections Department, local measures, November 3, 2026 General Election.
+Source: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326 (page updated 8/10/2026; each measure's own page retrieved 2026-10-07 in a browser, the site returns 403 to curl)
+Each entry: letter and jurisdiction, ballot question as printed, and the vote required. Marin is not part of the Regional Transit Measure (RTM).
+Order and grouping follow the county list: School (AB, N, O), County (P), City/Town (Q-X), Special District (Y-FF).
+
+Measure AB – Sonoma County Junior College District
+    Question: Sonoma County Junior College District Without increasing tax rates, to improve facilities to train students for careers in nursing/firefighting/first responders, building trades, agriculture, auto mechanics; attract/retain high quality faculty, prepare students for universities; repair leaky roofs; repair, construct, and acquire classrooms/sites/facilities/equipment, shall the Sonoma County Junior College District measure be adopted authorizing $830,000,000 in bonds at legal rates, levying $25 per $100,000 of assessed valuation ($55,300,000 annually), while bonds are outstanding, and with oversight/audits/local control?
+    Vote required: 55% voter approval
+
+Measure N – Miller Creek School District
+    Question: Miller Creek School District Miller Creek Elementary School District Classroom Repair/ Upgrade Measure. To improve aging local elementary/middle schools by fixing bathrooms, plumbing, roofs, HVAC, and electrical systems; upgrading classrooms to support high quality math, science, technology, reading, writing, arts/music instruction; and improve school security/ student safety, shall Miller Creek Elementary School District’s measure be adopted authorizing $67,000,000 in bonds at legal rates, with levies averaging $28 per $100,000 assessed value ($3,800,000 annually) while bonds are outstanding, independent oversight, audits and all funds locally controlled?
+    Vote required: 55% voter approval
+
+Measure O – Reed Union School District
+    Question: Reed Union School District Reed Union School District Repair, Safety, Upgrade Measure: To support quality education and retain/attract quality teachers by upgrading all Reed schools, keeping them safe; repairing deteriorating classrooms/bathrooms, leaky roofs; updating fire/electrical/security systems and earthquake safety; removing mold/asbestos; constructing, repairing facilities, acquiring equipment; shall a measure authorizing $115,000,000 in bonds at legal rates, levying $30 per $100,000 of assessed valuation, ($6,200,000 annually) while bonds are outstanding, requiring citizens’ oversight, spending disclosure/audits, be adopted?
+    Vote required: 55% voter approval
+
+Measure P – County of Marin Childcare Initiative
+    Question: Shall the Marin County Child Care Initiative be adopted to levy a special parcel tax of 5 cents per building square foot, generating approximately $12.5 million annually for fifteen years, to fund affordable childcare and high-quality early childhood education and improve compensation to retain and attract educators, with public disclosure, optional annual inflation adjustments, and a corresponding increase in the County appropriations limit, with all funds used locally in Marin County?
+    Vote required: simple majority
+
+Measure Q – Town of Corte Madera
+    Question: Town of Corte Madera To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $94.50/ residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $7. 75/year, generating approximately $786,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure R – Town of Fairfax
+    Question: Town of Fairfax To maintain 9-1-1 emergency response times and the number of Ross Valley Paramedic Authority on-duty paramedics ready to respond to accidents/medical emergencies, shall the measure be adopted extending the Fairfax paramedic services special tax for four years at a rate of up to $107. 50/residential living unit or 1,000 square feet of developed nonresidential property, adjusted by up to $4.00/year, generating approximately $432, 000 annually, with annual audits; public spending disclosure; all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure S – City of Larkspur
+    Question: City of Larkspur To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50 / residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4.00/ year, generating approximately $834,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure T – City of Mill Valley
+    Question: City of Mill Valley To renew funding exclusively for improved fire suppression activities including vegetation management and tree maintenance, and road repair and street maintenance, shall the Mill Valley Municipal Service Tax be renewed within the City of Mill Valley Community Facilities District Number 2026-1, at a rate of $303 for single family residential property, with a 2% annual adjustment, raising an average of $1.9 million annually over 10 years, and shall the appropriations limit be established, all as specified in Mill Valley City Council Resolution No. 26-49?
+    Vote required: 2/3 voter approval
+
+Measure U – Town of Ross
+    Question: Town of Ross To maintain local ambulance services staffed by paramedics available to respond to 9-1-1 emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50/residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4/year, generating approximately $111,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure V – Town of San Anselmo
+    Question: Town of San Anselmo To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50/residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4/ year, generating approximately $688,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure W – City of San Rafael
+    Question: City of San Rafael San Rafael Essential Services Protection Measure. To provide locally controlled funding for essential city services, such as fire protection, paramedics, rapid 9-1-1 emergency response times; preventing street/road deterioration; addressing impacts of homelessness/litter/illegal dumping; and other services, shall the City of San Rafael’s measure be adopted increasing the current real property transfer tax rate from 0.2% to 1% (only paid upon sale), generating approximately $7,500,000 annually until ended by voters, with annual audits and public spending disclosure?
+    Vote required: simple majority
+
+Measure X – City of Sausalito
+    Question: Shall the measure named the "Arts. Industrial & Maritime Preservation and Improvement Initiative," which revises zoning standards in the I and W zoning district to increase permitted height, building coverage limits and floor area ratio and allow certain new land uses; repeals the Marinship Specific Plan; revises Ordinance No. 1022 to allow future city council modifications to zoning outside the Downtown Historic District; and modifies various portions of the Sausalito General Plan, be adopted?
+    Vote required: simple majority
+
+Measure Y– County Services Area 27 – Ross Valley Paramedic Authority
+    Question: County Services Area 27 – Ross Valley Paramedic Authority To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50/ residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4/ year, generating approximately $84,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure Z – County Services Area 29 – Paradise Cay
+    Question: County Services Area 29 – Paradise Cay For ongoing maintenance dredging in the principal waterways of Paradise Cay along with the north and south entry channels to San Francisco Bay, shall the measure for an annual parcel tax in County Service Area No. 29, for $2,200 per lot per year commencing in July 2027 providing an estimated $272,800 and automatically increasing 3% each year thereafter, for a total of ten years, be adopted?
+    Vote required: 2/3 voter approval
+
+Measure AA – Inverness Public Utility District
+    Question: Shall the measure adjusting the appropriations limit for the Inverness Public Utility District pursuant to Article XIIIB of the California Constitution so that for each of the fiscal years 2026/2027 through 2029/2030 the appropriations limit shall include the combined total of all applicable revenue sources be adopted?
+    Vote required: simple majority
+
+Measure BB – Kentfield Fire Protection District
+    Question: Kentfield Fire Protection District To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50/residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4/ year, generating approximately $326,000 annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure CC – Marin Healthcare District
+    Question: Shall the measure funding expanded and upgraded emergency room, intensive care, hospital, and other medical facilities to care for trauma, heart attack, stroke, and other patients and attract qualified doctors and nurses, with no funds for administrator salaries, by enacting a parcel tax of 14¢ per square foot of improved building area annually, generating approximately $12,400,000 annually for 30 years, subject to annual audits and citizens' committee oversight, be adopted?
+    Vote required: simple majority
+
+Measure DD – Sleepy Hollow Fire Protection District
+    Question: Sleepy Hollow Fire Protection District To maintain rapid 9-1-1 emergency response times and preserve the number of on-duty paramedics ready to respond to accidents/medical emergencies, shall the Ross Valley Paramedic Authority measure be adopted continuing for four years the paramedic services special tax of up to $107.50/residential living unit or 1,000 square feet of developed nonresidential property, adjusted up to $4/ year, generating approximately One Hundred Five Thousand Dollars ($105,000) annually, with annual audits, public spending disclosure and all funds for local paramedic services?
+    Vote required: 2/3 voter approval
+
+Measure EE – Stinson Beach County Water District
+    Question: Shall the appropriations limit of the Stinson Beach County Water District for Fiscal Year 2026-2027 be established at $1,536,312 and should the limit for that Fiscal Year (i.e., $1,536,312) be used to determine the limits for Fiscal Years 2026-2027 through 2029-2030?
+    Vote required: simple majority
+
+Measure FF – Upper Bay Permanent Road Division
+    Question: Shall the measure be adopted authorizing a special tax on parcels within the Division of $4,350 per improved parcel and $2,175 per unimproved parcel per year for 10 years, beginning Fiscal Year 2027-28, totaling approximately $456,750, to fund improvements; thereafter, authorizing a special tax of $455 per parcel per year for ongoing maintenance, adjusted annually effective July 1 every year in accordance with the Consumer Price Index for All Urban Consumers San Francisco—Oakland—Hayward for the previous calendar year.
+    Vote required: 2/3 voter approval
+
