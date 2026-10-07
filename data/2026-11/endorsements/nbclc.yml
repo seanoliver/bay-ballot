@@ -1,0 +1,7 @@
+guide: nbclc
+election: 2026-11
+status: pending
+source: https://www.nbclc.org/2026endorsements # covers five counties; its statewide list is the California Labor Federation's PDF, not the council's own
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks: {}

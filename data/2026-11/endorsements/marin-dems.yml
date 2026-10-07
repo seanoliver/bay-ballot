@@ -1,0 +1,12 @@
+guide: marin-dems
+election: 2026-11
+status: pending
+source: https://marindemocrats.org/2026-november-election-endorsements/
+extraSources:
+  - https://marindemocrats.org/measure-n-miller-creek-school-district/
+  - https://marindemocrats.org/measure-p/
+  - https://marindemocrats.org/measure-w-san-rafael-services/
+  - https://marindemocrats.org/measure-cc-critical-care-for-marin/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks: {}
