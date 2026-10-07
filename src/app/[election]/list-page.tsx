@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BallotView } from "@/components/BallotView";
-import { areaLinks, placeName } from "@/lib/areas";
+import { areaMenu, placeName } from "@/lib/areas";
 import type { ElectionData } from "@/lib/data";
 import { electionIntro } from "@/lib/display";
 import { activeEntries, EMPTY } from "@/lib/filters";
@@ -24,7 +24,7 @@ export function ListPage({ d, electionId, area }: { d: ElectionData; electionId:
     <BallotView
       election={electionId}
       area={area?.id ?? null}
-      links={areaLinks(electionId, d.areas, area?.id ?? null)}
+      menu={areaMenu(electionId, d.areas, area?.id ?? null)}
       intro={electionIntro(ballot, view.files, { place: placeName(area).name })}
       {...view}
     />

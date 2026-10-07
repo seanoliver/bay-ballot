@@ -14,6 +14,21 @@ test("the Bay Area list groups contests by place and the picker opens an area", 
   await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
 });
 
+test("the area picker groups cities under their county and navigates", async ({ page }) => {
+  await openBallot(page);
+  const nav = page.getByRole("navigation", { name: "Area" });
+  await expect(nav.getByRole("link").first()).toHaveText("Bay Area");
+  const scc = nav.getByRole("group", { name: "Santa Clara County" });
+  await expect(scc.getByRole("link", { name: "Palo Alto" })).toBeVisible();
+  await expect(scc.getByRole("link", { name: "Mountain View" })).toBeVisible();
+  await expect(nav.getByRole("group", { name: "San Francisco" })).toHaveCount(0);
+  await scc.getByRole("link", { name: "Palo Alto" }).click();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/palo-alto$`));
+  await expect(page.getByRole("heading", { level: 1, name: "Palo Alto ballot" })).toBeVisible();
+  await expect(scc.getByRole("link", { name: "Palo Alto" })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Bay Area" })).not.toHaveAttribute("aria-current");
+});
+
 test("the SF page has its own title, canonical URL and contests", async ({ page }) => {
   await page.goto(`${BALLOT}/sf`);
   await expect(page).toHaveTitle("San Francisco endorsements (Nov 2026)");

@@ -49,11 +49,25 @@ export function placeName(area: Pick<Area, "name" | "shortName"> | null): PlaceN
 
 export type AreaLink = { href: string; label: string; current: boolean };
 
-export function areaLinks(election: string, areas: Pick<Area, "id" | "name">[], current: string | null): AreaLink[] {
-  return [
-    { href: `/${election}`, label: BAY_AREA.name, current: current === null },
-    ...areas.map((a) => ({ href: `/${election}/${a.id}`, label: a.name, current: current === a.id })),
-  ];
+export type AreaGroup = { county: string; label: string; page: AreaLink | null; cities: AreaLink[] };
+export type AreaMenu = { bayArea: AreaLink; groups: AreaGroup[] };
+
+type MenuArea = Pick<Area, "id" | "name" | "kind" | "jurisdictions">;
+
+export function areaMenu(election: string, areas: MenuArea[], current: string | null): AreaMenu {
+  const groups = new Map<string, AreaGroup>();
+  for (const a of areas) {
+    const county = countyOf(a) ?? a.name;
+    const link = { href: `/${election}/${a.id}`, label: a.name, current: current === a.id };
+    const g = groups.get(county) ?? { county, label: `${county} County`, page: null, cities: [] };
+    const cityCounty = a.kind === "city" && a.jurisdictions.some((j) => j.level === "city" && j.name === county);
+    if (a.kind === "county" || cityCounty || !countyOf(a)) {
+      g.page = link;
+      if (a.kind === "city") g.label = a.name;
+    } else g.cities.push(link);
+    groups.set(county, g);
+  }
+  return { bayArea: { href: `/${election}`, label: BAY_AREA.name, current: current === null }, groups: [...groups.values()] };
 }
 
 export type PlaceGroup = { key: string; heading: string; county: string | null; sections: Section[] };

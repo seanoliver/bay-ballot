@@ -1,0 +1,4 @@
+date: 2026-10-07
+type: new
+title: The area picker groups cities under their county
+details: Palo Alto and Mountain View now sit together under Santa Clara County instead of beside the county pages, so it's clear which areas are counties and which are cities.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaMenu, areasOf, BAY_AREA, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
-import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
+import { c, mpP, MV, OAK, PA, SCC, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
 const areas = [SF, SM, PA];
 const ids = (as: Area[]) => as.map((a) => a.id);
@@ -49,14 +49,28 @@ describe("placeName", () => {
   });
 });
 
-describe("areaLinks", () => {
-  it("lists the Bay Area then each area, marking the current one", () => {
-    expect(areaLinks("2026-11", [SF, SM], "sf")).toEqual([
-      { href: "/2026-11", label: "Bay Area", current: false },
-      { href: "/2026-11/sf", label: "San Francisco", current: true },
-      { href: "/2026-11/san-mateo", label: "San Mateo County", current: false },
+describe("areaMenu", () => {
+  const link = (id: string, label: string, current = false) => ({ href: `/2026-11/${id}`, label, current });
+  it("puts the Bay Area first, then each county with its own page first and its cities after it", () => {
+    expect(areaMenu("2026-11", [SF, SM, SCC, PA, MV, OAK], "palo-alto")).toEqual({
+      bayArea: { href: "/2026-11", label: "Bay Area", current: false },
+      groups: [
+        { county: "San Francisco", label: "San Francisco", page: link("sf", "San Francisco"), cities: [] },
+        { county: "San Mateo", label: "San Mateo County", page: link("san-mateo", "San Mateo County"), cities: [] },
+        { county: "Santa Clara", label: "Santa Clara County", page: link("santa-clara-county", "Santa Clara County"), cities: [link("palo-alto", "Palo Alto", true), link("mountain-view", "Mountain View")] },
+        { county: "Alameda", label: "Alameda County", page: null, cities: [link("oakland", "Oakland")] },
+      ],
+    });
+  });
+  it("groups cities under a county with no page, and puts a county page first even when it sorts after its cities", () => {
+    expect(areaMenu("2026-11", [PA, MV], null).groups).toEqual([
+      { county: "Santa Clara", label: "Santa Clara County", page: null, cities: [link("palo-alto", "Palo Alto"), link("mountain-view", "Mountain View")] },
     ]);
-    expect(areaLinks("2026-11", [SF], null)[0].current).toBe(true);
+    expect(areaMenu("2026-11", [PA, MV, SF, SCC], null).groups.map((g) => [g.label, g.page?.label, g.cities.map((x) => x.label)])).toEqual([
+      ["Santa Clara County", "Santa Clara County", ["Palo Alto", "Mountain View"]],
+      ["San Francisco", "San Francisco", []],
+    ]);
+    expect(areaMenu("2026-11", [SF], null).bayArea.current).toBe(true);
   });
 });
 

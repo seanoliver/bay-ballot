@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useStat
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import type { AreaMenu, PlaceGroup } from "@/lib/areas";
 import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
@@ -51,7 +51,7 @@ const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).
 type Props = {
   election: string;
   area: string | null;
-  links: AreaLink[];
+  menu: AreaMenu;
   intro: { title: string; line: string };
   groups: PlaceGroup[];
   guides: GuideInfo[];
@@ -60,7 +60,7 @@ type Props = {
   pending: string | null;
 };
 
-export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending }: Props) {
+export function BallotView({ election, area, menu, intro, groups, guides, allGuides, files, pending }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", COUNTIES_PARAM] });
   const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
@@ -353,7 +353,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={links} />
+          <AreaPicker menu={menu} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>

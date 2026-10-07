@@ -10,6 +10,9 @@ export const SM: Area = {
   jurisdictions: [state, county("San Mateo"), city("Menlo Park"), city("Redwood City"), city("San Mateo")],
 };
 export const PA: Area = { id: "palo-alto", name: "Palo Alto", kind: "city", jurisdictions: [state, county("Santa Clara"), city("Palo Alto")] };
+export const MV: Area = { id: "mountain-view", name: "Mountain View", kind: "city", jurisdictions: [state, county("Santa Clara"), city("Mountain View")] };
+export const SCC: Area = { id: "santa-clara-county", name: "Santa Clara County", kind: "county", jurisdictions: [state, county("Santa Clara"), city("Palo Alto"), city("Mountain View")] };
+export const OAK: Area = { id: "oakland", name: "Oakland", kind: "city", jurisdictions: [state, county("Alameda"), city("Oakland")] };
 
 export const c = (id: string, jurisdiction: Contest["jurisdiction"]) =>
   ({ id, section: "S", title: id, kind: "measure", candidates: [], seats: 1, rankedChoice: false, jurisdiction }) as Contest;
