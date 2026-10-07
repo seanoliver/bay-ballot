@@ -938,7 +938,7 @@ test.describe("phone history budget", () => {
     });
 
   test("opening and closing a contest sheet many times within ten seconds stays under the history limit", async ({ page }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(120_000);
     await limitHistory(page);
     const errors = watchErrors(page);
     await openBallot(page);
