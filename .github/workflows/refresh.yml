@@ -9,6 +9,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  actions: write
 
 concurrency:
   group: data-refresh
@@ -136,12 +137,26 @@ jobs:
           labels="$(gh pr view "$pr" --json labels --jq '[.labels[].name] | join(",")')"
           echo "labels=$labels" >> "$GITHUB_OUTPUT"
 
-      # PRs opened with GITHUB_TOKEN don't trigger other workflows, so check them here.
-      - name: Validate, test and build
+      # Pushes made with GITHUB_TOKEN don't start push/pull_request workflows, but a workflow_dispatch does.
+      - name: Run CI on the refresh branch
         id: checks
         if: steps.changes.outputs.commit == 'true'
         continue-on-error: true
-        run: npm run validate && npm test && npm run build
+        run: |
+          sha="$(git rev-parse HEAD)"
+          gh workflow run ci.yml --ref "$BRANCH"
+          run=""
+          for _ in $(seq 24); do
+            run="$(gh run list --workflow ci.yml --branch "$BRANCH" --event workflow_dispatch --commit "$sha" --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+            [ -n "$run" ] && break
+            sleep 5
+          done
+          if [ -z "$run" ]; then
+            echo "url=(no CI run appeared within 2 minutes)" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/$run" >> "$GITHUB_OUTPUT"
+          gh run watch "$run" --exit-status --interval 15 > /dev/null
 
       - name: Auto-merge a clean refresh
         if: >-
@@ -160,7 +175,7 @@ jobs:
         run: |
           gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
           gh pr edit "${{ steps.pr.outputs.pr }}" --add-label needs-review
-          gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
+          gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), CI ${{ steps.checks.outcome }}: ${{ steps.checks.outputs.url }}"
 
       - name: Open, update or close the review issue
         if: always() && steps.refresh.outcome != 'skipped'

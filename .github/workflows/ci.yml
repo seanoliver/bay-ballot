@@ -3,6 +3,8 @@ name: CI
 on:
   push:
   pull_request:
+  # The refresh workflow dispatches CI on its branch: its GITHUB_TOKEN pushes don't trigger push/pull_request runs.
+  workflow_dispatch:
 
 permissions:
   contents: read

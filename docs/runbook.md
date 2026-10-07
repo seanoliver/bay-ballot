@@ -27,9 +27,9 @@ What a run does:
 Then the workflow:
 
 - **Nothing relevant changed:** no commit. Page-text drift (dates, banners) is discarded; it never counts as a change, so it does not need to be stored.
-- **Something changed:** it commits to the single branch `data/refresh` and opens one PR into `main` with the summary and a cc to Sean. It then runs `validate`, `npm test` and `npm run build` itself, because PRs opened by the workflow's token don't trigger other workflows.
-  - Clean (exit 0), checks pass, and the PR is not labeled `needs-review`: squash-merged automatically, and Vercel deploys `main`.
-  - Picks held or a result shrank (exit 2), or a check failed: the PR stays open with the `needs-review` label and a comment saying why.
+- **Something changed:** it commits to the single branch `data/refresh` and opens one PR into `main` with the summary and a cc to Sean. Pushes made with the workflow's token don't trigger push or pull_request workflows, so it then starts the full CI workflow (`ci.yml`: validate, tests, type check, build, e2e) on the branch with `workflow_dispatch` and waits for it. That run reports the `ci` check on the PR's head commit, which `main` requires before a merge.
+  - Clean (exit 0), CI passes, and the PR is not labeled `needs-review`: squash-merged automatically, and Vercel deploys `main`.
+  - Picks held or a result shrank (exit 2), or CI failed or didn't start within 2 minutes: the PR stays open with the `needs-review` label and a comment saying why.
   - Error (exit 1, e.g. a page failed to load): the run is marked failed. If anything else changed, its PR stays open too.
 - **One PR at a time:** while the refresh PR is open, each daily run starts from the `data/refresh` branch rather than `main`. Its stored page text and held picks are the baseline, so nothing is re-extracted twice. New changes are added as another commit, and the PR body is replaced with the latest summary plus a comment. Once a PR is labeled `needs-review` it is never auto-merged, even if a later run is clean; merge it by hand after review. If the PR is closed without merging, the next run deletes the leftover branch and starts again from `main`.
   - Before refreshing, the run merges `main` into the open branch. If that conflicts, the run stops without refreshing, labels the PR `needs-review` and comments "Refresh branch conflicts with main; resolve by hand." Resolve the conflict on `data/refresh` and push; the next run continues.
@@ -46,7 +46,7 @@ Nothing is ever pushed straight to `main`.
 
 - **HELD** lines name the contest, the pick and the verifier's page evidence. If the pick is right, fix the input (a contest alias in `data/2026-11/ballot.yml`, more `extraSources`), or mark the guide `manual: true` and enter the pick by hand. A hold also clears when a later extraction returns a different pick for that contest, or when the guide's page changes again and the verifier, which re-checks held picks on every run that extracts the guide, now confirms it. Push the fix to the PR branch and merge.
 - **Shrunk** means a guide's picks dropped to under half (usually a page that failed to render). Check the page; re-run locally with `--browser` or `--force` if the drop is real.
-- **Check failed:** run `npm run validate` and `npm test` on the branch and fix what they report.
+- **CI failed:** the PR comment links the CI run. Run `npm run validate` and `npm test` on the branch and fix what they report. If no CI run appeared within 2 minutes, the comment says so; rerun CI with `gh workflow run ci.yml --ref data/refresh`.
 
 **Cost:** a day with no relevant change costs $0 (no model calls; only page fetches). A re-extracted guide averages about $0.05 to extract (Sonnet 5.5) plus about $0.11 to verify (Opus 5.5) when its data changed, so about $0.16. The longest guides (growsf, spur) cost about $0.30 to extract and $0.50 to verify. The 20-guide budget keeps a run under about $4 typically, and under $10 even if every changed guide were a long one. The PR summary shows each run's estimate.
 
