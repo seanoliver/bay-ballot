@@ -27,7 +27,7 @@ export default function AboutPage() {
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
         <p className="mt-2 text-base">
-          Bay Ballot puts every San Francisco and San Mateo County voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
+          Bay Ballot puts every San Francisco, San Mateo County, Palo Alto and Mountain View voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
           time.
         </p>
 
