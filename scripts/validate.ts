@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { readChangelog, utcDay, validateChangelog } from "../src/lib/changelog";
+import { latestDay, readChangelog, validateChangelog } from "../src/lib/changelog";
 import { listElections, loadElection, validateElection } from "../src/lib/data";
 
 const root = path.join(process.cwd(), "data");
@@ -25,7 +25,7 @@ for (const election of listElections(root)) {
   if (errors.length || warnings.length) failed = true;
 }
 try {
-  const today = utcDay();
+  const today = latestDay();
   const { entries, errors: read } = readChangelog(root);
   const errors = [...read, ...validateChangelog(entries, today)];
   errors.forEach((e) => console.error(`ERROR ${e}`));

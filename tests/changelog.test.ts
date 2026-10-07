@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
-import { changelogMonths, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
+import { changelogMonths, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
@@ -97,5 +97,17 @@ describe("changelogMonths", () => {
       ["October 2026", ["a", "b"]],
       ["September 2026", ["c"]],
     ]);
+  });
+});
+
+describe("pacificDay and latestDay", () => {
+  it("is the calendar day in California, not UTC", () => {
+    expect(pacificDay(new Date("2026-10-07T00:37:00Z"))).toBe("2026-10-06");
+    expect(pacificDay(new Date("2026-10-07T08:00:00Z"))).toBe("2026-10-07");
+    expect(pacificDay(new Date("2026-01-15T07:59:00Z"))).toBe("2026-01-14");
+  });
+  it("lets validation accept either day around midnight", () => {
+    expect(latestDay(new Date("2026-10-07T00:37:00Z"))).toBe("2026-10-07");
+    expect(latestDay(new Date("2026-10-07T12:00:00Z"))).toBe("2026-10-07");
   });
 });
