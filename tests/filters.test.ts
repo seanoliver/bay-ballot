@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
-  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
+  initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
   typeState, pendingGuides, EMPTY,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
@@ -171,13 +171,12 @@ describe("typeState", () => {
   });
 });
 
-describe("toggleTypeGroup", () => {
-  it("turns every guide of the type off when all are on", () => {
-    expect(toggleTypeGroup({ ...EMPTY, off: ["spur"] }, "club", clubs).off).toEqual(["milk", "spur", "toklas"]);
+describe("setTypeGroup with all of a type on or off", () => {
+  it("turns every guide of the type off when all are on, keeping other types", () => {
+    expect(setTypeGroup({ ...EMPTY, off: ["spur"] }, "club", clubs, false).off).toEqual(["milk", "spur", "toklas"]);
   });
-  it("turns every guide of the type on when some or none are on", () => {
-    expect(toggleTypeGroup({ ...EMPTY, off: ["milk", "spur"] }, "club", clubs).off).toEqual(["spur"]);
-    expect(toggleTypeGroup({ ...EMPTY, off: ["milk", "toklas"] }, "club", clubs).off).toEqual([]);
+  it("turns every guide of the type on when none are on", () => {
+    expect(setTypeGroup({ ...EMPTY, off: ["milk", "toklas"] }, "club", clubs, true).off).toEqual([]);
   });
 });
 

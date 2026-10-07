@@ -135,10 +135,6 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
   return on === 0 ? "off" : "mixed";
 }
 
-export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): Filters {
-  return setTypeGroup(f, type, guides, typeState(type, f, guides) !== "on");
-}
-
 export function setTypeGroup(f: Filters, type: string, guides: FilterGuide[], on: boolean): Filters {
   const ids = guides.filter((g) => g.type === type).map((g) => g.id);
   return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
