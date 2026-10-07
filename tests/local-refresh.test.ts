@@ -4,7 +4,6 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-// Sealed sandbox: throwaway repos, sandbox HOME, allowlisted env, and stubs for gh, npm, npx, pdftotext, osascript.
 const SCRIPT = path.join(__dirname, "..", "scripts", "local-refresh.sh");
 const hasZsh = spawnSync("zsh", ["-f", "-c", "true"]).status === 0;
 const isMac = process.platform === "darwin";
@@ -65,7 +64,7 @@ function setup() {
   fs.writeFileSync(p("gitconfig"), "[user]\n\tname = Test\n\temail = test@example.com\n[init]\n\tdefaultBranch = main\n[commit]\n\tgpgsign = false\n");
   for (const [name, body] of Object.entries(STUBS)) fs.writeFileSync(p("bin", name), body, { mode: 0o755 });
 
-  // Built from scratch: nothing from the real environment except locale and temp dir.
+  // Never spread process.env here: stray BB_*, GH_TOKEN or GIT_* vars from the real shell would reach the script.
   const env: Record<string, string> = {
     PATH: [p("bin"), which("node"), which("git"), "/usr/bin", "/bin", "/usr/sbin", "/sbin"].join(":"),
     HOME: p("home"),

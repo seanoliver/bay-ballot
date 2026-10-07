@@ -11,7 +11,6 @@ DOMAIN="gui/$(id -u)"
 
 case "${1:-}" in
   install)
-    # launchd starts with a bare PATH; record where this shell finds each tool the job needs.
     dirs=()
     for cmd in node npm npx gh git pdftotext; do
       found="$(command -v "$cmd")" || { echo "$cmd not found on PATH; install it first" >&2; exit 1; }
@@ -23,7 +22,7 @@ case "${1:-}" in
 
     launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
     mkdir -p "$SUPPORT" "${PLIST:h}" "${LOG:h}"
-    # Run a copy, replaced atomically: zsh reads a script as it runs.
+    # Not cp over $SCRIPT: zsh reads a script while running it, so replace it atomically.
     tmp_script="$(mktemp "$SUPPORT/.local-refresh.XXXXXX")"
     cp "$HERE/local-refresh.sh" "$tmp_script"
     chmod 755 "$tmp_script"

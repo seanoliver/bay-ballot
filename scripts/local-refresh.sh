@@ -1,10 +1,5 @@
 #!/bin/zsh
-# Daily refresh of the guides whose sites block GitHub's runners (fetchFrom: local).
-# Runs in its own worktree, opens or updates one PR, and notifies Sean, who merges it.
-#
-#   local-refresh.sh             refresh and open/update the PR
-#   local-refresh.sh --dry-run   fetch and gate pages only: no model calls, no commit, no PR
-#   --ref <git ref>              start from another ref (testing a branch); implies --dry-run
+# Usage and options: docs/runbook.md, "Local refresh on Sean's Mac".
 set -u
 setopt pipe_fail
 
@@ -45,10 +40,10 @@ notify() {
 
 mkdir -p "$SUPPORT" "${LOG:h}"
 
-# Lock: a directory holding the owner's PID. A fresh lock with no PID yet is a run that is starting.
 if ! mkdir "$LOCK" 2>/dev/null; then
   owner="$(cat "$LOCK/pid" 2>/dev/null)"
   age=$(( $(date +%s) - $(stat -f %m "$LOCK" 2>/dev/null || date +%s) ))
+  # A young lock with no PID is a run that has not written its PID yet, not a stale lock.
   if { [ -z "$owner" ] && [ "$age" -lt 60 ]; } ||
      { [ -n "$owner" ] && kill -0 "$owner" 2>/dev/null && [ "$age" -lt "$LOCK_STALE_SECS" ]; }; then
     log "another local refresh is running; exiting" >> "$LOG"
@@ -64,7 +59,6 @@ if [ -f "$LOG" ] && [ "$(wc -l < "$LOG")" -gt "$MAX_LOG_LINES" ]; then
   trimmed="$(tail -n $((MAX_LOG_LINES / 2)) "$LOG")"
   print -r -- "$trimmed" > "$LOG"
 fi
-# Under launchd the plist already sends stdout and stderr to the log.
 if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 work="$(mktemp -d)"
@@ -77,7 +71,6 @@ cleanup() {
 trap cleanup EXIT
 trap 'log "stopped by signal"; exit 143' TERM INT
 
-# Watchdog: its output goes to the log so it never holds this run's stdout open.
 main_pid=$$
 ( trap 'kill $nap 2>/dev/null; exit 0' TERM
   sleep "$WATCHDOG_SECS" & nap=$!
@@ -108,14 +101,13 @@ if [ ! -e "$WORKTREE" ]; then
   git -C "$SOURCE_REPO" worktree add -q --detach "$WORKTREE" "$ref" || fail "could not create $WORKTREE"
 fi
 
-# The worktree must be ours alone: a worktree of the source repo, its own top level, detached
-# (so no branch is ever reset), with nothing but data/ changed.
 check_worktree() {
   local top wt_common status_out
   top="$(git -C "$WORKTREE" rev-parse --show-toplevel 2>/dev/null)" || fail "$WORKTREE is not a git worktree"
   [ "${top:A}" = "${WORKTREE:A}" ] || fail "$WORKTREE is inside another checkout ($top)"
   wt_common="$(git -C "$WORKTREE" rev-parse --path-format=absolute --git-common-dir)" || fail "cannot read $WORKTREE's repository"
   [ "${wt_common:A}" = "${common:A}" ] || fail "$WORKTREE belongs to a different repository"
+  # Detached so the reset --hard below can never move a branch.
   git -C "$WORKTREE" symbolic-ref -q HEAD >/dev/null && fail "$WORKTREE has a branch checked out; it must be detached"
   status_out="$(git -C "$WORKTREE" status --porcelain --untracked-files=all)" || fail "git status failed in $WORKTREE"
   local dirty="$(print -r -- "$status_out" | grep -v '^.. data/' | grep -v '^$' || true)"
@@ -126,7 +118,6 @@ cd "$WORKTREE" || fail "no $WORKTREE"
 
 pr=""
 if ! $dry_run; then
-  # Our own open PR (a fork's PR from a same-named branch is ignored).
   pr="$(gh_ pr list --head "$BRANCH" --state open --json number,isCrossRepository \
     --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
 fi
@@ -158,7 +149,6 @@ if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then
   log "WARNING: $stale_script"
 fi
 
-# Only the one key the pipeline needs, recreated private to this user and never echoed.
 rm -f .env.local
 if [ -f "$SOURCE_REPO/.env.local" ]; then
   ( umask 077; grep -E '^BAYBALLOT_ANTHROPIC_API_KEY=' "$SOURCE_REPO/.env.local" | tail -n 1 > .env.local )
@@ -186,7 +176,6 @@ log "refresh exit code $code"
 summary_line="$(grep -m1 '^\*\*Result:\*\*' "$work/summary.md" 2>/dev/null | sed 's/\*\*Result:\*\* //')"
 [ -n "$summary_line" ] || summary_line="exit code $code"
 
-# Remember shrunk guides so an unchanged shrunk page isn't re-extracted; keep the old state if the run crashed.
 if [ -f "$work/result.json" ] && ! $dry_run; then
   node -e 'const r = require(process.argv[1]); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash]))))' \
     "$work/result.json" > "$work/shrunk.json" && mv "$work/shrunk.json" "$SHRUNK_STATE"
