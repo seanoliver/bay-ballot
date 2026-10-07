@@ -1,0 +1,539 @@
+Contra Costa County Clerk-Recorder-Elections, Candidate lists, November 3, 2026 General Election.
+Sources: https://www.contracostavote.gov/wp-content/uploads/8-27-26_candidatelist_detail_final.pdf ("Contest/Candidate Proof List", Contests On Ballot, Qualified Candidates, printed 8/27/2026 10:02 AM)
+         https://www.contracostavote.gov/wp-content/uploads/8-14-26_candidatelist_summary_final.pdf ("Candidate List", all local contests 3111-7886, printed 8/14/2026 5:04 PM)
+         both linked from https://www.contracostavote.gov/elections/candidates-campaigns-measures/ (retrieved 2026-10-07)
+         State/federal: https://elections.cdn.sos.ca.gov/statewide-elections/2026-general/cert-list-candidates.pdf (SOS Certified List, dated 8/27/2026), filtered to districts the county lists for this election.
+Redacted extract: contest, seats (vote for), whether the contest is on the ballot, and each qualified candidate's name and ballot designation (party for voter-nominated offices). Incumbent names from the proof list, addresses, phone numbers, emails, websites, filing dates and fee details are omitted.
+Candidates are listed in the order printed on the proof list ("Random Alpha Order"), not necessarily ballot order. "* " before a contest number = office went into the 5-day nomination extension.
+
+=== STATE / FEDERAL DISTRICTED CONTESTS ON CONTRA COSTA BALLOTS (SOS certified list 8/27/2026) ===
+(Statewide offices, State Superintendent, Supreme Court and Court of Appeal retention: see CA-Certified-Candidates-Nov2026.pdf. State Senate: none in Contra Costa in 2026, per county Positions Up for Election, June 2, 2026.)
+United States Representative, District 8  | vote for 1 | on ballot: Yes
+    JOHN GARAMENDI Democratic | Member of Congress
+    RUDY RECILE Republican | Business Owner/Consultant
+
+United States Representative, District 9  | vote for 1 | on ballot: Yes
+    JOSH HARDER Democratic | Father/Representative
+    JOHN MCBRIDE Republican | Athletic Performance Coach
+
+United States Representative, District 10  | vote for 1 | on ballot: Yes
+    MARK DESAULNIER Democratic | United States Congressman
+    JEFF FRESE Republican | Small Business Owner
+
+Member, State Board of Equalization, District 2  | vote for 1 | on ballot: Yes
+    SALLY J. LIEBER Democratic | Incumbent
+    JOHN PIMENTEL Democratic | Member, Board of Trustees, San Mateo County Community College District
+
+Member of the State Assembly, District 11  | vote for 1 | on ballot: Yes
+    LORI D WILSON Democratic | Assemblymember, 11th District
+    JENNY LEILANI CALLISON No Party Preference | Legislative Consultant
+
+Member of the State Assembly, District 14  | vote for 1 | on ballot: Yes
+    BUFFY WICKS Democratic | Assemblymember/Mom
+    MARK RENDON Green | Teacher
+
+Member of the State Assembly, District 15  | vote for 1 | on ballot: Yes
+    ANAMARIE AVILA FARIAS Democratic | Member of the State Assembly, District 15
+    ARTHUR WEBB No Party Preference | Retired Technology Manager
+
+Member of the State Assembly, District 16  | vote for 1 | on ballot: Yes
+    REBECCA BAUER-KAHAN Democratic | Assemblymember/Mother
+    JOSEPH A. RUBAY Republican | Businessman/Father
+
+=== LOCAL CONTESTS ON THE BALLOT (8/27/2026 proof list) ===
+3111  CONTRA COSTA COUNTY BOARD OF EDUCATION Governing Board Member, Area 2  | vote for 1 | on ballot: Yes
+    PAMELA WEST | Small Business Owner
+    SARAH BUTLER | Governing Board Member, Contra Costa County Board of Education, Area 2
+    SIBYL MINIGHINI | School Psychologist
+
+* 3201  CONTRA COSTA COMMUNITY COLLEGE DISTRICT Governing Board Member, Ward 1  | vote for 1 | on ballot: Yes
+    RAQUEL DONOSO | Education Program Director
+    CAMERON SASAI | Councilmember/Policy Coordinator
+
+3211  CONTRA COSTA COMMUNITY COLLEGE DISTRICT Governing Board Member, Ward 3  | vote for 1 | on ballot: Yes
+    BECCA BARRETT | Contra Costa Community College District, Governing Board Member, Ward 3
+    ALLYSE TANOVITZ | Principal/Teacher/Mother
+
+3305  ANTIOCH UNIFIED SCHOOL DISTRICT Governing Board Member, Area 5  | vote for 1 | on ballot: Yes
+    BRANDON DAWKINS | Health Worker/Organizer
+    MARY H ROCHA | Antioch Unified School District Board Member
+
+* 3311  JOHN SWETT UNIFIED SCHOOL DISTRICT Governing Board Member  | vote for 2 | on ballot: Yes
+    BRUCE HOEGER | Equity Investor
+    SAMANTHA WATSON-ALVARADO | Parent/Family Therapist
+    TERRI BURK | Incumbent
+    SHANE REINHART | Retired Teacher
+
+3332  MT DIABLO UNIFIED SCHOOL DISTRICT Governing Board Member, Area 2  | vote for 1 | on ballot: Yes
+    DOROTHY WEISENBERGER | Family Support Specialist
+    JANE BAULCH-ENLOE | Retired Teacher
+
+3334  MT DIABLO UNIFIED SCHOOL DISTRICT Governing Board Member, Area 4  | vote for 1 | on ballot: Yes
+    AL ANDERSON | Proposal Manager
+    BRIAN THOMAS LAWRENCE | Coach/Appointed Trustee
+
+3355  SAN RAMON VALLEY UNIFIED SCHOOL DISTRICT Governing Board Member, Area 5  | vote for 1 | on ballot: Yes
+    RACHEL HURD | Incumbent
+    JOEL WOODS | Educator/Teacher/Referee
+
+* 3370  LIVERMORE VALLEY JOINT UNIFIED SCHOOL DISTRICT Governing Board Member, Trustee Area 3  | vote for 1 | on ballot: Yes  [shared with Alameda County (county of jurisdiction); listed on the CoCo proof list but NOT on the contracostavote.gov election page contest list, so CoCo voter presence unverified]
+    ANGELA M. BRADY | Parent/Data Analyst
+    DEBORAH GIBSON | Retired Teacher
+
+3401  ACALANES UNION HIGH SCHOOL DISTRICT Governing Board Member - Trustee Area 1  | vote for 1 | on ballot: Yes
+    STACEY SCHWEPPE | Appointed Board Member, Acalanes Union High School District
+    NITHIN IYENGAR | Education Nonprofit Executive
+
+3417  LIBERTY UNION HIGH SCHOOL DISTRICT Governing Board Member, Area 4  | vote for 1 | on ballot: Yes
+    TAMARA WEBER | Incumbent
+    HILLARY FAIRBAIRN PEDROTTI | Retired English Teacher
+
+3501  BRENTWOOD UNION SCHOOL DISTRICT Governing Board Member  | vote for 3 | on ballot: Yes
+    OXSANA PAJOLUK | Mother/Business Owner
+    MARK ANDERSON | Principal IT Consultant
+    SCOTT S. DUDEK | Incumbent
+    EMIL JOHNSON GEDDES | Incumbent
+    STEVE GURSKY | Incumbent
+
+3531  KNIGHTSEN ELEMENTARY SCHOOL DISTRICT Governing Board Member  | vote for 2 | on ballot: Yes
+    ERIK M. HANSEN | Electrical Engineer
+    LIESEL WILLIAMS | Incumbent
+    ROBIN PASTOR | Incumbent
+
+3564  OAKLEY UNION ELEMENTARY SCHOOL DISTRICT Governing Board Member, Area 4  | vote for 1 | on ballot: Yes
+    CRAIG PEARSON | Incumbent
+    ISAIAH B.N. MATEAS | Teacher
+
+* 3571  ORINDA UNION SCHOOL DISTRICT Governing Board Member  | vote for 3 | on ballot: Yes
+    JOHN CHABALKO | Community Volunteer
+    EDDA COLLINS COLEMAN | Incumbent
+    CHLOE AFTEL | Photographer
+    KATIE SHOGAN | Incumbent
+
+* 3586  WALNUT CREEK SCHOOL DISTRICT Governing Board Member  | vote for 3 | on ballot: Yes
+    ERYN HOLL KING | Mother/School Volunteer
+    WENLEI JOHNSON | Incumbent
+    AILEEN ONG | Communications Consultant
+    GEETHA GANTI | Healthcare Director/Parent
+    HEIDI HERNANDEZ GATTY | Incumbent
+    ROD EHSANI | Real Estate Investor
+
+* 5006  CITY OF ANTIOCH City Council, District 1  | vote for 1 | on ballot: Yes
+    JOY MOTTS | Executive Director Nonprofit
+    TAMISHA TORRES-WALKER | Councilwoman/Nonprofit Executive
+
+5012  CITY OF ANTIOCH City Council, District 4  | vote for 1 | on ballot: Yes
+    SANDRA G WHITE | Human Resources Executive
+    MONICA E WILSON | Incumbent
+    MATTY MATHEWS ALAPPAT | Information Technology Engineer
+    ANDREW BECKER | Housing Development Consultant
+
+* 5108  CITY OF BRENTWOOD City Council, District 2  | vote for 1 | on ballot: Yes
+    TAMMY ZICKUHR | Small Business Owner
+    KRIS BRAND | Technical Program Manager
+    VINOY MEREDDY | Senior Software Engineer
+
+* 5112  CITY OF BRENTWOOD City Council, District 4  | vote for 1 | on ballot: Yes
+    STEPHANIE WILLIAMS-ROGERS | Healthcare Professional
+    SHEREE SHANNON | Business Manager/Realtor
+    HOLLEY BISHOP-MELLO | Business Owner
+
+* 5201  CITY OF CLAYTON Member, City Council  | vote for 2 | on ballot: Yes
+    MARIA SHULMAN | Registered Nurse
+    AMY CALLAGHAN | Real Estate Manager
+    CHARLES J. SCHMIDT | Chemist
+    KIM TRUPIANO | Incumbent
+
+5301  CITY OF CONCORD City Council, District 1  | vote for 1 | on ballot: Yes
+    LAURA HOFFMEISTER | Concord Council Member
+    MARIA BAGLEY | Government Finance Manager
+    TRISH BRAZIL | Business Owner
+
+5303  CITY OF CONCORD City Council, District 3  | vote for 1 | on ballot: Yes
+    ROBYN KUSLITS | Substitute Teacher
+    DENA ACOSTA BEERE | Community Volunteer
+    DOUGLAS LEZAMETA | Small Business Owner
+    DON SETA | Retired Lt. Colonel
+
+5305  CITY OF CONCORD City Council, District 5  | vote for 1 | on ballot: Yes
+    AEYSHA CORIO | Small Business Owner
+    LAURA NAKAMURA | City Council Member
+
+5316  CITY OF CONCORD City Treasurer  | vote for 1 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    PATTI BARSOTTI | Incumbent
+
+* 5401  TOWN OF DANVILLE Member, Town Council  | vote for 2 | on ballot: Yes
+    DENTON CARLSON | Retired Police Chief
+    PRATIMA SONAVNE | Business Owner
+    ROBERT STORER | Danville Town Councilmember
+
+5506  CITY OF EL CERRITO Member, City Council  | vote for 2 | on ballot: Yes
+    KIMBERLY WHITE | Executive Advisor
+    CAROLYN WYSINGER | City Councilmember/Educator
+    MARY ANN "MJ" JAWILI | Accessibility Product Manager
+    FORREST M. LANNING | Earthquake Resilience Engineer
+    WALLY NOWINSKI | Clean Energy Marketer
+    GABE QUINTO | Incumbent
+
+* 5601  CITY OF HERCULES Member, City Council  | vote for 2 | on ballot: Yes
+    JOHN DELGADO | Assistant District Attorney
+    PREET SIDHU | Educator/Business Owner
+    DION BAILEY | Councilmember
+    ADRENA BRECKENRIDGE | Civil Service Employee
+
+5801  TOWN OF MORAGA Member, Town Council  | vote for 2 | on ballot: Yes
+    KERRY HILLIS | Incumbent
+    STEVEN WOEHLEKE | Incumbent
+    BILL CARMAN | Feeder Driver
+    ALEXIS I. MAPEL | Businesswoman
+
+5902  CITY OF MARTINEZ City Council, District 1  | vote for 1 | on ballot: Yes
+    JAY HOWARD | City Councilmember District 1
+    NAKENYA ALLEN | IHSS Care Provider
+
+6101  CITY OF ORINDA Member, City Council  | vote for 3 | on ballot: Yes
+    BRANDYN IVERSON | Incumbent
+    JANET RILEY | Incumbent
+    JUANA RUDATI | Physicist/Mother
+    LATIKA MALKANI | Incumbent
+
+* 6201  CITY OF PINOLE Member, City Council  | vote for 3 | on ballot: Yes
+    MATTHEW "MATT" AVERY | Retired Police Commander
+    TRUC "CHRISTY" LAM-JULIAN | Mother/Nonprofit CEO
+    LIBBY DUARTE | Corporate Services Manager
+    GABRIEL SANDOVAL | Legislative Staff
+    TINA BROWN | Human Service Professional
+
+* 6301  CITY OF PITTSBURG Member, City Council  | vote for 3 | on ballot: Yes
+    ARLENE KOBATA (SIU LING) | Appointed Incumbent
+    C.C. CARDINALLI-MACALUSO | Mother
+    WOLF CROSKEY | Small Business Owner
+    AMHARI PERKINS | Homemaker
+    PAULINE JOHNSON | No Ballot Designation
+    DIONNE ADAMS | Diversity Executive/Councilmember
+    MARK LINDE | No Ballot Designation
+    ALVIN NELSON | Business Leader
+    SONJA SHEPHARD | Environmental Activist
+    CAROLYNNE BORN | Small Business Owner
+    IZTACCUAUHTLI HECTOR GONZALEZ | Businessman/Realtor
+
+* 6311  CITY OF PITTSBURG City Clerk  | vote for 1 | on ballot: Yes
+    LATOYYA P. ELLA BORDELON | Realtor/Notary Public
+    ANGEL RODRIGUEZ | Assistant District Secretary
+    MELAINE APPLE VENENCIANO | Clerk Services Director
+    ALICE E. EVENSON | Incumbent
+
+6316  CITY OF PITTSBURG City Treasurer  | vote for 1 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    NANCY PARENT | Incumbent
+
+* 6405  CITY OF PLEASANT HILL City Council, District 3  | vote for 1 | on ballot: Yes
+    ZAC SHESS | Councilmember, City of Pleasant Hill
+    JASON SETO | University Student
+
+* 6407  CITY OF PLEASANT HILL City Council, District 4  | vote for 1 | on ballot: Yes
+    SUE NOACK | Pleasant Hill City Councilmember
+    QUY TRAN | Physician/Clinical Professor
+
+* 6501  CITY OF RICHMOND Mayor  | vote for 1 | on ballot: Yes
+    CLAUDIA JIMÉNEZ | Councilmember, City of Richmond
+    AHMAD ANDERSON | Human Resources Director
+
+6606  CITY OF SAN PABLO Member, City Council  | vote for 2 | on ballot: Yes
+    RITA XAVIER | Incumbent
+    CADEN COTTON-BLAKE | Business Owner
+    ELIZABETH PABON ALVARADO | Incumbent
+    ANNA VILLALOBOS | Union Secretary
+
+6611  CITY OF SAN PABLO City Clerk  | vote for 1 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    DOROTHY GANTT | City Clerk
+
+6616  CITY OF SAN PABLO City Treasurer  | vote for 1 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    VIVIANA TOLEDO | Incumbent
+
+6701  CITY OF SAN RAMON Mayor  | vote for 1 | on ballot: Yes
+    EMMA CHIGBU | Student
+    MARK H. ARMSTRONG | Mayor/Retired Colonel
+    PASCHALIS NTATSOS | Nonprofit Director/CEO
+
+6708  CITY OF SAN RAMON City Council, District 2  | vote for 1 | on ballot: Yes
+    CHIRAG KATHRANI | Founder/Entrepreneur
+    RICHARD J. ADLER | Appointed Incumbent
+
+6712  CITY OF SAN RAMON City Council, District 4  | vote for 1 | on ballot: Yes
+    JEFFREY JOH | Technology Strategist
+    MARISOL RUBIO | Councilwoman/In-Home Provider
+
+* 6801  CITY OF WALNUT CREEK Member, City Council  | vote for 2 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    CHERISE MARIE KHAUND | Community Organizer/Parent
+    BRENDAN MORAN | Small Business Owner
+
+6811  CITY OF WALNUT CREEK City Treasurer  | vote for 1 | on ballot: Yes  [uncontested: candidates <= seats, still printed on ballot]
+    RONALD CASSANO | Incumbent
+
+* 7016  DIABLO COMMUNITY SERVICES DISTRICT Director  | vote for 3 | on ballot: Yes
+    GREGORY R LORENZ | Incumbent
+    STEVE LICHLITER | Retired Civil Engineer
+    ALAN BONNY | Appointed Incumbent
+    JESSICA RAEFIELD | Chief HR Officer
+
+* 7033  DUBLIN SAN RAMON SERVICES DISTRICT Director, Division 2  | vote for 1 | on ballot: Yes
+    KISMAT KATHRANI | Technology Business Owner
+    DONALD DOWNEY | Registered Geologist
+
+* 7121  MORAGA-ORINDA FIRE PROTECTION DISTRICT Director, Division 3  | vote for 1 | on ballot: Yes
+    STEVE COHN | No Ballot Designation
+    JOHN DONNELLY | Medical Scientist
+
+7126  MORAGA-ORINDA FIRE PROTECTION DISTRICT Director, Division 4  | vote for 1 | on ballot: Yes
+    LINDA STEVENS | Geospatial Technology Consultant
+    MIKE ROEMER | Incumbent
+
+7411  EAST BAY MUNICIPAL UTILITY DISTRICT Director, Ward 3  | vote for 1 | on ballot: Yes
+    MARGUERITE YOUNG | EBMUD Director Ward 3
+    DON GRAY | Retired Wastewater Manager
+
+7421  EAST BAY MUNICIPAL UTILITY DISTRICT Director, Ward 7  | vote for 1 | on ballot: Yes
+    GARY WOLFF | Licensed Civil Engineer
+    APRIL CHAN | Director, East Bay Municipal Utility District, Ward 7
+    LUIS REYNOSO | University Business Professor
+    JOSEPH GRCAR | Retired Laboratory Scientist
+
+7526  EAST BAY REGIONAL PARK DISTRICT Director, Ward 7  | vote for 1 | on ballot: Yes
+    COLIN J. COFFEY | Board Member, East Bay Regional Park District
+    INDERPRIT "INDY RISHI SINGH" SEKHON | Organic Farmer/Educator
+
+7541  PLEASANT HILL RECREATION & PARK DISTRICT Director  | vote for 3 | on ballot: Yes
+    DEREK M WURST | Director, Pleasant Hill Recreation & Park District
+    RAUL ORTEGA | Cyber Security Officer
+    ALEX NICHOL | No Ballot Designation
+    SANDRA BONATO | Pleasant Hill Recreation and Park District, Director
+    ROBERT "BOBBY" GLOVER | Director, Pleasant Hill Recreation and Park District
+
+7613  CENTRAL CONTRA COSTA SANITARY DISTRICT Director, Division 2  | vote for 1 | on ballot: Yes
+    BRIAN HENDERSON | Retired Wastewater Engineer
+    MICHAEL ROBERT MCGILL | Director, Central Contra Costa Sanitary District, Div 2
+
+* 7621  IRONHOUSE SANITARY DISTRICT Director  | vote for 2 | on ballot: Yes
+    KERRY HARVEY | No Ballot Designation
+    CHRIS A. CHRISTEAN | Wastewater Manager CPO
+    DAVE CORRIDON | Operations Manager
+    CHRIS LAURITZEN | Incumbent
+    PASCHAL IWUH | Engineer
+
+* 7632  MT VIEW SANITARY DISTRICT Director, District Area 2  | vote for 1 | on ballot: Yes
+    GWYNETH GILKEY | Data Scientist, Cybersecurity
+    ED MCGEE | Landscaper
+
+7841  CONTRA COSTA WATER DISTRICT Director, Division 2  | vote for 1 | on ballot: Yes
+    ALLISON PICARD | Retired County Manager
+    DANIEL T. FITZPATRICK | Appointed Director, Contra Costa Water District Division 2
+
+=== LOCAL CONTESTS NOT ON THE BALLOT (on the 8/14/2026 candidate list but absent from the 8/27/2026 "Contests On Ballot" list and from the county election page; candidates <= seats, so no election is held; such seats are normally filled by appointment in lieu of election) ===
+Contra Costa County Board of Education, Area 4  [CCCBdEdSchBd4]  | vote for 1 | on ballot: No
+    MIKE MAXWELL
+
+Contra Costa County Board of Education, Area 5  [CCCBdEdSchBd5]  | vote for 1 | on ballot: No
+    CLYDE HENRY LEWIS, JR
+
+Contra Costa Community College District, Ward 4  [CCCollege4]  | vote for 1 | on ballot: No
+    ANDY LI
+
+Antioch Unified School District, Area 2  [AntiochUSD Area2]  | vote for 1 | on ballot: No
+    ROXANNE REECE
+
+Martinez Unified School District, Area 3  [MartinezUSD, Area 3]  | vote for 1 | on ballot: No
+    BRENDA LEAL
+
+Martinez Unified School District, Area 5  [MartinezUSD, Area 5]  | vote for 1 | on ballot: No
+    TANIA E. BRUGGER
+
+Mt. Diablo Unified School District, Area 1  [MtDiabloUSD Area1]  | vote for 1 | on ballot: No
+    DEBRA MASON
+
+Pittsburg Unified School District, Governing Board  [PittsburgSchBd]  | vote for 3 | on ballot: No
+    HELIODORO "HELIO" MORENO
+    DESTINY BRISCOE
+    SUSAN Y SOWELS
+
+San Ramon Valley Unified School District, Area 1  [SanRamonVlyUSD, Area 1]  | vote for 1 | on ballot: No
+    AMANDA BUTLAND
+
+San Ramon Valley Unified School District, Area 4  [SanRamonVlyUSD, Area 4]  | vote for 1 | on ballot: No
+    SUSANNA WONG ORDWAY
+
+West Contra Costa Unified School District, Area 4  [WestCCUSD Area4]  | vote for 1 | on ballot: No
+    DEMETRIO GONZALEZ HOY
+
+West Contra Costa Unified School District, Area 5  [WestCCUSD Area5]  | vote for 1 | on ballot: No
+    CAITLIN GARIBALDI
+
+Acalanes Union High School District, Area 3  [AcalanesUHSD3]  | vote for 1 | on ballot: No
+    JENNIFER CHEN
+
+Acalanes Union High School District, Area 5  [AcalanesUHSD5]  | vote for 1 | on ballot: No
+    NANCY KENDZIERSKI
+
+Liberty Union High School District, Area 3  [LibertyUnionHSD Area3]  | vote for 1 | on ballot: No
+    SUSAN WALLACE
+
+Liberty Union High School District, Area 5  [LibertyUnionHSD Area5]  | vote for 1 | on ballot: No
+    JOSEPH J MAGANA
+
+Byron Union School District, Governing Board  [ByronUnionSchBd]  | vote for 3 | on ballot: No
+    KIMBERLY CARPENTER
+    KARI CROSS
+    ELYSSA CROSS
+
+Lafayette School District, Governing Board  [LafayetteSchBd]  | vote for 3 | on ballot: No
+    KATY FOREMAN
+    ROB STURM
+    ANNETTE MCCORMICK
+
+Moraga School District, Governing Board  [MoragaSchBd]  | vote for 3 | on ballot: No
+    LARRY JACOBS
+    MARTHA A. WHITE
+
+Oakley Union Elementary School District, Area 3  [OakleyUnionElemSch Area3]  | vote for 1 | on ballot: No
+    ANN CORRIDON
+
+Oakley Union Elementary School District, Area 5  [OakleyUnionElemSch Area5]  | vote for 1 | on ballot: No
+    PAUL DIDONATO
+
+City of Antioch, City Clerk  [AntiochCityClerk]  | vote for 1 | on ballot: No
+    MICHAEL J. MANDY
+
+City of Lafayette, City Council  [LafayetteCouncil]  | vote for 2 | on ballot: No
+    JIM CERVANTES
+    STELLA WOTHERSPOON
+
+City of Lafayette, City Council (2-year short term)  [LafayetteCouncil-Short]  | vote for 1 | on ballot: No
+    MARIO DIPRISCO
+
+City of Martinez, Mayor  [MartinezMayor]  | vote for 1 | on ballot: No
+    BRIANNE E. ZORN
+
+City of Martinez, City Council, District 4  [MartinezCouncil Dist4]  | vote for 1 | on ballot: No
+    DEBBIE MCKILLOP
+
+City of Oakley, City Council, District 2  [OakleyCouncil Dist2]  | vote for 1 | on ballot: No
+    HUGH HENDERSON
+
+City of Oakley, City Council, District 4  [OakleyCouncil Dist4]  | vote for 1 | on ballot: No
+    SHANNON SHAW
+
+Crockett Community Services District, Director  [CrockettCmtySvcs]  | vote for 3 | on ballot: No
+    NICK SPINNER
+
+Town of Discovery Bay Community Services District, Director  [TownOfDBayCmtySvcs]  | vote for 3 | on ballot: No
+    BILL MAYER
+    KEVIN GRAVES
+    ASHLEY PORTER
+
+Kensington Community Services District, Director  [KensCSD]  | vote for 3 | on ballot: No
+    RODNEY K. PAUL
+    DANIEL S LEVINE
+    ADAM BASTEIN
+
+Kensington Community Services District, Director (short term)  [KensCSD-Short]  | vote for 1 | on ballot: No
+    ALEXANDRA AQUINO-FIKE
+
+Moraga-Orinda Fire Protection District, Division 1  [MoragaOrindaFire1]  | vote for 1 | on ballot: No
+    GREG HASLER
+
+San Ramon Valley Fire Protection District, Director  [SanRamonVlyFireProt]  | vote for 2 | on ballot: No
+    BILL CLARKSON
+    RYAN T CREAN
+
+Bethel Island Municipal Improvement District, Director  [BethelIslandMID]  | vote for 2 | on ballot: No
+    BRUCE SMITH
+    VIGNESH RAMA
+
+East Bay Municipal Utility District, Ward 2  [EastBayMUD2]  | vote for 1 | on ballot: No
+    LUZ MARÍA GÓMEZ
+
+East Bay Municipal Utility District, Ward 4  [EastBayMUD4]  | vote for 1 | on ballot: No
+    ANDY KATZ
+
+Ambrose Recreation & Park District, Director  [AmbroseRecPark]  | vote for 3 | on ballot: No
+    TRINA HUDSON
+    MAE TORLAKSON
+    LUPE LOPEZ GARCIA
+
+Ambrose Recreation & Park District, Director (2-year short term)  [AmbroRecPark-Short]  | vote for 1 | on ballot: No
+    A.J. FARDELLA
+
+East Bay Regional Park District, Ward 6  [EastBayRegPark6]  | vote for 1 | on ballot: No
+    JOHN MERCURIO
+
+Green Valley Recreation & Park District, Director  [GreenVlyRecPark]  | vote for 3 | on ballot: No
+    TODD FITZSIMMONS
+    PAUL BURGIN
+    KATY CHANANA
+
+Byron Sanitary District, Director  [ByronSanitary]  | vote for 2 | on ballot: No
+    DANNY A HAMBY
+
+Central Contra Costa Sanitary District, Division 3  [CentralCCSanitary Div3]  | vote for 1 | on ballot: No
+    FLORENCE WEDINGTON
+
+Mt. View Sanitary District, Area 1  [MtViewSanDist1]  | vote for 1 | on ballot: No
+    JARED RUDDELL
+
+Mt. View Sanitary District, Area 5 (2-year short term)  [MtViewSanDist5-Short]  | vote for 1 | on ballot: No
+    CAITLIN B. WILEY-WALKER
+
+Stege Sanitary District, Director  [StegeSanitary]  | vote for 3 | on ballot: No
+    DWIGHT MERRILL
+    TED LAM
+    ALEX BORYS
+
+West County Wastewater District, District 1  [WestCountyWastewater Div1]  | vote for 1 | on ballot: No
+    ARTO RINTEELA
+
+West County Wastewater District, District 3  [WestCountyWastewater Div3]  | vote for 1 | on ballot: No
+    DAVID ALVARADO
+
+West County Wastewater District, District 5  [WestCountyWastewater Div5]  | vote for 1 | on ballot: No
+    CHERYL SUDDUTH
+
+AC Transit (Alameda-Contra Costa Transit District), Ward 1 (2-year short term)  [ACTrans1-Short]  | vote for 1 | on ballot: No
+    HARPREET S. SANDHU
+
+BART (San Francisco Bay Area Rapid Transit District), District 2  [BART2]  | vote for 1 | on ballot: No
+    MARK FOLEY
+
+Byron-Bethany Irrigation District, Division 1  [ByronBethanyIrr1]  | vote for 1 | on ballot: No
+    MILAN "PETE" PETROVICH
+
+Byron-Bethany Irrigation District, Division 3  [ByronBethanyIrr3]  | vote for 1 | on ballot: No
+    TIM MAGGIORE
+
+Castle Rock County Water District, Director  [CastleRockCountyWater]  | vote for 2 | on ballot: No
+    JOSEPH ATTURIO
+    JONATHAN SCHIMMEL
+
+Castle Rock County Water District, Director (2-year short term)  [CRCWater-Short]  | vote for 1 | on ballot: No
+    GARY BETTENCOURT
+
+Contra Costa Water District, Division 1  [CCWater1]  | vote for 1 | on ballot: No
+    PATT YOUNG
+
+Diablo Water District, Ward 2  [DiabloWater Ward 2]  | vote for 1 | on ballot: No
+    CONAN MOATS
+
+Diablo Water District, Ward 3  [DiabloWater Ward 3]  | vote for 1 | on ballot: No
+    PAUL SEGER
+
+Diablo Water District, Ward 4  [DiabloWater Ward 4]  | vote for 1 | on ballot: No
+    JASON SHAW
+
+East Contra Costa Irrigation District, Division 1  [EastCCIrr1]  | vote for 1 | on ballot: No
+    MICHAEL G. CASEY
+
+East Contra Costa Irrigation District, Division 4  [EastCCIrr4]  | vote for 1 | on ballot: No
+    KENNETH W. SMITH
+
+=== POSITIONS UP FOR ELECTION WITH NO QUALIFIED CANDIDATE (on 26Nov03_PositionsUpForElection.pdf, absent from the 8/14 candidate list) ===
+Canyon Elementary School District, 3 Governing Board Members  | on ballot: No (no candidates filed)
+Rodeo Sanitary District, 2 Directors  | on ballot: No (no candidates filed)
+Moraga School District, 3 seats: only 2 qualified candidates (listed above); not on ballot
