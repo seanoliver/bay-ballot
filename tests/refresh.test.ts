@@ -443,6 +443,25 @@ describe("fetchFrom: local", () => {
   });
 });
 
+describe("re-extracting keeps a guide's settings", () => {
+  it.each([
+    ["fetchFrom: local", "fetchFrom: local"],
+    ["fetchWith: browser", "fetchWith: browser"],
+    ["allowForeignSources: true", "allowForeignSources: true"],
+    ["rejectedQuotes", "rejectedQuotes:\n  - text: A sentence nobody wants back.\n    reason: not substantive"],
+  ])("an extraction with identical picks changes nothing (%s)", async (_name, yaml) => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("fetchedAt:", `${yaml}\nfetchedAt:`));
+    const before = fs.readFileSync(f, "utf8");
+    const { client } = fakeClient(sameOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, scope: yaml.startsWith("fetchFrom") ? "local" : "cloud" });
+    expect(results[0]).toMatchObject({ status: "changed", dataChanged: false });
+    expect(fs.readFileSync(f, "utf8")).toBe(before);
+  });
+});
+
 describe("gateOnly (dry run)", () => {
   it("reports which guides would be extracted without calling the model or storing their pages", async () => {
     const root = setup(["alpha", "beta"]);

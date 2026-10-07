@@ -186,3 +186,33 @@ describe("shrinkWarning", () => {
     expect(shrinkWarning("spur", many(4), {}, { force: true })).toBeNull();
   });
 });
+
+describe("nextFile keeps every field it doesn't set", () => {
+  const settings = {
+    fetchFrom: "local" as const,
+    fetchWith: "browser" as const,
+    manual: true,
+    allowForeignSources: true,
+    rejectedQuotes: [{ text: "A sentence nobody wants back.", reason: "not substantive" }],
+  };
+  it("keeps fetchFrom, fetchWith, manual, allowForeignSources and rejectedQuotes", () => {
+    const n = nextFile({ ...prev, ...settings }, picks, true, "2026-10-05");
+    expect(n).toMatchObject(settings);
+  });
+  it("keeps a field added to the schema later", () => {
+    const future = { ...prev, someFutureField: "kept" } as EndorsementFile;
+    expect((nextFile(future, picks, true, "2026-10-05") as Record<string, unknown>).someFutureField).toBe("kept");
+  });
+  it("writes a field missing from the key order instead of dropping it", () => {
+    const future = { ...prev, someFutureField: "kept" } as EndorsementFile;
+    const y = toYaml(future);
+    expect(y).toContain("someFutureField: kept");
+    expect(y.indexOf("someFutureField")).toBeLessThan(y.indexOf("picks:"));
+  });
+  it("keeps fetchFrom and its inline comment through toYaml", () => {
+    const before = EndorsementFile.parse({ ...prev, fetchFrom: "local" });
+    const text = toYaml(before).replace("fetchFrom: local", "fetchFrom: local # blocks GitHub's runners");
+    const y = toYaml(nextFile(before, picks, true, "2026-10-05"), { previous: text });
+    expect(y).toContain("fetchFrom: local # blocks GitHub's runners");
+  });
+});

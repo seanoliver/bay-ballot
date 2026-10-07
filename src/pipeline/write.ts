@@ -29,19 +29,12 @@ export function nextFile(
   // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
   const unchanged = isDeepStrictEqual(prev.picks, picks);
   return {
-    guide: prev.guide,
-    election: prev.election,
+    ...prev,
     status: Object.keys(picks).length > 0 ? "published" : "pending",
-    source: prev.source,
-    extraSources: prev.extraSources,
-    fetchWith: prev.fetchWith,
-    manual: prev.manual,
-    allowForeignSources: prev.allowForeignSources,
     archived: archived ? mergeArchived(prev, archived) : prev.archived,
     fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
     held: held.length ? held : undefined,
-    rejectedQuotes: prev.rejectedQuotes,
     picks,
   };
 }
@@ -73,9 +66,12 @@ function compactEntry(e: Entry): Record<string, unknown> {
 }
 
 function ordered(file: EndorsementFile): Record<string, unknown> {
+  const known = new Set<string>(KEY_ORDER);
+  const extra = Object.keys(file).filter((k) => !known.has(k));
+  const keys = [...KEY_ORDER.filter((k) => k !== "picks"), ...extra, "picks"];
   const out: Record<string, unknown> = {};
-  for (const k of KEY_ORDER) {
-    const v = file[k];
+  for (const k of keys) {
+    const v = (file as Record<string, unknown>)[k];
     if (v === undefined) continue;
     out[k] = k === "picks" ? Object.fromEntries(Object.entries(file.picks).map(([id, e]) => [id, compactEntry(e)])) : v;
   }
