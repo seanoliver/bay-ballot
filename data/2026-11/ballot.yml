@@ -920,6 +920,12 @@ contests:
     kind: candidate
     candidates: [Thida Cornes, Sanjay Dave, Catherine Vonnegut]
     jurisdiction: { level: district, name: Mountain View-Los Altos Union High School District, district: "3", within: [{ level: city, name: Mountain View }] }
+  - id: fremont-uhsd-trustee-area-3
+    section: School and special districts
+    title: Fremont Union High School District, Trustee Area 3
+    kind: candidate
+    candidates: [Rosa Kim, Jason Lin]
+    jurisdiction: { level: district, name: Fremont Union High School District, district: "3", within: [{ level: city, name: Palo Alto }] }
   - id: fremont-uhsd-trustee-area-4
     section: School and special districts
     title: Fremont Union High School District, Trustee Area 4
