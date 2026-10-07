@@ -48,7 +48,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   }, { singleKeys });
 
   return (
-    <div className={cn(FRAME, "lg:grid lg:grid-cols-[17rem_minmax(0,48rem)] lg:gap-x-6")}>
+    <div className={cn(FRAME, "lg:grid lg:grid-cols-[17rem_minmax(0,min(48rem,calc(100%-20rem)))_minmax(0,1fr)] lg:gap-x-6")}>
       {shown.length ? <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} /> : null}
       <div data-page-column className={cn(COLUMN, "lg:col-start-2")}>
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
