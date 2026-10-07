@@ -267,3 +267,16 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
 - Planned Parenthood Advocates Mar Monte's 2026 guide (not posted).
 - The building trades council, ChamberPAC and police/fire unions (no posted lists found).
 - Whether the Mercury News will publish SCC local editorials (it did in 2024). Re-check weekly.
+
+## Decisions (2026-10-07)
+
+- **Areas:** `santa-clara-county` (order 25) lists all 15 cities, Palo Alto and Mountain View included, the same way `alameda-county` includes Oakland. A `san-jose` city page (order 27). Palo Alto and Mountain View keep their pages. Each contest exists once, in `santa-clara.yml`.
+- **SVTA:** included, type `advocacy`, with a description that says plainly it is a taxpayers' association (as for CoCoTax).
+- **SV DSA:** a new guide owned by this branch.
+  - Its "recommendations" count as picks.
+  - "Joint" recommendations are duals: a list of names with `ranked: false`.
+  - "Recommend against" counts as No on a measure and is ignored for candidates.
+  - Its blanket "Yes on all school bond measures and parcel taxes" counts only for measures that are plainly school bonds or parcel taxes (Gilroy USD M, LGSUHSD N, Alum Rock O and P, Cambrian Q, Orchard R), each with the supporting quote.
+  - Its Alameda picks are listed for central widening.
+- **Unopposed seats** stay out, even when printed and picked: Sunnyvale D1, D3, D5 and Los Altos D4. Only contested contests go on the ballot.
+- **Equality California, California Environmental Voters and LWV Bay Area** are created by the Contra Costa branch. This branch only lists their Santa Clara needs.
