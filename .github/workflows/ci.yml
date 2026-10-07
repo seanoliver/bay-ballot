@@ -33,3 +33,52 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # TEMPORARY: what GitHub's runners get from the guides that failed the first refresh. Remove before merge.
+  fetch-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: npx playwright install --with-deps chromium
+      - name: Plain HTTP (headers and title only)
+        run: |
+          UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+          for u in https://www.sfcadc.org/endorsements https://www.sfd11dems.com/endorsements \
+            https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026 https://www.milkclub.org/endorsements \
+            https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements \
+            https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/; do
+            echo "== $u"
+            curl -s -A "$UA" -H "accept-language: en-US,en;q=0.9" -D headers.txt -o body.html "$u"
+            grep -iE "^HTTP|^server:|^cf-ray|^cf-mitigated|^x-nb|^via:|^x-served-by|^x-cache:|^content-length" headers.txt
+            echo "bytes: $(wc -c < body.html)  title: $(grep -o '<title>[^<]*' body.html | head -1)"
+          done
+      - name: fetch-check (HTTP, then browser on 403/429/503 or a bot wall)
+        run: npm run bb -- fetch-check cadc d11-dems league-pissed-off-voters milk-club sf-green-party sf-chronicle || true
+      - name: fetch-check, browser only
+        run: npm run bb -- fetch-check --browser cadc d11-dems league-pissed-off-voters milk-club sf-green-party sf-chronicle || true
+      - name: Chronicle page vs stored page text
+        run: |
+          cat > chronicle-diff.mts <<'TS'
+          import fs from "node:fs";
+          import { loadElection } from "./src/lib/data";
+          import { fetchSource } from "./src/pipeline/fetch";
+          import { changedLines, storedText } from "./src/pipeline/pagestore";
+          import { pagePath } from "./src/pipeline/refresh";
+          const d = loadElection("data", "2026-11");
+          const url = d.endorsements["sf-chronicle"].source!;
+          const old = fs.readFileSync(pagePath("data", "2026-11", "sf-chronicle", url), "utf8").split("\n");
+          const fresh = storedText(await fetchSource(url), { ballot: d.ballot }).split("\n");
+          const { removed, added } = changedLines(old, fresh);
+          console.log(`stored ${old.length} lines, runner ${fresh.length} lines, -${removed.length} +${added.length}`);
+          for (const i of removed.slice(0, 40)) console.log(`- ${old[i].slice(0, 140)}`);
+          for (const j of added.slice(0, 40)) console.log(`+ ${fresh[j].slice(0, 140)}`);
+          TS
+          npx tsx chronicle-diff.mts || true
