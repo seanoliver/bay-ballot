@@ -280,3 +280,18 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
   - Its Alameda picks are listed for central widening.
 - **Unopposed seats** stay out, even when printed and picked: Sunnyvale D1, D3, D5 and Los Altos D4. Only contested contests go on the ballot.
 - **Equality California, California Environmental Voters and LWV Bay Area** are created by the Contra Costa branch. This branch only lists their Santa Clara needs.
+
+## Data phase notes (2026-10-07)
+
+- **New guides created here:** `los-altos-town-crier`, `lwv-lamv`, `sv-dsa`, `svta` (`fetchWith: browser`), `cupertino-for-all`.
+- **`sv-dsa` Alameda picks, for central widening** (add `alameda-county` and the city pages to its `areas` once the Alameda contests exist):
+  - CD14 Aisha Wahab.
+  - Fremont D2 Desrie Campbell, D3 Kathy Kimberlin, D4 Aziz Akbari.
+  - Newark council Matthew Jorgens; Yes on Newark DD.
+  - Union City D2 Victor Pulido, D3 Cheris Crocker-Root, D4 Sarabjit Cheema; Yes on Union City II.
+- **Santa Clara needs of the guides the Contra Costa branch creates:**
+  - `equality-california`: CD16–19, AD23–26, AD28, AD29.
+  - `envirovoters`: CD16–19, SD10, AD23–26, AD28, AD29, BOE2.
+  - `lwv-bay-area`: RTM.
+  - All three add `santa-clara-county` and `san-jose` (and `palo-alto`/`mountain-view` for their CD16/AD23/RTM picks).
+- **`within`:** every Santa Clara district lists the cities it serves, so it stays off the San Jose, Palo Alto and Mountain View pages it doesn't cover. This includes the four existing ones (Valley Water 7, MVWSD, LASD, El Camino Measure S), which were whole-county before. The shared CD17–19, SD10 and AD24–29 entries list their Santa Clara cities from the 2021 district descriptions.
