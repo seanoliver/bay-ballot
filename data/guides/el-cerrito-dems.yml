@@ -1,0 +1,7 @@
+id: el-cerrito-dems
+name: El Cerrito Democratic Club
+shortName: "El Cerrito Dems"
+description: A Democratic club in El Cerrito whose members vote on endorsements.
+type: club
+homepage: https://ecdclub.org/
+areas: [contra-costa]

@@ -1,0 +1,7 @@
+id: envirovoters
+name: California Environmental Voters
+shortName: "EnviroVoters"
+description: A statewide environmental political organization, formerly the California League of Conservation Voters.
+type: advocacy
+homepage: https://envirovoters.org/
+areas: [contra-costa]
