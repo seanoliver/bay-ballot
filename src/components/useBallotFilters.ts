@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { COUNTIES_PARAM } from "@/lib/counties";
-import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, reconcileQuery, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
+import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
 export const CHANGE_EVENT = "bb-filters-change";
@@ -25,17 +25,8 @@ function writeKey(key: string, v: string) {
 // Counted in browser history calls, which throw past 100 in 10 seconds: Next adds a replaceState after each of our writes and after every popstate.
 export const HISTORY_BUDGET = historyBudget({ max: 90, windowMs: 10_000 });
 const WRITE_COST = 2;
+if (typeof window !== "undefined") window.addEventListener("popstate", () => HISTORY_BUDGET.note(1));
 let pending: { path: string; search: string } | null = null;
-// Deferred: the phone sheet's own popstate write must land first, or this writes a second time.
-if (typeof window !== "undefined") {
-  window.addEventListener("popstate", () => {
-    HISTORY_BUDGET.note(1);
-    setTimeout(() => {
-      const q = reconcileQuery(currentSearch(), readKey(FILTERS_KEY));
-      if (q !== null) replaceQuery(q);
-    }, 0);
-  });
-}
 
 export function currentSearch(): string {
   return pending && pending.path === window.location.pathname ? pending.search : window.location.search;

@@ -38,7 +38,7 @@ export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []):
 
 export function hasFilterParams(q: string): boolean {
   const p = new URLSearchParams(q);
-  return FILTER_PARAMS.some((k) => p.has(k));
+  return ["off", "offtypes", "why"].some((k) => p.has(k));
 }
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
@@ -153,16 +153,6 @@ export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>
     if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, label, count: ofType.length, guides: matching });
   }
   return out;
-}
-
-const FILTER_PARAMS = ["off", "offtypes", "why"];
-
-export function reconcileQuery(search: string, stored: string | null): string | null {
-  const p = new URLSearchParams(search);
-  if (stored === null || !hasFilterParams(search) || toQuery(fromQuery(search)) === toQuery(fromQuery(stored))) return null;
-  for (const k of FILTER_PARAMS) p.delete(k);
-  for (const [k, v] of new URLSearchParams(stored)) p.set(k, v);
-  return p.toString();
 }
 
 export function filterQuery(query: string, ignore: string[]): string {

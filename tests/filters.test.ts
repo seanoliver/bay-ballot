@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  filterQuery, carryQuery, contestFiles, reconcileQuery, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
+  filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
   typeState, pendingGuides, EMPTY,
@@ -292,17 +292,5 @@ describe("carryQuery", () => {
   it("is empty when there's nothing to carry", () => {
     expect(carryQuery("?c=prop-b", ["off", "why"])).toBe("");
     expect(carryQuery("", ["off"])).toBe("");
-  });
-});
-
-describe("reconcileQuery", () => {
-  it("swaps the URL's filter params for the stored ones when they differ, keeping other params", () => {
-    expect(reconcileQuery("?off=sf-gop&c=prop-b&offc=marin", "off=sf-gop&why=1")).toBe("c=prop-b&offc=marin&off=sf-gop&why=1");
-    expect(reconcileQuery("?off=sf-gop&c=prop-b", "")).toBe("c=prop-b");
-  });
-  it("leaves the URL alone when it matches storage, has no filter params, or nothing is stored", () => {
-    expect(reconcileQuery("?why=1&off=sf-gop", "off=sf-gop&why=1")).toBeNull();
-    expect(reconcileQuery("?c=prop-b", "why=1")).toBeNull();
-    expect(reconcileQuery("?off=sf-gop", null)).toBeNull();
   });
 });
