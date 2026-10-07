@@ -16,7 +16,9 @@ import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
+import { keepNumber } from "@/lib/display";
 import { FRAME } from "./frame";
+import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
@@ -398,11 +400,6 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   );
 }
 
-const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
-
-const ROW_LINK = "outline-none after:absolute after:inset-0 after:content-['']";
-const ROW_FOCUS = "has-[a:focus-visible]:outline-3 has-[a:focus-visible]:-outline-offset-3 has-[a:focus-visible]:outline-ring";
-
 const ContestRow = memo(function ContestRow({
   href,
   contest,
@@ -431,7 +428,7 @@ const ContestRow = memo(function ContestRow({
       </div>
       <div
         className={cn(
-          "relative hidden px-4 py-3 transition-colors hover:bg-muted/60 lg:block",
+          "relative hidden px-4 py-3 transition-[background-color] hover:bg-muted/60 lg:block",
           ROW_FOCUS,
           selected && "bg-muted shadow-[inset_3px_0_0_var(--foreground)]",
         )}

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContestDetail } from "@/components/ContestDetail";
-import { FRAME, READING } from "@/components/frame";
-import { Card } from "@/components/ui/card";
+import { PageColumn } from "@/components/PageColumn";
 import { contestArea, placeName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import type { ElectionData } from "@/lib/data";
@@ -60,13 +59,13 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   const { d, contest, electionId } = x;
   const { rows, pending, area, place } = contestView(d, contest);
   return (
-    <div className={`${FRAME} ${READING} pt-4 pb-10`}>
+    <PageColumn>
       <p className="text-sm">
         <Link href={area ? `/${electionId}/${area.id}` : `/${electionId}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
           {place.name} ballot
         </Link>
       </p>
-      <Card className="mt-3 gap-0 p-6 shadow-xs">
+      <section className="mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6">
         <ContestDetail
           election={electionId}
           contest={contest}
@@ -78,7 +77,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
           shortNames={false}
           answer={answerSentence(contest, rows, dataAsOf(d.endorsements), place)}
         />
-      </Card>
-    </div>
+      </section>
+    </PageColumn>
   );
 }

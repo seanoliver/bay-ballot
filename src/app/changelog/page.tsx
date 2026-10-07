@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "@/components/ExternalLink";
-import { FRAME, READING } from "@/components/frame";
+import { PageColumn } from "@/components/PageColumn";
 import { changelogMonths, readChangelog } from "@/lib/changelog";
 import { formatDate } from "@/lib/display";
 import type { ChangelogEntry } from "@/lib/schema";
@@ -18,7 +18,7 @@ const LABEL: Record<ChangelogEntry["type"], string> = { new: "New", data: "Data"
 export default function ChangelogPage() {
   const months = changelogMonths(readChangelog(DATA_ROOT).entries);
   return (
-    <div className={`${FRAME} ${READING} pt-6 pb-10`}>
+    <PageColumn>
       <article className="measure">
         <h1 className="text-xl font-semibold">Changelog</h1>
         {months.map((m) => (
@@ -44,6 +44,6 @@ export default function ChangelogPage() {
           </section>
         ))}
       </article>
-    </div>
+    </PageColumn>
   );
 }

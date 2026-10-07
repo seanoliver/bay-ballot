@@ -177,3 +177,5 @@ export function dataAsOf(ends: Record<string, Pick<EndorsementFile, "fetchedAt" 
   const last = latestFetchDay(ends);
   return last ? formatDate(last) : null;
 }
+
+export const keepNumber = (title: string) => title.replace(/ (\d+)$/, "\u00a0$1");
