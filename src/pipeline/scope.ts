@@ -22,7 +22,6 @@ export function newAreaBallot(ballot: Ballot, guide: Pick<Guide, "id" | "areas">
   return { ...ballot, contests: ballot.contests.filter((c) => fresh.some((a) => inArea(c, a)) && !old.some((a) => inArea(c, a))) };
 }
 
-/** `prev` with each in-scope item replaced in place by `next`'s or dropped, then `next`'s new items appended. */
 export function mergeInScope<T>(prev: T[], next: T[], key: (t: T) => string, inScope: (id: string) => boolean): T[] {
   const byKey = new Map(next.map((t) => [key(t), t]));
   const out = prev.flatMap((t) => (!inScope(key(t)) ? [t] : byKey.has(key(t)) ? [byKey.get(key(t))!] : []));
