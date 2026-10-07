@@ -33,14 +33,15 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
 function contestView(d: ElectionData, contest: Contest) {
   const { guides, files, pending } = ballotViewProps(d);
   const { area, place } = contestPlace(contest, d.areas);
-  return { guides, files, pending, area, place, rows: activeEntries(contest.id, guides, files, EMPTY) };
+  return { guides, files, pending, area, place };
 }
 
 export async function generateMetadata({ params }: PageProps<"/[election]/[contest]">): Promise<Metadata> {
   const x = await load(params);
   if (!x) return {};
   if (x.kind === "area") return listMetadata(x.d, x.electionId, x.area);
-  const { rows, place } = contestView(x.d, x.contest);
+  const { guides, files, place } = contestView(x.d, x.contest);
+  const rows = activeEntries(x.contest.id, guides, files, EMPTY);
   return {
     // The search title already names the site's subject; the " · Bay Ballot" suffix would cut it off.
     title: { absolute: contestTitle(x.contest, rows, x.d.ballot.date, place) },

@@ -11,10 +11,12 @@ import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
-import { COLUMN, FRAME, PANE } from "./frame";
+import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { useSingleKeys } from "./useSingleKeys";
+
+const TITLE_ID = "contest-title";
 
 type Props = {
   election: string;
@@ -40,33 +42,40 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {
-    if (action !== "search" || !window.matchMedia("(min-width: 1024px)").matches) return false;
-    document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
+    const search = document.querySelector<HTMLInputElement>(FILTER_SEARCH);
+    if (action !== "search" || !search || !window.matchMedia(DESKTOP).matches) return false;
+    search.focus();
   }, { singleKeys });
 
   return (
     <div className={cn(FRAME, "lg:grid lg:grid-cols-[17rem_minmax(0,48rem)] lg:gap-x-6")}>
-      <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
-      <div data-page-column className={COLUMN}>
+      {shown.length ? <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} /> : null}
+      <div data-page-column className={cn(COLUMN, "lg:col-start-2")}>
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
           <Link href={`${back.href}${carry}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
             {back.label}
           </Link>
-          {hidden > 0 ? (
-            <p className="text-muted-foreground">
-              {hiddenLabel(hidden)}
-              {" · "}
-              <button
-                type="button"
-                className="inline-block py-2.5 -my-2.5 underline underline-offset-2 hover:text-foreground"
-                onClick={() => setFilters(revealGuides(filters, shown.map((g) => g.id), files))}
-              >
-                Show all
-              </button>
-            </p>
-          ) : null}
+          <div aria-live="polite">
+            {hidden > 0 ? (
+              <p className="text-muted-foreground">
+                <span>{hiddenLabel(hidden)}</span>
+                {" · "}
+                <button
+                  type="button"
+                  aria-label="Show all guides on this contest"
+                  className="inline-block py-2.5 -my-2.5 underline underline-offset-2 hover:text-foreground"
+                  onClick={() => {
+                    document.getElementById(TITLE_ID)?.focus();
+                    setFilters(revealGuides(filters, shown.map((g) => g.id), files));
+                  }}
+                >
+                  Show all
+                </button>
+              </p>
+            ) : null}
+          </div>
         </div>
-        <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
+        {shown.length ? <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" /> : null}
         <section className="mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6">
           <ContestDetail
             election={election}
@@ -74,6 +83,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             rows={rows}
             pending={pending}
             heading="h1"
+            titleId={TITLE_ID}
             slots={slots}
             pageLink={false}
             shortNames={false}
