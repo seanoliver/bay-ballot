@@ -217,6 +217,10 @@
   max-width: 62ch;
 }
 
+html:has([data-section-nav]) {
+  scroll-padding-top: 4rem;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

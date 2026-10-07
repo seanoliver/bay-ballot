@@ -1,4 +1,4 @@
-export type KeyAction = "next" | "prev" | "search" | "help" | "close";
+export type KeyAction = "next" | "prev" | "search" | "help" | "close" | "jump";
 export type KeyLike = { key: string; metaKey: boolean; ctrlKey: boolean; altKey: boolean; shiftKey: boolean; defaultPrevented: boolean };
 export type TargetLike = { tagName: string; isContentEditable: boolean } | null;
 
@@ -8,7 +8,7 @@ export function isTypingTarget(t: TargetLike): boolean {
   return t !== null && (TYPING.has(t.tagName) || t.isContentEditable);
 }
 
-const PLAIN: Record<string, KeyAction> = { ArrowDown: "next", j: "next", ArrowUp: "prev", k: "prev", "/": "search", "?": "help", Escape: "close" };
+const PLAIN: Record<string, KeyAction> = { ArrowDown: "next", j: "next", ArrowUp: "prev", k: "prev", "/": "search", "?": "help", g: "jump", Escape: "close" };
 const ARROWS = new Set(["ArrowDown", "ArrowUp"]);
 
 export function keyAction(e: KeyLike, target: TargetLike): KeyAction | null {
@@ -26,9 +26,10 @@ export function stepSelection(ids: string[], current: string | null, dir: "next"
 
 export type KeyPlace = "page" | "list" | "pane" | "filters" | "overlay" | "other";
 
-export const OVERLAY = "[role=dialog]:not([data-closed]), [role=alertdialog]:not([data-closed]), [data-slot=popover-content]:not([data-closed])";
+export const OVERLAY =
+  "[role=dialog]:not([data-closed]), [role=alertdialog]:not([data-closed]), [role=menu]:not([data-closed]), [data-slot=popover-content]:not([data-closed])";
 
-const CLOSING = "[role=dialog][data-closed], [role=alertdialog][data-closed], [data-slot=popover-content][data-closed]";
+const CLOSING = "[role=dialog][data-closed], [role=alertdialog][data-closed], [role=menu][data-closed], [data-slot=popover-content][data-closed]";
 
 type Placeable = { tagName: string; closest(selector: string): unknown };
 
@@ -49,7 +50,7 @@ export function permits(action: KeyAction, key: string, place: KeyPlace, singleK
   if (place === "overlay" || place === "filters") return false;
   if (action === "close") return place === "page";
   if (!singleKeys && key.length === 1) return false;
-  if (action === "search" || action === "help") return true;
+  if (action === "search" || action === "help" || action === "jump") return true;
   if (place === "pane") return !ARROWS.has(key);
   return place === "page" || place === "list";
 }
