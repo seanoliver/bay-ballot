@@ -61,19 +61,21 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 
 - `npm run bb -- fetch-check <guide...>` shows what each attempt got (status, bytes, which wall), writing nothing. Run it locally, and on a runner if needed, to compare.
 - As of 2026-10-07, these are blocked on the runners even in the browser: cadc, d11-dems, league-pissed-off-voters and milk-club (NationBuilder sites behind a Cloudflare challenge), and sf-chronicle (client challenge). sf-green-party gets through via the browser retry.
-- Those guides are marked `fetchFrom: local` in their endorsement files. The GitHub job skips them and lists them as "local only" (not a failure); the local job below refreshes them.
+- Those guides are marked `fetchFrom: local` in their endorsement files. The GitHub job skips them and lists them as "local only" (not a failure); the local job below refreshes them. `npm run bb -- extract <guide>` still works on them from a laptop.
 
 ### Local refresh on Sean's Mac
 
 A launchd job runs the local refresh every day at 07:00 local time. It refreshes only the `fetchFrom: local` guides, from a home connection the sites don't block. It never merges anything: it opens or updates a PR and notifies Sean, who merges it.
 
 - **Where it runs:** its own worktree at `~/code/projects/bay-ballot-refresh`, created on first run and reset each run.
-  - It first checks that the worktree belongs to this repository, is its own top-level checkout, has no branch checked out, and has no changes outside `data/`. If a check fails (or `git status` itself fails), it stops with an error and touches nothing.
+  - It first checks that the worktree is a linked worktree of this repository (not the source checkout itself), is its own top-level checkout, has no branch checked out, and has no changes outside `data/`. If a check fails (or `git status` itself fails), it stops with an error and touches nothing.
+  - If the open refresh PR's branch changes anything outside `data/`, it runs none of that branch's code: it labels the PR `needs-review`, comments, and stops.
   - No other checkout is touched.
 - **What it runs:** `bb refresh --local-only` with main's data as the changelog baseline. It is the same pipeline as the cloud job: page gate, extract, verify, shrink guard, summary and exit codes.
   - Each run recreates the worktree's `.env.local` with only `BAYBALLOT_ANTHROPIC_API_KEY` from `~/code/projects/bay-ballot/.env.local`, readable only by Sean's user. The key is never printed.
   - Shrunk-guide hashes are kept in `~/Library/Application Support/bay-ballot/shrunk-state.json`.
-- **Nothing changed:** no commit, no PR. A "Local refresh needs review" issue left open by an earlier failure is closed.
+- **Nothing changed:** no commit, no PR.
+- **Any clean run** (exit 0, installed copy up to date) closes a "Local refresh needs review" issue left open by an earlier failure.
 - **Failed with nothing to commit:** it opens or updates the "Local refresh needs review" issue with a cc to Sean, and shows a notification.
 - **Something changed:**
   - It commits to `data/refresh-local`, pushes only that branch, and opens or updates one PR with the summary and a cc to Sean.

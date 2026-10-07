@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/zsh -f
 set -eu
 
 LABEL="com.bayballot.local-refresh"
@@ -22,6 +22,8 @@ case "${1:-}" in
 
     launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
     mkdir -p "$SUPPORT" "${PLIST:h}" "${LOG:h}"
+    tmp_script="" tmp_plist=""
+    trap 'rm -f "$tmp_script" "$tmp_plist" "$SUPPORT/.bootstrap-error"' EXIT
     # Not cp over $SCRIPT: zsh reads a script while running it, so replace it atomically.
     tmp_script="$(mktemp "$SUPPORT/.local-refresh.XXXXXX")"
     cp "$HERE/local-refresh.sh" "$tmp_script"
@@ -30,7 +32,7 @@ case "${1:-}" in
 
     tmp_plist="$(mktemp "${PLIST:h}/.$LABEL.XXXXXX")"
     cp "$HERE/$LABEL.plist" "$tmp_plist"
-    args_json="$(node -e 'console.log(JSON.stringify(["/bin/zsh", process.argv[1]]))' "$SCRIPT")"
+    args_json="$(node -e 'console.log(JSON.stringify(["/bin/zsh", "-f", process.argv[1]]))' "$SCRIPT")"
     plutil -replace ProgramArguments -json "$args_json" "$tmp_plist"
     plutil -replace StandardOutPath -string "$LOG" "$tmp_plist"
     plutil -replace StandardErrorPath -string "$LOG" "$tmp_plist"
@@ -40,7 +42,7 @@ case "${1:-}" in
 
     # bootstrap can fail with EIO right after a bootout while launchd finishes tearing down.
     if ! launchctl bootstrap "$DOMAIN" "$PLIST" 2>"$SUPPORT/.bootstrap-error"; then
-      grep -qi "input/output error\|: 5:" "$SUPPORT/.bootstrap-error" || { cat "$SUPPORT/.bootstrap-error" >&2; exit 1; }
+      grep -qiE 'input/output error|: 5:' "$SUPPORT/.bootstrap-error" || { cat "$SUPPORT/.bootstrap-error" >&2; exit 1; }
       sleep 2
       launchctl bootstrap "$DOMAIN" "$PLIST"
     fi

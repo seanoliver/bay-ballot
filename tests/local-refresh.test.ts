@@ -1,4 +1,4 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -25,6 +25,7 @@ exit 0
   npm: `#!/bin/zsh -f
 print -r -- "npm $*" >> "$CALLS"
 if [ "$1" = "ci" ]; then mkdir -p node_modules; exit 0; fi
+[ -n "\${STUB_SLEEP:-}" ] && sleep "$STUB_SLEEP"
 summary="" result=""
 while [ $# -gt 0 ]; do
   case "$1" in --summary) summary="$2"; shift ;; --result) result="$2"; shift ;; esac
@@ -109,7 +110,22 @@ function setup() {
     fs.rmSync(p("calls"), { force: true });
     return { code: r.status, out: `${r.stdout}${r.stderr}`, calls };
   };
-  return { root, p, git, run };
+  const runDetached = (extra: Record<string, string>) =>
+    new Promise<{ code: number | null; signal: string | null; calls: string[] }>((resolve) => {
+      const child = spawn("zsh", ["-f", p("installed", "local-refresh.sh")], {
+        cwd: root, env: { ...env, ...extra } as NodeJS.ProcessEnv, detached: true, stdio: "ignore",
+      });
+      child.on("exit", (code, signal) => {
+        const calls = fs.existsSync(p("calls")) ? fs.readFileSync(p("calls"), "utf8").trim().split("\n").filter(Boolean) : [];
+        resolve({ code, signal, calls });
+      });
+    });
+  const runTee = (extra: Record<string, string> = {}) => {
+    const { BAYBALLOT_LAUNCHD: _unused, ...rest } = env;
+    const r = spawnSync("zsh", ["-f", p("installed", "local-refresh.sh")], { cwd: root, env: { ...rest, ...extra } as NodeJS.ProcessEnv, encoding: "utf8", timeout: 60_000 });
+    return { code: r.status, out: `${r.stdout}${r.stderr}` };
+  };
+  return { root, p, git, run, runDetached, runTee, env };
 }
 
 const writes = (calls: string[]) => calls.filter((c) => /^(PUSH|gh pr (create|edit|comment|merge)|gh issue (create|edit|comment|close)|gh label)/.test(c));
@@ -143,7 +159,7 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --add-label needs-review"))).toBe(true);
   });
 
-  it("labels the PR needs-review when its branch changes files outside data/", () => {
+  it("labels the PR needs-review and runs none of its code when its branch changes files outside data/", () => {
     const t = setup();
     t.run({ STUB_CHANGE: "1" });
     t.git(t.p("source"), "fetch", "-q", "origin");
@@ -153,9 +169,11 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     t.git(t.p("other"), "commit", "-q", "-m", "not data");
     t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/data/refresh-local");
     const r = t.run({ STUB_CHANGE: "1", GH_OPEN_PR: "77" });
-    expect(r.code).toBe(2);
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("not running its code");
     expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --add-label needs-review"))).toBe(true);
     expect(r.calls.some((c) => c.startsWith("gh pr comment 77") && c.includes("README.md"))).toBe(true);
+    expect(r.calls.some((c) => c.startsWith("npm"))).toBe(false);
   });
 
   it("fails loudly if it cannot add the needs-review label", () => {
@@ -306,6 +324,63 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     expect(r.code).toBe(0);
     expect(r.calls).toEqual([]);
   });
+
+  it("closes the review issue after a clean run that commits", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", GH_OPEN_ISSUE: "12" });
+    expect(r.code).toBe(0);
+    expect(r.calls.some((c) => c.startsWith("gh issue close 12"))).toBe(true);
+  });
+
+  it("refuses to use the source checkout itself as the worktree", () => {
+    const t = setup();
+    const r = t.run({ BB_WORKTREE: t.p("source") });
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("not a linked worktree");
+    expect(r.calls.filter((c) => c.startsWith("gh"))).toEqual([]);
+  });
+
+  it("does not write .env.local on a dry run", () => {
+    const t = setup();
+    t.run({}, ["--dry-run"]);
+    expect(fs.existsSync(t.p("refresh", ".env.local"))).toBe(false);
+  });
+
+  it("fails clearly when the source .env.local has no API key line", () => {
+    const t = setup();
+    fs.writeFileSync(t.p("source", ".env.local"), "OTHER=1\n");
+    const r = t.run();
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("no BAYBALLOT_ANTHROPIC_API_KEY line");
+  });
+
+  it("looks only for its PR into main", () => {
+    const t = setup();
+    const r = t.run();
+    expect(r.calls.find((c) => c.startsWith("gh pr list"))).toContain("--base main");
+  });
+
+  it("copes with file names that need quoting in the worktree check", () => {
+    const t = setup();
+    t.run();
+    fs.writeFileSync(t.p("refresh", "data", "a \"quoted\" name.txt"), "x\n");
+    const r = t.run();
+    expect(r.code).toBe(0);
+  });
+
+  it("writes its own log when not run by launchd", () => {
+    const t = setup();
+    const r = t.runTee();
+    expect(r.code).toBe(0);
+    expect(fs.readFileSync(t.p("refresh.log"), "utf8")).toContain("local refresh starting");
+  });
+
+  it("is stopped by the watchdog, notifies, and exits 143", async () => {
+    const t = setup();
+    const r = await t.runDetached({ BB_WATCHDOG_SECS: "3", STUB_SLEEP: "60" });
+    expect(r.code === 143 || r.signal === "SIGTERM").toBe(true);
+    expect(r.calls.find((c) => c.startsWith("osascript"))).toContain("local refresh stopped (watchdog or signal)");
+  }, 30_000);
 
   it("passes the saved shrunk state to the refresh", () => {
     const t = setup();

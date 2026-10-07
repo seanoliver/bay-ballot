@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/zsh -f
 # Usage and options: docs/runbook.md, "Local refresh on Sean's Mac".
 set -u
 setopt pipe_fail
@@ -49,8 +49,10 @@ if ! mkdir "$LOCK" 2>/dev/null; then
     log "another local refresh is running; exiting" >> "$LOG"
     exit 0
   fi
-  rm -rf "$LOCK"
-  mkdir "$LOCK" || { print -u2 "could not take the lock at $LOCK"; exit 1; }
+  # Rename first: if two runs race for a stale lock, only the one whose rename succeeds goes on.
+  mv "$LOCK" "$LOCK.stale.$$" 2>/dev/null || exit 0
+  rm -rf "$LOCK.stale.$$"
+  mkdir "$LOCK" 2>/dev/null || exit 0
 fi
 print -r -- $$ > "$LOCK/pid"
 
@@ -69,7 +71,9 @@ cleanup() {
   [ "$(cat "$LOCK/pid" 2>/dev/null)" = "$$" ] && rm -rf "$LOCK"
 }
 trap cleanup EXIT
-trap 'log "stopped by signal"; exit 143' TERM INT
+stopped() { log "stopped by $1"; notify "Bay Ballot: local refresh stopped (watchdog or signal)"; exit "$2"; }
+trap 'stopped SIGTERM 143' TERM
+trap 'stopped SIGINT 130' INT
 
 main_pid=$$
 ( trap 'kill $nap 2>/dev/null; exit 0' TERM
@@ -102,23 +106,31 @@ if [ ! -e "$WORKTREE" ]; then
 fi
 
 check_worktree() {
-  local top wt_common status_out
+  local top wt_common wt_gitdir status_out entry file
+  local -a dirty
+  [ "${WORKTREE:A}" != "${SOURCE_REPO:A}" ] || fail "$WORKTREE is the source checkout, not a linked worktree"
   top="$(git -C "$WORKTREE" rev-parse --show-toplevel 2>/dev/null)" || fail "$WORKTREE is not a git worktree"
   [ "${top:A}" = "${WORKTREE:A}" ] || fail "$WORKTREE is inside another checkout ($top)"
   wt_common="$(git -C "$WORKTREE" rev-parse --path-format=absolute --git-common-dir)" || fail "cannot read $WORKTREE's repository"
   [ "${wt_common:A}" = "${common:A}" ] || fail "$WORKTREE belongs to a different repository"
-  # Detached so the reset --hard below can never move a branch.
+  wt_gitdir="$(git -C "$WORKTREE" rev-parse --path-format=absolute --git-dir)" || fail "cannot read $WORKTREE's git dir"
+  [ "${wt_gitdir:A}" != "${wt_common:A}" ] || fail "$WORKTREE is not a linked worktree"
   git -C "$WORKTREE" symbolic-ref -q HEAD >/dev/null && fail "$WORKTREE has a branch checked out; it must be detached"
-  status_out="$(git -C "$WORKTREE" status --porcelain --untracked-files=all)" || fail "git status failed in $WORKTREE"
-  local dirty="$(print -r -- "$status_out" | grep -v '^.. data/' | grep -v '^$' || true)"
-  [ -z "$dirty" ] || fail "$WORKTREE has changes outside data/:"$'\n'"$dirty"
+  status_out="$(git -C "$WORKTREE" status --porcelain -z --untracked-files=all)" || fail "git status failed in $WORKTREE"
+  # -z entries are "XY path", unquoted; a rename's source path follows as its own entry and is checked too.
+  for entry in "${(@0)status_out}"; do
+    [ -z "$entry" ] && continue
+    if [ ${#entry} -ge 4 ] && [ "${entry[3]}" = " " ]; then file="${entry:3}"; else file="$entry"; fi
+    [[ "$file" == data/* ]] || dirty+=("$file")
+  done
+  [ ${#dirty} -eq 0 ] || fail "$WORKTREE has changes outside data/: ${(j:, :)dirty}"
 }
 check_worktree
 cd "$WORKTREE" || fail "no $WORKTREE"
 
 pr=""
 if ! $dry_run; then
-  pr="$(gh_ pr list --head "$BRANCH" --state open --json number,isCrossRepository \
+  pr="$(gh_ pr list --head "$BRANCH" --base main --state open --json number,isCrossRepository \
     --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
 fi
 
@@ -143,6 +155,19 @@ else
 fi
 check_worktree
 
+# Never run code from the refresh branch that didn't come from main.
+outside="$(git diff --name-only --no-renames origin/main...HEAD)" || fail "could not list the branch's changes against main"
+outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
+if [ -n "$outside" ]; then
+  reason="the refresh branch changes files outside data/ (${(f)outside}); not running its code"
+  if [ -n "$pr" ]; then
+    gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
+    gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
+    gh_ pr comment "$pr" --body "Needs review: $reason." >/dev/null
+  fi
+  fail "$reason"
+fi
+
 stale_script=""
 if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then
   stale_script="the installed script differs from scripts/local-refresh.sh on main; re-run npm run local-refresh:install"
@@ -150,10 +175,11 @@ if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then
 fi
 
 rm -f .env.local
-if [ -f "$SOURCE_REPO/.env.local" ]; then
+if ! $dry_run; then
+  [ -f "$SOURCE_REPO/.env.local" ] || fail "no .env.local in $SOURCE_REPO"
+  grep -qE '^BAYBALLOT_ANTHROPIC_API_KEY=.' "$SOURCE_REPO/.env.local" ||
+    fail "no BAYBALLOT_ANTHROPIC_API_KEY line in $SOURCE_REPO/.env.local"
   ( umask 077; grep -E '^BAYBALLOT_ANTHROPIC_API_KEY=' "$SOURCE_REPO/.env.local" | tail -n 1 > .env.local )
-elif ! $dry_run; then
-  fail "no .env.local in $SOURCE_REPO"
 fi
 
 lock_hash="$(shasum -a 256 package-lock.json | cut -d' ' -f1)"
@@ -181,7 +207,7 @@ if [ -f "$work/result.json" ] && ! $dry_run; then
     "$work/result.json" > "$work/shrunk.json" && mv "$work/shrunk.json" "$SHRUNK_STATE"
 fi
 
-data_changed="$(git status --porcelain -- 'data/*/endorsements' data/changelog)"
+data_changed="$(git status --porcelain -- 'data/*/endorsements' data/changelog)" || fail "git status failed"
 extracted="$(node -e 'try { console.log(require(process.argv[1]).extracted.length) } catch { console.log(0) }' "$work/result.json")"
 
 if $dry_run; then
@@ -192,10 +218,15 @@ if $dry_run; then
   exit "$code"
 fi
 
+issue="$(gh_ issue list --state open --author @me --search "in:title \"$ISSUE_TITLE\"" --json number,title \
+  --jq "map(select(.title == \"$ISSUE_TITLE\")) | .[0].number // empty")" || fail "gh issue list failed"
+if [ -n "$issue" ] && [ "$code" = "0" ] && [ -z "$stale_script" ]; then
+  gh_ issue close "$issue" --comment "Local refresh $(date +%F) was clean; closing." >/dev/null || log "could not close issue #$issue"
+  issue=""
+fi
+
 if [ -z "$data_changed" ] && [ "$extracted" = "0" ]; then
   git checkout -q -- data && git clean -fdq -- data
-  issue="$(gh_ issue list --state open --author @me --search "in:title \"$ISSUE_TITLE\"" --json number,title \
-    --jq "map(select(.title == \"$ISSUE_TITLE\")) | .[0].number // empty")" || fail "gh issue list failed"
   if [ "$code" != "0" ] || [ -n "$stale_script" ]; then
     {
       cat "$work/summary.md" 2>/dev/null || print "The local refresh failed before writing a summary (exit code $code); see the log on Sean's Mac."
@@ -211,9 +242,6 @@ if [ -z "$data_changed" ] && [ "$extracted" = "0" ]; then
     log "no data to commit; review issue updated (exit code $code)"
     notify "Bay Ballot: local refresh needs review — $summary_line${stale_script:+ (installed script is out of date)}"
   else
-    if [ -n "$issue" ]; then
-      gh_ issue close "$issue" --comment "Local refresh $(date +%F) was clean; closing." >/dev/null || log "could not close issue #$issue"
-    fi
     log "no relevant changes; nothing to commit"
   fi
   exit "$code"
