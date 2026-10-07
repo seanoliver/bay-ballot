@@ -202,6 +202,8 @@ test.describe("desktop keyboard", () => {
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(new RegExp(`[?&]c=${second}(&|$)`));
+    const title = (await page.locator(`#row-d-${second}`).textContent())!.trim();
+    await expect(page.getByRole("region", { name: title, exact: true })).toBeVisible();
     await expect(page.locator(`#row-d-${second}`)).toBeFocused();
     await page.keyboard.press("ArrowUp");
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}(&|$)`));
