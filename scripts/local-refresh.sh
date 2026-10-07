@@ -1,8 +1,14 @@
 #!/bin/zsh
-# See docs/runbook.md (Local refresh on Sean's Mac).
+# Daily refresh of the guides whose sites block GitHub's runners (fetchFrom: local).
+# Runs in its own worktree, opens or updates one PR, and notifies Sean, who merges it.
+#
+#   local-refresh.sh             refresh and open/update the PR
+#   local-refresh.sh --dry-run   fetch and gate pages only: no model calls, no commit, no PR
+#   --ref <git ref>              start from another ref (testing a branch); implies --dry-run
 set -u
 setopt pipe_fail
 
+SELF="${0:A}"
 REPO="${BB_REPO:-seanoliver/bay-ballot}"
 SOURCE_REPO="${BB_SOURCE_REPO:-$HOME/code/projects/bay-ballot}"
 WORKTREE="${BB_WORKTREE:-$HOME/code/projects/bay-ballot-refresh}"
@@ -16,6 +22,7 @@ MAX_LOG_LINES=5000
 LOCK_STALE_SECS=$((3 * 3600))
 WATCHDOG_SECS="${BB_WATCHDOG_SECS:-7200}"
 FETCH_RETRY_DELAY="${BB_FETCH_RETRY_DELAY:-30}"
+export GIT_SSH_COMMAND='ssh -o BatchMode=yes -o ConnectTimeout=30'
 
 dry_run=false
 ref="origin/main"
@@ -27,21 +34,24 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+[ "$ref" = "origin/main" ] || dry_run=true
 
 log() { print -r -- "$(date '+%Y-%m-%d %H:%M:%S') $*"; }
 notify() {
-  [ "${BB_NOTIFY:-1}" = "1" ] && command -v osascript >/dev/null &&
-    osascript -e "display notification \"$1\" with title \"Bay Ballot local refresh\"" >/dev/null 2>&1
+  command -v osascript >/dev/null || return 0
+  osascript -e 'on run argv' -e 'display notification (item 1 of argv) with title "Bay Ballot"' -e 'end run' "$1" >/dev/null 2>&1
   return 0
 }
 
 mkdir -p "$SUPPORT" "${LOG:h}"
 
+# Lock: a directory holding the owner's PID. A fresh lock with no PID yet is a run that is starting.
 if ! mkdir "$LOCK" 2>/dev/null; then
   owner="$(cat "$LOCK/pid" 2>/dev/null)"
   age=$(( $(date +%s) - $(stat -f %m "$LOCK" 2>/dev/null || date +%s) ))
-  if [ -n "$owner" ] && kill -0 "$owner" 2>/dev/null && [ "$age" -lt "$LOCK_STALE_SECS" ]; then
-    log "another local refresh (pid $owner) is running; exiting" >> "$LOG"
+  if { [ -z "$owner" ] && [ "$age" -lt 60 ]; } ||
+     { [ -n "$owner" ] && kill -0 "$owner" 2>/dev/null && [ "$age" -lt "$LOCK_STALE_SECS" ]; }; then
+    log "another local refresh is running; exiting" >> "$LOG"
     exit 0
   fi
   rm -rf "$LOCK"
@@ -54,6 +64,7 @@ if [ -f "$LOG" ] && [ "$(wc -l < "$LOG")" -gt "$MAX_LOG_LINES" ]; then
   trimmed="$(tail -n $((MAX_LOG_LINES / 2)) "$LOG")"
   print -r -- "$trimmed" > "$LOG"
 fi
+# Under launchd the plist already sends stdout and stderr to the log.
 if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 work="$(mktemp -d)"
@@ -66,18 +77,17 @@ cleanup() {
 trap cleanup EXIT
 trap 'log "stopped by signal"; exit 143' TERM INT
 
+# Watchdog: its output goes to the log so it never holds this run's stdout open.
 main_pid=$$
-# Log directly, not to stdout: holding the tee pipe open would keep the run from ending.
 ( trap 'kill $nap 2>/dev/null; exit 0' TERM
   sleep "$WATCHDOG_SECS" & nap=$!
   wait $nap
   log "watchdog: run exceeded ${WATCHDOG_SECS}s; stopping"
-  # Signal the group so node and chromium die too, but only a group this script leads.
   if [ "$(ps -o pgid= -p $main_pid | tr -d ' ')" = "$main_pid" ]; then kill -TERM -- -$main_pid; else kill -TERM $main_pid; fi
 ) </dev/null >>"$LOG" 2>&1 &
 watchdog=$!
 
-fail() { log "ERROR: $*"; notify "Failed: $*"; exit 1; }
+fail() { log "ERROR: $*"; notify "Bay Ballot: local refresh failed: $*"; exit 1; }
 gh_() { gh "$@" --repo "$REPO"; }
 
 log "local refresh starting (dry run: $dry_run, ref: $ref)"
@@ -98,40 +108,43 @@ if [ ! -e "$WORKTREE" ]; then
   git -C "$SOURCE_REPO" worktree add -q --detach "$WORKTREE" "$ref" || fail "could not create $WORKTREE"
 fi
 
+# The worktree must be ours alone: a worktree of the source repo, its own top level, detached
+# (so no branch is ever reset), with nothing but data/ changed.
 check_worktree() {
-  local top wt_common
+  local top wt_common status_out
   top="$(git -C "$WORKTREE" rev-parse --show-toplevel 2>/dev/null)" || fail "$WORKTREE is not a git worktree"
   [ "${top:A}" = "${WORKTREE:A}" ] || fail "$WORKTREE is inside another checkout ($top)"
-  wt_common="$(git -C "$WORKTREE" rev-parse --path-format=absolute --git-common-dir)"
+  wt_common="$(git -C "$WORKTREE" rev-parse --path-format=absolute --git-common-dir)" || fail "cannot read $WORKTREE's repository"
   [ "${wt_common:A}" = "${common:A}" ] || fail "$WORKTREE belongs to a different repository"
   git -C "$WORKTREE" symbolic-ref -q HEAD >/dev/null && fail "$WORKTREE has a branch checked out; it must be detached"
-  local dirty
-  dirty="$(git -C "$WORKTREE" status --porcelain --untracked-files=all | grep -v '^.. data/' || true)"
+  status_out="$(git -C "$WORKTREE" status --porcelain --untracked-files=all)" || fail "git status failed in $WORKTREE"
+  local dirty="$(print -r -- "$status_out" | grep -v '^.. data/' | grep -v '^$' || true)"
   [ -z "$dirty" ] || fail "$WORKTREE has changes outside data/:"$'\n'"$dirty"
 }
 check_worktree
 cd "$WORKTREE" || fail "no $WORKTREE"
 
-pr="$(gh_ pr list --head "$BRANCH" --state open --json number,isCrossRepository \
-  --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
-# Disarm before any push: an armed PR merges whatever is pushed once ci passes, even if this run fails.
-if [ -n "$pr" ] && ! $dry_run; then gh_ pr merge "$pr" --disable-auto >/dev/null 2>&1 || true; fi
+pr=""
+if ! $dry_run; then
+  # Our own open PR (a fork's PR from a same-named branch is ignored).
+  pr="$(gh_ pr list --head "$BRANCH" --state open --json number,isCrossRepository \
+    --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
+fi
 
-hold() {
-  gh_ pr merge "$pr" --disable-auto >/dev/null 2>&1 || true
-  gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
-  gh_ pr edit "$pr" --add-label needs-review >/dev/null
-  gh_ pr comment "$pr" --body "Not auto-merged: $1" >/dev/null
-  log "PR #$pr needs review: $1"
-  notify "PR #$pr needs review"
-}
-
-if [ -n "$pr" ] && [ "$ref" = "origin/main" ]; then
+if [ -n "$pr" ]; then
   git reset -q --hard "origin/$BRANCH" && git clean -fdq || fail "could not reset to origin/$BRANCH"
-  if ! git -c commit.gpgsign=false merge -q --no-edit origin/main; then
+  if ! git -c commit.gpgsign=false merge -q --no-edit origin/main >/dev/null 2>&1; then
+    unmerged="$(git diff --name-only --diff-filter=U)"
     git merge --abort 2>/dev/null
-    $dry_run || hold "Refresh branch conflicts with main; resolve by hand."
-    exit 1
+    if [ -n "$unmerged" ]; then
+      reason="Refresh branch conflicts with main in: ${(f)unmerged}. Resolve by hand."
+    else
+      reason="Merging main into the refresh branch failed."
+    fi
+    gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
+    gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
+    gh_ pr comment "$pr" --body "$reason" >/dev/null
+    fail "$reason"
   fi
   log "continuing open PR #$pr"
 else
@@ -140,14 +153,14 @@ fi
 check_worktree
 
 stale_script=""
-if ! cmp -s "$0" "$WORKTREE/scripts/local-refresh.sh"; then
+if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then
   stale_script="the installed script differs from scripts/local-refresh.sh on main; re-run npm run local-refresh:install"
   log "WARNING: $stale_script"
 fi
 
+# Only the one key the pipeline needs, recreated private to this user and never echoed.
+rm -f .env.local
 if [ -f "$SOURCE_REPO/.env.local" ]; then
-  # rm first: umask applies only when the file is created.
-  rm -f .env.local
   ( umask 077; grep -E '^BAYBALLOT_ANTHROPIC_API_KEY=' "$SOURCE_REPO/.env.local" | tail -n 1 > .env.local )
 elif ! $dry_run; then
   fail "no .env.local in $SOURCE_REPO"
@@ -157,9 +170,9 @@ lock_hash="$(shasum -a 256 package-lock.json | cut -d' ' -f1)"
 if [ ! -d node_modules ] || [ "$(cat node_modules/.package-lock-hash 2>/dev/null)" != "$lock_hash" ]; then
   log "installing dependencies"
   npm ci --no-audit --no-fund --loglevel=error >/dev/null || fail "npm ci failed"
-  npx --no-install playwright install chromium >/dev/null 2>&1 || fail "playwright install failed"
   print -r -- "$lock_hash" > node_modules/.package-lock-hash
 fi
+npx --no-install playwright install chromium >/dev/null 2>&1 || fail "playwright install failed"
 
 git archive origin/main data | tar -x -C "$work" || fail "could not extract main's data as the baseline"
 
@@ -170,7 +183,10 @@ npm run -s bb -- refresh --local-only --baseline "$work/data" --summary "$work/s
 code=$?
 log "refresh exit code $code"
 [ -f "$work/summary.md" ] && cat "$work/summary.md"
+summary_line="$(grep -m1 '^\*\*Result:\*\*' "$work/summary.md" 2>/dev/null | sed 's/\*\*Result:\*\* //')"
+[ -n "$summary_line" ] || summary_line="exit code $code"
 
+# Remember shrunk guides so an unchanged shrunk page isn't re-extracted; keep the old state if the run crashed.
 if [ -f "$work/result.json" ] && ! $dry_run; then
   node -e 'const r = require(process.argv[1]); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash]))))' \
     "$work/result.json" > "$work/shrunk.json" && mv "$work/shrunk.json" "$SHRUNK_STATE"
@@ -189,23 +205,26 @@ fi
 
 if [ -z "$data_changed" ] && [ "$extracted" = "0" ]; then
   git checkout -q -- data && git clean -fdq -- data
+  issue="$(gh_ issue list --state open --author @me --search "in:title \"$ISSUE_TITLE\"" --json number,title \
+    --jq "map(select(.title == \"$ISSUE_TITLE\")) | .[0].number // empty")" || fail "gh issue list failed"
   if [ "$code" != "0" ] || [ -n "$stale_script" ]; then
     {
-      cat "$work/summary.md" 2>/dev/null || print "The local refresh failed before writing a summary (exit code $code); see $LOG on Sean's Mac."
+      cat "$work/summary.md" 2>/dev/null || print "The local refresh failed before writing a summary (exit code $code); see the log on Sean's Mac."
       [ -n "$stale_script" ] && print "\n**Warning:** $stale_script"
       print "\ncc @seanoliver"
     } > "$work/issue.md"
-    issue="$(gh_ issue list --state open --author @me --search "in:title \"$ISSUE_TITLE\"" --json number,title \
-      --jq "map(select(.title == \"$ISSUE_TITLE\")) | .[0].number // empty")"
     if [ -n "$issue" ]; then
-      gh_ issue edit "$issue" --body-file "$work/issue.md" >/dev/null
+      gh_ issue edit "$issue" --body-file "$work/issue.md" >/dev/null || fail "could not update issue #$issue"
       gh_ issue comment "$issue" --body "Local refresh $(date +%F): exit code $code." >/dev/null
     else
-      gh_ issue create --title "$ISSUE_TITLE" --body-file "$work/issue.md" >/dev/null
+      gh_ issue create --title "$ISSUE_TITLE" --body-file "$work/issue.md" >/dev/null || fail "could not open the review issue"
     fi
     log "no data to commit; review issue updated (exit code $code)"
-    notify "Local refresh needs review (exit code $code)"
+    notify "Bay Ballot: local refresh needs review — $summary_line${stale_script:+ (installed script is out of date)}"
   else
+    if [ -n "$issue" ]; then
+      gh_ issue close "$issue" --comment "Local refresh $(date +%F) was clean; closing." >/dev/null || log "could not close issue #$issue"
+    fi
     log "no relevant changes; nothing to commit"
   fi
   exit "$code"
@@ -214,11 +233,10 @@ fi
 git add data
 git -c commit.gpgsign=false commit -q -m "data: local refresh $(date +%F)" || fail "commit failed"
 if [ -n "$pr" ]; then
-  git push -q origin "HEAD:refs/heads/$BRANCH" || fail "push failed"
+  git push -q --no-follow-tags origin "HEAD:refs/heads/$BRANCH" || fail "push failed"
 else
-  git push -q --force-with-lease origin "HEAD:refs/heads/$BRANCH" || fail "push failed"
+  git push -q --no-follow-tags --force-with-lease origin "HEAD:refs/heads/$BRANCH" || fail "push failed"
 fi
-head_sha="$(git rev-parse HEAD)"
 
 {
   cat "$work/summary.md"
@@ -237,21 +255,16 @@ log "PR #$pr updated"
 
 reasons=()
 [ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks or a shrunk result, 1 = error)")
-outside="$(git diff --name-only --no-renames origin/main...HEAD | grep -v '^data/' || true)"
+outside="$(git diff --name-only --no-renames origin/main...HEAD)" || outside="(could not list the PR's files)"
+outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 [ -z "$outside" ] || reasons+=("files outside data/: ${(f)outside}")
-labels="$(gh_ pr view "$pr" --json labels --jq '[.labels[].name] | join(",")')"
-[[ ",$labels," != *",needs-review,"* ]] || reasons+=("the PR is labeled needs-review")
-[ -z "$stale_script" ] || reasons+=("$stale_script")
-requires_ci="$(gh api "repos/$REPO/rules/branches/main" \
-  --jq '[.[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context] | index("ci") != null' 2>/dev/null)"
-[ "$requires_ci" = "true" ] || reasons+=("main's ruleset does not require the ci check, so auto-merge would not wait for it")
-
-if [ ${#reasons} -eq 0 ]; then
-  gh_ pr merge "$pr" --auto --squash --delete-branch --match-head-commit "$head_sha" >/dev/null ||
-    { hold "could not enable auto-merge"; exit 2; }
-  log "auto-merge enabled on PR #$pr at $head_sha (merges after the required ci check passes)"
-  exit 0
+if [ ${#reasons} -gt 0 ]; then
+  gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
+  gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
+  gh_ pr comment "$pr" --body "Needs review: ${(j:; :)reasons}" >/dev/null
+  log "PR #$pr needs review: ${(j:; :)reasons}"
 fi
-hold "${(j:; :)reasons}"
-[ "$code" = "0" ] && exit 2
+
+notify "Bay Ballot: local refresh PR #$pr ready — $summary_line${stale_script:+ (installed script is out of date)}"
+[ "$code" = "0" ] && [ ${#reasons} -gt 0 ] && exit 2
 exit "$code"

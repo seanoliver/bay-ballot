@@ -2,25 +2,28 @@ import { execFileSync, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
+// Sealed sandbox: throwaway repos, sandbox HOME, allowlisted env, and stubs for gh, npm, npx, pdftotext, osascript.
 const SCRIPT = path.join(__dirname, "..", "scripts", "local-refresh.sh");
-const hasZsh = spawnSync("zsh", ["-c", "true"]).status === 0;
+const hasZsh = spawnSync("zsh", ["-f", "-c", "true"]).status === 0;
 const isMac = process.platform === "darwin";
+const which = (cmd: string) => path.dirname(execFileSync("/usr/bin/which", [cmd], { encoding: "utf8" }).trim());
 
 const STUBS: Record<string, string> = {
-  gh: `#!/bin/zsh
+  gh: `#!/bin/zsh -f
 print -r -- "gh $*" >> "$CALLS"
 case "$*" in
+  *"\${GH_FAIL:-__none__}"*) exit 1 ;;
+esac
+case "$*" in
   "pr list"*) print -r -- "\${GH_OPEN_PR:-}" ;;
-  "pr create"*) print -r -- "https://github.com/seanoliver/bay-ballot/pull/77" ;;
-  "pr view"*) print -r -- "\${GH_LABELS:-}" ;;
-  "api repos/"*"/rules/branches/main"*) print -r -- "\${GH_REQUIRES_CI:-true}" ;;
-  "issue list"*) print -r -- "" ;;
+  "pr create"*) print -r -- "https://github.com/sandbox/repo/pull/77" ;;
+  "issue list"*) print -r -- "\${GH_OPEN_ISSUE:-}" ;;
 esac
 exit 0
 `,
-  npm: `#!/bin/zsh
+  npm: `#!/bin/zsh -f
 print -r -- "npm $*" >> "$CALLS"
 if [ "$1" = "ci" ]; then mkdir -p node_modules; exit 0; fi
 summary="" result=""
@@ -37,41 +40,51 @@ else
 fi
 exit \${STUB_CODE:-0}
 `,
-  npx: `#!/bin/zsh
+  npx: `#!/bin/zsh -f
 print -r -- "npx $*" >> "$CALLS"
 exit 0
 `,
-  pdftotext: `#!/bin/zsh
+  pdftotext: "#!/bin/zsh -f\nexit 0\n",
+  osascript: `#!/bin/zsh -f
+print -r -- "osascript $*" >> "$CALLS"
 exit 0
 `,
 };
 
-type Env = Record<string, string | undefined>;
+let sandboxes: string[] = [];
+afterEach(() => {
+  for (const s of sandboxes) fs.rmSync(s, { recursive: true, force: true });
+  sandboxes = [];
+});
 
 function setup() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-local-refresh-"));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "bb-local-refresh-")));
+  sandboxes.push(root);
   const p = (...s: string[]) => path.join(root, ...s);
-  fs.writeFileSync(p("gitconfig"), "[user]\n\tname = Test\n\temail = test@example.com\n[init]\n\tdefaultBranch = main\n");
-  const env: Env = {
-    ...process.env,
-    // Keep HOME in the sandbox: the script's default paths point at real checkouts under ~.
-    HOME: root,
+  for (const d of ["bin", "home", "gh-config", "zdotdir"]) fs.mkdirSync(p(d));
+  fs.writeFileSync(p("gitconfig"), "[user]\n\tname = Test\n\temail = test@example.com\n[init]\n\tdefaultBranch = main\n[commit]\n\tgpgsign = false\n");
+  for (const [name, body] of Object.entries(STUBS)) fs.writeFileSync(p("bin", name), body, { mode: 0o755 });
+
+  // Built from scratch: nothing from the real environment except locale and temp dir.
+  const env: Record<string, string> = {
+    PATH: [p("bin"), which("node"), which("git"), "/usr/bin", "/bin", "/usr/sbin", "/sbin"].join(":"),
+    HOME: p("home"),
+    TMPDIR: os.tmpdir(),
+    LANG: "en_US.UTF-8",
     GIT_CONFIG_GLOBAL: p("gitconfig"),
     GIT_CONFIG_NOSYSTEM: "1",
-    PATH: `${p("bin")}:${process.env.PATH}`,
+    GH_CONFIG_DIR: p("gh-config"),
+    ZDOTDIR: p("zdotdir"),
     CALLS: p("calls"),
+    BB_REPO: "sandbox/repo",
     BB_SOURCE_REPO: p("source"),
     BB_WORKTREE: p("refresh"),
     BB_SUPPORT: p("support"),
     BB_LOG: p("refresh.log"),
-    BB_NOTIFY: "0",
     BB_FETCH_RETRY_DELAY: "0",
     BAYBALLOT_LAUNCHD: "1",
   };
-  const git = (cwd: string, ...args: string[]) => execFileSync("git", ["-c", "commit.gpgsign=false", ...args], { cwd, env: env as NodeJS.ProcessEnv, encoding: "utf8" });
-
-  fs.mkdirSync(p("bin"));
-  for (const [name, body] of Object.entries(STUBS)) fs.writeFileSync(p("bin", name), body, { mode: 0o755 });
+  const git = (cwd: string, ...args: string[]) => execFileSync("git", args, { cwd, env: env as NodeJS.ProcessEnv, encoding: "utf8" });
 
   git(root, "init", "-q", "--bare", "origin.git");
   fs.mkdirSync(p("seed", "scripts"), { recursive: true });
@@ -84,93 +97,89 @@ function setup() {
   git(p("seed"), "add", ".");
   git(p("seed"), "commit", "-q", "-m", "seed");
   git(p("seed"), "remote", "add", "origin", p("origin.git"));
-  git(p("seed"), "push", "-q", "origin", "HEAD:refs/heads/main");
+  git(p("seed"), "push", "-q", "origin", "HEAD:refs/heads/main", "HEAD:refs/heads/feature");
   git(root, "clone", "-q", p("origin.git"), "source");
   fs.writeFileSync(p("source", ".env.local"), "OTHER=1\nBAYBALLOT_ANTHROPIC_API_KEY=sk-test-key\n");
-  fs.writeFileSync(p("source", ".git", "hooks", "pre-push"), `#!/bin/sh\necho "PUSH $2" >> "${p("calls")}"\n`, { mode: 0o755 });
+  fs.writeFileSync(p("source", ".git", "hooks", "pre-push"), `#!/bin/sh\nwhile read l ls r rs; do echo "PUSH $r" >> "${p("calls")}"; done\n`, { mode: 0o755 });
   fs.mkdirSync(p("installed"));
   fs.copyFileSync(SCRIPT, p("installed", "local-refresh.sh"));
 
-  const run = (extra: Env = {}, args: string[] = []) => {
-    const r = spawnSync("zsh", [p("installed", "local-refresh.sh"), ...args], { cwd: root, env: { ...env, ...extra } as NodeJS.ProcessEnv, encoding: "utf8" });
+  const run = (extra: Record<string, string> = {}, args: string[] = [], scriptArg = p("installed", "local-refresh.sh")) => {
+    const r = spawnSync("zsh", ["-f", scriptArg, ...args], { cwd: root, env: { ...env, ...extra } as NodeJS.ProcessEnv, encoding: "utf8", timeout: 60_000 });
     const calls = fs.existsSync(p("calls")) ? fs.readFileSync(p("calls"), "utf8").trim().split("\n").filter(Boolean) : [];
     fs.rmSync(p("calls"), { force: true });
     return { code: r.status, out: `${r.stdout}${r.stderr}`, calls };
   };
-  return { root, p, git, run, env };
+  return { root, p, git, run };
 }
 
-const merges = (calls: string[]) => calls.filter((c) => c.startsWith("gh pr merge"));
+const writes = (calls: string[]) => calls.filter((c) => /^(PUSH|gh pr (create|edit|comment|merge)|gh issue (create|edit|comment|close)|gh label)/.test(c));
 
 describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
-  it("commits, opens a PR and arms auto-merge pinned to the pushed commit when every guard passes", () => {
+  it("commits, pushes only its branch, opens a PR, notifies, and never touches auto-merge", () => {
     const t = setup();
     const r = t.run({ STUB_CHANGE: "1" });
     expect(r.code).toBe(0);
-    expect(r.calls).toContain("PUSH https://placeholder".replace("https://placeholder", t.p("origin.git")));
-    expect(r.calls.some((c) => c.startsWith("gh pr create") && c.includes("--repo seanoliver/bay-ballot"))).toBe(true);
-    const head = t.git(t.p("origin.git"), "rev-parse", "refs/heads/data/refresh-local").trim();
-    expect(merges(r.calls)).toEqual([`gh pr merge 77 --auto --squash --delete-branch --match-head-commit ${head} --repo seanoliver/bay-ballot`]);
+    expect(r.calls.filter((c) => c.startsWith("PUSH"))).toEqual(["PUSH refs/heads/data/refresh-local"]);
+    expect(r.calls.some((c) => c.startsWith("gh pr create") && c.includes("--repo sandbox/repo"))).toBe(true);
+    expect(r.calls.filter((c) => c.startsWith("gh pr merge"))).toEqual([]);
+    expect(r.calls.some((c) => c.startsWith("gh pr edit") && c.includes("needs-review"))).toBe(false);
+    expect(r.calls.find((c) => c.startsWith("osascript"))).toContain("Bay Ballot: local refresh PR #77 ready");
   });
 
-  it("disarms auto-merge on an existing PR before pushing", () => {
+  it("updates the open PR instead of opening another", () => {
     const t = setup();
     t.run({ STUB_CHANGE: "1" });
     const r = t.run({ STUB_CHANGE: "1", GH_OPEN_PR: "77" });
-    const disarm = r.calls.findIndex((c) => c.startsWith("gh pr merge 77 --disable-auto"));
-    const push = r.calls.findIndex((c) => c.startsWith("PUSH"));
-    expect(disarm).toBeGreaterThanOrEqual(0);
-    expect(push).toBeGreaterThan(disarm);
-    expect(merges(r.calls).at(-1)).toContain("--auto --squash");
+    expect(r.code).toBe(0);
+    expect(r.calls.some((c) => c.startsWith("gh pr create"))).toBe(false);
+    expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --body-file"))).toBe(true);
+    expect(r.calls.filter((c) => c.startsWith("gh pr merge"))).toEqual([]);
   });
 
-  it("holds the PR with auto-merge off when the refresh exits 2, and passes the code through", () => {
+  it("labels the PR needs-review when the refresh exits 2, and passes the code through", () => {
     const t = setup();
     const r = t.run({ STUB_CHANGE: "1", STUB_CODE: "2" });
     expect(r.code).toBe(2);
-    expect(merges(r.calls).every((c) => !c.includes("--auto"))).toBe(true);
-    expect(r.calls).toContain("gh pr merge 77 --disable-auto --repo seanoliver/bay-ballot");
     expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --add-label needs-review"))).toBe(true);
-    expect(r.calls.some((c) => c.startsWith("gh pr comment 77") && c.includes("refresh exit code 2"))).toBe(true);
   });
 
-  it("refuses auto-merge when main's ruleset doesn't require ci", () => {
-    const t = setup();
-    const r = t.run({ STUB_CHANGE: "1", GH_REQUIRES_CI: "false" });
-    expect(r.code).toBe(2);
-    expect(merges(r.calls).every((c) => !c.includes("--auto"))).toBe(true);
-    expect(r.calls.some((c) => c.startsWith("gh pr comment") && c.includes("does not require the ci check"))).toBe(true);
-  });
-
-  it("refuses auto-merge when the PR is already labeled needs-review", () => {
-    const t = setup();
-    const r = t.run({ STUB_CHANGE: "1", GH_LABELS: "needs-review" });
-    expect(r.code).toBe(2);
-    expect(merges(r.calls).every((c) => !c.includes("--auto"))).toBe(true);
-  });
-
-  it("refuses auto-merge when the installed script differs from main's", () => {
-    const t = setup();
-    fs.appendFileSync(t.p("installed", "local-refresh.sh"), "\n# local edit\n");
-    const r = t.run({ STUB_CHANGE: "1" });
-    expect(r.code).toBe(2);
-    expect(r.out).toContain("WARNING: the installed script differs");
-    expect(merges(r.calls).every((c) => !c.includes("--auto"))).toBe(true);
-  });
-
-  it("refuses auto-merge when the PR branch has changes outside data/", () => {
+  it("labels the PR needs-review when its branch changes files outside data/", () => {
     const t = setup();
     t.run({ STUB_CHANGE: "1" });
     t.git(t.p("source"), "fetch", "-q", "origin");
-    t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("evil"), "origin/data/refresh-local");
-    fs.writeFileSync(t.p("evil", "README.md"), "surprise\n");
-    t.git(t.p("evil"), "add", "README.md");
-    t.git(t.p("evil"), "commit", "-q", "-m", "not data");
-    t.git(t.p("evil"), "push", "-q", "origin", "HEAD:refs/heads/data/refresh-local");
+    t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/data/refresh-local");
+    fs.writeFileSync(t.p("other", "README.md"), "surprise\n");
+    t.git(t.p("other"), "add", "README.md");
+    t.git(t.p("other"), "commit", "-q", "-m", "not data");
+    t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/data/refresh-local");
     const r = t.run({ STUB_CHANGE: "1", GH_OPEN_PR: "77" });
     expect(r.code).toBe(2);
-    expect(r.calls.some((c) => c.startsWith("gh pr comment") && c.includes("files outside data/: README.md"))).toBe(true);
-    expect(merges(r.calls).every((c) => !c.includes("--auto"))).toBe(true);
+    expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --add-label needs-review"))).toBe(true);
+    expect(r.calls.some((c) => c.startsWith("gh pr comment 77") && c.includes("README.md"))).toBe(true);
+  });
+
+  it("fails loudly if it cannot add the needs-review label", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", STUB_CODE: "2", GH_FAIL: "--add-label" });
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("could not label PR #77 needs-review");
+  });
+
+  it("warns in the PR body and notification when the installed script is stale, without blocking", () => {
+    const t = setup();
+    fs.appendFileSync(t.p("installed", "local-refresh.sh"), "\n# local edit\n");
+    const r = t.run({ STUB_CHANGE: "1" });
+    expect(r.code).toBe(0);
+    expect(r.out).toContain("WARNING: the installed script differs");
+    expect(r.calls.find((c) => c.startsWith("osascript"))).toContain("installed script is out of date");
+  });
+
+  it("does not report a stale script when run by a relative path", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1" }, [], "installed/local-refresh.sh");
+    expect(r.code).toBe(0);
+    expect(r.out).not.toContain("installed script differs");
   });
 
   it("refuses to run in a worktree that has a branch checked out, before any gh call", () => {
@@ -198,15 +207,29 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     t.git(t.root, "init", "-q", "refresh");
     const r = t.run();
     expect(r.code).toBe(1);
-    expect(r.out).toMatch(/different repository|has a branch checked out/);
+    expect(writes(r.calls)).toEqual([]);
   });
 
-  it("opens a review issue when the run fails with nothing to commit, and passes the exit code through", () => {
+  it("opens a review issue when the run fails with nothing to commit, and passes the code through", () => {
     const t = setup();
     const r = t.run({ STUB_CODE: "1" });
     expect(r.code).toBe(1);
     expect(r.calls.some((c) => c.startsWith("gh issue create") && c.includes("Local refresh needs review"))).toBe(true);
     expect(r.calls.filter((c) => c.startsWith("PUSH"))).toEqual([]);
+  });
+
+  it("does not create a duplicate issue when listing issues fails", () => {
+    const t = setup();
+    const r = t.run({ STUB_CODE: "1", GH_FAIL: "issue list" });
+    expect(r.code).toBe(1);
+    expect(r.calls.some((c) => c.startsWith("gh issue create"))).toBe(false);
+  });
+
+  it("closes the review issue after a clean run", () => {
+    const t = setup();
+    const r = t.run({ GH_OPEN_ISSUE: "12" });
+    expect(r.code).toBe(0);
+    expect(r.calls.some((c) => c.startsWith("gh issue close 12"))).toBe(true);
   });
 
   it("passes unknown exit codes through", () => {
@@ -218,7 +241,7 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     const t = setup();
     const r = t.run();
     expect(r.code).toBe(0);
-    expect(r.calls.filter((c) => c.startsWith("PUSH") || c.startsWith("gh issue") || c.startsWith("gh pr create"))).toEqual([]);
+    expect(writes(r.calls)).toEqual([]);
   });
 
   it("writes only the API key into the worktree's .env.local, private to the user, and never prints it", () => {
@@ -233,20 +256,34 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
   it("tightens an existing .env.local that others could read", () => {
     const t = setup();
     t.run();
-    fs.writeFileSync(t.p("refresh", ".env.local"), "OLD=1\nBAYBALLOT_ANTHROPIC_API_KEY=old\n", { mode: 0o644 });
+    fs.writeFileSync(t.p("refresh", ".env.local"), "OLD=1\n", { mode: 0o644 });
     fs.chmodSync(t.p("refresh", ".env.local"), 0o644);
     t.run();
     expect(fs.statSync(t.p("refresh", ".env.local")).mode & 0o077).toBe(0);
-    expect(fs.readFileSync(t.p("refresh", ".env.local"), "utf8")).toBe("BAYBALLOT_ANTHROPIC_API_KEY=sk-test-key\n");
   });
 
   it("dry run: no commit, push, PR or issue, and the worktree is left clean", () => {
     const t = setup();
     const r = t.run({ STUB_CHANGE: "1" }, ["--dry-run"]);
     expect(r.code).toBe(0);
-    expect(r.calls.filter((c) => /^(PUSH|gh pr (create|edit|comment|merge)|gh issue)/.test(c))).toEqual([]);
+    expect(writes(r.calls)).toEqual([]);
     expect(r.calls.some((c) => c.includes("--no-extract"))).toBe(true);
     expect(t.git(t.p("refresh"), "status", "--porcelain").trim()).toBe("");
+  });
+
+  it("treats --ref other than origin/main as a dry run", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1" }, ["--ref", "origin/feature"]);
+    expect(r.code).toBe(0);
+    expect(writes(r.calls)).toEqual([]);
+    expect(r.calls.some((c) => c.includes("--no-extract"))).toBe(true);
+  });
+
+  it("runs the Playwright browser install every run", () => {
+    const t = setup();
+    t.run();
+    const r = t.run();
+    expect(r.calls).toContain("npx --no-install playwright install chromium");
   });
 
   it("exits quietly while another run holds the lock, and takes over a dead one's lock", () => {
@@ -261,6 +298,14 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     expect(r.code).toBe(0);
     expect(r.calls.some((c) => c.startsWith("gh pr create"))).toBe(true);
     expect(fs.existsSync(t.p("support", "lock"))).toBe(false);
+  });
+
+  it("treats a fresh lock with no PID yet as busy", () => {
+    const t = setup();
+    fs.mkdirSync(t.p("support", "lock"), { recursive: true });
+    const r = t.run({ STUB_CHANGE: "1" });
+    expect(r.code).toBe(0);
+    expect(r.calls).toEqual([]);
   });
 
   it("passes the saved shrunk state to the refresh", () => {
