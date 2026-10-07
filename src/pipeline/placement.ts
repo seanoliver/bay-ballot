@@ -75,7 +75,11 @@ function districtPatterns(c: Contest): string[] {
       return [`(?:${ciWords("board of equalization")}|BOE),?\\s*${d}`];
     case "Court of Appeal": {
       const nth = `(?:${n}(?:st|nd|rd|th)|${ci(ORDINALS[Number(n)] ?? n)})`;
-      return [`${nth}\\s+${ciWords("district court of appeal")}`, `${ciWords("court of appeal")},?\\s*${nth}\\s+${ci("district")}`];
+      return [
+        `${nth}\\s+(?:${ci("district")}\\s+)?${ciWords("court of appeal")}s?`,
+        `${ciWords("court of appeal")}s?,?\\s*${nth}\\s+${ci("district")}`,
+        `${nth}\\s+${ciWords("appellate district")}`,
+      ];
     }
     case "City Council":
       return [`(?:${ci("city")}\\s+)?${ci("council")}(?:${ci("member")})?,?\\s*${d}`];

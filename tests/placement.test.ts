@@ -239,6 +239,11 @@ describe("markers across places", () => {
     expect(marks(one, [one, six], "First District Court of Appeal")).toBe(true);
     expect(marks(six, [one, six], "6th District Court of Appeal")).toBe(true);
     expect(marks(six, [one, six], "Court of Appeal, Sixth District")).toBe(true);
+    expect(marks(six, [one, six], "Sixth Appellate District")).toBe(true);
+    expect(marks(six, [one, six], "6th Appellate District: retain all five")).toBe(true);
+    expect(marks(one, [one, six], "First Court of Appeals")).toBe(true);
+    expect(marks(six, [one, six], "6th Court of Appeal")).toBe(true);
+    expect(marks(one, [one, six], "6th Court of Appeals")).toBe(false);
   });
   it("places a quote under the right city's Measure P", () => {
     const page: Page = {
