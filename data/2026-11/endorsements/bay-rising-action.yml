@@ -16,6 +16,9 @@ rejectedQuotes:
     reason: "does not stand alone: opens with a connector (audit 2026-10-06)"
   - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
     reason: "does not stand alone: refers back to the previous sentence (audit 2026-10-06)"
+  - text: This measure would also strengthen just cause for eviction by requiring landlords to provide one of a list of approved reasons before evicting a tenant.
+    reason: 'does not stand alone: "also" refers back (review 2026-10-06)'
+    contestId: redwood-city-measure-e
 picks:
   prop-1:
     pick: Y
@@ -26,6 +29,10 @@ picks:
   prop-4:
     pick: Y
     quotes:
+      - text: Wealthy donors and special interests continue to dominate election campaign spending.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Prop 4 would allow local governments the option to create systems that help candidates rely less on wealthy donors and public interests.
+        source: https://bayrisingaction.org/voterguide/
       - text: Money in politics sways our elections.
         source: https://bayrisingaction.org/voterguide/
   prop-5:
@@ -92,6 +99,8 @@ picks:
   prop-d:
     pick: N
     quotes:
+      - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
+        source: https://bayrisingaction.org/voterguide/
       - text: Prop D would make it harder for voters to have their voices heard by increasing the number of signatures a measure needs to reach the ballot.
         source: https://bayrisingaction.org/voterguide/
   prop-e:
@@ -123,7 +132,7 @@ picks:
   redwood-city-measure-e:
     pick: Y
     quotes:
-      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
+      - text: Half of Redwood City residents, including over 70% of Latino and Black households, are renters who pay an average of almost $4,000 for a 2-bedroom home.
         source: https://bayrisingaction.org/voterguide/
-      - text: This measure would also strengthen just cause for eviction by requiring landlords to provide one of a list of approved reasons before evicting a tenant.
+      - text: Measure E would strengthen protections for renters, including rent stabilization capped at 5% per year, with exemptions for single-family homes, condos, and all new units built since 1995.
         source: https://bayrisingaction.org/voterguide/

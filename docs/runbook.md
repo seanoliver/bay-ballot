@@ -65,6 +65,8 @@ Nothing is ever pushed straight to `main`.
 
 Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents) and svgop (slate is a JPG card). `npm run bb -- check` lists them.
 
+When you widen a guide's `areas` and run `extract --force-extract`, the model re-extracts every contest, not just the new area's. Review the quote diff for contests outside the new area (`git diff data/2026-11/endorsements/<guide>.yml`): restore any quotes it changed there unless you meant to change them, and add bad new ones to `rejectedQuotes`.
+
 To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text` and `reason`) in its endorsement file. Extraction never writes a listed quote back, and `npm run validate` fails if a pick quotes one. The San Mateo audits of 2026-10-06 seeded this list for courage-california, lwv-ssmc, lwv-ncsmc, green-foothills and bay-rising-action.
 
 Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasReasoning`) is overwritten by the next `extract`. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.

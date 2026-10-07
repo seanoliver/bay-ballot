@@ -57,7 +57,7 @@ picks:
     pick:
       - Malia M. Cohen
     quotes:
-      - text: In her tenure as controller, she has prioritized fairness and equity, supporting gender equity, workforce training and development, affordable housing, affordable and quality health care, climate change, and corporate accountability in her duties.
+      - text: As chair of the San Francisco Employee Retirement System, she led the effort to divest from fossil fuels.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   treasurer:
     pick:
@@ -68,9 +68,14 @@ picks:
     quotes:
       - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: Based on our Courage Score analysis, he supported the most progressive bills that made it to a vote and earned the Courage Score All-Star designation three times.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
+    quotes:
+      - text: As a member of the board, she has prioritized transparency and accountability, affordable housing, environmental protection, and veterans’ and homeowners’ services.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   assembly-19:
     pick:
       - Catherine Stefani
@@ -89,24 +94,26 @@ picks:
   prop-1:
     pick: Y
     quotes:
-      - text: VOTING YES will increase housing availability, and housing stability provides both personal and community benefits.
+      - text: VOTING YES will create significant economic benefits across the state, including over 50,000 new construction jobs, and $1.3 billion in state and local tax revenue.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-2:
     pick: Y
     quotes:
-      - text: VOTING YES will ensure that California maintains a larger state-based stockpile of rainy day funds that can be easily accessed during difficult times.
+      - text: VOTING YES will allow the state to stabilize its savings and continue to protect critical services, like education and public safety, from unexpected cuts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-3:
     pick: Y
     quotes:
       - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING YES will prevent a significant loss of revenue as federal cuts impact the state and Californians for years.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-4:
     pick: Y
   prop-5:
     pick: Y
     quotes:
-      - text: Recall elections are sometimes abused as a tool for political gamesmanship, allowing for the strategic removal of someone who has won a fair election, often by the people and interests who opposed the candidate in the original election.
+      - text: VOTING YES will reform the process to potentially reduce the number of recall special elections and save taxpayer dollars.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N
@@ -114,6 +121,8 @@ picks:
     pick: N
     quotes:
       - text: National and state data continues to show that voter fraud is extremely rare, making up a fraction of a percentage point of overall voting in the United States.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING NO will prevent the state from disenfranchising a registered voter if they cannot produce a document on demand.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-40:
     pick: Y
@@ -125,6 +134,9 @@ picks:
     pick: N
   prop-44:
     pick: N
+    quotes:
+      - text: Estimates indicate that noncompliance fees could total $1.7 billion in the first year if Proposition 44 passes, and many FQHC clinics would likely be forced to close or substantially cut services as a result.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-45:
     pick: N
     quotes:

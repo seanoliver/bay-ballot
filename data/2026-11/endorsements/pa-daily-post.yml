@@ -27,15 +27,14 @@ rejectedQuotes:
   - text: Dailey has earned broad, trusted regional support, including endorsements from his fellow council members, Santa Clara County Supervisor Margaret Abe-Koga, and District Attorney Jeff Rosen.
     reason: lists endorsers; gives no reason (audit 2026-10-06)
     contestId: valley-water-7
+  - text: Vote “Yes” on Measure P to protect our businesses, preserve our parking, and demand a smarter approach to housing growth.
+    reason: call to vote; gives no reason (review 2026-10-06)
+    contestId: menlo-park-measure-p
 picks:
   menlo-park-measure-p:
     pick: Y
     quotes:
       - text: By requiring voter approval before the city can sell, lease, or permanently alter our eight downtown parking lots, this measure establishes a vital safeguard for our vibrant commercial core.
-        source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
-      - text: Wiping out 556 essential parking spaces would hand a death sentence to the mom-and-pop storefronts, hardware stores and restaurants that are already struggling with rising vacancies.
-        source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
-      - text: Vote “Yes” on Measure P to protect our businesses, preserve our parking, and demand a smarter approach to housing growth.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
   palo-alto-council:
     pick:
