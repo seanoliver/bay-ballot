@@ -2,21 +2,39 @@ guide: mercury-news
 election: 2026-11
 status: published
 source: https://www.mercurynews.com/opinion/endorsements/
+extraSources:
+  - https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+  - https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+  - https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
 archived:
   - source: https://www.mercurynews.com/opinion/endorsements/
     snapshot: https://web.archive.org/web/20261006232819/https://www.mercurynews.com/opinion/endorsements/
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   lt-governor:
     pick:
       - Fiona Ma
+    quotes:
+      - text: Ma — who emerged first in the 16-way June primary with 19.1% — has already held one of the most consequential, stressful jobs in California in what may well have been the most turbulent years the state has seen in recent decades.
+        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+      - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
+        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+    quotes:
+      - text: Californians cannot afford Kim’s experiment.
+        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+      - text: There is only one candidate who grasps the complexity of this crisis and has the legislative experience to address it.
+        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
     pick:
       - Eleni Kounalakis
     quotes:
-      - text: The challenges awaiting the state’s banker require a tested political and economic operator.
-        source: https://www.mercurynews.com/opinion/endorsements/
-  insurance-commissioner:
-    pick:
-      - Ben Allen
+      - text: Kounalakis’ background, which spans state politics, international affairs and private industry, is well suited for the job.
+        source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+      - text: In an interview with our editorial board, Kounalakis demonstrated a clear command of this office’s responsibilities — from bond issuances and housing tax credit programs to state employee pension governance and infrastructure finance.
+        source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+      - text: Hawks’ black box of a résumé does not inspire confidence she can manage California’s $162 billion investment portfolio.
+        source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
