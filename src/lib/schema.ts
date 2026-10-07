@@ -103,7 +103,6 @@ export const EndorsementFile = z.object({
   fetchedAt: z.union([z.iso.date(), z.iso.datetime()]),
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(),
-  // The site blocks GitHub's runners; only the scheduled job on Sean's Mac refreshes it.
   fetchFrom: z.literal("local").optional(),
   extraSources: z.array(HttpUrl).optional(),
   manual: z.boolean().optional(),

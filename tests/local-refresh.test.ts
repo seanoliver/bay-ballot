@@ -4,7 +4,6 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-// Runs scripts/local-refresh.sh against throwaway git repos, with gh, npm, npx and pdftotext stubbed.
 const SCRIPT = path.join(__dirname, "..", "scripts", "local-refresh.sh");
 const hasZsh = spawnSync("zsh", ["-c", "true"]).status === 0;
 const isMac = process.platform === "darwin";
@@ -55,7 +54,7 @@ function setup() {
   fs.writeFileSync(p("gitconfig"), "[user]\n\tname = Test\n\temail = test@example.com\n[init]\n\tdefaultBranch = main\n");
   const env: Env = {
     ...process.env,
-    // HOME points into the sandbox so no default path can reach a real checkout or log.
+    // Keep HOME in the sandbox: the script's default paths point at real checkouts under ~.
     HOME: root,
     GIT_CONFIG_GLOBAL: p("gitconfig"),
     GIT_CONFIG_NOSYSTEM: "1",

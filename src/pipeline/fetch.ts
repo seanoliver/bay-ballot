@@ -63,10 +63,6 @@ const isPdfPath = (url: string): boolean => {
 
 const errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 
-// Bot walls and challenge pages. Matched only on short pages or the <title>, so a real page that
-// mentions "access denied" in passing is not mistaken for one.
-// Matched against the <title>, or the visible text of short pages only (scripts removed), so a
-// real page that mentions "access denied" in passing is not mistaken for a wall.
 const BLOCK_SIGNS: [string, RegExp][] = [
   ["cloudflare challenge", /just a moment\.\.\.|enable javascript and cookies to continue/i],
   ["cloudflare block", /attention required! \| cloudflare|sorry, you have been blocked/i],
@@ -78,8 +74,7 @@ const BLOCK_SIGNS: [string, RegExp][] = [
   ["access denied", /^\s*access denied\s*$|you don'?t have permission to access .* on this server/im],
   ["bot check", /verify(?:ing)? (?:that )?you are (?:a )?human|are you a robot\?/i],
 ];
-// Markup only a challenge page carries. Real Cloudflare sites also load
-// /cdn-cgi/challenge-platform/scripts/jsd/main.js on every page, so that alone means nothing.
+// Not /cdn-cgi/challenge-platform/scripts/jsd/main.js: real Cloudflare sites load it on every page.
 const BLOCK_MARKUP: [string, RegExp][] = [
   ["cloudflare challenge", /id=["']challenge-form["']|window\._cf_chl_opt|\/cdn-cgi\/challenge-platform\/h\//],
   ["perimeterx", /px-captcha/],
@@ -94,21 +89,20 @@ function visibleText(html: string): { title: string; text: string } {
   return { title, text: $("body").text().replace(/\s+/g, " ").trim() };
 }
 
-/** The kind of bot wall `html` is, or null for a real page. */
 export function detectBlock(html: string): string | null {
   const { title, text } = visibleText(html);
   const short = text.length <= MAX_BLOCK_PAGE_TEXT;
+  // Match only the <title> or a short page's text: a real page can say "access denied" in passing.
   for (const [name, re] of BLOCK_SIGNS) if (re.test(title) || (short && re.test(text))) return name;
   for (const [name, re] of BLOCK_MARKUP) if (re.test(html)) return name;
   return null;
 }
 
-/** The status of the last main-frame navigation (a challenge that solves itself navigates again). */
+// Not page.goto's status: a challenge that solves itself navigates again.
 export function finalStatus(responses: { status: number; mainFrameNavigation: boolean }[], fallback: number): number {
   return responses.filter((r) => r.mainFrameNavigation).at(-1)?.status ?? fallback;
 }
 
-/** Read the page, waiting out one navigation if the page moved while being read. */
 export async function contentAfterNavigation(content: () => Promise<string>, settle: () => Promise<void>): Promise<string> {
   try {
     return await content();
@@ -122,7 +116,7 @@ export async function contentAfterNavigation(content: () => Promise<string>, set
 export type FetchAttempt = { via: "http" | "browser"; status: number; bytes: number; blocked: string | null };
 type BrowserFetch = (url: string) => Promise<{ status: number; html: string }>;
 export type FetchOptions = {
-  browser?: boolean; // go straight to the browser (fetchWith: browser)
+  browser?: boolean;
   browserFetch?: BrowserFetch;
   onAttempt?: (a: FetchAttempt) => void;
 };
@@ -183,11 +177,6 @@ async function fetchHttp(url: string): Promise<HttpResult> {
   return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(html) } };
 }
 
-/**
- * Fetch a guide's page. A 403/429/503 or a bot-challenge page over plain HTTP is retried in a
- * real browser; a page still blocked there is an error, never content, so it is not extracted
- * or stored.
- */
 export async function fetchSource(url: string, opts: FetchOptions = {}): Promise<Fetched> {
   const browserFetch = opts.browserFetch ?? browserPage;
   const report = opts.onAttempt ?? (() => {});
@@ -201,7 +190,7 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     }
     const blocked = detectBlock(r.html);
     report({ via: "browser", status: r.status, bytes: Buffer.byteLength(r.html), blocked });
-    // An error status with a full, unblocked page means the wall let the browser through after the first response.
+    // A full unblocked page counts despite an error status: some walls let the browser through after a 403.
     const realPage = !blocked && visibleText(r.html).text.length > MAX_BLOCK_PAGE_TEXT;
     if (r.status >= 400 && !realPage) {
       throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);

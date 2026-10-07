@@ -1,12 +1,5 @@
 #!/bin/zsh
-# Daily refresh of the guides whose sites block GitHub's runners (fetchFrom: local).
-# Runs in its own worktree, opens or updates one PR, and lets it auto-merge only when every guard passes.
-#
-#   local-refresh.sh             refresh and open/update the PR
-#   local-refresh.sh --dry-run   fetch and gate pages only: no model calls, no commit, no PR
-#   --ref <git ref>              start from this ref instead of origin/main (testing a branch)
-#
-# To stop a pending auto-merge by hand: gh pr merge <number> --disable-auto (a label alone does not stop it).
+# See docs/runbook.md (Local refresh on Sean's Mac).
 set -u
 setopt pipe_fail
 
@@ -44,7 +37,6 @@ notify() {
 
 mkdir -p "$SUPPORT" "${LOG:h}"
 
-# Lock: a directory holding the owner's PID. Take it over if that process is gone or the lock is stale.
 if ! mkdir "$LOCK" 2>/dev/null; then
   owner="$(cat "$LOCK/pid" 2>/dev/null)"
   age=$(( $(date +%s) - $(stat -f %m "$LOCK" 2>/dev/null || date +%s) ))
@@ -62,7 +54,6 @@ if [ -f "$LOG" ] && [ "$(wc -l < "$LOG")" -gt "$MAX_LOG_LINES" ]; then
   trimmed="$(tail -n $((MAX_LOG_LINES / 2)) "$LOG")"
   print -r -- "$trimmed" > "$LOG"
 fi
-# Under launchd the plist already sends stdout and stderr to the log.
 if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 work="$(mktemp -d)"
@@ -75,14 +66,13 @@ cleanup() {
 trap cleanup EXIT
 trap 'log "stopped by signal"; exit 143' TERM INT
 
-# Watchdog: end a run that hangs. Kill the whole process group only when this script leads it
-# (launchd or an interactive job); otherwise just this script.
-# Its output goes straight to the log so it never holds this run's stdout open.
 main_pid=$$
+# Log directly, not to stdout: holding the tee pipe open would keep the run from ending.
 ( trap 'kill $nap 2>/dev/null; exit 0' TERM
   sleep "$WATCHDOG_SECS" & nap=$!
   wait $nap
   log "watchdog: run exceeded ${WATCHDOG_SECS}s; stopping"
+  # Signal the group so node and chromium die too, but only a group this script leads.
   if [ "$(ps -o pgid= -p $main_pid | tr -d ' ')" = "$main_pid" ]; then kill -TERM -- -$main_pid; else kill -TERM $main_pid; fi
 ) </dev/null >>"$LOG" 2>&1 &
 watchdog=$!
@@ -108,8 +98,6 @@ if [ ! -e "$WORKTREE" ]; then
   git -C "$SOURCE_REPO" worktree add -q --detach "$WORKTREE" "$ref" || fail "could not create $WORKTREE"
 fi
 
-# The worktree must be ours alone: a worktree of the source repo, its own top level, detached
-# (so no branch is ever reset), with nothing but data/ changed.
 check_worktree() {
   local top wt_common
   top="$(git -C "$WORKTREE" rev-parse --show-toplevel 2>/dev/null)" || fail "$WORKTREE is not a git worktree"
@@ -124,13 +112,12 @@ check_worktree() {
 check_worktree
 cd "$WORKTREE" || fail "no $WORKTREE"
 
-# Our own open PR (a fork's PR from a same-named branch is ignored).
 pr="$(gh_ pr list --head "$BRANCH" --state open --json number,isCrossRepository \
   --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
-# Never leave auto-merge armed while this run might push new data.
+# Disarm before any push: an armed PR merges whatever is pushed once ci passes, even if this run fails.
 if [ -n "$pr" ] && ! $dry_run; then gh_ pr merge "$pr" --disable-auto >/dev/null 2>&1 || true; fi
 
-hold() { # hold <reason>: keep the PR open for a person
+hold() {
   gh_ pr merge "$pr" --disable-auto >/dev/null 2>&1 || true
   gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
   gh_ pr edit "$pr" --add-label needs-review >/dev/null
@@ -158,8 +145,8 @@ if ! cmp -s "$0" "$WORKTREE/scripts/local-refresh.sh"; then
   log "WARNING: $stale_script"
 fi
 
-# Only the one key the pipeline needs, never echoed.
 if [ -f "$SOURCE_REPO/.env.local" ]; then
+  # rm first: umask applies only when the file is created.
   rm -f .env.local
   ( umask 077; grep -E '^BAYBALLOT_ANTHROPIC_API_KEY=' "$SOURCE_REPO/.env.local" | tail -n 1 > .env.local )
 elif ! $dry_run; then
@@ -184,7 +171,6 @@ code=$?
 log "refresh exit code $code"
 [ -f "$work/summary.md" ] && cat "$work/summary.md"
 
-# Remember shrunk guides so an unchanged shrunk page isn't re-extracted; keep the old state if the run crashed.
 if [ -f "$work/result.json" ] && ! $dry_run; then
   node -e 'const r = require(process.argv[1]); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash]))))' \
     "$work/result.json" > "$work/shrunk.json" && mv "$work/shrunk.json" "$SHRUNK_STATE"

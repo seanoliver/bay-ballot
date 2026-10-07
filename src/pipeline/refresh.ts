@@ -35,8 +35,8 @@ export type RefreshOptions = {
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
   baseline?: string;
-  scope?: "cloud" | "local"; // cloud skips fetchFrom: local guides; local refreshes only those
-  gateOnly?: boolean; // dry run: fetch and gate pages, but never call the model or store page text
+  scope?: "cloud" | "local";
+  gateOnly?: boolean;
 };
 
 type Usage = Anthropic.Messages.Usage;

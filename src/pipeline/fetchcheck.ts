@@ -14,7 +14,6 @@ export type FetchCheckRow = {
 
 type Deps = { fetchSource: (url: string, opts?: FetchOptions) => Promise<Fetched> };
 
-/** Fetch each source of the named guides the way refresh does, recording what came back. Writes nothing. */
 export async function fetchCheck(
   deps: Deps,
   { root, election, ids, browser = false }: { root: string; election: string; ids: string[]; browser?: boolean },

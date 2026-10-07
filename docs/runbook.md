@@ -89,7 +89,7 @@ A launchd job runs `scripts/local-refresh.sh` every day at 07:00 local time. It 
   - A lock in `~/Library/Application Support/bay-ballot/lock` stops overlapping runs. It is taken over if its process is gone or it is more than 3 hours old.
   - A watchdog stops a run after 2 hours.
   - `git fetch` is retried 3 times, 30 seconds apart.
-- **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`). `--dry-run` fetches and gates pages only: no model calls, no commit, no PR, no issue.
+- **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`). `--dry-run` fetches and gates pages only: no model calls, no commit, no PR, no issue. `--ref <git ref>` starts from that ref instead of `origin/main`, to test a branch.
 - **Logs:** `~/Library/Logs/bay-ballot-refresh.log`, trimmed to the last 2,500 lines once it passes 5,000.
 - **Install / uninstall:**
   - `npm run local-refresh:install` copies the script to `~/Library/Application Support/bay-ballot/` and loads `com.bayballot.local-refresh` into launchd.

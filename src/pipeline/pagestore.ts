@@ -23,9 +23,8 @@ const FILLER = /\b(?:on|at|by|yesterday|today)\b|[:\-–—.,]/gi;
 const COUNTER = /\b\d[\d,.]*\s*[kKmM]?\s+(?:comments?|shares?|likes?|views?|followers?|retweets?|reposts?|reactions?|replies)\b/g;
 const BOILERPLATE =
   /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content/i;
-// Not part of BOILERPLATE: a breadcrumb like "Home > Endorsements" must drop even though it has an endorsement word.
-// An image whose alt text is only its file name ("[endorsements-nov2026-teal.png]") says nothing; sites swap these freely.
 const IMAGE_FILE_ALT = /^\[[^\]]*\.(?:png|jpe?g|gif|webp|svg|heic|avif)\]$/i;
+// Not part of BOILERPLATE: a breadcrumb like "Home > Endorsements" must drop even though it has an endorsement word.
 const NAVIGATION = /^(?:you are here\b|breadcrumbs?\b)/i;
 const MAX_BOILERPLATE_LINE = 200;
 
