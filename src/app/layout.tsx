@@ -24,6 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
       <body className="min-h-full bg-muted dark:bg-background">
+        <noscript>
+          <style>{".js-only{display:none!important}"}</style>
+        </noscript>
         <header className="bg-background">
           <div className="border-b border-border bg-muted/40">
             <div className={`${FRAME} flex min-h-16 items-center justify-between gap-4`}>

@@ -18,7 +18,7 @@ import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { keepNumber } from "@/lib/display";
-import { FRAME } from "./frame";
+import { FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
@@ -31,9 +31,6 @@ import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
 const DESKTOP = "(min-width: 1024px)";
-// self-start: a grid item stretches to the row (the whole list), which made the sticky box a full
-// viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
-const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
   const mq = window.matchMedia(DESKTOP);
@@ -335,9 +332,6 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       <p aria-live="polite" className="sr-only">
         {announce}
       </p>
-      <noscript>
-        <style>{".js-only{display:none!important}"}</style>
-      </noscript>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
