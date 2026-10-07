@@ -202,7 +202,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     markHomeVisit(area);
     applyFilters(f);
   };
-  const filterProps = { filters, onChange: setFilters, guides, files, counties };
+  const filterProps = { filters, onChange: setFilters, guides, files, counties, typeGuides: allGuides };
   const carry = useCarriedQuery();
 
   useEffect(() => {

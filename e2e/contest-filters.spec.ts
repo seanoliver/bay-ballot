@@ -122,6 +122,17 @@ test.describe("contest page filters", () => {
     await expect(page).toHaveURL(/[?&]off=courage-california/);
   });
 
+  test("a type checked on an area list turns on that type's guides outside the area too", async ({ page }, info) => {
+    await page.goto(`${BALLOT}/sf?off=seiu-1021,sf-building-trades,sf-labor-council,smc-labor-council,south-bay-labor,uesf`);
+    await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+    const panel = await filterPanel(page, info);
+    const unions = panel.getByRole("checkbox", { name: /^Unions/ });
+    await expect(unions).toHaveAttribute("aria-checked", "false");
+    await unions.click();
+    await expect(unions).toHaveAttribute("aria-checked", "true");
+    await expect(page).not.toHaveURL(/smc-labor-council|south-bay-labor/);
+  });
+
   test("a contest no guide took a position on has no Filters", async ({ page }) => {
     await page.goto(`${BALLOT}/court-of-appeal-6`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -173,6 +184,16 @@ test.describe("desktop contest page layout", () => {
     const box = (await page.locator("[data-page-column]").boundingBox())!;
     expect(Math.round(box.x)).toBe(Math.round(listX));
     expect(Math.round(box.width)).toBe(768);
+  });
+
+  test("at 1024px the contest column is as wide as the list column", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 800 });
+    await openBallot(page);
+    const list = (await page.locator("[data-keys=list]").boundingBox())!;
+    await openContest(page);
+    const column = (await page.locator("[data-page-column]").boundingBox())!;
+    expect(Math.round(column.x)).toBe(Math.round(list.x));
+    expect(Math.round(column.width)).toBe(Math.round(list.width));
   });
 
   test("a contest with no positions keeps the column where the list column is", async ({ page }) => {
