@@ -39,7 +39,6 @@ export function nextFile(
   };
 }
 
-/** nextFile for an area-scoped extraction: only contests `inScope` accepts are added, replaced or dropped. */
 export function scopedNextFile(
   prev: EndorsementFile,
   picks: Record<string, Entry>,

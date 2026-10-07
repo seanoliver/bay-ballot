@@ -37,7 +37,6 @@ export type RefreshOptions = {
   baseline?: string;
   scope?: "cloud" | "local";
   gateOnly?: boolean;
-  /** Extract only these areas' new contests and leave the rest of each file as it is. */
   onlyAreas?: string[];
 };
 

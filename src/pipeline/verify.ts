@@ -228,13 +228,11 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   return { file: next, confirmed, held, droppedQuotes, missing: out.missing, notes };
 }
 
-/** The part of a file an area-scoped extraction sends to the verifier: the picks in `ids` and the holds `inScope` accepts. */
 export function auditPart(file: EndorsementFile, ids: string[], inScope: (contestId: string) => boolean): EndorsementFile {
   const held = (file.held ?? []).filter((h) => inScope(h.contestId));
   return { ...file, picks: Object.fromEntries(ids.map((id) => [id, file.picks[id]])), held: held.length ? held : undefined };
 }
 
-/** Puts an audited auditPart back into the whole file, leaving every other pick and hold as it was. */
 export function withAudited(file: EndorsementFile, audited: EndorsementFile, ids: string[], inScope: (contestId: string) => boolean): EndorsementFile {
   const picks: Record<string, Entry> = {};
   for (const [id, e] of Object.entries(file.picks)) {
