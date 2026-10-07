@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { ExternalLink } from "@/components/ExternalLink";
 import { PageColumn } from "@/components/PageColumn";
@@ -26,10 +27,76 @@ export default function AboutPage() {
     <PageColumn>
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
-        <p className="mt-2 text-base">
-          Bay Ballot puts every San Francisco, San Mateo County, Palo Alto and Mountain View voter guide&apos;s endorsements for the November 3, 2026 election side by side, one contest at a
-          time.
-        </p>
+        <div className="mt-4 rounded-xl border border-border bg-card p-5 sm:p-7">
+          <div className="space-y-4 text-base">
+            <p>
+              I&apos;ve lived in San Francisco since 2012, and both my kids are in SFUSD. Every election since 2016, I&apos;ve sat down with my ballot and a
+              dozen browser tabs: the Chronicle, the League of Women Voters, the local clubs and unions, a few advocacy groups. I kept a spreadsheet of
+              who endorsed what, to see where the guides agreed and where they split.
+            </p>
+            <p>
+              Over the years I started sharing that spreadsheet with friends and colleagues to help them vote, and kept running into the same problem.
+              Many of them live outside San Francisco, all over the Bay Area, and my spreadsheet only covered the city.
+            </p>
+            <p>
+              So I turned it into Bay Ballot: one place for every voter guide in the Bay Area, side by side, one contest at a time, with the reasons
+              each guide gives in its own words. It starts with San Francisco and the Peninsula and will grow from there. It stays up to date as guides
+              publish, and it&apos;s free for everyone.
+            </p>
+            <p>It doesn&apos;t tell you how to vote. It shows you what the people who spend time on this are recommending, and why.</p>
+          </div>
+          <div className="mt-5 flex items-center gap-3">
+            <div aria-hidden className="grid size-10 flex-none place-items-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+              SO
+            </div>
+            <div>
+              <div className="font-semibold">Sean Oliver</div>
+              <div className="text-sm text-muted-foreground">
+                San Francisco ·{" "}
+                <ExternalLink href="https://seanoliver.dev" className={LINK}>
+                  seanoliver.dev
+                </ExternalLink>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className="mt-8 border-border" />
+
+        <Section title="How guides are found">
+          <p>
+            For each area, I look for every voter guide that publishes endorsements: newspaper editorial boards, party committees, political clubs,
+            labor councils, advocacy groups and civic groups. A guide is added once it has published endorsements for this election.
+          </p>
+        </Section>
+
+        <Section title="How endorsements are collected">
+          <p>
+            An automated process reads each guide&apos;s published pages and records its endorsements, along with short quotes giving its reasons. A
+            separate check confirms every quote appears word for word on the guide&apos;s page. Anything that doesn&apos;t pass is held back until I
+            review it. I monitor the whole process closely.
+          </p>
+        </Section>
+
+        <Section title="Staying current">
+          <p>
+            Every guide is checked daily for updates. Each change is listed on the{" "}
+            <Link href="/changelog" className={LINK}>
+              changelog
+            </Link>
+            .
+          </p>
+        </Section>
+
+        <Section title="Open source">
+          <p>
+            All of the code and data are{" "}
+            <ExternalLink href={REPO} className={LINK}>
+              public on GitHub
+            </ExternalLink>
+            , so anyone can see exactly how it works.
+          </p>
+        </Section>
 
         <Section title="Counting">
           <List>
@@ -37,17 +104,6 @@ export default function AboutPage() {
             <li>A guide that ranks candidates counts toward its first choice.</li>
             <li>In races with more than one seat, each name a guide endorses counts.</li>
             <li>An area&apos;s page counts only the guides that cover that area. The Bay Area list counts every guide.</li>
-          </List>
-        </Section>
-
-        <Section title="Sources">
-          <List>
-            <li>
-              Endorsements come from each guide&apos;s own published pages. They are collected automatically, then checked against those pages in
-              a separate review pass.
-            </li>
-            <li>Quotes are verbatim and link to their source or an archived copy.</li>
-            <li>Guides that publish only a list of endorsements show no quotes.</li>
           </List>
         </Section>
 
