@@ -13,7 +13,7 @@ import { resultJson } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 
 const ELECTION = "2026-11";
-const REAL_BALLOT = path.join(__dirname, "..", "data", ELECTION, "ballot.yml");
+const REAL_DATA = path.join(__dirname, "..", "data");
 const url = (g: string) => `https://${g}.org/endorsements`;
 
 const PAGE = (g: string, stamp: string) =>
@@ -30,8 +30,9 @@ function setup(guides: string[], { stored = true }: { stored?: boolean } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-refresh-"));
   fs.mkdirSync(path.join(root, "guides"));
   fs.mkdirSync(path.join(root, ELECTION, "endorsements"), { recursive: true });
-  fs.copyFileSync(REAL_BALLOT, path.join(root, ELECTION, "ballot.yml"));
-  fs.copyFileSync(path.join(__dirname, "..", "data", "areas.yml"), path.join(root, "areas.yml"));
+  fs.copyFileSync(path.join(REAL_DATA, ELECTION, "ballot.yml"), path.join(root, ELECTION, "ballot.yml"));
+  fs.cpSync(path.join(REAL_DATA, ELECTION, "ballot"), path.join(root, ELECTION, "ballot"), { recursive: true });
+  fs.cpSync(path.join(REAL_DATA, "areas"), path.join(root, "areas"), { recursive: true });
   for (const g of guides) {
     fs.writeFileSync(path.join(root, "guides", `${g}.yml`), `id: ${g}\nname: ${g.toUpperCase()}\ndescription: d\ntype: club\nhomepage: https://${g}.org/\nareas: [sf]\n`);
     fs.writeFileSync(

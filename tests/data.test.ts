@@ -49,8 +49,8 @@ describe("data", () => {
     expect(validateElection(d).errors).toEqual([
       "dist: district jurisdiction requires within",
       "wide: a local district must be within one place",
-      "far: in no area (check its jurisdiction and data/areas.yml)",
-      "dist: in no area (check its jurisdiction and data/areas.yml)",
+      "far: in no area (check its jurisdiction and data/areas/)",
+      "dist: in no area (check its jurisdiction and data/areas/)",
     ]);
   });
   it("checks that a held pick is in one of the guide's areas", () => {
@@ -130,7 +130,7 @@ describe("data", () => {
       "duplicate contest id 'board'",
       "board: district jurisdiction requires a district",
       "board: district jurisdiction requires within",
-      "board: in no area (check its jurisdiction and data/areas.yml)",
+      "board: in no area (check its jurisdiction and data/areas/)",
     ]);
   });
   it("warns on too many names and pending files with picks", () => {
@@ -198,17 +198,18 @@ describe("loadElection failures", () => {
     return dir;
   }
   const ballot = fs.readFileSync(path.join(root, "2026-11/ballot.yml"), "utf8");
-  const areas = fs.readFileSync(path.join(root, "areas.yml"), "utf8");
+  const areas = { "areas/sf.yml": fs.readFileSync(path.join(root, "areas/sf.yml"), "utf8") };
   it("throws with the path on schema errors", () => {
-    const dir = tmp({ "2026-11/ballot.yml": "election: nope\n" });
+    const dir = tmp({ ...areas, "2026-11/ballot.yml": "election: nope\n" });
     expect(() => loadElection(dir, "2026-11")).toThrow(/2026-11\/ballot\.yml/);
   });
   it("throws with the path on YAML syntax errors", () => {
-    const dir = tmp({ "2026-11/ballot.yml": "a: [unclosed\n" });
+    const dir = tmp({ ...areas, "2026-11/ballot.yml": "a: [unclosed\n" });
     expect(() => loadElection(dir, "2026-11")).toThrow(/2026-11\/ballot\.yml/);
   });
   it("throws when filename differs from guide field", () => {
     const dir = tmp({
+      ...areas,
       "2026-11/ballot.yml": ballot,
       "2026-11/endorsements/other.yml": "guide: growsf\nelection: 2026-11\nstatus: pending\nfetchedAt: 2026-10-05\nhasReasoning: false\n",
     });
@@ -217,26 +218,24 @@ describe("loadElection failures", () => {
   const guide = (id: string) =>
     `id: ${id}\nname: G\ndescription: d\ntype: civic\nhomepage: https://g.org/\nareas: [sf]\n`;
   it("throws when a guide id differs from its filename", () => {
-    const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("b") });
+    const dir = tmp({ ...areas, "2026-11/ballot.yml": ballot, "guides/a.yml": guide("b") });
     expect(() => loadElection(dir, "2026-11")).toThrow(/guides\/a\.yml.*'b'/);
   });
   it("throws on duplicate guide ids", () => {
-    const dir = tmp({ "2026-11/ballot.yml": ballot, "guides/a.yml": guide("a"), "guides/b.yml": guide("a") });
+    const dir = tmp({ ...areas, "2026-11/ballot.yml": ballot, "guides/a.yml": guide("a"), "guides/b.yml": guide("a") });
     expect(() => loadElection(dir, "2026-11")).toThrow(/b\.yml/);
   });
   it("throws on non-.yml entries but ignores dotfiles", () => {
-    const ok = { "2026-11/ballot.yml": ballot, "areas.yml": areas, "guides/.gitkeep": "", "guides/.DS_Store": "" };
+    const ok = { ...areas, "2026-11/ballot.yml": ballot, "guides/.gitkeep": "", "guides/.DS_Store": "" };
     expect(() => loadElection(tmp(ok), "2026-11")).not.toThrow();
     expect(() => loadElection(tmp({ ...ok, "guides/growsf.yaml": guide("growsf") }), "2026-11")).toThrow(/growsf\.yaml/);
     expect(() => loadElection(tmp({ ...ok, "2026-11/endorsements/notes.txt": "x" }), "2026-11")).toThrow(/notes\.txt/);
   });
-  it("throws with the path when areas.yml is missing or has a duplicate id", () => {
-    expect(() => loadElection(tmp({ "2026-11/ballot.yml": ballot }), "2026-11")).toThrow(/areas\.yml/);
-    const dup = `areas:\n${areas.split("areas:\n")[1]}${areas.split("areas:\n")[1]}`;
-    expect(() => loadElection(tmp({ "2026-11/ballot.yml": ballot, "areas.yml": dup }), "2026-11")).toThrow(/duplicate area id 'sf'/);
+  it("throws with the path when the areas directory is missing", () => {
+    expect(() => loadElection(tmp({ "2026-11/ballot.yml": ballot }), "2026-11")).toThrow(/areas: no area files/);
   });
   it("throws when ballot election differs from directory", () => {
-    const dir = tmp({ "2026-06/ballot.yml": ballot });
+    const dir = tmp({ ...areas, "2026-06/ballot.yml": ballot });
     expect(() => loadElection(dir, "2026-06")).toThrow(/ballot\.yml: election '2026-11' does not match directory '2026-06'/);
   });
 });

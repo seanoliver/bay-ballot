@@ -5,8 +5,9 @@ Corrections and pull requests are welcome. Most fixes are a one-line change to a
 ## Data layout
 
 - `data/guides/<guide>.yml`: one file per voter guide (name, type, homepage, and `areas`, the area ids it covers).
-- `data/areas.yml`: the areas with their own page (`/2026-11/sf`), each with the jurisdictions it covers.
-- `data/2026-11/ballot.yml`: the contests on the ballot, with candidate names and aliases.
+- `data/areas/<area>.yml`: one file per area with its own page (`/2026-11/sf`): its jurisdictions, and an `order` that sets where it is listed. An area id must never equal a contest id.
+- `data/2026-11/ballot.yml`: the election, plus the statewide and regional contests (state offices and propositions, Congress, Assembly, Board of Equalization, Court of Appeal, regional measures), with candidate names and aliases.
+- `data/2026-11/ballot/<county>.yml`: one county's contests (county, city, school and special districts, local measures).
 - `data/2026-11/endorsements/<guide>.yml`: one guide's picks for the election, keyed by contest id.
 
 A pick looks like this:
@@ -24,7 +25,7 @@ picks:
     rankedCount: 1
 ```
 
-- `pick` is `Y` or `N` for a measure, or a list of names for a candidate race. Names must match `ballot.yml`.
+- `pick` is `Y` or `N` for a measure, or a list of names for a candidate race. Names must match the contest's candidates in the ballot files.
 - `ranked: true` means the list is in ranked order. `rankedCount` marks how many of the names are ranked.
 - Quotes are copied word for word from the page in `source`.
 

@@ -1,0 +1,170 @@
+# Sources: data/2026-11/sources/SF-Voter-Pamphlet-Nov2026.pdf (SF DOE ballot worksheet) and the SF DOE qualified-candidates page.
+placement:
+  Local candidates: Judicial
+  Local propositions: Regional measures
+contests:
+  # ---------- Local candidates ----------
+  - id: board-of-education
+    section: Local candidates
+    title: Board of Education
+    kind: candidate
+    seats: 3
+    candidates: [Autumn Brown Garibay, Virginia Cheung, Alida Fisher, Ryan Hazelton, Phil Kim, Laurance Lee, Reina Tello, Tim Tung]
+    aliases: { Phil Kim: [Philip Kim, Phillip Kim], Laurance Lee: [Laurence Lee] }
+    jurisdiction: { level: city, name: San Francisco }
+  - id: college-board
+    section: Local candidates
+    title: Community College Board
+    description: 4-year term ending January 8, 2031
+    kind: candidate
+    seats: 3
+    candidates: [Elijah Ball, Rome Moses Jones, Monroe Lace, Leah LaCroix, Jeremy Lee, Bunny McFadden, Erwin Tam, Lisa Palagi Wynn II]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: college-board-partial
+    section: Local candidates
+    title: Community College Board (partial term)
+    description: Remainder of the current term ending January 8, 2029
+    kind: candidate
+    candidates: [Ruth Ferguson]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: bart-8
+    section: Local candidates
+    title: BART Board, District 8
+    kind: candidate
+    candidates: [Sara Barz]
+    jurisdiction: { level: district, name: BART, district: "8", within: [{ level: county, name: San Francisco }] }
+  - id: assessor
+    section: Local candidates
+    title: Assessor-Recorder
+    kind: candidate
+    rankedChoice: true
+    candidates: [Joaquín Torres]
+    jurisdiction: { level: city, name: San Francisco }
+  - id: public-defender
+    section: Local candidates
+    title: Public Defender
+    kind: candidate
+    rankedChoice: true
+    candidates: [Mano Raju]
+    aliases: { Mano Raju: [Manohar Raju] }
+    jurisdiction: { level: city, name: San Francisco }
+  - id: supervisor-2
+    section: Local candidates
+    title: Board of Supervisors, District 2
+    kind: candidate
+    rankedChoice: true
+    candidates: [Nicholas Berg, Guy McCoy, Monthanus Ratanapakdee, Stephen Sherrill]
+    aliases: { Stephen Sherrill: [Stephen Sherill] }
+    jurisdiction: { level: district, name: Supervisor, district: "2", within: [{ level: county, name: San Francisco }] }
+  - id: supervisor-4
+    section: Local candidates
+    title: Board of Supervisors, District 4
+    kind: candidate
+    rankedChoice: true
+    candidates: [Albert Chow, Jeremy Julian Greco, Alan Wong]
+    jurisdiction: { level: district, name: Supervisor, district: "4", within: [{ level: county, name: San Francisco }] }
+  - id: supervisor-6
+    section: Local candidates
+    title: Board of Supervisors, District 6
+    kind: candidate
+    rankedChoice: true
+    candidates: [Alex Behrend, Matt Dorsey]
+    jurisdiction: { level: district, name: Supervisor, district: "6", within: [{ level: county, name: San Francisco }] }
+  - id: supervisor-8
+    section: Local candidates
+    title: Board of Supervisors, District 8
+    kind: candidate
+    rankedChoice: true
+    candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
+    aliases: { Michael T. Nguyen: [Michael Trung Nguyen] }
+    jurisdiction: { level: district, name: Supervisor, district: "8", within: [{ level: county, name: San Francisco }] }
+  - id: supervisor-10
+    section: Local candidates
+    title: Board of Supervisors, District 10
+    kind: candidate
+    rankedChoice: true
+    candidates:
+      - Pearci "PJ" Bastiany III
+      - Dionjay (DJ) Brookter
+      - Deandra Bryant
+      - Theo Ellington
+      - J.R. Eppler
+      - Ellsworth "Ell" M. Jennison, Jr.
+      - Mike Trouble Lin
+      - Jamo Muhammad
+      - Jessica Pessecow
+      - Shawn M. Richard
+    aliases: { Dionjay (DJ) Brookter: [Dion-Jay Brookter] }
+    jurisdiction: { level: district, name: Supervisor, district: "10", within: [{ level: county, name: San Francisco }] }
+
+  # ---------- Local propositions ----------
+  - id: prop-a
+    section: Local propositions
+    title: Proposition A
+    kind: measure
+    description: "Charter Changes Affecting Various City Departments and Commissions"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-b
+    section: Local propositions
+    title: Proposition B
+    kind: measure
+    description: "Establishing a Municipal Finance Corporation and a Public Bank"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-c
+    section: Local propositions
+    title: Proposition C
+    kind: measure
+    description: "Contributions to the Housing Trust Fund"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-d
+    section: Local propositions
+    title: Proposition D
+    kind: measure
+    description: "Changes to Ballot Measure Process"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-e
+    section: Local propositions
+    title: Proposition E
+    kind: measure
+    description: "City Administrator’s Authority and Changes to City Contracting"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-f
+    section: Local propositions
+    title: Proposition F
+    kind: measure
+    description: "Changes to Executive Branch Management"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-g
+    section: Local propositions
+    title: Proposition G
+    kind: measure
+    description: "Allowing Private Vehicles on the Upper Great Highway in Sunset Dunes Park"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-h
+    section: Local propositions
+    title: Proposition H
+    kind: measure
+    description: "Parcel Tax to Fund Muni Operations"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-i
+    section: Local propositions
+    title: Proposition I
+    kind: measure
+    description: "Changes to Real Property Transfer Tax"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }
+  - id: prop-j
+    section: Local propositions
+    title: Proposition J
+    kind: measure
+    description: "Removal of Foreclosure Exemption for Real Property Transfer Tax"
+    link: https://www.sf.gov/qualified-ballot-measures
+    jurisdiction: { level: city, name: San Francisco }

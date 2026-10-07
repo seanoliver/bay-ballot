@@ -11,3 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Changelog
 
 Every PR that changes what visitors see or what data the site shows adds an entry in the same PR: one file, `data/changelog/<YYYY-MM-DD>-<slug>.yml`, holding `date`, `type` (`new`, `data` or `fix`), `title`, and optional `details` and `pr`. Internal-only changes (tests, CI, refactors, docs) don't.
+
+## Ballot data
+
+Contests are split across `data/2026-11/ballot.yml` (statewide and regional) and `data/2026-11/ballot/<county>.yml` (one county each); areas are `data/areas/<id>.yml`. Adding a county adds files and never edits another county's. See "Ballot and area files" in `docs/runbook.md`.
