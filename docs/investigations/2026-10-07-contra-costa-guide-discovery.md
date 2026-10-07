@@ -309,3 +309,14 @@ Under the existing naming, the new contest ids would be like `concord-council-3`
     - No existing endorsement file has keys for `us-rep-8/9/10` or `assembly-11/14/15/16`, so adding the contests changes what a re-extract can return.
     - Per the runbook, after widening run `extract --force-extract` and review quote diffs for contests outside CoCo.
     - Courage California needs the CoCo county page added as an `extraSource`.
+
+---
+
+## Decisions (2026-10-07)
+
+- **Inclusion:** include any guide whose endorsements are clearly for Nov 3, 2026, however few contests it covers. RTM-only and props-only guides (Bike East Bay, EBHO, LWV Bay Area) are in. Undated guides wait until they're dated: Contra Costa Jewish Democrats is skipped for now.
+- **CoCoTax:** included, type `advocacy`. Its description says plainly that it is a taxpayers' association.
+- **ContraCosta.news:** type `newspaper`.
+- **Image-only guides** (CoCo GOP, Lamorinda Dem Club, and the Labor Council's federal and state picks) are `manual: true` and entered by hand from the images, the same as the existing manual guides.
+- **Uncontested or June-decided seats** are not in the ballot, which lists only contested November contests. Guides' picks for those seats are never recorded.
+- **Areas:** one `contra-costa` county area. No Richmond page.
