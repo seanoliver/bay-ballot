@@ -1,0 +1,26 @@
+id: contra-costa
+name: Contra Costa County
+kind: county
+order: 50
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Contra Costa }
+  - { level: city, name: Antioch }
+  - { level: city, name: Brentwood }
+  - { level: city, name: Clayton }
+  - { level: city, name: Concord }
+  - { level: city, name: Danville }
+  - { level: city, name: El Cerrito }
+  - { level: city, name: Hercules }
+  - { level: city, name: Lafayette }
+  - { level: city, name: Martinez }
+  - { level: city, name: Moraga }
+  - { level: city, name: Oakley }
+  - { level: city, name: Orinda }
+  - { level: city, name: Pinole }
+  - { level: city, name: Pittsburg }
+  - { level: city, name: Pleasant Hill }
+  - { level: city, name: Richmond }
+  - { level: city, name: San Pablo }
+  - { level: city, name: San Ramon }
+  - { level: city, name: Walnut Creek }
