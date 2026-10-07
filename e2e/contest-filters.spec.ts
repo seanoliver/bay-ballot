@@ -1,8 +1,9 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
+import { BALLOT, contestRow, openBallot, watchErrors } from "./helpers";
 
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
+const isPhone = (info: TestInfo) => info.project.name.startsWith("phone");
 const SHOW_ALL = "Show all guides on this contest";
 
 async function filterPanel(page: Page, info: TestInfo) {
@@ -171,6 +172,48 @@ test.describe("contest page filters", () => {
     await expect(page.getByText("1 guide hidden")).toBeVisible();
     expect(errors).toEqual([]);
   });
+});
+
+test("a filter set on a statewide contest page doesn't send the home page to an area", async ({ page }, info) => {
+  await page.goto(`${BALLOT}/governor`);
+  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toBeVisible();
+  const panel = await filterPanel(page, info);
+  await panel.getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
+  await expect(page).toHaveURL(/[?&]why=1/);
+  if (isPhone(info)) await panel.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("banner").getByRole("link", { name: "Bay Ballot" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+});
+
+test("a filter changed on a contest page is still applied after Back to the list, and after Forward", async ({ page }, info) => {
+  await openBallot(page, "?off=sf-gop");
+  const filtersButton = page.getByRole("button", { name: /^Filters/ });
+  const listSummary = isPhone(info) ? await filtersButton.textContent() : null;
+  await contestRow(page, "Proposition B").click();
+  await page.getByRole("link", { name: "Open contest page" }).filter({ visible: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Proposition B" })).toBeVisible();
+  await expect(page).toHaveURL(/\/prop-b\?off=sf-gop$/);
+  const panel = await filterPanel(page, info);
+  const why = panel.getByRole("checkbox", { name: "Only guides that explain their endorsements" });
+  await why.click();
+  await expect(page).toHaveURL(/[?&]why=1/);
+  if (isPhone(info)) {
+    await panel.getByRole("button", { name: "Close" }).click();
+    await expect(panel).toBeHidden();
+  }
+  await page.goBack();
+  await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+  await expect(page).toHaveURL(/[?&]why=1/);
+  await expect(page).toHaveURL(/[?&]off=sf-gop/);
+  // On a phone, opening the sheet here would push an entry and drop Forward, so read the button's count instead.
+  if (isPhone(info)) await expect(filtersButton).not.toHaveText(listSummary!);
+  else await expect(page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" })).toBeChecked();
+  await page.goForward();
+  await expect(page.getByRole("heading", { level: 1, name: "Proposition B" })).toBeVisible();
+  await expect(page).toHaveURL(/[?&]why=1/);
+  const again = await filterPanel(page, info);
+  await expect(again.getByRole("checkbox", { name: "Only guides that explain their endorsements" })).toBeChecked();
 });
 
 test.describe("desktop contest page layout", () => {
