@@ -74,7 +74,8 @@ export default function AboutPage() {
           <p>
             An automated process reads each guide&apos;s published pages and records its endorsements, along with short quotes giving its reasons. A
             separate check confirms every quote appears word for word on the guide&apos;s page. Anything that doesn&apos;t pass is held back until I
-            review it. I monitor the whole process closely.
+            review it. I monitor the whole process closely. Each quote links to its source or an archived copy. Guides that publish only a list of
+            endorsements show no quotes.
           </p>
         </Section>
 

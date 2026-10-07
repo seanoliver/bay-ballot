@@ -24,6 +24,8 @@ test("the About page explains how it works before the reference sections", async
     "Privacy",
     "Corrections",
   ]);
+  await expect(page.getByRole("main").getByText("Each quote links to its source or an archived copy.")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Guides that publish only a list of endorsements show no quotes.")).toBeVisible();
   await expect(page.getByRole("main").getByRole("link", { name: "changelog" })).toHaveAttribute("href", "/changelog");
   await expect(page.getByRole("main").getByRole("link", { name: "public on GitHub" })).toHaveAttribute("href", REPO);
 });
