@@ -332,7 +332,7 @@ test.describe("desktop keyboard", () => {
   test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
     await openBallot(page);
     await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
-    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k / Shift+?");
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k g / Shift+?");
   });
 
 
@@ -456,7 +456,7 @@ test.describe("desktop keyboard", () => {
     await openBallot(page, "?c=us-rep-11");
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
-    const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, /, and ?)" });
+    const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, g, /, and ?)" });
     await expect(toggle).toBeChecked();
     await toggle.click();
     await expect(toggle).not.toBeChecked();
@@ -476,7 +476,7 @@ test.describe("desktop keyboard", () => {
     await expect(toggle).not.toBeChecked();
     await expect(dialog.getByText("Search guides (off)")).toBeVisible();
     await expect(dialog.getByText("Show these shortcuts (off)")).toBeVisible();
-    await dialog.getByText("Single-key shortcuts (j, k, /, and ?)").click();
+    await dialog.getByText("Single-key shortcuts (j, k, g, /, and ?)").click();
     await expect(toggle).toBeChecked();
     await expect(dialog.getByText("Search guides", { exact: true })).toBeVisible();
   });
@@ -569,6 +569,228 @@ test("the changelog is linked from the footer and lists entries by month", async
   const launch = page.getByRole("link", { name: "Pull request #1 (opens in new tab)" });
   await expect(launch).toBeVisible();
   await expect(launch).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
+});
+
+test.describe("section nav", () => {
+  const bar = (page: Page) => page.locator("[data-section-nav]").getByRole("button");
+  const menu = (page: Page) => page.getByRole("menu");
+
+  test("the bar names the current place and section, and follows scrolling", async ({ page }) => {
+    await openBallot(page);
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
+    await page.locator("#section-state-judicial").scrollIntoViewIfNeeded();
+    await page.evaluate(() => {
+      const h = document.getElementById("section-state-judicial")!;
+      window.scrollTo(0, window.scrollY + h.getBoundingClientRect().top - 80);
+    });
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Judicial");
+  });
+
+  test("choosing a section jumps there and focuses its heading", async ({ page }) => {
+    await openBallot(page);
+    await bar(page).click();
+    await expect(menu(page)).toBeVisible();
+    await expect(menu(page).getByRole("menuitem", { name: /^California, \d+ contests?$/ })).toBeVisible();
+    await menu(page).getByRole("menuitem", { name: /^Judicial/ }).click();
+    const heading = page.locator("#section-state-judicial");
+    await expect(heading).toBeFocused();
+    await expect.poll(() => heading.evaluate((h) => Math.round(h.getBoundingClientRect().top)), { timeout: 3_000 }).toBeLessThan(100);
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Judicial");
+    await expect(page).not.toHaveURL(/#/);
+  });
+
+  test("works on an area page", async ({ page }) => {
+    await page.goto(`${BALLOT}/sf`);
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
+    await bar(page).click();
+    await menu(page).getByRole("menuitem", { name: /^Local candidates/ }).click();
+    await expect(page.locator("#section-county-san-francisco-local-candidates")).toBeFocused();
+  });
+
+  for (const path of [BALLOT, `${BALLOT}/san-mateo`]) {
+    test(`on ${path} the menu lists every place on the page, and every item has a heading to jump to`, async ({ page }) => {
+      await page.goto(path);
+      const places = await page.locator("[data-keys=list] h2").allTextContents();
+      expect(places).toContain("San Mateo County");
+      await bar(page).click();
+      const items = menu(page).getByRole("menuitem");
+      const hrefs = await items.evaluateAll((els) => els.map((e) => e.getAttribute("href")!));
+      expect(await page.evaluate((ids) => ids.filter((h) => !document.querySelector(h)), hrefs)).toEqual([]);
+      for (const place of places) await expect(menu(page).getByRole("menuitem", { name: new RegExp(`^${place}, \\d+ contests?$`) })).toHaveCount(1);
+      await menu(page).getByRole("menuitem", { name: /^Redwood City, \d+ contests?$/ }).click();
+      await expect(page.locator("#place-city-redwood-city")).toBeFocused();
+      await expect(bar(page)).toHaveAccessibleName(/^Jump to a section\. Now: Redwood City, /);
+    });
+  }
+
+  test("a link to a section lands with its heading below the bar", async ({ page }) => {
+    await page.goto(`${BALLOT}#section-state-judicial`);
+    const heading = page.locator("#section-state-judicial");
+    await expect(heading).toBeVisible();
+    await expect
+      .poll(async () => {
+        const navBottom = await page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+        return (await heading.evaluate((el) => el.getBoundingClientRect().top)) >= navBottom;
+      })
+      .toBe(true);
+  });
+
+  test("menu items name their place and contest count", async ({ page }) => {
+    await openBallot(page);
+    await bar(page).click();
+    await expect(menu(page).getByRole("group", { name: "California" }).getByRole("menuitem", { name: /^Judicial, \d+ contests?$/ })).toHaveCount(1);
+    await expect(menu(page).getByRole("menuitem", { name: /^Regional measures, 1 contest$/ })).toHaveCount(1);
+  });
+
+  test("with reduced motion the jump is instant", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await openBallot(page);
+    await bar(page).click();
+    await menu(page).getByRole("menuitem", { name: /^San Francisco/ }).click();
+    const top = await page.locator("#place-county-san-francisco").evaluate((h) => Math.round(h.getBoundingClientRect().top));
+    expect(top).toBeLessThan(100);
+  });
+});
+
+test.describe("desktop keyboard section nav", () => {
+  test.skip(({ isMobile }) => isMobile, "desktop only");
+  const bar = (page: Page) => page.locator("[data-section-nav]").getByRole("button");
+
+  test("g opens the menu on the current section; arrows, Enter and Esc work in it", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    const menu = page.getByRole("menu");
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole("menuitem", { name: /^Federal/ })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(bar(page)).toBeFocused();
+    await page.keyboard.press("g");
+    await expect(menu.getByRole("menuitem", { name: /^Federal/ })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("menuitem", { name: /^State, \d+ contests?$/ })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.locator("#section-state-state")).toBeFocused();
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, State");
+  });
+
+  test("stepping up with k never leaves the selected row under the bar", async ({ page }) => {
+    await openBallot(page);
+    const last = (await page.locator("[id^=row-d-]").last().getAttribute("id"))!.replace("row-d-", "");
+    await openBallot(page, `?c=${last}`);
+    await page.locator(`#row-d-${last}`).scrollIntoViewIfNeeded();
+    const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+    for (let i = 0; i < 15; i++) {
+      await page.keyboard.press("k");
+      const top = await page.evaluate(() => (document.activeElement as HTMLElement).closest("div")!.getBoundingClientRect().top);
+      expect(top).toBeGreaterThanOrEqual(await navBottom());
+    }
+  });
+
+  test("after a jump, j selects the first contest in that place and stays there", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    const first = (await page.locator("[aria-label^='San Francisco: '] a[id^=row-d-]").first().getAttribute("id"))!;
+    await page.keyboard.press("j");
+    await expect(page.locator(`#${first}`)).toBeFocused();
+    await expect(page.locator(`#${first}`)).toHaveAttribute("aria-current", "true");
+    await expect(page.locator(`#${first}`)).toBeInViewport();
+  });
+
+  test("a click on a row after a jump steps from that row", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    await page.locator("#row-d-treasurer").click();
+    await expect(page).toHaveURL(/[?&]c=treasurer/);
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(/[?&]c=attorney-general/);
+  });
+
+  test("Shift+Tab never leaves the focused link under the bar", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Chromium");
+    await openBallot(page);
+    await page.locator("footer a").last().focus();
+    const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+    for (let i = 0; i < 30; i++) {
+      await page.keyboard.press("Shift+Tab");
+      const top = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement;
+        return el.closest("[data-keys=list]") && !el.closest("[data-section-nav]") ? el.getBoundingClientRect().top : null;
+      });
+      if (top !== null) expect(top).toBeGreaterThanOrEqual(await navBottom());
+    }
+  });
+
+  test("a modified click on a menu item is left to the browser", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    const item = page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ });
+    const prevented = await item.evaluate((el) => !el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true, ctrlKey: true })));
+    expect(prevented).toBe(false);
+  });
+
+  test("k after a jump selects the last contest before that place", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    const before = (await page.locator("[aria-label^='Bay Area: '] a[id^=row-d-]").last().getAttribute("id"))!;
+    await page.keyboard.press("k");
+    await expect(page.locator(`#${before}`)).toBeFocused();
+  });
+
+  test("stepping with j across a section boundary updates the bar", async ({ page }) => {
+    await openBallot(page);
+    const ids = await page.locator("[aria-label='California: Federal'] a[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+    const firstState = await page.locator("[aria-label='California: State'] a[id^=row-d-]").first().getAttribute("id");
+    await openBallot(page, `?c=${ids.at(-1)}`);
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
+    await page.keyboard.press("j");
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${firstState!.replace("row-d-", "")}`));
+    await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, State");
+  });
+
+  test("g does nothing when single-key shortcuts are off, and the dialog lists it", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("Shift+?");
+    const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
+    await expect(dialog.getByText("Jump to a section")).toBeVisible();
+    await dialog.getByRole("switch").click();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await page.keyboard.press("g");
+    await page.waitForTimeout(300);
+    await expect(page.getByRole("menu")).toHaveCount(0);
+  });
+});
+
+test.describe("phone section nav", () => {
+  test.skip(({ isMobile }) => !isMobile, "phone only");
+
+  test("g does nothing on a phone", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.waitForTimeout(300);
+    await expect(page.getByRole("menu")).toHaveCount(0);
+  });
+
+  test("the bar sticks to the top without covering the Filters button, and its menu jumps", async ({ page }) => {
+    await openBallot(page);
+    const filters = page.getByRole("button", { name: /Filters/ });
+    const nav = page.locator("[data-section-nav]");
+    const [f, n] = [(await filters.boundingBox())!, (await nav.boundingBox())!];
+    expect(n.y).toBeGreaterThanOrEqual(f.y + f.height);
+    await page.evaluate(() => window.scrollBy(0, 2000));
+    await expect.poll(async () => Math.round((await nav.boundingBox())!.y)).toBe(0);
+    await nav.getByRole("button").tap();
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).tap();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    await expect(nav.getByRole("button")).toHaveAccessibleName(/^Jump to a section\. Now: San Francisco, /);
+  });
 });
 
 test.describe("pages without the filter column", () => {
@@ -747,5 +969,13 @@ test.describe("phone history budget", () => {
     await expect.poll(() => new URL(page.url()).searchParams.get("why"), { timeout: 12_000 }).toBe("1");
     await expect(page).toHaveURL(/[?&]c=governor/);
   });
+});
+
+test("without JavaScript the section bar isn't shown", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(BALLOT);
+  await expect(page.locator("[data-section-nav]")).toBeHidden();
+  await context.close();
 });
 

@@ -8,6 +8,7 @@ const SHORTCUTS: [string[], string][] = [
   [["↓", "j"], "Next contest"],
   [["↑", "k"], "Previous contest"],
   [["Esc"], "Close the details"],
+  [["g"], "Jump to a section"],
   [["/"], "Search guides"],
   [["?"], "Show these shortcuts"],
 ];
@@ -59,7 +60,7 @@ export function ShortcutsDialog({
           })}
         </dl>
         <label className="flex cursor-pointer items-center justify-between gap-4 border-t border-border pt-3 text-sm">
-          <span>Single-key shortcuts (j, k, /, and ?)</span>
+          <span>Single-key shortcuts (j, k, g, /, and ?)</span>
           <Switch checked={singleKeys} onCheckedChange={onSingleKeysChange} />
         </label>
       </DialogContent>

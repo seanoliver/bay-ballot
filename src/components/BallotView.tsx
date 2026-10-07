@@ -10,6 +10,7 @@ import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
+import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
 import { useBallotFilters, useQueryParam, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
+import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
@@ -40,6 +42,7 @@ const subscribeDesktop = (onChange: () => void) => {
 };
 const isDesktop = () => window.matchMedia(DESKTOP).matches;
 const STEP_URL_MS = 250;
+const msFromNow = (ms: number) => performance.now() + ms;
 // Focusable only while focused, so a click on the list's empty space still leaves focus on <body>.
 function focusTarget(el: HTMLElement | null): HTMLElement | null {
   if (!el) return null;
@@ -87,6 +90,53 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const all = useMemo(() => listed.flatMap((g) => g.sections.flatMap((s) => s.contests)), [listed]);
+  const nav = useMemo(() => navModel(listed), [listed]);
+  const [navSection, setNavSection] = useState<string | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
+  const [navStuck, setNavStuck] = useState(false);
+  const spyPausedUntil = useRef(0);
+  useEffect(() => {
+    let frame = 0;
+    const spy = () => {
+      frame = 0;
+      const bar = document.querySelector("[data-section-nav]");
+      const barBox = bar?.getBoundingClientRect();
+      setNavStuck(barBox !== undefined && barBox.top <= 0.5 && window.scrollY > 0);
+      if (performance.now() < spyPausedUntil.current) return;
+      const headings = nav.flatMap((p) => p.sections).map((x) => ({ id: x.id, top: document.getElementById(x.id)?.getBoundingClientRect().top ?? Infinity }));
+      const line = (barBox?.bottom ?? 0) + window.innerHeight * 0.25;
+      const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      setNavSection(spySection(headings, { line, atBottom, viewport: window.innerHeight }));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(spy);
+    };
+    spy();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [nav]);
+  const jumpedTo = useRef<string | null>(null);
+  useEffect(() => {
+    const forget = (e: PointerEvent) => {
+      if (!(e.target instanceof Element && e.target.closest("[data-section-menu]"))) jumpedTo.current = null;
+    };
+    window.addEventListener("pointerdown", forget, true);
+    return () => window.removeEventListener("pointerdown", forget, true);
+  }, []);
+  const jumpTo = (id: string) => {
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    spyPausedUntil.current = msFromNow(smooth ? 1000 : 100);
+    jumpedTo.current = id;
+    heading.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
+    setNavSection(nav.find((p) => p.id === id)?.sections[0]?.id ?? id);
+  };
   const [stepped, setStepped] = useState<string | null>(null);
   const [stepWrite] = useState(() =>
     trailing(STEP_URL_MS, ({ id, path }: { id: string; path: string }) => {
@@ -98,7 +148,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   useEffect(() => {
     const flush = () => stepWrite.flush();
     const flushIfDue = () => stepWrite.flushIfDue();
-    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null;
+    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null && el.closest("[data-section-menu]") === null;
     // Capture phase, so the write lands before a Link starts a client-side navigation.
     const onClick = (e: globalThis.MouseEvent) => {
       if (leaving(e.target)) flush();
@@ -165,6 +215,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
 
   // Desktop selection changes go through here so opening and closing animate.
   const select = (next: string | null) => {
+    jumpedTo.current = null;
     setAnimate(true);
     clearTimeout(exitTimer.current);
     const out = motionOutMs();
@@ -184,6 +235,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   const onRowClick = (e: MouseEvent<HTMLAnchorElement>, c: Contest) => {
     if (!isPlainClick(e)) return;
     e.preventDefault();
+    jumpedTo.current = null;
     if (window.matchMedia(DESKTOP).matches) {
       // detail 0: Enter on the link, not a mouse click.
       if (e.detail === 0 && selectedId === c.id) {
@@ -230,6 +282,10 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   useBallotKeys((action: KeyAction) => {
     // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
     if (!window.matchMedia(DESKTOP).matches) return false;
+    if (action === "jump") {
+      setNavOpen(true);
+      return;
+    }
     if (action === "help") {
       setShortcutsOpen(true);
       return;
@@ -243,16 +299,23 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
       return;
     }
-    const id = stepSelection(all.map((c) => c.id), selectedId, action);
+    const ids = all.map((c) => c.id);
+    const active = document.activeElement;
+    const heading = active instanceof HTMLHeadingElement && /^(place|section)-/.test(active.id) ? active.id : null;
+    const anchor = heading ?? jumpedTo.current;
+    jumpedTo.current = null;
+    const id = anchor ? stepFrom(nav, anchor, ids, action) : stepSelection(ids, selectedId, action);
     if (id === null) return false;
     setAnimate(true);
     clearTimeout(exitTimer.current);
     setExiting(null);
     setStepped(id);
     stepWrite.push({ id, path: window.location.pathname });
+    spyPausedUntil.current = msFromNow(200);
+    setNavSection(sectionOf(nav, id));
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
-    row?.scrollIntoView({ block: "nearest" });
+    row?.closest("li")?.scrollIntoView({ block: "nearest" });
   }, { singleKeys });
 
   return (
@@ -282,7 +345,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
         className="min-w-0 pb-10 outline-none"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
-        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k / Shift+?" : "ArrowDown ArrowUp") : undefined}
+        aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k g / Shift+?" : "ArrowDown ArrowUp") : undefined}
         data-keys="list"
         onKeyDown={onEscape}
       >
@@ -313,12 +376,15 @@ export function BallotView({ election, area, links, intro, groups, guides, files
             </a>
           ) : null}
         </div>
-        {listed.map((g) => (
+        <SectionNav places={nav} current={navSection} open={navOpen} stuck={navStuck} onOpenChange={setNavOpen} onJump={jumpTo} />
+        {listed.map((g, gi) => (
           <section key={g.key} aria-label={g.heading}>
-            <SectionHeading>{g.heading}</SectionHeading>
-            {g.sections.map((s) => (
+            <SectionHeading id={nav[gi].id}>{g.heading}</SectionHeading>
+            {g.sections.map((s, si) => (
               <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
-                <SectionHeading as="h3">{s.name}</SectionHeading>
+                <SectionHeading as="h3" id={nav[gi].sections[si].id}>
+                  {s.name}
+                </SectionHeading>
                 <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
                   {s.contests.map((c) => (
                     <li key={c.id}>
