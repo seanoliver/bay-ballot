@@ -9,7 +9,7 @@ import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
-import { pageGate, sourceSlug, storedText, type Gate } from "./pagestore";
+import { pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchMode, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
 import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
@@ -85,7 +85,9 @@ function writeStored(p: string, text: string): void {
   if (readStored(p) !== text) fs.writeFileSync(p, text);
 }
 
-type Fetchedpage = { source: Source; stored: string; path: string; gate: Gate; changedOutside?: boolean };
+const NOT_STORED = "page text not stored, so the next refresh re-extracts the whole guide";
+
+type Fetchedpage = { source: Source; stored: string; path: string; gate: Gate; outsideWarning?: string };
 
 async function refreshGuide(
   deps: RefreshDeps,
@@ -118,8 +120,13 @@ async function refreshGuide(
     const p = pagePath(opts.root, opts.election, id, url);
     const stored = storedText(fetched, { ballot });
     const old = readStored(p);
-    const changedOutside = outside ? pageGate(old, stored, outside) === "relevant" : false;
-    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), changedOutside });
+    const others = guide.areas.filter((a) => !opts.onlyAreas?.includes(a)).join(", ");
+    const outsideWarning = !outside
+      ? undefined
+      : old === null
+        ? relevantChange("", stored, outside) ? `new page ${url} also covers ${others}; ${NOT_STORED}` : undefined
+        : pageGate(old, stored, outside) === "relevant" ? `${url}: page changed outside ${opts.onlyAreas?.join(", ")}; ${NOT_STORED}` : undefined;
+    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
 
   const relevant = forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
@@ -168,9 +175,7 @@ async function refreshGuide(
     droppedByVerifier: 0,
     missing: [],
     usage: { extract: usage },
-    warnings: pages
-      .filter((p) => p.changedOutside)
-      .map((p) => `${p.source.url}: page changed outside ${opts.onlyAreas?.join(", ")}; page text not stored, so the next refresh re-extracts the whole guide`),
+    warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
   };
 
   const hasHeld = (next.held ?? []).some((h) => inScope(h.contestId));
@@ -199,7 +204,7 @@ async function refreshGuide(
     const file = path.join(opts.root, opts.election, "endorsements", `${id}.yml`);
     fs.writeFileSync(file, toYaml(next, { previous: fs.readFileSync(file, "utf8") }));
   }
-  for (const p of pages) if (!p.changedOutside) writeStored(p.path, p.stored);
+  for (const p of pages) if (!p.outsideWarning) writeStored(p.path, p.stored);
   return result;
 }
 

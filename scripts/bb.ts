@@ -193,7 +193,12 @@ async function runExtract(): Promise<void> {
     return !onlyAreas || (onlyAreas.every((a) => areas.includes(a)) && areas.some((a) => !onlyAreas.includes(a)));
   };
   const ids = flag("--all") ? Object.keys(data.endorsements).sort().filter(lists) : positional();
-  if (ids.length === 0 && !(flag("--all") && onlyAreas)) {
+  if (ids.length === 0 && flag("--all") && onlyAreas) {
+    console.error(`--only-areas: no guide lists ${onlyAreas.join(", ")} plus another area`);
+    process.exitCode = 1;
+    return;
+  }
+  if (ids.length === 0) {
     console.log(USAGE);
     process.exitCode = 1;
     return;

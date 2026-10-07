@@ -617,6 +617,26 @@ describe("onlyAreas (widening a guide)", () => {
     expect(md).toMatch(/page changed outside san-mateo; page text not stored, so the next refresh re-extracts the whole guide/);
   });
 
+  it("doesn't store a new page that also covers the guide's other areas, and warns", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const fresh = PAGE("alpha", "October 7, 2026").replace("No on Prop B", "Yes on Prop B");
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
+    const after = parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8"));
+    expect([after.picks["prop-b"].pick, after.picks.governor.pick]).toEqual(["N", ["Xavier Becerra"]]);
+    expect(summarize(results, { date: "2026-10-07" })).toContain(
+      `new page ${url("alpha")} also covers sf; page text not stored, so the next refresh re-extracts the whole guide`,
+    );
+  });
+
+  it("stores a new page that covers only the new area", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const fresh = "Alpha Peninsula picks\nSam Liccardo has delivered for families across the Peninsula.";
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(normalizePageText(fresh));
+    expect(summarize(results, { date: "2026-10-07" })).not.toMatch(/not stored/);
+  });
+
   it("stores the page when it changed only for the new area", async () => {
     const { root, client } = wide("sf, san-mateo", { stored: true });
     const stored = pagePath(root, ELECTION, "alpha", url("alpha"));
