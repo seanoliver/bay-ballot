@@ -243,6 +243,10 @@ describe("edge cases", () => {
 });
 
 describe("area-aware copy", () => {
+  it("doesn't double the word District in a special district's name", () => {
+    const water = contest({ id: "valley-water-7", title: "Santa Clara Valley Water District, District 7", kind: "candidate", candidates: ["Pete Dailey"], jurisdiction: { level: "district", name: "Santa Clara Valley Water District", district: "7", within: [{ level: "county", name: "Santa Clara" }] } });
+    expect(officeName(water, SF)).toBe("Santa Clara Valley Water District 7");
+  });
   it("names any Court of Appeal district's justices in the answer", () => {
     const six = contest({ id: "court-of-appeal-6", title: "6th District Court of Appeal (5 justices)", kind: "retention", jurisdiction: { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] } });
     expect(answerSentence(six, many(2, "Y"), AS_OF, BAY_AREA)).toBe("2 of 2 Bay Area voter guides recommend Yes on retaining the 6th District Court of Appeal justices, as of October 5, 2026.");

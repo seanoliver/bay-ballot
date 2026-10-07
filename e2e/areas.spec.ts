@@ -275,3 +275,10 @@ test("the Counties filter lists all three counties", async ({ page }, info) => {
   const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
   for (const c of ["San Francisco", "San Mateo", "Santa Clara"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
 });
+
+test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {
+  await page.goto(`${BALLOT}/valley-water-7`);
+  await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
+  await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toHaveAttribute("href", BALLOT);
+});

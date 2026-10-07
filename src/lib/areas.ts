@@ -28,6 +28,16 @@ export function contestArea<A extends AreaLike>(c: Pick<Contest, "jurisdiction">
   return found.length === 1 ? found[0] : null;
 }
 
+export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, areas: A[]): { area: A | null; place: PlaceName } {
+  const found = areasOf(c, areas);
+  if (found.length === 1) return { area: found[0], place: placeName(found[0]) };
+  const counties = new Set(found.map((a) => a.jurisdictions.find((j) => j.level === "county")?.name));
+  const [county] = counties;
+  const local = c.jurisdiction.level !== "state" && c.jurisdiction.level !== "region";
+  if (local && found.length > 1 && counties.size === 1 && county) return { area: null, place: { name: `${county} County`, short: `${county} County` } };
+  return { area: null, place: BAY_AREA };
+}
+
 export function areaGuides<G extends { areas: string[] }>(guides: G[], area: Pick<Area, "id">): G[] {
   return guides.filter((g) => g.areas.includes(area.id));
 }

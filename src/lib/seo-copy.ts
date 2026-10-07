@@ -30,6 +30,7 @@ export function officeName(c: Contest, place: PlaceName): string {
   return t
     .replace(/^United States Representative, /, "U.S. Rep. ")
     .replace(/^State Assembly, /, "Assembly ")
+    .replace(/ District, District /, " District ")
     .replace(/, District /, " District ");
 }
 

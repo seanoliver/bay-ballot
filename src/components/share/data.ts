@@ -1,4 +1,4 @@
-import { contestArea, placeName } from "@/lib/areas";
+import { contestPlace } from "@/lib/areas";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import { formatDate } from "@/lib/display";
 import { mostPositions, shareCard, shareLabel } from "@/lib/share";
@@ -11,7 +11,7 @@ export function contestShare(electionId: string, contestId: string) {
   const { guides, files } = ballotViewProps(d);
   return {
     card: shareCard(contest, activeEntries(contest.id, guides, files, EMPTY)),
-    right: shareLabel(d.ballot.date, placeName(contestArea(contest, d.areas)).name),
+    right: shareLabel(d.ballot.date, contestPlace(contest, d.areas).place.name),
   };
 }
 
