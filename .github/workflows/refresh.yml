@@ -5,10 +5,7 @@ on:
     - cron: "0 13 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+permissions: {}
 
 concurrency:
   group: data-refresh
@@ -22,8 +19,14 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    outputs:
+      sha: ${{ steps.pr.outputs.sha }}
+      pr: ${{ steps.pr.outputs.pr }}
+      code: ${{ steps.refresh.outputs.code }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +35,8 @@ jobs:
 
       - name: Start from the open refresh PR, if any
         id: base
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -75,6 +80,8 @@ jobs:
       - name: Read the open review issue
         id: issue
         if: steps.base.outputs.stop != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           issue="$(gh issue list --state open --app github-actions --search "in:title \"$ISSUE_TITLE\"" --json number,title --jq "map(select(.title == env.ISSUE_TITLE)) | .[0].number // empty")"
           echo "number=$issue" >> "$GITHUB_OUTPUT"
@@ -85,9 +92,11 @@ jobs:
 
       - name: Extract main's data as the changelog baseline
         if: steps.base.outputs.stop != 'true'
+        env:
+          MAIN_SHA: ${{ steps.base.outputs.main_sha }}
         run: |
           mkdir -p "$RUNNER_TEMP/main"
-          git archive "${{ steps.base.outputs.main_sha }}" data | tar -x -C "$RUNNER_TEMP/main"
+          git archive "$MAIN_SHA" data | tar -x -C "$RUNNER_TEMP/main"
           test -d "$RUNNER_TEMP/main/data"
 
       - name: Refresh
@@ -119,57 +128,39 @@ jobs:
       - name: Commit, push, and open or update the PR
         id: pr
         if: steps.changes.outputs.commit == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPEN_PR: ${{ steps.base.outputs.pr }}
+          CODE: ${{ steps.refresh.outputs.code }}
         run: |
           git add data/
           git commit -q -m "data: refresh $(date -u +%F)"
           git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           { cat summary.md; echo; echo "cc @seanoliver"; } > pr-body.md
-          pr="${{ steps.base.outputs.pr }}"
+          pr="$OPEN_PR"
           if [ -n "$pr" ]; then
             gh pr edit "$pr" --body-file pr-body.md
-            gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code ${{ steps.refresh.outputs.code }}); summary above is updated."
+            gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code $CODE); summary above is updated."
           else
             url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
             pr="${url##*/}"
           fi
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
-          labels="$(gh pr view "$pr" --json labels --jq '[.labels[].name] | join(",")')"
-          echo "labels=$labels" >> "$GITHUB_OUTPUT"
-
-      # PRs opened with GITHUB_TOKEN don't trigger other workflows, so check them here.
-      - name: Validate, test and build
-        id: checks
-        if: steps.changes.outputs.commit == 'true'
-        continue-on-error: true
-        run: npm run validate && npm test && npm run build
-
-      - name: Auto-merge a clean refresh
-        if: >-
-          steps.changes.outputs.commit == 'true' && steps.refresh.outputs.code == '0' &&
-          steps.checks.outcome == 'success' && !contains(steps.pr.outputs.labels, 'needs-review')
-        run: |
-          pr="${{ steps.pr.outputs.pr }}"
-          [ "$(gh pr view "$pr" --json isCrossRepository,headRefName --jq '"\(.isCrossRepository) \(.headRefName)"')" = "false $BRANCH" ] \
-            || { echo "PR #$pr is not this repo's $BRANCH; not merging."; exit 1; }
-          gh pr merge "$pr" --squash --delete-branch --match-head-commit "$(git rev-parse HEAD)"
-
-      - name: Leave the PR open for review
-        if: >-
-          steps.changes.outputs.commit == 'true' &&
-          (steps.refresh.outputs.code != '0' || steps.checks.outcome != 'success')
-        run: |
-          gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
-          gh pr edit "${{ steps.pr.outputs.pr }}" --add-label needs-review
-          gh pr comment "${{ steps.pr.outputs.pr }}" --body "Not auto-merged: refresh exit code ${{ steps.refresh.outputs.code }} (2 = held picks or a shrunk result, 1 = error), checks ${{ steps.checks.outcome }}."
 
       - name: Open, update or close the review issue
         if: always() && steps.refresh.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CODE: ${{ steps.refresh.outputs.code }}
+          ISSUE: ${{ steps.issue.outputs.number }}
+          COMMITTED: ${{ steps.changes.outputs.commit }}
         run: |
-          code="${{ steps.refresh.outputs.code }}"
-          issue="${{ steps.issue.outputs.number }}"
+          code="$CODE"
+          issue="$ISSUE"
           # Without result.json (a crash) keep the previous shrunk-state rather than wiping it.
           state="$(node -e "const fs = require('fs'); try { const r = JSON.parse(fs.readFileSync('result.json', 'utf8')); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash])))) } catch { try { console.log(JSON.stringify(JSON.parse(fs.readFileSync('shrunk-state.json', 'utf8')))) } catch { console.log('{}') } }")"
-          if [ "$code" != "0" ] && { [ "${{ steps.changes.outputs.commit }}" != "true" ] || [ "$state" != "{}" ]; }; then
+          if [ "$code" != "0" ] && { [ "$COMMITTED" != "true" ] || [ "$state" != "{}" ]; }; then
             {
               cat summary.md 2>/dev/null || echo "The refresh run failed before writing a summary: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
               echo
@@ -191,3 +182,109 @@ jobs:
       - name: Fail the run on a refresh error
         if: steps.refresh.outputs.code == '1'
         run: exit 1
+
+  # Separate from refresh so the job that runs repo code never holds actions: write. It checks out nothing.
+  gate:
+    needs: refresh
+    if: ${{ !cancelled() && needs.refresh.outputs.sha != '' && needs.refresh.outputs.pr != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      SHA: ${{ needs.refresh.outputs.sha }}
+      PR: ${{ needs.refresh.outputs.pr }}
+    steps:
+      - name: Run CI on the refresh branch
+        id: ci
+        continue-on-error: true
+        timeout-minutes: 25
+        run: |
+          echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+          start="$(date -u +%FT%TZ)"
+          gh workflow run ci.yml --ref "$BRANCH"
+          run=""
+          for _ in $(seq 24); do
+            sleep 5
+            run="$(gh run list --workflow ci.yml --branch "$BRANCH" --event workflow_dispatch --commit "$SHA" --limit 5 --json databaseId,createdAt \
+              --jq "map(select(.createdAt >= \"$start\")) | .[0].databaseId // empty" || true)"
+            [ -n "$run" ] && break
+          done
+          [ -n "$run" ] || { echo "No CI run for $SHA appeared within 2 minutes."; exit 1; }
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/$run" >> "$GITHUB_OUTPUT"
+          gh run watch "$run" --exit-status --interval 15 > /dev/null
+
+      - name: Rerun failed CI jobs once
+        id: rerun
+        if: steps.ci.outcome == 'failure' && steps.ci.outputs.run != ''
+        continue-on-error: true
+        timeout-minutes: 25
+        env:
+          RUN: ${{ steps.ci.outputs.run }}
+        run: |
+          status="$(gh run view "$RUN" --json status --jq .status)"
+          [ "$status" = "completed" ] || { echo "CI run $RUN is $status, not completed; not rerunning."; exit 1; }
+          gh run rerun "$RUN" --failed
+          for _ in $(seq 12); do
+            sleep 5
+            [ "$(gh run view "$RUN" --json status --jq .status || true)" != "completed" ] && break
+          done
+          gh run watch "$RUN" --exit-status --interval 15 > /dev/null
+
+      - name: Auto-merge a clean refresh, or leave it for review
+        env:
+          CODE: ${{ needs.refresh.outputs.code }}
+          CI: ${{ steps.ci.outcome == 'success' || steps.rerun.outcome == 'success' }}
+          CI_URL: ${{ steps.ci.outputs.url }}
+        run: |
+          review() {
+            gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force || true
+            gh pr edit "$PR" --add-label needs-review || true
+            gh pr comment "$PR" --body "$1"
+          }
+          # Exit 1 is a fetch error the next run can recover from, so it gets a comment but no needs-review label.
+          if [ "$CODE" = "1" ]; then
+            gh pr comment "$PR" --body "Not auto-merged: refresh exit code 1 (a fetch or run error); the next clean run can merge it. CI: $CI_URL"
+            exit 0
+          fi
+          if [ "$CODE" != "0" ] || [ "$CI" != "true" ]; then
+            review "Not auto-merged: refresh exit code $CODE (2 = held picks or a shrunk result); CI $([ "$CI" = "true" ] && echo passed || echo "failed or didn't start"): $CI_URL"
+            exit 0
+          fi
+          # Read at merge time: a label added while CI ran must stop the merge.
+          if ! state="$(gh pr view "$PR" --json isCrossRepository,headRefName,labels,changedFiles \
+            --jq '"\(.isCrossRepository) \(.headRefName) \(any(.labels[]; .name == "needs-review")) \(.changedFiles)"')"; then
+            review "Couldn't read the PR's state; not auto-merging."
+            exit 1
+          fi
+          read -r cross head labeled changed <<< "$state"
+          [ "$cross $head" = "false $BRANCH" ] || { echo "PR #$PR is not this repo's $BRANCH; not merging."; exit 1; }
+          [ "$labeled" = "false" ] || { echo "PR #$PR is labeled needs-review; not merging."; exit 0; }
+          if [ "$changed" = "0" ]; then
+            gh pr close "$PR" --delete-branch --comment "No net changes against main; closing."
+            exit 0
+          fi
+          # A rename lists only its new name in .filename, so both names must be under data/.
+          if ! files="$(gh api --paginate "repos/$GH_REPO/pulls/$PR/files" --jq '.[] | "\(.filename)\t\(.previous_filename // "")"')"; then
+            review "Couldn't list the PR's files; not auto-merging."
+            exit 1
+          fi
+          listed="$(printf '%s\n' "$files" | grep -c . || true)"
+          outside="$(printf '%s\n' "$files" | awk -F'\t' 'NF && ($1 !~ /^data\// || ($2 != "" && $2 !~ /^data\//))' | grep -c . || true)"
+          if [ "$listed" != "$changed" ]; then
+            review "File count mismatch: the PR changes $changed files but the API lists $listed; not auto-merging."
+            exit 1
+          fi
+          if [ "$outside" != "0" ]; then
+            review "Touches files outside data/; not auto-merging."
+            exit 1
+          fi
+          if ! out="$(gh pr merge "$PR" --squash --delete-branch --match-head-commit "$SHA" 2>&1)"; then
+            review "Auto-merge failed: $out"
+            exit 1
+          fi
