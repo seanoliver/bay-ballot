@@ -104,7 +104,7 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
 ### Running it locally
 
 - `npm run bb -- refresh --summary summary.md` does the same as the workflow, minus the PR.
-- `npm run bb -- extract <guide...>` re-checks named guides; `--force-extract` extracts even when the pages look unchanged.
+- `npm run bb -- extract <guide...>` re-checks named guides; `--force-extract` extracts even when the pages look unchanged. `--only-areas <area>` extracts only the contests a widened guide's new area adds (see Manual guides).
 - `npm run bb -- verify --all` re-audits every guide without re-extracting; `verify <guide>` does one.
 - `npm run bb -- pages --seed` stores today's page text for every guide without extracting, e.g. after adding a guide's `extraSources` by hand.
 - Locally the API key comes from `.env.local` (`BAYBALLOT_ANTHROPIC_API_KEY=...`), never from `ANTHROPIC_API_KEY`.
@@ -114,7 +114,15 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
 
 Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents) and svgop (slate is a JPG card). `npm run bb -- check` lists them.
 
-When you widen a guide's `areas` and run `extract --force-extract`, the model re-extracts every contest, not just the new area's. Review the quote diff for contests outside the new area (`git diff data/2026-11/endorsements/<guide>.yml`): restore any quotes it changed there unless you meant to change them, and add bad new ones to `rejectedQuotes`.
+When you widen a guide's `areas`, add the area to `data/guides/<guide>.yml` (and any new `extraSources`), then run `npm run bb -- extract <guide...> --only-areas <area>[,<area>]`, for example `--only-areas marin`.
+
+- The model is offered only the contests the new areas add to the guide's ballot: their county and city contests, and a shared district (a new Congress or Assembly district) that none of the guide's other areas covers. Statewide contests and shared contests the guide already had are not re-extracted.
+- Only those contests are added, replaced or dropped. Every other pick, quote, `ranked`/`rankedCount`, held pick and `hasReasoning` stays byte-for-byte as it was, so the diff and the changelog show only the new area.
+- Only the new or changed picks, and holds in those contests, are sent to `verify`.
+- Pages are fetched, stored and archived as for a normal extract. It always extracts, even when the pages look unchanged.
+- It refuses an area id that doesn't exist, or one the guide doesn't list in `areas`. With `--all`, it runs only the guides that list every given area.
+
+Use a full `extract --force-extract` only to re-read a guide whose page changed. It re-extracts every contest, so the model may reword quotes, re-rank or have picks held in the guide's other areas: review `git diff data/2026-11/endorsements/<guide>.yml`, restore anything it changed by mistake, and add bad new quotes to `rejectedQuotes`.
 
 To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text` and `reason`) in its endorsement file. Extraction never writes a listed quote back, and `npm run validate` fails if a pick quotes one. The San Mateo audits of 2026-10-06 seeded this list for courage-california, lwv-ssmc, lwv-ncsmc, green-foothills and bay-rising-action.
 

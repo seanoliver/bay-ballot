@@ -39,6 +39,25 @@ export function nextFile(
   };
 }
 
+/** nextFile for an area-scoped extraction: only contests `inScope` accepts are added, replaced or dropped. */
+export function scopedNextFile(
+  prev: EndorsementFile,
+  picks: Record<string, Entry>,
+  inScope: (contestId: string) => boolean,
+  today: string,
+  archived?: ArchivedSource[],
+): EndorsementFile {
+  const merged: Record<string, Entry> = {};
+  for (const [id, e] of Object.entries(prev.picks)) {
+    if (!inScope(id)) merged[id] = e;
+    else if (picks[id]) merged[id] = picks[id];
+  }
+  for (const [id, e] of Object.entries(picks)) if (!(id in merged)) merged[id] = e;
+  const next = nextFile({ ...prev, held: prev.held?.filter((h) => inScope(h.contestId)) }, merged, prev.hasReasoning, today, archived);
+  const held = [...(prev.held ?? []).filter((h) => !inScope(h.contestId)), ...(next.held ?? [])];
+  return { ...next, held: held.length ? held : undefined };
+}
+
 export function shrinkWarning(
   id: string,
   prev: Record<string, Entry>,

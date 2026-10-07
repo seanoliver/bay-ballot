@@ -16,12 +16,13 @@ import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costOf, exitCodeFor, resultJson, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
-import { guideBallot } from "../src/pipeline/scope";
+import { guideBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
+                                              [--only-areas <area[,area...]>]
        npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--baseline <data dir>] [--archive]
                              [--local-only] [--no-extract]
        npm run bb -- verify <guide...> | --all [--browser]
@@ -45,13 +46,18 @@ extract rewrites each guide's picks from its pages, overwriting hand edits to pi
 that empties or more than halves the previous picks. Unless --no-verify, extract then
 runs verify on each guide whose picks or quotes changed.
 
+extract --only-areas marin[,contra-costa] is for widening a guide's areas: it always
+extracts, but only the contests those areas add to the guide's ballot, and verifies only
+the picks that changed there. Every other pick, quote and hold in the file stays as it is.
+Each area must already be in the guide's areas; with --all, only guides listing them run.
+
 verify has a separate model audit each guide's picks and quotes against its pages.
 Unconfirmed picks move to 'held' (not published) and unconfirmed quotes are dropped;
 the command exits non-zero when anything is held.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
-const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state", "--baseline"];
+const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state", "--baseline", "--only-areas"];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
 const REFRESH_BUDGET = 20;
@@ -162,8 +168,21 @@ function totalsLine(results: GuideResult[]): string {
 
 async function runExtract(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
-  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : positional();
-  if (ids.length === 0) {
+  const onlyAreas = option("--only-areas")?.split(",").map((a) => a.trim()).filter(Boolean);
+  if (flag("--only-areas") && !onlyAreas?.length) {
+    console.log(USAGE);
+    process.exitCode = 1;
+    return;
+  }
+  const unknown = onlyAreas && unknownAreaError(data.areas, onlyAreas);
+  if (unknown) {
+    console.error(unknown);
+    process.exitCode = 1;
+    return;
+  }
+  const lists = (id: string) => onlyAreas?.every((a) => data.guides.find((g) => g.id === id)?.areas.includes(a)) ?? true;
+  const ids = flag("--all") ? Object.keys(data.endorsements).sort().filter(lists) : positional();
+  if (ids.length === 0 && !(flag("--all") && onlyAreas)) {
     console.log(USAGE);
     process.exitCode = 1;
     return;
@@ -171,7 +190,7 @@ async function runExtract(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION, ids,
     browser: flag("--browser"), archive: flag("--archive"), force: flag("--force"),
-    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"),
+    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas,
   });
   console.log(`\n${totalsLine(results)}\nReview with: git diff data/`);
   process.exitCode = exitCodeFor(results);
