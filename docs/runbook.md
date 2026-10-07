@@ -58,7 +58,25 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 
 - `npm run bb -- fetch-check <guide...>` shows what each attempt got (status, bytes, which wall), writing nothing. Run it locally, and on a runner if needed, to compare.
 - As of 2026-10-07, these are blocked on the runners even in the browser: cadc, d11-dems, league-pissed-off-voters and milk-club (NationBuilder sites behind a Cloudflare challenge), and sf-chronicle (client challenge). sf-green-party gets through via the browser retry.
-- Until those are handled another way, refresh them from a laptop: `npm run bb -- extract <guide>` and commit.
+- Those guides are marked `fetchFrom: local` in their endorsement files. The GitHub job skips them and lists them as "local only" (not a failure); the local job below refreshes them.
+
+### Local refresh on Sean's Mac
+
+A launchd job runs `scripts/local-refresh.sh` every day at 07:00 local time. It refreshes only the `fetchFrom: local` guides, from a home connection that the sites don't block.
+
+- **Where it runs:** its own worktree at `~/code/projects/bay-ballot-refresh`, created on first run and reset each run (no other checkout is touched).
+- **What it runs:** `bb refresh --local-only` with main's data as the changelog baseline, the same pipeline as the cloud job: page gate, extract, verify, shrink guard, summary and exit codes. It reads the API key from `.env.local` (copied from `~/code/projects/bay-ballot` if missing).
+- **Nothing relevant changed:** no commit, no PR.
+- **Something changed:** it commits to `data/refresh-local` and opens or updates one PR with the summary and a cc to Sean. While that PR is open, later runs continue from its branch with `main` merged in, as the cloud job does.
+- **Auto-merge:** enabled only when the refresh exited 0, every changed file is under `data/`, and the PR has no `needs-review` label. GitHub merges once the required `ci` check passes; the PRs are pushed from Sean's account, so CI runs on them normally. Otherwise the PR gets `needs-review` and a comment saying why.
+- **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`). `--dry-run` fetches and gates pages only: no model calls, no commit, no PR.
+- **Logs:** `~/Library/Logs/bay-ballot-refresh.log`, trimmed to the last 2,500 lines once it passes 5,000.
+- **Install / uninstall:**
+  - `npm run local-refresh:install` copies the script to `~/Library/Application Support/bay-ballot/` and loads `com.bayballot.local-refresh` into launchd. Re-run it after the script changes.
+  - `npm run local-refresh:uninstall` removes it.
+  - `launchctl kickstart gui/$(id -u)/com.bayballot.local-refresh` runs it immediately.
+- **Mac asleep at 07:00:** launchd runs a missed calendar job when the Mac next wakes (one run, however many days were missed). If the Mac is off, nothing runs until the next 07:00 after it is back on.
+
 
 ### Running it locally
 

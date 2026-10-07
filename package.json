@@ -10,7 +10,10 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "validate": "tsx scripts/validate.ts",
-    "bb": "tsx scripts/bb.ts"
+    "bb": "tsx scripts/bb.ts",
+    "local-refresh": "zsh scripts/local-refresh.sh",
+    "local-refresh:install": "zsh scripts/local-refresh-launchd.sh install",
+    "local-refresh:uninstall": "zsh scripts/local-refresh-launchd.sh uninstall"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
