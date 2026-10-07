@@ -25,7 +25,7 @@ Researched 2026-10-07. Follows the structure of `2026-10-06-peninsula-guide-disc
 | `cclabor.org` is the Labor Council | It doesn't resolve. The council is **https://www.cclabor.net**. |
 | `wccdems.org` and `westcountydemocrats.org` are West County clubs | They are in Pennsylvania and Missouri. The CoCo club is **westcountydemocraticclub.com**. |
 | `eastcountytoday.net` | A dead archive. The publisher moved to **contracosta.news**. |
-| SEIU 1021's `/2026endorsements` (the URL in `data/guides/seiu-1021.yml`) | That is the **June** page. November is **https://www.seiu1021.org/post/election-endorsements-nov-3-2026** (posted 9/28). |
+| SEIU 1021's `/2026endorsements` (the guide's `previousElectionLink`) | That is the **June** page. November is **https://www.seiu1021.org/post/election-endorsements-nov-3-2026** (posted 9/28), which the endorsement file already uses as `source`. |
 | East Bay Times endorsements are a separate board | The East Bay Times and Mercury News share one board (Bay Area News Group). Same editorials, same slugs; the eastbaytimes.com pages declare the mercurynews.com version as canonical. Widen `mercury-news`; don't add a second guide. |
 | The East Bay Times endorsement page has CoCo picks | All of its CoCo items are from **June**: Urban Limit Line, Clerk Connelly, No on county sales tax, CCCCD Measure G, Assessor Robb, Superintendent Eaton. November has statewide picks only. |
 | Guides endorsing Richmond City Council (Sierra Club: Robinson, Zepeda; 350 Bay Area: Robinson) | Richmond held its first primary on June 2. All three council seats (D2 Zepeda, D3 Robinson, D4 Bana) were won outright in June. **Only Mayor** goes to the November runoff (Jiménez vs Anderson). Ignore the council picks. |
@@ -288,7 +288,7 @@ Under the existing naming, the new contest ids would be like `concord-council-3`
    - Lamorinda Dem Club (about 36 JPGs; only checkmarked names count; 5 cities unread)
    - CC Labor Council (federal and state headshots; the local list is text)
 5. **Off-ballot picks.** Many guides endorse uncontested seats (Martinez Mayor/D4, Oakley D4, EBMUD 2/4, WCCUSD 4/5, Pittsburg USD, Stege, BART 2, AC Transit 1) or Richmond council seats already decided in June. Extraction must not create contests for these. Consider `rejectedQuotes`, or a note in the extraction prompt.
-6. **June/November mixing:** East Bay Times and 350 Bay Area Action. The SEIU 1021 guide file's `previousElectionLink` points at the June page; the November `source` must be the `/post/` URL.
+6. **June/November mixing:** East Bay Times and 350 Bay Area Action. SEIU 1021's `previousElectionLink` is the June page; its endorsement file's `source` is already the November `/post/` URL.
 7. **Dual endorsements:** SEIU 1021 Concord D3 (Kuslits and Acosta Beere), and Labor Council CCWD Div 2 (Fitzpatrick or Picard).
 8. **Unverified:**
    - Richmond Progressive Alliance (no endorsements page).
@@ -320,3 +320,27 @@ Under the existing naming, the new contest ids would be like `concord-council-3`
 - **Image-only guides** (CoCo GOP, Lamorinda Dem Club, and the Labor Council's federal and state picks) are `manual: true` and entered by hand from the images, the same as the existing manual guides.
 - **Uncontested or June-decided seats** are not in the ballot, which lists only contested November contests. Guides' picks for those seats are never recorded.
 - **Areas:** one `contra-costa` county area. No Richmond page.
+
+## What each shared guide needs for Contra Costa
+
+These guides are shared with the other county branches, so this branch does not edit them. They will be widened once for all counties after the ballot split.
+
+For every guide below, add `contra-costa` to `areas` in `data/guides/<id>.yml`. "Sources" lists only URLs to add to `data/2026-11/endorsements/<id>.yml`; each guide's current `source` stays.
+
+| Guide | Sources to add | CoCo picks to expect | Notes |
+|---|---|---|---|
+| sierra-club-sf-bay | none; CoCo picks are on the current `source` and the explanations page | CD10, AD16, RTM, CCCCD 3, EBMUD 3 and 7, EBRPD 7, Concord D3 and D5, El Cerrito, San Ramon D4, Richmond Mayor | Keep `fetchWith: browser`. Richmond council picks (Robinson, Zepeda) are for June-decided seats and have no contest. |
+| seiu-1021 | none; the current `source` (the `/post/election-endorsements-nov-3-2026` page) has a Contra Costa section | AD11, AD14, AD16, BOE2, RTM, Richmond Mayor, El Cerrito, Antioch D1/D4, Antioch USD 5, Concord D3 (dual: Kuslits and Acosta Beere) and D5, San Ramon D4, CCCCD 1 and 3, EBMUD 3, San Pablo S | Concord D3 is a dual endorsement. |
+| ca-wfp | none; the current PDF covers CoCo | BOE2, Antioch D1/D4, Antioch USD 5, CCCCD 1 and 3, Concord D5, Pinole, Richmond Mayor | Its Pittsburg USD pick is for an off-ballot seat. |
+| courage-california | https://www.progressivevotersguide.com/california/2026/general/county/contracosta | CD8/9/10, AD11, AD14, AD16, BOE2, Richmond Mayor | AD15 says "No Recommendation". The page has no RTM pick. |
+| yimby-action | none | AD11, AD14, RTM, Moraga council (Hillis) | The page labels Hillis "Moraga Mayor"; the contest is Moraga Town Council. Needs a contest alias or a manual check. |
+| greenbelt-alliance | none | Walnut Creek U (Yes), RTM | Keep `fetchWith: browser`. |
+| bay-rising-action | none | RTM, San Pablo S | Its candidate picks copy CA WFP's. |
+| housing-action-coalition | none | AD11, AD14, AD15 | `manual: true`, so the three picks must be entered by hand. |
+| lwv-ca | none | props only | `manual: true`. The props are statewide contests and already entered, so widening only changes `areas`. |
+| spur | none | RTM, props | The current `extraSources` already include the RTM page. |
+| mercury-news (becomes the Bay Area News Group guide) | https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/ (10/7, Superintendent: Barrera) | statewide only so far | East Bay Times pages use the mercurynews.com version as canonical, so keep the mercurynews.com URLs. The CoCo items on https://www.eastbaytimes.com/opinion/endorsements/ are all from June. Add CoCo editorials as they appear. |
+| sf-chronicle | none | RTM, statewide, props | Keep `fetchFrom: local`. |
+| bay-area-reporter | https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates (9/16, Concord D3 Kuslits) and https://www.ebar.com/story/170969/ (10/7, props) | Concord D3, RTM, statewide, props | Keep `fetchWith: browser` (403 to curl). The council editorial says "more soon". |
+
+The other existing guides (SF clubs, Peninsula and South Bay groups, sierra-club-loma-prieta, sflcv) have no Contra Costa content.
