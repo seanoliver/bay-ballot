@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
-import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
@@ -18,7 +18,7 @@ import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { keepNumber } from "@/lib/display";
-import { FRAME, PANE } from "./frame";
+import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
@@ -30,7 +30,6 @@ import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
 
-const DESKTOP = "(min-width: 1024px)";
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
   const mq = window.matchMedia(DESKTOP);
@@ -56,12 +55,13 @@ type Props = {
   intro: { title: string; line: string };
   groups: PlaceGroup[];
   guides: GuideInfo[];
+  allGuides: FilterGuide[];
   files: Record<string, PickFile>;
   pending: string | null;
 };
 
-export function BallotView({ election, area, links, intro, groups, guides, files, pending }: Props) {
-  const { filters, setFilters: applyFilters } = useBallotFilters({ guides, keep: ["c", COUNTIES_PARAM] });
+export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending }: Props) {
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", COUNTIES_PARAM] });
   const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
   const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
@@ -294,7 +294,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       return;
     }
     if (action === "search") {
-      document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
+      document.querySelector<HTMLInputElement>(FILTER_SEARCH)?.focus();
       return;
     }
     const ids = all.map((c) => c.id);
@@ -337,7 +337,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
 
       <div
         ref={listRef}
-        className="min-w-0 pb-10 outline-none"
+        className="min-w-0 pb-10 outline-none lg:col-start-2"
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
         aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k g / Shift+?" : "ArrowDown ArrowUp") : undefined}
