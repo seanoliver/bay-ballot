@@ -44,7 +44,7 @@ export type GuideResult =
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
   | { id: string; status: "failed"; error: string }
-  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string }
+  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string; usage: Usage }
   | { id: string; status: "shrunk-skipped"; pageHash: string }
   | {
       id: string;
@@ -123,7 +123,7 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
   const { picks, notes } = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
   const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
-  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash };
+  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };
 
   let archived: ArchivedSource[] | undefined;
   if (opts.archive && deps.archiveUrl) {
@@ -263,7 +263,12 @@ function usageCost(u: Usage | undefined, r: (typeof RATES)["extract"]): number {
 
 export function costOf(results: GuideResult[]): number {
   return results.reduce(
-    (sum, r) => (r.status === "changed" ? sum + usageCost(r.usage.extract, RATES.extract) + usageCost(r.usage.verify, RATES.verify) : sum),
+    (sum, r) =>
+      r.status === "changed"
+        ? sum + usageCost(r.usage.extract, RATES.extract) + usageCost(r.usage.verify, RATES.verify)
+        : r.status === "shrunk"
+          ? sum + usageCost(r.usage, RATES.extract)
+          : sum,
     0,
   );
 }

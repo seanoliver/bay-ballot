@@ -8,7 +8,7 @@ import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
 import type { Fetched } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
-import { exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
+import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
 import { resultJson } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 
@@ -352,6 +352,14 @@ describe("shrunk guides", () => {
     expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(before);
     expect(exitCodeFor(results)).toBe(2);
     expect(resultJson(results, 2).shrunk).toEqual([{ id: "alpha", pageHash: (results[0] as { pageHash: string }).pageHash }]);
+  });
+
+  it("counts the cost of an extraction that came back shrunk", async () => {
+    const root = setup(["alpha"]);
+    fivePicks(root);
+    const { client } = fakeClient(sameOut);
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(costOf(results)).toBeGreaterThan(0);
   });
 
   it("skips re-extracting a shrunk guide whose pages haven't changed since it was reported", async () => {
