@@ -2,6 +2,7 @@ guide: league-pissed-off-voters
 election: 2026-11
 status: published
 source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
     snapshot: https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026

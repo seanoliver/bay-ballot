@@ -8,7 +8,7 @@ import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
 import type { Fetched } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
-import { exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
+import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
 import { resultJson } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 
@@ -354,6 +354,14 @@ describe("shrunk guides", () => {
     expect(resultJson(results, 2).shrunk).toEqual([{ id: "alpha", pageHash: (results[0] as { pageHash: string }).pageHash }]);
   });
 
+  it("counts the cost of an extraction that came back shrunk", async () => {
+    const root = setup(["alpha"]);
+    fivePicks(root);
+    const { client } = fakeClient(sameOut);
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(costOf(results)).toBeGreaterThan(0);
+  });
+
   it("skips re-extracting a shrunk guide whose pages haven't changed since it was reported", async () => {
     const root = setup(["alpha"]);
     fivePicks(root);
@@ -391,5 +399,109 @@ describe("resultJson", () => {
       failed: [{ id: "a", error: "HTTP 503" }],
       shrunk: [{ id: "c", pageHash: "f".repeat(64) }],
     });
+  });
+});
+
+describe("fetchFrom: local", () => {
+  const markLocal = (root: string, g: string) => {
+    const p = path.join(root, ELECTION, "endorsements", `${g}.yml`);
+    fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace("fetchedAt:", "fetchFrom: local\nfetchedAt:"));
+  };
+
+  it("skips local-only guides on the cloud run without fetching them, and that is not a failure", async () => {
+    const root = setup(["alpha", "beta"]);
+    markLocal(root, "beta");
+    const { client, stream } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "cloud" });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["alpha", "unchanged"], ["beta", "skipped"]]);
+    expect(results[1]).toMatchObject({ reason: "local only" });
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+    expect(stream).not.toHaveBeenCalled();
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("ignores explicitly named guides that aren't local-only when the scope is local", async () => {
+    const root = setup(["alpha", "beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "local", ids: ["alpha", "beta"] });
+    expect(results.map((r) => r.id)).toEqual(["beta"]);
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+  });
+
+  it("extracts a local-only guide named directly (bb extract) when no scope is given", async () => {
+    const root = setup(["beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    const results = await runRefresh(deps(client, fetcher({ beta: PAGE("beta", "x") })), { root, election: ELECTION, ids: ["beta"] });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["beta", "changed"]]);
+  });
+
+  it("keeps fetchFrom on disk after a data change", async () => {
+    const root = setup(["beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    await runRefresh(deps(client, fetcher({ beta: PAGE("beta", "x") })), { root, election: ELECTION, scope: "local" });
+    const text = fs.readFileSync(path.join(root, ELECTION, "endorsements", "beta.yml"), "utf8");
+    expect(text).toContain("prop-c");
+    expect(parse(text).fetchFrom).toBe("local");
+  });
+
+  it("refreshes only local-only guides with scope local", async () => {
+    const root = setup(["alpha", "beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client, stream } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "local" });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["beta", "changed"]]);
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5", "claude-opus-5-5"]);
+  });
+});
+
+describe("re-extracting keeps a guide's settings", () => {
+  it.each([
+    ["fetchFrom: local", "fetchFrom: local"],
+    ["fetchWith: browser", "fetchWith: browser"],
+    ["allowForeignSources: true", "allowForeignSources: true"],
+    ["rejectedQuotes", "rejectedQuotes:\n  - text: A sentence nobody wants back.\n    reason: not substantive"],
+  ])("an extraction with identical picks changes nothing (%s)", async (_name, yaml) => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("fetchedAt:", `${yaml}\nfetchedAt:`));
+    const before = fs.readFileSync(f, "utf8");
+    const { client } = fakeClient(sameOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, scope: yaml.startsWith("fetchFrom") ? "local" : "cloud" });
+    expect(results[0]).toMatchObject({ status: "changed", dataChanged: false });
+    expect(fs.readFileSync(f, "utf8")).toBe(before);
+  });
+});
+
+describe("gateOnly (dry run)", () => {
+  it("reports which guides would be extracted without calling the model or storing their pages", async () => {
+    const root = setup(["alpha", "beta"]);
+    const { client, stream } = fakeClient();
+    const changed = PAGE("beta", "x").replace("No on Prop B", "Yes on Prop B");
+    const before = fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8");
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x"), beta: changed })), { root, election: ELECTION, gateOnly: true });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["alpha", "unchanged"], ["beta", "would-extract"]]);
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8")).toBe(before);
+    expect(exitCodeFor(results)).toBe(0);
+    expect(summarize(results, { date: "2026-10-07" })).toContain("Would extract (dry run): beta");
+  });
+
+  it("labels a dry-run summary as a dry run, not as a clean result", () => {
+    const results: GuideResult[] = [{ id: "alpha", status: "unchanged" }, { id: "beta", status: "would-extract" }];
+    const md = summarize(results, { date: "2026-10-07" });
+    expect(md).toContain("# Data refresh 2026-10-07 (dry run)");
+    expect(md).toContain("**Result:** dry run; 1 guide would be extracted");
+    expect(md).not.toContain("**Result:** clean");
+    const quiet = summarize([{ id: "alpha", status: "unchanged" }], { date: "2026-10-07", dryRun: true });
+    expect(quiet).toContain("# Data refresh 2026-10-07 (dry run)");
+    expect(quiet).toContain("**Result:** dry run; no guide would be extracted");
   });
 });

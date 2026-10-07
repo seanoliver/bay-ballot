@@ -23,6 +23,7 @@ const FILLER = /\b(?:on|at|by|yesterday|today)\b|[:\-–—.,]/gi;
 const COUNTER = /\b\d[\d,.]*\s*[kKmM]?\s+(?:comments?|shares?|likes?|views?|followers?|retweets?|reposts?|reactions?|replies)\b/g;
 const BOILERPLATE =
   /cookie|accept all|privacy policy|terms of (?:service|use)|subscribe|newsletter|sign up|all rights reserved|©|\bcopyright\b|skip to (?:main )?content/i;
+const IMAGE_FILE_ALT = /^\[[^\]]*\.(?:png|jpe?g|gif|webp|svg|heic|avif)\]$/i;
 // Not part of BOILERPLATE: a breadcrumb like "Home > Endorsements" must drop even though it has an endorsement word.
 const NAVIGATION = /^(?:you are here\b|breadcrumbs?\b)/i;
 const MAX_BOILERPLATE_LINE = 200;
@@ -49,6 +50,7 @@ export function normalizePageText(text: string, { ballot }: { ballot?: Ballot } 
     if (!line || /^(?:yesterday|today)$/i.test(line)) continue;
     if (FRESHNESS_PREFIX.test(line) && line.replace(FRESHNESS_PREFIX, "").replace(FILLER, " ").trim() === "") continue;
     if (NAVIGATION.test(line)) continue;
+    if (IMAGE_FILE_ALT.test(line)) continue;
     if (line.length <= MAX_BOILERPLATE_LINE && BOILERPLATE.test(line) && !endorsementContent(line, markers)) continue;
     // No dedupe or sorting: bare "YES"/"NO" lines under each heading carry the picks.
     out.push(line);

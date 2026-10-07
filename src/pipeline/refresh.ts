@@ -35,6 +35,8 @@ export type RefreshOptions = {
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
   baseline?: string;
+  scope?: "cloud" | "local";
+  gateOnly?: boolean;
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -43,8 +45,9 @@ export type GuideResult =
   | { id: string; status: "skipped"; reason: string }
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
+  | { id: string; status: "would-extract" }
   | { id: string; status: "failed"; error: string }
-  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string }
+  | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string; usage: Usage }
   | { id: string; status: "shrunk-skipped"; pageHash: string }
   | {
       id: string;
@@ -94,6 +97,7 @@ async function refreshGuide(
   const prev = data.endorsements[id];
   const ballot = guideBallot(data.ballot, guide, data.areas);
   if (prev.manual) return { id, status: "skipped", reason: "manual" };
+  if (prev.fetchFrom === "local" && opts.scope === "cloud") return { id, status: "skipped", reason: "local only" };
   const urls = sourcesFor(prev);
   if (urls.length === 0) return { id, status: "skipped", reason: "no source" };
   const hostProblems = checkHosts(guide, prev);
@@ -116,6 +120,7 @@ async function refreshGuide(
   }
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
   if (!opts.forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
+  if (opts.gateOnly) return { id, status: "would-extract" };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
 
@@ -123,7 +128,7 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
   const { picks, notes } = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
   const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
-  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash };
+  if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };
 
   let archived: ArchivedSource[] | undefined;
   if (opts.archive && deps.archiveUrl) {
@@ -179,7 +184,9 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
   const baseline = opts.baseline ? loadBaseline(opts.baseline, opts.election) : null;
   const log = deps.log ?? (() => {});
   const data = loadElection(opts.root, opts.election);
-  const ids = opts.ids ?? Object.keys(data.endorsements).sort();
+  const ids = (opts.ids ?? Object.keys(data.endorsements).sort()).filter(
+    (id) => opts.scope !== "local" || data.endorsements[id]?.fetchFrom === "local",
+  );
   const budget = { left: opts.maxChanged ?? Infinity };
   const results: GuideResult[] = [];
   for (const id of ids) {
@@ -230,6 +237,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: unchanged (no relevant change)`;
     case "deferred":
       return `${r.id}: deferred (budget reached; picked up next run)`;
+    case "would-extract":
+      return `${r.id}: would extract (dry run; pages changed)`;
     case "failed":
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
@@ -263,7 +272,12 @@ function usageCost(u: Usage | undefined, r: (typeof RATES)["extract"]): number {
 
 export function costOf(results: GuideResult[]): number {
   return results.reduce(
-    (sum, r) => (r.status === "changed" ? sum + usageCost(r.usage.extract, RATES.extract) + usageCost(r.usage.verify, RATES.verify) : sum),
+    (sum, r) =>
+      r.status === "changed"
+        ? sum + usageCost(r.usage.extract, RATES.extract) + usageCost(r.usage.verify, RATES.verify)
+        : r.status === "shrunk"
+          ? sum + usageCost(r.usage, RATES.extract)
+          : sum,
     0,
   );
 }
@@ -274,14 +288,20 @@ export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   return 0;
 }
 
-export function summarize(results: GuideResult[], { date }: { date: string }): string {
+export function summarize(results: GuideResult[], { date, dryRun = false }: { date: string; dryRun?: boolean }): string {
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
   const held = changed.reduce((n, r) => n + r.held.length, 0);
   const code = exitCodeFor(results);
-  const verdict = code === 1 ? "errors" : code === 2 ? `needs review (${held} held)` : "clean";
+  const would = by("would-extract").length;
+  const isDryRun = dryRun || would > 0;
+  const verdict =
+    code === 1 ? "errors"
+    : code === 2 ? `needs review (${held} held)`
+    : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
+    : "clean";
   const lines = [
-    `# Data refresh ${date}`,
+    `# Data refresh ${date}${isDryRun ? " (dry run)" : ""}`,
     "",
     `**Result:** ${verdict}`,
     "",
@@ -306,6 +326,8 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
   }
+  const wouldExtract = by("would-extract").map((r) => r.id);
+  if (wouldExtract.length) lines.push("", `Would extract (dry run): ${wouldExtract.join(", ")}`);
   const deferred = by("deferred").map((r) => r.id);
   if (deferred.length) lines.push("", `Deferred (budget): ${deferred.join(", ")} — picked up by the next run.`);
   const unchanged = by("unchanged").map((r) => r.id);

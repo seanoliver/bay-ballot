@@ -103,6 +103,7 @@ export const EndorsementFile = z.object({
   fetchedAt: z.union([z.iso.date(), z.iso.datetime()]),
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(),
+  fetchFrom: z.literal("local").optional(),
   extraSources: z.array(HttpUrl).optional(),
   manual: z.boolean().optional(),
   allowForeignSources: z.boolean().optional(),
@@ -110,7 +111,7 @@ export const EndorsementFile = z.object({
   held: z.array(HeldPick).optional(),
   rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
-});
+}).strict();
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
 
 export const ChangelogEntry = z.object({

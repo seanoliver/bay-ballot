@@ -63,21 +63,91 @@ const isPdfPath = (url: string): boolean => {
 
 const errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 
-async function fetchBrowser(url: string): Promise<Fetched> {
+const BLOCK_SIGNS: [string, RegExp][] = [
+  ["cloudflare challenge", /just a moment\.\.\.|enable javascript and cookies to continue/i],
+  ["cloudflare block", /attention required! \| cloudflare|sorry, you have been blocked/i],
+  ["incapsula", /incapsula incident id|request unsuccessful\. incapsula/i],
+  ["perimeterx", /press & hold to confirm you are a human/i],
+  ["datadome", /please enable js and disable any ad blocker/i],
+  ["distil", /pardon our interruption/i],
+  ["client challenge", /^\s*client challenge\s*$|a required part of this site couldn.t load/im],
+  ["access denied", /^\s*access denied\s*$|you don'?t have permission to access .* on this server/im],
+  ["bot check", /verify(?:ing)? (?:that )?you are (?:a )?human|are you a robot\?/i],
+];
+// Not /cdn-cgi/challenge-platform/scripts/jsd/main.js: real Cloudflare sites load it on every page.
+const BLOCK_MARKUP: [string, RegExp][] = [
+  ["cloudflare challenge", /id=["']challenge-form["']|window\._cf_chl_opt|\/cdn-cgi\/challenge-platform\/h\//],
+  ["perimeterx", /px-captcha/],
+  ["datadome", /captcha-delivery\.com/],
+];
+const MAX_BLOCK_PAGE_TEXT = 1500;
+
+function visibleText(html: string): { title: string; text: string } {
+  const $ = cheerio.load(html);
+  const title = $("title").first().text().trim();
+  $("script, style, noscript, template").remove();
+  return { title, text: $("body").text().replace(/\s+/g, " ").trim() };
+}
+
+export function detectBlock(html: string): string | null {
+  const { title, text } = visibleText(html);
+  const short = text.length <= MAX_BLOCK_PAGE_TEXT;
+  // Match only the <title> or a short page's text: a real page can say "access denied" in passing.
+  for (const [name, re] of BLOCK_SIGNS) if (re.test(title) || (short && re.test(text))) return name;
+  if (short) for (const [name, re] of BLOCK_MARKUP) if (re.test(html)) return name;
+  return null;
+}
+
+// Not page.goto's status: a challenge that solves itself navigates again.
+export function finalStatus(responses: { status: number; mainFrameNavigation: boolean }[], fallback: number): number {
+  return responses.filter((r) => r.mainFrameNavigation).at(-1)?.status ?? fallback;
+}
+
+export async function contentAfterNavigation(content: () => Promise<string>, settle: () => Promise<void>): Promise<string> {
+  try {
+    return await content();
+  } catch (e) {
+    if (!/execution context was destroyed|navigating/i.test(errMsg(e))) throw e;
+    await settle();
+    return content();
+  }
+}
+
+export type FetchAttempt = { via: "http" | "browser"; status: number; bytes: number; blocked: string | null };
+type BrowserFetch = (url: string) => Promise<{ status: number; html: string }>;
+export type FetchOptions = {
+  browser?: boolean;
+  browserFetch?: BrowserFetch;
+  onAttempt?: (a: FetchAttempt) => void;
+};
+
+async function browserPage(url: string): Promise<{ status: number; html: string }> {
   const { chromium } = await import("@playwright/test");
   const b = await chromium.launch();
   try {
-    const page = await b.newPage({ userAgent: UA });
+    const page = await b.newPage({ userAgent: UA, locale: "en-US", extraHTTPHeaders: { "accept-language": "en-US,en;q=0.9" } });
+    const responses: { status: number; mainFrameNavigation: boolean }[] = [];
+    page.on("response", (r) => {
+      const req = r.request();
+      responses.push({ status: r.status(), mainFrameNavigation: req.isNavigationRequest() && req.frame() === page.mainFrame() });
+    });
     const res = await page.goto(url, { waitUntil: "load", timeout: 60_000 });
-    if (res && !res.ok()) throw new Error(`${url} -> HTTP ${res.status()}`);
-    await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
-    return { kind: "text", text: htmlToText(await page.content()) };
+    const settle = () => page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
+    await settle();
+    const html = await contentAfterNavigation(() => page.content(), settle);
+    return { status: finalStatus(responses, res?.status() ?? 200), html };
   } finally {
     await b.close();
   }
 }
 
-async function fetchHttp(url: string): Promise<Fetched> {
+const RETRY_IN_BROWSER = new Set([403, 429, 503]);
+
+type HttpResult =
+  | { kind: "page"; fetched: Fetched; status: number; bytes: number; html?: string }
+  | { kind: "error"; status: number; bytes: number };
+
+async function fetchHttp(url: string): Promise<HttpResult> {
   let res: Response;
   let buf: Buffer;
   try {
@@ -89,29 +159,59 @@ async function fetchHttp(url: string): Promise<Fetched> {
       },
       signal: AbortSignal.timeout(30_000),
     });
-    if (!res.ok) throw new Error(`${url} -> HTTP ${res.status}`);
     buf = Buffer.from(await res.arrayBuffer());
   } catch (e) {
     const m = errMsg(e);
     throw new Error(m.includes(url) ? m : `${url}: ${m}`);
   }
+  if (!res.ok) return { kind: "error", status: res.status, bytes: buf.length };
   const type = (res.headers.get("content-type") ?? "").toLowerCase();
   const isPdf = type.includes("pdf") || isPdfPath(url) || buf.subarray(0, 5).toString("latin1") === "%PDF-";
-  if (isPdf) return { kind: "pdf", base64: buf.toString("base64"), text: pdfToText(buf) };
+  if (isPdf) {
+    return { kind: "page", status: res.status, bytes: buf.length, fetched: { kind: "pdf", base64: buf.toString("base64"), text: pdfToText(buf) } };
+  }
   if (!(type.startsWith("text/") || type.includes("html"))) {
     throw new Error(`${url}: unsupported content-type ${type || "(none)"}`);
   }
-  return { kind: "text", text: htmlToText(buf.toString("utf8")) };
+  const html = buf.toString("utf8");
+  return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(html) } };
 }
 
-export async function fetchSource(url: string, opts: { browser?: boolean } = {}): Promise<Fetched> {
-  if (opts.browser && !isPdfPath(url)) {
+export async function fetchSource(url: string, opts: FetchOptions = {}): Promise<Fetched> {
+  const browserFetch = opts.browserFetch ?? browserPage;
+  const report = opts.onAttempt ?? (() => {});
+  const viaBrowser = async (httpFailure: string | null, retriedStatus?: number): Promise<Fetched> => {
+    let r: { status: number; html: string };
     try {
-      return await fetchBrowser(url);
+      r = await browserFetch(url);
     } catch (e) {
       const m = errMsg(e);
-      throw new Error(m.includes(url) ? m : `${url}: ${m}`);
+      throw new Error(httpFailure ? `${httpFailure} (browser: ${m})` : m.includes(url) ? m : `${url}: ${m}`);
     }
+    const blocked = detectBlock(r.html);
+    report({ via: "browser", status: r.status, bytes: Buffer.byteLength(r.html), blocked });
+    // Some walls let the browser through but keep the 403/429, so a full unblocked page still counts.
+    const wallLetUsThrough = (retriedStatus === 403 || retriedStatus === 429) && (r.status === 403 || r.status === 429);
+    const errorTitle = /\b(?:403|429|forbidden|too many requests)\b/i.test(visibleText(r.html).title);
+    const realPage = wallLetUsThrough && !blocked && !errorTitle && htmlToText(r.html).length > MAX_BLOCK_PAGE_TEXT;
+    if (r.status >= 400 && !realPage) {
+      throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
+    }
+    if (blocked) throw new Error(`${url}: blocked (${blocked})${httpFailure ? " over http and browser" : ""}`);
+    return { kind: "text", text: htmlToText(r.html) };
+  };
+
+  if (opts.browser && !isPdfPath(url)) return viaBrowser(null);
+
+  const r = await fetchHttp(url);
+  if (r.kind === "error") {
+    report({ via: "http", status: r.status, bytes: r.bytes, blocked: null });
+    const failure = `${url} -> HTTP ${r.status}`;
+    if (!RETRY_IN_BROWSER.has(r.status) || isPdfPath(url)) throw new Error(failure);
+    return viaBrowser(failure, r.status);
   }
-  return fetchHttp(url);
+  const blocked = r.html ? detectBlock(r.html) : null;
+  report({ via: "http", status: r.status, bytes: r.bytes, blocked });
+  if (!blocked) return r.fetched;
+  return viaBrowser(`${url}: blocked (${blocked})`);
 }

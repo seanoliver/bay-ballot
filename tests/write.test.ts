@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
 import { EndorsementFile, type Entry } from "@/lib/schema";
-import { nextFile, shrinkWarning, toYaml } from "@/pipeline/write";
+import { KEY_ORDER as KEY_ORDER_FOR_TESTS, nextFile, shrinkWarning, toYaml } from "@/pipeline/write";
 
 const prev: EndorsementFile = {
   guide: "spur", election: "2026-11", status: "pending", source: "https://www.spur.org/voter-guide/2026-11",
@@ -184,5 +184,43 @@ describe("shrinkWarning", () => {
   });
   it("accepts with force", () => {
     expect(shrinkWarning("spur", many(4), {}, { force: true })).toBeNull();
+  });
+});
+
+describe("nextFile keeps every field it doesn't set", () => {
+  const settings = {
+    fetchFrom: "local" as const,
+    fetchWith: "browser" as const,
+    manual: true,
+    allowForeignSources: true,
+    rejectedQuotes: [{ text: "A sentence nobody wants back.", reason: "not substantive" }],
+  };
+  it("keeps fetchFrom, fetchWith, manual, allowForeignSources and rejectedQuotes", () => {
+    const n = nextFile({ ...prev, ...settings }, picks, true, "2026-10-05");
+    expect(n).toMatchObject(settings);
+  });
+  it("keeps every schema field it does not set itself", () => {
+    const sets = new Set(["status", "archived", "fetchedAt", "hasReasoning", "held", "picks"]);
+    const sample: Record<string, unknown> = {
+      fetchFrom: "local", fetchWith: "browser", manual: true, allowForeignSources: true,
+      rejectedQuotes: [{ text: "Gone.", reason: "x" }], extraSources: ["https://www.spur.org/b"],
+    };
+    const full = EndorsementFile.parse({ ...prev, ...sample });
+    const n = nextFile(full, picks, true, "2026-10-05") as Record<string, unknown>;
+    for (const k of Object.keys(EndorsementFile.shape).filter((k) => !sets.has(k))) {
+      expect(n[k], k).toEqual((full as Record<string, unknown>)[k]);
+    }
+  });
+  it("has a key order for every schema field, so toYaml never drops one", () => {
+    const f = EndorsementFile.parse({ ...prev, fetchFrom: "local", manual: true });
+    const keys = toYaml(f).split("\n").filter((l) => /^[a-zA-Z]/.test(l)).map((l) => l.split(":")[0]);
+    expect(keys).toEqual(expect.arrayContaining(["fetchFrom", "manual"]));
+    expect(KEY_ORDER_FOR_TESTS).toEqual(expect.arrayContaining(Object.keys(EndorsementFile.shape)));
+  });
+  it("keeps fetchFrom and its inline comment through toYaml", () => {
+    const before = EndorsementFile.parse({ ...prev, fetchFrom: "local" });
+    const text = toYaml(before).replace("fetchFrom: local", "fetchFrom: local # blocks GitHub's runners");
+    const y = toYaml(nextFile(before, picks, true, "2026-10-05"), { previous: text });
+    expect(y).toContain("fetchFrom: local # blocks GitHub's runners");
   });
 });

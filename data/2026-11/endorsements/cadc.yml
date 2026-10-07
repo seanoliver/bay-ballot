@@ -2,6 +2,7 @@ guide: cadc
 election: 2026-11
 status: published
 source: https://www.sfcadc.org/endorsements # page also lists Mar/Apr 2026 slates; extract only "November 2026 Recommendations"
+fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.sfcadc.org/endorsements
     snapshot: https://web.archive.org/web/20261005220914/https://www.sfcadc.org/endorsements

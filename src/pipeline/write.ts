@@ -29,19 +29,12 @@ export function nextFile(
   // isDeepStrictEqual ignores key order, so a reordered but identical result keeps its date.
   const unchanged = isDeepStrictEqual(prev.picks, picks);
   return {
-    guide: prev.guide,
-    election: prev.election,
+    ...prev,
     status: Object.keys(picks).length > 0 ? "published" : "pending",
-    source: prev.source,
-    extraSources: prev.extraSources,
-    fetchWith: prev.fetchWith,
-    manual: prev.manual,
-    allowForeignSources: prev.allowForeignSources,
     archived: archived ? mergeArchived(prev, archived) : prev.archived,
     fetchedAt: unchanged ? prev.fetchedAt : today, // date picks or quotes last changed
     hasReasoning,
     held: held.length ? held : undefined,
-    rejectedQuotes: prev.rejectedQuotes,
     picks,
   };
 }
@@ -58,8 +51,8 @@ export function shrinkWarning(
   return `  !! ${id}: ${after} picks (previous ${before}), file left unchanged; rerun with --force to accept`;
 }
 
-const KEY_ORDER = [
-  "guide", "election", "status", "source", "extraSources", "fetchWith", "manual",
+export const KEY_ORDER = [
+  "guide", "election", "status", "source", "extraSources", "fetchWith", "fetchFrom", "manual",
   "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "rejectedQuotes", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 
