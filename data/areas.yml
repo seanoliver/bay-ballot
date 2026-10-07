@@ -35,3 +35,17 @@ areas:
       - { level: city, name: San Mateo }
       - { level: city, name: South San Francisco }
       - { level: city, name: Woodside }
+  - id: palo-alto
+    name: Palo Alto
+    kind: city
+    jurisdictions:
+      - { level: state, name: California }
+      - { level: county, name: Santa Clara }
+      - { level: city, name: Palo Alto }
+  - id: mountain-view
+    name: Mountain View
+    kind: city
+    jurisdictions:
+      - { level: state, name: California }
+      - { level: county, name: Santa Clara }
+      - { level: city, name: Mountain View }

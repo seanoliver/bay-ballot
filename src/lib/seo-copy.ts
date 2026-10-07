@@ -30,6 +30,7 @@ export function officeName(c: Contest, place: PlaceName): string {
   return t
     .replace(/^United States Representative, /, "U.S. Rep. ")
     .replace(/^State Assembly, /, "Assembly ")
+    .replace(/ District, District /, " District ")
     .replace(/, District /, " District ");
 }
 
@@ -45,7 +46,7 @@ export function familyName(name: string): string {
 }
 
 function measureObject(c: Contest, place: PlaceName, { named = false }: { named?: boolean } = {}): string {
-  if (c.kind === "retention") return `retaining ${officeName(c, place).replace(/^1st District Court of Appeal$/, "the 1st District Court of Appeal justices")}`;
+  if (c.kind === "retention") return `retaining ${officeName(c, place).replace(/^(\d+(?:st|nd|rd|th)) District Court of Appeal$/, "the $1 District Court of Appeal justices")}`;
   const label = measureLabel(c);
   if (!label.startsWith("Prop")) return /\bMeasure [A-Z]+$/.test(label) ? label : `the ${label}`;
   return named && c.jurisdiction.level !== "state" ? officeName(c, place) : label;

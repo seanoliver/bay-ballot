@@ -1,7 +1,7 @@
 import { sections, type Section } from "./display";
 import type { Area, Contest, Jurisdiction, Place } from "./schema";
 
-export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization"];
+export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization", "Court of Appeal"];
 
 export type PlaceName = { name: string; short: string };
 export const BAY_AREA: PlaceName = { name: "Bay Area", short: "Bay Area" };
@@ -26,6 +26,17 @@ export function areasOf<A extends AreaLike>(c: Pick<Contest, "jurisdiction">, ar
 export function contestArea<A extends AreaLike>(c: Pick<Contest, "jurisdiction">, areas: A[]): A | null {
   const found = areasOf(c, areas);
   return found.length === 1 ? found[0] : null;
+}
+
+export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, areas: A[]): { area: A | null; place: PlaceName } {
+  const found = areasOf(c, areas);
+  if (found.length === 1) return { area: found[0], place: placeName(found[0]) };
+  const counties = new Set(found.map((a) => a.jurisdictions.find((j) => j.level === "county")?.name));
+  const [county] = counties;
+  const j = c.jurisdiction;
+  const local = j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
+  if (local && found.length > 1 && counties.size === 1 && county) return { area: null, place: { name: `${county} County`, short: `${county} County` } };
+  return { area: null, place: BAY_AREA };
 }
 
 export function areaGuides<G extends { areas: string[] }>(guides: G[], area: Pick<Area, "id">): G[] {

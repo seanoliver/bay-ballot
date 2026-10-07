@@ -3,7 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import fs from "node:fs";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
-import { utcDay } from "../src/lib/changelog";
+import { pacificDay } from "../src/lib/changelog";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
 import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
@@ -51,7 +51,7 @@ const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) 
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
 const REFRESH_BUDGET = 20;
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
-const today = () => utcDay();
+const today = () => pacificDay();
 const endorsementPath = (id: string) => path.join(ROOT, ELECTION, "endorsements", `${id}.yml`);
 
 

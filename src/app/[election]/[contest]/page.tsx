@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContestDetail } from "@/components/ContestDetail";
 import { PageColumn } from "@/components/PageColumn";
-import { contestArea, placeName } from "@/lib/areas";
+import { BAY_AREA, contestPlace } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import type { ElectionData } from "@/lib/data";
 import { dataAsOf } from "@/lib/display";
@@ -35,8 +35,8 @@ async function load(params: PageProps<"/[election]/[contest]">["params"]) {
 
 function contestView(d: ElectionData, contest: Contest) {
   const { guides, files, pending } = ballotViewProps(d);
-  const area = contestArea(contest, d.areas);
-  return { rows: activeEntries(contest.id, guides, files, EMPTY), pending, area, place: placeName(area) };
+  const { area, place } = contestPlace(contest, d.areas);
+  return { rows: activeEntries(contest.id, guides, files, EMPTY), pending, area, place };
 }
 
 export async function generateMetadata({ params }: PageProps<"/[election]/[contest]">): Promise<Metadata> {
@@ -62,7 +62,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
     <PageColumn>
       <p className="text-sm">
         <Link href={area ? `/${electionId}/${area.id}` : `/${electionId}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
-          {place.name} ballot
+          {area ? place.name : BAY_AREA.name} ballot
         </Link>
       </p>
       <section className="mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6">

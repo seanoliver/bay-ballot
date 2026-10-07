@@ -16,6 +16,9 @@ rejectedQuotes:
     reason: "does not stand alone: opens with a connector (audit 2026-10-06)"
   - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
     reason: "does not stand alone: refers back to the previous sentence (audit 2026-10-06)"
+  - text: This measure would also strengthen just cause for eviction by requiring landlords to provide one of a list of approved reasons before evicting a tenant.
+    reason: 'does not stand alone: "also" refers back (review 2026-10-06)'
+    contestId: redwood-city-measure-e
 picks:
   prop-1:
     pick: Y

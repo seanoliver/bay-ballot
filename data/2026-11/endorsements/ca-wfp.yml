@@ -17,6 +17,24 @@ picks:
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
+  board-of-education:
+    pick:
+      - Virginia Cheung
+      - Ryan Hazelton
+      - Reina Tello
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Jeremy Lee
+      - Bunny McFadden
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
   prop-1:
     pick: Y
   prop-2:
@@ -43,24 +61,6 @@ picks:
     pick: N
   prop-45:
     pick: N
-  board-of-education:
-    pick:
-      - Virginia Cheung
-      - Ryan Hazelton
-      - Reina Tello
-  college-board:
-    pick:
-      - Leah LaCroix
-      - Jeremy Lee
-      - Bunny McFadden
-  supervisor-8:
-    pick:
-      - Gary McCoy
-      - Michael T. Nguyen
-  supervisor-10:
-    pick:
-      - Dionjay (DJ) Brookter
-      - J.R. Eppler
   san-mateo-county-supervisor-5:
     pick:
       - Mark Nagales
@@ -101,3 +101,7 @@ picks:
   south-san-francisco-council-5:
     pick:
       - Eddie Flores
+  mountain-view-council:
+    pick:
+      - Erik Poicon
+      - IdaRose Sylvester

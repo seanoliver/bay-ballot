@@ -29,6 +29,7 @@ function namePatterns(candidate: string): string[] {
   return firstForms.map((f) => `${f}\\.?(?:\\s+\\S+){0,2}?\\s+${last}`);
 }
 
+const ORDINALS = ["", "first", "second", "third", "fourth", "fifth", "sixth"];
 const MEASURE_TITLE = /^(?:(.+?)\s+)?(Proposition|Measure)\s+(\w+)$/;
 const measureLetter = (c: Contest) => (c.kind === "measure" && c.id !== "rtm" ? (c.title.match(MEASURE_TITLE)?.[3] ?? null) : null);
 const sameDistrict = (a: Contest, b: Contest) =>
@@ -72,6 +73,14 @@ function districtPatterns(c: Contest): string[] {
       return [`BART(?:\\s+${ci("board")})?(?:\\s+${ciWords("of directors")})?,?\\s*${d}`];
     case "Board of Equalization":
       return [`(?:${ciWords("board of equalization")}|BOE),?\\s*${d}`];
+    case "Court of Appeal": {
+      const nth = `(?:${n}(?:st|nd|rd|th)|${ci(ORDINALS[Number(n)] ?? n)})`;
+      return [
+        `${nth}\\s+(?:${ci("district")}\\s+)?${ciWords("court of appeal")}s?`,
+        `${ciWords("court of appeal")}s?,?\\s*${nth}\\s+${ci("district")}`,
+        `${nth}\\s+${ciWords("appellate district")}`,
+      ];
+    }
     case "City Council":
       return [`(?:${ci("city")}\\s+)?${ci("council")}(?:${ci("member")})?,?\\s*${d}`];
     case "State Senate":
@@ -94,7 +103,9 @@ export function contestMarkers(c: Contest, siblings: Contest[] = [], { sharedBar
     else out.push(asHeading(ciWords(c.title)));
     if (c.id === "lt-governor") out.push(asHeading(`${ci("lt")}\\.?\\s+${ci("gov")}(?:${ci("ernor")})?`));
     if (c.id === "assessor") out.push(asHeading(ci("assessor")));
-    if (c.id === "court-of-appeal-1") out.push(ciWords("court of appeal"));
+    if (c.jurisdiction.name === "Court of Appeal" && !siblings.some((s) => s.id !== c.id && s.jurisdiction.name === "Court of Appeal")) {
+      out.push(ciWords("court of appeal"));
+    }
     if (c.kind === "retention" && /^Supreme Court/.test(c.title)) {
       out.push(ciWords("supreme court"), escapeRegExp(c.title.split(/\s+/).at(-1)!));
     }

@@ -228,6 +228,23 @@ describe("markers across places", () => {
     expect(marks(smSup5, [smSup5, sfSup5], "San Mateo County Supervisor, District 5")).toBe(true);
     expect(marks(sfSup5, [sfSup5], "District 5")).toBe(true);
   });
+  it("tells Court of Appeal districts apart, and keeps the bare name when only one is on the ballot", () => {
+    const coa = (n: string, county: string) =>
+      ({ id: `court-of-appeal-${n}`, section: "Judicial", title: `${n === "1" ? "1st" : "6th"} District Court of Appeal`, kind: "retention", candidates: [], seats: 1, rankedChoice: false,
+         jurisdiction: { level: "district", name: "Court of Appeal", district: n, within: [{ level: "county", name: county }] } }) as Contest;
+    const one = coa("1", "San Francisco");
+    const six = coa("6", "Santa Clara");
+    expect(marks(one, [one], "Court of Appeal: retain all")).toBe(true);
+    expect(marks(one, [one, six], "Court of Appeal")).toBe(false);
+    expect(marks(one, [one, six], "First District Court of Appeal")).toBe(true);
+    expect(marks(six, [one, six], "6th District Court of Appeal")).toBe(true);
+    expect(marks(six, [one, six], "Court of Appeal, Sixth District")).toBe(true);
+    expect(marks(six, [one, six], "Sixth Appellate District")).toBe(true);
+    expect(marks(six, [one, six], "6th Appellate District: retain all five")).toBe(true);
+    expect(marks(one, [one, six], "First Court of Appeals")).toBe(true);
+    expect(marks(six, [one, six], "6th Court of Appeal")).toBe(true);
+    expect(marks(one, [one, six], "6th Court of Appeals")).toBe(false);
+  });
   it("places a quote under the right city's Measure P", () => {
     const page: Page = {
       url: "https://g.org/e", kind: "html",
@@ -279,5 +296,28 @@ describe("quotes under a letter shared across areas", () => {
     const q = { text: "Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.", source: page.url };
     expect(misplacedUnder(q, "half-moon-bay-measure-i", [page], ballot.contests)).toBe("prop-i");
     expect(misplacedUnder(q, "prop-i", [page], ballot.contests)).toBeNull();
+  });
+  it("places quotes under Mountain View's Measure E and El Camino Healthcare's Measure S, not the other cities' E and S", () => {
+    const page: Page = {
+      url: "https://g.org/scc", kind: "html",
+      text: [
+        "Redwood City Measure E: Yes",
+        "Renters need stable rents.",
+        "",
+        "Mountain View Measure E: Yes",
+        "The charter should use gender-neutral language.",
+        "",
+        "El Camino Healthcare District Measure S: Yes",
+        "Term limits keep the board accountable.",
+        "",
+        "San Bruno Measure S: No",
+        "The housing rules are too loose.",
+      ].join("\n"),
+    };
+    const q = (text: string) => ({ text, source: page.url });
+    expect(misplacedUnder(q("The charter should use gender-neutral language."), "mountain-view-measure-e", [page], ballot.contests)).toBeNull();
+    expect(misplacedUnder(q("The charter should use gender-neutral language."), "redwood-city-measure-e", [page], ballot.contests)).toBe("mountain-view-measure-e");
+    expect(misplacedUnder(q("Term limits keep the board accountable."), "el-camino-healthcare-measure-s", [page], ballot.contests)).toBeNull();
+    expect(misplacedUnder(q("Term limits keep the board accountable."), "san-bruno-measure-s", [page], ballot.contests)).toBe("el-camino-healthcare-measure-s");
   });
 });

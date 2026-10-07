@@ -107,11 +107,10 @@ const guideCount = async (page: import("@playwright/test").Page, path: string) =
 
 test("each area page counts only its own guides", async ({ page }) => {
   const all = await guideCount(page, BALLOT);
-  const sf = await guideCount(page, `${BALLOT}/sf`);
-  const sm = await guideCount(page, `${BALLOT}/san-mateo`);
-  expect(sf).toBeLessThan(all);
-  expect(sm).toBeLessThan(all);
-  expect(sf + sm).toBeGreaterThanOrEqual(all);
+  const counts: number[] = [];
+  for (const area of ["sf", "san-mateo", "palo-alto", "mountain-view"]) counts.push(await guideCount(page, `${BALLOT}/${area}`));
+  for (const n of counts) expect(n).toBeLessThan(all);
+  expect(counts.reduce((a, b) => a + b, 0)).toBeGreaterThanOrEqual(all);
 });
 
 test("the San Mateo page shows state and San Mateo contests only", async ({ page }) => {
@@ -257,4 +256,29 @@ test("closing a contest from a hidden county keeps focus on the page and says th
   await expect(contestRow(page, "Menlo Park Measure P")).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
   await expect(page.locator("[aria-live=polite]").filter({ hasText: "San Mateo contests hidden again" })).toHaveCount(1);
+});
+
+test("Palo Alto and Mountain View pages share Santa Clara County contests and keep their own", async ({ page }) => {
+  for (const [slug, name, other] of [["palo-alto", "Palo Alto", "Mountain View"], ["mountain-view", "Mountain View", "Palo Alto"]] as const) {
+    await page.goto(`${BALLOT}/${slug}`);
+    await expect(page).toHaveTitle(`${name} endorsements (Nov 2026)`);
+    await expect(page.getByRole("region", { name: "Santa Clara County", exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name, exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: other, exact: true })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  }
+});
+
+test("the Counties filter lists all three counties", async ({ page }, info) => {
+  test.skip(isPhone(info), "desktop sidebar");
+  await openBallot(page);
+  const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
+  for (const c of ["San Francisco", "San Mateo", "Santa Clara"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
+});
+
+test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {
+  await page.goto(`${BALLOT}/valley-water-7`);
+  await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
+  await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toHaveAttribute("href", BALLOT);
 });

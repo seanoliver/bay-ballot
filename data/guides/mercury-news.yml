@@ -1,0 +1,7 @@
+id: mercury-news
+name: The Mercury News
+shortName: "Mercury News"
+description: The daily newspaper of San Jose and the South Bay, whose editorial board endorses in statewide and local races.
+type: newspaper
+homepage: https://www.mercurynews.com/
+areas: [palo-alto, mountain-view]

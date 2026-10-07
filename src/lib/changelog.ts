@@ -61,3 +61,12 @@ export function changelogMonths<E extends Pick<ChangelogEntry, "date">>(entries:
   }
   return out;
 }
+
+// en-CA formats as YYYY-MM-DD.
+export const pacificDay = (now = new Date()) => now.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+
+export function latestDay(now = new Date()): string {
+  const a = utcDay(now);
+  const b = pacificDay(now);
+  return a > b ? a : b;
+}

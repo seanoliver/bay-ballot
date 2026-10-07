@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
 import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
@@ -82,5 +82,34 @@ describe("placeGroups", () => {
     const a = { ...prop1, id: "a", section: "State" };
     const b = { ...prop1, id: "b", section: "State propositions" };
     expect(placeGroups([b, a], [SF])[0].sections.map((s) => s.name)).toEqual(["State propositions", "State"]);
+  });
+});
+
+describe("Court of Appeal", () => {
+  it("lists a Court of Appeal district under California", () => {
+    const coa = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
+    expect(placeGroups([coa], [PA])[0].heading).toBe("California");
+  });
+});
+
+describe("contestPlace", () => {
+  const MV: Area = { id: "mountain-view", name: "Mountain View", kind: "city", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "Mountain View" }] };
+  const all = [SF, SM, PA, MV];
+  it("is the one area a contest is in", () => {
+    expect(contestPlace(propB, all)).toEqual({ area: SF, place: { name: "San Francisco", short: "SF" } });
+  });
+  it("names the county when every area it is in shares that county", () => {
+    const water = c("valley-water-7", { level: "district", name: "Santa Clara Valley Water District", district: "7", within: [{ level: "county", name: "Santa Clara" }] });
+    expect(contestPlace(water, all)).toEqual({ area: null, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+    expect(contestPlace(sccA, all).place.name).toBe("Santa Clara County");
+  });
+  it("is the Bay Area for a state-drawn district in several areas, even when they share a county", () => {
+    const coa6 = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
+    expect(contestPlace(coa6, all)).toEqual({ area: null, place: BAY_AREA });
+  });
+  it("is the Bay Area for statewide, regional and cross-county contests", () => {
+    expect(contestPlace(prop1, all)).toEqual({ area: null, place: BAY_AREA });
+    expect(contestPlace(rtm, all).place).toEqual(BAY_AREA);
+    expect(contestPlace(rep15, all).place).toEqual(BAY_AREA);
   });
 });

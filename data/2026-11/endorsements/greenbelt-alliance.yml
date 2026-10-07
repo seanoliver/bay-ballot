@@ -8,6 +8,25 @@ archived:
     snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
 fetchedAt: 2026-10-06
 hasReasoning: true
+rejectedQuotes:
+  - text: Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: prop-g
+  - text: Greenbelt Alliance recommends voting YES on Proposition H in San Francisco to ensure enough funds to keep Muni going strong.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: prop-h
+  - text: Greenbelt Alliance endorses a YES vote on the Regional Transit Measure in November to save the Bay Area’s public transit and fight climate change.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: rtm
+  - text: Greenbelt Alliance proudly endorses a YES vote on Measure L in San Mateo County to put climate resilience as a priority in the county’s charter.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: san-mateo-county-measure-l
+  - text: Greenbelt Alliance is excited to endorse Measure Q in Half Moon Bay to unlock a transformational affordable housing community designed for senior farmworkers.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: half-moon-bay-measure-q
+  - text: To protect affordable housing in Menlo Park, Greenbelt Alliance urges voters to say NO on Measure P, the Downtown Parking Plazas Ordinance.
+    reason: endorsement announcement or call to vote; gives no reason (review 2026-10-06)
+    contestId: menlo-park-measure-p
 picks:
   prop-45:
     pick: N

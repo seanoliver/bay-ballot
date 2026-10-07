@@ -1,0 +1,7 @@
+id: south-bay-labor
+name: South Bay AFL-CIO Labor Council
+shortName: "South Bay Labor"
+description: The AFL-CIO federation of labor unions in Santa Clara and San Benito counties.
+type: union
+homepage: https://www.southbaylabor.org/
+areas: [palo-alto, mountain-view]
