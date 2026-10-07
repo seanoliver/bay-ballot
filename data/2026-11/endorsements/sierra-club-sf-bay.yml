@@ -5,7 +5,7 @@ source: https://www.sierraclub.org/sfbay/2026-endorsements
 extraSources:
   - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   us-rep-11:
@@ -128,3 +128,33 @@ picks:
     pick: Y
   prop-i:
     pick: Y
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  assembly-12:
+    pick:
+      - Jackie Elward
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  sausalito-measure-x:
+    pick: Y
+  corte-madera-council:
+    pick:
+      - Eli Beckman
+  larkspur-council:
+    pick:
+      - Stephanie Andre
+      - Sarah Margulies
+  mill-valley-council:
+    pick:
+      - Max Perrey
+  novato-council-2:
+    pick:
+      - Rachel Farac
+  san-rafael-council-2:
+    pick:
+      - Eli Hill
+  sausalito-council:
+    pick:
+      - Adrian Brinton
