@@ -34,6 +34,8 @@ type Props = {
   guides: GuideInfo[];
   files: Record<string, PickFile>;
   counties?: CountyControl;
+  // The guides a type checkbox turns on or off, when `guides` lists only some of them.
+  typeGuides?: GuideInfo[];
 };
 
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
@@ -79,7 +81,7 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
   );
 }
 
-function FilterControls({ filters: f, onChange, guides, files, counties }: Props) {
+function FilterControls({ filters: f, onChange, guides, files, counties, typeGuides }: Props) {
   return (
     <>
       <Section title="Show">
@@ -89,7 +91,7 @@ function FilterControls({ filters: f, onChange, guides, files, counties }: Props
         </label>
       </Section>
       {counties ? <CountyChecklist {...counties} /> : null}
-      <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} />
+      <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} typeGuides={typeGuides} />
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange(EMPTY)}>
         Reset filters
       </Button>
@@ -129,7 +131,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function GuideChecklist({ filters: f, onChange, guides, files }: Props) {
+function GuideChecklist({ filters: f, onChange, guides, files, typeGuides }: Props) {
   const [query, setQuery] = useState("");
   const groups = guideGroups(guides, files, query);
   const searching = query.trim() !== "";
@@ -161,7 +163,7 @@ function GuideChecklist({ filters: f, onChange, guides, files }: Props) {
       ) : (
         <div className="mt-2 divide-y divide-border rounded-xl border border-border">
           {groups.map((g) => (
-            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={guides} files={files} />
+            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={typeGuides ?? guides} files={files} />
           ))}
         </div>
       )}

@@ -36,7 +36,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   const slots = useMemo(() => candidateSlots(contest, activeEntries(contest.id, guides, files, EMPTY).map((r) => r.entry)), [contest, guides, files]);
   const hidden = shown.length - rows.length;
   const carry = useCarriedQuery();
-  const filterProps = { filters, onChange: setFilters, guides: shown, files };
+  const filterProps = { filters, onChange: setFilters, guides: shown, files, typeGuides: guides };
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {

@@ -45,6 +45,17 @@ test.describe("contest page filters", () => {
     await expect(page.getByRole("link", { name: "SF Republican Party", exact: true })).toHaveCount(0);
   });
 
+  test("a type turned off on a contest page is off everywhere, not mixed on the list", async ({ page }, info) => {
+    await openContest(page);
+    const panel = await filterPanel(page, info);
+    await panel.getByRole("checkbox", { name: /^Unions/ }).click();
+    await expect(page).toHaveURL(/[?&]off=[^&]*smc-labor-council/);
+    await page.evaluate(() => localStorage.setItem("bb-area", "bay-area"));
+    await openBallot(page);
+    const list = await filterPanel(page, info);
+    await expect(list.getByRole("checkbox", { name: /^Unions/ })).toHaveAttribute("aria-checked", "false");
+  });
+
   test("Show all turns the hidden guides back on and leaves other filters alone", async ({ page }) => {
     await openContest(page, "?off=sf-gop,spur,abundant-sf");
     await expect(page.getByText("2 guides hidden")).toBeVisible();
