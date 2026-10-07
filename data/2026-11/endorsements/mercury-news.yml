@@ -9,6 +9,12 @@ extraSources:
 archived:
   - source: https://www.mercurynews.com/opinion/endorsements/
     snapshot: https://web.archive.org/web/20261006232819/https://www.mercurynews.com/opinion/endorsements/
+  - source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+    snapshot: https://web.archive.org/web/20261007005149/https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+  - source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+    snapshot: https://web.archive.org/web/20261007005226/https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+  - source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+    snapshot: https://web.archive.org/web/20261007005328/https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
 fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
