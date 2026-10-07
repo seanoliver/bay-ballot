@@ -8,28 +8,28 @@ contests:
     title: Santa Clara Valley Water District, District 7
     kind: candidate
     candidates: [Pete Dailey, Rebecca Eisenberg]
-    jurisdiction: { level: district, name: Santa Clara Valley Water District, district: "7", within: [{ level: city, name: Palo Alto }, { level: city, name: Mountain View }, { level: city, name: Los Altos }, { level: city, name: Los Altos Hills }] }
+    jurisdiction: { level: district, name: Santa Clara Valley Water District, district: "7", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos Hills }, { level: city, name: Los Altos }, { level: city, name: Mountain View }, { level: city, name: San Jose }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }] }
   - id: mvwsd-trustee
     section: School and special districts
     title: Mountain View Whisman School District Board
     kind: candidate
     candidates: [Devon Conley, William Lambert, Sundar Subbarayan, Quintin Riis]
     seats: 2
-    jurisdiction: { level: district, name: Mountain View Whisman School District, district: "at-large", within: [{ level: city, name: Mountain View }] }
+    jurisdiction: { level: district, name: Mountain View Whisman School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Mountain View }, { level: city, name: Sunnyvale }] }
   - id: los-altos-sd-trustee
     section: School and special districts
     title: Los Altos School District Board
     kind: candidate
     candidates: [David Poll, Bryan Harvey Johnson, Vaishali "Shali" Sirkay, Brandon Stroy]
     seats: 3
-    jurisdiction: { level: district, name: Los Altos School District, district: "at-large", within: [{ level: city, name: Los Altos }, { level: city, name: Los Altos Hills }, { level: city, name: Mountain View }] }
+    jurisdiction: { level: district, name: Los Altos School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos Hills }, { level: city, name: Los Altos }, { level: city, name: Mountain View }, { level: city, name: Sunnyvale }] }
   - id: el-camino-healthcare-measure-s
     section: School and special districts
     title: El Camino Healthcare District Measure S
     kind: measure
     description: "Term limits for District Directors"
     link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
-    jurisdiction: { level: district, name: El Camino Healthcare District, district: "at-large", within: [{ level: city, name: Mountain View }, { level: city, name: Los Altos }, { level: city, name: Los Altos Hills }, { level: city, name: Sunnyvale }] }
+    jurisdiction: { level: district, name: El Camino Healthcare District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos Hills }, { level: city, name: Los Altos }, { level: city, name: Mountain View }, { level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: Santa Clara }] }
   - id: palo-alto-council
     section: Local candidates
     title: Palo Alto City Council
@@ -51,7 +51,7 @@ contests:
     kind: candidate
     candidates: [Linda Henigin, Avery Wang, John Craig]
     seats: 2
-    jurisdiction: { level: district, name: Palo Alto Unified School District, district: "at-large", within: [{ level: city, name: Palo Alto }] }
+    jurisdiction: { level: district, name: Palo Alto Unified School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos Hills }] }
   - id: mountain-view-council
     section: Local candidates
     title: Mountain View City Council
@@ -85,13 +85,13 @@ contests:
     title: Fremont Union High School District, Trustee Area 3
     kind: candidate
     candidates: [Rosa Kim, Jason Lin]
-    jurisdiction: { level: district, name: Fremont Union High School District, district: "3", within: [{ level: city, name: Palo Alto }] }
+    jurisdiction: { level: district, name: Fremont Union High School District, district: "3", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos }, { level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: San Jose }] }
   - id: fremont-uhsd-trustee-area-4
     section: School and special districts
     title: Fremont Union High School District, Trustee Area 4
     kind: candidate
     candidates: [Naomi Nakano-Matsumoto, Ilanit Eliaz]
-    jurisdiction: { level: district, name: Fremont Union High School District, district: "4", within: [{ level: city, name: Mountain View }] }
+    jurisdiction: { level: district, name: Fremont Union High School District, district: "4", within: [{ level: city, name: Mountain View }, { level: city, name: Sunnyvale }] }
   - id: campbell-council-3
     section: Local candidates
     title: Campbell City Council, District 3
@@ -273,33 +273,33 @@ contests:
     kind: candidate
     candidates: ["Liangfang \"Liang\" Chao", "William \"Bill\" Wilson"]
     aliases: { "Liangfang \"Liang\" Chao": [Liang Chao, Liangfang Chao], "William \"Bill\" Wilson": [Bill Wilson, William Wilson] }
-    jurisdiction: { level: district, name: Foothill-De Anza Community College District, district: "4", within: [{ level: city, name: Cupertino }, { level: city, name: Sunnyvale }] }
+    jurisdiction: { level: district, name: Foothill-De Anza Community College District, district: "4", within: [{ level: city, name: Cupertino }, { level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Saratoga }] }
   - id: gavilan-trustee-area-3
     section: School and special districts
     title: Gavilan Joint Community College District, Trustee Area 3
     kind: candidate
     candidates: [Shahida S. Merchant, Gabriel Gutierrez]
-    jurisdiction: { level: district, name: Gavilan Joint Community College District, district: "3", within: [{ level: city, name: Gilroy }, { level: city, name: Morgan Hill }] }
+    jurisdiction: { level: district, name: Gavilan Joint Community College District, district: "3", within: [{ level: city, name: Morgan Hill }, { level: city, name: Gilroy }] }
   - id: wvm-trustee-area-3
     section: School and special districts
     title: West Valley-Mission Community College District, Trustee Area 3
     kind: candidate
     candidates: [Anne J. Kepner, Colin Lee Elliott Glaves]
     aliases: { Anne J. Kepner: [Anne Kepner, Anne Jones Kepner], Colin Lee Elliott Glaves: [Colin Glaves] }
-    jurisdiction: { level: district, name: West Valley-Mission Community College District, district: "3", within: [{ level: city, name: Campbell }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }, { level: city, name: Monte Sereno }, { level: city, name: San Jose }, { level: city, name: Santa Clara }, { level: city, name: Cupertino }] }
+    jurisdiction: { level: district, name: West Valley-Mission Community College District, district: "3", within: [{ level: city, name: Santa Clara }, { level: city, name: San Jose }] }
   - id: wvm-trustee-area-7
     section: School and special districts
     title: West Valley-Mission Community College District, Trustee Area 7
     kind: candidate
     candidates: [Doug Robb, Susan Oster Fish]
     aliases: { Susan Oster Fish: [Susan Fish] }
-    jurisdiction: { level: district, name: West Valley-Mission Community College District, district: "7", within: [{ level: city, name: Campbell }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }, { level: city, name: Monte Sereno }, { level: city, name: San Jose }, { level: city, name: Santa Clara }, { level: city, name: Cupertino }] }
+    jurisdiction: { level: district, name: West Valley-Mission Community College District, district: "7", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }, { level: city, name: Los Gatos }] }
   - id: midpen-ward-1
     section: School and special districts
     title: Midpeninsula Regional Open Space District, Ward 1
     kind: candidate
     candidates: [Craig Gleason, Tina Marie To]
-    jurisdiction: { level: district, name: Midpeninsula Regional Open Space District, district: "1", within: [{ level: city, name: Cupertino }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }, { level: city, name: Monte Sereno }] }
+    jurisdiction: { level: district, name: Midpeninsula Regional Open Space District, district: "1", within: [{ level: city, name: Cupertino }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Los Gatos }] }
   - id: valley-water-1
     section: School and special districts
     title: Santa Clara Valley Water District, District 1
@@ -326,13 +326,13 @@ contests:
     title: East Side Union High School District, Trustee Area 4
     kind: candidate
     candidates: [Lorena Chavez, Tony Lam, Mahbub Khan]
-    jurisdiction: { level: district, name: East Side Union High School District, district: "4", within: [{ level: city, name: San Jose }] }
+    jurisdiction: { level: district, name: East Side Union High School District, district: "4", within: [{ level: city, name: San Jose }, { level: city, name: Milpitas }] }
   - id: lgsuhsd-trustee-area-2
     section: School and special districts
     title: Los Gatos-Saratoga Union High School District, Trustee Area 2
     kind: candidate
     candidates: [Sangeeta Balachandran Mallik, Ishaan Prasad]
-    jurisdiction: { level: district, name: Los Gatos-Saratoga Union High School District, district: "2", within: [{ level: city, name: Los Gatos }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }] }
+    jurisdiction: { level: district, name: Los Gatos-Saratoga Union High School District, district: "2", within: [{ level: city, name: Palo Alto }, { level: city, name: Cupertino }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Los Gatos }] }
   - id: gilroy-usd-trustee-area-3
     section: School and special districts
     title: Gilroy Unified School District, Trustee Area 3
@@ -351,27 +351,27 @@ contests:
     kind: candidate
     candidates: [Chris Norwood, Kelly Yip-Chuan, Anuradha Sankaran, Franchesca Lacanlale]
     seats: 3
-    jurisdiction: { level: district, name: Milpitas Unified School District, district: "at-large", within: [{ level: city, name: Milpitas }] }
+    jurisdiction: { level: district, name: Milpitas Unified School District, district: "at-large", within: [{ level: city, name: San Jose }, { level: city, name: Milpitas }] }
   - id: mhusd-trustee-area-1
     section: School and special districts
     title: Morgan Hill Unified School District, Trustee Area 1
     kind: candidate
     candidates: [Nancy Altman-Palm, Jason Amezcua]
     aliases: { Nancy Altman-Palm: [Nancy Altman, Nancy Altman Palm] }
-    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "1", within: [{ level: city, name: Morgan Hill }] }
+    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "1", within: [{ level: city, name: San Jose }, { level: city, name: Morgan Hill }] }
   - id: mhusd-trustee-area-2
     section: School and special districts
     title: Morgan Hill Unified School District, Trustee Area 2
     kind: candidate
     candidates: [John T. Horner, "Gabriela \"Gabby\" Winter"]
     aliases: { John T. Horner: [John Horner], "Gabriela \"Gabby\" Winter": [Gabriela Winter, Gabby Winter] }
-    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "2", within: [{ level: city, name: Morgan Hill }] }
+    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "2", within: [{ level: city, name: San Jose }, { level: city, name: Morgan Hill }] }
   - id: mhusd-trustee-area-3
     section: School and special districts
     title: Morgan Hill Unified School District, Trustee Area 3
     kind: candidate
     candidates: [Art Cohen, Cesar Gamboa, Sarah Northrup Gadus]
-    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "3", within: [{ level: city, name: Morgan Hill }] }
+    jurisdiction: { level: district, name: Morgan Hill Unified School District, district: "3", within: [{ level: city, name: San Jose }, { level: city, name: Morgan Hill }] }
   - id: mhusd-trustee-area-4
     section: School and special districts
     title: Morgan Hill Unified School District, Trustee Area 4
@@ -385,7 +385,7 @@ contests:
     kind: candidate
     candidates: [Tomara Hall, Carson Dance, Jose Magana]
     aliases: { Tomara Hall: [Tomara Latreece Hall], Jose Magana: [José Magaña, Jose Magaña] }
-    jurisdiction: { level: district, name: San Jose Unified School District, district: "2", within: [{ level: city, name: San Jose }] }
+    jurisdiction: { level: district, name: San Jose Unified School District, district: "2", within: [{ level: city, name: Santa Clara }, { level: city, name: San Jose }] }
   - id: sjusd-trustee-area-4
     section: School and special districts
     title: San Jose Unified School District, Trustee Area 4
@@ -398,7 +398,7 @@ contests:
     title: Santa Clara Unified School District, Trustee Area 1
     kind: candidate
     candidates: [Jim Canova, Kamal Yassin]
-    jurisdiction: { level: district, name: Santa Clara Unified School District, district: "1", within: [{ level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Sunnyvale }] }
+    jurisdiction: { level: district, name: Santa Clara Unified School District, district: "1", within: [{ level: city, name: Sunnyvale }, { level: city, name: Santa Clara }, { level: city, name: San Jose }] }
   - id: alum-rock-sd-trustee-area-3
     section: School and special districts
     title: Alum Rock Union School District, Trustee Area 3
@@ -420,19 +420,19 @@ contests:
     candidates: [Jaria Jaug, Thelma B. Boac, Jamal Khan, Shanna Brewer]
     aliases: { Thelma B. Boac: [Thelma Boac] }
     seats: 3
-    jurisdiction: { level: district, name: Berryessa Union School District, district: "at-large", within: [{ level: city, name: San Jose }] }
+    jurisdiction: { level: district, name: Berryessa Union School District, district: "at-large", within: [{ level: city, name: San Jose }, { level: city, name: Milpitas }] }
   - id: campbell-union-sd-trustee-area-4
     section: School and special districts
     title: Campbell Union School District, Trustee Area 4
     kind: candidate
     candidates: [Mohit Vora, Chris Miller]
-    jurisdiction: { level: district, name: Campbell Union School District, district: "4", within: [{ level: city, name: Campbell }, { level: city, name: San Jose }, { level: city, name: Los Gatos }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Santa Clara }] }
+    jurisdiction: { level: district, name: Campbell Union School District, district: "4", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }, { level: city, name: Los Gatos }] }
   - id: campbell-union-sd-trustee-area-5
     section: School and special districts
     title: Campbell Union School District, Trustee Area 5
     kind: candidate
     candidates: [Vartika Chandra, Sam Krow-Lucal]
-    jurisdiction: { level: district, name: Campbell Union School District, district: "5", within: [{ level: city, name: Campbell }, { level: city, name: San Jose }, { level: city, name: Los Gatos }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Santa Clara }] }
+    jurisdiction: { level: district, name: Campbell Union School District, district: "5", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }] }
   - id: evergreen-sd-trustee
     section: School and special districts
     title: Evergreen School District Board
@@ -483,7 +483,7 @@ contests:
     candidates: [Eric Cao, Catalina Rupert, Vidya R. Vineet, Farnoush Drexel, Anna Goldberg]
     aliases: { Vidya R. Vineet: [Vidya Vineet] }
     seats: 3
-    jurisdiction: { level: district, name: Saratoga Union School District, district: "at-large", within: [{ level: city, name: Saratoga }] }
+    jurisdiction: { level: district, name: Saratoga Union School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Cupertino }, { level: city, name: Saratoga }, { level: city, name: Los Gatos }] }
   - id: sunnyvale-sd-trustee-area-3
     section: School and special districts
     title: Sunnyvale School District, Trustee Area 3
@@ -531,7 +531,7 @@ contests:
     kind: measure
     description: "School bonds ($321 million)"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
-    jurisdiction: { level: district, name: Los Gatos-Saratoga Union High School District, district: "at-large", within: [{ level: city, name: Los Gatos }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }] }
+    jurisdiction: { level: district, name: Los Gatos-Saratoga Union High School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Cupertino }, { level: city, name: San Jose }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Los Gatos }] }
   - id: alum-rock-sd-measure-o
     section: Local measures
     title: Alum Rock Union School District Measure O
@@ -552,7 +552,7 @@ contests:
     kind: measure
     description: "Parcel tax"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
-    jurisdiction: { level: district, name: Cambrian School District, district: "at-large", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }] }
+    jurisdiction: { level: district, name: Cambrian School District, district: "at-large", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }, { level: city, name: Los Gatos }] }
   - id: orchard-sd-measure-r
     section: Local measures
     title: Orchard School District Measure R

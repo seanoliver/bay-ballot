@@ -295,3 +295,22 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
   - `lwv-bay-area`: RTM.
   - All three add `santa-clara-county` and `san-jose` (and `palo-alto`/`mountain-view` for their CD16/AD23/RTM picks).
 - **`within`:** every Santa Clara district lists the cities it serves, so it stays off the San Jose, Palo Alto and Mountain View pages it doesn't cover. This includes the four existing ones (Valley Water 7, MVWSD, LASD, El Camino Measure S), which were whole-county before. The shared CD17–19, SD10 and AD24–29 entries list their Santa Clara cities from the 2021 district descriptions.
+
+## `within` from ballot styles (audit, 2026-10-07)
+
+- Every Santa Clara district's `within`, in `santa-clara.yml` and the Santa Clara cities of CD17–19, SD10 and AD24–29, now comes from the registrar's 327 published ballot styles. That is the evidence in `data/2026-11/sources/SCC-Ballot-Styles-Nov2026.txt`.
+- A city is listed if and only if one of its styles carries the contest.
+- **Corrected, changing the Palo Alto and San Jose pages:**
+  - Palo Alto now gets MVWSD, LASD, El Camino S, LGSUHSD TA2, Saratoga Union SD and LGSUHSD N.
+  - Los Altos Hills now gets PAUSD.
+  - San Jose now gets Valley Water 7 and SD10.
+  - FUHSD TA3 and TA4 list their real cities.
+- **Cities a style can't identify:**
+  - San Jose outside D5/7/9: taken from its precinct range. Every identified style numbered 0007xxx–0008xxx is San Jose.
+  - Campbell outside D3–5 and Monte Sereno: kept from the district description only where an unidentified precinct in their range carries the contest.
+  - Unincorporated areas are not places.
+- Inferred this way:
+  - San Jose for the Oak Grove and Orchard contests, SJUSD TA2, SCUSD TA1, Milpitas USD, MHUSD TA1–3, Campbell Union SD TA4/TA5, WVM TA3, FHDA TA4, FUHSD TA3, LGSUHSD N and AD26.
+  - Campbell for WVM TA7, Cambrian Q and AD28.
+  - Monte Sereno for Midpen W1, LGSUHSD TA2, LGSUHSD N and AD28.
+- **Left county-wide:** `assembly-23` (whose styles reach San Jose's 0007xxx range, so the county-wide San Jose listing stands) and `us-rep-16`.

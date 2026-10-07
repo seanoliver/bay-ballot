@@ -4,7 +4,7 @@ status: published
 source: https://www.svtaxpayers.org/
 fetchWith: browser
 fetchedAt: 2026-10-07
-hasReasoning: true
+hasReasoning: false
 picks:
   rtm:
     pick: N
