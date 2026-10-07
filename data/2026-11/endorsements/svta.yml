@@ -1,8 +1,62 @@
 guide: svta
 election: 2026-11
-status: pending
+status: published
 source: https://www.svtaxpayers.org/
-fetchedAt: 2026-10-07
-hasReasoning: false
 fetchWith: browser
-picks: {}
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  rtm:
+    pick: N
+  gilroy-measure-b:
+    pick: N
+  mountain-view-measure-f:
+    pick: N
+  palo-alto-measure-j:
+    pick: N
+  milpitas-measure-k:
+    pick: N
+  gilroy-usd-measure-m:
+    pick: N
+  lgsuhsd-measure-n:
+    pick: N
+  alum-rock-sd-measure-o:
+    pick: N
+  alum-rock-sd-measure-p:
+    pick: N
+  cambrian-sd-measure-q:
+    pick: N
+  orchard-sd-measure-r:
+    pick: N
+  burlingame-sd-measure-r:
+    pick: N
+  cabrillo-usd-measure-z:
+    pick: N
+  jefferson-uhsd-measure-m:
+    pick: N
+  pacifica-sd-measure-t:
+    pick: N
+  san-carlos-sd-measure-k:
+    pick: N
+  smcccd-measure-v:
+    pick: N
+  smfcsd-measure-w:
+    pick: N
+  belmont-measure-y:
+    pick: N
+  brisbane-measure-x:
+    pick: N
+  burlingame-measure-d:
+    pick: N
+  east-palo-alto-measure-o:
+    pick: N
+  pacifica-measure-bb:
+    pick: N
+  portola-valley-measure-n:
+    pick: N
+  san-bruno-measure-ee:
+    pick: N
+  san-carlos-measure-g:
+    pick: N
+  san-mateo-measure-h:
+    pick: N

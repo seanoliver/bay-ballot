@@ -1,9 +1,45 @@
 guide: los-altos-town-crier
 election: 2026-11
-status: pending
+status: published
 source: https://www.losaltosonline.com/opinion/town-crier-endorsements/article_cddcbc6a-6f71-4a55-b19d-0aa447cdc306.html
 extraSources:
   - https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
 fetchedAt: 2026-10-07
-hasReasoning: false
-picks: {}
+hasReasoning: true
+rejectedQuotes:
+  - text: The first is that Measure D is unnecessary.
+    reason: 'does not stand alone: "The first is" points to a list (review 2026-10-07)'
+    contestId: los-altos-measure-d
+  - text: The second is that Measure D was poorly drafted.
+    reason: 'does not stand alone: "The second is" points to a list (review 2026-10-07)'
+    contestId: los-altos-measure-d
+picks:
+  los-altos-council-2:
+    pick:
+      - Anky van Deursen
+  los-altos-hills-council:
+    pick:
+      - Jim Waschura
+      - Jasmeen Pombra
+  mountain-view-council:
+    pick:
+      - IdaRose Sylvester
+      - Paul Donahue
+      - Robert Cox
+  los-altos-sd-trustee:
+    pick:
+      - Brandon Stroy
+      - Vaishali "Shali" Sirkay
+      - Bryan Harvey Johnson
+  valley-water-7:
+    pick:
+      - Pete Dailey
+  los-altos-measure-d:
+    pick: N
+    quotes:
+      - text: Instead, the text of Measure D was written in such a way that it impacts our Housing Element and therefore the mighty State of California.
+        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
+  mountain-view-measure-e:
+    pick: Y
+  mountain-view-measure-f:
+    pick: Y

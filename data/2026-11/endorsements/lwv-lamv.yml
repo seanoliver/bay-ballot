@@ -1,7 +1,9 @@
 guide: lwv-lamv
 election: 2026-11
-status: pending
+status: published
 source: https://lwvlamv.org/
 fetchedAt: 2026-10-07
 hasReasoning: false
-picks: {}
+picks:
+  los-altos-measure-d:
+    pick: N
