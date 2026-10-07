@@ -72,11 +72,13 @@ const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 
 function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   const names = new Set<string>();
+  // A surname alone must keep its capital, so "Park" or "Hall" doesn't match "the park" or "a hall".
+  const surnames = new Set<string>();
   const add = (n: string) => {
     const bare = n.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " ").trim();
     names.add(bare);
     const surname = bare.split(/\s+/).filter((t) => !NAME_SUFFIX.test(t)).at(-1);
-    if (surname && surname.length >= 4) names.add(surname);
+    if (surname && surname.length >= 4) surnames.add(surname);
   };
   for (const c of ballot.contests) {
     for (const n of c.candidates) add(n);
@@ -84,7 +86,8 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   }
   for (const list of Object.values(extra)) list.forEach(add);
   const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
-  return [...names].filter(Boolean).map((n) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, "iu"));
+  const re = (n: string, flags: string) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, flags);
+  return [...[...names].filter(Boolean).map((n) => re(n, "iu")), ...[...surnames].filter((n) => !names.has(n)).map((n) => re(n, "u"))];
 }
 
 function ballotMarkers(ballot: Ballot, aliases: Aliases): RegExp[] {

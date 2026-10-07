@@ -61,6 +61,10 @@ describe("relevantChange", () => {
   it("ignores whitespace-only changes and reordering", () => {
     expect(relevantChange(page, page.replace(/ /g, "  "), ballot)).toBe(false);
   });
+  it("matches a surname alone only with its capital", () => {
+    expect(relevantChange(page, `${page}\nPicnic in the park by the hall`, ballot)).toBe(false);
+    expect(relevantChange(page, `${page}\nPark and Hall spoke at the forum`, ballot)).toBe(true);
+  });
   it("ignores unrelated text that names no contest and no endorsement", () => {
     expect(relevantChange(page, page.replace("fall picnic", "winter potluck on Saturday"), ballot)).toBe(false);
   });
