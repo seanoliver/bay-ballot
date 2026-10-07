@@ -190,7 +190,7 @@ contests:
     title: Miller Creek School District Measure N
     kind: measure
     description: "Bond Measure"
-    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-n-110226
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-n-110226 # the county's own slug says 110226; 110326 is a 404
     jurisdiction: { level: district, name: Miller Creek School District, district: "at-large", within: [{ level: county, name: Marin }] }
   - id: novato-usd-trustee-area-4
     section: School and special districts
