@@ -367,7 +367,7 @@ Proposed local ids (area-prefixed, following the existing `san-mateo-county-*`, 
 |---|---|
 | County board of education | `marin-county-board-of-education-3`, `-5`, `-6` |
 | Cross-county | `sonoma-county-board-of-education-2` |
-| School | `tamalpais-uhsd-trustee`, `miller-creek-sd-trustee`, `novato-usd-trustee-area-4`, `reed-usd-trustee`, `sausalito-marin-city-sd-trustee` |
+| School | `tamalpais-uhsd-trustee`, `miller-creek-sd-trustee`, `novato-usd-trustee-area-4`, `reed-union-sd-trustee`, `sausalito-marin-city-sd-trustee` |
 | City/town | `corte-madera-council`, `fairfax-council`, `fairfax-clerk`, `larkspur-council`, `mill-valley-council`, `novato-council-2`, `novato-council-4`, `ross-council`, `san-anselmo-council`, `san-rafael-council-2`, `san-rafael-council-3`, `sausalito-council`, `tiburon-council` |
 | Special district | `marin-city-csd-director`, `marin-city-csd-director-short-term`, `southern-marin-fire-director`, `marin-healthcare-district-1`, `marin-healthcare-district-3`, `richardson-bay-sanitary-director`, `north-marin-water-district-5` |
 | Measures | `miller-creek-sd-measure-n`, `marin-county-measure-p`, `fairfax-measure-r`, `larkspur-measure-s`, `ross-measure-u`, `san-anselmo-measure-v`, `san-rafael-measure-w`, `sausalito-measure-x`, `marin-csa-27-measure-y`, `kentfield-fire-measure-bb`, `marin-healthcare-measure-cc`, `sleepy-hollow-fire-measure-dd` |
