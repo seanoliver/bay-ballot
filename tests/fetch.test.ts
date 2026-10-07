@@ -230,6 +230,29 @@ describe("browser fallback trusts the final page", () => {
   });
 });
 
+describe("which error-status pages are trusted", () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const realPage = `<html><body><h1>November 2026 Endorsements</h1>${"<p>We recommend Yes on Prop C because the city needs more affordable housing in every neighborhood.</p>".repeat(25)}</body></html>`;
+  const http = (status: number) =>
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("x", { status, headers: { "content-type": "text/html" } })));
+
+  it("trusts a full page after an HTTP 429 retried in the browser", async () => {
+    http(429);
+    const r = await fetchSource("https://x.test/a", { browserFetch: async () => ({ status: 429, html: realPage }) });
+    expect(r.text).toContain("November 2026 Endorsements");
+  });
+  it("does not trust an error page after an HTTP 503", async () => {
+    http(503);
+    await expect(fetchSource("https://x.test/a", { browserFetch: async () => ({ status: 503, html: realPage }) })).rejects.toThrow("HTTP 503 (browser: HTTP 503)");
+  });
+  it("does not trust an error page when the guide is fetched with the browser from the start", async () => {
+    await expect(fetchSource("https://x.test/a", { browser: true, browserFetch: async () => ({ status: 403, html: realPage }) })).rejects.toThrow("HTTP 403");
+  });
+  it("ignores challenge markup on a long real page", () => {
+    expect(detectBlock(realPage.replace("<h1>", '<form id="challenge-form"></form><h1>'))).toBeNull();
+  });
+});
+
 describe("browser helpers", () => {
   it("uses the last main-frame navigation's status (challenge solved mid-load)", () => {
     expect(finalStatus([{ status: 403, mainFrameNavigation: true }, { status: 204, mainFrameNavigation: false }, { status: 200, mainFrameNavigation: true }], 403)).toBe(200);

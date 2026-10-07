@@ -94,7 +94,7 @@ export function detectBlock(html: string): string | null {
   const short = text.length <= MAX_BLOCK_PAGE_TEXT;
   // Match only the <title> or a short page's text: a real page can say "access denied" in passing.
   for (const [name, re] of BLOCK_SIGNS) if (re.test(title) || (short && re.test(text))) return name;
-  for (const [name, re] of BLOCK_MARKUP) if (re.test(html)) return name;
+  if (short) for (const [name, re] of BLOCK_MARKUP) if (re.test(html)) return name;
   return null;
 }
 
@@ -180,7 +180,7 @@ async function fetchHttp(url: string): Promise<HttpResult> {
 export async function fetchSource(url: string, opts: FetchOptions = {}): Promise<Fetched> {
   const browserFetch = opts.browserFetch ?? browserPage;
   const report = opts.onAttempt ?? (() => {});
-  const viaBrowser = async (httpFailure: string | null): Promise<Fetched> => {
+  const viaBrowser = async (httpFailure: string | null, retriedStatus?: number): Promise<Fetched> => {
     let r: { status: number; html: string };
     try {
       r = await browserFetch(url);
@@ -190,8 +190,9 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     }
     const blocked = detectBlock(r.html);
     report({ via: "browser", status: r.status, bytes: Buffer.byteLength(r.html), blocked });
-    // A full unblocked page counts despite an error status: some walls let the browser through after a 403.
-    const realPage = !blocked && visibleText(r.html).text.length > MAX_BLOCK_PAGE_TEXT;
+    // A full unblocked page counts despite a 403/429 only after an HTTP 403/429: some walls let the browser through but keep the status.
+    const wallLetUsThrough = (retriedStatus === 403 || retriedStatus === 429) && (r.status === 403 || r.status === 429);
+    const realPage = wallLetUsThrough && !blocked && visibleText(r.html).text.length > MAX_BLOCK_PAGE_TEXT;
     if (r.status >= 400 && !realPage) {
       throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
     }
@@ -206,7 +207,7 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     report({ via: "http", status: r.status, bytes: r.bytes, blocked: null });
     const failure = `${url} -> HTTP ${r.status}`;
     if (!RETRY_IN_BROWSER.has(r.status) || isPdfPath(url)) throw new Error(failure);
-    return viaBrowser(failure);
+    return viaBrowser(failure, r.status);
   }
   const blocked = r.html ? detectBlock(r.html) : null;
   report({ via: "http", status: r.status, bytes: r.bytes, blocked });
