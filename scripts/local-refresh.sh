@@ -160,6 +160,7 @@ fi
 
 # Only the one key the pipeline needs, never echoed.
 if [ -f "$SOURCE_REPO/.env.local" ]; then
+  rm -f .env.local
   ( umask 077; grep -E '^BAYBALLOT_ANTHROPIC_API_KEY=' "$SOURCE_REPO/.env.local" | tail -n 1 > .env.local )
 elif ! $dry_run; then
   fail "no .env.local in $SOURCE_REPO"

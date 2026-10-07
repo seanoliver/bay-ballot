@@ -231,6 +231,16 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     expect(fs.readFileSync(t.p("refresh.log"), "utf8")).not.toContain("sk-test-key");
   });
 
+  it("tightens an existing .env.local that others could read", () => {
+    const t = setup();
+    t.run();
+    fs.writeFileSync(t.p("refresh", ".env.local"), "OLD=1\nBAYBALLOT_ANTHROPIC_API_KEY=old\n", { mode: 0o644 });
+    fs.chmodSync(t.p("refresh", ".env.local"), 0o644);
+    t.run();
+    expect(fs.statSync(t.p("refresh", ".env.local")).mode & 0o077).toBe(0);
+    expect(fs.readFileSync(t.p("refresh", ".env.local"), "utf8")).toBe("BAYBALLOT_ANTHROPIC_API_KEY=sk-test-key\n");
+  });
+
   it("dry run: no commit, push, PR or issue, and the worktree is left clean", () => {
     const t = setup();
     const r = t.run({ STUB_CHANGE: "1" }, ["--dry-run"]);
