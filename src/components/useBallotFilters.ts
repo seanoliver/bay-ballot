@@ -26,7 +26,7 @@ function writeKey(key: string, v: string) {
 export const HISTORY_BUDGET = historyBudget({ max: 90, windowMs: 10_000 });
 const WRITE_COST = 2;
 let pending: { path: string; search: string } | null = null;
-// Back/Forward can land on older filters than storage's latest; deferred so a sheet's own popstate write lands first.
+// Deferred: the phone sheet's own popstate write must land first, or this writes a second time.
 if (typeof window !== "undefined") {
   window.addEventListener("popstate", () => {
     HISTORY_BUDGET.note(1);
