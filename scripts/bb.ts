@@ -23,6 +23,7 @@ const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
        npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--baseline <data dir>] [--archive]
+                             [--local-only] [--no-extract]
        npm run bb -- verify <guide...> | --all [--browser]
        npm run bb -- pages --seed [<guide...>]
        npm run bb -- fetch-check <guide...> | --all [--browser]   (fetch only; prints what came back, writes nothing)
@@ -33,9 +34,11 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
 extract and refresh fetch each guide's pages and compare them with the stored page text
 (data/<election>/pages). Guides whose pages changed only in dates, banners or other text
 that names no contest are skipped with no model call; --force-extract re-extracts anyway.
-refresh checks every guide, extracts at most ${"$"}{REFRESH_BUDGET} changed guides, validates, and exits
-0 (clean), 2 (something held or needs review) or 1 (error). pages --seed stores today's page
-text without extracting.
+refresh checks every guide, extracts at most 20 changed guides, validates, and exits
+0 (clean), 2 (something held or needs review) or 1 (error). Guides marked fetchFrom: local
+(their sites block GitHub's runners) are skipped unless --local-only, which refreshes only
+them. --no-extract fetches and gates pages but makes no model calls and stores nothing new
+for changed guides. pages --seed stores today's page text without extracting.
 
 extract rewrites each guide's picks from its pages, overwriting hand edits to picks
 (mark hand-entered guides with 'manual: true' to skip them). --force accepts a result
@@ -138,9 +141,13 @@ async function runVerify(): Promise<void> {
   console.log("\nReview with: git diff data/");
 }
 
-function refreshDeps(): RefreshDeps {
+const NO_MODEL = {
+  messages: { stream: () => { throw new Error("no model calls in this mode"); } },
+} as unknown as RefreshDeps["client"];
+
+function refreshDeps({ model = true }: { model?: boolean } = {}): RefreshDeps {
   return {
-    client: makeClient(resolveApiKey(".env.local")),
+    client: model ? makeClient(resolveApiKey(".env.local")) : NO_MODEL,
     fetchSource,
     archiveUrl: (url) => archiveUrl(url),
     today,
@@ -171,11 +178,14 @@ async function runExtract(): Promise<void> {
 }
 
 async function runRefreshCmd(): Promise<void> {
-  const results = await runRefresh(refreshDeps(), {
+  const gateOnly = flag("--no-extract");
+  const results = await runRefresh(refreshDeps({ model: !gateOnly }), {
     root: ROOT, election: ELECTION,
     browser: flag("--browser"), archive: flag("--archive"), maxChanged: REFRESH_BUDGET,
     shrunkSkip: readShrunkState(option("--shrunk-state")),
     baseline: option("--baseline"),
+    scope: flag("--local-only") ? "local" : "cloud",
+    gateOnly,
   });
   const { errors } = validateElection(loadElection(ROOT, ELECTION));
   let md = summarize(results, { date: today() });
@@ -207,7 +217,7 @@ async function runPages(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  const deps: RefreshDeps = { client: { messages: { stream: () => { throw new Error("no model calls when seeding"); } } } as unknown as RefreshDeps["client"], fetchSource, today, log: (l) => console.log(l) };
+  const deps: RefreshDeps = { client: NO_MODEL, fetchSource, today, log: (l) => console.log(l) };
   const out = await seedPages(deps, { root: ROOT, election: ELECTION, browser: flag("--browser"), ids: positional().length ? positional() : undefined });
   const failed = out.filter((o) => o.error);
   console.log(`\nStored pages for ${out.length - failed.length} guide(s); ${failed.length} failed.`);

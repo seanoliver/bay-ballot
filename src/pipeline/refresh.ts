@@ -35,6 +35,8 @@ export type RefreshOptions = {
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
   baseline?: string;
+  scope?: "cloud" | "local"; // cloud skips fetchFrom: local guides; local refreshes only those
+  gateOnly?: boolean; // dry run: fetch and gate pages, but never call the model or store page text
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -43,6 +45,7 @@ export type GuideResult =
   | { id: string; status: "skipped"; reason: string }
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
+  | { id: string; status: "would-extract" }
   | { id: string; status: "failed"; error: string }
   | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string; usage: Usage }
   | { id: string; status: "shrunk-skipped"; pageHash: string }
@@ -94,6 +97,7 @@ async function refreshGuide(
   const prev = data.endorsements[id];
   const ballot = guideBallot(data.ballot, guide, data.areas);
   if (prev.manual) return { id, status: "skipped", reason: "manual" };
+  if (prev.fetchFrom === "local" && opts.scope !== "local") return { id, status: "skipped", reason: "local only" };
   const urls = sourcesFor(prev);
   if (urls.length === 0) return { id, status: "skipped", reason: "no source" };
   const hostProblems = checkHosts(guide, prev);
@@ -116,6 +120,7 @@ async function refreshGuide(
   }
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
   if (!opts.forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
+  if (opts.gateOnly) return { id, status: "would-extract" };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
 
@@ -179,7 +184,9 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
   const baseline = opts.baseline ? loadBaseline(opts.baseline, opts.election) : null;
   const log = deps.log ?? (() => {});
   const data = loadElection(opts.root, opts.election);
-  const ids = opts.ids ?? Object.keys(data.endorsements).sort();
+  const ids = (opts.ids ?? Object.keys(data.endorsements).sort()).filter(
+    (id) => opts.scope !== "local" || data.endorsements[id]?.fetchFrom === "local",
+  );
   const budget = { left: opts.maxChanged ?? Infinity };
   const results: GuideResult[] = [];
   for (const id of ids) {
@@ -230,6 +237,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: unchanged (no relevant change)`;
     case "deferred":
       return `${r.id}: deferred (budget reached; picked up next run)`;
+    case "would-extract":
+      return `${r.id}: would extract (dry run; pages changed)`;
     case "failed":
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
@@ -311,6 +320,8 @@ export function summarize(results: GuideResult[], { date }: { date: string }): s
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
   }
+  const wouldExtract = by("would-extract").map((r) => r.id);
+  if (wouldExtract.length) lines.push("", `Would extract (dry run): ${wouldExtract.join(", ")}`);
   const deferred = by("deferred").map((r) => r.id);
   if (deferred.length) lines.push("", `Deferred (budget): ${deferred.join(", ")} — picked up by the next run.`);
   const unchanged = by("unchanged").map((r) => r.id);

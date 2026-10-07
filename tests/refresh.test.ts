@@ -401,3 +401,49 @@ describe("resultJson", () => {
     });
   });
 });
+
+describe("fetchFrom: local", () => {
+  const markLocal = (root: string, g: string) => {
+    const p = path.join(root, ELECTION, "endorsements", `${g}.yml`);
+    fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace("fetchedAt:", "fetchFrom: local\nfetchedAt:"));
+  };
+
+  it("skips local-only guides on the cloud run without fetching them, and that is not a failure", async () => {
+    const root = setup(["alpha", "beta"]);
+    markLocal(root, "beta");
+    const { client, stream } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["alpha", "unchanged"], ["beta", "skipped"]]);
+    expect(results[1]).toMatchObject({ reason: "local only" });
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+    expect(stream).not.toHaveBeenCalled();
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("refreshes only local-only guides with scope local", async () => {
+    const root = setup(["alpha", "beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client, stream } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "local" });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["beta", "changed"]]);
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5", "claude-opus-5-5"]);
+  });
+});
+
+describe("gateOnly (dry run)", () => {
+  it("reports which guides would be extracted without calling the model or storing their pages", async () => {
+    const root = setup(["alpha", "beta"]);
+    const { client, stream } = fakeClient();
+    const changed = PAGE("beta", "x").replace("No on Prop B", "Yes on Prop B");
+    const before = fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8");
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x"), beta: changed })), { root, election: ELECTION, gateOnly: true });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["alpha", "unchanged"], ["beta", "would-extract"]]);
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8")).toBe(before);
+    expect(exitCodeFor(results)).toBe(0);
+    expect(summarize(results, { date: "2026-10-07" })).toContain("Would extract (dry run): beta");
+  });
+});

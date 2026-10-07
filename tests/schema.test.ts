@@ -274,3 +274,10 @@ describe("held picks", () => {
     expect(EndorsementFile.safeParse({ ...file, held: [{ ...held, pick: [] }] }).success).toBe(false);
   });
 });
+
+describe("fetchFrom", () => {
+  it("accepts local and rejects anything else", () => {
+    expect(EndorsementFile.safeParse({ ...file, fetchFrom: "local" }).success).toBe(true);
+    expect(EndorsementFile.safeParse({ ...file, fetchFrom: "cloud" }).success).toBe(false);
+  });
+});
