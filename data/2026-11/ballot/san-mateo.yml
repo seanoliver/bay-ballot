@@ -1,0 +1,434 @@
+# Sources: data/2026-11/sources/SMC-Candidate-Roster-0903.txt and SMC-Measures-Nov2026.txt (San Mateo County registrar).
+contests:
+  - id: san-mateo-county-supervisor-5
+    section: Local candidates
+    title: San Mateo County Board of Supervisors, District 5 (Short Term)
+    kind: candidate
+    candidates: [Mark Nagales, Juslyn Cabrera Manalo]
+    jurisdiction: { level: district, name: Supervisor, district: "5", within: [{ level: county, name: San Mateo }] }
+  - id: san-mateo-county-board-of-education-2
+    section: Local candidates
+    title: San Mateo County Board of Education, Trustee Area 2
+    kind: candidate
+    candidates: [Beverly Gerard, Dana Johnson]
+    jurisdiction: { level: district, name: County Board of Education, district: "2", within: [{ level: county, name: San Mateo }] }
+  - id: san-mateo-county-measure-l
+    section: Local measures
+    title: San Mateo County Measure L
+    kind: measure
+    description: "Charter Amendment: Extreme Weather Events"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: county, name: San Mateo }
+  - id: san-mateo-county-measure-aa
+    section: Local measures
+    title: San Mateo County Measure AA
+    kind: measure
+    description: "Charter Amendment: Affirmation of Rights"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: county, name: San Mateo }
+  - id: san-mateo-county-measure-j
+    section: Local measures
+    title: San Mateo County Measure J
+    kind: measure
+    description: "Charter Amendment: Extension to Call a Special Election or Appoint"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: county, name: San Mateo }
+  - id: san-mateo-county-measure-u
+    section: Local measures
+    title: San Mateo County Measure U
+    kind: measure
+    description: "Charter Amendment: Reapportionment of Supervisorial Districts"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: county, name: San Mateo }
+  - id: smcccd-trustee-area-2
+    section: School and special districts
+    title: San Mateo County Community College District, Trustee Area 2
+    kind: candidate
+    candidates: [Mike Guingona, Jason Holt]
+    jurisdiction: { level: district, name: San Mateo County Community College District, district: "2", within: [{ level: county, name: San Mateo }] }
+  - id: cabrillo-usd-trustee-area-c
+    section: School and special districts
+    title: Cabrillo Unified School District, Trustee Area C
+    kind: candidate
+    candidates: [Peter Tokofsky, Lizet Cortes-Ronquillo]
+    jurisdiction: { level: district, name: Cabrillo Unified School District, district: "C", within: [{ level: county, name: San Mateo }] }
+  - id: ssfusd-trustee-area-c
+    section: School and special districts
+    title: South San Francisco Unified School District, Trustee Area C
+    kind: candidate
+    candidates: [Chialin Hsieh, Avin Sharma]
+    jurisdiction: { level: district, name: South San Francisco Unified School District, district: "C", within: [{ level: county, name: San Mateo }] }
+  - id: ssfusd-trustee-area-e
+    section: School and special districts
+    title: South San Francisco Unified School District, Trustee Area E
+    kind: candidate
+    candidates: [Frank Lara, Mina A. Richardson]
+    jurisdiction: { level: district, name: South San Francisco Unified School District, district: "E", within: [{ level: county, name: San Mateo }] }
+  - id: smuhsd-trustee-area-3
+    section: School and special districts
+    title: San Mateo Union High School District, Trustee Area 3
+    kind: candidate
+    candidates: [Diana Harris, Jennifer Jacobson]
+    aliases: { Jennifer Jacobson: [Jennifer Jacobsen] }
+    jurisdiction: { level: district, name: San Mateo Union High School District, district: "3", within: [{ level: county, name: San Mateo }] }
+  - id: smuhsd-trustee-area-5
+    section: School and special districts
+    title: San Mateo Union High School District, Trustee Area 5
+    kind: candidate
+    candidates: [Kimo Rosenbaum, Alison Proctor]
+    jurisdiction: { level: district, name: San Mateo Union High School District, district: "5", within: [{ level: county, name: San Mateo }] }
+  - id: sequoia-uhsd-trustee-area-a
+    section: School and special districts
+    title: Sequoia Union High School District, Trustee Area A
+    kind: candidate
+    candidates: [Amy Koo, Alon Shiran]
+    jurisdiction: { level: district, name: Sequoia Union High School District, district: "A", within: [{ level: county, name: San Mateo }] }
+  - id: pacifica-sd-trustee
+    section: School and special districts
+    title: Pacifica School District Board
+    kind: candidate
+    candidates: [Bridget Hardt, Rachel Durkin, Grace Sobieski, Tiffany Button, Christopher Swiedler, Katy Bradley, Laverne R Villalobos]
+    seats: 3
+    jurisdiction: { level: district, name: Pacifica School District, district: "at-large", within: [{ level: city, name: Pacifica }] }
+  - id: pacifica-sd-trustee-short-term
+    section: School and special districts
+    title: Pacifica School District Board (Short Term)
+    kind: candidate
+    candidates: [Kelly Mendoza, Tracey Simmons, Elizabeth A. Bredall]
+    jurisdiction: { level: district, name: Pacifica School District, district: "short-term", within: [{ level: city, name: Pacifica }] }
+  - id: san-carlos-sd-trustee
+    section: School and special districts
+    title: San Carlos School District Board
+    kind: candidate
+    candidates: [Boris Lipkin, Richard F. Wahl, Megha Chawla, Shivani Tripathi]
+    seats: 3
+    jurisdiction: { level: district, name: San Carlos School District, district: "at-large", within: [{ level: city, name: San Carlos }] }
+  - id: granada-csd-director
+    section: School and special districts
+    title: Granada Community Services District Board
+    kind: candidate
+    candidates: [Barbara Dye, Kevin W. Sniecinski, Matt Allen, Patrick Tierney]
+    seats: 3
+    jurisdiction: { level: district, name: Granada Community Services District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: burlingame-sd-measure-r
+    section: School and special districts
+    title: Burlingame School District Measure R
+    kind: measure
+    description: "Bond Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: Burlingame School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: cabrillo-usd-measure-z
+    section: School and special districts
+    title: Cabrillo Unified School District Measure Z
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: Cabrillo Unified School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: jefferson-uhsd-measure-m
+    section: School and special districts
+    title: Jefferson Union High School District Measure M
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: Jefferson Union High School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: pacifica-sd-measure-t
+    section: School and special districts
+    title: Pacifica School District Measure T
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: Pacifica School District, district: "at-large", within: [{ level: city, name: Pacifica }] }
+  - id: san-carlos-sd-measure-k
+    section: School and special districts
+    title: San Carlos School District Measure K
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: San Carlos School District, district: "at-large", within: [{ level: city, name: San Carlos }] }
+  - id: smcccd-measure-v
+    section: School and special districts
+    title: San Mateo County Community College District Measure V
+    kind: measure
+    description: "Bond Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: San Mateo County Community College District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: smfcsd-measure-w
+    section: School and special districts
+    title: San Mateo-Foster City School District Measure W
+    kind: measure
+    description: "Bond Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: district, name: San Mateo-Foster City School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
+  - id: belmont-measure-y
+    section: Local measures
+    title: Belmont Measure Y
+    kind: measure
+    description: "Special Tax Measure (community center)"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Belmont }
+  - id: brisbane-measure-x
+    section: Local measures
+    title: Brisbane Measure X
+    kind: measure
+    description: "Business License Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Brisbane }
+  - id: burlingame-measure-d
+    section: Local measures
+    title: Burlingame Measure D
+    kind: measure
+    description: "Transient Occupancy Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Burlingame }
+  - id: daly-city-council
+    section: Local candidates
+    title: Daly City Council
+    kind: candidate
+    candidates: [Thomas A. Nuris, Pamela DiGiovanni, Teresa Proaño, Tony Bayudan, Rod Daus-Magbual, Asia Su, Barry Rodriguez]
+    seats: 3
+    jurisdiction: { level: city, name: Daly City }
+  - id: east-palo-alto-council
+    section: Local candidates
+    title: East Palo Alto City Council
+    kind: candidate
+    candidates: [Holifa Windom, Gail Wilk Dixon, Ruben Abrica, Sam Jimenez, Ofelia Bello, Deborah Lewis-Virges, Michael Mashack]
+    seats: 2
+    jurisdiction: { level: city, name: East Palo Alto }
+  - id: east-palo-alto-measure-o
+    section: Local measures
+    title: East Palo Alto Measure O
+    kind: measure
+    description: "Bond Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: East Palo Alto }
+  - id: east-palo-alto-measure-cc
+    section: Local measures
+    title: East Palo Alto Measure CC
+    kind: measure
+    description: "Term Limits Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: East Palo Alto }
+  - id: foster-city-council-1
+    section: Local candidates
+    title: Foster City Council, District 1
+    kind: candidate
+    candidates: [Art Kiesel, Phoebe Shin Venkat]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Foster City }] }
+  - id: foster-city-council-2
+    section: Local candidates
+    title: Foster City Council, District 2
+    kind: candidate
+    candidates: [Stacy Jimenez]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Foster City }] }
+  - id: half-moon-bay-council-1
+    section: Local candidates
+    title: Half Moon Bay City Council, District 1
+    kind: candidate
+    candidates: [Robert Brownstone, David Gorn]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Half Moon Bay }] }
+  - id: half-moon-bay-council-4
+    section: Local candidates
+    title: Half Moon Bay City Council, District 4
+    kind: candidate
+    candidates: [Ron Kies, Debbie Ruddock]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Half Moon Bay }] }
+  - id: half-moon-bay-council-5
+    section: Local candidates
+    title: Half Moon Bay City Council, District 5
+    kind: candidate
+    candidates: [Susie Morasci, Steven R. Booker]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Half Moon Bay }] }
+  - id: half-moon-bay-measure-i
+    section: Local measures
+    title: Half Moon Bay Measure I
+    kind: measure
+    description: "Coastal Land Use Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Half Moon Bay }
+  - id: half-moon-bay-measure-q
+    section: Local measures
+    title: Half Moon Bay Measure Q
+    kind: measure
+    description: "Housing Initiative Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Half Moon Bay }
+  - id: menlo-park-council-1
+    section: Local candidates
+    title: Menlo Park City Council, District 1
+    kind: candidate
+    candidates: [James Rohr, Wonman Lee]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Menlo Park }] }
+  - id: menlo-park-council-2
+    section: Local candidates
+    title: Menlo Park City Council, District 2
+    kind: candidate
+    candidates: [Drew Combs, Vamsi Velagapudi]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Menlo Park }] }
+  - id: menlo-park-council-4
+    section: Local candidates
+    title: Menlo Park City Council, District 4
+    kind: candidate
+    candidates: [Charlotte Reed, Laura Melahn]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Menlo Park }] }
+  - id: menlo-park-measure-p
+    section: Local measures
+    title: Menlo Park Measure P
+    kind: measure
+    description: "Citizen Initiative to Amend Municipal Code (downtown parking plazas)"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Menlo Park }
+  - id: millbrae-council-3
+    section: Local candidates
+    title: Millbrae City Council, District 3 (Short Term)
+    kind: candidate
+    candidates: [Juan Gámez, Ann Schneider]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Millbrae }] }
+  - id: millbrae-council-4
+    section: Local candidates
+    title: Millbrae City Council, District 4
+    kind: candidate
+    candidates: [Albert Yam, Bob Nguyen]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Millbrae }] }
+  - id: pacifica-council-2
+    section: Local candidates
+    title: Pacifica City Council, District 2
+    kind: candidate
+    candidates: [Christine Boles, Dan Urban]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Pacifica }] }
+  - id: pacifica-council-3
+    section: Local candidates
+    title: Pacifica City Council, District 3
+    kind: candidate
+    candidates: [Cindy Abbott]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Pacifica }] }
+  - id: pacifica-council-5
+    section: Local candidates
+    title: Pacifica City Council, District 5
+    kind: candidate
+    candidates: [Margo Meiman, Sam Casillas]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Pacifica }] }
+  - id: pacifica-measure-bb
+    section: Local measures
+    title: Pacifica Measure BB
+    kind: measure
+    description: "Transactions and Use Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Pacifica }
+  - id: portola-valley-measure-n
+    section: Local measures
+    title: Portola Valley Measure N
+    kind: measure
+    description: "Town Charter and Property Transfer Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Portola Valley }
+  - id: redwood-city-council-2
+    section: Local candidates
+    title: Redwood City Council, District 2
+    kind: candidate
+    candidates: [Chris Sturken]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Redwood City }] }
+  - id: redwood-city-measure-e
+    section: Local measures
+    title: Redwood City Measure E
+    kind: measure
+    description: "Rent Control and Eviction Limits Initiative"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: Redwood City }
+  - id: san-bruno-council-1
+    section: Local candidates
+    title: San Bruno City Council, District 1
+    kind: candidate
+    candidates: [Jennifer M. Blanco, Kingsley Ma]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: San Bruno }] }
+  - id: san-bruno-council-4
+    section: Local candidates
+    title: San Bruno City Council, District 4
+    kind: candidate
+    candidates: [Marty P. Medina, Auros Harman]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: San Bruno }] }
+  - id: san-bruno-measure-s
+    section: Local measures
+    title: San Bruno Measure S
+    kind: measure
+    description: "Housing Permits and Developments Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Bruno }
+  - id: san-bruno-measure-dd
+    section: Local measures
+    title: San Bruno Measure DD
+    kind: measure
+    description: "Fireworks Ban Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Bruno }
+  - id: san-bruno-measure-ee
+    section: Local measures
+    title: San Bruno Measure EE
+    kind: measure
+    description: "Business License Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Bruno }
+  - id: san-carlos-council
+    section: Local candidates
+    title: San Carlos City Council
+    kind: candidate
+    candidates: [Pranita Venkatesh, Sara McDowell, Adam Rak, Mark D. Iwanowski]
+    seats: 3
+    jurisdiction: { level: city, name: San Carlos }
+  - id: san-carlos-measure-g
+    section: Local measures
+    title: San Carlos Measure G
+    kind: measure
+    description: "Transactions and Use Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Carlos }
+  - id: san-mateo-council-1
+    section: Local candidates
+    title: San Mateo City Council, District 1
+    kind: candidate
+    candidates: [Taso Zografos, Lisa Diaz Nash]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: San Mateo }] }
+  - id: san-mateo-council-3
+    section: Local candidates
+    title: San Mateo City Council, District 3
+    kind: candidate
+    candidates: [Seema Patel, Robert G. Newsom Jr.]
+    aliases: { Robert G. Newsom Jr.: [Rob Newsom Jr., Rob Newsom] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: San Mateo }] }
+  - id: san-mateo-council-5
+    section: Local candidates
+    title: San Mateo City Council, District 5
+    kind: candidate
+    candidates: [Dave Johnson, Dana Yates Sahae, Adam Loraine]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: San Mateo }] }
+  - id: san-mateo-measure-h
+    section: Local measures
+    title: San Mateo Measure H
+    kind: measure
+    description: "Transactions and Use Tax Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Mateo }
+  - id: san-mateo-measure-f
+    section: Local measures
+    title: San Mateo Measure F
+    kind: measure
+    description: "Charter Amendment Measure"
+    link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
+    jurisdiction: { level: city, name: San Mateo }
+  - id: south-san-francisco-council-1
+    section: Local candidates
+    title: South San Francisco City Council, District 1
+    kind: candidate
+    candidates: [Aysha Dominguez Pamukcu]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: South San Francisco }] }
+  - id: south-san-francisco-council-3
+    section: Local candidates
+    title: South San Francisco City Council, District 3
+    kind: candidate
+    candidates: [Buenaflor (Flor) Nicolas, Sophia Cyris, Melanie Olson]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: South San Francisco }] }
+  - id: south-san-francisco-council-5
+    section: Local candidates
+    title: South San Francisco City Council, District 5
+    kind: candidate
+    candidates: [Eddie Flores]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: South San Francisco }] }

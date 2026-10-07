@@ -2,8 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
-import { AreasFile, Ballot, EndorsementFile, Guide, type Area } from "./schema";
-import { areasOf, inArea, STATE_DISTRICTS } from "./areas";
+import { Area, AreaFile, Ballot, CountyBallot, EndorsementFile, Guide, type Contest } from "./schema";
+import { areaCounties, areasOf, ballotCounty, inArea, STATE_DISTRICTS } from "./areas";
+import { countySlug } from "./counties";
 import { matchName } from "./names";
 import { isRejected } from "./quote-key";
 
@@ -36,12 +37,74 @@ function ymlFiles(dir: string): string[] {
 
 const stem = (f: string) => f.replace(/\.yml$/, "");
 
-export function loadElection(root: string, election: string): ElectionData {
+function loadAreas(root: string): Area[] {
+  const dir = path.join(root, "areas");
+  const files = ymlFiles(dir);
+  if (files.length === 0) throw new Error(`${dir}: no area files`);
+  const loaded = files.map((f) => {
+    const file = path.join(dir, f);
+    const a = readParsed(file, AreaFile);
+    if (a.id !== stem(f)) throw new Error(`${file}: filename does not match area id '${a.id}'`);
+    return a;
+  });
+  return loaded.sort((a, b) => a.order - b.order || a.id.localeCompare(b.id)).map((a) => Area.parse(a));
+}
+
+// ballot.yml holds the statewide and regional contests; ballot/<county>.yml holds one county's, merged in area order.
+function loadBallot(root: string, election: string, areas: Area[]): Ballot {
   const ballotFile = path.join(root, election, "ballot.yml");
   const ballot = readParsed(ballotFile, Ballot);
   if (ballot.election !== election) {
     throw new Error(`${ballotFile}: election '${ballot.election}' does not match directory '${election}'`);
   }
+  const sourceOf = new Map<string, string>();
+  const claim = (c: Contest, file: string) => {
+    const prev = sourceOf.get(c.id);
+    if (prev) throw new Error(`duplicate contest id '${c.id}' in ${prev} and ${file}`);
+    sourceOf.set(c.id, file);
+  };
+  for (const c of ballot.contests) {
+    claim(c, ballotFile);
+    const county = ballotCounty(c, areas);
+    if (county) throw new Error(`${ballotFile}: ${c.id} is a ${county} contest; move it to ballot/${countySlug(county)}.yml`);
+  }
+  const shared = new Set(ballot.contests);
+  const contests = [...ballot.contests];
+  const dir = path.join(root, election, "ballot");
+  const counties = areaCounties(areas);
+  const slugs = counties.map(countySlug);
+  const files = ymlFiles(dir);
+  for (const f of files) {
+    if (!slugs.includes(stem(f))) throw new Error(`${path.join(dir, f)}: no area is in a county with this slug (known: ${slugs.join(", ")})`);
+  }
+  for (const county of counties) {
+    const f = `${countySlug(county)}.yml`;
+    if (!files.includes(f)) continue;
+    const file = path.join(dir, f);
+    const { placement = {}, contests: mine } = readParsed(file, CountyBallot);
+    const placed = new Map<string, Contest[]>();
+    const rest: Contest[] = [];
+    for (const c of mine) {
+      claim(c, file);
+      const at = ballotCounty(c, areas);
+      if (at !== county) throw new Error(`${file}: ${c.id} is ${at === null ? "a statewide or regional" : at === undefined ? "a no-area" : `a ${at}`} contest, not ${county}`);
+      if (placement[c.section]) placed.set(c.section, [...(placed.get(c.section) ?? []), c]);
+      else rest.push(c);
+    }
+    for (const [section, cs] of placed) {
+      const after = placement[section];
+      const i = contests.findLastIndex((c) => shared.has(c) && c.section === after);
+      if (i < 0) throw new Error(`${file}: placement section '${after}' is not in ballot.yml`);
+      contests.splice(i + 1, 0, ...cs);
+    }
+    contests.push(...rest);
+  }
+  return { ...ballot, contests };
+}
+
+export function loadElection(root: string, election: string): ElectionData {
+  const areas = loadAreas(root);
+  const ballot = loadBallot(root, election, areas);
   const guidesDir = path.join(root, "guides");
   const guides: Guide[] = [];
   const seenGuides = new Set<string>();
@@ -63,10 +126,6 @@ export function loadElection(root: string, election: string): ElectionData {
     }
     endorsements[e.guide] = e;
   }
-  const areasFile = path.join(root, "areas.yml");
-  const { areas } = readParsed(areasFile, AreasFile);
-  const dup = areas.find((a, i) => areas.findIndex((b) => b.id === a.id) !== i);
-  if (dup) throw new Error(`${areasFile}: duplicate area id '${dup.id}'`);
   return { ballot, guides, endorsements, areas };
 }
 
@@ -102,7 +161,7 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if (contests.has(a.id)) errors.push(`area '${a.id}' collides with contest '${a.id}': both would be /${d.ballot.election}/${a.id}`);
   }
   for (const c of d.ballot.contests) {
-    if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas.yml)`);
+    if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas/)`);
   }
   for (const g of d.guides) {
     const mine = d.areas.filter((a) => g.areas.includes(a.id));

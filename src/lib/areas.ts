@@ -87,6 +87,15 @@ function slotOf(c: Contest, areas: Area[]): Slot {
   return { key: `city:${p.name}`, county, city: p.name };
 }
 
+export const areaCounties = (areas: AreaLike[]) => [...new Set(areas.map(countyOf).filter((x): x is string => x !== null))];
+
+/** The county whose ballot file holds a contest; null for a statewide or regional one, undefined for a place in no area. */
+export function ballotCounty(c: Contest, areas: Area[]): string | null | undefined {
+  const slot = slotOf(c, areas);
+  if (slot === STATE_SLOT || slot === REGION_SLOT) return null;
+  return slot.county ?? undefined;
+}
+
 export function placeGroups(contests: Contest[], areas: Area[]): PlaceGroup[] {
   const slots = new Map<string, { slot: Slot; contests: Contest[] }>();
   for (const c of contests) {
@@ -95,7 +104,7 @@ export function placeGroups(contests: Contest[], areas: Area[]): PlaceGroup[] {
     s.contests.push(c);
     slots.set(slot.key, s);
   }
-  const counties = [...new Set(areas.map(countyOf).filter((x): x is string => x !== null))];
+  const counties = areaCounties(areas);
   const rank = (s: Slot) => (s === STATE_SLOT ? -2 : s === REGION_SLOT ? -1 : counties.indexOf(s.county ?? ""));
   const ordered = [...slots.values()].sort(
     (a, b) =>

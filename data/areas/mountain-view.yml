@@ -1,0 +1,8 @@
+id: mountain-view
+name: Mountain View
+kind: city
+order: 40
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Santa Clara }
+  - { level: city, name: Mountain View }

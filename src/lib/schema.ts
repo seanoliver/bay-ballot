@@ -42,7 +42,7 @@ export const Area = z.object({
 });
 export type Area = z.infer<typeof Area>;
 
-export const AreasFile = z.object({ areas: z.array(Area).min(1) });
+export const AreaFile = Area.extend({ order: z.number() });
 
 export const Contest = z.object({
   id: Slug,
@@ -69,6 +69,11 @@ export const Ballot = z.object({
   contests: z.array(Contest),
 });
 export type Ballot = z.infer<typeof Ballot>;
+
+export const CountyBallot = z.object({
+  placement: z.record(NonEmpty, NonEmpty).optional(),
+  contests: z.array(Contest).min(1),
+});
 
 export const Quote = z.object({ text: NonEmpty, source: HttpUrl });
 export type Quote = z.infer<typeof Quote>;

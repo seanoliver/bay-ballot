@@ -1,0 +1,12 @@
+contests:
+  - id: prop-b
+    section: Local measures
+    title: Prop B
+    kind: measure
+    jurisdiction: { level: city, name: San Francisco }
+  - id: assessor
+    section: Local candidates
+    title: Assessor-Recorder
+    kind: candidate
+    candidates: [Joaquín Torres]
+    jurisdiction: { level: city, name: San Francisco }
