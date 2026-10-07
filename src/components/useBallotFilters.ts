@@ -124,7 +124,6 @@ export function useStoredParam(name: string, storageKey: string): [string | null
 
 const CARRIED = ["off", "offtypes", "why", COUNTIES_PARAM];
 
-// For links to the list or a contest page: the filters in this URL go along, so a shared link keeps them.
 export function useCarriedQuery(): string {
   return carryQuery(useQuery(), CARRIED);
 }

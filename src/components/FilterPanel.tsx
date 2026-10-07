@@ -35,7 +35,6 @@ type Props = {
   guides: GuideInfo[];
   files: Record<string, PickFile>;
   counties?: CountyControl;
-  // The guides a type checkbox turns on or off, when `guides` lists only some of them.
   typeGuides?: FilterGuide[];
 };
 
