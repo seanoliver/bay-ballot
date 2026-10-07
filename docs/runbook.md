@@ -137,6 +137,8 @@ Each county's data lives in files of its own, so branches adding different count
 - `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`, `contra-costa.yml`, `marin.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
 - `data/areas/<area-id>.yml`: one area, with an `order` number. Areas are listed by `order` (then id), and that also sets the county order on the ballot pages.
 
+A local district (school, water, transit ward) may list several places in `within`, all in one county: it appears on every area page that lists one of them and sits under the county heading on the Bay Area page. List cities rather than the county when a county has city pages (Alameda: Oakland, Berkeley), or the district shows on city pages it doesn't cover. `alameda-county` also lists the unincorporated communities that some districts serve (Castro Valley, San Lorenzo, Fairview, Sunol) as places.
+
 The site merges them: `ballot.yml`'s contests first, then each county file in area order. A county file's optional `placement:` maps one of its sections to a section of `ballot.yml`; those contests go right after that section instead of at the end. Only `san-francisco.yml` uses it, to keep the SF ballot worksheet's order.
 
 `npm run validate` fails on a contest id used twice (naming both files), a contest in the wrong file, a county file whose name matches no area's county, and an area file whose name differs from its id.

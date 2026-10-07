@@ -85,6 +85,19 @@ describe("placeGroups", () => {
   });
 });
 
+describe("a district in several places", () => {
+  const ward = c("water-ward-1", {
+    level: "district", name: "Water Board", district: "1",
+    within: [{ level: "city", name: "Menlo Park" }, { level: "city", name: "Redwood City" }],
+  });
+  it("is in every area that lists one of its places", () => {
+    expect(ids(areasOf(ward, areas))).toEqual(["san-mateo"]);
+  });
+  it("sits under its county, not under its first city", () => {
+    expect(placeGroups([ward], areas).map((g) => [g.heading, g.county])).toEqual([["San Mateo County", "San Mateo"]]);
+  });
+});
+
 describe("Court of Appeal", () => {
   it("lists a Court of Appeal district under California", () => {
     const coa = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
