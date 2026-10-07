@@ -1,0 +1,136 @@
+Santa Clara County Registrar of Voters, November 3, 2026 General Election: Final Qualified List of Local Eligible Candidates.
+Source: https://files.santaclaracounty.gov/exjcpb1296/2026-09/qualified-list-of-local-candidates-9-28-26.pdf?VersionId=CM6jbwAVTLFIjLakj6hJku2l9KPAIxli (linked from https://vote.santaclaracounty.gov/november-3-2026-general-election-resources)
+PDF footer: "Print Date and Time: 8/27/2026 3:20:01PM; the file name says 9-28-26". Retrieved 2026-10-07 in a browser (the registrar's sites return 403 to curl).
+Extract: contest number, contest, whether it is printed on the ballot, vote-for count, and candidate names only. Ballot designations, party preferences, addresses, phone numbers, emails and websites in the source are omitted.
+
+129 contests; 73 on the ballot. "On Ballot: No" means the contest is uncontested (appointed in lieu of election) or administered elsewhere.
+
+3120 | Santa Clara County BOE, Trustee Area 2 | On Ballot: No | Vote for 1 | Yan Zhao
+3160 | Santa Clara County BOE, Trustee Area 6 | On Ballot: No | Vote for 1 | Maimona Afzal Berta
+3170 | Santa Clara County BOE, Trustee Area 7 | On Ballot: Yes | Vote for 1 | Raeena S. Lari ; Karla Dominguez Vega
+3190 | Stanislaus County BOE, Trustee Area 5 | On Ballot: No | Vote for 1 | Cindy Young
+3214 | Foothill-De Anza CCD, Trustee Area 2 | On Ballot: No | Vote for 1 | Alexander Gvatua
+3216 | Foothill-De Anza CCD, Trustee Area 4 | On Ballot: Yes | Vote for 1 | Liangfang "Liang" Chao ; William "Bill" Wilson
+3221 | Gavilan Joint CCD, Trustee Area 1 | On Ballot: No | Vote for 1 | Kathy Chavez Napoli
+3227 | Gavilan Joint CCD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Shahida S. Merchant ; Gabriel Gutierrez
+3234 | San José-Evergreen CCD, Trustee Area 2 | On Ballot: Yes | Vote for 1 | Karen Martinez ; Scott Hung Pham
+3240 | San José-Evergreen CCD, Trustee Area 4 | On Ballot: No | Vote for 1 | Maria R. Fuentes
+3246 | San José-Evergreen CCD, Trustee Area 6 | On Ballot: No | Vote for 1 | Jeffrey Lease
+3253 | West Valley-Mission CCD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Anne J. Kepner ; Colin Lee Elliott Glaves
+3255 | West Valley-Mission CCD, Trustee Area 5 | On Ballot: No | Vote for 1 | Diane Lamkin
+3257 | West Valley-Mission CCD, Trustee Area 7 | On Ballot: Yes | Vote for 1 | Doug Robb ; Susan Oster Fish
+3264 | Yosemite CCD, Trustee Area 4 | On Ballot: Yes | Vote for 1 | Ryan Segoviano ; Jenny Nicolau
+3310 | Gilroy Unified SD, Trustee Area 1 | On Ballot: No | Vote for 1 | Gabriela Kim
+3312 | Gilroy Unified SD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Michelle Nelson ; Daniel Harney
+3314 | Gilroy Unified SD, Trustee Area 4 | On Ballot: Yes | Vote for 1 | Trevor Scott Van Laar ; Jane Stevens
+3317 | Gilroy Unified SD, Trustee Area 7 | On Ballot: No | Vote for 1 | Tuyen Fiack
+3321 | Milpitas Unified SD | On Ballot: Yes | Vote for 3 | Chris Norwood ; Kelly Yip-Chuan ; Anuradha Sankaran ; Franchesca Lacanlale
+3333 | Morgan Hill Unified SD, Trustee Area 1 | On Ballot: Yes | Vote for 1 | Nancy Altman-Palm ; Jason Amezcua
+3334 | Morgan Hill Unified SD, Trustee Area 2 | On Ballot: Yes | Vote for 1 | John T. Horner ; Gabriela "Gabby" Winter
+3335 | Morgan Hill Unified SD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Art Cohen ; Cesar Gamboa ; Sarah Northrup Gadus
+3336 | Morgan Hill Unified SD, Trustee Area 4 | On Ballot: Yes | Vote for 1 | Glen R. Webb ; Claudia Ortiz
+3340 | Palo Alto Unified SD | On Ballot: Yes | Vote for 2 | Linda Henigin ; John Craig ; Avery Wang
+3348 | Patterson Joint Unified SD, Trustee Area 2 | On Ballot: No | Vote for 1 | Sergio Perez
+3352 | San José Unified SD, Trustee Area 2 | On Ballot: Yes | Vote for 1 | Tomara Hall ; Carson Dance ; Jose Magana
+3354 | San José Unified SD, Trustee Area 4 | On Ballot: Yes | Vote for 1 | Mary J. Grunthaner ; Michael Melillo
+3371 | Santa Clara Unified SD, Trustee Area 1 | On Ballot: Yes | Vote for 1 | Jim Canova ; Kamal Yassin
+3377 | Santa Clara Unified SD, Trustee Area 3 | On Ballot: No | Vote for 1 | Vickie Fairchild
+3379 | Santa Clara Unified SD, Trustee Area 4 | On Ballot: No | Vote for 1 | Andrew O'Dea Ratermann
+3381 | Santa Clara Unified SD, Trustee Area 6 | On Ballot: No | Vote for 1 | Jodi Muirhead
+3410 | Campbell Union HSD, Trustee Area 1 | On Ballot: No | Vote for 1 | James Kim
+3411 | Campbell Union HSD, Trustee Area 2 | On Ballot: No | Vote for 1 | Elisabeth Halliday
+3412 | Campbell Union HSD, Trustee Area 3 | On Ballot: No | Vote for 1 | Jason Baker
+3422 | East Side Union HSD, TA 1, Short Term | On Ballot: Yes | Vote for 1 | Mer Curry Nuñez ; Patricia Martínez-Roach ; Paul Pham
+3423 | East Side Union HSD, TA 2 | On Ballot: No | Vote for 1 | Anthony Montes
+3425 | East Side Union HSD, TA 4 | On Ballot: Yes | Vote for 1 | Lorena Chavez ; Tony Lam ; Mahbub Khan
+3433 | Fremont Union HSD, TA 1 | On Ballot: No | Vote for 1 | Stanley Kou
+3435 | Fremont Union HSD, TA 3 | On Ballot: Yes | Vote for 1 | Rosa Kim ; Jason Lin
+3436 | Fremont Union HSD, TA 4 | On Ballot: Yes | Vote for 1 | Ilanit Eliaz ; Naomi Nakano-Matsumoto
+3444 | Los Gatos-Saratoga Union HSD, TA 2 | On Ballot: Yes | Vote for 1 | Sangeeta Balachandran Mallik ; Ishaan Prasad
+3445 | Los Gatos-Saratoga Union HSD, TA 3 | On Ballot: No | Vote for 1 | Shawn K. Mortensen
+3446 | Los Gatos-Saratoga Union HSD, TA 4 | On Ballot: No | Vote for 1 | Steven Chen
+3453 | Mountain View-Los Altos Union HSD, TA 1 | On Ballot: No | Vote for 1 | Nir Paz
+3454 | Mountain View-Los Altos Union HSD, TA 2 | On Ballot: No | Vote for 1 | Ellen Kamei
+3455 | Mountain View-Los Altos Union HSD, TA 3 | On Ballot: Yes | Vote for 1 | Catherine Vonnegut ; Thida Cornes ; Sanjay Dave
+3501 | Alum Rock Union SD, TA 1 | On Ballot: No | Vote for 1 | Darcie Green
+3503 | Alum Rock Union SD, TA 3 | On Ballot: Yes | Vote for 1 | Andrés Quintero ; Delia Oseguera
+3505 | Alum Rock Union SD, TA 5 | On Ballot: Yes | Vote for 1 | Manisha Kand ; Línda Lo Chávez ; Jenny Ludwig
+3511 | Berryessa Union SD | On Ballot: Yes | Vote for 3 | Jaria Jaug ; Thelma B. Boac ; Jamal Khan ; Shanna Brewer
+3521 | Cambrian SD | On Ballot: Yes | Vote for 3 | Carol Presunka ; Debora Bodenheimer ; Sergio Martínez ; Harmony "Jay" McMillin
+3530 | Campbell Union SD, TA 1 | On Ballot: No | Vote for 1 | Richard Nguyen
+3533 | Campbell Union SD, TA 4 | On Ballot: Yes | Vote for 1 | Mohit Vora ; Chris Miller
+3534 | Campbell Union SD, TA 5 | On Ballot: Yes | Vote for 1 | Vartika Chandra ; Sam Krow-Lucal
+3541 | Cupertino Union SD | On Ballot: No | Vote for 3 | Ava Chiao ; Satheesh Madhathil ; Jerry Liu
+3551 | Evergreen SD | On Ballot: Yes | Vote for 3 | Johnny Ray Reyna ; Mary Hien Pollett ; Corinna Diener ; Monte Wright ; Thong Quang La ; Magaly Fernández
+3561 | Franklin-McKinley SD | On Ballot: Yes | Vote for 3 | Rudy J. Rodriguez ; Gilbert Borrayo ; Marc Cooper ; Steven Sanchez
+3571 | Lakeside Joint SD | On Ballot: No | Vote for 3 | Mingi Bodine
+3581 | Loma Prieta Joint Union SD | On Ballot: No | Vote for 3 | Charlotte Boisvert-Khandelwal ; Denise Ramon Herrera ; Courtney Thomas
+3591 | Los Altos SD | On Ballot: Yes | Vote for 3 | David Poll ; Brandon Stroy ; Vaishali "Shali" Sirkay ; Bryan Harvey Johnson
+3601 | Los Gatos Union SD | On Ballot: No | Vote for 3 | Peter Noymer ; Melissa Crow ; Heather Wygant
+3611 | Luther Burbank SD | On Ballot: No | Vote for 2 | Antonio R. Perez ; Kim A. Perez
+3612 | Luther Burbank SD, Short Term | On Ballot: No | Vote for 1 | Jacob Perez
+3630 | Moreland SD, TA 1, Short Term | On Ballot: No | Vote for 1 | Seshan Sekariapuram
+3631 | Moreland SD, Trustee Area 2 | On Ballot: No | Vote for 1 | Tracy Dwyer
+3632 | Moreland SD, Trustee Area 3 | On Ballot: No | Vote for 1 | Angelica Woodward
+3634 | Moreland SD, Trustee Area 4 | On Ballot: No | Vote for 1 | Heather E. Sutton
+3641 | Mountain View Whisman SD | On Ballot: Yes | Vote for 2 | Devon Conley ; William Lambert ; Sundar Subbarayan ; Quintin Riis
+3651 | Mount Pleasant SD | On Ballot: No | Vote for 3 | Lissa Oros ; Brenda Serrano ; Antonio Perez
+3660 | North County Joint Union SD | On Ballot: No | Vote for 2 | Cindy King ; Ted Brian Zanella
+3672 | Oak Grove SD, Trustee Area 2 | On Ballot: Yes | Vote for 1 | Victor A. Ramirez ; Diego Martinez
+3673 | Oak Grove SD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Sophie Freestone ; Kaushik C. Joglekar
+3675 | Oak Grove SD, Trustee Area 5 | On Ballot: Yes | Vote for 1 | Paul Chun ; Pradeep Kumar ; Casino Fajardo
+3681 | Orchard SD | On Ballot: Yes | Vote for 3 | Lyseria Evelyn Phillips ; Renee Lo ; Katherine Kasolas-Jacobson ; Jeff Tang ; Molly Eslao
+3691 | Saratoga Union SD | On Ballot: Yes | Vote for 3 | Eric Cao ; Catalina Rupert ; Vidya R. Vineet ; Farnoush Drexel ; Anna Goldberg
+3703 | Sunnyvale SD, Trustee Area 1 | On Ballot: No | Vote for 1 | Bridget Watson
+3705 | Sunnyvale SD, Trustee Area 3 | On Ballot: Yes | Vote for 1 | Michelle Maginot ; Rommy Kushner
+3707 | Sunnyvale SD, Trustee Area 5 | On Ballot: No | Vote for 1 | Evelyn D. Castillo Profeta
+3711 | Union School District | On Ballot: No | Vote for 3 | Aengus Linehan ; Sheila Billings ; Brooke Libman
+5022 | City of Campbell Council, District 3 | On Ballot: Yes | Vote for 1 | Joseph "Joe" Brenner ; Dan Furtado
+5025 | City of Campbell Council, District 4 | On Ballot: Yes | Vote for 1 | Davis Stuart Fields ; Joseph I. Guardado
+5026 | City of Campbell Council, District 5 | On Ballot: Yes | Vote for 1 | Daraius R. Sorabji
+5031 | City of Cupertino Council | On Ballot: Yes | Vote for 3 | Gopal Kumarappan ; Santosh Rao ; Seema Sharma Lindskog ; Tracy Kosolcharoen ; Mark Fantozzi ; John Tang ; J.R. Fruen ; J. Z. Wang
+5044 | City of Gilroy Council, District 4 | On Ballot: Yes | Vote for 1 | Fred Tovar ; Diana Sanchez Bentz
+5045 | City of Gilroy Council, District 5 | On Ballot: Yes | Vote for 1 | Joseph Garcia ; Christina Tovar ; Tom Cline
+5046 | City of Gilroy Council, District 6 | On Ballot: Yes | Vote for 1 | Elizabeth Bracco ; Brad Starks ; Rebeca G. Armendáriz
+5054 | City of Los Altos Council, D2 | On Ballot: Yes | Vote for 1 | Anky van Deursen ; Lynette Lee Eng
+5056 | City of Los Altos Council, D4 | On Ballot: Yes | Vote for 1 | Larry Lang
+5060 | Town of Los Altos Hills Council | On Ballot: Yes | Vote for 2 | Jim Waschura ; Jasmeen Pombra ; Indu Kadambi
+5071 | Town of Los Gatos Council | On Ballot: Yes | Vote for 3 | Steve Raspe ; Rob Stump ; Mary Badame ; Jeff Suzuki ; Rob Moore ; Heidi Owens
+5080 | Mayor, City of Milpitas | On Ballot: Yes | Vote for 1 | Hon Lien ; Carmen Montano ; Voltaire S. Montemayor ; Santosh Sahoo
+5081 | City of Milpitas Council | On Ballot: Yes | Vote for 2 | Jennie Ha Phan ; Bill Chuan ; Seema Kanani ; Garry Barbadillo ; Dipak Awasthi
+5091 | City of Monte Sereno Council | On Ballot: No | Vote for 3 | Ken Toren ; Allison Zeidler ; Burton Craig
+5100 | Mayor, City of Morgan Hill | On Ballot: Yes | Vote for 1 | Kristopher L. Clayton ; Mark Turner ; Deborah M. Africa
+5107 | City of Morgan Hill Council, District B | On Ballot: Yes | Vote for 1 | Steven Hayes ; Yvonne Martinez Beltran
+5109 | City of Morgan Hill Council, District D | On Ballot: Yes | Vote for 1 | Dolores Alvarado ; Marilyn Librers
+5110 | City of Mountain View Council | On Ballot: Yes | Vote for 3 | Paul Donahue ; Robert Cox ; James Kuszmaul ; Samuel Ali ; IdaRose Sylvester ; Silja Paymer ; Erik Poicon ; Alex Amoroso
+5121 | City of Palo Alto Council | On Ballot: Yes | Vote for 3 | Henry Etzkowitz ; Ed Lauing ; Bryna Chang ; Vicki Veenker ; Yu "Yudy" Deng ; Gary Gechlik ; Raymond L. Goins ; Brian Hamachek
+5205 | City of San José Council, District 5 | On Ballot: Yes | Vote for 1 | Nora Campos ; Peter Ortiz
+5207 | City of San José Council, District 7 | On Ballot: Yes | Vote for 1 | Van Le ; Bien Doan
+5209 | City of San José Council, District 9 | On Ballot: Yes | Vote for 1 | Genny Altwer ; Gordon Chester
+5230 | Mayor, City of Santa Clara | On Ballot: Yes | Vote for 1 | Mike Wiltberger ; Armando "Gary" Ferraris ; Karen Hardy ; David Kertes ; Kathy Watanabe ; Kevin Park
+5232 | City of Santa Clara Council, District 2 | On Ballot: Yes | Vote for 1 | Kimberley Williams ; Yvonne Inciarte
+5233 | City of Santa Clara Council, District 3 | On Ballot: Yes | Vote for 1 | Kyle Madej ; Eric Crutchlow
+5240 | City of Saratoga Council | On Ballot: Yes | Vote for 3 | Jeri Bromley ; Ping Li ; Bill Dalton ; Glenn K. Hendricks
+5251 | City of Sunnyvale Council, District 1 | On Ballot: Yes | Vote for 1 | Linda Sell
+5253 | City of Sunnyvale Council, District 3 | On Ballot: Yes | Vote for 1 | Murali Srinivasan
+5255 | City of Sunnyvale Council, District 5 | On Ballot: Yes | Vote for 1 | Richard Mehlinger
+6001 | Santa Clara Valley Water, District 1 | On Ballot: Yes | Vote for 1 | Jimmy Forbis ; John L. Varela
+6004 | Santa Clara Valley Water, District 4 | On Ballot: No | Vote for 1 | Jim Beall
+6006 | Santa Clara Valley Water, District 6 | On Ballot: Yes | Vote for 1 | Phuong Tran Nguyen ; Milan Balinton
+6007 | Santa Clara Valley Water, District 7 | On Ballot: Yes | Vote for 1 | Pete Dailey ; Rebecca Eisenberg
+6011 | Aldercroft Heights County Water District | On Ballot: No | Vote for 2 | David Gibbs Pearce ; Alyce Green
+6015 | Burbank Sanitary District | On Ballot: No | Vote for 3 | Procopio J. Sclafani ; Mark Alan Negrete ; Kristina Marika Seldal
+6020 | Cupertino Sanitary District | On Ballot: Yes | Vote for 2 | Patrick Shupui Kwok ; Taghi Saadati ; Gilbert Wong
+6025 | El Camino Healthcare District | On Ballot: No | Vote for 2 | Peter C. Fung ; George O. Ting
+6051 | Midpeninsula Regional Open Space District Ward 1 | On Ballot: Yes | Vote for 1 | Craig Gleason ; Tina Marie To
+6052 | Midpeninsula Regional Open Space District Ward 2 | On Ballot: No | Vote for 1 | Yoriko Kishimoto
+6055 | Midpeninsula Regional Open Space District Ward 5 | On Ballot: No | Vote for 1 | Karen C. Holman
+6058 | SCV Open Space Authority, District 2 | On Ballot: No | Vote for 1 | Margie Matthews
+6061 | SCV Open Space Authority, District 5 | On Ballot: No | Vote for 1 | Cathryn Ming Hyde
+6062 | SCV Open Space Authority, District 6 | On Ballot: No | Vote for 1 | Lisanna Dominguez
+6063 | SCV Open Space Authority, District 7 | On Ballot: No | Vote for 1 | Kalvin Gill
+6065 | Purissima Hills Water District | On Ballot: No | Vote for 2 | Anand Ranganathan ; Essy Stone
+6070 | Rancho Rinconada Recreation and Park District | On Ballot: No | Vote for 2 | Wayne Lin ; Meesha Reiisieh
+6086 | Saratoga Fire Protection District | On Ballot: No | Vote for 1 | Ernie Kraule
+6090 | South Santa Clara Valley Memorial District | On Ballot: No | Vote for 2 | Terry L. Palmisano ; Danny Edward Molina
+6099 | West Bay Sanitary District | On Ballot: No | Vote for 2 | Edward Moritz ; Roy Thiele-Sardina
