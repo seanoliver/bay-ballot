@@ -413,7 +413,7 @@ describe("fetchFrom: local", () => {
     markLocal(root, "beta");
     const { client, stream } = fakeClient();
     const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
-    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "cloud" });
     expect(results.map((r) => [r.id, r.status])).toEqual([["alpha", "unchanged"], ["beta", "skipped"]]);
     expect(results[1]).toMatchObject({ reason: "local only" });
     expect(fetchSource).toHaveBeenCalledTimes(1);
@@ -429,6 +429,24 @@ describe("fetchFrom: local", () => {
     const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "local", ids: ["alpha", "beta"] });
     expect(results.map((r) => r.id)).toEqual(["beta"]);
     expect(fetchSource).toHaveBeenCalledTimes(1);
+  });
+
+  it("extracts a local-only guide named directly (bb extract) when no scope is given", async () => {
+    const root = setup(["beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    const results = await runRefresh(deps(client, fetcher({ beta: PAGE("beta", "x") })), { root, election: ELECTION, ids: ["beta"] });
+    expect(results.map((r) => [r.id, r.status])).toEqual([["beta", "changed"]]);
+  });
+
+  it("keeps fetchFrom on disk after a data change", async () => {
+    const root = setup(["beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    await runRefresh(deps(client, fetcher({ beta: PAGE("beta", "x") })), { root, election: ELECTION, scope: "local" });
+    const text = fs.readFileSync(path.join(root, ELECTION, "endorsements", "beta.yml"), "utf8");
+    expect(text).toContain("prop-c");
+    expect(parse(text).fetchFrom).toBe("local");
   });
 
   it("refreshes only local-only guides with scope local", async () => {

@@ -281,3 +281,10 @@ describe("fetchFrom", () => {
     expect(EndorsementFile.safeParse({ ...file, fetchFrom: "cloud" }).success).toBe(false);
   });
 });
+
+describe("strict endorsement files", () => {
+  it("rejects a misspelled field instead of silently ignoring it", () => {
+    const r = EndorsementFile.safeParse({ ...file, fetchfrom: "local" });
+    expect(r.success).toBe(false);
+  });
+});

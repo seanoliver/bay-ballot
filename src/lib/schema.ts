@@ -111,7 +111,7 @@ export const EndorsementFile = z.object({
   held: z.array(HeldPick).optional(),
   rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
-});
+}).strict();
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
 
 export const ChangelogEntry = z.object({

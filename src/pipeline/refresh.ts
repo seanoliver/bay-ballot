@@ -97,7 +97,7 @@ async function refreshGuide(
   const prev = data.endorsements[id];
   const ballot = guideBallot(data.ballot, guide, data.areas);
   if (prev.manual) return { id, status: "skipped", reason: "manual" };
-  if (prev.fetchFrom === "local" && opts.scope !== "local") return { id, status: "skipped", reason: "local only" };
+  if (prev.fetchFrom === "local" && opts.scope === "cloud") return { id, status: "skipped", reason: "local only" };
   const urls = sourcesFor(prev);
   if (urls.length === 0) return { id, status: "skipped", reason: "no source" };
   const hostProblems = checkHosts(guide, prev);

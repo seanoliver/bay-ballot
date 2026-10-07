@@ -51,7 +51,7 @@ export function shrinkWarning(
   return `  !! ${id}: ${after} picks (previous ${before}), file left unchanged; rerun with --force to accept`;
 }
 
-const KEY_ORDER = [
+export const KEY_ORDER = [
   "guide", "election", "status", "source", "extraSources", "fetchWith", "fetchFrom", "manual",
   "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "rejectedQuotes", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
@@ -66,12 +66,9 @@ function compactEntry(e: Entry): Record<string, unknown> {
 }
 
 function ordered(file: EndorsementFile): Record<string, unknown> {
-  const known = new Set<string>(KEY_ORDER);
-  const extra = Object.keys(file).filter((k) => !known.has(k));
-  const keys = [...KEY_ORDER.filter((k) => k !== "picks"), ...extra, "picks"];
   const out: Record<string, unknown> = {};
-  for (const k of keys) {
-    const v = (file as Record<string, unknown>)[k];
+  for (const k of KEY_ORDER) {
+    const v = file[k];
     if (v === undefined) continue;
     out[k] = k === "picks" ? Object.fromEntries(Object.entries(file.picks).map(([id, e]) => [id, compactEntry(e)])) : v;
   }

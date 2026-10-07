@@ -192,7 +192,8 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     report({ via: "browser", status: r.status, bytes: Buffer.byteLength(r.html), blocked });
     // Some walls let the browser through but keep the 403/429, so a full unblocked page still counts.
     const wallLetUsThrough = (retriedStatus === 403 || retriedStatus === 429) && (r.status === 403 || r.status === 429);
-    const realPage = wallLetUsThrough && !blocked && visibleText(r.html).text.length > MAX_BLOCK_PAGE_TEXT;
+    const errorTitle = /\b(?:403|429|forbidden|too many requests)\b/i.test(visibleText(r.html).title);
+    const realPage = wallLetUsThrough && !blocked && !errorTitle && htmlToText(r.html).length > MAX_BLOCK_PAGE_TEXT;
     if (r.status >= 400 && !realPage) {
       throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
     }

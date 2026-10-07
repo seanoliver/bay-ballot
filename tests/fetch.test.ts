@@ -248,6 +248,19 @@ describe("which error-status pages are trusted", () => {
   it("does not trust an error page when the guide is fetched with the browser from the start", async () => {
     await expect(fetchSource("https://x.test/a", { browser: true, browserFetch: async () => ({ status: 403, html: realPage }) })).rejects.toThrow("HTTP 403");
   });
+  it("does not trust a long error page titled 403 or 429", async () => {
+    http(403);
+    const page = realPage.replace("<html>", "<html><head><title>403 Forbidden</title></head>");
+    await expect(fetchSource("https://x.test/a", { browserFetch: async () => ({ status: 403, html: page }) })).rejects.toThrow("HTTP 403");
+    http(429);
+    const busy = realPage.replace("<html>", "<html><head><title>Too Many Requests</title></head>");
+    await expect(fetchSource("https://x.test/a", { browserFetch: async () => ({ status: 429, html: busy }) })).rejects.toThrow("HTTP 429");
+  });
+  it("does not count nav and footer text toward a real page", async () => {
+    http(403);
+    const chrome = `<html><body><nav>${"<a>Menu link</a>".repeat(200)}</nav><p>Forbidden</p><footer>${"<p>Footer text here.</p>".repeat(100)}</footer></body></html>`;
+    await expect(fetchSource("https://x.test/a", { browserFetch: async () => ({ status: 403, html: chrome }) })).rejects.toThrow("HTTP 403");
+  });
   it("ignores challenge markup on a long real page", () => {
     expect(detectBlock(realPage.replace("<h1>", '<form id="challenge-form"></form><h1>'))).toBeNull();
   });
