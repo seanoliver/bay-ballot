@@ -81,7 +81,7 @@ Candidates
 Jump to top ↑
 [Connie Chan]
 Congress
-Connie Chan
+Connie Chan*
 [Jane Kim]
 Insurance Commissioner
 Jane Kim
@@ -90,7 +90,7 @@ District 4 Supervisor
 Jeremy Greco
 [Gary McCoy]
 District 8 Supervisor
-Gary McCoy
+Gary McCoy*
 [Dion-Jay “DJ” Brookter]
 District 10 Supervisor
 Dion-Jay “DJ” Brookter
@@ -104,11 +104,11 @@ Prop B
 Establishing a Municipal Finance Corporation and a Public Bank
 YES
 →
-Prop C
+Prop C*
 Contributions to the Housing Fund
 HELL YES
 →
-Prop D
+Prop D*
 Changes to the Ballot Measure Process
 Includes raising the signature threshold for citizen initiatives from 2% to 8% of registered voters
 HELL NO
@@ -129,7 +129,7 @@ Prop H
 Parcel Tax to Fund Public Muni (SFMTA) Operations
 YES
 →
-Prop I
+Prop I*
 Changes to the Real Property Transfer Tax (dedicating a portion to housing)
 HELL YES
 →
@@ -199,4 +199,6 @@ Prop 45
 CEQA Reform
 NO
 →
+NOTICE TO VOTERS
+THIS AD WAS PREPARED BY SAN FRANCISCO TENANTS UNION SMO, NOT AN OFFICIAL POLITICAL PARTY ORGANIZATION. Appearance in this ad does not necessarily imply endorsement of others appearing in this ad, nor does it imply endorsement of, or opposition to, any issues set forth in this ad. Appearance is paid for and authorized by each candidate and ballot measure which is designated by an *.
 Go to Top

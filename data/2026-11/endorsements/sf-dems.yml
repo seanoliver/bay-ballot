@@ -5,7 +5,7 @@ source: https://www.sfdems.org/endorsements/nov-3-2026-general-election
 archived:
   - source: https://www.sfdems.org/endorsements/nov-3-2026-general-election
     snapshot: https://web.archive.org/web/20261005222037/https://www.sfdems.org/endorsements/nov-3-2026-general-election
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-07
 hasReasoning: false
 picks:
   governor:
@@ -81,8 +81,36 @@ picks:
   supervisor-10:
     pick:
       - Theo Ellington
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
   prop-40:
     pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
   prop-a:
     pick: Y
   prop-b:
@@ -102,6 +130,4 @@ picks:
   prop-i:
     pick: N
   prop-j:
-    pick: Y
-  rtm:
     pick: Y

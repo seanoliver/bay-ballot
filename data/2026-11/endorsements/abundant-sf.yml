@@ -9,7 +9,7 @@ archived:
     snapshot: https://web.archive.org/web/20261005220230/https://www.abundantsanfrancisco.org/vote/ballot-measures
   - source: https://www.abundantsanfrancisco.org/vote
     snapshot: https://web.archive.org/web/20261005220248/https://www.abundantsanfrancisco.org/vote
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   us-rep-11:
@@ -24,6 +24,9 @@ picks:
   supervisor-6:
     pick:
       - Matt Dorsey
+  supervisor-8:
+    pick:
+      - Gary McCoy
   supervisor-10:
     pick:
       - Theo Ellington
@@ -67,11 +70,15 @@ picks:
   prop-c:
     pick: Y
     quotes:
+      - text: This measure gradually expands the Housing Trust Fund – a general fund set-aside that provides support for affordable housing and housing preservation.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
       - text: Building more affordable housing is a priority for Abundant and this was part of a deal to lower the inclusionary rate for new housing – a key barrier to building new homes.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-d:
     pick: Y
     quotes:
+      - text: This measure eliminates the unilateral ability of the Mayor or four members of the Board of Supervisors to place a measure on the ballot without gaining majority support from the Board.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
       - text: While there are arguments for keeping the status quo in place, we believe that on balance this measure continues to provide access to the ballot for citizen-initiatives in line with other jurisdictions, while also driving the decisions around ballot measures to be more consensus driven.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-e:
@@ -104,3 +111,6 @@ picks:
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-j:
     pick: Y
+    quotes:
+      - text: This measure applies the transfer tax to foreclosed properties, generating new revenue for the city at the cost of potentially increasing prices on the sale of foreclosed properties.
+        source: https://www.abundantsanfrancisco.org/vote/ballot-measures

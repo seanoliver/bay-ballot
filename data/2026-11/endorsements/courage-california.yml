@@ -9,7 +9,7 @@ archived:
     snapshot: https://web.archive.org/web/20261006200128/https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   - source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-07
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -32,9 +32,6 @@ picks:
   us-rep-15:
     pick:
       - Kevin Mullin
-    quotes:
-      - text: Mullin previously served as a state assemblymember from 2012-2022, and earned a lifetime 96 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   us-rep-16:
     pick:
       - Sam Liccardo
@@ -68,14 +65,9 @@ picks:
     quotes:
       - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-      - text: Based on our Courage Score analysis, he supported the most progressive bills that made it to a vote and earned the Courage Score All-Star designation three times.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
-    quotes:
-      - text: As a member of the board, she has prioritized transparency and accountability, affordable housing, environmental protection, and veterans’ and homeowners’ services.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   assembly-19:
     pick:
       - Catherine Stefani
@@ -94,22 +86,29 @@ picks:
   prop-1:
     pick: Y
     quotes:
+      - text: VOTING YES will increase housing availability, and housing stability provides both personal and community benefits.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING YES will create significant economic benefits across the state, including over 50,000 new construction jobs, and $1.3 billion in state and local tax revenue.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-2:
     pick: Y
     quotes:
+      - text: VOTING YES will ensure that California maintains a larger state-based stockpile of rainy day funds that can be easily accessed during difficult times.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING YES will allow the state to stabilize its savings and continue to protect critical services, like education and public safety, from unexpected cuts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-3:
     pick: Y
     quotes:
-      - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING YES will prevent a significant loss of revenue as federal cuts impact the state and Californians for years.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-4:
     pick: Y
+    quotes:
+      - text: VOTING YES will allow grassroots candidates with limited resources to receive enough critical funds to launch and sustain a campaign and engage with voters on local issues.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-5:
     pick: Y
     quotes:
@@ -117,12 +116,15 @@ picks:
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N
+    quotes:
+      - text: VOTING NO on Prop 38 will save the state from having to divert $500 million to $600 million in state funding each year from critical health and human services to bond repayment.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-39:
     pick: N
     quotes:
-      - text: National and state data continues to show that voter fraud is extremely rare, making up a fraction of a percentage point of overall voting in the United States.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING NO will prevent the state from disenfranchising a registered voter if they cannot produce a document on demand.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING NO will ensure that California does not waste millions of dollars and disenfranchise eligible voters in an effort to solve a problem that does not exist.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-40:
     pick: Y
@@ -132,10 +134,15 @@ picks:
     pick: N
   prop-43:
     pick: N
+    quotes:
+      - text: VOTING NO will ensure that Proposition 43 doesn’t make it harder for communities to maintain a tool to enact new tax measures as needed to support local residents.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-44:
     pick: N
     quotes:
       - text: Estimates indicate that noncompliance fees could total $1.7 billion in the first year if Proposition 44 passes, and many FQHC clinics would likely be forced to close or substantially cut services as a result.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: VOTING NO will deny another overreach that inserts politics into Californians’ health care.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-45:
     pick: N
