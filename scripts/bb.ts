@@ -188,7 +188,7 @@ async function runRefreshCmd(): Promise<void> {
     gateOnly,
   });
   const { errors } = validateElection(loadElection(ROOT, ELECTION));
-  let md = summarize(results, { date: today() });
+  let md = summarize(results, { date: today(), dryRun: gateOnly });
   if (errors.length) md += `\n## Validation errors\n\n${errors.map((e) => `- ${e}`).join("\n")}\n`;
   const code = errors.length ? 1 : exitCodeFor(results);
   const summaryPath = option("--summary");

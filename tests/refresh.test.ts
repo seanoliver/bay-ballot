@@ -421,6 +421,16 @@ describe("fetchFrom: local", () => {
     expect(exitCodeFor(results)).toBe(0);
   });
 
+  it("ignores explicitly named guides that aren't local-only when the scope is local", async () => {
+    const root = setup(["alpha", "beta"], { stored: false });
+    markLocal(root, "beta");
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x"), beta: PAGE("beta", "x") });
+    const results = await runRefresh(deps(client, fetchSource), { root, election: ELECTION, scope: "local", ids: ["alpha", "beta"] });
+    expect(results.map((r) => r.id)).toEqual(["beta"]);
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+  });
+
   it("refreshes only local-only guides with scope local", async () => {
     const root = setup(["alpha", "beta"], { stored: false });
     markLocal(root, "beta");
@@ -445,5 +455,16 @@ describe("gateOnly (dry run)", () => {
     expect(fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8")).toBe(before);
     expect(exitCodeFor(results)).toBe(0);
     expect(summarize(results, { date: "2026-10-07" })).toContain("Would extract (dry run): beta");
+  });
+
+  it("labels a dry-run summary as a dry run, not as a clean result", () => {
+    const results: GuideResult[] = [{ id: "alpha", status: "unchanged" }, { id: "beta", status: "would-extract" }];
+    const md = summarize(results, { date: "2026-10-07" });
+    expect(md).toContain("# Data refresh 2026-10-07 (dry run)");
+    expect(md).toContain("**Result:** dry run; 1 guide would be extracted");
+    expect(md).not.toContain("**Result:** clean");
+    const quiet = summarize([{ id: "alpha", status: "unchanged" }], { date: "2026-10-07", dryRun: true });
+    expect(quiet).toContain("# Data refresh 2026-10-07 (dry run)");
+    expect(quiet).toContain("**Result:** dry run; no guide would be extracted");
   });
 });

@@ -288,14 +288,20 @@ export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   return 0;
 }
 
-export function summarize(results: GuideResult[], { date }: { date: string }): string {
+export function summarize(results: GuideResult[], { date, dryRun = false }: { date: string; dryRun?: boolean }): string {
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
   const held = changed.reduce((n, r) => n + r.held.length, 0);
   const code = exitCodeFor(results);
-  const verdict = code === 1 ? "errors" : code === 2 ? `needs review (${held} held)` : "clean";
+  const would = by("would-extract").length;
+  const isDryRun = dryRun || would > 0;
+  const verdict =
+    code === 1 ? "errors"
+    : code === 2 ? `needs review (${held} held)`
+    : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
+    : "clean";
   const lines = [
-    `# Data refresh ${date}`,
+    `# Data refresh ${date}${isDryRun ? " (dry run)" : ""}`,
     "",
     `**Result:** ${verdict}`,
     "",
