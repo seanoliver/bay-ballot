@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { PlaceName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import { COUNTIES_PARAM } from "@/lib/counties";
-import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type GuideInfo, type PickFile } from "@/lib/filters";
+import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
+import { markHomeVisit } from "./useHomeRedirect";
 import { useBallotKeys } from "./useBallotKeys";
 import { useSingleKeys } from "./useSingleKeys";
 
@@ -27,11 +28,16 @@ type Props = {
   asOf: string | null;
   place: PlaceName;
   back: { href: string; label: string };
+  area: string | null;
 };
 
-export function ContestView({ election, contest, guides, files, pending, asOf, place, back }: Props) {
+export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
-  const { filters, setFilters } = useBallotFilters({ guides, keep: [COUNTIES_PARAM] });
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides, keep: [COUNTIES_PARAM] });
+  const setFilters = (f: Filters) => {
+    markHomeVisit(area);
+    applyFilters(f);
+  };
   const shown = useMemo(() => positionGuides(contest.id, guides, files), [contest.id, guides, files]);
   const rows = useMemo(() => activeEntries(contest.id, guides, files, filters), [contest.id, guides, files, filters]);
   // EMPTY, not `filters`: a filter must never repaint a candidate.

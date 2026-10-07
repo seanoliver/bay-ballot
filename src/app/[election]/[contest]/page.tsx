@@ -65,6 +65,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
       pending={pending}
       asOf={dataAsOf(d.endorsements)}
       place={place}
+      area={area?.id ?? null}
       back={{ href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` }}
     />
   );
