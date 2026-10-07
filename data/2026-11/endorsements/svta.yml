@@ -1,0 +1,8 @@
+guide: svta
+election: 2026-11
+status: pending
+source: https://www.svtaxpayers.org/
+fetchedAt: 2026-10-07
+hasReasoning: false
+fetchWith: browser
+picks: {}

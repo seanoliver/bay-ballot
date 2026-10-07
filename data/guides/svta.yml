@@ -1,0 +1,7 @@
+id: svta
+name: Silicon Valley Taxpayers Association
+shortName: "SV Taxpayers"
+description: A taxpayers' association that opposes tax increases and recommends a No vote on tax measures in Santa Clara and San Mateo counties.
+type: advocacy
+homepage: https://www.svtaxpayers.org/
+areas: [santa-clara-county, san-jose, palo-alto, mountain-view, san-mateo]
