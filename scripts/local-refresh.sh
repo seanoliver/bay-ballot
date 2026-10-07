@@ -155,7 +155,6 @@ else
 fi
 check_worktree
 
-# Never run code from the refresh branch that didn't come from main.
 outside="$(git diff --name-only --no-renames origin/main...HEAD)" || fail "could not list the branch's changes against main"
 outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 if [ -n "$outside" ]; then
