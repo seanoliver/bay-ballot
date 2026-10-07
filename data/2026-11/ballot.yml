@@ -48,6 +48,24 @@ contests:
     kind: candidate
     candidates: [Sam Liccardo, Peter Sundin Soulé]
     jurisdiction: { level: district, name: Congress, district: "16", within: [{ level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
+  - id: us-rep-17
+    section: Federal
+    title: United States Representative, District 17
+    kind: candidate
+    candidates: [Ro Khanna, Ritesh Tandon]
+    jurisdiction: { level: district, name: Congress, district: "17", within: [{ level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: Santa Clara }, { level: city, name: Milpitas }, { level: city, name: San Jose }] }
+  - id: us-rep-18
+    section: Federal
+    title: United States Representative, District 18
+    kind: candidate
+    candidates: [Zoe Lofgren, Shane Lewis]
+    jurisdiction: { level: district, name: Congress, district: "18", within: [{ level: city, name: San Jose }, { level: city, name: Morgan Hill }, { level: city, name: Gilroy }] }
+  - id: us-rep-19
+    section: Federal
+    title: United States Representative, District 19
+    kind: candidate
+    candidates: [Jimmy Panetta, Peter Coe Verbica]
+    jurisdiction: { level: district, name: Congress, district: "19", within: [{ level: city, name: San Jose }] }
 
   # ---------- State ----------
   - id: governor
@@ -138,6 +156,12 @@ contests:
     candidates: [Rebecca Bauer-Kahan, Joseph A. Rubay]
     aliases: { Rebecca Bauer-Kahan: [Rebecca Bauer Kahan], Joseph A. Rubay: [Joseph Rubay, Joe Rubay] }
     jurisdiction: { level: district, name: Assembly, district: "16", within: [{ level: county, name: Contra Costa }] }
+  - id: state-senate-10
+    section: State
+    title: State Senator, District 10
+    kind: candidate
+    candidates: [Scott Sakakihara, Linda R. Price]
+    jurisdiction: { level: district, name: State Senate, district: "10", within: [{ level: city, name: Milpitas }, { level: city, name: Sunnyvale }, { level: city, name: Santa Clara }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
@@ -163,6 +187,36 @@ contests:
     kind: candidate
     candidates: [Marc Berman, David G. Johnson]
     jurisdiction: { level: district, name: Assembly, district: "23", within: [{ level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
+  - id: assembly-24
+    section: State
+    title: State Assembly, District 24
+    kind: candidate
+    candidates: [Alex Lee, Max Hsia]
+    jurisdiction: { level: district, name: Assembly, district: "24", within: [{ level: city, name: Milpitas }, { level: city, name: San Jose }] }
+  - id: assembly-25
+    section: State
+    title: State Assembly, District 25
+    kind: candidate
+    candidates: [Ash Kalra, Himat Singh Bainiwal]
+    jurisdiction: { level: district, name: Assembly, district: "25", within: [{ level: city, name: San Jose }] }
+  - id: assembly-26
+    section: State
+    title: State Assembly, District 26
+    kind: candidate
+    candidates: [Patrick Ahrens, Tim Gorsulowsky]
+    jurisdiction: { level: district, name: Assembly, district: "26", within: [{ level: city, name: Cupertino }, { level: city, name: Sunnyvale }, { level: city, name: Santa Clara }, { level: city, name: San Jose }] }
+  - id: assembly-28
+    section: State
+    title: State Assembly, District 28
+    kind: candidate
+    candidates: [Gail Pellerin, Carol Pefley]
+    jurisdiction: { level: district, name: Assembly, district: "28", within: [{ level: city, name: Los Gatos }, { level: city, name: Monte Sereno }, { level: city, name: Saratoga }, { level: city, name: Campbell }, { level: city, name: San Jose }, { level: city, name: Morgan Hill }] }
+  - id: assembly-29
+    section: State
+    title: State Assembly, District 29
+    kind: candidate
+    candidates: [Robert Rivas, Dennis P. Sanchez]
+    jurisdiction: { level: district, name: Assembly, district: "29", within: [{ level: city, name: Gilroy }, { level: city, name: Morgan Hill }] }
   - id: superintendent
     section: State
     title: Superintendent of Public Instruction
