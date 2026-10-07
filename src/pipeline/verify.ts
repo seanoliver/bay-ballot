@@ -2,6 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import type { Ballot, EndorsementFile, Entry, Guide, HeldPick } from "@/lib/schema";
 import { pageBlocks, type ExtractClient, type Source } from "./extract";
+import { mergeInScope } from "./scope";
 
 export const VERIFY_MODEL = "claude-opus-5-5";
 const MAX_TOKENS = 64000;
@@ -234,12 +235,7 @@ export function auditPart(file: EndorsementFile, ids: string[], inScope: (contes
 }
 
 export function withAudited(file: EndorsementFile, audited: EndorsementFile, ids: string[], inScope: (contestId: string) => boolean): EndorsementFile {
-  const picks: Record<string, Entry> = {};
-  for (const [id, e] of Object.entries(file.picks)) {
-    if (!ids.includes(id)) picks[id] = e;
-    else if (audited.picks[id]) picks[id] = audited.picks[id];
-  }
-  for (const [id, e] of Object.entries(audited.picks)) if (!(id in picks)) picks[id] = e;
-  const held = [...(file.held ?? []).filter((h) => !inScope(h.contestId)), ...(audited.held ?? [])];
+  const picks = Object.fromEntries(mergeInScope(Object.entries(file.picks), Object.entries(audited.picks), ([id]) => id, (id) => ids.includes(id)));
+  const held = mergeInScope(file.held ?? [], audited.held ?? [], (h) => h.contestId, inScope);
   return { ...file, status: Object.keys(picks).length > 0 ? file.status : "pending", picks, held: held.length ? held : undefined };
 }

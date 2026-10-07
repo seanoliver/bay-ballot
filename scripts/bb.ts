@@ -16,7 +16,8 @@ import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costOf, exitCodeFor, resultJson, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
-import { guideBallot, unknownAreaError } from "../src/pipeline/scope";
+import { badFlag } from "../src/pipeline/args";
+import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 
 const ROOT = path.join(process.cwd(), "data");
@@ -49,7 +50,8 @@ runs verify on each guide whose picks or quotes changed.
 extract --only-areas marin[,contra-costa] is for widening a guide's areas: it always
 extracts, but only the contests those areas add to the guide's ballot, and verifies only
 the picks that changed there. Every other pick, quote and hold in the file stays as it is.
-Each area must already be in the guide's areas; with --all, only guides listing them run.
+Each area must exist and be in the guide's areas, and the guide must have another area; with
+--all, only guides that list them and another area run.
 
 verify has a separate model audit each guide's picks and quotes against its pages.
 Unconfirmed picks move to 'held' (not published) and unconfirmed quotes are dropped;
@@ -167,6 +169,12 @@ function totalsLine(results: GuideResult[]): string {
 }
 
 async function runExtract(): Promise<void> {
+  const bad = badFlag(args, ["--all", "--browser", "--archive", "--force", "--force-extract", "--no-verify", "--only-areas"]);
+  if (bad) {
+    console.error(`${bad}\n\n${USAGE}`);
+    process.exitCode = 1;
+    return;
+  }
   const data = loadElection(ROOT, ELECTION);
   const onlyAreas = option("--only-areas")?.split(",").map((a) => a.trim()).filter(Boolean);
   if (flag("--only-areas") && !onlyAreas?.length) {
@@ -180,10 +188,29 @@ async function runExtract(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  const lists = (id: string) => onlyAreas?.every((a) => data.guides.find((g) => g.id === id)?.areas.includes(a)) ?? true;
+  const lists = (id: string) => {
+    const areas = data.guides.find((g) => g.id === id)?.areas ?? [];
+    return !onlyAreas || (onlyAreas.every((a) => areas.includes(a)) && areas.some((a) => !onlyAreas.includes(a)));
+  };
   const ids = flag("--all") ? Object.keys(data.endorsements).sort().filter(lists) : positional();
   if (ids.length === 0 && !(flag("--all") && onlyAreas)) {
     console.log(USAGE);
+    process.exitCode = 1;
+    return;
+  }
+  const refused = onlyAreas
+    ? ids.flatMap((id) => {
+        const guide = data.guides.find((g) => g.id === id);
+        try {
+          if (guide) newAreaBallot(data.ballot, guide, data.areas, onlyAreas);
+          return [];
+        } catch (e) {
+          return [errMsg(e)];
+        }
+      })
+    : [];
+  if (refused.length) {
+    refused.forEach((r) => console.error(r));
     process.exitCode = 1;
     return;
   }

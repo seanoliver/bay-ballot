@@ -2,6 +2,7 @@ import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
 import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
 import { isRejected } from "@/lib/quote-key";
+import { mergeInScope } from "./scope";
 import { sourcesFor } from "./sources";
 
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
@@ -46,14 +47,9 @@ export function scopedNextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
-  const merged: Record<string, Entry> = {};
-  for (const [id, e] of Object.entries(prev.picks)) {
-    if (!inScope(id)) merged[id] = e;
-    else if (picks[id]) merged[id] = picks[id];
-  }
-  for (const [id, e] of Object.entries(picks)) if (!(id in merged)) merged[id] = e;
+  const merged = Object.fromEntries(mergeInScope(Object.entries(prev.picks), Object.entries(picks), ([id]) => id, inScope));
   const next = nextFile({ ...prev, held: prev.held?.filter((h) => inScope(h.contestId)) }, merged, prev.hasReasoning, today, archived);
-  const held = [...(prev.held ?? []).filter((h) => !inScope(h.contestId)), ...(next.held ?? [])];
+  const held = mergeInScope(prev.held ?? [], next.held ?? [], (h) => h.contestId, inScope);
   return { ...next, held: held.length ? held : undefined };
 }
 

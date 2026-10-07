@@ -537,20 +537,22 @@ describe("onlyAreas (widening a guide)", () => {
     ],
   };
 
-  function wide(areas: string) {
-    const root = setup(["alpha"], { stored: false });
+  type WideOpts = { held?: EndorsementFile["held"]; verdicts?: Record<string, VerifyOutput["picks"][number]["verdict"]>; missing?: VerifyOutput["missing"]; stored?: boolean; extra?: ExtractOutput["picks"] };
+  function wide(areas: string, { held = before.held, verdicts: over = {}, missing = [], stored = false, extra = [] }: WideOpts = {}) {
+    const root = setup(["alpha"], { stored });
     fs.writeFileSync(path.join(root, "guides", "alpha.yml"), fs.readFileSync(path.join(root, "guides", "alpha.yml"), "utf8").replace("areas: [sf]", `areas: [${areas}]`));
     const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
-    fs.writeFileSync(file, toYaml(before));
+    fs.writeFileSync(file, toYaml({ ...before, held }));
+    const out = { ...widened, picks: [...widened.picks, ...extra] };
     const stream = vi.fn((req: { model: string; messages: { content: { type: string; text?: string }[] }[] }) => {
       const audit = req.messages[0].content.at(-1)?.text ?? "";
       const ids = [...audit.matchAll(/"contestId":"([^"]+)"/g)].map((m) => m[1]);
-      const verdicts: VerifyOutput = { picks: ids.map((contestId) => ({ contestId, verdict: "confirmed", evidence: "on the page" })), quotes: [], missing: [] };
+      const verdicts: VerifyOutput = { picks: ids.map((contestId) => ({ contestId, verdict: over[contestId] ?? "confirmed", evidence: "on the page" })), quotes: [], missing };
       return {
         finalMessage: async () => ({
           stop_reason: "end_turn", stop_details: null,
           usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
-          content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? verdicts : widened) }],
+          content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? verdicts : out) }],
         }),
       };
     });
@@ -559,13 +561,69 @@ describe("onlyAreas (widening a guide)", () => {
   }
   const page = PAGE("alpha", "x");
 
-  it("offers the model only the new area's contests, including a district newly in scope", async () => {
+  it("offers both models the guide's whole ballot, so another area's same-letter measure isn't read as the new one", async () => {
     const { root, stream, client } = wide("sf, san-mateo");
     await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
-    const system = (stream.mock.calls[0][0] as unknown as { system: { text: string }[] }).system[0].text;
-    expect(system).toContain('"menlo-park-measure-p"');
-    expect(system).toContain('"us-rep-16"');
-    for (const out of ['"governor"', '"prop-b"', '"us-rep-15"', '"supervisor-4"']) expect(system).not.toContain(out);
+    const systems = stream.mock.calls.map((c) => (c[0] as unknown as { system: { text: string }[] }).system[0].text);
+    expect(systems).toHaveLength(2);
+    for (const s of systems) for (const id of ["menlo-park-measure-p", "us-rep-16", "prop-b", "supervisor-4"]) expect(s).toContain(id);
+  });
+
+  it("refuses a guide with no areas besides the given ones, without fetching", async () => {
+    const { root, client, stream } = wide("san-mateo");
+    const f = fetcher({ alpha: page });
+    const results = await runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(results[0]).toMatchObject({ status: "failed", error: expect.stringMatching(/alpha has no areas besides san-mateo; use a normal extract/) });
+    expect(f).not.toHaveBeenCalled();
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("keeps holds in the file's order, replacing an in-scope hold in place", async () => {
+    const holds = [
+      { contestId: "assembly-21", pick: ["Diane Papan"], reason: "not-found" as const, evidence: "old" },
+      { contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick" as const, evidence: "page backs Wiener" },
+    ];
+    const { root, file, client } = wide("sf, san-mateo", { held: holds, verdicts: { "assembly-21": "wrong-rank" }, extra: [pick("assembly-21", { candidates: ["Diane Papan"] })] });
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    const held = parse(fs.readFileSync(file, "utf8")).held;
+    expect(held.map((h: { contestId: string; reason: string }) => [h.contestId, h.reason])).toEqual([["assembly-21", "wrong-rank"], ["us-rep-11", "wrong-pick"]]);
+  });
+
+  it("keeps holds in the file's order without verify", async () => {
+    const holds = [
+      { contestId: "assembly-21", pick: ["Diane Papan"], reason: "not-found" as const, evidence: "old" },
+      { contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick" as const, evidence: "page backs Wiener" },
+    ];
+    const { root, file, client } = wide("sf, san-mateo", { held: holds, extra: [pick("assembly-21", { candidates: ["Diane Papan"] })] });
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"], verify: false });
+    expect(parse(fs.readFileSync(file, "utf8")).held.map((h: { contestId: string }) => h.contestId)).toEqual(["assembly-21", "us-rep-11"]);
+  });
+
+  it("reports as missing only in-scope contests left with no pick or hold", async () => {
+    const m = (contestId: string) => ({ contestId, pick: "Y", evidence: "on the page" });
+    const { root, client } = wide("sf, san-mateo", { missing: [m("menlo-park-measure-p"), m("assembly-21"), m("supervisor-2"), m("prop-b")] });
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect((results[0] as Extract<GuideResult, { status: "changed" }>).missing.map((x) => x.contestId)).toEqual(["assembly-21"]);
+  });
+
+  it("leaves the stored page alone and warns when it changed for the guide's other areas", async () => {
+    const { root, client } = wide("sf, san-mateo", { stored: true });
+    const stored = pagePath(root, ELECTION, "alpha", url("alpha"));
+    const old = fs.readFileSync(stored, "utf8");
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 7, 2026").replace("No on Prop B", "Yes on Prop B") })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(stored, "utf8")).toBe(old);
+    expect(parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8")).picks["prop-b"].pick).toBe("N");
+    const md = summarize(results, { date: "2026-10-07" });
+    expect(md).toMatch(/page changed outside san-mateo; page text not stored, so the next refresh re-extracts the whole guide/);
+  });
+
+  it("stores the page when it changed only for the new area", async () => {
+    const { root, client } = wide("sf, san-mateo", { stored: true });
+    const stored = pagePath(root, ELECTION, "alpha", url("alpha"));
+    const fresh = `${PAGE("alpha", "October 7, 2026")}\nSam Liccardo has delivered for families across the Peninsula.`;
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(stored, "utf8")).toBe(normalizePageText(fresh));
+    expect(summarize(results, { date: "2026-10-07" })).not.toMatch(/not stored/);
   });
 
   it("adds or replaces only the new area's contests and leaves every other pick, rank and hold byte-identical", async () => {

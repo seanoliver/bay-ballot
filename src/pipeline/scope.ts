@@ -18,5 +18,14 @@ export function newAreaBallot(ballot: Ballot, guide: Pick<Guide, "id" | "areas">
   const mine = areas.filter((a) => guide.areas.includes(a.id));
   const fresh = mine.filter((a) => only.includes(a.id));
   const old = mine.filter((a) => !only.includes(a.id));
+  if (old.length === 0) throw new Error(`--only-areas: ${guide.id} has no areas besides ${only.join(", ")}; use a normal extract`);
   return { ...ballot, contests: ballot.contests.filter((c) => fresh.some((a) => inArea(c, a)) && !old.some((a) => inArea(c, a))) };
+}
+
+/** `prev` with each in-scope item replaced in place by `next`'s or dropped, then `next`'s new items appended. */
+export function mergeInScope<T>(prev: T[], next: T[], key: (t: T) => string, inScope: (id: string) => boolean): T[] {
+  const byKey = new Map(next.map((t) => [key(t), t]));
+  const out = prev.flatMap((t) => (!inScope(key(t)) ? [t] : byKey.has(key(t)) ? [byKey.get(key(t))!] : []));
+  const seen = new Set(out.map(key));
+  return [...out, ...next.filter((t) => !seen.has(key(t)))];
 }
