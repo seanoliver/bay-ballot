@@ -63,7 +63,7 @@ Nothing is ever pushed straight to `main`.
 
 ## Manual guides
 
-Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage) and smc-labor-council (picks are Word documents). `npm run bb -- check` lists them.
+Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents) and svgop (slate is a JPG card). `npm run bb -- check` lists them.
 
 To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text` and `reason`) in its endorsement file. Extraction never writes a listed quote back, and `npm run validate` fails if a pick quotes one. The San Mateo audits of 2026-10-06 seeded this list for courage-california, lwv-ssmc, lwv-ncsmc, green-foothills and bay-rising-action.
 
@@ -73,4 +73,6 @@ Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasRe
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
 - San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `ballot.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
+- Santa Clara County contests come from sample ballots, not the registrar site: vote.santaclaracounty.gov and rovservices.sccgov.org block automated browsers. `data/2026-11/sources/SCC-Sample-Ballots-PA-MV.txt` lists the precincts and ballot styles sampled through the County Voter Information Guide (https://ca.omniballot.us/sites/06085/site/app/cvig/vg/info?pid=<precinct>). Omniballot throttles fast lookups, so sample one precinct at a time.
+- Not yet published for Palo Alto and Mountain View as of 2026-10-06: Palo Alto Weekly / Palo Alto Online, Mountain View Voice, and Mercury News local picks. LWV Los Altos-Mountain View and the Los Altos Town Crier have no Palo Alto or Mountain View positions yet.
 - Not yet published for San Mateo County as of 2026-10-06: The Almanac, Redwood City Pulse, Half Moon Bay Review, Coastsider (site down) and Mercury News local picks. Add them when they publish.
