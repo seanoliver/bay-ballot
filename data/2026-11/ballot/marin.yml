@@ -1,0 +1,295 @@
+# Sources: data/2026-11/sources/Marin-Candidates-Nov2026.txt and Marin-Measures-Nov2026.txt (Marin County Elections Department).
+# Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-07-marin-guide-discovery.md).
+contests:
+  - id: marin-county-board-of-education-3
+    section: Local candidates
+    title: Marin County Board of Education, Trustee Area 3
+    kind: candidate
+    candidates: [Cynthia Johanson Irish, Craig Stuart Adams]
+    aliases: { Craig Stuart Adams: [Craig Adams] }
+    jurisdiction: { level: district, name: County Board of Education, district: "3", within: [{ level: county, name: Marin }] }
+  - id: marin-county-board-of-education-5
+    section: Local candidates
+    title: Marin County Board of Education, Trustee Area 5
+    kind: candidate
+    candidates: [Marilyn Nemzer, Avery Lieberman]
+    jurisdiction: { level: district, name: County Board of Education, district: "5", within: [{ level: county, name: Marin }] }
+  - id: marin-county-board-of-education-6
+    section: Local candidates
+    title: Marin County Board of Education, Trustee Area 6
+    kind: candidate
+    candidates: [Curtis F. Robinson, James Goddard]
+    aliases: { Curtis F. Robinson: [Curtis Robinson] }
+    jurisdiction: { level: district, name: County Board of Education, district: "6", within: [{ level: county, name: Marin }] }
+  - id: marin-county-measure-p
+    section: Local measures
+    title: Marin County Measure P
+    kind: measure
+    description: "Childcare Initiative (parcel tax)"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-p-110326
+    jurisdiction: { level: county, name: Marin }
+  - id: corte-madera-council
+    section: Local candidates
+    title: Corte Madera Town Council
+    kind: candidate
+    candidates: [Eli Beckman, Pat Ravasio, David C. Bell, Ava Fruin, Deborah E. Gallegos]
+    seats: 3
+    aliases: { David C. Bell: [David Bell], Deborah E. Gallegos: [Deborah Gallegos] }
+    jurisdiction: { level: city, name: Corte Madera }
+  - id: fairfax-council
+    section: Local candidates
+    title: Fairfax Town Council
+    kind: candidate
+    candidates: [Larry Bragman, Susan Denise Adams, Matt Da Cunha, Aubrey Harmon, Doug Kelly, Cheryl Scorza]
+    seats: 2
+    aliases: { Susan Denise Adams: [Susan Adams] }
+    jurisdiction: { level: city, name: Fairfax }
+  - id: fairfax-clerk
+    section: Local candidates
+    title: Fairfax Town Clerk
+    kind: candidate
+    candidates: [Deborah Benson, Bruce Ackerman]
+    jurisdiction: { level: city, name: Fairfax }
+  - id: fairfax-measure-r
+    section: Local measures
+    title: Fairfax Measure R
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-r-110326
+    jurisdiction: { level: city, name: Fairfax }
+  - id: larkspur-council
+    section: Local candidates
+    title: Larkspur City Council
+    kind: candidate
+    candidates: [Stephanie Andre, Sarah Margulies, Gareth Walter, Aaron Burnett, Spencer Doyle, Jeanne Friedel, Brian H. Jaffe]
+    seats: 3
+    aliases: { Sarah Margulies: [Sarah Marguiles], Brian H. Jaffe: [Brian Jaffe] }
+    jurisdiction: { level: city, name: Larkspur }
+  - id: larkspur-measure-s
+    section: Local measures
+    title: Larkspur Measure S
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-s-110326
+    jurisdiction: { level: city, name: Larkspur }
+  - id: mill-valley-council
+    section: Local candidates
+    title: Mill Valley City Council
+    kind: candidate
+    candidates: [Stephen Burke, Max Perrey]
+    seats: 2
+    jurisdiction: { level: city, name: Mill Valley }
+  - id: novato-council-2
+    section: Local candidates
+    title: Novato City Council, District 2
+    kind: candidate
+    candidates: [Rachel Farac, Mike Little, Bob Rasmussen]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Novato }] }
+  - id: novato-council-4
+    section: Local candidates
+    title: Novato City Council, District 4
+    kind: candidate
+    candidates: [Pat Eklund, Luiggino Galletto, Chris Carpiniello, Dan Christian]
+    aliases: { Dan Christian: [Daniel Christian] }
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Novato }] }
+  - id: ross-council
+    section: Local candidates
+    title: Ross Town Council
+    kind: candidate
+    candidates: [Robert Herbst, Jeffrey Kuhn, Julie A McMillan, Paul J. Roesler]
+    seats: 2
+    aliases: { Julie A McMillan: [Julie McMillan, Julie A. McMillan], Paul J. Roesler: [Paul Roesler] }
+    jurisdiction: { level: city, name: Ross }
+  - id: ross-measure-u
+    section: Local measures
+    title: Ross Measure U
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-u-110326
+    jurisdiction: { level: city, name: Ross }
+  - id: san-anselmo-council
+    section: Local candidates
+    title: San Anselmo Town Council
+    kind: candidate
+    candidates: [Steve Burdo, Philip Chigos, Will Dittmar]
+    seats: 2
+    aliases: { Will Dittmar: [William Dittmar] }
+    jurisdiction: { level: city, name: San Anselmo }
+  - id: san-anselmo-measure-v
+    section: Local measures
+    title: San Anselmo Measure V
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-v-110326
+    jurisdiction: { level: city, name: San Anselmo }
+  - id: san-rafael-council-2
+    section: Local candidates
+    title: San Rafael City Council, District 2
+    kind: candidate
+    candidates: [Eli Hill]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: San Rafael }] }
+  - id: san-rafael-council-3
+    section: Local candidates
+    title: San Rafael City Council, District 3
+    kind: candidate
+    candidates: [Daryoush Davidi, Robert Sandoval]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: San Rafael }] }
+  - id: san-rafael-measure-w
+    section: Local measures
+    title: San Rafael Measure W
+    kind: measure
+    description: "Essential Services Protection Measure (real property transfer tax)"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-w-110326
+    jurisdiction: { level: city, name: San Rafael }
+  - id: sausalito-council
+    section: Local candidates
+    title: Sausalito City Council
+    kind: candidate
+    candidates: [Joan Cox, Jill James Hoffman, Nastassya Saad, Adrian Brinton]
+    seats: 2
+    aliases: { Jill James Hoffman: [Jill Hoffman], Nastassya Saad: [Natassya Saad] }
+    jurisdiction: { level: city, name: Sausalito }
+  - id: sausalito-measure-x
+    section: Local measures
+    title: Sausalito Measure X
+    kind: measure
+    description: "Arts, Industrial & Maritime Preservation and Improvement Initiative (Marinship zoning)"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-city-sausalito-110326
+    jurisdiction: { level: city, name: Sausalito }
+  - id: tiburon-council
+    section: Local candidates
+    title: Tiburon Town Council
+    kind: candidate
+    candidates: [Kathleen Defever, Alice Fredericks, Chuck Hornbrook, Jack Ryan, Faris Jafar]
+    seats: 3
+    jurisdiction: { level: city, name: Tiburon }
+  - id: sonoma-county-board-of-education-2
+    section: School and special districts
+    title: Sonoma County Board of Education, Trustee Area 2
+    kind: candidate
+    candidates: [Jonathan Lenz, Caitlin Quinn]
+    jurisdiction: { level: district, name: Sonoma County Board of Education, district: "2", within: [{ level: county, name: Marin }] }
+  - id: tamalpais-uhsd-trustee
+    section: School and special districts
+    title: Tamalpais Union High School District Board
+    kind: candidate
+    candidates: [Cynthia C. Roenisch, Kevin C. Saavedra, Maria D. Sandoval, Joy Scully Koo, Brian A. Sutherland, Valerie Wynn, Leslie J. Harlander]
+    seats: 3
+    aliases: { Joy Scully Koo: [Joy Koo], Brian A. Sutherland: [Brian Sutherland] }
+    jurisdiction: { level: district, name: Tamalpais Union High School District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: miller-creek-sd-trustee
+    section: School and special districts
+    title: Miller Creek School District Board
+    kind: candidate
+    candidates: [Brad Honsberger, Megan Roberts Hutchinson, Caitlin McShane, Adam Compton, Matt Dance]
+    seats: 3
+    aliases: { Megan Roberts Hutchinson: [Megan Hutchinson] }
+    jurisdiction: { level: district, name: Miller Creek School District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: miller-creek-sd-measure-n
+    section: School and special districts
+    title: Miller Creek School District Measure N
+    kind: measure
+    description: "Bond Measure"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-n-110226
+    jurisdiction: { level: district, name: Miller Creek School District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: novato-usd-trustee-area-4
+    section: School and special districts
+    title: Novato Unified School District, Trustee Area 4
+    kind: candidate
+    candidates: [Abbey Picus, Francis Drouillard]
+    aliases: { Abbey Picus: [Abby Picus] }
+    jurisdiction: { level: district, name: Novato Unified School District, district: "4", within: [{ level: county, name: Marin }] }
+  - id: reed-union-sd-trustee
+    section: School and special districts
+    title: Reed Union School District Board
+    kind: candidate
+    candidates: [Mike Ghaffary, Shelby Pasarell Tsai, Krupa Antani, Lina Godfrey]
+    seats: 3
+    aliases: { Shelby Pasarell Tsai: [Shelby Tsai] }
+    jurisdiction: { level: district, name: Reed Union School District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: sausalito-marin-city-sd-trustee
+    section: School and special districts
+    title: Sausalito Marin City School District Board
+    kind: candidate
+    candidates: [Lauren J. Walters, Leshawn Holcomb, Alena Maunder, Eduardo Vazquez]
+    seats: 3
+    aliases: { Leshawn Holcomb: [LeShawn Holcomb] }
+    jurisdiction: { level: district, name: Sausalito Marin City School District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: marin-city-csd-director
+    section: School and special districts
+    title: Marin City Community Services District Board
+    kind: candidate
+    candidates: [Kevin Douglas, Angela Haynes, Eboni McKinley, Royce McLemore, Derek Morgan, Capri M. Price, La Tanya J. Wiggins, Beatra Hall]
+    seats: 3
+    aliases: { La Tanya J. Wiggins: [La Tanya Wiggins, LaTanya Wiggins] }
+    jurisdiction: { level: district, name: Marin City Community Services District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: marin-city-csd-director-short-term
+    section: School and special districts
+    title: Marin City Community Services District Board (Short Term)
+    kind: candidate
+    candidates: [Sarah Elizabeth Canson, Terrie Harris Green]
+    aliases: { Sarah Elizabeth Canson: [Sarah Canson] }
+    jurisdiction: { level: district, name: Marin City Community Services District, district: "short-term", within: [{ level: county, name: Marin }] }
+  - id: southern-marin-fire-director
+    section: School and special districts
+    title: Southern Marin Fire Protection District Board
+    kind: candidate
+    candidates: [Kurt Chun, Cristine Soto Deberry, Peter Fleming, Thomas W. Perazzo, Eric Steinhofer, Amy Svendberg, Thomas Clark]
+    seats: 4
+    aliases: { Cristine Soto Deberry: [Cristine Soto DeBerry, Cristine DeBerry] }
+    jurisdiction: { level: district, name: Southern Marin Fire Protection District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: marin-healthcare-district-1
+    section: School and special districts
+    title: Marin Healthcare District, Division 1
+    kind: candidate
+    candidates: [Clayton Hess, Kendra Hoepper]
+    aliases: { Clayton Hess: [Clay Hess, Dr. Clay Hess] }
+    jurisdiction: { level: district, name: Marin Healthcare District, district: "1", within: [{ level: county, name: Marin }] }
+  - id: marin-healthcare-district-3
+    section: School and special districts
+    title: Marin Healthcare District, Division 3
+    kind: candidate
+    candidates: [Brian Su, Jonathan Goff]
+    jurisdiction: { level: district, name: Marin Healthcare District, district: "3", within: [{ level: county, name: Marin }] }
+  - id: marin-healthcare-measure-cc
+    section: School and special districts
+    title: Marin Healthcare District Measure CC
+    kind: measure
+    description: "Hospital facilities parcel tax (citizen initiative)"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-cc-110326
+    jurisdiction: { level: district, name: Marin Healthcare District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: richardson-bay-sanitary-director
+    section: School and special districts
+    title: Richardson Bay Sanitary District Board
+    kind: candidate
+    candidates: [Mark Fitzgerald, Peter McIntosh, Patrick Walravens, John Turnacliff]
+    seats: 3
+    jurisdiction: { level: district, name: Richardson Bay Sanitary District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: north-marin-water-district-5
+    section: School and special districts
+    title: North Marin Water District, Division 5
+    kind: candidate
+    candidates: [Marc Hunter Lewis, Laurie L. Williams]
+    aliases: { Laurie L. Williams: [Laurie Williams] }
+    jurisdiction: { level: district, name: North Marin Water District, district: "5", within: [{ level: county, name: Marin }] }
+  - id: marin-csa-27-measure-y
+    section: School and special districts
+    title: County Service Area 27 Measure Y
+    kind: measure
+    description: "Ross Valley Paramedic Authority special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-csa-27-ross-valley-paramedic-service-area-110326
+    jurisdiction: { level: district, name: County Service Area 27, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: kentfield-fire-measure-bb
+    section: School and special districts
+    title: Kentfield Fire Protection District Measure BB
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-kentfield-fire-protection-district-110326
+    jurisdiction: { level: district, name: Kentfield Fire Protection District, district: "at-large", within: [{ level: county, name: Marin }] }
+  - id: sleepy-hollow-fire-measure-dd
+    section: School and special districts
+    title: Sleepy Hollow Fire Protection District Measure DD
+    kind: measure
+    description: "Paramedic services special tax renewal"
+    link: https://www.marincounty.gov/departments/elections/november-3-2026-general-election/information-about-measures-110326/list-measures-110326/measure-sleepy-hollow-fire-protection-district-110326
+    jurisdiction: { level: district, name: Sleepy Hollow Fire Protection District, district: "at-large", within: [{ level: county, name: Marin }] }
