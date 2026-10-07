@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Template: scripts/local-refresh-launchd.sh replaces __SCRIPT__ and __LOG__ when installing. -->
+<!-- Template: scripts/local-refresh-launchd.sh replaces __SCRIPT__, __LOG__ and __PATH__ when installing. -->
 <plist version="1.0">
 <dict>
   <key>Label</key>
@@ -15,6 +15,8 @@
   <dict>
     <key>BAYBALLOT_LAUNCHD</key>
     <string>1</string>
+    <key>PATH</key>
+    <string>__PATH__</string>
   </dict>
   <key>StartCalendarInterval</key>
   <dict>

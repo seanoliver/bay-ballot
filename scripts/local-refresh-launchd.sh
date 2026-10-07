@@ -14,11 +14,19 @@ DOMAIN="gui/$(id -u)"
 
 case "${1:-}" in
   install)
+    # launchd starts with a bare PATH; record where this shell finds each tool the job needs.
+    dirs=()
+    for cmd in node npm npx gh git pdftotext; do
+      found="$(command -v "$cmd")" || { echo "$cmd not found on PATH; install it first" >&2; exit 1; }
+      dirs+=("${found:h}")
+    done
+    unique=(${(u)dirs})
+    job_path="${(j.:.)unique}:/usr/bin:/bin:/usr/sbin:/sbin"
     mkdir -p "$SUPPORT" "${PLIST:h}" "${LOG:h}"
     # A copy, so resetting the refresh worktree never rewrites the script while it runs.
     cp "$HERE/local-refresh.sh" "$SCRIPT"
     chmod +x "$SCRIPT"
-    sed -e "s|__SCRIPT__|'$SCRIPT'|" -e "s|__LOG__|$LOG|" "$HERE/$LABEL.plist" > "$PLIST"
+    sed -e "s|__SCRIPT__|'$SCRIPT'|" -e "s|__LOG__|$LOG|" -e "s|__PATH__|$job_path|" "$HERE/$LABEL.plist" > "$PLIST"
     plutil -lint "$PLIST" >/dev/null
     launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
     launchctl bootstrap "$DOMAIN" "$PLIST"

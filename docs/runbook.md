@@ -64,15 +64,37 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 
 A launchd job runs `scripts/local-refresh.sh` every day at 07:00 local time. It refreshes only the `fetchFrom: local` guides, from a home connection that the sites don't block.
 
-- **Where it runs:** its own worktree at `~/code/projects/bay-ballot-refresh`, created on first run and reset each run (no other checkout is touched).
-- **What it runs:** `bb refresh --local-only` with main's data as the changelog baseline, the same pipeline as the cloud job: page gate, extract, verify, shrink guard, summary and exit codes. It reads the API key from `.env.local` (copied from `~/code/projects/bay-ballot` if missing).
+- **Where it runs:** its own worktree at `~/code/projects/bay-ballot-refresh`, created on first run and reset each run.
+  - Before touching anything it checks that the worktree belongs to this repository, is its own top-level checkout, has no branch checked out (detached HEAD), and has no changes outside `data/`. If any check fails, it stops with an error and changes nothing.
+  - No other checkout is touched.
+- **What it runs:** `bb refresh --local-only` with main's data as the changelog baseline. It is the same pipeline as the cloud job: page gate, extract, verify, shrink guard, summary and exit codes.
+  - Each run writes only `BAYBALLOT_ANTHROPIC_API_KEY` from `~/code/projects/bay-ballot/.env.local` into the worktree's `.env.local`, readable only by Sean's user. The key is never printed.
+  - Shrunk-guide hashes are kept in `~/Library/Application Support/bay-ballot/shrunk-state.json`, so an unchanged shrunk page isn't re-extracted.
 - **Nothing relevant changed:** no commit, no PR.
+- **Failed with nothing to commit:** it opens or updates an issue titled "Local refresh needs review" with a cc to Sean, and shows a macOS notification.
 - **Something changed:** it commits to `data/refresh-local` and opens or updates one PR with the summary and a cc to Sean. While that PR is open, later runs continue from its branch with `main` merged in, as the cloud job does.
-- **Auto-merge:** enabled only when the refresh exited 0, every changed file is under `data/`, and the PR has no `needs-review` label. GitHub merges once the required `ci` check passes; the PRs are pushed from Sean's account, so CI runs on them normally. Otherwise the PR gets `needs-review` and a comment saying why.
-- **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`). `--dry-run` fetches and gates pages only: no model calls, no commit, no PR.
+- **Auto-merge:**
+  - Before every push, auto-merge on the open PR is turned off.
+  - It is turned back on only at the end, pinned to the commit just pushed, when all of these hold:
+    - the refresh exited 0;
+    - every file the PR changes is under `data/`;
+    - the PR has no `needs-review` label;
+    - the installed script matches `scripts/local-refresh.sh` on main;
+    - main's ruleset requires the `ci` check.
+  - GitHub then merges once `ci` passes. The PRs are pushed from Sean's account, so CI runs on them normally.
+  - Otherwise auto-merge stays off, the PR gets `needs-review`, and a comment lists the reasons.
+  - **To stop a pending auto-merge by hand:** `gh pr merge <number> --disable-auto`. Adding the label alone does not stop it.
+- **Exit codes:** 0 clean, 2 needs review, 1 error; any other code from the refresh is passed through.
+- **Safety limits:**
+  - A lock in `~/Library/Application Support/bay-ballot/lock` stops overlapping runs. It is taken over if its process is gone or it is more than 3 hours old.
+  - A watchdog stops a run after 2 hours.
+  - `git fetch` is retried 3 times, 30 seconds apart.
+- **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`). `--dry-run` fetches and gates pages only: no model calls, no commit, no PR, no issue.
 - **Logs:** `~/Library/Logs/bay-ballot-refresh.log`, trimmed to the last 2,500 lines once it passes 5,000.
 - **Install / uninstall:**
-  - `npm run local-refresh:install` copies the script to `~/Library/Application Support/bay-ballot/` and loads `com.bayballot.local-refresh` into launchd. Re-run it after the script changes.
+  - `npm run local-refresh:install` copies the script to `~/Library/Application Support/bay-ballot/` and loads `com.bayballot.local-refresh` into launchd.
+    - It records in the job where this shell finds `node`, `npm`, `npx`, `gh`, `git` and `pdftotext`, because launchd starts with a bare PATH. It fails if any is missing.
+    - Re-run it after the script changes. Until then, every run warns, and auto-merge stays off.
   - `npm run local-refresh:uninstall` removes it.
   - `launchctl kickstart gui/$(id -u)/com.bayballot.local-refresh` runs it immediately.
 - **Mac asleep at 07:00:** launchd runs a missed calendar job when the Mac next wakes (one run, however many days were missed). If the Mac is off, nothing runs until the next 07:00 after it is back on.
