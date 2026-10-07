@@ -32,6 +32,7 @@ Researched 2026-10-07. Follows the structure of `2026-10-06-peninsula-guide-disc
 | Guides endorsing Martinez Mayor and D4, Oakley D4, Martinez USD, Pittsburg USD, WCCUSD 4/5, EBMUD 2/4, BART 2, AC Transit 1, Stege, West County Wastewater, Ambrose | All of these are **uncontested and not on the ballot** (appointed in lieu of election). Drop those picks. |
 | YIMBY Action "Moraga Mayor: Kerry Hillis" | Moraga has no elected mayor on the ballot. Hillis is a candidate for Moraga Town Council (vote for 2). Map the pick to the council race. |
 | The Lamorinda Democratic Club lists candidates | Its images list **every** Democrat on the ballot. Only the names with a **green checkmark** are endorsements. |
+| CoCo GOP "Judges: vote no on retention" covers the 1st District Court of Appeal | Its list names 9 of the 11 justices on the November ballot, leaving out Kathleen M. Banke and Mark Simons, and adds 7 justices who aren't on it. Bay Ballot treats the 11 retention votes as one contest, so record no pick for `court-of-appeal-1`; a grouped No would put words in the party's mouth about Banke and Simons. Its Supreme Court No picks (Groban, Evans) are exact. |
 | Bay Rising Action candidate picks | They copy CA WFP's slate. Counting both double-counts. |
 
 ---

@@ -25,7 +25,6 @@ picks:
   superintendent: { pick: ["Sonja Shaw"] }
   supreme-court-groban: { pick: N }
   supreme-court-evans: { pick: N }
-  court-of-appeal-1: { pick: N } # "Judges: vote no on retention" lists every 1st District justice
   prop-1: { pick: N }
   prop-2: { pick: N }
   prop-3: { pick: N }
