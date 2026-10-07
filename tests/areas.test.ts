@@ -103,6 +103,10 @@ describe("contestPlace", () => {
     expect(contestPlace(water, all)).toEqual({ area: null, place: { name: "Santa Clara County", short: "Santa Clara County" } });
     expect(contestPlace(sccA, all).place.name).toBe("Santa Clara County");
   });
+  it("is the Bay Area for a state-drawn district in several areas, even when they share a county", () => {
+    const coa6 = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
+    expect(contestPlace(coa6, all)).toEqual({ area: null, place: BAY_AREA });
+  });
   it("is the Bay Area for statewide, regional and cross-county contests", () => {
     expect(contestPlace(prop1, all)).toEqual({ area: null, place: BAY_AREA });
     expect(contestPlace(rtm, all).place).toEqual(BAY_AREA);

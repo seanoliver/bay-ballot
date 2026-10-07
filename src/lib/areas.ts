@@ -33,7 +33,8 @@ export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, a
   if (found.length === 1) return { area: found[0], place: placeName(found[0]) };
   const counties = new Set(found.map((a) => a.jurisdictions.find((j) => j.level === "county")?.name));
   const [county] = counties;
-  const local = c.jurisdiction.level !== "state" && c.jurisdiction.level !== "region";
+  const j = c.jurisdiction;
+  const local = j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
   if (local && found.length > 1 && counties.size === 1 && county) return { area: null, place: { name: `${county} County`, short: `${county} County` } };
   return { area: null, place: BAY_AREA };
 }
