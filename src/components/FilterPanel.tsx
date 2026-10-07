@@ -14,8 +14,9 @@ import {
   guideGroups,
   isGuideOn,
   toggleGuide,
-  toggleTypeGroup,
+  setTypeGroup,
   typeState,
+  type FilterGuide,
   type Filters,
   type GuideGroup,
   type GuideInfo,
@@ -35,7 +36,7 @@ type Props = {
   files: Record<string, PickFile>;
   counties?: CountyControl;
   // The guides a type checkbox turns on or off, when `guides` lists only some of them.
-  typeGuides?: GuideInfo[];
+  typeGuides?: FilterGuide[];
 };
 
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
@@ -163,7 +164,7 @@ function GuideChecklist({ filters: f, onChange, guides, files, typeGuides }: Pro
       ) : (
         <div className="mt-2 divide-y divide-border rounded-xl border border-border">
           {groups.map((g) => (
-            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={typeGuides ?? guides} files={files} />
+            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={guides} typeGuides={typeGuides ?? guides} files={files} />
           ))}
         </div>
       )}
@@ -177,8 +178,9 @@ function TypeGroup({
   filters: f,
   onChange,
   guides,
+  typeGuides,
   files,
-}: { group: GuideGroup; searching: boolean } & Props) {
+}: { group: GuideGroup; searching: boolean } & Props & { typeGuides: FilterGuide[] }) {
   const [expanded, setExpanded] = useState(false);
   const state = typeState(group.type, f, guides);
   const open = searching || expanded;
@@ -189,7 +191,7 @@ function TypeGroup({
           <Checkbox
             checked={state === "on"}
             indeterminate={state === "mixed"}
-            onCheckedChange={() => onChange(toggleTypeGroup(f, group.type, guides))}
+            onCheckedChange={() => onChange(setTypeGroup(f, group.type, typeGuides, state !== "on"))}
           />
           <span>{group.label}</span>
           <span className="ml-auto text-sm font-normal text-muted-foreground tabular-nums">{group.count}</span>

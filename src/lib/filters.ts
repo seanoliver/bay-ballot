@@ -10,6 +10,7 @@ export const FILTERS_KEY = "bb-filters";
 export const EMPTY: Filters = { off: [], whyOnly: false };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
+export type FilterGuide = Pick<Guide, "id" | "type">;
 export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archived">;
 
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
@@ -135,9 +136,12 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
 }
 
 export function toggleTypeGroup(f: Filters, type: string, guides: GuideInfo[]): Filters {
+  return setTypeGroup(f, type, guides, typeState(type, f, guides) !== "on");
+}
+
+export function setTypeGroup(f: Filters, type: string, guides: FilterGuide[], on: boolean): Filters {
   const ids = guides.filter((g) => g.type === type).map((g) => g.id);
-  if (typeState(type, f, guides) === "on") return { ...f, off: uniqSorted([...f.off, ...ids]) };
-  return { ...f, off: f.off.filter((id) => !ids.includes(id)) };
+  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
 }
 
 export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
@@ -169,7 +173,10 @@ export function contestFiles(contestId: string, files: Record<string, PickFile>)
   const out: Record<string, PickFile> = {};
   for (const [id, file] of Object.entries(files)) {
     const entry = file.picks[contestId];
-    if (entry) out[id] = { ...file, picks: { [contestId]: entry } };
+    if (!entry) continue;
+    const { archived, ...rest } = file;
+    const kept = archived?.filter((a) => entry.quotes.some((q) => q.source === a.source));
+    out[id] = { ...rest, picks: { [contestId]: entry }, ...(kept?.length ? { archived: kept } : {}) };
   }
   return out;
 }

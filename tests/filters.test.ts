@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  filterQuery, carryQuery, contestFiles, hiddenLabel, positionGuides, revealGuides,
+  filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toggleTypeGroup, toQuery,
   typeState, pendingGuides, EMPTY,
@@ -239,6 +239,32 @@ describe("contestFiles", () => {
       a: { hasReasoning: true, picks: { x: files.a.picks.x } },
       b: { hasReasoning: false, picks: { x: files.b.picks.x } },
     });
+  });
+});
+
+describe("contestFiles archived snapshots", () => {
+  it("keeps only the snapshots for this contest's quote sources", () => {
+    const q = (source: string) => ({ text: "t", source });
+    const f = {
+      g: {
+        hasReasoning: true,
+        picks: { x: { pick: "Y", ranked: false, quotes: [q("https://g.org/x")] }, y: { pick: "N", ranked: false, quotes: [q("https://g.org/y")] } },
+        archived: [{ source: "https://g.org/x", snapshot: "https://web.archive.org/x" }, { source: "https://g.org/y", snapshot: "https://web.archive.org/y" }],
+      },
+      h: { hasReasoning: true, picks: { x: { pick: "Y", ranked: false, quotes: [] } }, archived: [{ source: "https://h.org/y", snapshot: "https://web.archive.org/hy" }] },
+    } as unknown as Record<string, PickFile>;
+    expect(contestFiles("x", f)).toEqual({
+      g: { hasReasoning: true, picks: { x: f.g.picks.x }, archived: [{ source: "https://g.org/x", snapshot: "https://web.archive.org/x" }] },
+      h: { hasReasoning: true, picks: { x: f.h.picks.x } },
+    });
+  });
+});
+
+describe("setTypeGroup", () => {
+  const gs = [{ id: "m", type: "club" }, { id: "n", type: "club" }, { id: "s", type: "civic" }] as GuideInfo[];
+  it("turns every guide of the type off or on, whatever their state", () => {
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, false)).toEqual({ off: ["m", "n", "s"], whyOnly: false });
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, true)).toEqual({ off: ["s"], whyOnly: false });
   });
 });
 
