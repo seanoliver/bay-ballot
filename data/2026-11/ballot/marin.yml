@@ -243,7 +243,7 @@ contests:
     title: Marin Healthcare District, Division 1
     kind: candidate
     candidates: [Clayton Hess, Kendra Hoepper]
-    aliases: { Clayton Hess: [Clay Hess, Dr. Clay Hess] }
+    aliases: { Clayton Hess: [Clay Hess, Dr. Clay Hess], Kendra Hoepper: [Nancy Hoepper] }
     jurisdiction: { level: district, name: Marin Healthcare District, district: "1", within: [{ level: county, name: Marin }] }
   - id: marin-healthcare-district-3
     section: School and special districts

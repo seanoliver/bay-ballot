@@ -57,6 +57,10 @@ archived:
     snapshot: https://web.archive.org/web/20261007202341/https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   - source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
     snapshot: https://web.archive.org/web/20261007202524/https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  - source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+    snapshot: https://web.archive.org/web/20261007202247/https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+  - source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+    snapshot: https://web.archive.org/web/20261007202709/https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
 fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
@@ -202,3 +206,10 @@ picks:
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: The big increase will bring in more than the city needs right now.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+  ross-council:
+    pick:
+      - Julie A McMillan
+      - Robert Herbst
+    quotes:
+      - text: McMillan and Herbst offer a balance and breadth of civic experience and perspectives.
+        source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/

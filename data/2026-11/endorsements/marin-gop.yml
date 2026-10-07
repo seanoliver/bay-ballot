@@ -1,11 +1,11 @@
 guide: marin-gop
 election: 2026-11
 status: published
-source: https://maringop.org/2026/09/15/marin-gop-endorses/ # candidates and props are two PNG cards on this post; no page text
+source: https://maringop.org/elections/endorsements/ # "Marin GOP Recommendations for the 11/3/2026 General Election"; measure positions in page text
 extraSources:
+  - https://maringop.org/2026/09/15/marin-gop-endorses/ # candidates and props are two PNG cards on this post; no page text
   - https://maringop.org/wp-content/uploads/2026/09/Artboard-1@4x-1.png
   - https://maringop.org/wp-content/uploads/2026/09/Artboard-2@4x-1.png
-  - https://maringop.org/elections/endorsements/
 fetchedAt: 2026-10-07
 hasReasoning: false
 manual: true # picks hand-entered from the two slate images and the measures page; extract skips this guide

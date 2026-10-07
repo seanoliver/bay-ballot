@@ -16,6 +16,8 @@ archived:
     snapshot: https://web.archive.org/web/20261007194431/https://marindemocrats.org/measure-p/
   - source: https://marindemocrats.org/measure-cc-critical-care-for-marin/
     snapshot: https://web.archive.org/web/20261007194513/https://marindemocrats.org/measure-cc-critical-care-for-marin/
+  - source: https://marindemocrats.org/measure-w-san-rafael-services/
+    snapshot: https://web.archive.org/web/20261007215539/https://marindemocrats.org/measure-w-san-rafael-services/
 fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
