@@ -374,6 +374,8 @@ The IJ is still publishing; new editorials need adding as they appear.
 
 San Mateo rule: a local race or measure is added only where a guide takes a position. Cross-county contests follow the same rule, with `within` including Marin. That gives 3 new district contests, 2 widened, 29 candidate contests and 12 measures. Petaluma JUHSD TA3 and SRJC Measure AB have no guide position and are left out; Sonoma BOE TA2 (SEIU) is in.
 
+The two unopposed races with guide picks are confirmed on the ballot. San Rafael lists Eli Hill under "Qualified Candidates on the Ballot" and says only its school seats are appointed in lieu (https://www.cityofsanrafael.org/november-3-2026-election). Mill Valley's Notice of Nominees (8/20/2026) lists Burke and Perrey "to be filled at the General Municipal Election" on Nov 3, vote for two (https://www.cityofmillvalley.gov/DocumentCenter/View/12662/Notice-of-Nominees-for-Public-Office_260820, a scanned PDF). Hoepper's first name is Kendra on the county list; the IJ calls her Nancy, so "Nancy Hoepper" is an alias.
+
 District: `us-rep-2`, `state-senate-2`, `assembly-12` (new, within Marin); add Marin to `within` on `board-of-equalization-2` and `court-of-appeal-1`. Do not add Marin to `rtm`.
 
 Proposed local ids (area-prefixed, following the existing `san-mateo-county-*`, `<city>-council-<n>`, `<city>-measure-<x>` and `<district>-trustee` patterns):
