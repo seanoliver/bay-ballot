@@ -27,6 +27,9 @@ export default function AboutPage() {
     <PageColumn>
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          Endorsements for the November 3, 2026 election from voter guides in San Francisco, San Mateo County, Palo Alto and Mountain View.
+        </p>
         <div className="mt-4 rounded-xl border border-border bg-card p-5 sm:p-7">
           <div className="space-y-4 text-base">
             <p>
@@ -66,22 +69,24 @@ export default function AboutPage() {
         <Section title="How guides are found">
           <p>
             For each area, I look for every voter guide that publishes endorsements: newspaper editorial boards, party committees, political clubs,
-            labor councils, advocacy groups and civic groups. A guide is added once it has published endorsements for this election.
+            labor councils, advocacy groups and civic groups. A guide&apos;s endorsements appear once it publishes them for this election.
           </p>
         </Section>
 
         <Section title="How endorsements are collected">
           <p>
-            An automated process reads each guide&apos;s published pages and records its endorsements, along with short quotes giving its reasons. A
-            separate check confirms every quote appears word for word on the guide&apos;s page. Anything that doesn&apos;t pass is held back until I
-            review it. I monitor the whole process closely. Each quote links to its source or an archived copy. Guides that publish only a list of
-            endorsements show no quotes.
+            For most guides, an automated process reads the guide&apos;s published pages and records its endorsements, along with short quotes giving
+            its reasons. A separate check confirms each quote appears word for word on the guide&apos;s page. Quotes that fail are left out, and
+            endorsements the check can&apos;t confirm stay off the site until they&apos;re confirmed. A few guides publish their endorsements as images
+            or documents, and I enter those by hand. I monitor the whole process closely. Each quote links to its source or an archived copy. Guides
+            that publish only a list of endorsements show no quotes.
           </p>
         </Section>
 
         <Section title="Staying current">
           <p>
-            Every guide is checked daily for updates. Each change is listed on the{" "}
+            Guides are checked for updates every day, and the few that can&apos;t be checked automatically are checked by hand. Updates are listed on
+            the{" "}
             <Link href="/changelog" className={LINK}>
               changelog
             </Link>
