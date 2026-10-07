@@ -3,7 +3,7 @@
 import { Menu } from "@base-ui/react/menu";
 import { ChevronDownIcon } from "lucide-react";
 import { useRef, type MouseEvent } from "react";
-import type { NavPlace } from "@/lib/section-nav";
+import { countLabel, type NavPlace } from "@/lib/section-nav";
 import { cn } from "@/lib/utils";
 
 const ITEM =
@@ -34,7 +34,7 @@ export function SectionNav({
     onJump(id);
   };
   return (
-    <div data-section-nav data-stuck={stuck ? "" : undefined} className="sticky top-0 z-10 -mx-1 bg-muted px-1 py-1.5 data-stuck:shadow-[0_1px_0_var(--border)] dark:bg-background">
+    <div data-section-nav data-stuck={stuck ? "" : undefined} className="js-only sticky top-0 z-10 -mx-1 bg-muted px-1 py-1.5 data-stuck:shadow-[0_1px_0_var(--border)] dark:bg-background">
       <Menu.Root
         open={open}
         onOpenChange={onOpenChange}
@@ -68,7 +68,15 @@ export function SectionNav({
               {places.map((p, i) => (
                 <Menu.Group key={p.id}>
                   {i > 0 ? <Menu.Separator className="mx-1 my-1.5 h-px bg-border" /> : null}
-                  <Menu.LinkItem href={`#${p.id}`} label={p.heading} onClick={jump(p.id)} closeOnClick className={cn(ITEM, "font-semibold")}>
+                  <Menu.GroupLabel className="sr-only">{p.heading}</Menu.GroupLabel>
+                  <Menu.LinkItem
+                    href={`#${p.id}`}
+                    label={p.heading}
+                    aria-label={countLabel(p.heading, p.count)}
+                    onClick={jump(p.id)}
+                    closeOnClick
+                    className={cn(ITEM, "font-semibold")}
+                  >
                     {p.heading}
                     <span className="font-normal text-muted-foreground tabular-nums">{p.count}</span>
                   </Menu.LinkItem>
@@ -77,6 +85,7 @@ export function SectionNav({
                       key={s.id}
                       href={`#${s.id}`}
                       label={`${p.heading} ${s.name}`}
+                      aria-label={countLabel(s.name, s.count)}
                       aria-current={s.id === here.id ? "location" : undefined}
                       onClick={jump(s.id)}
                       closeOnClick

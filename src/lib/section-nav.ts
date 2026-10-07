@@ -44,3 +44,14 @@ export function spySection(
   }
   return current;
 }
+
+export function stepFrom(places: NavPlace[], anchor: string, ids: string[], dir: "next" | "prev"): string | null {
+  const place = places.find((p) => p.id === anchor);
+  const section = place?.sections[0] ?? places.flatMap((p) => p.sections).find((s) => s.id === anchor);
+  const first = section?.contestIds[0];
+  const i = first === undefined ? -1 : ids.indexOf(first);
+  if (i === -1) return null;
+  return dir === "next" ? ids[i] : (ids[i - 1] ?? null);
+}
+
+export const countLabel = (name: string, count: number) => `${name}, ${count} ${count === 1 ? "contest" : "contests"}`;

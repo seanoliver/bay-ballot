@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { navModel, sectionOf, spySection } from "@/lib/section-nav";
+import { countLabel, navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import type { PlaceGroup } from "@/lib/areas";
 import type { Contest } from "@/lib/schema";
 
@@ -56,5 +56,29 @@ describe("spySection", () => {
   });
   it("no sections, no answer", () => {
     expect(spySection([], { line: 250, atBottom: false, viewport: 900 })).toBeNull();
+  });
+});
+
+describe("stepFrom", () => {
+  const m = navModel(groups);
+  const ids = ["a", "b", "d", "e", "f", "g", "h"];
+  it("j from a place or section goes to its first contest", () => {
+    expect(stepFrom(m, "place-sf", ids, "next")).toBe("e");
+    expect(stepFrom(m, "section-ca-state", ids, "next")).toBe("d");
+  });
+  it("k from a place or section goes to the last contest before it", () => {
+    expect(stepFrom(m, "place-sf", ids, "prev")).toBe("d");
+    expect(stepFrom(m, "section-sf-state", ids, "prev")).toBe("g");
+    expect(stepFrom(m, "place-ca", ids, "prev")).toBeNull();
+  });
+  it("an unknown anchor gives nothing", () => {
+    expect(stepFrom(m, "nope", ids, "next")).toBeNull();
+  });
+});
+
+describe("item labels", () => {
+  it("say the count, singular or plural", () => {
+    expect(countLabel("Local candidates", 1)).toBe("Local candidates, 1 contest");
+    expect(countLabel("California", 31)).toBe("California, 31 contests");
   });
 });

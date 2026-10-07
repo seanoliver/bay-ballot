@@ -590,7 +590,7 @@ test.describe("section nav", () => {
     await openBallot(page);
     await bar(page).click();
     await expect(menu(page)).toBeVisible();
-    await expect(menu(page).getByRole("menuitem", { name: /^California\s*\d+$/ })).toBeVisible();
+    await expect(menu(page).getByRole("menuitem", { name: /^California, \d+ contests?$/ })).toBeVisible();
     await menu(page).getByRole("menuitem", { name: /^Judicial/ }).click();
     const heading = page.locator("#section-state-judicial");
     await expect(heading).toBeFocused();
@@ -616,12 +616,31 @@ test.describe("section nav", () => {
       const items = menu(page).getByRole("menuitem");
       const hrefs = await items.evaluateAll((els) => els.map((e) => e.getAttribute("href")!));
       expect(await page.evaluate((ids) => ids.filter((h) => !document.querySelector(h)), hrefs)).toEqual([]);
-      for (const place of places) await expect(menu(page).getByRole("menuitem", { name: new RegExp(`^${place}\\s*\\d+$`) })).toHaveCount(1);
-      await menu(page).getByRole("menuitem", { name: /^Redwood City\s*\d+$/ }).click();
+      for (const place of places) await expect(menu(page).getByRole("menuitem", { name: new RegExp(`^${place}, \\d+ contests?$`) })).toHaveCount(1);
+      await menu(page).getByRole("menuitem", { name: /^Redwood City, \d+ contests?$/ }).click();
       await expect(page.locator("#place-city-redwood-city")).toBeFocused();
       await expect(bar(page)).toHaveAccessibleName(/^Jump to a section\. Now: Redwood City, /);
     });
   }
+
+  test("a link to a section lands with its heading below the bar", async ({ page }) => {
+    await page.goto(`${BALLOT}#section-state-judicial`);
+    const heading = page.locator("#section-state-judicial");
+    await expect(heading).toBeVisible();
+    await expect
+      .poll(async () => {
+        const navBottom = await page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+        return (await heading.evaluate((el) => el.getBoundingClientRect().top)) >= navBottom;
+      })
+      .toBe(true);
+  });
+
+  test("menu items name their place and contest count", async ({ page }) => {
+    await openBallot(page);
+    await bar(page).click();
+    await expect(menu(page).getByRole("group", { name: "California" }).getByRole("menuitem", { name: /^Judicial, \d+ contests?$/ })).toHaveCount(1);
+    await expect(menu(page).getByRole("menuitem", { name: /^Regional measures, 1 contest$/ })).toHaveCount(1);
+  });
 
   test("with reduced motion the jump is instant", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -649,10 +668,45 @@ test.describe("desktop keyboard section nav", () => {
     await page.keyboard.press("g");
     await expect(menu.getByRole("menuitem", { name: /^Federal/ })).toBeFocused();
     await page.keyboard.press("ArrowDown");
-    await expect(menu.getByRole("menuitem", { name: /^State\s*\d+$/ })).toBeFocused();
+    await expect(menu.getByRole("menuitem", { name: /^State, \d+ contests?$/ })).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.locator("#section-state-state")).toBeFocused();
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, State");
+  });
+
+  test("stepping up with k never leaves the selected row under the bar", async ({ page }) => {
+    await openBallot(page);
+    const last = (await page.locator("[id^=row-d-]").last().getAttribute("id"))!.replace("row-d-", "");
+    await openBallot(page, `?c=${last}`);
+    await page.locator(`#row-d-${last}`).scrollIntoViewIfNeeded();
+    const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
+    for (let i = 0; i < 15; i++) {
+      await page.keyboard.press("k");
+      const top = await page.evaluate(() => (document.activeElement as HTMLElement).closest("div")!.getBoundingClientRect().top);
+      expect(top).toBeGreaterThanOrEqual(await navBottom());
+    }
+  });
+
+  test("after a jump, j selects the first contest in that place and stays there", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    const first = (await page.locator("[aria-label^='San Francisco: '] a[id^=row-d-]").first().getAttribute("id"))!;
+    await page.keyboard.press("j");
+    await expect(page.locator(`#${first}`)).toBeFocused();
+    await expect(page.locator(`#${first}`)).toHaveAttribute("aria-current", "true");
+    await expect(page.locator(`#${first}`)).toBeInViewport();
+  });
+
+  test("k after a jump selects the last contest before that place", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
+    await expect(page.locator("#place-county-san-francisco")).toBeFocused();
+    const before = (await page.locator("[aria-label^='Bay Area: '] a[id^=row-d-]").last().getAttribute("id"))!;
+    await page.keyboard.press("k");
+    await expect(page.locator(`#${before}`)).toBeFocused();
   });
 
   test("stepping with j across a section boundary updates the bar", async ({ page }) => {
@@ -682,6 +736,13 @@ test.describe("desktop keyboard section nav", () => {
 
 test.describe("phone section nav", () => {
   test.skip(({ isMobile }) => !isMobile, "phone only");
+
+  test("g does nothing on a phone", async ({ page }) => {
+    await openBallot(page);
+    await page.keyboard.press("g");
+    await page.waitForTimeout(300);
+    await expect(page.getByRole("menu")).toHaveCount(0);
+  });
 
   test("the bar sticks to the top without covering the Filters button, and its menu jumps", async ({ page }) => {
     await openBallot(page);
@@ -874,5 +935,13 @@ test.describe("phone history budget", () => {
     await expect.poll(() => new URL(page.url()).searchParams.get("why"), { timeout: 12_000 }).toBe("1");
     await expect(page).toHaveURL(/[?&]c=governor/);
   });
+});
+
+test("without JavaScript the section bar isn't shown", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(BALLOT);
+  await expect(page.locator("[data-section-nav]")).toBeHidden();
+  await context.close();
 });
 

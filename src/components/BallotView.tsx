@@ -10,7 +10,7 @@ import { cardDescription } from "@/lib/display";
 import { activeEntries, EMPTY, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
-import { navModel, sectionOf, spySection } from "@/lib/section-nav";
+import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -120,14 +120,14 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       window.removeEventListener("resize", onScroll);
     };
   }, [nav]);
+  const jumpedTo = useRef<string | null>(null);
   const jumpTo = (id: string) => {
     const heading = document.getElementById(id);
     if (!heading) return;
-    const bar = document.querySelector("[data-section-nav]");
-    const offset = (bar?.getBoundingClientRect().height ?? 0) + 8;
     const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     spyPausedUntil.current = msFromNow(smooth ? 1000 : 100);
-    window.scrollTo({ top: window.scrollY + heading.getBoundingClientRect().top - offset, behavior: smooth ? "smooth" : "auto" });
+    jumpedTo.current = id;
+    heading.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
     setNavSection(nav.find((p) => p.id === id)?.sections[0]?.id ?? id);
   };
   const [stepped, setStepped] = useState<string | null>(null);
@@ -141,7 +141,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   useEffect(() => {
     const flush = () => stepWrite.flush();
     const flushIfDue = () => stepWrite.flushIfDue();
-    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null;
+    const leaving = (el: EventTarget | null) => el instanceof Element && el.closest("a[href]") !== null && el.closest("[data-keys=list]") === null && el.closest("[data-section-menu]") === null;
     // Capture phase, so the write lands before a Link starts a client-side navigation.
     const onClick = (e: globalThis.MouseEvent) => {
       if (leaving(e.target)) flush();
@@ -271,12 +271,12 @@ export function BallotView({ election, area, links, intro, groups, guides, files
   };
 
   useBallotKeys((action: KeyAction) => {
+    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
+    if (!window.matchMedia(DESKTOP).matches) return false;
     if (action === "jump") {
       setNavOpen(true);
       return;
     }
-    // false, not a bare return: it leaves the key to the browser, so arrows still scroll on mobile.
-    if (!window.matchMedia(DESKTOP).matches) return false;
     if (action === "help") {
       setShortcutsOpen(true);
       return;
@@ -290,7 +290,12 @@ export function BallotView({ election, area, links, intro, groups, guides, files
       document.querySelector<HTMLInputElement>("aside[aria-label=Filters] input[type=search]")?.focus();
       return;
     }
-    const id = stepSelection(all.map((c) => c.id), selectedId, action);
+    const ids = all.map((c) => c.id);
+    const active = document.activeElement;
+    const heading = active instanceof HTMLHeadingElement && /^(place|section)-/.test(active.id) ? active.id : null;
+    const anchor = heading ?? jumpedTo.current;
+    jumpedTo.current = null;
+    const id = anchor ? stepFrom(nav, anchor, ids, action) : stepSelection(ids, selectedId, action);
     if (id === null) return false;
     setAnimate(true);
     clearTimeout(exitTimer.current);
@@ -301,7 +306,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
     setNavSection(sectionOf(nav, id));
     const row = document.getElementById(`row-d-${id}`);
     row?.focus({ preventScroll: true });
-    row?.scrollIntoView({ block: "nearest" });
+    row?.closest("li")?.scrollIntoView({ block: "nearest" });
   }, { singleKeys });
 
   return (
@@ -373,7 +378,7 @@ export function BallotView({ election, area, links, intro, groups, guides, files
                 </SectionHeading>
                 <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
                   {s.contests.map((c) => (
-                    <li key={c.id}>
+                    <li key={c.id} className="scroll-mt-16">
                       <ContestRow
                         href={`/${election}/${c.id}`}
                         contest={c}
