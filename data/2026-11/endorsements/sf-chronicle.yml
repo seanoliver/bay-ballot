@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   lt-governor:
@@ -19,8 +19,6 @@ picks:
     pick:
       - Shirley N. Weber
     quotes:
-      - text: The need for steady and trustworthy leadership from our secretary of state cannot be understated.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: Shirley Weber’s breadth of experience, willingness to do the right thing and fierce advocacy for voting rights make her the strongest candidate.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   controller:
@@ -66,15 +64,24 @@ picks:
     quotes:
       - text: Befitting the broad consensus on California’s affordability crisis, Prop 1 has no formal opposition.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-3:
     pick: Y
     quotes:
       - text: Amid a dystopian federal climate under Trump, California can’t afford to further reduce ongoing funds for schools and healthcare programs.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-4:
+    pick: N
+    quotes:
+      - text: And Prop 4 has a fatal flaw that opens the door to limited taxpayer funds being wasted on efforts that don’t meaningfully move the needle — at a time of widespread budget deficits.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-37:
     pick: Y
     quotes:
       - text: Prop 37 promises to make it easier for middle-class Californians to enter homeownership.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: But given how dire our housing crisis is, any positive impact is better than none at all.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-38:
     pick: N
@@ -126,4 +133,9 @@ picks:
     pick: Y
     quotes:
       - text: Proposition H would help stem the bleeding.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-i:
+    pick: N
+    quotes:
+      - text: But Prop I is a cocktail of poison pills that will actually make San Francisco’s housing crisis worse.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/

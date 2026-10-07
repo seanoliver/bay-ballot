@@ -5,7 +5,7 @@ Voter Guide
 [Illustration of a red and a blue star.] Elections
 S.F. Chronicle Endorsements for the 2026 California Election
 The San Francisco Chronicle Editorial Board’s endorsements for the California and S.F. Bay Area election on .
-By Chronicle Editorial Board
+By Chronicle Editorial Board | Updated
 California’s November election is shaping up to be one of the most confusing in years for voters to navigate. There are 14 measures on the state ballot, many of them dense and extremely complicated tax policies. Unsurprisingly, polls show 80% of voters are frustrated and pessimistic about how this election will impact them. Voters in San Francisco and Oakland will also have to weigh in on hugely impactful charter reform ballot measures that could change the future of their cities.
 In this kind of environment, details matter. And, yes, your vote matters.
 The San Francisco Chronicle editorial board has spent months interviewing candidates, talking to experts, fact checking campaign promises and scrutinizing the issues in every statewide contest on the ballot, along with a group of consequential races in the Bay Area. These recommendations are made by Opinion writers and editors; newsroom reporters who cover the campaigns do not participate in endorsement decisions.
@@ -74,7 +74,10 @@ Proposition 3: Yes
 Why we're endorsing
 Amid a dystopian federal climate under Trump, California can’t afford to further reduce ongoing funds for schools and healthcare programs. Voters should support Prop 3 to sustain funding levels but keep pressure on their politicians to work toward a fairer and more sustainable tax system.
 Read the full editorial
-Proposition 4: Coming Soon
+Proposition 4: No
+Why we're endorsing
+All available research indicates that the effectiveness of a public campaign finance program depends on how it’s designed. And Prop 4 has a fatal flaw that opens the door to limited taxpayer funds being wasted on efforts that don’t meaningfully move the needle — at a time of widespread budget deficits.
+Read the full editorial
 Proposition 5: Coming Soon
 Proposition 37: Yes
 Why we're endorsing
@@ -157,13 +160,17 @@ Proposition H: Yes
 Why we're endorsing
 Faced with a $307 million annual budget shortfall, Muni is considering eliminating 19 bus lines, making steep cuts to street and cable car service and drastically reducing the frequency of busy bus and Metro lines. The City Controller’s Office predicts these cuts would result in a potentially disastrous scenario that could dissuade people from working in the city — adding to staffing crises for both city departments and local businesses — and result in declining property values for homeowners. Proposition H would help stem the bleeding.
 Read the full editorial
-Proposition I: Coming Soon
+Proposition I: No
+Why we're endorsing
+Everyone wants affordable housing. But Prop I is a cocktail of poison pills that will actually make San Francisco’s housing crisis worse.
+Read the full editorial
 Proposition J: Coming Soon
 Oakland ballot measures
 The editorial board recommends
 Oakland Measure EE: Coming Soon
 Credits
 Editing by Chronicle Editorial Board. Design and development by Maren Kranking/Hearst DevHub, Vivien Ngo/Hearst DevHub, Alejandra Arevalo/Hearst DevHub and Evan Wagstaff/Hearst DevHub. Design, development and project management by Danielle Rindler/Hearst DevHub. Project management by Brittany Schell/Hearst DevHub. Illustrations by Liz Hart. Powered by Hearst Newspapers DevHub.
+Originally published on
 Advertisement
 Read more
 S.F. Chronicle 2026 Voter Guide
