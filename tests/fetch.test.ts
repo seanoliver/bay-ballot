@@ -116,6 +116,7 @@ describe("detectBlock", () => {
     ["perimeterx", page("Access to this page has been denied", "<p>Press &amp; Hold to confirm you are a human (and not a bot).</p>")],
     ["datadome", page("", "<p>Please enable JS and disable any ad blocker</p>")],
     ["distil", page("Pardon Our Interruption", "<p>As you were browsing something about your browser made us think you were a bot.</p>")],
+    ["client challenge (sfchronicle.com on GitHub's runners)", page("Client Challenge", "<p>A required part of this site couldn’t load. This may be due to a browser extension, network issues, or browser settings. Please check your connection, disable any ad blockers, or try using a different browser.</p>")],
   ])("flags a %s page", (_name, html) => {
     expect(detectBlock(html)).not.toBeNull();
   });

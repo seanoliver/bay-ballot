@@ -72,6 +72,7 @@ const BLOCK_SIGNS: [string, RegExp][] = [
   ["perimeterx", /press (?:&|&amp;) hold to confirm you are a human|px-captcha/i],
   ["datadome", /please enable js and disable any ad blocker|captcha-delivery\.com/i],
   ["distil", /pardon our interruption/i],
+  ["client challenge", /^\s*client challenge\s*$|a required part of this site couldn.t load/im],
   ["access denied", /^\s*access denied\s*$|you don'?t have permission to access .* on this server/im],
   ["bot check", /verify(?:ing)? (?:that )?you are (?:a )?human|are you a robot\?/i],
 ];
