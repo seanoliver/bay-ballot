@@ -1,0 +1,22 @@
+id: santa-clara-county
+name: Santa Clara County
+kind: county
+order: 25
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Santa Clara }
+  - { level: city, name: Campbell }
+  - { level: city, name: Cupertino }
+  - { level: city, name: Gilroy }
+  - { level: city, name: Los Altos }
+  - { level: city, name: Los Altos Hills }
+  - { level: city, name: Los Gatos }
+  - { level: city, name: Milpitas }
+  - { level: city, name: Monte Sereno }
+  - { level: city, name: Morgan Hill }
+  - { level: city, name: Mountain View }
+  - { level: city, name: Palo Alto }
+  - { level: city, name: San Jose }
+  - { level: city, name: Santa Clara }
+  - { level: city, name: Saratoga }
+  - { level: city, name: Sunnyvale }

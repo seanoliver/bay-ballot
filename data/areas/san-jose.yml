@@ -1,0 +1,8 @@
+id: san-jose
+name: San Jose
+kind: city
+order: 27
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Santa Clara }
+  - { level: city, name: San Jose }
