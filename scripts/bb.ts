@@ -9,6 +9,7 @@ import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
 import type { Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
+import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
@@ -24,6 +25,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--baseline <data dir>] [--archive]
        npm run bb -- verify <guide...> | --all [--browser]
        npm run bb -- pages --seed [<guide...>]
+       npm run bb -- fetch-check <guide...> | --all [--browser]   (fetch only; prints what came back, writes nothing)
        npm run bb -- discover
        npm run bb -- check
        npm run bb -- review [--no-open]
@@ -271,11 +273,27 @@ function runReview(): void {
   if (!flag("--no-open")) execFileSync("open", [out]);
 }
 
+async function runFetchCheck(): Promise<void> {
+  const data = loadElection(ROOT, ELECTION);
+  const ids = flag("--all") ? Object.keys(data.endorsements).sort() : positional();
+  if (ids.length === 0) {
+    console.log(USAGE);
+    process.exitCode = 1;
+    return;
+  }
+  const rows = await fetchCheck({ fetchSource }, { root: ROOT, election: ELECTION, ids, browser: flag("--browser") });
+  console.log(formatFetchCheck(rows));
+  const failed = rows.filter((r) => !r.ok).length;
+  console.log(`\n${rows.length - failed} of ${rows.length} source(s) fetched; ${failed} failed.`);
+  if (failed) process.exitCode = 1;
+}
+
 async function main(): Promise<void> {
   if (flag("--help") || flag("-h")) return console.log(USAGE);
   if (cmd === "extract") await runExtract();
   else if (cmd === "refresh") await runRefreshCmd();
   else if (cmd === "pages") await runPages();
+  else if (cmd === "fetch-check") await runFetchCheck();
   else if (cmd === "verify") await runVerify();
   else if (cmd === "discover") runDiscover();
   else if (cmd === "check") runCheck();
