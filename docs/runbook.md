@@ -52,6 +52,14 @@ Nothing is ever pushed straight to `main`.
 
 **Setup it relies on:** the repository secret `BAYBALLOT_ANTHROPIC_API_KEY`, and Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests". The workflow file must be on `main` for the schedule to fire.
 
+### When a guide fails to fetch on the runner
+
+GitHub's runners use data-center addresses, and some sites put those behind a bot wall. A 403, 429 or 503, or a recognized bot-wall page (Cloudflare "Just a moment...", the Chronicle's "Client Challenge", and others), is retried in headless Chromium. A page still blocked after that fails the guide: nothing is extracted or stored, and the run's review issue lists it.
+
+- `npm run bb -- fetch-check <guide...>` shows what each attempt got (status, bytes, which wall), writing nothing. Run it locally, and on a runner if needed, to compare.
+- As of 2026-10-07, these are blocked on the runners even in the browser: cadc, d11-dems, league-pissed-off-voters and milk-club (NationBuilder sites behind a Cloudflare challenge), and sf-chronicle (client challenge). sf-green-party gets through via the browser retry.
+- Until those are handled another way, refresh them from a laptop: `npm run bb -- extract <guide>` and commit.
+
 ### Running it locally
 
 - `npm run bb -- refresh --summary summary.md` does the same as the workflow, minus the PR.
