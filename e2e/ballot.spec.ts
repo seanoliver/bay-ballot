@@ -607,19 +607,24 @@ test.describe("section nav", () => {
     await expect(page.locator("#section-county-san-francisco-local-candidates")).toBeFocused();
   });
 
-  for (const path of [BALLOT, `${BALLOT}/san-mateo`]) {
-    test(`on ${path} the menu lists every place on the page, and every item has a heading to jump to`, async ({ page }) => {
+  for (const [path, county, city, cityId] of [
+    [BALLOT, "San Mateo County", "Redwood City", "redwood-city"],
+    [`${BALLOT}/san-mateo`, "San Mateo County", "Redwood City", "redwood-city"],
+    [BALLOT, "Santa Clara County", "Mountain View", "mountain-view"],
+    [`${BALLOT}/palo-alto`, "Santa Clara County", "Palo Alto", "palo-alto"],
+  ] as const) {
+    test(`on ${path} the menu lists every place on the page, and every item has a heading to jump to (${city})`, async ({ page }) => {
       await page.goto(path);
       const places = await page.locator("[data-keys=list] h2").allTextContents();
-      expect(places).toContain("San Mateo County");
+      expect(places).toContain(county);
       await bar(page).click();
       const items = menu(page).getByRole("menuitem");
       const hrefs = await items.evaluateAll((els) => els.map((e) => e.getAttribute("href")!));
       expect(await page.evaluate((ids) => ids.filter((h) => !document.querySelector(h)), hrefs)).toEqual([]);
       for (const place of places) await expect(menu(page).getByRole("menuitem", { name: new RegExp(`^${place}, \\d+ contests?$`) })).toHaveCount(1);
-      await menu(page).getByRole("menuitem", { name: /^Redwood City, \d+ contests?$/ }).click();
-      await expect(page.locator("#place-city-redwood-city")).toBeFocused();
-      await expect(bar(page)).toHaveAccessibleName(/^Jump to a section\. Now: Redwood City, /);
+      await menu(page).getByRole("menuitem", { name: new RegExp(`^${city}, \\d+ contests?$`) }).click();
+      await expect(page.locator(`#place-city-${cityId}`)).toBeFocused();
+      await expect(bar(page)).toHaveAccessibleName(new RegExp(`^Jump to a section\\. Now: ${city}, `));
     });
   }
 
