@@ -1,5 +1,7 @@
 # Sources: data/2026-11/sources/ (SF DOE Voter Information Pamphlet N26 ballot worksheet;
 # CA SoS Certified List of Candidates 8/27/2026) and the SF DOE qualified-candidates page.
+# Alameda County places in district `within` lists (CD10/12/14/17, SD10, AD14/16/18/20/24) are from the districts' Wikipedia
+# profiles (2021 commission maps, incl. census-designated places; CD12 is unchanged by Prop 50, the others shifted slightly).
 # Section order follows the brief; within each section, contests follow the SF ballot worksheet.
 election: 2026-11
 title: Bay Area General Election
@@ -29,13 +31,25 @@ contests:
     title: United States Representative, District 10
     kind: candidate
     candidates: [Mark DeSaulnier, Jeff Frese]
-    jurisdiction: { level: district, name: Congress, district: "10", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Congress, district: "10", within: [{ level: county, name: Contra Costa }, { level: city, name: Dublin }] }
   - id: us-rep-11
     section: Federal
     title: United States Representative, District 11
     kind: candidate
     candidates: [Connie Chan, Scott Wiener]
     jurisdiction: { level: district, name: Congress, district: "11", within: [{ level: county, name: San Francisco }] }
+  - id: us-rep-12
+    section: Federal
+    title: United States Representative, District 12
+    kind: candidate
+    candidates: [Jamie Joyce, Lateefah Simon]
+    jurisdiction: { level: district, name: Congress, district: "12", within: [{ level: city, name: Oakland }, { level: city, name: Berkeley }, { level: city, name: San Leandro }, { level: city, name: Alameda }, { level: city, name: Albany }, { level: city, name: Emeryville }, { level: city, name: Piedmont }] }
+  - id: us-rep-14
+    section: Federal
+    title: United States Representative, District 14
+    kind: candidate
+    candidates: [Melissa Hernandez, Aisha Wahab]
+    jurisdiction: { level: district, name: Congress, district: "14", within: [{ level: city, name: Hayward }, { level: city, name: Pleasanton }, { level: city, name: Livermore }, { level: city, name: Union City }, { level: city, name: Dublin }, { level: city, name: Fremont }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Fairview }, { level: city, name: Sunol }] }
   - id: us-rep-15
     section: Federal
     title: United States Representative, District 15
@@ -53,7 +67,7 @@ contests:
     title: United States Representative, District 17
     kind: candidate
     candidates: [Ro Khanna, Ritesh Tandon]
-    jurisdiction: { level: district, name: Congress, district: "17", within: [{ level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Milpitas }] }
+    jurisdiction: { level: district, name: Congress, district: "17", within: [{ level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Milpitas }, { level: city, name: Fremont }, { level: city, name: Newark }] }
   - id: us-rep-18
     section: Federal
     title: United States Representative, District 18
@@ -116,7 +130,7 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
   - id: state-senate-2
     section: State
     title: State Senate, District 2
@@ -141,7 +155,7 @@ contests:
     title: State Assembly, District 14
     kind: candidate
     candidates: [Buffy Wicks, Mark Rendon]
-    jurisdiction: { level: district, name: Assembly, district: "14", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Assembly, district: "14", within: [{ level: county, name: Contra Costa }, { level: city, name: Berkeley }, { level: city, name: Oakland }, { level: city, name: Albany }, { level: city, name: Piedmont }] }
   - id: assembly-15
     section: State
     title: State Assembly, District 15
@@ -155,19 +169,25 @@ contests:
     kind: candidate
     candidates: [Rebecca Bauer-Kahan, Joseph A. Rubay]
     aliases: { Rebecca Bauer-Kahan: [Rebecca Bauer Kahan], Joseph A. Rubay: [Joseph Rubay, Joe Rubay] }
-    jurisdiction: { level: district, name: Assembly, district: "16", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Assembly, district: "16", within: [{ level: county, name: Contra Costa }, { level: city, name: Dublin }, { level: city, name: Livermore }, { level: city, name: Pleasanton }] }
   - id: state-senate-10
     section: State
     title: State Senator, District 10
     kind: candidate
     candidates: [Scott Sakakihara, Linda R. Price]
-    jurisdiction: { level: district, name: State Senate, district: "10", within: [{ level: city, name: Sunnyvale }, { level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Milpitas }] }
+    jurisdiction: { level: district, name: State Senate, district: "10", within: [{ level: city, name: Sunnyvale }, { level: city, name: Santa Clara }, { level: city, name: San Jose }, { level: city, name: Milpitas }, { level: city, name: Fremont }, { level: city, name: Hayward }, { level: city, name: Union City }, { level: city, name: Newark }, { level: city, name: Fairview }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
     kind: candidate
     candidates: [Matt Haney, Manuel Noris-Barrera]
     jurisdiction: { level: district, name: Assembly, district: "17", within: [{ level: county, name: San Francisco }] }
+  - id: assembly-18
+    section: State
+    title: State Assembly, District 18
+    kind: candidate
+    candidates: [Mia Bonta, Andre Sandford]
+    jurisdiction: { level: district, name: Assembly, district: "18", within: [{ level: city, name: Oakland }, { level: city, name: Alameda }, { level: city, name: Emeryville }] }
   - id: assembly-19
     section: State
     title: State Assembly, District 19
@@ -175,6 +195,12 @@ contests:
     candidates: [Catherine Stefani, Philip Louis Wing]
     aliases: { Philip Louis Wing: [Phillip Louis Wing] }
     jurisdiction: { level: district, name: Assembly, district: "19", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }] }
+  - id: assembly-20
+    section: State
+    title: State Assembly, District 20
+    kind: candidate
+    candidates: [Liz Ortega, Patricia Muga]
+    jurisdiction: { level: district, name: Assembly, district: "20", within: [{ level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Union City }, { level: city, name: Dublin }, { level: city, name: Pleasanton }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Fairview }] }
   - id: assembly-21
     section: State
     title: State Assembly, District 21
@@ -192,7 +218,7 @@ contests:
     title: State Assembly, District 24
     kind: candidate
     candidates: [Alex Lee, Max Hsia]
-    jurisdiction: { level: district, name: Assembly, district: "24", within: [{ level: city, name: San Jose }, { level: city, name: Milpitas }] }
+    jurisdiction: { level: district, name: Assembly, district: "24", within: [{ level: city, name: San Jose }, { level: city, name: Milpitas }, { level: city, name: Fremont }, { level: city, name: Newark }] }
   - id: assembly-25
     section: State
     title: State Assembly, District 25
@@ -242,7 +268,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)
@@ -357,4 +383,4 @@ contests:
     kind: measure
     description: Regional Transit Measure
     link: https://www.sf.gov/qualified-ballot-measures
-    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Contra Costa }] }
+    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
