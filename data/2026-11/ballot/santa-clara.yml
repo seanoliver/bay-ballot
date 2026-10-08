@@ -517,42 +517,42 @@ contests:
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Cupertino }
   - id: gilroy-usd-measure-m
-    section: Local measures
+    section: School and special districts
     title: Gilroy Unified School District Measure M
     kind: measure
     description: "School bonds ($295 million)"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: Gilroy Unified School District, district: "at-large", within: [{ level: city, name: Gilroy }] }
   - id: lgsuhsd-measure-n
-    section: Local measures
+    section: School and special districts
     title: Los Gatos-Saratoga Union High School District Measure N
     kind: measure
     description: "School bonds ($321 million)"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: Los Gatos-Saratoga Union High School District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Cupertino }, { level: city, name: San Jose }, { level: city, name: Saratoga }, { level: city, name: Monte Sereno }, { level: city, name: Los Gatos }] }
   - id: alum-rock-sd-measure-o
-    section: Local measures
+    section: School and special districts
     title: Alum Rock Union School District Measure O
     kind: measure
     description: "Parcel tax"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: Alum Rock Union Elementary School District, district: "at-large", within: [{ level: city, name: San Jose }] }
   - id: alum-rock-sd-measure-p
-    section: Local measures
+    section: School and special districts
     title: Alum Rock Union School District Measure P
     kind: measure
     description: "School bonds ($100 million)"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: Alum Rock Union Elementary School District, district: "at-large", within: [{ level: city, name: San Jose }] }
   - id: cambrian-sd-measure-q
-    section: Local measures
+    section: School and special districts
     title: Cambrian School District Measure Q
     kind: measure
     description: "Parcel tax"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: Cambrian School District, district: "at-large", within: [{ level: city, name: San Jose }, { level: city, name: Campbell }, { level: city, name: Los Gatos }] }
   - id: orchard-sd-measure-r
-    section: Local measures
+    section: School and special districts
     title: Orchard School District Measure R
     kind: measure
     description: "Parcel tax"
