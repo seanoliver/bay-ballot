@@ -1,0 +1,8 @@
+id: berkeley
+name: Berkeley
+kind: city
+order: 62
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Alameda }
+  - { level: city, name: Berkeley }

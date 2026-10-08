@@ -1,0 +1,8 @@
+id: oakland
+name: Oakland
+kind: city
+order: 61
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Alameda }
+  - { level: city, name: Oakland }

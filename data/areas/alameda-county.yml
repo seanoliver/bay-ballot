@@ -1,0 +1,27 @@
+id: alameda-county
+name: Alameda County
+kind: county
+order: 60
+# Castro Valley, San Lorenzo, Fairview and Sunol are unincorporated communities, listed as places so that
+# districts serving only them (Castro Valley USD, Castro Valley Sanitary, Fairview Fire, Sunol Glen USD) stay off the city pages.
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Alameda }
+  - { level: city, name: Alameda }
+  - { level: city, name: Albany }
+  - { level: city, name: Berkeley }
+  - { level: city, name: Dublin }
+  - { level: city, name: Emeryville }
+  - { level: city, name: Fremont }
+  - { level: city, name: Hayward }
+  - { level: city, name: Livermore }
+  - { level: city, name: Newark }
+  - { level: city, name: Oakland }
+  - { level: city, name: Piedmont }
+  - { level: city, name: Pleasanton }
+  - { level: city, name: San Leandro }
+  - { level: city, name: Union City }
+  - { level: city, name: Castro Valley }
+  - { level: city, name: San Lorenzo }
+  - { level: city, name: Fairview }
+  - { level: city, name: Sunol }
