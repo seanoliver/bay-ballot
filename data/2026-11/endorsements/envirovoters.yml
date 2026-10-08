@@ -54,3 +54,12 @@ picks:
     pick: N
   prop-45:
     pick: N
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward
+  us-rep-2:
+    pick:
+      - Jared Huffman
