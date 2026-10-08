@@ -5,7 +5,7 @@ source: https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsemen
 archived:
   - source: https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
     snapshot: https://web.archive.org/web/20261006232307/https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-07
 hasReasoning: false
 picks:
   valley-water-7:
@@ -48,3 +48,157 @@ picks:
   fremont-uhsd-trustee-area-4:
     pick:
       - Naomi Nakano-Matsumoto
+  campbell-council-3:
+    pick:
+      - Dan Furtado
+  cupertino-council:
+    pick:
+      - J.R. Fruen
+      - Seema Sharma Lindskog
+      - John Tang
+  gilroy-council-4:
+    pick:
+      - Diana Sanchez Bentz
+  gilroy-council-5:
+    pick:
+      - Christina Tovar
+  gilroy-council-6:
+    pick:
+      - Rebeca G. Armendáriz
+  los-altos-council-2:
+    pick:
+      - Anky van Deursen
+  los-gatos-council:
+    pick:
+      - Rob Moore
+      - Steve Raspe
+      - Jeff Suzuki
+  milpitas-council:
+    pick:
+      - Bill Chuan
+      - Seema Kanani
+  morgan-hill-mayor:
+    pick:
+      - Deborah M. Africa
+  morgan-hill-council-b:
+    pick:
+      - Yvonne Martinez Beltran
+  morgan-hill-council-d:
+    pick:
+      - Dolores Alvarado
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
+  san-jose-council-7:
+    pick:
+      - Bien Doan
+  san-jose-council-9:
+    pick:
+      - Gordon Chester
+  santa-clara-council-2:
+    pick:
+      - Kimberley Williams
+  saratoga-council:
+    pick:
+      - Jeri Bromley
+  midpen-ward-1:
+    pick:
+      - Craig Gleason
+  valley-water-6:
+    pick:
+      - Milan Balinton
+  los-altos-measure-d:
+    pick: N
+  gilroy-usd-measure-m:
+    pick: Y
+  alum-rock-sd-measure-o:
+    pick: Y
+  alum-rock-sd-measure-p:
+    pick: Y
+  cambrian-sd-measure-q:
+    pick: Y
+  orchard-sd-measure-r:
+    pick: Y
+  santa-clara-county-board-of-education-7:
+    pick:
+      - Raeena S. Lari
+  fhda-trustee-area-4:
+    pick:
+      - William "Bill" Wilson
+  gavilan-trustee-area-3:
+    pick:
+      - Gabriel Gutierrez
+  wvm-trustee-area-3:
+    pick:
+      - Anne J. Kepner
+  wvm-trustee-area-7:
+    pick:
+      - Susan Oster Fish
+  esuhsd-trustee-area-1-short-term:
+    pick:
+      - Mer Curry Nuñez
+  esuhsd-trustee-area-4:
+    pick:
+      - Lorena Chavez
+  alum-rock-sd-trustee-area-5:
+    pick:
+      - Jenny Ludwig
+  berryessa-sd-trustee:
+    pick:
+      - Thelma B. Boac
+      - Shanna Brewer
+      - Jaria Jaug
+  campbell-union-sd-trustee-area-4:
+    pick:
+      - Chris Miller
+  campbell-union-sd-trustee-area-5:
+    pick:
+      - Vartika Chandra
+      - Sam Krow-Lucal
+  evergreen-sd-trustee:
+    pick:
+      - Johnny Ray Reyna
+      - Monte Wright
+  franklin-mckinley-sd-trustee:
+    pick:
+      - Rudy J. Rodriguez
+  gilroy-usd-trustee-area-3:
+    pick:
+      - Michelle Nelson
+  gilroy-usd-trustee-area-4:
+    pick:
+      - Jane Stevens
+  milpitas-usd-trustee:
+    pick:
+      - Kelly Yip-Chuan
+  mhusd-trustee-area-1:
+    pick:
+      - Jason Amezcua
+  mhusd-trustee-area-2:
+    pick:
+      - John T. Horner
+  mhusd-trustee-area-3:
+    pick:
+      - Sarah Northrup Gadus
+  mhusd-trustee-area-4:
+    pick:
+      - Claudia Ortiz
+  oak-grove-sd-trustee-area-2:
+    pick:
+      - Victor A. Ramirez
+  oak-grove-sd-trustee-area-3:
+    pick:
+      - Sophie Freestone
+  orchard-sd-trustee:
+    pick:
+      - Lyseria Evelyn Phillips
+  sjusd-trustee-area-2:
+    pick:
+      - Tomara Hall
+      - Jose Magana
+  sjusd-trustee-area-4:
+    pick:
+      - Mary J. Grunthaner
+  sunnyvale-sd-trustee-area-3:
+    pick:
+      - Rommy Kushner

@@ -21,3 +21,32 @@ picks:
   assembly-15:
     pick:
       - Anamarie Avila Farias
+  assembly-23:
+    pick:
+      - Marc Berman
+  assembly-24:
+    pick:
+      - Alex Lee
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+  assembly-28:
+    pick:
+      - Gail Pellerin
+  assembly-29:
+    pick:
+      - Robert Rivas
+  cupertino-council:
+    pick:
+      - J.R. Fruen
+      - Seema Sharma Lindskog
+      - John Tang
+  sunnyvale-council-5:
+    pick:
+      - Richard Mehlinger
+  mountain-view-council:
+    pick:
+      - James Kuszmaul

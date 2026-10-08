@@ -21,6 +21,20 @@ picks:
   attorney-general: { pick: ["Michael E. Gates"] }
   us-rep-16: { pick: ["Peter Sundin Soulé"] }
   assembly-23: { pick: ["David G. Johnson"] }
+  us-rep-17: { pick: ["Ritesh Tandon"] }
+  us-rep-18: { pick: ["Shane Lewis"] }
+  us-rep-19: { pick: ["Peter Coe Verbica"] }
+  state-senate-10: { pick: ["Linda R. Price"] }
+  assembly-24: { pick: ["Max Hsia"] }
+  assembly-25: { pick: ["Himat Singh Bainiwal"] }
+  assembly-26: { pick: ["Tim Gorsulowsky"] }
+  assembly-28: { pick: ["Carol Pefley"] }
+  assembly-29: { pick: ["Dennis P. Sanchez"] }
+  milpitas-usd-trustee: { pick: ["Chris Norwood"] }
+  lgsuhsd-trustee-area-2: { pick: ["Ishaan Prasad"] }
+  alum-rock-sd-trustee-area-5: { pick: ["Línda Lo Chávez"] }
+  franklin-mckinley-sd-trustee: { pick: ["Marc Cooper"] }
+  milpitas-council: { pick: ["Jennie Ha Phan"] }
   superintendent: { pick: ["Sonja Shaw"] }
   prop-1: { pick: N }
   prop-2: { pick: N }
