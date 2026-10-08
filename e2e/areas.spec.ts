@@ -287,11 +287,11 @@ test("the Counties filter lists all five counties", async ({ page }, info) => {
   for (const c of ["San Francisco", "San Mateo", "Santa Clara", "Contra Costa", "Marin"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
 });
 
-test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {
+test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Santa Clara County list", async ({ page }) => {
   await page.goto(`${BALLOT}/valley-water-7`);
   await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
   await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
-  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toHaveAttribute("href", BALLOT);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
 });
 
 test("the Contra Costa page shows state and Contra Costa contests, and the Counties filter lists it", async ({ page }, info) => {
@@ -337,4 +337,10 @@ test("a San Jose contest page names San Jose and links back to the San Jose list
   await page.goto(`${BALLOT}/san-jose-council-5`);
   await expect(page).toHaveTitle(/^San Jose City Council District 5 endorsements \(Nov 2026\)/);
   await expect(page.getByRole("link", { name: "San Jose ballot" })).toHaveAttribute("href", `${BALLOT}/san-jose`);
+});
+
+test("a district in several Santa Clara cities links back to the Santa Clara County list", async ({ page }) => {
+  await page.goto(`${BALLOT}/pausd-trustee`);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
+  await expect(page.getByText(/by \d+ Santa Clara County voter guides?:/)).toBeVisible();
 });

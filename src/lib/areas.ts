@@ -35,10 +35,19 @@ export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, a
   const [county] = counties;
   const j = c.jurisdiction;
   const local = j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
-  if (local) {
-    const ps = places(j);
-    const holders = ps === "everywhere" || ps.length === 0 ? [] : found.filter((a) => a.kind === "city" && ps.every((p) => p.level === "city" && a.jurisdictions.some((x) => x.level === "city" && x.name === p.name)));
-    if (holders.length === 1) return { area: holders[0], place: placeName(holders[0]) };
+  const ps = places(j);
+  if (ps !== "everywhere" && ps.length > 0 && j.level !== "region") {
+    if (local) {
+      const holders = found.filter((a) => a.kind === "city" && ps.every((p) => p.level === "city" && a.jurisdictions.some((x) => x.level === "city" && x.name === p.name)));
+      if (holders.length === 1) return { area: holders[0], place: placeName(holders[0]) };
+    }
+    // A contest wholly inside one county belongs to that county's page, when there is exactly one.
+    const homes = new Set(ps.map((p) => placeCounty(p, areas)));
+    const [home] = homes;
+    if (homes.size === 1 && home) {
+      const pages = found.filter((a) => a.kind === "county" && countyOf(a) === home);
+      if (pages.length === 1) return { area: pages[0], place: placeName(pages[0]) };
+    }
   }
   if (local && found.length > 1 && counties.size === 1 && county) return { area: null, place: { name: `${county} County`, short: `${county} County` } };
   return { area: null, place: BAY_AREA };

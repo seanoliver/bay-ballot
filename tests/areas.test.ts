@@ -133,13 +133,19 @@ describe("contestPlace", () => {
       const ward = c("valley-water-6", { level: "district", name: "Santa Clara Valley Water District", district: "6", within: [{ level: "city", name: "San Jose" }] });
       expect(contestPlace(ward, withCounty).area?.id).toBe("san-jose");
     });
-    it("names the county for a district in several cities", () => {
+    it("is the county page for a district in several of its cities", () => {
       const lasd = c("los-altos-sd-trustee", { level: "district", name: "Los Altos School District", district: "at-large", within: [{ level: "city", name: "Palo Alto" }, { level: "city", name: "Mountain View" }] });
-      expect(contestPlace(lasd, withCounty)).toEqual({ area: null, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+      expect(contestPlace(lasd, withCounty)).toEqual({ area: SCC, place: { name: "Santa Clara County", short: "Santa Clara County" } });
     });
-    it("keeps a state-drawn district in one city on the Bay Area", () => {
+    it("is the county page for a state-drawn district inside that county", () => {
       const cd19 = c("us-rep-19", { level: "district", name: "Congress", district: "19", within: [{ level: "city", name: "San Jose" }] });
-      expect(contestPlace(cd19, withCounty)).toEqual({ area: null, place: BAY_AREA });
+      expect(contestPlace(cd19, withCounty)).toEqual({ area: SCC, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+      const ad26 = c("assembly-26", { level: "district", name: "Assembly", district: "26", within: [{ level: "city", name: "San Jose" }, { level: "city", name: "Mountain View" }] });
+      expect(contestPlace(ad26, withCounty).area).toBe(SCC);
+    });
+    it("stays on the Bay Area for a district in two counties", () => {
+      const ad23 = c("assembly-23", { level: "district", name: "Assembly", district: "23", within: [{ level: "county", name: "San Mateo" }, { level: "city", name: "Palo Alto" }] });
+      expect(contestPlace(ad23, withCounty)).toEqual({ area: null, place: BAY_AREA });
     });
   });
   it("is the Bay Area for statewide, regional and cross-county contests", () => {
