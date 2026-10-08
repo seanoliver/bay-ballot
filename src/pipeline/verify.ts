@@ -66,7 +66,7 @@ export function verifierPrompt(ballot: Ballot): string {
     "",
     "Picks: give exactly one verdict per pick listed in the extraction.",
     "- confirmed: the pages show this organization taking this position in this contest for this election.",
-    "- wrong-pick: the pages show a different position (other candidates, the opposite vote, or no position or neutral).",
+    "- wrong-pick: the pages show a different position (other candidates, the opposite vote, or no position or neutral). A candidate marked only \"Open Endorsement\" is not endorsed.",
     "- wrong-rank: the names are right but the ranking is not (ranked when the page gives no order, unranked when it ranks them, a different order, or rankedCount wrong when only some names are ranked).",
     "- not-found: the pages do not mention this organization's position in this contest at all.",
     "- old-election: the position on the page is for a different election (an earlier primary or special election).",
