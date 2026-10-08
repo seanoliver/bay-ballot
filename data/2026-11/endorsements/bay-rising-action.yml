@@ -138,3 +138,5 @@ picks:
         source: https://bayrisingaction.org/voterguide/
   marin-county-measure-p:
     pick: Y
+  san-pablo-measure-s:
+    pick: Y

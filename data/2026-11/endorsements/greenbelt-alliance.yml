@@ -52,3 +52,8 @@ picks:
     pick: N
   sausalito-measure-x:
     pick: Y
+  walnut-creek-measure-u:
+    pick: Y
+    quotes:
+      - text: Greenbelt Alliance supports voting YES on Measure U in Contra Costa County to allow more senior homes near transit in Downtown Walnut Creek.
+        source: https://www.greenbelt.org/voter-guide-26/

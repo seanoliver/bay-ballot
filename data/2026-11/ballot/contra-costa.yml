@@ -13,6 +13,7 @@ contests:
     title: Antioch City Council, District 1
     kind: candidate
     candidates: [Joy Motts, Tamisha Torres-Walker]
+    aliases: { Tamisha Torres-Walker: [Tamisha Torres Walker] }
     jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Antioch }] }
   - id: antioch-council-4
     section: Local candidates
