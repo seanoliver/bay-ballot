@@ -70,7 +70,6 @@ function cityCounty(name: string, areas: Area[]): string | null {
   return a ? countyOf(a) : null;
 }
 
-/** The county a place is in: itself for a county, else the county of an area listing the city. */
 export function placeCounty(p: Place, areas: Area[]): string | null {
   return p.level === "county" ? p.name : cityCounty(p.name, areas);
 }
@@ -87,7 +86,6 @@ function slotOf(c: Contest, areas: Area[]): Slot {
   const p = j.level === "district" ? j.within?.[0] : { level: j.level, name: j.name };
   if (!p) return STATE_SLOT;
   if (p.level === "county") return { key: `county:${p.name}`, county: p.name, city: null };
-  // A district spanning several places in one county sits under the county.
   if ((j.within?.length ?? 0) > 1) {
     const county = placeCounty(p, areas);
     if (county) return { key: `county:${county}`, county, city: null };

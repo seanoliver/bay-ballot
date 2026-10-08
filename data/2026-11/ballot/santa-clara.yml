@@ -1,7 +1,5 @@
 # Sources: data/2026-11/sources/SCC-Sample-Ballots-PA-MV.txt (County Voter Information Guide sample ballots for Palo Alto and Mountain View),
 # SCC-Candidate-List-0827.txt and SCC-Measures-Nov2026.txt (Santa Clara County registrar).
-# A district lists the cities it serves in `within` (not the whole county), so it stays off the pages of cities it does not cover.
-# Unverified: the cities a trustee area or ward covers were not mapped precinct by precinct (only Palo Alto and Mountain View were sampled).
 contests:
   - id: valley-water-7
     section: School and special districts
