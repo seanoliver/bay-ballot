@@ -109,7 +109,6 @@ describe("relevantChange", () => {
     } finally {
       spy.mockRestore();
     }
-    // Each regex costs a compile the first time it runs; about 560 heading, district and measure markers always run, while ~2,700 name markers wait for their word.
     expect(ran.size).toBeLessThan(1000);
   });
 });
