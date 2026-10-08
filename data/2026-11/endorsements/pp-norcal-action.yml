@@ -1,0 +1,44 @@
+guide: pp-norcal-action
+election: 2026-11
+status: published
+source: https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements
+archived:
+  - source: https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements
+    snapshot: https://web.archive.org/web/20261007195423/https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  assembly-11:
+    pick:
+      - Lori D Wilson
+  assembly-14:
+    pick:
+      - Buffy Wicks
+  assembly-15:
+    pick:
+      - Anamarie Avila Farias
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  antioch-council-1:
+    pick:
+      - Tamisha Torres-Walker
+  antioch-council-4:
+    pick:
+      - Monica E Wilson
+  concord-council-1:
+    pick:
+      - Maria Bagley
+  san-ramon-council-4:
+    pick:
+      - Marisol Rubio
+  walnut-creek-council:
+    pick:
+      - Cherise Khaund
+      - Brendan Moran
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  san-rafael-council-2:
+    pick:
+      - Eli Hill

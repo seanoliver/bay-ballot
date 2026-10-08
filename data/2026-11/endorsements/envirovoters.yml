@@ -1,0 +1,65 @@
+guide: envirovoters
+election: 2026-11
+status: published
+source: https://envirovoters.org/2026-endorsements/
+archived:
+  - source: https://envirovoters.org/2026-endorsements/
+    snapshot: https://web.archive.org/web/20261007195635/https://envirovoters.org/2026-endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  attorney-general:
+    pick:
+      - Rob Bonta
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  superintendent:
+    pick:
+      - Richard Barrera
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  us-rep-8:
+    pick:
+      - John Garamendi
+  us-rep-9:
+    pick:
+      - Josh Harder
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  prop-2:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward
+  us-rep-2:
+    pick:
+      - Jared Huffman

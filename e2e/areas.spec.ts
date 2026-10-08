@@ -280,11 +280,11 @@ test("Palo Alto and Mountain View pages share Santa Clara County contests and ke
   }
 });
 
-test("the Counties filter lists all three counties", async ({ page }, info) => {
+test("the Counties filter lists all five counties", async ({ page }, info) => {
   test.skip(isPhone(info), "desktop sidebar");
   await openBallot(page);
   const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
-  for (const c of ["San Francisco", "San Mateo", "Santa Clara"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
+  for (const c of ["San Francisco", "San Mateo", "Santa Clara", "Contra Costa", "Marin"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
 });
 
 test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {
@@ -292,4 +292,18 @@ test("a contest shared by Palo Alto and Mountain View names Santa Clara County a
   await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
   await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Bay Area ballot" })).toHaveAttribute("href", BALLOT);
+});
+
+test("the Contra Costa page shows state and Contra Costa contests, and the Counties filter lists it", async ({ page }, info) => {
+  await page.goto(`${BALLOT}/contra-costa`);
+  await expect(page).toHaveTitle("Contra Costa County endorsements (Nov 2026)");
+  await expect(page.getByRole("heading", { level: 1, name: "Contra Costa County ballot" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Contra Costa County", exact: true })).toBeVisible();
+  await expect(contestRow(page, "Richmond Mayor")).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  await expect(contestRow(page, "Proposition B")).toHaveCount(0);
+  if (isPhone(info)) return;
+  await openBallot(page);
+  const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
+  await expect(group.getByRole("checkbox", { name: "Contra Costa", exact: true })).toBeChecked();
 });

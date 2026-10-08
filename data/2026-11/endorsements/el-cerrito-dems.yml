@@ -1,0 +1,61 @@
+guide: el-cerrito-dems
+election: 2026-11
+status: published
+source: https://ecdclub.org/endorsements-vote-results/
+extraSources:
+  - https://ecdclub.org/november-3-election-endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  us-rep-8:
+    pick:
+      - John Garamendi
+  lt-governor:
+    pick:
+      - Fiona Ma
+  attorney-general:
+    pick:
+      - Rob Bonta
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  el-cerrito-council:
+    pick:
+      - Carolyn Wysinger
+  wccusd-measure-v:
+    pick: Y
+  rtm:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N

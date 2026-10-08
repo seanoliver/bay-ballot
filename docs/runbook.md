@@ -112,7 +112,7 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
 
 ## Manual guides
 
-Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents) and svgop (slate is a JPG card). `npm run bb -- check` lists them.
+Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents), svgop (slate is a JPG card), and since 2026-10-07 contra-costa-gop (two PNG slates), lamorinda-dems (city JPGs; only checkmarked names are endorsements) and contra-costa-labor-council (federal and state picks are headshot images). `npm run bb -- check` lists them.
 
 When you widen a guide's `areas`, add the area to `data/guides/<guide>.yml` (and any new `extraSources`). Don't run `pages --seed` first: it would store the new page text, and the scoped run could no longer tell what changed. Then run `npm run bb -- extract <guide...> --only-areas <area>[,<area>]`, for example `--only-areas san-mateo`. The area must already have a file in `data/areas/`.
 
@@ -134,7 +134,7 @@ Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasRe
 Each county's data lives in files of its own, so branches adding different counties don't touch the same file.
 
 - `data/2026-11/ballot.yml`: the election header and the contests every county shares: state offices and propositions, Congress, State Senate, Assembly, Board of Equalization and Court of Appeal districts (`STATE_DISTRICTS` in `src/lib/areas.ts`), and `level: region` measures.
-- `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`, `marin.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
+- `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`, `contra-costa.yml`, `marin.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
 - `data/areas/<area-id>.yml`: one area, with an `order` number. Areas are listed by `order` (then id), and that also sets the county order on the ballot pages.
 
 The site merges them: `ballot.yml`'s contests first, then each county file in area order. A county file's optional `placement:` maps one of its sections to a section of `ballot.yml`; those contests go right after that section instead of at the end. Only `san-francisco.yml` uses it, to keep the SF ballot worksheet's order.
@@ -143,7 +143,7 @@ The site merges them: `ballot.yml`'s contests first, then each county file in ar
 
 To add a county (Contra Costa, Alameda, Marin):
 
-1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40, and 70 for Marin). Two areas with the same `order` are sorted by id.
+1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40, 50 for Contra Costa and 70 for Marin). Two areas with the same `order` are sorted by id.
 2. Add `data/2026-11/ballot/<county-slug>.yml` (for example `contra-costa.yml`) holding every contest that belongs to that county.
 3. Edit `ballot.yml` only for a shared contest: a new Congress or Assembly district, or a district or regional measure that now lists the new county in `within`.
 
@@ -152,6 +152,8 @@ To add a county (Contra Costa, Alameda, Marin):
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
 - mercury-news `ross-council` (Julie A McMillan, Robert Herbst) was added by hand on 2026-10-07 from the IJ's 9/27 Ross editorial, which the extractor missed. After the next re-extract of mercury-news, check that the pick and its quote survived; if not, add them back by hand.
 - Marin County races follow the San Mateo rule: a local race is on the ballot only when a guide takes a position. The Marin IJ publishes one editorial at a time; when a guide covers a Marin race that isn't in `data/2026-11/ballot/marin.yml`, add it from `data/2026-11/sources/Marin-Candidates-Nov2026.txt` and re-extract that guide. New IJ editorials need adding to mercury-news's `extraSources`.
+- Contra Costa County races follow the same rule, and unopposed seats printed on the ballot count when a guide picks them. Add a missing race from `data/2026-11/sources/CCC-Candidate-List-0827.txt`. Seats decided in June (Richmond council) or not printed (uncontested, appointed in lieu of election) never go on the ballot, so guide picks for them are not recorded. Livermore Valley JUSD Area 3 is left out until it is confirmed on Contra Costa ballots.
+- Not yet published for Contra Costa as of 2026-10-07: Lift Up Contra Costa Action, LWV Diablo Valley (Walnut Creek U, Acalanes W), East Bay Times local picks, and more ContraCosta.news cities. Contra Costa Jewish Democrats is left out until its page names the election.
 - San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `data/2026-11/ballot/san-mateo.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
 - palo-alto-forward's page has only one-line taglines and no quotable reasons, so `hasReasoning` is set to false by hand (2026-10-06). A re-extract can set it back; check it after one.
 - yimby-action's `hasReasoning` is set to false by hand (2026-10-07). Its only reason quote is the Marin YIMBY one on AD12, out of more than 40 picks, and true would count it as a guide that explains on SF and Peninsula contests. A re-extract can set it back; check it after one.

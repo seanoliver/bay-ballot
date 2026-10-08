@@ -7,8 +7,10 @@ extraSources:
   - https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
   - https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
   - https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
+  - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   supervisor-8:
@@ -142,3 +144,6 @@ picks:
     quotes:
       - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  concord-council-3:
+    pick:
+      - Robyn Kuslits

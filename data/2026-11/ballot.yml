@@ -12,6 +12,24 @@ contests:
     kind: candidate
     candidates: [Jared Huffman, Robin Littau]
     jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }] }
+  - id: us-rep-8
+    section: Federal
+    title: United States Representative, District 8
+    kind: candidate
+    candidates: [John Garamendi, Rudy Recile]
+    jurisdiction: { level: district, name: Congress, district: "8", within: [{ level: county, name: Contra Costa }] }
+  - id: us-rep-9
+    section: Federal
+    title: United States Representative, District 9
+    kind: candidate
+    candidates: [Josh Harder, John McBride]
+    jurisdiction: { level: district, name: Congress, district: "9", within: [{ level: county, name: Contra Costa }] }
+  - id: us-rep-10
+    section: Federal
+    title: United States Representative, District 10
+    kind: candidate
+    candidates: [Mark DeSaulnier, Jeff Frese]
+    jurisdiction: { level: district, name: Congress, district: "10", within: [{ level: county, name: Contra Costa }] }
   - id: us-rep-11
     section: Federal
     title: United States Representative, District 11
@@ -80,19 +98,46 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }] }
   - id: state-senate-2
     section: State
     title: State Senate, District 2
     kind: candidate
     candidates: [Damon Connolly, Tief Gibbs]
     jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }] }
+  - id: assembly-11
+    section: State
+    title: State Assembly, District 11
+    kind: candidate
+    candidates: [Lori D Wilson, Jenny Leilani Callison]
+    aliases: { Lori D Wilson: [Lori D. Wilson, Lori Wilson] }
+    jurisdiction: { level: district, name: Assembly, district: "11", within: [{ level: county, name: Contra Costa }] }
   - id: assembly-12
     section: State
     title: State Assembly, District 12
     kind: candidate
     candidates: [Jackie Elward, Eric Lucan]
     jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }] }
+  - id: assembly-14
+    section: State
+    title: State Assembly, District 14
+    kind: candidate
+    candidates: [Buffy Wicks, Mark Rendon]
+    jurisdiction: { level: district, name: Assembly, district: "14", within: [{ level: county, name: Contra Costa }] }
+  - id: assembly-15
+    section: State
+    title: State Assembly, District 15
+    kind: candidate
+    candidates: [Anamarie Avila Farias, Arthur Webb]
+    aliases: { Anamarie Avila Farias: [Anamarie Ávila Farías, Anamarie Avila Farías] }
+    jurisdiction: { level: district, name: Assembly, district: "15", within: [{ level: county, name: Contra Costa }] }
+  - id: assembly-16
+    section: State
+    title: State Assembly, District 16
+    kind: candidate
+    candidates: [Rebecca Bauer-Kahan, Joseph A. Rubay]
+    aliases: { Rebecca Bauer-Kahan: [Rebecca Bauer Kahan], Joseph A. Rubay: [Joseph Rubay, Joe Rubay] }
+    jurisdiction: { level: district, name: Assembly, district: "16", within: [{ level: county, name: Contra Costa }] }
   - id: assembly-17
     section: State
     title: State Assembly, District 17
@@ -143,7 +188,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)
@@ -258,4 +303,4 @@ contests:
     kind: measure
     description: Regional Transit Measure
     link: https://www.sf.gov/qualified-ballot-measures
-    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
+    jurisdiction: { level: region, name: Bay Area, within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Contra Costa }] }

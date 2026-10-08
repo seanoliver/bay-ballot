@@ -1,0 +1,29 @@
+guide: bike-east-bay
+election: 2026-11
+status: published
+source: https://bikeeastbay.org/election2026/
+archived:
+  - source: https://bikeeastbay.org/election2026/
+    snapshot: https://web.archive.org/web/20261007195707/https://bikeeastbay.org/election2026/
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  rtm:
+    pick: Y
+    quotes:
+      - text: Transit agency cuts will cause hours of gridlock traffic for drivers.
+        source: https://bikeeastbay.org/election2026/
+      - text: Cuts will devastate the Bay Area’s economic recovery and climate goals.
+        source: https://bikeeastbay.org/election2026/
+      - text: BART will close 15 stations, shut down two lines, and cut train service by 70%.
+        source: https://bikeeastbay.org/election2026/
+  prop-43:
+    pick: N
+    quotes:
+      - text: If Prop 43 is passed, a 2/3rds (66.667%) supermajority of voter support will be required to pass any special tax increase vote going to specific expenditures.
+        source: https://bikeeastbay.org/election2026/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Bike, walk, and transit projects already have categorical CEQA exemptions statewide, so this proposition will not help sustainable transportation.
+        source: https://bikeeastbay.org/election2026/

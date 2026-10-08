@@ -1,0 +1,28 @@
+guide: lamorinda-dems
+election: 2026-11
+status: published
+source: https://ldclub.org/2026-voter-guides/ # nine city pages, each four JPG pages (October 2026); no page text
+extraSources:
+  - https://ldclub.org/wp-content/uploads/2026/10/ALHAMBRA-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/BRIONES-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/DANVILLE-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/LAFAYETTE-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/MARTINEZ-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/MORAGA-3.pdf-1.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/ORINDA-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/PLEASANT-HILL-3.pdf.jpg
+  - https://ldclub.org/wp-content/uploads/2026/10/WALNUT-CREEK-3.pdf.jpg
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # picks hand-entered from the city guide images; only names with a green checkmark are endorsements (the guides list every Democrat on the ballot)
+picks:
+  contra-costa-county-board-of-education-2: { pick: ["Sarah Butler"] }
+  ebmud-ward-3: { pick: ["Marguerite Young"] }
+  acalanes-uhsd-area-1: { pick: ["Nithin Iyengar"] }
+  orinda-council: { pick: ["Latika Malkani"] }
+  orinda-usd: { pick: ["Edda Collins Coleman"] }
+  mofd-division-3: { pick: ["John Donnelly"] }
+  mofd-division-4: { pick: ["Linda Stevens"] }
+  moraga-council: { pick: ["Kerry Hillis"] }
+  rtm: { pick: Y }
+  acalanes-uhsd-measure-w: { pick: Y }

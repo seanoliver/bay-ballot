@@ -1,0 +1,412 @@
+# Sources: data/2026-11/sources/CCC-Candidate-List-0827.txt and CCC-Measures-Nov2026.txt (Contra Costa County Elections).
+# Only November contests that at least one guide takes a position on, including unopposed seats printed on the ballot; seats decided in June or not printed are left out.
+contests:
+  - id: richmond-mayor
+    section: Local candidates
+    title: Richmond Mayor
+    kind: candidate
+    candidates: [Claudia Jiménez, Ahmad Anderson]
+    aliases: { Claudia Jiménez: [Claudia Jimenez] }
+    jurisdiction: { level: city, name: Richmond }
+  - id: antioch-council-1
+    section: Local candidates
+    title: Antioch City Council, District 1
+    kind: candidate
+    candidates: [Joy Motts, Tamisha Torres-Walker]
+    aliases: { Tamisha Torres-Walker: [Tamisha Torres Walker] }
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Antioch }] }
+  - id: antioch-council-4
+    section: Local candidates
+    title: Antioch City Council, District 4
+    kind: candidate
+    candidates: [Sandra G White, Monica E Wilson, Matty Mathews Alappat, Andrew Becker]
+    aliases: { Monica E Wilson: [Monica Wilson, Monica E. Wilson], Matty Mathews Alappat: [Matt Mathews Alappat, Matty Matthews Alappat], Sandra G White: [Sandra White] }
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Antioch }] }
+  - id: brentwood-council-2
+    section: Local candidates
+    title: Brentwood City Council, District 2
+    kind: candidate
+    candidates: [Tammy Zickuhr, Kris Brand, Vinoy Mereddy]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Brentwood }] }
+  - id: brentwood-council-4
+    section: Local candidates
+    title: Brentwood City Council, District 4
+    kind: candidate
+    candidates: [Stephanie Williams-Rogers, Sheree Shannon, Holley Bishop-Mello]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Brentwood }] }
+  - id: clayton-council
+    section: Local candidates
+    title: Clayton City Council
+    kind: candidate
+    seats: 2
+    candidates: [Maria Shulman, Amy Callaghan, Charles J. Schmidt, Kim Trupiano]
+    jurisdiction: { level: city, name: Clayton }
+  - id: concord-council-1
+    section: Local candidates
+    title: Concord City Council, District 1
+    kind: candidate
+    candidates: [Laura Hoffmeister, Maria Bagley, Trish Brazil]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Concord }] }
+  - id: concord-council-3
+    section: Local candidates
+    title: Concord City Council, District 3
+    kind: candidate
+    candidates: [Robyn Kuslits, Dena Acosta Beere, Douglas Lezameta, Don Seta]
+    aliases: { Dena Acosta Beere: [Dena Acosta-Beere] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Concord }] }
+  - id: concord-council-5
+    section: Local candidates
+    title: Concord City Council, District 5
+    kind: candidate
+    candidates: [Aeysha Corio, Laura Nakamura]
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Concord }] }
+  - id: danville-council
+    section: Local candidates
+    title: Danville Town Council
+    kind: candidate
+    seats: 2
+    candidates: [Denton Carlson, Pratima Sonavne, Robert Storer]
+    jurisdiction: { level: city, name: Danville }
+  - id: el-cerrito-council
+    section: Local candidates
+    title: El Cerrito City Council
+    kind: candidate
+    seats: 2
+    candidates: [Kimberly White, Carolyn Wysinger, Mary Ann "MJ" Jawili, Forrest M. Lanning, Wally Nowinski, Gabe Quinto]
+    aliases: { Gabe Quinto: [Gabriel Quinto] }
+    jurisdiction: { level: city, name: El Cerrito }
+  - id: hercules-council
+    section: Local candidates
+    title: Hercules City Council
+    kind: candidate
+    seats: 2
+    candidates: [John Delgado, Preet Sidhu, Dion Bailey, Adrena Breckenridge]
+    jurisdiction: { level: city, name: Hercules }
+  - id: martinez-council-1
+    section: Local candidates
+    title: Martinez City Council, District 1
+    kind: candidate
+    candidates: [Jay Howard, Nakenya Allen]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Martinez }] }
+  - id: moraga-council
+    section: Local candidates
+    title: Moraga Town Council
+    kind: candidate
+    seats: 2
+    candidates: [Kerry Hillis, Steven Woehleke, Bill Carman, Alexis I. Mapel]
+    aliases: { Alexis I. Mapel: [Alexis Mapel] }
+    jurisdiction: { level: city, name: Moraga }
+  - id: orinda-council
+    section: Local candidates
+    title: Orinda City Council
+    kind: candidate
+    seats: 3
+    candidates: [Brandyn Iverson, Janet Riley, Juana Rudati, Latika Malkani]
+    jurisdiction: { level: city, name: Orinda }
+  - id: pinole-council
+    section: Local candidates
+    title: Pinole City Council
+    kind: candidate
+    seats: 3
+    candidates: [Matthew "Matt" Avery, Truc "Christy" Lam-Julian, Libby Duarte, Gabriel Sandoval, Tina Brown]
+    aliases: { Truc "Christy" Lam-Julian: [Christy Lam-Julian, Truc Lam-Julian], Matthew "Matt" Avery: [Matt Avery, Matthew Avery], Gabriel Sandoval: [Gabe Sandoval] }
+    jurisdiction: { level: city, name: Pinole }
+  - id: pittsburg-council
+    section: Local candidates
+    title: Pittsburg City Council
+    kind: candidate
+    seats: 3
+    candidates: [Arlene Kobata, C.C. Cardinalli-Macaluso, Wolf Croskey, Amhari Perkins, Pauline Johnson, Dionne Adams, Mark Linde, Alvin Nelson, Sonja Shephard, Carolynne Born, Iztaccuauhtli Hector Gonzalez]
+    aliases: { Wolf Croskey: [Wolfgang Croskey], Iztaccuauhtli Hector Gonzalez: [Hector Gonzalez, Iztaccuahtli Hector Gonzalez], Arlene Kobata: [Arlene Kobata (Siu Ling)] }
+    jurisdiction: { level: city, name: Pittsburg }
+  - id: pittsburg-city-clerk
+    section: Local candidates
+    title: Pittsburg City Clerk
+    kind: candidate
+    candidates: [Latoyya P. Ella Bordelon, Angel Rodriguez, Melaine Apple Venenciano, Alice E. Evenson]
+    aliases: { Latoyya P. Ella Bordelon: [Latoyya Bordelon], Alice E. Evenson: [Alice Evenson] }
+    jurisdiction: { level: city, name: Pittsburg }
+  - id: pleasant-hill-council-3
+    section: Local candidates
+    title: Pleasant Hill City Council, District 3
+    kind: candidate
+    candidates: [Zac Shess, Jason Seto]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Pleasant Hill }] }
+  - id: san-pablo-council
+    section: Local candidates
+    title: San Pablo City Council
+    kind: candidate
+    seats: 2
+    candidates: [Rita Xavier, Caden Cotton-Blake, Elizabeth Pabon Alvarado, Anna Villalobos]
+    jurisdiction: { level: city, name: San Pablo }
+  - id: san-ramon-council-2
+    section: Local candidates
+    title: San Ramon City Council, District 2
+    kind: candidate
+    candidates: [Chirag Kathrani, Richard J. Adler]
+    aliases: { Richard J. Adler: [Richard Adler] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: San Ramon }] }
+  - id: san-ramon-council-4
+    section: Local candidates
+    title: San Ramon City Council, District 4
+    kind: candidate
+    candidates: [Jeffrey Joh, Marisol Rubio]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: San Ramon }] }
+  - id: walnut-creek-council
+    section: Local candidates
+    title: Walnut Creek City Council
+    kind: candidate
+    seats: 2
+    candidates: [Cherise Khaund, Brendan Moran]
+    aliases: { Cherise Khaund: [Cherise Marie Khaund] }
+    jurisdiction: { level: city, name: Walnut Creek }
+  - id: clayton-measure-m
+    section: Local measures
+    title: Clayton Measure M
+    kind: measure
+    description: "Sales Tax Measure (1%)"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Clayton }
+  - id: clayton-measure-n
+    section: Local measures
+    title: Clayton Measure N
+    kind: measure
+    description: "Citywide Landscape Maintenance Special Tax"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Clayton }
+  - id: concord-measure-o
+    section: Local measures
+    title: Concord Measure O
+    kind: measure
+    description: "Business License Tax Update"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Concord }
+  - id: hercules-measure-p
+    section: Local measures
+    title: Hercules Measure P
+    kind: measure
+    description: "Sales Tax Measure (1%)"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Hercules }
+  - id: richmond-measure-q
+    section: Local measures
+    title: Richmond Measure Q
+    kind: measure
+    description: "Fire Facilities Bond ($120 million)"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Richmond }
+  - id: san-pablo-measure-r
+    section: Local measures
+    title: San Pablo Measure R
+    kind: measure
+    description: "Transactions and Use Tax"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: San Pablo }
+  - id: san-pablo-measure-s
+    section: Local measures
+    title: San Pablo Measure S
+    kind: measure
+    description: "Rent Control"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: San Pablo }
+  - id: walnut-creek-measure-t
+    section: Local measures
+    title: Walnut Creek Measure T
+    kind: measure
+    description: "Appointive City Treasurer"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Walnut Creek }
+  - id: walnut-creek-measure-u
+    section: Local measures
+    title: Walnut Creek Measure U
+    kind: measure
+    description: "Senior Housing Rezoning (North California Blvd and Ygnacio Valley Rd)"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: city, name: Walnut Creek }
+  - id: wccusd-measure-v
+    section: School and special districts
+    title: West Contra Costa Unified School District Measure V
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: district, name: West Contra Costa Unified School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: acalanes-uhsd-measure-w
+    section: School and special districts
+    title: Acalanes Union High School District Measure W
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: district, name: Acalanes Union High School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: liberty-uhsd-measure-x
+    section: School and special districts
+    title: Liberty Union High School District Measure X
+    kind: measure
+    description: "Bond Measure ($165 million)"
+    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    jurisdiction: { level: district, name: Liberty Union High School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: contra-costa-county-board-of-education-2
+    section: School and special districts
+    title: Contra Costa County Board of Education, Area 2
+    kind: candidate
+    candidates: [Pamela West, Sarah Butler, Sibyl Minighini]
+    aliases: { Sarah Butler: [Sarah G. Butler] }
+    jurisdiction: { level: district, name: County Board of Education, district: "2", within: [{ level: county, name: Contra Costa }] }
+  - id: cccd-ward-1
+    section: School and special districts
+    title: Contra Costa Community College District, Ward 1
+    kind: candidate
+    candidates: [Raquel Donoso, Cameron Sasai]
+    jurisdiction: { level: district, name: Contra Costa Community College District, district: "1", within: [{ level: county, name: Contra Costa }] }
+  - id: cccd-ward-3
+    section: School and special districts
+    title: Contra Costa Community College District, Ward 3
+    kind: candidate
+    candidates: [Becca Barrett, Allyse Tanovitz]
+    aliases: { Becca Barrett: [Rebecca Barrett, Rebecca Faith Barrett] }
+    jurisdiction: { level: district, name: Contra Costa Community College District, district: "3", within: [{ level: county, name: Contra Costa }] }
+  - id: antioch-usd-area-5
+    section: School and special districts
+    title: Antioch Unified School District, Area 5
+    kind: candidate
+    candidates: [Brandon Dawkins, Mary H Rocha]
+    aliases: { Mary H Rocha: [Mary Rocha] }
+    jurisdiction: { level: district, name: Antioch Unified School District, district: "5", within: [{ level: county, name: Contra Costa }] }
+  - id: john-swett-usd
+    section: School and special districts
+    title: John Swett Unified School District
+    kind: candidate
+    seats: 2
+    candidates: [Bruce Hoeger, Samantha Watson-Alvarado, Terri Burk, Shane Reinhart]
+    aliases: { Samantha Watson-Alvarado: [Sam Alvarado, Sam Watson-Alvarado] }
+    jurisdiction: { level: district, name: John Swett Unified School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: mdusd-area-2
+    section: School and special districts
+    title: Mt. Diablo Unified School District, Area 2
+    kind: candidate
+    candidates: [Dorothy Weisenberger, Jane Baulch-Enloe]
+    jurisdiction: { level: district, name: Mt. Diablo Unified School District, district: "2", within: [{ level: county, name: Contra Costa }] }
+  - id: mdusd-area-4
+    section: School and special districts
+    title: Mt. Diablo Unified School District, Area 4
+    kind: candidate
+    candidates: [Al Anderson, Brian Thomas Lawrence]
+    aliases: { Brian Thomas Lawrence: [Brian Lawrence] }
+    jurisdiction: { level: district, name: Mt. Diablo Unified School District, district: "4", within: [{ level: county, name: Contra Costa }] }
+  - id: srvusd-area-5
+    section: School and special districts
+    title: San Ramon Valley Unified School District, Area 5
+    kind: candidate
+    candidates: [Rachel Hurd, Joel Woods]
+    jurisdiction: { level: district, name: San Ramon Valley Unified School District, district: "5", within: [{ level: county, name: Contra Costa }] }
+  - id: acalanes-uhsd-area-1
+    section: School and special districts
+    title: Acalanes Union High School District, Trustee Area 1
+    kind: candidate
+    candidates: [Stacey Schweppe, Nithin Iyengar]
+    jurisdiction: { level: district, name: Acalanes Union High School District, district: "1", within: [{ level: county, name: Contra Costa }] }
+  - id: liberty-uhsd-area-4
+    section: School and special districts
+    title: Liberty Union High School District, Area 4
+    kind: candidate
+    candidates: [Tamara Weber, Hillary Fairbairn Pedrotti]
+    aliases: { Hillary Fairbairn Pedrotti: [Hillary Pedrotti] }
+    jurisdiction: { level: district, name: Liberty Union High School District, district: "4", within: [{ level: county, name: Contra Costa }] }
+  - id: brentwood-usd
+    section: School and special districts
+    title: Brentwood Union School District
+    kind: candidate
+    seats: 3
+    candidates: [Oxsana Pajoluk, Mark Anderson, Scott S. Dudek, Emil Johnson Geddes, Steve Gursky]
+    aliases: { Mark Anderson: [Mark Andersen], Scott S. Dudek: [Scott Dudek] }
+    jurisdiction: { level: district, name: Brentwood Union School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: knightsen-esd
+    section: School and special districts
+    title: Knightsen Elementary School District
+    kind: candidate
+    seats: 2
+    candidates: [Erik M. Hansen, Liesel Williams, Robin Pastor]
+    aliases: { Erik M. Hansen: [Erik Hansen], Liesel Williams: [Liesel Ann Williams] }
+    jurisdiction: { level: district, name: Knightsen Elementary School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: oakley-union-esd-area-4
+    section: School and special districts
+    title: Oakley Union Elementary School District, Area 4
+    kind: candidate
+    candidates: [Craig Pearson, Isaiah B.N. Mateas]
+    aliases: { Isaiah B.N. Mateas: [Isaiah Mateas] }
+    jurisdiction: { level: district, name: Oakley Union Elementary School District, district: "4", within: [{ level: county, name: Contra Costa }] }
+  - id: orinda-usd
+    section: School and special districts
+    title: Orinda Union School District
+    kind: candidate
+    seats: 3
+    candidates: [John Chabalko, Edda Collins Coleman, Chloe Aftel, Katie Shogan]
+    jurisdiction: { level: district, name: Orinda Union School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: walnut-creek-sd
+    section: School and special districts
+    title: Walnut Creek School District
+    kind: candidate
+    seats: 3
+    candidates: [Eryn Holl King, Wenlei Johnson, Aileen Ong, Geetha Ganti, Heidi Hernandez Gatty, Rod Ehsani]
+    aliases: { Eryn Holl King: [Eryn King], Heidi Hernandez Gatty: [Heidi Gatty] }
+    jurisdiction: { level: district, name: Walnut Creek School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: central-san-division-2
+    section: School and special districts
+    title: Central Contra Costa Sanitary District, Division 2
+    kind: candidate
+    candidates: [Brian Henderson, Michael Robert McGill]
+    aliases: { Michael Robert McGill: [Mike McGill, Michael McGill] }
+    jurisdiction: { level: district, name: Central Contra Costa Sanitary District, district: "2", within: [{ level: county, name: Contra Costa }] }
+  - id: ccwd-division-2
+    section: School and special districts
+    title: Contra Costa Water District, Division 2
+    kind: candidate
+    candidates: [Allison Picard, Daniel T. Fitzpatrick]
+    aliases: { Daniel T. Fitzpatrick: [Dan Fitzpatrick, Daniel Fitzpatrick] }
+    jurisdiction: { level: district, name: Contra Costa Water District, district: "2", within: [{ level: county, name: Contra Costa }] }
+  - id: diablo-csd
+    section: School and special districts
+    title: Diablo Community Services District
+    kind: candidate
+    seats: 3
+    candidates: [Gregory R Lorenz, Steve Lichliter, Alan Bonny, Jessica Raefield]
+    aliases: { Gregory R Lorenz: [Gregory Lorenz, Greg Lorenz] }
+    jurisdiction: { level: district, name: Diablo Community Services District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: ebmud-ward-3
+    section: School and special districts
+    title: East Bay Municipal Utility District, Ward 3
+    kind: candidate
+    candidates: [Marguerite Young, Don Gray]
+    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "3", within: [{ level: county, name: Contra Costa }] }
+  - id: ebmud-ward-7
+    section: School and special districts
+    title: East Bay Municipal Utility District, Ward 7
+    kind: candidate
+    candidates: [Gary Wolff, April Chan, Luis Reynoso, Joseph Grcar]
+    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "7", within: [{ level: county, name: Contra Costa }] }
+  - id: ebrpd-ward-7
+    section: School and special districts
+    title: East Bay Regional Park District, Ward 7
+    kind: candidate
+    candidates: [Colin J. Coffey, Inderprit "Indy Rishi Singh" Sekhon]
+    aliases: { Colin J. Coffey: [Colin Coffey], Inderprit "Indy Rishi Singh" Sekhon: [Indy Sekhon, Inderprit Sekhon] }
+    jurisdiction: { level: district, name: East Bay Regional Park District, district: "7", within: [{ level: county, name: Contra Costa }] }
+  - id: ironhouse-sanitary
+    section: School and special districts
+    title: Ironhouse Sanitary District
+    kind: candidate
+    seats: 2
+    candidates: [Kerry Harvey, Chris A. Christean, Dave Corridon, Chris Lauritzen, Paschal Iwuh]
+    aliases: { Paschal Iwuh: [Paschal Iwu] }
+    jurisdiction: { level: district, name: Ironhouse Sanitary District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
+  - id: mofd-division-3
+    section: School and special districts
+    title: Moraga-Orinda Fire Protection District, Division 3
+    kind: candidate
+    candidates: [Steve Cohn, John Donnelly]
+    jurisdiction: { level: district, name: Moraga-Orinda Fire Protection District, district: "3", within: [{ level: county, name: Contra Costa }] }
+  - id: mofd-division-4
+    section: School and special districts
+    title: Moraga-Orinda Fire Protection District, Division 4
+    kind: candidate
+    candidates: [Linda Stevens, Mike Roemer]
+    jurisdiction: { level: district, name: Moraga-Orinda Fire Protection District, district: "4", within: [{ level: county, name: Contra Costa }] }

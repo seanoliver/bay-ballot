@@ -1,0 +1,74 @@
+guide: contra-costa-labor-council
+election: 2026-11
+status: published
+source: https://www.cclabor.net/2026 # federal, statewide and legislative picks are headshot images with name and office; local picks and props are text
+extraSources:
+  - https://drive.google.com/file/d/1NKpLVXNITAdgf49ZgtiljPIACabhkdpY/view # "Printable Version" linked from the page
+allowForeignSources: true
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # picks hand-entered from the page text and headshot images; extract skips this guide
+picks:
+  us-rep-8: { pick: ["John Garamendi"] }
+  us-rep-9: { pick: ["Josh Harder"] }
+  us-rep-10: { pick: ["Mark DeSaulnier"] }
+  governor: { pick: ["Xavier Becerra"] }
+  lt-governor: { pick: ["Fiona Ma"] }
+  secretary-of-state: { pick: ["Shirley N. Weber"] }
+  controller: { pick: ["Malia M. Cohen"] }
+  treasurer: { pick: ["Eleni Kounalakis"] }
+  attorney-general: { pick: ["Rob Bonta"] }
+  insurance-commissioner: { pick: ["Jane Kim"] }
+  board-of-equalization-2: { pick: ["Sally J. Lieber"] }
+  assembly-11: { pick: ["Lori D Wilson"] }
+  assembly-16: { pick: ["Rebecca Bauer-Kahan"] }
+  superintendent: { pick: ["Richard Barrera"] }
+  prop-1: { pick: Y }
+  prop-2: { pick: Y }
+  prop-3: { pick: Y }
+  prop-4: { pick: Y }
+  prop-5: { pick: Y }
+  prop-37: { pick: Y }
+  prop-39: { pick: N }
+  prop-40: { pick: Y }
+  prop-41: { pick: N }
+  prop-42: { pick: N }
+  prop-43: { pick: N }
+  prop-44: { pick: Y }
+  prop-45: { pick: N }
+  rtm: { pick: Y }
+  antioch-council-1: { pick: ["Tamisha Torres-Walker"] }
+  antioch-council-4: { pick: ["Monica E Wilson"] }
+  el-cerrito-council: { pick: ["Carolyn Wysinger", "Gabe Quinto"] }
+  concord-council-3: { pick: ["Dena Acosta Beere"] }
+  concord-council-5: { pick: ["Laura Nakamura"] }
+  hercules-council: { pick: ["Dion Bailey"] }
+  martinez-council-1: { pick: ["Jay Howard"] }
+  orinda-council: { pick: ["Latika Malkani"] }
+  pinole-council: { pick: ["Gabriel Sandoval", "Truc \"Christy\" Lam-Julian"] }
+  pittsburg-council: { pick: ["Dionne Adams", "Arlene Kobata"] }
+  richmond-mayor: { pick: ["Claudia Jiménez"] }
+  san-pablo-council: { pick: ["Caden Cotton-Blake", "Anna Villalobos"] }
+  san-ramon-council-4: { pick: ["Marisol Rubio"] }
+  walnut-creek-council: { pick: ["Brendan Moran", "Cherise Khaund"] }
+  concord-measure-o: { pick: Y }
+  richmond-measure-q: { pick: Y }
+  san-pablo-measure-s: { pick: Y }
+  wccusd-measure-v: { pick: Y }
+  acalanes-uhsd-measure-w: { pick: Y }
+  liberty-uhsd-measure-x: { pick: Y }
+  cccd-ward-1: { pick: ["Cameron Sasai"] }
+  cccd-ward-3: { pick: ["Becca Barrett"] } # the page says "Rebecca Barrett"
+  contra-costa-county-board-of-education-2: { pick: ["Sarah Butler"] }
+  antioch-usd-area-5: { pick: ["Brandon Dawkins"] }
+  brentwood-usd: { pick: ["Scott S. Dudek"] }
+  john-swett-usd: { pick: ["Terri Burk", "Samantha Watson-Alvarado"] }
+  liberty-uhsd-area-4: { pick: ["Hillary Fairbairn Pedrotti"] }
+  mdusd-area-2: { pick: ["Jane Baulch-Enloe"] }
+  mdusd-area-4: { pick: ["Brian Thomas Lawrence"] }
+  ccwd-division-2: { pick: ["Daniel T. Fitzpatrick", "Allison Picard"] } # "Dual Endorsement (Pick 1)"
+  ebrpd-ward-7: { pick: ["Colin J. Coffey"] }
+  ebmud-ward-3: { pick: ["Marguerite Young"] }
+  ebmud-ward-7: { pick: ["Gary Wolff"] }
+  mofd-division-3: { pick: ["John Donnelly"] }
+  mofd-division-4: { pick: ["Linda Stevens"] }
