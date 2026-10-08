@@ -189,6 +189,12 @@ test("every page names its canonical URL on bayballot.com", async ({ page }) => 
   }
 });
 
+/** The contest after `id` in list order; other counties' House seats sort between District 11 and District 15. */
+async function after(page: Page, id: string): Promise<string> {
+  const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
+  return ids[ids.indexOf(id) + 1];
+}
+
 async function pauseClock(page: Page) {
   await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
 }
@@ -283,11 +289,12 @@ test.describe("desktop keyboard", () => {
 
   test("right after Escape closes the shortcuts, j works", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.keyboard.press("Shift+?");
     await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
     await page.keyboard.press("Escape");
     await page.keyboard.press("j");
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
   });
 
   test("an open popover blocks shortcuts", async ({ page }) => {
@@ -340,19 +347,21 @@ test.describe("desktop keyboard", () => {
 
   test("a step is written on keyup, so a reload right after keeps it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.keyboard.press("ArrowDown");
     await page.reload();
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
   });
 
   test("leaving the page mid-hold writes the step, so Back restores it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.keyboard.down("ArrowDown");
-    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
     await page.goto("/about");
     await page.keyboard.up("ArrowDown");
     await page.goBack();
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
   });
 
   test("following a pane link mid-hold lands on the guide, and Back returns to the stepped contest", async ({ page }) => {
@@ -361,8 +370,9 @@ test.describe("desktop keyboard", () => {
       await route.continue();
     });
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.keyboard.down("ArrowDown");
-    await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+    await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
     const link = page.locator("[data-keys=pane] a[href^='/guides/']").first();
     const href = (await link.getAttribute("href"))!;
     await link.click();
@@ -371,7 +381,7 @@ test.describe("desktop keyboard", () => {
     await page.waitForTimeout(400);
     await expect(page).toHaveURL(new RegExp(`${href}$`));
     await page.goBack();
-    await expect(page).toHaveURL(/\/2026-11\?c=us-rep-15$/);
+    await expect(page).toHaveURL(new RegExp(`/2026-11\\?c=${next}$`));
   });
 
   test("arrows every 260ms and a filter every 520ms for 15 seconds stay under the browser's history limit", async ({ page }) => {
@@ -456,6 +466,7 @@ test.describe("desktop keyboard", () => {
 
   test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
     const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, g, /, and ?)" });
@@ -469,7 +480,7 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
     await expect(dialog).toBeHidden();
     await page.keyboard.press("ArrowDown");
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
     await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp");
     await page.reload();
     const button = page.getByRole("button", { name: "Keyboard shortcuts" });
@@ -485,11 +496,12 @@ test.describe("desktop keyboard", () => {
 
   test("in the detail pane arrows don't switch contests but j does", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    const next = await after(page, "us-rep-11");
     await page.locator("[data-keys=pane]").locator("a, button").first().focus();
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
     await page.keyboard.press("j");
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
   });
 });
 
@@ -498,9 +510,10 @@ test("resizing to a phone drops a stepped contest that was never written", async
   await page.clock.install();
   await openBallot(page, "?c=us-rep-11");
   await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  const next = await after(page, "us-rep-11");
   await pauseClock(page);
   await page.keyboard.down("ArrowDown");
-  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole("region", { name: "Contests" })).toHaveCount(0);
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -515,9 +528,10 @@ test("a phone tap drops a stepped contest that was never written", async ({ page
   await page.clock.install();
   await openBallot(page, "?c=us-rep-11");
   await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
+  const next = await after(page, "us-rep-11");
   await pauseClock(page);
   await page.keyboard.down("ArrowDown");
-  await expect(page.locator("#row-d-us-rep-15")).toHaveAttribute("aria-current", "true");
+  await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
   // Phone width for the click handler's one check only, so the resize reset can't be what clears it.
   await page.evaluate(() => {
     let phone = false;
