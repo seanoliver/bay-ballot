@@ -4,16 +4,16 @@ import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
-import { EndorsementFile, type ArchivedSource, type Guide, type HeldPick } from "@/lib/schema";
+import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
-import { pageGate, sourceSlug, storedText, type Gate } from "./pagestore";
+import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchMode, sourcesFor } from "./sources";
-import { applyVerdicts, verify, type VerifyOutput } from "./verify";
-import { guideBallot } from "./scope";
-import { nextFile, shrinkWarning, toYaml } from "./write";
+import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
+import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
+import { nextFile, scopedNextFile, shrinkWarning, toYaml } from "./write";
 
 export type RefreshDeps = {
   client: ExtractClient;
@@ -37,6 +37,7 @@ export type RefreshOptions = {
   baseline?: string;
   scope?: "cloud" | "local";
   gateOnly?: boolean;
+  onlyAreas?: string[];
 };
 
 type Usage = Anthropic.Messages.Usage;
@@ -58,6 +59,7 @@ export type GuideResult =
       held: HeldPick[];
       droppedByVerifier: number;
       missing: VerifyOutput["missing"];
+      warnings?: string[];
       usage: { extract: Usage; verify?: Usage };
     };
 
@@ -83,7 +85,16 @@ function writeStored(p: string, text: string): void {
   if (readStored(p) !== text) fs.writeFileSync(p, text);
 }
 
-type Fetchedpage = { source: Source; stored: string; path: string; gate: Gate };
+const NOT_STORED = "page text not stored, so the next refresh re-extracts the whole guide";
+
+function changedOutside(url: string, old: string | null, fresh: string, outside: Ballot, guideAreas: string[], only: string[]): string | undefined {
+  if (old !== null) return pageGate(old, fresh, outside) === "relevant" ? `${url}: page changed outside ${only.join(", ")}; ${NOT_STORED}` : undefined;
+  if (isPdfDigest(fresh)) return `new page ${url} is a PDF without text; ${NOT_STORED}`;
+  const others = guideAreas.filter((a) => !only.includes(a)).join(", ");
+  return relevantChange("", fresh, outside) ? `new page ${url} also covers ${others}; ${NOT_STORED}` : undefined;
+}
+
+type Fetchedpage = { source: Source; stored: string; path: string; gate: Gate; outsideWarning?: string };
 
 async function refreshGuide(
   deps: RefreshDeps,
@@ -96,10 +107,16 @@ async function refreshGuide(
   const id = guide.id;
   const prev = data.endorsements[id];
   const ballot = guideBallot(data.ballot, guide, data.areas);
+  const scoped = opts.onlyAreas ? newAreaBallot(ballot, guide, data.areas, opts.onlyAreas) : null;
+  const scopeIds = new Set((scoped ?? ballot).contests.map((c) => c.id));
+  const inScope = (contestId: string) => !scoped || scopeIds.has(contestId);
+  const forceExtract = opts.forceExtract || Boolean(scoped);
+  const outside = scoped ? { ...ballot, contests: ballot.contests.filter((c) => !inScope(c.id)) } : null;
   if (prev.manual) return { id, status: "skipped", reason: "manual" };
   if (prev.fetchFrom === "local" && opts.scope === "cloud") return { id, status: "skipped", reason: "local only" };
   const urls = sourcesFor(prev);
   if (urls.length === 0) return { id, status: "skipped", reason: "no source" };
+  if (scoped?.contests.length === 0) return { id, status: "skipped", reason: `no contests new to ${opts.onlyAreas?.join(", ")}` };
   const hostProblems = checkHosts(guide, prev);
   if (hostProblems.length) return { id, status: "skipped", reason: `source host check: ${hostProblems.join("; ")}` };
 
@@ -109,25 +126,31 @@ async function refreshGuide(
     const fetched = await deps.fetchSource(url, { browser });
     const p = pagePath(opts.root, opts.election, id, url);
     const stored = storedText(fetched, { ballot });
-    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(readStored(p), stored, ballot) });
+    const old = readStored(p);
+    const outsideWarning = outside ? changedOutside(url, old, stored, outside, guide.areas, opts.onlyAreas ?? []) : undefined;
+    pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
 
-  const relevant = opts.forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
+  const relevant = forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
   if (!relevant) {
     // Store the drift (dates, banners) so it never accumulates into a later diff.
     for (const p of pages) writeStored(p.path, p.stored);
     return { id, status: "unchanged" };
   }
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
-  if (!opts.forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
+  if (!forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
   if (opts.gateOnly) return { id, status: "would-extract" };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
 
   const sources = pages.map((p) => p.source);
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
-  const { picks, notes } = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
-  const shrunk = shrinkWarning(id, prev.picks, picks, { force: opts.force });
+  const entries = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
+  const picks = Object.fromEntries(Object.entries(entries.picks).filter(([c]) => inScope(c)));
+  const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
+  const notes = entries.notes.filter((n) => !outOfScope.has(n.split(":")[0]));
+  const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
+  const shrunk = shrinkWarning(id, prevInScope, picks, { force: opts.force });
   if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };
 
   let archived: ArchivedSource[] | undefined;
@@ -141,7 +164,9 @@ async function refreshGuide(
     if (snaps.length) archived = snaps;
   }
 
-  let next = EndorsementFile.parse(nextFile(prev, picks, output.hasReasoning, deps.today(), archived));
+  let next = EndorsementFile.parse(
+    scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived),
+  );
   const result: Extract<GuideResult, { status: "changed" }> = {
     id,
     status: "changed",
@@ -152,16 +177,21 @@ async function refreshGuide(
     droppedByVerifier: 0,
     missing: [],
     usage: { extract: usage },
+    warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
   };
 
-  const hasHeld = (next.held ?? []).length > 0;
-  if (opts.verify !== false && ((!isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0) || hasHeld)) {
-    const v = await verify(deps.client, ballot, guide, next, sources);
-    const applied = applyVerdicts(next, v.output);
-    next = EndorsementFile.parse(applied.file);
+  const hasHeld = (next.held ?? []).some((h) => inScope(h.contestId));
+  const changedIds = Object.keys(next.picks).filter((c) => inScope(c) && !isDeepStrictEqual(prev.picks[c], next.picks[c]));
+  const picksChanged = scoped ? changedIds.length > 0 : !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0;
+  if (opts.verify !== false && (picksChanged || hasHeld)) {
+    const audited = scoped ? auditPart(next, changedIds, inScope) : next;
+    const v = await verify(deps.client, ballot, guide, audited, sources);
+    const applied = applyVerdicts(audited, v.output);
+    next = EndorsementFile.parse(scoped ? withAudited(next, applied.file, changedIds, inScope) : applied.file);
     result.held = applied.held;
     result.droppedByVerifier = applied.droppedQuotes.length;
-    result.missing = applied.missing;
+    const picked = (c: string) => c in next.picks || (next.held ?? []).some((h) => h.contestId === c);
+    result.missing = scoped ? applied.missing.filter((m) => inScope(m.contestId) && !picked(m.contestId)) : applied.missing;
     result.notes = [
       ...notes,
       ...applied.droppedQuotes.map((d) => `${d.contestId}: verifier dropped quote (${d.reason}): "${d.text.slice(0, 80)}"`),
@@ -171,12 +201,15 @@ async function refreshGuide(
     result.diff = diffPicks(prev.picks, next.picks);
   }
 
+  if (scoped && !Object.keys(next.picks).some(inScope) && !(next.held ?? []).some((h) => inScope(h.contestId))) {
+    result.warnings?.push(`no endorsements found for ${opts.onlyAreas?.join(", ")}`);
+  }
   result.dataChanged = !sameFile(prev, next);
   if (result.dataChanged) {
     const file = path.join(opts.root, opts.election, "endorsements", `${id}.yml`);
     fs.writeFileSync(file, toYaml(next, { previous: fs.readFileSync(file, "utf8") }));
   }
-  for (const p of pages) writeStored(p.path, p.stored);
+  for (const p of pages) if (!p.outsideWarning) writeStored(p.path, p.stored);
   return result;
 }
 
@@ -188,6 +221,8 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
     (id) => opts.scope !== "local" || data.endorsements[id]?.fetchFrom === "local",
   );
   const budget = { left: opts.maxChanged ?? Infinity };
+  const unknown = opts.onlyAreas && unknownAreaError(data.areas, opts.onlyAreas);
+  if (unknown) throw new Error(unknown);
   const results: GuideResult[] = [];
   for (const id of ids) {
     const guide = data.guides.find((g) => g.id === id);
@@ -250,6 +285,7 @@ function describe(r: GuideResult): string {
         `${r.id}: ${r.dataChanged ? "changed" : "re-extracted, no data change"}`,
         ...r.diff.map((l) => `  ${l}`),
         ...r.held.map((h) => `  !! HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}`),
+        ...(r.warnings ?? []).map((w) => `  !! ${w}`),
         ...r.notes.map((n) => `${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`),
       ].join("\n");
   }
@@ -317,6 +353,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
       lines.push("", `### ${r.id}`, r.dataChanged ? "" : "_Pages changed; extracted data is the same._");
       for (const d of r.diff) lines.push(`- ${d}`);
       for (const h of r.held) lines.push(`- **HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}**`);
+      for (const w of r.warnings ?? []) lines.push(`- **${w}**`);
       if (r.droppedByVerifier) lines.push(`- verifier dropped ${r.droppedByVerifier} quote(s)`);
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }

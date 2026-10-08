@@ -2,6 +2,7 @@ import { Document, isMap, isScalar, parseDocument, type Pair } from "yaml";
 import { isDeepStrictEqual } from "node:util";
 import type { ArchivedSource, EndorsementFile, Entry } from "@/lib/schema";
 import { isRejected } from "@/lib/quote-key";
+import { mergeInScope } from "./scope";
 import { sourcesFor } from "./sources";
 
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
@@ -37,6 +38,19 @@ export function nextFile(
     held: held.length ? held : undefined,
     picks,
   };
+}
+
+export function scopedNextFile(
+  prev: EndorsementFile,
+  picks: Record<string, Entry>,
+  inScope: (contestId: string) => boolean,
+  today: string,
+  archived?: ArchivedSource[],
+): EndorsementFile {
+  const merged = Object.fromEntries(mergeInScope(Object.entries(prev.picks), Object.entries(picks), ([id]) => id, inScope));
+  const next = nextFile({ ...prev, held: prev.held?.filter((h) => inScope(h.contestId)) }, merged, prev.hasReasoning, today, archived);
+  const held = mergeInScope(prev.held ?? [], next.held ?? [], (h) => h.contestId, inScope);
+  return { ...next, held: held.length ? held : undefined };
 }
 
 export function shrinkWarning(

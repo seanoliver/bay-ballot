@@ -11,6 +11,8 @@ import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
 import { resultJson } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
+import { toYaml } from "@/pipeline/write";
+import type { EndorsementFile } from "@/lib/schema";
 
 const ELECTION = "2026-11";
 const REAL_DATA = path.join(__dirname, "..", "data");
@@ -504,5 +506,219 @@ describe("gateOnly (dry run)", () => {
     const quiet = summarize([{ id: "alpha", status: "unchanged" }], { date: "2026-10-07", dryRun: true });
     expect(quiet).toContain("# Data refresh 2026-10-07 (dry run)");
     expect(quiet).toContain("**Result:** dry run; no guide would be extracted");
+  });
+});
+
+describe("onlyAreas (widening a guide)", () => {
+  const src = url("alpha");
+  const before: EndorsementFile = {
+    guide: "alpha", election: ELECTION, status: "published", source: src, fetchedAt: "2026-10-05", hasReasoning: true,
+    held: [{ contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick", evidence: "page backs Wiener" }],
+    picks: {
+      governor: { pick: ["Xavier Becerra"], ranked: false, quotes: [] },
+      "prop-b": { pick: "N", ranked: false, quotes: [{ text: "No on Prop B: the public bank would cost the city hundreds of millions of dollars.", source: src }] },
+      "supervisor-4": { pick: ["Alan Wong", "Albert Chow"], ranked: true, rankedCount: 1, quotes: [] },
+      "us-rep-15": { pick: ["Kevin Mullin"], ranked: false, quotes: [] },
+      "menlo-park-measure-p": { pick: "Y", ranked: false, quotes: [] },
+    },
+  };
+  const pick = (contestId: string, p: Partial<ExtractOutput["picks"][number]>): ExtractOutput["picks"][number] =>
+    ({ contestId, vote: null, candidates: [], ranked: false, rankedCount: null, quotes: [], note: null, ...p });
+  const widened: ExtractOutput = {
+    hasReasoning: false,
+    picks: [
+      pick("governor", { candidates: ["Steve Hilton"] }),
+      pick("prop-b", { vote: "Y", quotes: ["Yes on Prop C: we need more affordable housing in every neighborhood."] }),
+      pick("supervisor-4", { candidates: ["Albert Chow", "Alan Wong"], ranked: true }),
+      pick("us-rep-11", { candidates: ["Scott Wiener"] }),
+      pick("us-rep-15", { candidates: ["Charles Hoelter"] }),
+      pick("menlo-park-measure-p", { vote: "N" }),
+      pick("us-rep-16", { candidates: ["Sam Liccardo"] }),
+    ],
+  };
+
+  type WideOpts = { held?: EndorsementFile["held"]; verdicts?: Record<string, VerifyOutput["picks"][number]["verdict"]>; missing?: VerifyOutput["missing"]; stored?: boolean; extra?: ExtractOutput["picks"]; drop?: string[] };
+  function wide(areas: string, { held = before.held, verdicts: over = {}, missing = [], stored = false, extra = [], drop = [] }: WideOpts = {}) {
+    const root = setup(["alpha"], { stored });
+    fs.writeFileSync(path.join(root, "guides", "alpha.yml"), fs.readFileSync(path.join(root, "guides", "alpha.yml"), "utf8").replace("areas: [sf]", `areas: [${areas}]`));
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(file, toYaml({ ...before, held, picks: Object.fromEntries(Object.entries(before.picks).filter(([c]) => !drop.includes(c))) }));
+    const out = { ...widened, picks: [...widened.picks, ...extra].filter((p) => !drop.includes(p.contestId)) };
+    const stream = vi.fn((req: { model: string; messages: { content: { type: string; text?: string }[] }[] }) => {
+      const audit = req.messages[0].content.at(-1)?.text ?? "";
+      const ids = [...audit.matchAll(/"contestId":"([^"]+)"/g)].map((m) => m[1]);
+      const verdicts: VerifyOutput = { picks: ids.map((contestId) => ({ contestId, verdict: over[contestId] ?? "confirmed", evidence: "on the page" })), quotes: [], missing };
+      return {
+        finalMessage: async () => ({
+          stop_reason: "end_turn", stop_details: null,
+          usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+          content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? verdicts : out) }],
+        }),
+      };
+    });
+    const client = { messages: { stream } } as unknown as ExtractClient;
+    return { root, file, stream, client, text: fs.readFileSync(file, "utf8") };
+  }
+  const page = PAGE("alpha", "x");
+
+  it("offers both models the guide's whole ballot, so another area's same-letter measure isn't read as the new one", async () => {
+    const { root, stream, client } = wide("sf, san-mateo");
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    const systems = stream.mock.calls.map((c) => (c[0] as unknown as { system: { text: string }[] }).system[0].text);
+    expect(systems).toHaveLength(2);
+    for (const s of systems) for (const id of ["menlo-park-measure-p", "us-rep-16", "prop-b", "supervisor-4"]) expect(s).toContain(id);
+  });
+
+  it("refuses a guide with no areas besides the given ones, without fetching", async () => {
+    const { root, client, stream } = wide("san-mateo");
+    const f = fetcher({ alpha: page });
+    const results = await runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(results[0]).toMatchObject({ status: "failed", error: expect.stringMatching(/alpha has no areas besides san-mateo; use a normal extract/) });
+    expect(f).not.toHaveBeenCalled();
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("keeps holds in the file's order, replacing an in-scope hold in place", async () => {
+    const holds = [
+      { contestId: "assembly-21", pick: ["Diane Papan"], reason: "not-found" as const, evidence: "old" },
+      { contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick" as const, evidence: "page backs Wiener" },
+    ];
+    const { root, file, client } = wide("sf, san-mateo", { held: holds, verdicts: { "assembly-21": "wrong-rank" }, extra: [pick("assembly-21", { candidates: ["Diane Papan"] })] });
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    const held = parse(fs.readFileSync(file, "utf8")).held;
+    expect(held.map((h: { contestId: string; reason: string }) => [h.contestId, h.reason])).toEqual([["assembly-21", "wrong-rank"], ["us-rep-11", "wrong-pick"]]);
+  });
+
+  it("keeps holds in the file's order without verify", async () => {
+    const holds = [
+      { contestId: "assembly-21", pick: ["Diane Papan"], reason: "not-found" as const, evidence: "old" },
+      { contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick" as const, evidence: "page backs Wiener" },
+    ];
+    const { root, file, client } = wide("sf, san-mateo", { held: holds, extra: [pick("assembly-21", { candidates: ["Diane Papan"] })] });
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"], verify: false });
+    expect(parse(fs.readFileSync(file, "utf8")).held.map((h: { contestId: string }) => h.contestId)).toEqual(["assembly-21", "us-rep-11"]);
+  });
+
+  it("reports as missing only in-scope contests left with no pick or hold", async () => {
+    const m = (contestId: string) => ({ contestId, pick: "Y", evidence: "on the page" });
+    const { root, client } = wide("sf, san-mateo", { missing: [m("menlo-park-measure-p"), m("assembly-21"), m("supervisor-2"), m("prop-b")] });
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect((results[0] as Extract<GuideResult, { status: "changed" }>).missing.map((x) => x.contestId)).toEqual(["assembly-21"]);
+  });
+
+  it("leaves the stored page alone and warns when it changed for the guide's other areas", async () => {
+    const { root, client } = wide("sf, san-mateo", { stored: true });
+    const stored = pagePath(root, ELECTION, "alpha", url("alpha"));
+    const old = fs.readFileSync(stored, "utf8");
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 7, 2026").replace("No on Prop B", "Yes on Prop B") })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(stored, "utf8")).toBe(old);
+    expect(parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8")).picks["prop-b"].pick).toBe("N");
+    const md = summarize(results, { date: "2026-10-07" });
+    expect(md).toMatch(/page changed outside san-mateo; page text not stored, so the next refresh re-extracts the whole guide/);
+  });
+
+  it("doesn't store a new page that also covers the guide's other areas, and warns", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const fresh = PAGE("alpha", "October 7, 2026").replace("No on Prop B", "Yes on Prop B");
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
+    const after = parse(fs.readFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "utf8"));
+    expect([after.picks["prop-b"].pick, after.picks.governor.pick]).toEqual(["N", ["Xavier Becerra"]]);
+    expect(summarize(results, { date: "2026-10-07" })).toContain(
+      `new page ${url("alpha")} also covers sf; page text not stored, so the next refresh re-extracts the whole guide`,
+    );
+  });
+
+  it("doesn't store a new PDF without text, since it can't be checked for other areas, and warns", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const pdf = vi.fn(async (): Promise<Fetched> => ({ kind: "pdf", base64: Buffer.from("%PDF image only").toString("base64"), text: "" }));
+    const results = await runRefresh(deps(client, pdf), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
+    expect(summarize(results, { date: "2026-10-07" })).toContain(
+      `new page ${url("alpha")} is a PDF without text; page text not stored, so the next refresh re-extracts the whole guide`,
+    );
+  });
+
+  it("warns when the run finds no endorsements for the new areas", async () => {
+    const { root, client } = wide("sf, san-mateo", { drop: ["menlo-park-measure-p", "us-rep-16"] });
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(summarize(results, { date: "2026-10-07" })).toContain("- **no endorsements found for san-mateo**");
+  });
+
+  it("doesn't warn about an empty scope when the new areas have picks", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(summarize(results, { date: "2026-10-07" })).not.toContain("no endorsements found");
+  });
+
+  it("stores a new page that covers only the new area", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const fresh = "Alpha Peninsula picks\nSam Liccardo has delivered for families across the Peninsula.";
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(normalizePageText(fresh));
+    expect(summarize(results, { date: "2026-10-07" })).not.toMatch(/not stored/);
+  });
+
+  it("stores the page when it changed only for the new area", async () => {
+    const { root, client } = wide("sf, san-mateo", { stored: true });
+    const stored = pagePath(root, ELECTION, "alpha", url("alpha"));
+    const fresh = `${PAGE("alpha", "October 7, 2026")}\nSam Liccardo has delivered for families across the Peninsula.`;
+    const results = await runRefresh(deps(client, fetcher({ alpha: fresh })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.readFileSync(stored, "utf8")).toBe(normalizePageText(fresh));
+    expect(summarize(results, { date: "2026-10-07" })).not.toMatch(/not stored/);
+  });
+
+  it("adds or replaces only the new area's contests and leaves every other pick, rank and hold byte-identical", async () => {
+    const { root, file, text, client } = wide("sf, san-mateo");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    const after = fs.readFileSync(file, "utf8");
+    const head = (t: string) => t.replace(/fetchedAt: \S+/, "fetchedAt: X").split("  menlo-park-measure-p:")[0];
+    expect(head(after)).toBe(head(text));
+    const parsed = parse(after);
+    expect(parsed.picks["menlo-park-measure-p"]).toEqual({ pick: "N" });
+    expect(parsed.picks["us-rep-16"]).toEqual({ pick: ["Sam Liccardo"] });
+    expect(parsed.hasReasoning).toBe(true);
+    expect(parsed.held).toEqual([{ contestId: "us-rep-11", pick: ["Connie Chan"], reason: "wrong-pick", evidence: "page backs Wiener" }]);
+    expect(Object.keys(parsed.picks)).toEqual(["governor", "prop-b", "supervisor-4", "us-rep-15", "menlo-park-measure-p", "us-rep-16"]);
+    expect(results[0]).toMatchObject({ status: "changed", dataChanged: true });
+  });
+
+  it("verifies only the new or changed picks", async () => {
+    const { root, stream, client } = wide("sf, san-mateo");
+    await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5", "claude-opus-5-5"]);
+    const audit = (stream.mock.calls[1][0] as unknown as { messages: { content: { text?: string }[] }[] }).messages[0].content.at(-1)?.text ?? "";
+    const audited = [...audit.matchAll(/"contestId":"([^"]+)"/g)].map((m) => m[1]);
+    expect(audited).toEqual(["menlo-park-measure-p", "us-rep-16"]);
+  });
+
+  it("reports only the new area's changes in the result and summary", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    const r = results[0] as Extract<GuideResult, { status: "changed" }>;
+    expect(r.diff).toEqual(["~ menlo-park-measure-p: Y -> N", "+ us-rep-16: Sam Liccardo"]);
+    expect(r.notes.filter((n) => /governor|prop-b|supervisor-4|us-rep-1[15]/.test(n))).toEqual([]);
+    const md = summarize(results, { date: "2026-10-07" });
+    expect(md).toContain("- ~ menlo-park-measure-p: Y -> N");
+    expect(md).toContain("- + us-rep-16: Sam Liccardo");
+    expect(md).not.toMatch(/governor|prop-b|supervisor-4|us-rep-1[15]/);
+  });
+
+  it("refuses an unknown area before fetching anything", async () => {
+    const { root, client, stream } = wide("sf, san-mateo");
+    const f = fetcher({ alpha: page });
+    await expect(runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["not-a-real-area"] })).rejects.toThrow(/unknown area 'not-a-real-area'/);
+    expect(f).not.toHaveBeenCalled();
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("refuses an area the guide doesn't list, without fetching or writing", async () => {
+    const { root, file, text, client, stream } = wide("sf");
+    const f = fetcher({ alpha: page });
+    const results = await runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(results[0]).toMatchObject({ status: "failed", error: expect.stringMatching(/alpha doesn't list area 'san-mateo'/) });
+    expect(f).not.toHaveBeenCalled();
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.readFileSync(file, "utf8")).toBe(text);
   });
 });

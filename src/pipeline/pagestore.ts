@@ -59,6 +59,7 @@ export function normalizePageText(text: string, { ballot }: { ballot?: Ballot } 
 }
 
 const PDF_DIGEST = /^pdf-sha256:[0-9a-f]{64}$/;
+export const isPdfDigest = (text: string) => PDF_DIGEST.test(text);
 
 export function storedText(fetched: Fetched, { ballot }: { ballot?: Ballot } = {}): string {
   if (fetched.kind === "pdf" && fetched.text.trim() === "") {
