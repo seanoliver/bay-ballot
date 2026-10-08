@@ -1,5 +1,5 @@
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { loadElection } from "@/lib/data";
 import { normalizePageText, pageGate, relevantChange, sourceSlug, storedText } from "@/pipeline/pagestore";
 
@@ -90,6 +90,27 @@ describe("relevantChange", () => {
     const line = "DJB will host a phone bank Saturday afternoon";
     expect(relevantChange(page, `${page}\n${line}`, ballot)).toBe(false);
     expect(relevantChange(page, `${page}\n${line}`, ballot, { "Dionjay (DJ) Brookter": ["DJB"] })).toBe(true);
+  });
+  it("matches names whose letters differ only by case folding (long s, final sigma)", () => {
+    const said = (line: string, name: string) => relevantChange(page, `${page}\n${line} spoke to the members about the city budget`, ballot, { [name]: [name] });
+    expect(said("ANN ROſS", "Ann Ross")).toBe(true);
+    expect(said("Νίκοσ Παππάσ", "Νίκος Παππάς")).toBe(true);
+  });
+  it("runs only the markers whose name words appear on a 200-line page", () => {
+    const prose = Array.from({ length: 200 }, (_, i) => `the club met after work on day ${i} to plan the potluck and the cleanup`).join("\n");
+    const ran = new Set<RegExp>();
+    const test = RegExp.prototype.test;
+    const spy = vi.spyOn(RegExp.prototype, "test").mockImplementation(function (this: RegExp, s: string) {
+      ran.add(this);
+      return test.call(this, s);
+    });
+    try {
+      expect(relevantChange("", prose, ballot)).toBe(false);
+    } finally {
+      spy.mockRestore();
+    }
+    // Each regex costs a compile the first time it runs; about 560 heading, district and measure markers always run, while ~2,700 name markers wait for their word.
+    expect(ran.size).toBeLessThan(1000);
   });
 });
 

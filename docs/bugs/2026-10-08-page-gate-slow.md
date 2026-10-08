@@ -15,19 +15,20 @@ Joining the markers into one alternation per flag set made it worse. A 237k-char
 
 ## Repro
 
-On `4dc1a88`, run `npx vitest run tests/pagestore-speed.test.ts` from this fix. Gating a 199-line new page plus one candidate line takes about 1.75s of CPU and fails the 1.5s bound.
+On `4dc1a88`, run `npx vitest run tests/pagestore.test.ts` from this fix. "runs only the markers whose name words appear on a 200-line page" fails with `expected 42877 to be less than 1000`: one gate call runs 42,877 distinct regexes, each compiled on first use.
 
 ## Fix
 
 - Every candidate-name marker now carries a needle: one whole lowercased word that any match must contain (`Matcher`, `needleOf`, `lowerWords` in `placement.ts`). `contestMarkerSet` returns those matchers, and `contestMarkers` still returns plain RegExps for its other callers.
 - `ballotMarkers` in `pagestore.ts` sorts markers into `always` (no needle: headings, districts, measures) and `byNeedle`, and caches the result per ballot object (WeakMap) and aliases key. `hits` runs the `always` regexes, then only the regexes whose needle is a word on the line. Most name regexes never run, so they never compile.
+- `lowerWords` maps the letters that /iu folding treats as equal but `toLowerCase` keeps apart (ſ→s, µ→μ, ς→σ, the Greek symbol variants, the old Cyrillic forms). NFKC or an upper/lower round trip would also merge letters /iu keeps apart (José with a combining accent, ẞ and Strauß).
 
 ## Verification
 
 - Old against new on every line of every stored page (25k lines, each also uppercased and lowercased, with and without an extra alias), probing both the single-line gate and the contest-or-candidate `mentions` check: all 88,854 probes agreed (scratch test, not committed).
-- "ignores date…" test: 1359ms before, about 460ms after. 200-line cold gate: about 1.75s of CPU before, about 0.52s after.
+- "ignores date…" test: 1359ms before, about 460ms after. 200-line cold gate: about 1.75s of CPU before, about 0.52s after. Distinct regexes run on a 200-line prose page: 42,877 before, 767 after.
 - `npx vitest run` with the default timeout, `npx tsc --noEmit` and `npx eslint` all pass.
 
 ## Guardrail
 
-`tests/pagestore-speed.test.ts` gates a 200-line new page from a cold start in its own file. It fails above 1.5s of worker CPU time locally, or 4s under `CI`. CPU time rather than wall time, because the parallel suite pushed wall time to 1.6s. Any marker added with a needle must match text that contains that word verbatim, apart from case, between word boundaries. If not, leave the needle off.
+`tests/pagestore.test.ts` counts the distinct regexes one gate call runs on a 200-line prose page and fails at 1,000. It replaced a CPU-time check, which passed the old code under `CI` and sat only about 10% under the old cost locally. Another test checks long s and final sigma names. Any marker given a needle must match text that contains that word between word boundaries, the same apart from case and the folds `lowerWords` applies. If it might not, leave the needle off.

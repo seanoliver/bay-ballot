@@ -91,8 +91,14 @@ function districtPatterns(c: Contest): string[] {
 }
 
 export type Matcher = { re: RegExp; needle?: string };
-export const lowerWords = (text: string) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
-// Only for literal text the pattern matches verbatim (bar case) between word boundaries.
+// Letters an /iu regex treats as equal to another lowercase letter; NFKC or an upper/lower round trip would also merge letters /iu keeps apart.
+const FOLD: Record<string, string> = {
+  "µ": "μ", "ſ": "s", "ς": "σ", "ϐ": "β", "ϑ": "θ", "ϕ": "φ", "ϖ": "π", "ϰ": "κ", "ϱ": "ρ", "ϵ": "ε", "ẛ": "ṡ", "\u1fbe": "ι",
+  "ᲀ": "в", "ᲁ": "д", "ᲂ": "о", "ᲃ": "с", "ᲄ": "т", "ᲅ": "т", "ᲆ": "ъ", "ᲇ": "ѣ", "ᲈ": "ꙋ",
+};
+const FOLDABLE = new RegExp(`[${Object.keys(FOLD).join("")}]`, "gu");
+export const lowerWords = (text: string) => text.toLowerCase().replace(FOLDABLE, (ch) => FOLD[ch]).match(/[\p{L}\p{N}]+/gu) ?? [];
+// Only for literal text the pattern matches verbatim (bar case folding) between word boundaries.
 export const needleOf = (literal: string) => lowerWords(literal).reduce<string | undefined>((a, b) => (b.length > (a?.length ?? 0) ? b : a), undefined);
 type Pattern = { body: string; needle?: string };
 
