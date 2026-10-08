@@ -376,13 +376,13 @@ contests:
     title: East Bay Municipal Utility District, Ward 3
     kind: candidate
     candidates: [Marguerite Young, Don Gray]
-    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "3", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "3", within: [{ level: county, name: Contra Costa }, { level: city, name: Oakland }, { level: city, name: Piedmont }] }
   - id: ebmud-ward-7
     section: School and special districts
     title: East Bay Municipal Utility District, Ward 7
     kind: candidate
     candidates: [Gary Wolff, April Chan, Luis Reynoso, Joseph Grcar]
-    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "7", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: East Bay Municipal Utility District, district: "7", within: [{ level: county, name: Contra Costa }, { level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: San Lorenzo }, { level: city, name: Castro Valley }, { level: city, name: Fairview }] }
   - id: ebrpd-ward-7
     section: School and special districts
     title: East Bay Regional Park District, Ward 7
