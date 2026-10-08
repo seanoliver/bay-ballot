@@ -5,7 +5,7 @@ source: https://bayrisingaction.org/voterguide/
 archived:
   - source: https://bayrisingaction.org/voterguide/
     snapshot: https://web.archive.org/web/20261006195712/https://bayrisingaction.org/voterguide/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 rejectedQuotes:
   - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
@@ -140,3 +140,21 @@ picks:
     pick: Y
   san-pablo-measure-s:
     pick: Y
+  oakland-measure-ee:
+    pick: Y
+    quotes:
+      - text: The city council can override a Mayoral veto with a supermajority, providing checks and balances between the legislative and executive branches of government.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure EE was drafted after an extensive community process, co-facilitated by the League of Women Voters.
+        source: https://bayrisingaction.org/voterguide/
+  oakland-measure-ff:
+    pick: Y
+  berkeley-measure-x:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+    quotes:
+      - text: Public banks loan to local institutions like community banks and credit unions, and stipulate how the funds are used.
+        source: https://bayrisingaction.org/voterguide/
+      - text: If passed, Berkeley would be the first public bank in California.
+        source: https://bayrisingaction.org/voterguide/

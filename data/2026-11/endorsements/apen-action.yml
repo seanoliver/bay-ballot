@@ -2,7 +2,7 @@ guide: apen-action
 election: 2026-11
 status: published
 source: https://www.apenaction.org/endorsements/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 picks:
   prop-1:
@@ -36,3 +36,8 @@ picks:
   oakland-mayor:
     pick:
       - Barbara Lee
+  wccusd-measure-v:
+    pick: Y
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez

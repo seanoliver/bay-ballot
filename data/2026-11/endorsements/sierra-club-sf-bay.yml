@@ -5,7 +5,7 @@ source: https://www.sierraclub.org/sfbay/2026-endorsements
 extraSources:
   - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
   us-rep-11:
@@ -192,3 +192,90 @@ picks:
   assembly-16:
     pick:
       - Rebecca Bauer-Kahan
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-24:
+    pick:
+      - Alex Lee
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+  ebrpd-ward-5:
+    pick:
+      - Olivia Sanwong
+  alameda-measure-l:
+    pick: Y
+  berkeley-measure-aa:
+    pick: Y
+  berkeley-measure-u:
+    pick: Y
+  albany-council:
+    pick:
+      - Robin D. López
+      - Aaron Tiedemann
+  berkeley-council-1:
+    pick:
+      - Ross Bernet
+      - Daria Wrubel
+    ranked: true
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-council-8:
+    pick:
+      - Mark Humbert
+  dublin-mayor:
+    pick:
+      - Kiran Mohammad
+  dublin-council-4:
+    pick:
+      - Kashef Qaadri
+  emeryville-council:
+    pick:
+      - David Mourra
+  hayward-council-1:
+    pick:
+      - George Syrop
+  hayward-council-6:
+    pick:
+      - Julie Roche
+  livermore-council-2:
+    pick:
+      - Ben Barrientos
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-council-6:
+    pick:
+      - Kevin E. Jenkins
+  pleasanton-mayor:
+    pick:
+      - Julie Testa
+  pleasanton-council-3:
+    pick:
+      - Reena Gupta
+  san-leandro-mayor:
+    pick:
+      - Juan González III
+  san-leandro-council-3:
+    pick:
+      - Joseph Trujillo

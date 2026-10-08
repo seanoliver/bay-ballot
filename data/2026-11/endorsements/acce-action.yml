@@ -2,7 +2,7 @@ guide: acce-action
 election: 2026-11
 status: published
 source: https://www.acceaction.org/2026voterguide
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 picks:
   governor:
@@ -50,4 +50,9 @@ picks:
   prop-45:
     pick: N
   oakland-measure-ee:
+    pick: Y
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
+  san-pablo-measure-s:
     pick: Y

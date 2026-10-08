@@ -5,7 +5,7 @@ source: https://www.seiu1021.org/post/election-endorsements-nov-3-2026
 archived:
   - source: https://www.seiu1021.org/post/election-endorsements-nov-3-2026
     snapshot: https://web.archive.org/web/20261006234429/https://www.seiu1021.org/post/election-endorsements-nov-3-2026
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 picks:
   governor:
@@ -190,3 +190,106 @@ picks:
   milpitas-council:
     pick:
       - Seema Kanani
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-20:
+    pick:
+      - Liz Ortega
+  alameda-mayor:
+    pick:
+      - Malia Vella
+  albany-council:
+    pick:
+      - Robin D. López
+      - Aaron Tiedemann
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Nathan Mizell
+      - Vylma Ortiz
+      - Derek Rodriguez
+  emeryville-council:
+    pick:
+      - Corry Frydlewicz
+  hayward-council-1:
+    pick:
+      - George Syrop
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-council-6:
+    pick:
+      - Kevin E. Jenkins
+  oakland-council-2:
+    pick:
+      - Nate Adams
+  union-city-council-2:
+    pick:
+      - Jaime Patino
+      - Victor Lopez Pulido
+  union-city-council-3:
+    pick:
+      - Cheris Crocker-Root
+  clpccd-trustee-area-2:
+    pick:
+      - Linda Granger
+  clpccd-trustee-area-3:
+    pick:
+      - Harris Mojadedi
+  clpccd-trustee-area-6:
+    pick:
+      - Hal G. Gin
+  peralta-ccd-trustee-area-5:
+    pick:
+      - Sandra Weese
+  hayward-usd-trustee-area-2:
+    pick:
+      - Joann Guzman
+  hayward-usd-trustee-area-4:
+    pick:
+      - Michelle Fernelius
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  berkeley-measure-u:
+    pick: Y
+  berkeley-measure-v:
+    pick: Y
+  berkeley-measure-w:
+    pick: Y
+  berkeley-measure-x:
+    pick: Y
+  berkeley-measure-y:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+  berkeley-measure-aa:
+    pick: Y
+  hayward-measure-cc:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y
+  union-city-measure-ii:
+    pick: Y
+  emeryville-measure-bb:
+    pick: Y

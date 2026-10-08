@@ -5,7 +5,7 @@ source: https://www.eqca.org/our-endorsements/
 archived:
   - source: https://www.eqca.org/our-endorsements/
     snapshot: https://web.archive.org/web/20261007195254/https://www.eqca.org/elections/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 held:
   - contestId: orchard-sd-trustee
@@ -129,3 +129,30 @@ picks:
   assembly-29:
     pick:
       - Robert Rivas
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-20:
+    pick:
+      - Liz Ortega
+  berkeley-council-7:
+    pick:
+      - Aidan Hill
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  san-leandro-council-2:
+    pick:
+      - James Aguilar

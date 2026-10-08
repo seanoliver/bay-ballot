@@ -2,7 +2,7 @@ guide: ifpte-21
 election: 2026-11
 status: published
 source: https://ifpte21.org/endorsements/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 picks:
   governor:
@@ -69,3 +69,23 @@ picks:
   ebmud-ward-7:
     pick:
       - Gary Wolff
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-20:
+    pick:
+      - Liz Ortega
+  assembly-24:
+    pick:
+      - Alex Lee
+  hayward-measure-cc:
+    pick: Y
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  san-leandro-council-2:
+    pick:
+      - James Aguilar

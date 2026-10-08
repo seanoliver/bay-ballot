@@ -2,7 +2,7 @@ guide: ebyd
 election: 2026-11
 status: published
 source: https://www.ebyd.org/endorsements
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 held:
   - contestId: albany-council
@@ -124,3 +124,6 @@ picks:
     pick: Y
   oakland-measure-ff:
     pick: Y
+  san-pablo-council:
+    pick:
+      - Caden Cotton-Blake

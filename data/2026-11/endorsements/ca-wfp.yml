@@ -5,14 +5,14 @@ source: http://caworkingfamilies.org/voter-guide-general-election-2026.pdf
 archived:
   - source: http://caworkingfamilies.org/voter-guide-general-election-2026.pdf
     snapshot: https://web.archive.org/web/20261002213302/https://www.caworkingfamilies.org/voter-guide-general-election-2026.pdf
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: false
 held:
   - contestId: santa-clara-mayor
     pick:
       - Kevin Park
     reason: unverified
-    evidence: 'The PDF lists "KEVIN PARK / SANTA CLARA CITY COUNCIL", but he runs only for Mayor of Santa Clara; the guide labels him Santa Clara City Council (review 2026-10-07).'
+    evidence: The PDF lists "KEVIN PARK / SANTA CLARA CITY COUNCIL", but he runs only for Mayor of Santa Clara; the guide labels him Santa Clara City Council (review 2026-10-07).
 picks:
   us-rep-11:
     pick:
@@ -177,3 +177,50 @@ picks:
   berryessa-sd-trustee:
     pick:
       - Jaria Jaug
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  assembly-20:
+    pick:
+      - Liz Ortega
+  berkeley-council-1:
+    pick:
+      - Moni Gangopadhyay
+      - Daria Wrubel
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-auditor:
+    pick:
+      - Jenny Wong
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Nathan Mizell
+      - Vylma Ortiz
+      - Derek Rodriguez
+  dublin-usd-trustee-area-5:
+    pick:
+      - Seema Badar
+  hayward-council-1:
+    pick:
+      - George Syrop
+  hayward-usd-trustee-area-4:
+    pick:
+      - Michelle Fernelius
+  union-city-council-2:
+    pick:
+      - Victor Lopez Pulido

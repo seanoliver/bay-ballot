@@ -3,13 +3,20 @@ election: 2026-11
 status: published
 source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
 allowForeignSources: true
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 held:
   - contestId: smcccd-measure-v
     pick: Y
     reason: unverified
-    evidence: 'The guide gives no position on Measure V by name; its blanket "Yes on all school bond measures and parcel taxes" names school districts, and SMCCCD is a community college district, so it does not unambiguously fit (decision 2026-10-07).'
+    evidence: The guide gives no position on Measure V by name; its blanket "Yes on all school bond measures and parcel taxes" names school districts, and SMCCCD is a community college district, so it does not unambiguously fit (decision 2026-10-07).
+rejectedQuotes:
+  - text: The tax restructuring would also lower taxes for smaller businesses.
+    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
+    contestId: newark-measure-dd
+  - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
+    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
+    contestId: union-city-measure-ii
 picks:
   secretary-of-state:
     pick:
@@ -377,4 +384,35 @@ picks:
   cambrian-sd-measure-q:
     pick: Y
   orchard-sd-measure-r:
+    pick: Y
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  fremont-council-2:
+    pick:
+      - Desrie Campbell
+  fremont-council-3:
+    pick:
+      - Kathy Kimberlin
+  fremont-council-4:
+    pick:
+      - Aziz Akbari
+  newark-council:
+    pick:
+      - Matthew Jorgens
+  union-city-council-2:
+    pick:
+      - Victor Lopez Pulido
+  union-city-council-3:
+    pick:
+      - Cheris Crocker-Root
+  union-city-council-4:
+    pick:
+      - Sarabjit Kaur Cheema
+    quotes:
+      - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  newark-measure-dd:
+    pick: Y
+  union-city-measure-ii:
     pick: Y
