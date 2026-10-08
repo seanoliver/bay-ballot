@@ -1,7 +1,4 @@
-# EBMUD Wards 3 and 7 span Contra Costa and Alameda and live in contra-costa.yml.
 # Sources: data/2026-11/sources/ALA-Candidates-Nov2026.txt and ALA-Measures-Nov2026.txt (Alameda County registrar).
-# Races printed on the Nov 3 ballot that at least one guide takes a position on, including unopposed ones.
-# Left out for want of any guide position: Newark Mayor (unopposed) and Pleasanton D1. Names are the registrar's in normal case.
 contests:
   # ---------- Community colleges (trustee-area lines not mapped: `within` lists the district's cities) ----------
   - id: ohlone-ccd-trustee-area-6
@@ -43,7 +40,6 @@ contests:
     seats: 2
     candidates: [Joyce Boyd, Carrie Hahnel, Gary Lym, Mike McMahon, Sarah Putnam]
     jurisdiction: { level: district, name: Alameda Unified School District, district: "at-large", within: [{ level: city, name: Alameda }] }
-  # Albany elects its school board by multi-winner ranked-choice voting (registrar: Albany uses RCV for most local offices).
   - id: albany-usd-board
     section: School and special districts
     title: Albany Unified School District Board
@@ -53,7 +49,6 @@ contests:
     candidates: [Margaret Allen, Melissa Boyd, Becky Hopwood, Josh Mahoney, David McKinney]
     aliases: { Melissa Boyd: [Melissa Harrison Boyd] }
     jurisdiction: { level: district, name: Albany Unified School District, district: "at-large", within: [{ level: city, name: Albany }] }
-  # Three candidates for three seats; printed on the ballot.
   - id: berkeley-usd-board
     section: School and special districts
     title: Berkeley Unified School District Board
@@ -427,7 +422,6 @@ contests:
     rankedChoice: true
     candidates: [Fred M. Feller, Mark Humbert, Mari Mendonca, Michael Wallman]
     jurisdiction: { level: district, name: City Council, district: "8", within: [{ level: city, name: Berkeley }] }
-  # Unopposed; printed on the ballot.
   - id: berkeley-auditor
     section: Local candidates
     title: Berkeley City Auditor
@@ -622,7 +616,6 @@ contests:
     rankedChoice: true
     candidates: [Kevin E. Jenkins, Nancy S. Sidebotham]
     jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Oakland }] }
-  # Unopposed; printed on the ballot.
   - id: oakland-auditor
     section: Local candidates
     title: Oakland City Auditor

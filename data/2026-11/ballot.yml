@@ -1,7 +1,6 @@
 # Sources: data/2026-11/sources/ (SF DOE Voter Information Pamphlet N26 ballot worksheet;
 # CA SoS Certified List of Candidates 8/27/2026) and the SF DOE qualified-candidates page.
-# Alameda County places in district `within` lists (CD10/12/14/17, SD10, AD14/16/18/20/24) are from the districts' Wikipedia
-# profiles (2021 commission maps, incl. census-designated places; CD12 is unchanged by Prop 50, the others shifted slightly).
+# Alameda places in these districts' `within` lists come from the districts' Wikipedia profiles (2021 maps).
 # Section order follows the brief; within each section, contests follow the SF ballot worksheet.
 election: 2026-11
 title: Bay Area General Election

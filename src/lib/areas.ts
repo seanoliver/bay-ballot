@@ -99,7 +99,6 @@ function slotOf(c: Contest, areas: Area[]): Slot {
   const p = j.level === "district" ? j.within?.[0] : { level: j.level, name: j.name };
   if (!p) return STATE_SLOT;
   if ((j.within?.length ?? 0) > 1) {
-    // A local district spanning counties (an EBMUD ward) is listed with the regional contests.
     if (new Set(j.within!.map((x) => placeCounty(x, areas))).size > 1) return REGION_SLOT;
   }
   if (p.level === "county") return { key: `county:${p.name}`, county: p.name, city: null };
