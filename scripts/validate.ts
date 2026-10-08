@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { latestDay, readChangelog, validateChangelog } from "../src/lib/changelog";
 import { listElections, loadElection, validateElection } from "../src/lib/data";
+import { siteShortLinks } from "../src/lib/short-links";
 
 const root = path.join(process.cwd(), "data");
 if (!fs.existsSync(root)) {
@@ -32,6 +33,12 @@ try {
   if (errors.length) failed = true;
 } catch (e) {
   console.error(`ERROR changelog ${e instanceof Error ? e.message : String(e)}`);
+  failed = true;
+}
+try {
+  siteShortLinks();
+} catch (e) {
+  console.error(`ERROR ${e instanceof Error ? e.message : String(e)}`);
   failed = true;
 }
 if (failed) process.exit(1);
