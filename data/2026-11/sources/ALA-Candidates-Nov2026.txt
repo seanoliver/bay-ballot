@@ -1,0 +1,569 @@
+Alameda County Registrar of Voters, Candidate List, General Election - 11/03/2026 (Official).
+Source: https://alamedacountyca.gov/rov_app/candidatelist (election 260; Race Status = On Ballot / Not On Ballot; Candidate Status = Filing Completed), retrieved 2026-10-07.
+Redacted extract: contest, seats (vote for N), ballot status, and each qualified candidate's name as printed by the registrar. Party, ballot designation, addresses, phone numbers, emails and websites are omitted.
+Not on Ballot = uncontested; the candidate is appointed in lieu of election.
+
+Governor | vote for 1 | On Ballot
+    XAVIER BECERRA
+    STEVE HILTON
+
+Lieutenant Governor | vote for 1 | On Ballot
+    FIONA MA
+    GLORIA ROMERO
+
+Secretary Of State | vote for 1 | On Ballot
+    DONALD P. (DON) WAGNER
+    SHIRLEY N. WEBER
+
+Controller | vote for 1 | On Ballot
+    MALIA M. COHEN
+    HERB W MORGAN
+
+Treasurer | vote for 1 | On Ballot
+    JENNIFER HAWKS
+    ELENI KOUNALAKIS
+
+Attorney General | vote for 1 | On Ballot
+    ROB BONTA
+    MICHAEL E. GATES
+
+Insurance Commissioner | vote for 1 | On Ballot
+    BEN ALLEN
+    JANE KIM
+
+Member, State Board Of Equalization, 2nd District | vote for 1 | On Ballot
+    SALLY J. LIEBER
+    JOHN PIMENTEL
+
+10th Congressional District | vote for 1 | On Ballot
+    MARK DESAULNIER
+    JEFF FRESE
+
+12th Congressional District | vote for 1 | On Ballot
+    JAMIE JOYCE
+    LATEEFAH SIMON
+
+14th Congressional District | vote for 1 | On Ballot
+    MELISSA HERNANDEZ
+    AISHA WAHAB
+
+17th Congressional District | vote for 1 | On Ballot
+    RO KHANNA
+    RITESH TANDON
+
+10th State Senate District | vote for 1 | On Ballot
+    LINDA R. PRICE
+    SCOTT SAKAKIHARA
+
+14th Assembly District | vote for 1 | On Ballot
+    MARK RENDON
+    BUFFY WICKS
+
+16th Assembly District | vote for 1 | On Ballot
+    REBECCA BAUER-KAHAN
+    JOSEPH A. RUBAY
+
+18th Assembly District | vote for 1 | On Ballot
+    MIA BONTA
+    ANDRE SANDFORD
+
+20th Assembly District | vote for 1 | On Ballot
+    PATRICIA MUGA
+    LIZ ORTEGA
+
+24th Assembly District | vote for 1 | On Ballot
+    MAX HSIA
+    ALEX LEE
+
+State Superintendent Of Public Instruction | vote for 1 | On Ballot
+    RICHARD BARRERA
+    SONJA SHAW
+
+Ohlone Community College District Trustee, Area 6 | vote for 1 | On Ballot
+    SUZANNE "SUE" LEE CHAN
+    SONIA SALWAN
+
+Chabot - Las Positas Community College District Trustee, Area 2 | vote for 1 | On Ballot
+    LINDA GRANGER
+    CINDY ROCHA
+
+Chabot - Las Positas Community College District Trustee, Area 3 | vote for 1 | On Ballot
+    MARK FAY
+    WENDY HUANG
+    HARRIS MOJADEDI
+
+Chabot - Las Positas Community College District Trustee, Area 6 | vote for 1 | On Ballot
+    HAL G. GIN
+    JOE ORLANDO RAMOS
+
+Peralta Community College District Trustee, Area 5 | vote for 1 | On Ballot
+    CINDI REISS
+    SANDRA WEESE
+
+Alameda Unified School District Governing Board Member, Full Term | vote for 2 | On Ballot
+    JOYCE BOYD
+    CARRIE HAHNEL
+    GARY LYM
+    MIKE MCMAHON
+    SARAH PUTNAM
+
+Castro Valley Unified School District Governing Board Member, Area 2, Short Term | vote for 1 | On Ballot
+    JESUS JACOBO
+    MYLA LONG
+    FREDERICK REGALA
+
+Castro Valley Unified School District Governing Board Member, Area 3 | vote for 1 | On Ballot
+    DAN JACOWITZ
+    ERYKA N MATHEWS-CAIN
+    GLENN A. MILLER
+    KARA WONG
+
+Castro Valley Unified School District Governing Board Member, Area 4 | vote for 1 | On Ballot
+    FAITH CARROLL
+    BRIAN A. FOSTER
+    JOSEPH GRCAR
+
+Dublin Unified School District Governing Board Members, Area 3, Short Term | vote for 1 | On Ballot
+    SHALINI BHANDARI
+    TANNER FRYE
+
+Dublin Unified School District Governing Board Members, Area 5 | vote for 1 | On Ballot
+    SEEMA BADAR
+    DAN CHERRIER
+
+Emery Unified School District Governing Board Members | vote for 3 | On Ballot
+    CHRISTOPHER KEITH ALLEN
+    REGINA CHAGOLLA
+    BRIAN DONAHUE
+    DAVID RIDLEHUBER
+    KIMBERLY SOLIS
+
+Hayward Unified School District Governing Board Member, Area 2 | vote for 1 | On Ballot
+    JOANN GUZMAN
+    JOE ORLANDO RAMOS
+
+Hayward Unified School District Governing Board Member, Area 4 | vote for 1 | On Ballot
+    MICHELLE FERNELIUS
+    MARIA ARACELI OROZCO
+
+Livermore Valley Joint Unified School District Governing Board Member, Area #2 | vote for 1 | On Ballot
+    TARA BOYCE
+    STEPHEN R ORGAIN
+
+Livermore Valley Joint Unified School District Governing Board Member, Area #3 | vote for 1 | On Ballot
+    ANGELA M. BRADY
+    DEBORAH GIBSON
+
+Livermore Valley Joint Unified School District Governing Board Member, Area #5 | vote for 1 | On Ballot
+    DEENA KAPLANIS
+    SAM PHELPS
+    CHRISTIAAN VANDENHEUVEL
+
+New Haven Unified School District Governing Board Member, Area 4 | vote for 1 | On Ballot
+    SHRUTI KUMAR
+    CHARANDEEP SINGH TATLAH
+    KASHIF WASIM
+
+New Haven Unified School District Governing Board Member, Area 5 | vote for 1 | On Ballot
+    DEEPTI GARG
+    FRANCIS ROJAS
+
+Pleasanton Unified School District Governing Board Member, Area 5 | vote for 1 | On Ballot
+    THOMAS CHOI
+    KAREN FLETCHER
+    BRETT GERALD MARTINEZ
+
+Sunol Glen Unified School District Governing Board Member | vote for 2 | On Ballot
+    GAGAN BASSI
+    JENNIFER KAVOUNIARIS
+    KAREN RUTH NEWCOMB
+    RENÉ TURNBULL
+
+For Mayor, Alameda | vote for 1 | On Ballot
+    TONY DAYSOG
+    TRACY JENSEN
+    MALIA VELLA
+
+For Members of City Council, Alameda | vote for 2 | On Ballot
+    THUSHAN AMARASIRIWARDENA
+    MARIA L. BONDONNO
+    MARCIE JOHNSON
+    TYLER SAVAGE
+    STEVE SLAUSON
+    AMOS WHITE
+
+For Rent Stabilization Board Commissioners, Berkeley | vote for 5 | On Ballot
+    AVERY ARBAUGH
+    CAROLE MARASOVIC
+    IDA MARTINAC
+    NATHAN MIZELL
+    VYLMA ORTIZ
+    DEREK RODRIGUEZ
+
+For School Directors, Berkeley | vote for 3 | On Ballot
+    KA'DIJAH A. BROWN
+    SANDY PARK
+    JENNIFER SHANOSKI
+
+For Mayor, Dublin | vote for 1 | On Ballot
+    SHERRY HU
+    MICHAEL MCCORRISTON
+    KIRAN MOHAMMAD
+
+For Members Of City Council #2, Dublin | vote for 1 | On Ballot
+    DANIEL HOR
+    STEVE LOREY
+    TEJPREET SINGH
+    RICHARD THORNBURY
+
+For Members Of City Council #4, Dublin | vote for 1 | On Ballot
+    KASHEF QAADRI
+    SHIVRAJ SINGH
+
+For Members of City Council, Emeryville | vote for 2 | On Ballot
+    CORRY FRYDLEWICZ
+    DAVID MOURRA
+    KALIMAH ATREYU PRIFORCE
+    BRANDON SOUBLET
+
+For Member Of City Council #2, Fremont | vote for 1 | On Ballot
+    DESRIE CAMPBELL
+    KEITH PARKER
+
+For Member Of City Council #3, Fremont | vote for 1 | On Ballot
+    KATHY KIMBERLIN
+    VIPIN SHARMA
+
+For Member Of City Council #4, Fremont | vote for 1 | On Ballot
+    AZIZ AKBARI
+    YING MIN LI
+    ANURAG MISHRA
+    MANISHA PATHAK
+
+For Mayor, Hayward | vote for 1 | On Ballot
+    MARK SALINAS
+    TOM WONG
+
+For Members Of City Council District #1, Hayward | vote for 1 | On Ballot
+    BRIAN M. SCHOTT
+    GEORGE SYROP
+
+For Members Of City Council District #6, Hayward | vote for 1 | On Ballot
+    JULIE ROCHE
+
+For Member Of City Council #2, Livermore | vote for 1 | On Ballot
+    BEN BARRIENTOS
+    NARAYAN TADIMETI
+
+For Mayor, Newark | vote for 1 | On Ballot
+    MICHAEL K. HANNON
+
+For Members Of City Council, Newark | vote for 2 | On Ballot
+    TONYA CONNOLLY
+    NOAH PATRICK GRUSHKIN
+    MATTHEW JORGENS
+    EVE MARIE LITTLE
+
+For Members of City Council, Piedmont | vote for 3 | On Ballot
+    NANCY BENINATI
+    SUNNY BOSTROM-FLEMING
+    ADAM HUNDT
+    TOM RAMSEY
+    BILL REICHLE
+
+For Mayor, Pleasanton | vote for 1 | On Ballot
+    JACK BALCH
+    JULIE TESTA
+
+For Members Of City Council #1, Pleasanton | vote for 1 | On Ballot
+    VIN KRUTTIVENTI
+    KATHY NARUM
+
+For Members Of City Council #3, Pleasanton | vote for 1 | On Ballot
+    REENA GUPTA
+    JAMIE YEE
+
+For Mayor, San Leandro | vote for 1 | On Ballot
+    JUAN GONZÁLEZ III
+    JAMES MAES
+
+For Member Of City Council #1, San Leandro | vote for 1 | On Ballot
+    SBEYDEH VIVEROS-WALTON
+
+For Member Of City Council #2, San Leandro - Short Term | vote for 1 | On Ballot
+    JAMES AGUILAR
+
+For Member Of City Council #3, San Leandro | vote for 1 | On Ballot
+    LEE THOMAS
+    JOSEPH TRUJILLO
+
+For Member Of City Council #5, San Leandro | vote for 1 | On Ballot
+    XOUHOA BOWEN
+
+For Member Of City Council #2, Union City | vote for 1 | On Ballot
+    VICTOR LOPEZ PULIDO
+    JAIME PATINO
+
+For Member Of City Council #3, Union City | vote for 1 | On Ballot
+    CHERIS CROCKER-ROOT
+    JEFF WANG
+
+For Member Of City Council #4, Union City | vote for 1 | On Ballot
+    VIPAN S. BAJWA
+    SARABJIT KAUR CHEEMA
+    QASIM LODHI
+    ANN YAP-JEQUINTO
+
+AC Transit District Director, Ward 3 | vote for 1 | On Ballot
+    ADRIANA VALENCIA
+    JOEL B. YOUNG
+
+AC Transit District Director, Ward 4 | vote for 1 | On Ballot
+    GABRIEL MORALES
+    SARAH SYED
+
+AC Transit District Director, Ward 5 | vote for 1 | On Ballot
+    JOSEPH GRCAR
+    MURPHY MCCALLEY
+    LUIS REYNOSO
+
+Alameda County Water District Director, Ward 2 | vote for 1 | On Ballot
+    JUDY C. HUANG
+    JASON MIGUEL
+
+Alameda County Water District Director, Ward 3 | vote for 1 | On Ballot
+    PAUL SETHY
+    YANG SHAO
+
+BART Director, District 4 | vote for 1 | On Ballot
+    ROBERT RABURN
+    LUIS REYNOSO
+
+Castro Valley Sanitary District Directors | vote for 2 | On Ballot
+    KRISTY (DOOMAN) WOERZ
+    JOSEPH GRCAR
+    RALPH JOHNSON
+    KEN OWEN
+    DARSHAN SAINI
+
+EBMUD Director, Ward 3 | vote for 1 | On Ballot
+    DON GRAY
+    MARGUERITE YOUNG
+
+EBMUD Director, Ward 7 | vote for 1 | On Ballot
+    APRIL CHAN
+    JOSEPH GRCAR
+    LUIS REYNOSO
+    GARY WOLFF
+
+East Bay Regional Park District Director, Ward 3 | vote for 1 | On Ballot
+    JOSEPH GRCAR
+    REBECCA LEWINGTON
+    WILLIAM YRAGUI
+
+East Bay Regional Park District Director, Ward 5 | vote for 1 | On Ballot
+    BRUCE HENRY
+    OLIVIA SANWONG
+
+Eden Township Healthcare District Director, Area 3 | vote for 1 | On Ballot
+    NARGES DILLON
+    JOSEPH GRCAR
+
+Fairview Fire Protection District Directors | vote for 2 | On Ballot
+    MICHELLE BICHE
+    VANDANA SINGH GAUTAM
+    MICHAEL D. JUSTICE
+
+Hayward Area Recreation & Park District Director, Area 2 | vote for 1 | On Ballot
+    AMANDA ALYSIA DANIELS
+    SARA LAMNIN
+
+Hayward Area Recreation & Park District Director, Area 4 | vote for 1 | On Ballot
+    JOSEPH "JOE" GILTNER
+    PAUL W. HODGES, JR.
+
+Livermore Area Recreation & Park District Directors | vote for 3 | On Ballot
+    TIMOTHY BARRY
+    LARRY BIRD
+    MATT BOGDANOWICZ
+    MARYALICE SUMMERS FALTINGS
+    PHILIP PIERPONT
+    MIKE RALPH
+    LAUREEN TURNER
+
+Member, Board Of Director, Oro Loma Sanitary Dist #1 | vote for 1 | On Ballot
+    TIARE PEÑA
+    SHELIA YOUNG
+
+Member, Board Of Director, Oro Loma Sanitary Dist #3 | vote for 1 | On Ballot
+    BENNY LEE
+    FRED SIMON
+
+Member, Board Of Director, Oro Loma Sanitary Dist #5 | vote for 1 | On Ballot
+    RITA DUNCAN
+    KOROUSH "CYRUS" FARSAEI
+
+For Members Of City Council, Albany | vote for 2 | On Ballot
+    JON DESTIN
+    KATHERINE ENOS
+    ROBIN D. LÓPEZ
+    CHRIS MCDANIELS
+    AARON TIEDEMANN
+
+Members Of The Board Of Education, Albany | vote for 4 | On Ballot
+    MARGARET ALLEN
+    MELISSA BOYD
+    BECKY HOPWOOD
+    JOSH MAHONEY
+    DAVID MCKINNEY
+
+For Member Of City Council District #1, Berkeley | vote for 1 | On Ballot
+    LAURA BABITT
+    ROSS BERNET
+    MONI GANGOPADHYAY
+    STEVE KROMER
+    DARIA WRUBEL
+
+For Member Of City Council District #4, Berkeley | vote for 1 | On Ballot
+    MAJDI "GAITH" ABUHAMDIEH
+    IGOR A. TREGUB
+
+For Member Of City Council District #7, Berkeley | vote for 1 | On Ballot
+    AIDAN HILL
+    SYRAK MICAEL
+
+For Member Of City Council District #8, Berkeley | vote for 1 | On Ballot
+    FRED M. FELLER
+    MARK HUMBERT
+    MARI MENDONCA
+    MICHAEL WALLMAN
+
+For Auditor, Berkeley | vote for 1 | On Ballot
+    JENNY WONG
+
+For Mayor, Oakland | vote for 1 | On Ballot
+    BRENDA F. GRISHAM
+    BARBARA LEE
+    MINDY RUTH PECHENUK
+    JULIUS ROBINSON
+
+For Councilmember, District No. 2, Oakland | vote for 1 | On Ballot
+    NATE ADAMS
+    CHARLENE WANG
+
+For Councilmember, District No. 4, Oakland | vote for 1 | On Ballot
+    JANANI RAMACHANDRAN
+
+For Councilmember, District No. 6, Oakland | vote for 1 | On Ballot
+    KEVIN E. JENKINS
+    NANCY S. SIDEBOTHAM
+
+For Auditor, Oakland | vote for 1 | On Ballot
+    MICHAEL C. HOUSTON
+
+For School Director, District No. 2, Oakland | vote for 1 | On Ballot
+    JENNIFER BROUHARD
+    ARIELLE FLEISHER
+
+For School Director, District No. 4, Oakland | vote for 1 | On Ballot
+    KATHRYN CAMP
+    MIKE HUTCHINSON
+    SYLVIA PFEIFFER WILLIAMS
+
+For School Director, District No. 6, Oakland | vote for 1 | On Ballot
+    VALARIE BACHELOR
+    LEANA POWELL
+    ALEXANDRA WILLIAMS
+
+Ohlone Community College District Trustee, Area 3 | vote for 1 | Not On Ballot
+    PHUONG NGUYEN
+
+Ohlone Community College District Trustee, Area 4 | vote for 1 | Not On Ballot
+    ELISA MARTINEZ
+
+Ohlone Community College District Trustee, Area 7 | vote for 1 | Not On Ballot
+    BETTY HO
+
+Peralta Community College District Trustee, Area 3 | vote for 1 | Not On Ballot
+    LOUIS QUINDLEN
+
+Peralta Community College District Trustee, Area 7 | vote for 1 | Not On Ballot
+    SHEWEET YOHANNES
+
+San Joaquin Delta Community College District Trustee, Area 4 | vote for 1 | Not On Ballot
+    CHARLES R JENNINGS
+    TONY SHAH
+
+Alameda Unified School District Governing Board Member, Short Term | vote for 1 | Not On Ballot
+    RYAN LALONDE
+
+Dublin Unified School District Governing Board Members, Area 2 | vote for 1 | Not On Ballot
+    HOLDEN LOMELI
+
+Fremont Unified School District Governing Board Members, Area 2 | vote for 1 | Not On Ballot
+    LARRY SWEENEY
+
+Fremont Unified School District Governing Board Members, Area 3 | vote for 1 | Not On Ballot
+    DIANNE JONES
+
+Newark Unified School District Governing Board Members | vote for 2 | Not On Ballot
+    CHRISTINE KIZER
+    RENU MALHOTRA
+
+Pleasanton Unified School District Governing Board Member, Area 2 | vote for 1 | Not On Ballot
+    LAURIE WALKER
+
+San Leandro Unified School District Governing Board Member, Area 2 | vote for 1 | Not On Ballot
+    JACQUELINE CALDERÓN PERL
+
+San Leandro Unified School District Governing Board Member, Area 4 | vote for 1 | Not On Ballot
+    LEO SHERIDAN
+
+San Leandro Unified School District Governing Board Member, Area 6 | vote for 1 | Not On Ballot
+    NATASHA MARTINEZ
+
+San Lorenzo Unified School District Governing Board Members, Area 1 | vote for 1 | Not On Ballot
+    YULIANA TORRES
+
+San Lorenzo Unified School District Governing Board Members, Area 4 | vote for 1 | Not On Ballot
+    SAMUEL MEDINA
+
+For Mayor, Livermore | vote for 1 | Not On Ballot
+    JOHN MARCHAND
+
+For Member Of City Council #1, Livermore | vote for 1 | Not On Ballot
+    EVAN BRANNING
+
+AC Transit District Director, Ward 1, Short Term | vote for 1 | Not On Ballot
+    HARPREET SANDHU
+
+AC Transit District Director, Ward 7 | vote for 1 | Not On Ballot
+    DIANE SHAW
+
+BART Director, District 6 | vote for 1 | Not On Ballot
+    LIZ AMES
+
+Byron - Bethany Irrigation District Directors | vote for 1 | Not On Ballot
+    TIM MAGGIORE
+
+City Of Alameda Healthcare District Directors | vote for 3 | Not On Ballot
+    GAYLE GODFREY CODIGA
+    ROBERT DEUTSCH
+    DAVID W SAYEN
+
+Member, Board Of Directors, Dublin San Ramon, Area 4 | vote for 1 | Not On Ballot
+    GEORGEAN VONHEEDER-LEOPOLD
+
+EBMUD Director, Ward 4 | vote for 1 | Not On Ballot
+    ANDY KATZ
+
+Eden Township Healthcare District Director, Area 1 | vote for 1 | Not On Ballot
+    MARIELLEN FARIA
+
+Eden Township Healthcare District Director, Area 5 | vote for 1 | Not On Ballot
+    ED HERNANDEZ
+
+Washington Township Healthcare District Directors | vote for 3 | Not On Ballot
+    JACOB EAPEN
+    BERNARD L. STEWART
+    MICHAEL J. WALLACE
