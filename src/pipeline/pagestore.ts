@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { Ballot } from "@/lib/schema";
 import type { Aliases } from "@/lib/names";
 import type { Fetched } from "./fetch";
-import { contestMarkers } from "./placement";
+import { contestMarkerSet, lowerWords, needleOf, type Matcher } from "./placement";
 
 const MONTHS =
   "jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?";
@@ -34,12 +34,20 @@ const ENDORSEMENT_WORDS =
 const VERDICT = /^[\W_]*(?:(?:strong(?:ly)?|hell|oh hell)\s+)?(?:yes|no|support|oppose|neutral)\b|^[\W_]*(?:✓|✔|✗|✘|❌|✅)/i;
 const GENERIC_CONTEST = /\b(?:[Pp]rop(?:osition)?s?\.?|PROP(?:OSITION)?S?\.?|[Mm]easure|MEASURE)\s*[A-Z0-9]{1,3}\b|\bRTM\b/;
 
-function endorsementContent(line: string, markers: RegExp[] = []): boolean {
-  return VERDICT.test(line) || ENDORSEMENT_WORDS.test(line) || GENERIC_CONTEST.test(line) || markers.some((re) => re.test(line));
+type Markers = { always: RegExp[]; byNeedle: Map<string, RegExp[]> };
+const NO_MARKERS: Markers = { always: [], byNeedle: new Map() };
+
+function hits(line: string, { always, byNeedle }: Markers): boolean {
+  if (always.some((re) => re.test(line))) return true;
+  return lowerWords(line).some((w) => byNeedle.get(w)?.some((re) => re.test(line)));
+}
+
+function endorsementContent(line: string, markers: Markers = NO_MARKERS): boolean {
+  return VERDICT.test(line) || ENDORSEMENT_WORDS.test(line) || GENERIC_CONTEST.test(line) || hits(line, markers);
 }
 
 export function normalizePageText(text: string, { ballot }: { ballot?: Ballot } = {}): string {
-  const markers = ballot ? ballotMarkers(ballot, {}) : [];
+  const markers = ballot ? ballotMarkers(ballot, {}) : undefined;
   const out: string[] = [];
   for (const raw of text.split("\n")) {
     let line = raw.replace(/\s+/g, " ").trim();
@@ -70,7 +78,7 @@ export function storedText(fetched: Fetched, { ballot }: { ballot?: Ballot } = {
 
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 
-function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
+function nameMarkers(ballot: Ballot, extra: Aliases): Matcher[] {
   const names = new Set<string>();
   // A surname alone matches as written or in capitals, so "Park" or "PARK" counts but "the park" doesn't.
   const surnames = new Set<string>();
@@ -88,11 +96,29 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
   const re = (n: string, flags: string) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, flags);
   const surnameOnly = [...surnames].filter((n) => !names.has(n));
-  return [...[...names].filter(Boolean).map((n) => re(n, "iu")), ...surnameOnly.flatMap((n) => [re(n, "u"), re(n.toUpperCase(), "u")])];
+  return [
+    ...[...names].filter(Boolean).map((n) => ({ re: re(n, "iu"), needle: needleOf(n) })),
+    ...surnameOnly.flatMap((n) => [n, n.toUpperCase()].map((form) => ({ re: re(form, "u"), needle: needleOf(form) }))),
+  ];
 }
 
-function ballotMarkers(ballot: Ballot, aliases: Aliases): RegExp[] {
-  return [...ballot.contests.flatMap((c) => contestMarkers(c, ballot.contests)), ...nameMarkers(ballot, aliases)];
+// Keyed by identity, so build a new Ballot rather than mutating one that has been gated.
+const markerCache = new WeakMap<Ballot, Map<string, Markers>>();
+
+function ballotMarkers(ballot: Ballot, aliases: Aliases): Markers {
+  let byAliases = markerCache.get(ballot);
+  if (!byAliases) markerCache.set(ballot, (byAliases = new Map()));
+  const key = JSON.stringify(aliases);
+  let markers = byAliases.get(key);
+  if (!markers) {
+    markers = { always: [], byNeedle: new Map() };
+    for (const { re, needle } of [...ballot.contests.flatMap((c) => contestMarkerSet(c, ballot.contests)), ...nameMarkers(ballot, aliases)]) {
+      if (needle === undefined) markers.always.push(re);
+      else markers.byNeedle.set(needle, [...(markers.byNeedle.get(needle) ?? []), re]);
+    }
+    byAliases.set(key, markers);
+  }
+  return markers;
 }
 
 export function changedLines(a: string[], b: string[]): { removed: number[]; added: number[] } {
@@ -140,7 +166,7 @@ export function relevantChange(oldText: string, newText: string, ballot: Ballot,
   const a = normalizePageText(oldText, { ballot }).split("\n");
   const b = normalizePageText(newText, { ballot }).split("\n");
   const { removed, added } = changedLines(a, b);
-  const mentions = (line: string) => GENERIC_CONTEST.test(line) || markers.some((re) => re.test(line));
+  const mentions = (line: string) => GENERIC_CONTEST.test(line) || hits(line, markers);
   const inA = new Set(a);
   const inB = new Set(b);
   const relevant = (lines: string[], idx: number, other: Set<string>) => {
