@@ -44,11 +44,11 @@ describe("data", () => {
     d.ballot.contests.push({ ...m, id: "dist", jurisdiction: { level: "district", name: "Supervisor", district: "1" } });
     d.ballot.contests.push({
       ...m, id: "wide",
-      jurisdiction: { level: "district", name: "Water Board", district: "1", within: [{ level: "county", name: "San Francisco" }, { level: "city", name: "Menlo Park" }] },
+      jurisdiction: { level: "district", name: "Water Board", district: "1", within: [{ level: "county", name: "San Francisco" }, { level: "city", name: "Atlantis" }] },
     });
     expect(validateElection(d).errors).toEqual([
       "dist: district jurisdiction requires within",
-      "wide: a local district's places must all be in one county",
+      "wide: every place a local district lists must be in an area's county",
       "far: in no area (check its jurisdiction and data/areas/)",
       "dist: in no area (check its jurisdiction and data/areas/)",
     ]);
