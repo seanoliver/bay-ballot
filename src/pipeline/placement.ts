@@ -17,7 +17,7 @@ const asHeading = (body: string) => `${body}(?=[^\\S\\n]*(?:\\n|$|[:—–\\-,(|
 const PROP_WORD = `(?:${ci("proposition")}|${ci("prop")}\\.?|${ci("measure")})`;
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
 
-function namePatterns(candidate: string): string[] {
+function namePatterns(candidate: string): Pattern[] {
   const nick = candidate.match(/\(([^)]*)\)|["“”]([^"“”]*)["“”]/);
   const bare = candidate.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " ");
   const tokens = bare.split(/\s+/).filter((t) => t && !SUFFIX.test(t));
@@ -26,7 +26,7 @@ function namePatterns(candidate: string): string[] {
   const firstForms = [tokens[0], ...(nick ? [nick[1] ?? nick[2]] : [])].map((f) =>
     escapeRegExp(f.replace(/\./g, "")).split("").join("\\.?"),
   );
-  return firstForms.map((f) => `${f}\\.?(?:\\s+\\S+){0,2}?\\s+${last}`);
+  return firstForms.map((f) => ({ body: `${f}\\.?(?:\\s+\\S+){0,2}?\\s+${last}`, needle: needleOf(tokens.at(-1)!) }));
 }
 
 const ORDINALS = ["", "first", "second", "third", "fourth", "fifth", "sixth"];
@@ -90,8 +90,19 @@ function districtPatterns(c: Contest): string[] {
   }
 }
 
-export function contestMarkers(c: Contest, siblings: Contest[] = [], { sharedBare = true }: { sharedBare?: boolean } = {}): RegExp[] {
-  const out: string[] = [];
+// Every match contains `needle` as a whole lowercased word, so a line without that word can skip compiling and running `re`.
+export type Matcher = { re: RegExp; needle?: string };
+export const lowerWords = (text: string) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+// Only for literal text the pattern matches verbatim (bar case) between word boundaries.
+export const needleOf = (literal: string) => lowerWords(literal).reduce<string | undefined>((a, b) => (b.length > (a?.length ?? 0) ? b : a), undefined);
+type Pattern = { body: string; needle?: string };
+
+export function contestMarkers(c: Contest, siblings: Contest[] = [], opts: { sharedBare?: boolean } = {}): RegExp[] {
+  return contestMarkerSet(c, siblings, opts).map((m) => m.re);
+}
+
+export function contestMarkerSet(c: Contest, siblings: Contest[] = [], { sharedBare = true }: { sharedBare?: boolean } = {}): Matcher[] {
+  const out: (string | Pattern)[] = [];
   if (c.kind === "measure") {
     if (c.id === "rtm") out.push("RTM", `${ci("regional")}\\s+(?:${ci("transit")}\\s+)?${ci("measure")}`);
     else out.push(...measurePatterns(c, siblings, sharedBare));
@@ -112,7 +123,7 @@ export function contestMarkers(c: Contest, siblings: Contest[] = [], { sharedBar
     for (const name of c.candidates) out.push(...namePatterns(name));
   }
   // Whitespace inside a marker never crosses a line ("Measure\nA 14-year…" is not Prop A).
-  return out.map((p) => bounded(p.replace(/\\s/g, "[^\\S\\n]")));
+  return out.map((p) => (typeof p === "string" ? { body: p } : p)).map(({ body, needle }) => ({ re: bounded(body.replace(/\\s/g, "[^\\S\\n]")), needle }));
 }
 
 type Marker = { start: number; end: number; ids: string[] };
