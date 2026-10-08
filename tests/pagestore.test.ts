@@ -62,7 +62,6 @@ describe("relevantChange", () => {
     expect(relevantChange(page, page.replace(/ /g, "  "), ballot)).toBe(false);
   });
   it("matches a surname alone in its own case or in capitals, not as a lowercase word", () => {
-    // Four plain lines first, so the change isn't counted for sitting just below a contest line.
     const added = (line: string) => `${page}\nThe club met downtown this week to talk about the year ahead.\nCoffee and snacks were served by volunteers from the neighborhood.\nThe next meeting is the second Tuesday of the month as usual.\nAll members and guests are welcome to attend and bring a friend.\n${line}`;
     expect(relevantChange(page, added("We had a picnic in the park by a hall near the creek"), ballot)).toBe(false);
     expect(relevantChange(page, added("Park spoke to the members about the city budget for an hour"), ballot)).toBe(true);

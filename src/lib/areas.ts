@@ -35,7 +35,6 @@ export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, a
   const [county] = counties;
   const j = c.jurisdiction;
   const local = j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
-  // A county page that lists its cities also holds their contests; a contest wholly in one city page's city belongs to that page.
   if (local) {
     const ps = places(j);
     const holders = ps === "everywhere" || ps.length === 0 ? [] : found.filter((a) => a.kind === "city" && ps.every((p) => p.level === "city" && a.jurisdictions.some((x) => x.level === "city" && x.name === p.name)));
