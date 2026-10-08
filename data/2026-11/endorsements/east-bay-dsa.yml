@@ -29,6 +29,15 @@ rejectedQuotes:
   - text: On balance, this is a limited but progressive measure that increases the tax contributions of big businesses to Emeryville.
     reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
     contestId: emeryville-measure-bb
+  - text: Measure Z would impose a progressive (per square foot of building footprint) parcel tax to fund a public bank, which offers government agencies lower interest rates and fees for community-wide projects.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: berkeley-measure-z
+  - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
+    reason: "does not stand alone: 'she' refers to an earlier sentence (review 2026-10-08)"
+    contestId: oakland-usd-2
+  - text: Absent the passage of this tax, the city will face a deficit that is likely including mass city worker layoffs and the continued funding of city services serving the homeless and providing permanently affordable housing to residents.
+    reason: garbled sentence (review 2026-10-08)
+    contestId: berkeley-measure-v
 picks:
   richmond-mayor:
     pick:
@@ -92,9 +101,6 @@ picks:
   oakland-usd-2:
     pick:
       - Jennifer Brouhard
-    quotes:
-      - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
-        source: https://vote.eastbaydsa.org/simple-guide.html
   oakland-usd-6:
     pick:
       - Valarie Bachelor
@@ -113,9 +119,6 @@ picks:
         source: https://vote.eastbaydsa.org/simple-guide.html
   berkeley-measure-z:
     pick: Y
-    quotes:
-      - text: Measure Z would impose a progressive (per square foot of building footprint) parcel tax to fund a public bank, which offers government agencies lower interest rates and fees for community-wide projects.
-        source: https://vote.eastbaydsa.org/simple-guide.html
   dublin-usd-measure-i:
     pick: Y
   san-lorenzo-usd-measure-j:
@@ -155,9 +158,6 @@ picks:
     pick: Y
   berkeley-measure-v:
     pick: Y
-    quotes:
-      - text: Absent the passage of this tax, the city will face a deficit that is likely including mass city worker layoffs and the continued funding of city services serving the homeless and providing permanently affordable housing to residents.
-        source: https://vote.eastbaydsa.org/simple-guide.html
   berkeley-measure-w:
     pick: Y
     quotes:
