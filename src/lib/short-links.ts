@@ -18,7 +18,6 @@ function entries(dir: string): string[] {
   });
 }
 
-/** Every top-level path segment the app or public/ already serves. */
 export function reservedSegments(root: string = process.cwd()): string[] {
   return [...new Set([...entries(path.join(root, "src/app")), ...entries(path.join(root, "public")), ...ALWAYS_RESERVED])];
 }
@@ -38,7 +37,6 @@ export function shortLinkRedirects({ areaIds, election, reserved }: { areaIds: s
   return areaIds.map((id) => ({ source: `/${id}`, destination: `/${election}/${id}`, permanent: false }));
 }
 
-/** /<area> → /<latest election>/<area> for every file in data/areas. */
 export function siteShortLinks(root: string = process.cwd()): ShortLink[] {
   const data = path.join(root, "data");
   const election = listElections(data).at(-1);
