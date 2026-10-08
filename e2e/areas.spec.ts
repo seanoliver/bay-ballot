@@ -280,11 +280,11 @@ test("Palo Alto and Mountain View pages share Santa Clara County contests and ke
   }
 });
 
-test("the Counties filter lists all three counties", async ({ page }, info) => {
+test("the Counties filter lists all five counties", async ({ page }, info) => {
   test.skip(isPhone(info), "desktop sidebar");
   await openBallot(page);
   const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
-  for (const c of ["San Francisco", "San Mateo", "Santa Clara"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
+  for (const c of ["San Francisco", "San Mateo", "Santa Clara", "Contra Costa", "Marin"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
 });
 
 test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {

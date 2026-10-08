@@ -157,8 +157,8 @@ contests:
     title: Walnut Creek City Council
     kind: candidate
     seats: 2
-    candidates: [Cherise Marie Khaund, Brendan Moran]
-    aliases: { Cherise Marie Khaund: [Cherise Khaund] }
+    candidates: [Cherise Khaund, Brendan Moran]
+    aliases: { Cherise Khaund: [Cherise Marie Khaund] }
     jurisdiction: { level: city, name: Walnut Creek }
   - id: clayton-measure-m
     section: Local measures

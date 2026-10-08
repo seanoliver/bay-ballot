@@ -43,7 +43,7 @@ export default function AboutPage() {
             </p>
             <p>
               So I turned it into Bay Ballot: one place for every voter guide in the Bay Area, side by side, one contest at a time, with the reasons
-              each guide gives in its own words. It starts with San Francisco, the Peninsula, the East Bay and Marin and will grow from there. It stays up to date as guides
+              each guide gives in its own words. It starts with San Francisco, the Peninsula, Contra Costa and Marin and will grow from there. It stays up to date as guides
               publish, and it&apos;s free for everyone.
             </p>
             <p>It doesn&apos;t tell you how to vote. It shows you what the people who spend time on this are recommending, and why.</p>
