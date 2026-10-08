@@ -136,7 +136,7 @@ contests:
     title: State Assembly, District 16
     kind: candidate
     candidates: [Rebecca Bauer-Kahan, Joseph A. Rubay]
-    aliases: { Joseph A. Rubay: [Joseph Rubay, Joe Rubay] }
+    aliases: { Rebecca Bauer-Kahan: [Rebecca Bauer Kahan], Joseph A. Rubay: [Joseph Rubay, Joe Rubay] }
     jurisdiction: { level: district, name: Assembly, district: "16", within: [{ level: county, name: Contra Costa }] }
   - id: assembly-17
     section: State
