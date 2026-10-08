@@ -5,6 +5,8 @@ source: https://www.greenbelt.org/voter-guide-26/
 extraSources:
   - https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
   - https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+  - https://www.greenbelt.org/blog/vote-yes-measure-l-alameda/
+  - https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
 fetchWith: browser
 archived:
   - source: https://www.greenbelt.org/voter-guide-26/
