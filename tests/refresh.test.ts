@@ -707,7 +707,7 @@ describe("onlyAreas (widening a guide)", () => {
   it("refuses an unknown area before fetching anything", async () => {
     const { root, client, stream } = wide("sf, san-mateo");
     const f = fetcher({ alpha: page });
-    await expect(runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["marin"] })).rejects.toThrow(/unknown area 'marin'/);
+    await expect(runRefresh(deps(client, f), { root, election: ELECTION, onlyAreas: ["not-a-real-area"] })).rejects.toThrow(/unknown area 'not-a-real-area'/);
     expect(f).not.toHaveBeenCalled();
     expect(stream).not.toHaveBeenCalled();
   });
