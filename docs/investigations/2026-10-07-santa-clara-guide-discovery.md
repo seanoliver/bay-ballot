@@ -314,3 +314,15 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
   - Campbell for WVM TA7, Cambrian Q and AD28.
   - Monte Sereno for Midpen W1, LGSUHSD TA2, LGSUHSD N and AD28.
 - **Left county-wide:** `assembly-23` (whose styles reach San Jose's 0007xxx range, so the county-wide San Jose listing stands) and `us-rep-16`.
+
+## Widening the shared guides (2026-10-07)
+
+- **What was run:** 23 shared guides were widened to `santa-clara-county` and `san-jose`, with one scoped `extract --only-areas santa-clara-county,san-jose` over the 20 non-manual ones. South Bay Labor was re-run after the extractor learned that "Open Endorsement" isn't a pick. svgop and housing-action-coalition were hand-entered from their sources; lwv-ca adds only areas.
+- **"Open Endorsement":** South Bay Labor marks some candidates "Open Endorsement". These are not picks:
+  - San Jose D7 is Doan only. Alum Rock TA3 is Oseguera only, MHUSD TA3 Cohen only and WVM TA7 Robb only.
+  - County BOE TA7 and Campbell Union SD TA4 have no pick.
+  - The extract and verify prompts now say so.
+- **South Bay Labor, Evergreen SD:** held at first because the extractor added Reyna, who is only "Open". After the re-run the pick is Wright, Diener and Fernández, with nothing held.
+- **Held:** Equality California, Orchard SD. Its page names "Lyseria Kursave", who is not on the ballot.
+- **No Santa Clara picks yet:** mercury-news, pa-daily-post, bay-rising-action, green-foothills, spur, sf-chronicle, bay-area-reporter and lwv-bay-area. Their RTM and statewide picks were already in.
+- **Changes outside the county file:** the only changed picks not in `santa-clara.yml` or the new shared districts are us-rep-16 and assembly-23, for eqca, envirovoters and housing-action-coalition. None of those guides' other areas covers those districts, so they are in scope.
