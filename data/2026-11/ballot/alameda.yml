@@ -285,13 +285,6 @@ contests:
     candidates: [Rita Duncan, "Koroush \"Cyrus\" Farsaei"]
     jurisdiction: { level: district, name: Oro Loma Sanitary District, district: "5", within: [{ level: city, name: San Lorenzo }, { level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: Fairview }] }
   # ---------- School district measures ----------
-  - id: dublin-usd-measure-i
-    section: Local measures
-    title: Dublin Unified School District Measure I
-    kind: measure
-    description: "Parcel Tax Measure"
-    link: https://alamedacountyca.gov/rov_app/measures
-    jurisdiction: { level: district, name: Dublin Unified School District, district: "at-large", within: [{ level: city, name: Dublin }] }
   - id: san-lorenzo-usd-measure-j
     section: Local measures
     title: San Lorenzo Unified School District Measure J
@@ -505,6 +498,13 @@ contests:
     kind: candidate
     candidates: [Kashef Qaadri, Shivraj Singh]
     jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Dublin }] }
+  - id: dublin-usd-measure-i
+    section: Local measures
+    title: Dublin Unified School District Measure I
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: district, name: Dublin Unified School District, district: "at-large", within: [{ level: city, name: Dublin }] }
   # ---------- Emeryville ----------
   - id: emeryville-council
     section: Local candidates
