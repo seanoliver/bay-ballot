@@ -1,6 +1,6 @@
 # Bay Ballot
 
-Bay Ballot shows every Bay Area voter guide's endorsements (San Francisco, San Mateo County, Santa Clara County (including San Jose, Palo Alto and Mountain View), Contra Costa County and Marin County so far) for the November 3, 2026 election side by side, at [bayballot.com](https://bayballot.com).
+Bay Ballot shows every Bay Area voter guide's endorsements (San Francisco, San Mateo County, Santa Clara County (including San Jose, Palo Alto and Mountain View), Contra Costa County and Marin County so far) for the November 3, 2026 election side by side, at [bayballot.com](https://bayballot.com). Each area also has a short link, like [bayballot.com/marin](https://bayballot.com/marin), that goes to its page for the current election.
 
 ## Data and counting
 
