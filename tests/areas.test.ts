@@ -120,6 +120,28 @@ describe("contestPlace", () => {
     const coa6 = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
     expect(contestPlace(coa6, all)).toEqual({ area: null, place: BAY_AREA });
   });
+  describe("with a county page that lists every city", () => {
+    const SCC: Area = {
+      id: "santa-clara-county", name: "Santa Clara County", kind: "county",
+      jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "Palo Alto" }, { level: "city", name: "Mountain View" }, { level: "city", name: "San Jose" }],
+    };
+    const SJ: Area = { id: "san-jose", name: "San Jose", kind: "city", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "San Jose" }] };
+    const withCounty = [SF, SM, SCC, PA, MV, SJ];
+    it("is the city page for a contest in one city", () => {
+      const council = c("palo-alto-council", { level: "city", name: "Palo Alto" });
+      expect(contestPlace(council, withCounty)).toEqual({ area: PA, place: { name: "Palo Alto", short: "Palo Alto" } });
+      const ward = c("valley-water-6", { level: "district", name: "Santa Clara Valley Water District", district: "6", within: [{ level: "city", name: "San Jose" }] });
+      expect(contestPlace(ward, withCounty).area?.id).toBe("san-jose");
+    });
+    it("names the county for a district in several cities", () => {
+      const lasd = c("los-altos-sd-trustee", { level: "district", name: "Los Altos School District", district: "at-large", within: [{ level: "city", name: "Palo Alto" }, { level: "city", name: "Mountain View" }] });
+      expect(contestPlace(lasd, withCounty)).toEqual({ area: null, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+    });
+    it("keeps a state-drawn district in one city on the Bay Area", () => {
+      const cd19 = c("us-rep-19", { level: "district", name: "Congress", district: "19", within: [{ level: "city", name: "San Jose" }] });
+      expect(contestPlace(cd19, withCounty)).toEqual({ area: null, place: BAY_AREA });
+    });
+  });
   it("is the Bay Area for statewide, regional and cross-county contests", () => {
     expect(contestPlace(prop1, all)).toEqual({ area: null, place: BAY_AREA });
     expect(contestPlace(rtm, all).place).toEqual(BAY_AREA);

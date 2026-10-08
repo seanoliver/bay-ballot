@@ -325,3 +325,16 @@ test("the Santa Clara County page includes Palo Alto, Mountain View and San Jose
   }
   await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
 });
+
+test("a Palo Alto contest page names Palo Alto and links back to the Palo Alto list", async ({ page }) => {
+  await page.goto(`${BALLOT}/palo-alto-council`);
+  await expect(page).toHaveTitle(/^Palo Alto Palo Alto City Council endorsements \(Nov 2026\)/);
+  await expect(page.getByRole("link", { name: "Palo Alto ballot" })).toHaveAttribute("href", `${BALLOT}/palo-alto`);
+  await expect(page.getByText(/^Most-endorsed for Palo Alto City Council by \d+ Palo Alto voter guides:/)).toBeVisible();
+});
+
+test("a San Jose contest page names San Jose and links back to the San Jose list", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-jose-council-5`);
+  await expect(page).toHaveTitle(/^San Jose City Council District 5 endorsements \(Nov 2026\)/);
+  await expect(page.getByRole("link", { name: "San Jose ballot" })).toHaveAttribute("href", `${BALLOT}/san-jose`);
+});
