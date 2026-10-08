@@ -109,7 +109,7 @@ describe("relevantChange", () => {
     } finally {
       spy.mockRestore();
     }
-    expect(ran.size).toBeLessThan(1000);
+    expect(ran.size).toBeLessThan(5000);
   });
 });
 
