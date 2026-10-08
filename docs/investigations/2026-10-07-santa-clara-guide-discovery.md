@@ -246,7 +246,7 @@ The team lead widens these centrally; this branch doesn't edit them. "SCC areas"
 
 - **Off-ballot picks to drop** (no contest): SBLC ARUSD TA1 Green, Campbell Union HSD TA1 Kim and TA2 Halliday, Cupertino Union SD Chiao, Gavilan TA1 Napoli, TA5 Wallace and TA7 Gonzalez (TA5/TA7 aren't on the SCC list), MVLA TA2 Kamei, SJECCD TA4 Fuentes, County BOE TA2 Zhao, WVM TA5 Lamkin, SCUSD Fairchild, Hollister D2/D3, San Benito Supervisor D5. CA WFP ESUHSD Montes and FHDA Gvatua. Sierra Midpen W2 Kishimoto and W5 Holman.
 - **Mislabels:**
-  - SBLC lists Kamal Yassin under "Santa Clara Unified TA 3"; he is in **TA1** (Canova vs Yassin).
+  - SBLC lists Kamal Yassin under "Santa Clara Unified TA 3"; he runs only in **TA1** (Canova vs Yassin). The extractor maps the pick to TA1 by his name.
   - SV DSA labels Oak Grove's Victor Ramirez "District 1"; he is in **TA2**.
   - CA WFP labels Kevin Park "Santa Clara City Council"; he runs for **Mayor**.
 - **Name aliases needed** (registrar name ← guide spelling):

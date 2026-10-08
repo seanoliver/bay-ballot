@@ -155,6 +155,11 @@ To add a county (Contra Costa, Alameda, Marin):
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
 - mercury-news `ross-council` (Julie A McMillan, Robert Herbst) was added by hand on 2026-10-07 from the IJ's 9/27 Ross editorial, which the extractor missed. After the next re-extract of mercury-news, check that the pick and its quote survived; if not, add them back by hand.
+- Added by hand on 2026-10-07 after the Santa Clara widening audit, because the scoped extract missed them:
+  - sccdp `lgsuhsd-measure-n` = Y, from "YES on Measures N / Los Gatos-Saratoga UHSD School Bonds" in its November local measures list.
+  - south-bay-labor `fremont-uhsd-trustee-area-3` = Rosa Kim, from "Fremont Union High School District — Trustee Area 3 / Rosa Kim — Sole Endorsement".
+  - ca-wfp holds `santa-clara-mayor` (Kevin Park): its PDF labels him "Santa Clara City Council", but he runs only for mayor.
+  - After the next re-extract of these guides, check that the picks survived and the hold is still there. Add them back by hand if not.
 - Marin County races follow the San Mateo rule: a local race is on the ballot only when a guide takes a position. The Marin IJ publishes one editorial at a time; when a guide covers a Marin race that isn't in `data/2026-11/ballot/marin.yml`, add it from `data/2026-11/sources/Marin-Candidates-Nov2026.txt` and re-extract that guide. New IJ editorials need adding to mercury-news's `extraSources`.
 - Contra Costa County races follow the same rule, and unopposed seats printed on the ballot count when a guide picks them. Add a missing race from `data/2026-11/sources/CCC-Candidate-List-0827.txt`. Seats decided in June (Richmond council) or not printed (uncontested, appointed in lieu of election) never go on the ballot, so guide picks for them are not recorded. Livermore Valley JUSD Area 3 is left out until it is confirmed on Contra Costa ballots.
 - Not yet published for Contra Costa as of 2026-10-07: Lift Up Contra Costa Action, LWV Diablo Valley (Walnut Creek U, Acalanes W), East Bay Times local picks, and more ContraCosta.news cities. Contra Costa Jewish Democrats is left out until its page names the election.

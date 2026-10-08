@@ -7,6 +7,12 @@ archived:
     snapshot: https://web.archive.org/web/20261002213302/https://www.caworkingfamilies.org/voter-guide-general-election-2026.pdf
 fetchedAt: 2026-10-07
 hasReasoning: false
+held:
+  - contestId: santa-clara-mayor
+    pick:
+      - Kevin Park
+    reason: unverified
+    evidence: 'The PDF lists "KEVIN PARK / SANTA CLARA CITY COUNCIL", but he runs only for Mayor of Santa Clara; the guide labels him Santa Clara City Council (review 2026-10-07).'
 picks:
   us-rep-11:
     pick:
