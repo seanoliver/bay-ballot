@@ -90,7 +90,6 @@ function districtPatterns(c: Contest): string[] {
   }
 }
 
-// Every match contains `needle` as a whole lowercased word, so a line without that word can skip compiling and running `re`.
 export type Matcher = { re: RegExp; needle?: string };
 export const lowerWords = (text: string) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
 // Only for literal text the pattern matches verbatim (bar case) between word boundaries.

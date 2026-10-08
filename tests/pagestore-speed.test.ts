@@ -7,7 +7,6 @@ const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
 
 // Own file so the gate runs cold, as on the first page of a refresh.
 describe("relevantChange speed", () => {
-  // About 0.5s on a dev machine and 1.7s before the fix; GitHub runners are roughly 3.5x slower.
   it("gates a 200-line new page against the real ballot fast from a cold start", () => {
     const candidate = ballot.contests.flatMap((c) => c.candidates).at(-1)!;
     const prose = Array.from({ length: 199 }, (_, i) => `the club met after work on day ${i} to plan the potluck and the cleanup`);
