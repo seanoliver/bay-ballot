@@ -1,0 +1,129 @@
+guide: ebyd
+election: 2026-11
+status: published
+source: https://www.ebyd.org/endorsements
+fetchedAt: 2026-10-08
+hasReasoning: false
+held:
+  - contestId: albany-council
+    pick:
+      - Aaron Tiedemann
+      - Robin D. López
+    reason: wrong-rank
+    evidence: "At Large: 1. Aaron Tiedemann, 2. Robin D. Lopez"
+picks:
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-24:
+    pick:
+      - Alex Lee
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-council-8:
+    pick:
+      - Mark Humbert
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Nathan Mizell
+      - Vylma Ortiz
+      - Derek Rodriguez
+  castro-valley-usd-trustee-area-3:
+    pick:
+      - Eryka N Mathews-Cain
+  dublin-mayor:
+    pick:
+      - Michael McCorriston
+  dublin-council-2:
+    pick:
+      - Richard Thornbury
+  dublin-council-4:
+    pick:
+      - Kashef Qaadri
+  dublin-usd-trustee-area-3:
+    pick:
+      - Tanner Frye
+  dublin-usd-trustee-area-5:
+    pick:
+      - Seema Badar
+  emeryville-council:
+    pick:
+      - Corry Frydlewicz
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-usd-4:
+    pick:
+      - Kathryn Camp
+  oakland-usd-6:
+    pick:
+      - LeAna Powell
+      - Alexandra Williams
+    ranked: true
+  pleasanton-council-3:
+    pick:
+      - Jamie Yee
+  san-leandro-mayor:
+    pick:
+      - Juan González III
+  san-leandro-council-3:
+    pick:
+      - Joseph Trujillo
+  union-city-council-3:
+    pick:
+      - Cheris Crocker-Root
+  union-city-council-4:
+    pick:
+      - Sarabjit Kaur Cheema
+  new-haven-usd-trustee-area-5:
+    pick:
+      - Deepti Garg
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+  bart-4:
+    pick:
+      - Robert Raburn
+  clpccd-trustee-area-3:
+    pick:
+      - Harris Mojadedi
+  ebmud-ward-7:
+    pick:
+      - Gary Wolff
+  ebrpd-ward-5:
+    pick:
+      - Olivia Sanwong
+  berkeley-measure-u:
+    pick: Y
+  berkeley-measure-v:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+  oakland-measure-ee:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y
+  san-pablo-council:
+    pick:
+      - Caden Cotton-Blake

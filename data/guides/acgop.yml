@@ -1,0 +1,7 @@
+id: acgop
+name: Alameda County Republican Party
+shortName: "Alameda County GOP"
+description: The official Republican Party committee for Alameda County.
+type: party
+homepage: https://www.alamedagop.org/
+areas: [alameda-county]

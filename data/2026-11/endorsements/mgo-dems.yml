@@ -1,0 +1,58 @@
+guide: mgo-dems
+election: 2026-11
+status: published
+source: https://mgodems.org/2026/09/26/metropolitan-greater-oakland-mgo-democratic-club-2026-general-election-endorsements/
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-usd-2:
+    pick:
+      - Arielle Fleisher
+  bart-4:
+    pick:
+      - Robert Raburn
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  rtm:
+    pick: Y
+  oakland-measure-ee:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N

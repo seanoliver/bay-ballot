@@ -5,11 +5,13 @@ source: https://www.greenbelt.org/voter-guide-26/
 extraSources:
   - https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
   - https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+  - https://www.greenbelt.org/blog/vote-yes-measure-l-alameda/
+  - https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
 fetchWith: browser
 archived:
   - source: https://www.greenbelt.org/voter-guide-26/
     snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 rejectedQuotes:
   - text: Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.
@@ -78,3 +80,19 @@ picks:
         source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
       - text: Measure D weaponizes the initiative process to stifle infill housing and prevent improvement of existing use of urban space.
         source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+  alameda-measure-l:
+    pick: Y
+    quotes:
+      - text: The Safer Alameda Act (Measure L) would open up new funding to prepare for flooding, earthquakes, and aging infrastructure.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-l-alameda/
+      - text: When it comes to protecting people and places, prevention is the best strategy.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-l-alameda/
+  albany-measure-o:
+    pick: Y
+    quotes:
+      - text: Decisions about citywide housing policy should be made through a standardized, public process, not controlled by a narrow petition requirement limited to voters living within 300 feet of a project.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
+      - text: Measure O is a good governance measure and a sensible approach to land use that expands participation and supports equitable housing opportunities.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
+      - text: Measure O also brings the City into compliance with its 2023-2031 Housing Element, which commits the City to pursue repeal of Measure D’s neighborhood petition requirement.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/

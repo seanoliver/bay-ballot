@@ -148,7 +148,7 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     if ((j.level === "district" || j.level === "region") && !j.within) errors.push(`${c.id}: ${j.level} jurisdiction requires within`);
     if (j.level === "district" && !STATE_DISTRICTS.includes(j.name) && (j.within?.length ?? 0) > 1) {
       const counties = new Set(j.within!.map((p) => placeCounty(p, d.areas)));
-      if (counties.size > 1 || counties.has(null)) errors.push(`${c.id}: a local district's places must all be in one county`);
+      if (counties.has(null)) errors.push(`${c.id}: every place a local district lists must be in an area's county`);
     }
     const seen = new Set<string>();
     for (const n of c.candidates) {

@@ -5,8 +5,39 @@ source: https://vote.eastbaydsa.org/simple-guide.html
 archived:
   - source: https://vote.eastbaydsa.org/simple-guide.html
     snapshot: https://web.archive.org/web/20261007195003/https://vote.eastbaydsa.org/simple-guide
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
+rejectedQuotes:
+  - text: Measure I seeks to provide local funding for Dublin schools that cannot be taken by the state, is locally controlled, and is subject to independent oversight.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: dublin-usd-measure-i
+  - text: Measure J seeks to renew San Lorenzo’s existing education parcel tax to provide local funding for SLUSD schools that cannot be taken by the state, is locally controlled, and is subject to independent oversight.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: san-lorenzo-usd-measure-j
+  - text: Measure DD replaces Newark’s business license ordinance, originally passed in 1970, with the intention of raising funds to prevent service cuts.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: newark-measure-dd
+  - text: Measure AA would double Berkeley’s existing tax on distributors of sugar-sweetened beverages, as well as earmark all funds towards specified public health, nutrition, and drinking water projects and programming.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: berkeley-measure-aa
+  - text: Overall, this is a very minimally progressive proposal.
+    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
+    contestId: oakland-measure-ff
+  - text: "On balance, this is a measure that redirects governance in minor, insufficient ways toward socialist priorities: by expanding influence of non-citizens in governance, mandating technical and environmental expertise, allowing Councilmembers to hire staff, and clarifying outdated, administrative laws that complicate the administration of government."
+    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
+    contestId: alameda-measure-m
+  - text: On balance, this is a limited but progressive measure that increases the tax contributions of big businesses to Emeryville.
+    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
+    contestId: emeryville-measure-bb
+  - text: Measure Z would impose a progressive (per square foot of building footprint) parcel tax to fund a public bank, which offers government agencies lower interest rates and fees for community-wide projects.
+    reason: "descriptive: says what the measure does (review 2026-10-08)"
+    contestId: berkeley-measure-z
+  - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
+    reason: "does not stand alone: 'she' refers to an earlier sentence (review 2026-10-08)"
+    contestId: oakland-usd-2
+  - text: Absent the passage of this tax, the city will face a deficit that is likely including mass city worker layoffs and the continued funding of city services serving the homeless and providing permanently affordable housing to residents.
+    reason: garbled sentence (review 2026-10-08)
+    contestId: berkeley-measure-v
 picks:
   richmond-mayor:
     pick:
@@ -46,4 +77,122 @@ picks:
       - text: Currently, the school district does not contain charter schools, so we find it unlikely that any of the revenue would be spent on charter schools.
         source: https://vote.eastbaydsa.org/simple-guide.html
   liberty-uhsd-measure-x:
+    pick: Y
+  oakland-council-2:
+    pick:
+      - Nate Adams
+    quotes:
+      - text: Nate Adams is the former Co-Chair of East Bay DSA and a community organizer.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+      - text: As an organizer for Richmond Progressive Alliance, he supported bringing people power and accountability to City Hall.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  hayward-council-1:
+    pick:
+      - George Syrop
+    quotes:
+      - text: As a councilmember, Syrop has advanced important legislation related to divestment, housing, and community safety.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+    quotes:
+      - text: Syrak Micael is an East Bay DSA member, a longtime organizer, and serves as the Vice Chair of the Berkeley Housing Commission.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+    quotes:
+      - text: Before joining the School Board, Bachelor spent more than two decades as an organizer, including working for SEIU International and the California Federation of Teachers.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Nathan Mizell
+      - Vylma Ortiz
+      - Derek Rodriguez
+    quotes:
+      - text: The Right to Housing Slate is a pro-tenant slate vetted and voted on by a coalition of local organizations and Berkeley residents.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-measure-z:
+    pick: Y
+  dublin-usd-measure-i:
+    pick: Y
+  san-lorenzo-usd-measure-j:
+    pick: Y
+  sunol-glen-usd-measure-k:
+    pick: Y
+    quotes:
+      - text: Given the limited scope of bond measure spending, provisions for citizen oversight, and the urgency of repairing and modernizing an 101-year-old building that serves as the only school in Sunol, East Bay Democratic Socialists of America recommends voting YES on this ballot measure.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  alameda-measure-l:
+    pick: Y
+    quotes:
+      - text: Alameda currently has around $800M in unfunded infrastructure needs, particularly with respect to climate resilience measures.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  alameda-measure-m:
+    pick: Y
+  albany-measure-p:
+    pick: Y
+  albany-measure-q:
+    pick: Y
+  albany-measure-r:
+    pick: Y
+    quotes:
+      - text: The gross receipts tax is structured as a progressive tax, meaning it would fall heaviest upon large businesses.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  albany-measure-s:
+    pick: Y
+    quotes:
+      - text: Transfer taxes constitute a tax on the sale of property, which when implemented as a graduated tax like this one, tends to function as a means of taxing wealth.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  albany-measure-t:
+    pick: Y
+    quotes:
+      - text: In 2024, the city conducted a study of streetlighting, which found that inadequate maintenance and lighting in some high-collision areas motivated car crashes and threatened pedestrian safety.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-measure-u:
+    pick: Y
+  berkeley-measure-v:
+    pick: Y
+  berkeley-measure-w:
+    pick: Y
+    quotes:
+      - text: The most noteworthy change is increasing from $250,000 to $400,000 the cap on administrative and enforcement expenses for the Fair Elections Fund (public financing system), which would be a positive change toward increasing funding for the administration and accountability measures for public financing.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-measure-x:
+    pick: Y
+    quotes:
+      - text: Measure X would strengthen and expand rent control, and eviction protections, and the legally-enforceable right of tenants to unionize and collectively bargain with their landlord.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-measure-y:
+    pick: Y
+    quotes:
+      - text: Several performing arts organizations have closed in Berkeley, and many others are struggling to stay afloat.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  berkeley-measure-aa:
+    pick: Y
+  emeryville-measure-bb:
+    pick: Y
+  hayward-measure-cc:
+    pick: Y
+    quotes:
+      - text: The proposed tax is far more progressive than the city’s current business license tax.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  newark-measure-dd:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y
+    quotes:
+      - text: Generally, socialists are strong supporters of transfer taxes, which tax the sale and purchase of property, and support progressive transfer taxes as the transfer of property in general is far undertaxed compared to taxes on essential goods, like groceries and gas.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  piedmont-measure-gg:
+    pick: Y
+    quotes:
+      - text: In a wealthy, high-property-value city, taxing real estate sales is a relatively progressive means of taxation, as it captures money when substantial property wealth changes hands, as opposed to imposing a broad tax on parcels or consumption.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  pleasanton-measure-hh:
     pick: Y

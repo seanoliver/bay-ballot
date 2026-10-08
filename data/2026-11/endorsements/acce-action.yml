@@ -1,0 +1,58 @@
+guide: acce-action
+election: 2026-11
+status: published
+source: https://www.acceaction.org/2026voterguide
+fetchedAt: 2026-10-08
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  prop-1:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: N
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  oakland-measure-ee:
+    pick: Y
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
+  san-pablo-measure-s:
+    pick: Y

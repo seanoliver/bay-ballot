@@ -1,0 +1,130 @@
+guide: eb4e
+election: 2026-11
+status: published
+source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+extraSources:
+  - https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
+fetchedAt: 2026-10-07
+hasReasoning: true
+picks:
+  rtm:
+    pick: Y
+    quotes:
+      - text: We need a strong, healthy transit system for people to live comfortably in the Bay Area without needing to own a car.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: The Regional Transit Measure (RTM) provides that time for transition for BART and other agencies while requiring efficiency reviews for all transit agencies to lower their costs and improve their operations.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Instead, Prop. 45 streamlines destructive single-family sprawl developments and their infrastructure.
+        source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
+      - text: Rubber stamping sprawl is not in alignment with East Bay for Everyone’s values and goals as an organization.
+        source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
+      - text: Moreover, Prop. 45 does not provide any specific relief to public transit, intercity rail, cycling, walking or other clean, low carbon infrastructure.
+        source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
+  berkeley-council-1:
+    pick:
+      - Ross Bernet
+    quotes:
+      - text: While serving on the Sierra Club’s executive committee, he’s consistently supported and voted for housing, bike lanes and pedestrian safety, and transit over cars.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: He is also the only candidate in this crowded race who contributed to the Measure FF campaign, the battle to bring safety improvements to Berkeley’s streets, rather than just repaving them to make it smoother for cars.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+    quotes:
+      - text: CM Tregub has been a consistent supporter of all approaches to housing (produce, preserve, protect) while on council.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: With his latest vote in favor of the Hopkins bike lanes, we are excited to see CM Tregub becoming a bigger champion for safe streets in Berkeley.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+    quotes:
+      - text: Syrak champions an all-of-the-above approach to housing that includes building housing at all income levels, funding affordable housing, advancing social housing, and supporting robust tenant protections.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: In his service on Berkeley’s Housing Advisory Commission he has voted to support housing construction and he is strongly supportive of Vision Zero / traffic safety projects.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  berkeley-council-8:
+    pick:
+      - Mark Humbert
+    quotes:
+      - text: In his strong first term, CM Humbert has taken tough positions in favor of housing, including the Middle Housing Ordinance and housing along Berkeley’s commercial corridors, and has been a vocal supporter for adding more housing in the Claremont District.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: Not just his votes, but also his comments on the dais, demonstrate that he truly understands the importance of building homes and embracing change in order to solve our housing crisis.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  emeryville-council:
+    pick:
+      - David Mourra
+      - Corry Frydlewicz
+    quotes:
+      - text: CM Mourra has been a vocal champion of housing, transit, and safe streets during his time on council.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: Corry Frydlewicz is unapologetically devoted to safe streets and building a more walkable community.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+    quotes:
+      - text: Wang has served a half term and has been a consistent supporter of housing in her district and Oakland generally.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: One of her major wins was to implement transit-oriented upzoning bill SB79 in her district as soon as the law came into effect, years sooner than the citywide plan, a crucial stand that rippled to neighboring jurisdictions.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  oakland-council-6:
+    pick:
+      - Kevin E. Jenkins
+    quotes:
+      - text: Since being elected in 2022 he has supported Oakland wide re-zonings as part of the Housing Element process, including fourplexes and upzoning Rockridge.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: Furthermore we appreciate CM Jenkins willingness to support service-led planning and transit priority for bus service in Oakland.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  alameda-mayor:
+    pick:
+      - Malia Vella
+    quotes:
+      - text: As a member of council, Vella has been a leader in supporting housing development – especially at Alameda Point.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: We also appreciate Vella’s work to make Alameda a more multi-modal city for transport with investments in safe street infrastructure and improvements to roadways and signals for buses.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  alameda-council:
+    pick:
+      - Thushan Amarasiriwardena
+    quotes:
+      - text: Thusan Amarasiriwardena is a newcomer to Alameda politics but we like his focus on building housing and car-free living.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: He wants to improve housing permitting timelines, developing and meeting transit service goals, and delivering needed infrastructure.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  san-leandro-mayor:
+    pick:
+      - James Maes
+    quotes:
+      - text: He is a fresh voice who has spoken strongly for enabling housing and safe streets citywide, even when they inconvenience existing interests.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: He also brings experience as an engineer, public servant and regular transit rider, and supports the continued improvement of tenant protections.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  bart-4:
+    pick:
+      - Robert Raburn
+    quotes:
+      - text: Director Raburn has been instrumental in guiding BART out of the pandemic with his efforts to attract more riders through improved scheduling, transfers, safety and fare gates.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: Raburn has continued to show leadership in building housing near transit.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+    quotes:
+      - text: A founding member of East Bay for Everyone, Valencia is an everyday rider on the AC Transit system.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: Her consistent advocacy over the years portends a vigorous role in delivering better service and a greater rider focus going forward.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+    quotes:
+      - text: A current Board Director and professional planner, researcher and policy expert, Sarah Syed has been focused on both rider labor needs.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+      - text: It was Syed who brought nighttime service displacement on Broadway in Oakland into the spotlight, and was instrumental in getting that service restored.
+        source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/

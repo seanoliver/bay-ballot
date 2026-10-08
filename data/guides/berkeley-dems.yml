@@ -1,0 +1,7 @@
+id: berkeley-dems
+name: Berkeley Democratic Club
+shortName: "Berkeley Dems"
+description: A Democratic club in Berkeley.
+type: club
+homepage: https://www.berkeleydemocraticclub.com/
+areas: [alameda-county, berkeley]

@@ -5,7 +5,7 @@ source: https://ebho.org/2026-campaign-endorsements/
 archived:
   - source: https://ebho.org/2026-campaign-endorsements/
     snapshot: https://web.archive.org/web/20261007195813/https://ebho.org/2026-campaign-endorsements/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
   prop-1:
@@ -24,4 +24,11 @@ picks:
     pick: Y
     quotes:
       - text: The measure also funds transit improvements, capital projects within counties, and targeted road improvements.
+        source: https://ebho.org/2026-campaign-endorsements/
+  berkeley-measure-x:
+    pick: Y
+    quotes:
+      - text: Passing Measure X will reduce financial burdens on non-profit affordable housing providers who provide key services to low income and elderly Berkeley residents, all while maintaining existing legal protections for vulnerable residents.
+        source: https://ebho.org/2026-campaign-endorsements/
+      - text: Measure X was crafted through a collaborative process between the Rent Board, the City Council, tenant advocates, non-profit affordable housing providers, and landlords to ensure a final product that was acceptable to all parties.
         source: https://ebho.org/2026-campaign-endorsements/

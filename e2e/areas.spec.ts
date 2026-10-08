@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { BALLOT, contestRow, isPhone, openBallot } from "./helpers";
 
@@ -108,7 +110,8 @@ const guideCount = async (page: import("@playwright/test").Page, path: string) =
 test("each area page counts only its own guides", async ({ page }) => {
   const all = await guideCount(page, BALLOT);
   const counts: number[] = [];
-  for (const area of ["sf", "san-mateo", "palo-alto", "mountain-view"]) counts.push(await guideCount(page, `${BALLOT}/${area}`));
+  const areas = fs.readdirSync(path.join(__dirname, "..", "data", "areas")).map((f) => f.replace(/\.yml$/, ""));
+  for (const area of areas) counts.push(await guideCount(page, `${BALLOT}/${area}`));
   for (const n of counts) expect(n).toBeLessThan(all);
   expect(counts.reduce((a, b) => a + b, 0)).toBeGreaterThanOrEqual(all);
 });

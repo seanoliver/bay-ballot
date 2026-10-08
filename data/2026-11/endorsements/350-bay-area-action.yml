@@ -10,7 +10,7 @@ archived:
     snapshot: https://web.archive.org/web/20261007195505/https://350bayareaaction.org/electoral/endorsements-2026
   - source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
     snapshot: https://web.archive.org/web/20261007195539/https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
   prop-3:
@@ -122,3 +122,23 @@ picks:
     pick:
       - Jill James Hoffman
       - Joan Cox
+  berkeley-council-1:
+    pick:
+      - Ross Bernet
+      - Daria Wrubel
+    ranked: true
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  us-rep-14:
+    pick:
+      - Aisha Wahab

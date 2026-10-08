@@ -1,0 +1,67 @@
+guide: lwv-bae
+election: 2026-11
+status: published
+source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+fetchedAt: 2026-10-07
+hasReasoning: true
+rejectedQuotes:
+  - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
+    reason: "does not stand alone: refers to an earlier passage (review 2026-10-07)"
+    contestId: berkeley-measure-v
+picks:
+  albany-measure-o:
+    pick: Y
+  albany-measure-p:
+    pick: Y
+    quotes:
+      - text: The most compelling reason for supporting Measure P is LWVBAE’s adopted infrastructure and finance positions.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  albany-measure-q:
+    pick: Y
+  albany-measure-r:
+    pick: Y
+  albany-measure-s:
+    pick: Y
+    quotes:
+      - text: Based on the League of Women Voters of California position on the State and Local Government Finance System, the League supports this measure.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  albany-measure-t:
+    pick: Y
+    quotes:
+      - text: Urban canopy helps mitigate heat-island effects, provides habitat, sequesters carbon and improves pedestrian environments.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Albany’s own streetlighting study found locations where inadequate illumination creates safety concerns for pedestrians and bicyclists and recommended improving poorly lit intersections and crosswalks.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  berkeley-measure-u:
+    pick: Y
+    quotes:
+      - text: Although the City has sensibly increased investment in critical infrastructure in recent years, it requires an estimated $2 billion of investment in capital assets to maintain and upgrade its aging infrastructure.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  berkeley-measure-v:
+    pick: Y
+    quotes:
+      - text: The LWVBAE position on revenue and taxation emphasizes “adequacy,” so municipalities have the revenue needed to carry out the basic functions of a properly managed city, which include maintaining public safety departments at reasonable staffing levels.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  berkeley-measure-w:
+    pick: Y
+    quotes:
+      - text: The measure is aligned with the League’s long commitment to expanding opportunities for citizens to run for public office, without the lack of personal wealth standing in the way as a prohibitive barrier.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Investing in Berkeley’s public financing of campaign system expands opportunities and helps to reduce the outsized influence Big Money has in our political system.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  berkeley-measure-x:
+    pick: Y
+  berkeley-measure-aa:
+    pick: Y
+    quotes:
+      - text: The basis for League support lies in a 2021 California Public Health Department report that states that a 2 cent per ounce state tax on sugary beverages would reduce health care costs by 1.8 billion.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  emeryville-measure-bb:
+    pick: Y
+    quotes:
+      - text: The passing of Measure BB will modernize the nearly 42-year-old business license tax system and benefit the city of Emeryville immensely and address the structural deficit without creating a new tax for residents.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: LWVBAE’s position on City Finances supports taxes that have receipts as a basis.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+  rtm:
+    pick: Y

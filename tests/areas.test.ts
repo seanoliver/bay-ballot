@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
 import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
@@ -95,6 +95,23 @@ describe("a district in several places", () => {
   });
   it("sits under its county, not under its first city", () => {
     expect(placeGroups([ward], areas).map((g) => [g.heading, g.county])).toEqual([["San Mateo County", "San Mateo"]]);
+  });
+});
+
+describe("a district spanning counties", () => {
+  const ward = c("water-ward-2", {
+    level: "district", name: "Water Board", district: "2",
+    within: [{ level: "county", name: "San Francisco" }, { level: "city", name: "Menlo Park" }],
+  });
+  it("is in every area that lists one of its places", () => {
+    expect(ids(areasOf(ward, areas))).toEqual(["sf", "san-mateo"]);
+  });
+  it("is listed with the regional contests, under the Bay Area", () => {
+    expect(placeGroups([ward], areas).map((g) => [g.heading, g.county])).toEqual([["Bay Area", null]]);
+    expect(contestPlace(ward, areas)).toEqual({ area: null, place: BAY_AREA });
+  });
+  it("lives in the ballot file of the first county it lists", () => {
+    expect(ballotCounty(ward, areas)).toBe("San Francisco");
   });
 });
 

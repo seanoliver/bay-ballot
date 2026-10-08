@@ -1,0 +1,741 @@
+# Sources: data/2026-11/sources/ALA-Candidates-Nov2026.txt and ALA-Measures-Nov2026.txt (Alameda County registrar).
+contests:
+  # ---------- Community colleges (trustee-area lines not mapped: `within` lists the district's cities) ----------
+  - id: ohlone-ccd-trustee-area-6
+    section: School and special districts
+    title: "Ohlone Community College District, Trustee Area 6"
+    kind: candidate
+    candidates: ["Suzanne \"Sue\" Lee Chan", Sonia Salwan]
+    aliases: { "Suzanne \"Sue\" Lee Chan": [Suzanne Chan, Sue Chan] }
+    jurisdiction: { level: district, name: Ohlone Community College District, district: "6", within: [{ level: city, name: Fremont }, { level: city, name: Newark }] }
+  - id: clpccd-trustee-area-2
+    section: School and special districts
+    title: "Chabot-Las Positas Community College District, Trustee Area 2"
+    kind: candidate
+    candidates: [Linda Granger, Cindy Rocha]
+    jurisdiction: { level: district, name: Chabot-Las Positas Community College District, district: "2", within: [{ level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Union City }, { level: city, name: Dublin }, { level: city, name: Pleasanton }, { level: city, name: Livermore }] }
+  - id: clpccd-trustee-area-3
+    section: School and special districts
+    title: "Chabot-Las Positas Community College District, Trustee Area 3"
+    kind: candidate
+    candidates: [Mark Fay, Wendy Huang, Harris Mojadedi]
+    jurisdiction: { level: district, name: Chabot-Las Positas Community College District, district: "3", within: [{ level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Union City }, { level: city, name: Dublin }, { level: city, name: Pleasanton }, { level: city, name: Livermore }] }
+  - id: clpccd-trustee-area-6
+    section: School and special districts
+    title: "Chabot-Las Positas Community College District, Trustee Area 6"
+    kind: candidate
+    candidates: [Hal G. Gin, Joe Orlando Ramos]
+    jurisdiction: { level: district, name: Chabot-Las Positas Community College District, district: "6", within: [{ level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Union City }, { level: city, name: Dublin }, { level: city, name: Pleasanton }, { level: city, name: Livermore }] }
+  - id: peralta-ccd-trustee-area-5
+    section: School and special districts
+    title: "Peralta Community College District, Trustee Area 5"
+    kind: candidate
+    candidates: [Cindi Reiss, Sandra Weese]
+    jurisdiction: { level: district, name: Peralta Community College District, district: "5", within: [{ level: city, name: Oakland }, { level: city, name: Piedmont }] }
+  # ---------- School districts ----------
+  - id: alameda-usd-board
+    section: School and special districts
+    title: Alameda Unified School District Board
+    kind: candidate
+    seats: 2
+    candidates: [Joyce Boyd, Carrie Hahnel, Gary Lym, Mike McMahon, Sarah Putnam]
+    jurisdiction: { level: district, name: Alameda Unified School District, district: "at-large", within: [{ level: city, name: Alameda }] }
+  - id: albany-usd-board
+    section: School and special districts
+    title: Albany Unified School District Board
+    kind: candidate
+    seats: 4
+    rankedChoice: true
+    candidates: [Margaret Allen, Melissa Boyd, Becky Hopwood, Josh Mahoney, David McKinney]
+    aliases: { Melissa Boyd: [Melissa Harrison Boyd] }
+    jurisdiction: { level: district, name: Albany Unified School District, district: "at-large", within: [{ level: city, name: Albany }] }
+  - id: berkeley-usd-board
+    section: School and special districts
+    title: Berkeley Unified School District Board
+    kind: candidate
+    seats: 3
+    candidates: ["Ka'Dijah A. Brown", Sandy Park, Jennifer Shanoski]
+    aliases: { "Ka'Dijah A. Brown": [Ka’Dijah Brown] }
+    jurisdiction: { level: district, name: Berkeley Unified School District, district: "at-large", within: [{ level: city, name: Berkeley }] }
+  - id: castro-valley-usd-trustee-area-2
+    section: School and special districts
+    title: "Castro Valley Unified School District, Trustee Area 2 (Short Term)"
+    kind: candidate
+    candidates: [Jesus Jacobo, Myla Long, Frederick Regala]
+    jurisdiction: { level: district, name: Castro Valley Unified School District, district: "2", within: [{ level: city, name: Castro Valley }] }
+  - id: castro-valley-usd-trustee-area-3
+    section: School and special districts
+    title: "Castro Valley Unified School District, Trustee Area 3"
+    kind: candidate
+    candidates: [Dan Jacowitz, Eryka N Mathews-Cain, Glenn A. Miller, Kara Wong]
+    jurisdiction: { level: district, name: Castro Valley Unified School District, district: "3", within: [{ level: city, name: Castro Valley }] }
+  - id: castro-valley-usd-trustee-area-4
+    section: School and special districts
+    title: "Castro Valley Unified School District, Trustee Area 4"
+    kind: candidate
+    candidates: [Faith Carroll, Brian A. Foster, Joseph Grcar]
+    jurisdiction: { level: district, name: Castro Valley Unified School District, district: "4", within: [{ level: city, name: Castro Valley }] }
+  - id: dublin-usd-trustee-area-3
+    section: School and special districts
+    title: "Dublin Unified School District, Trustee Area 3 (Short Term)"
+    kind: candidate
+    candidates: [Shalini Bhandari, Tanner Frye]
+    aliases: { Tanner Frye: [James Tanner Frye, James Frye] }
+    jurisdiction: { level: district, name: Dublin Unified School District, district: "3", within: [{ level: city, name: Dublin }] }
+  - id: dublin-usd-trustee-area-5
+    section: School and special districts
+    title: "Dublin Unified School District, Trustee Area 5"
+    kind: candidate
+    candidates: [Seema Badar, Dan Cherrier]
+    jurisdiction: { level: district, name: Dublin Unified School District, district: "5", within: [{ level: city, name: Dublin }] }
+  - id: emery-usd-board
+    section: School and special districts
+    title: Emery Unified School District Board
+    kind: candidate
+    seats: 3
+    candidates: [Christopher Keith Allen, Regina Chagolla, Brian Donahue, David Ridlehuber, Kimberly Solis]
+    jurisdiction: { level: district, name: Emery Unified School District, district: "at-large", within: [{ level: city, name: Emeryville }] }
+  - id: hayward-usd-trustee-area-2
+    section: School and special districts
+    title: "Hayward Unified School District, Trustee Area 2"
+    kind: candidate
+    candidates: [Joann Guzman, Joe Orlando Ramos]
+    jurisdiction: { level: district, name: Hayward Unified School District, district: "2", within: [{ level: city, name: Hayward }] }
+  - id: hayward-usd-trustee-area-4
+    section: School and special districts
+    title: "Hayward Unified School District, Trustee Area 4"
+    kind: candidate
+    candidates: [Michelle Fernelius, Maria Araceli Orozco]
+    aliases: { Michelle Fernelius: [Michelle Fernellius] }
+    jurisdiction: { level: district, name: Hayward Unified School District, district: "4", within: [{ level: city, name: Hayward }] }
+  - id: livermore-vjusd-trustee-area-2
+    section: School and special districts
+    title: "Livermore Valley Joint Unified School District, Trustee Area 2"
+    kind: candidate
+    candidates: [Tara Boyce, Stephen R Orgain]
+    jurisdiction: { level: district, name: Livermore Valley Joint Unified School District, district: "2", within: [{ level: city, name: Livermore }] }
+  - id: livermore-vjusd-trustee-area-3
+    section: School and special districts
+    title: "Livermore Valley Joint Unified School District, Trustee Area 3"
+    kind: candidate
+    candidates: [Angela M. Brady, Deborah Gibson]
+    jurisdiction: { level: district, name: Livermore Valley Joint Unified School District, district: "3", within: [{ level: city, name: Livermore }] }
+  - id: livermore-vjusd-trustee-area-5
+    section: School and special districts
+    title: "Livermore Valley Joint Unified School District, Trustee Area 5"
+    kind: candidate
+    candidates: [Deena Kaplanis, Sam Phelps, Christiaan VandenHeuvel]
+    jurisdiction: { level: district, name: Livermore Valley Joint Unified School District, district: "5", within: [{ level: city, name: Livermore }] }
+  - id: new-haven-usd-trustee-area-4
+    section: School and special districts
+    title: "New Haven Unified School District, Trustee Area 4"
+    kind: candidate
+    candidates: [Shruti Kumar, Charandeep Singh Tatlah, Kashif Wasim]
+    jurisdiction: { level: district, name: New Haven Unified School District, district: "4", within: [{ level: city, name: Union City }, { level: city, name: Hayward }] }
+  - id: new-haven-usd-trustee-area-5
+    section: School and special districts
+    title: "New Haven Unified School District, Trustee Area 5"
+    kind: candidate
+    candidates: [Deepti Garg, Francis Rojas]
+    jurisdiction: { level: district, name: New Haven Unified School District, district: "5", within: [{ level: city, name: Union City }, { level: city, name: Hayward }] }
+  - id: oakland-usd-2
+    section: School and special districts
+    title: "Oakland Unified School District, District 2"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Jennifer Brouhard, Arielle Fleisher]
+    jurisdiction: { level: district, name: Oakland Unified School District, district: "2", within: [{ level: city, name: Oakland }] }
+  - id: oakland-usd-4
+    section: School and special districts
+    title: "Oakland Unified School District, District 4"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Kathryn Camp, Mike Hutchinson, Sylvia Pfeiffer Williams]
+    jurisdiction: { level: district, name: Oakland Unified School District, district: "4", within: [{ level: city, name: Oakland }] }
+  - id: oakland-usd-6
+    section: School and special districts
+    title: "Oakland Unified School District, District 6"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Valarie Bachelor, LeAna Powell, Alexandra Williams]
+    jurisdiction: { level: district, name: Oakland Unified School District, district: "6", within: [{ level: city, name: Oakland }] }
+  - id: pleasanton-usd-trustee-area-5
+    section: School and special districts
+    title: "Pleasanton Unified School District, Trustee Area 5"
+    kind: candidate
+    candidates: [Thomas Choi, Karen Fletcher, Brett Gerald Martinez]
+    jurisdiction: { level: district, name: Pleasanton Unified School District, district: "5", within: [{ level: city, name: Pleasanton }] }
+  - id: sunol-glen-usd-board
+    section: School and special districts
+    title: Sunol Glen Unified School District Board
+    kind: candidate
+    seats: 2
+    candidates: [Gagan Bassi, Jennifer Kavouniaris, Karen Ruth Newcomb, René Turnbull]
+    aliases: { René Turnbull: [Gail Rene Turnbull] }
+    jurisdiction: { level: district, name: Sunol Glen Unified School District, district: "at-large", within: [{ level: city, name: Sunol }] }
+  # ---------- Special districts (ward lines from each agency where known; otherwise `within` lists the district's cities) ----------
+  - id: ac-transit-ward-3
+    section: School and special districts
+    title: "AC Transit Board, Ward 3"
+    kind: candidate
+    candidates: [Adriana Valencia, Joel B. Young]
+    jurisdiction: { level: district, name: AC Transit, district: "3", within: [{ level: city, name: Oakland }, { level: city, name: Alameda }, { level: city, name: San Leandro }] }
+  - id: ac-transit-ward-4
+    section: School and special districts
+    title: "AC Transit Board, Ward 4"
+    kind: candidate
+    candidates: [Gabriel Morales, Sarah Syed]
+    aliases: { Sarah Syed: [Sarah Yasmin Syed] }
+    jurisdiction: { level: district, name: AC Transit, district: "4", within: [{ level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }, { level: city, name: Fairview }] }
+  - id: ac-transit-ward-5
+    section: School and special districts
+    title: "AC Transit Board, Ward 5"
+    kind: candidate
+    candidates: [Joseph Grcar, Murphy McCalley, Luis Reynoso]
+    jurisdiction: { level: district, name: AC Transit, district: "5", within: [{ level: city, name: Fremont }, { level: city, name: Newark }, { level: city, name: Hayward }] }
+  - id: acwd-ward-2
+    section: School and special districts
+    title: "Alameda County Water District, Ward 2"
+    kind: candidate
+    candidates: [Judy C. Huang, Jason Miguel]
+    aliases: { Jason Miguel: [Jason Mathew Miguel] }
+    jurisdiction: { level: district, name: Alameda County Water District, district: "2", within: [{ level: city, name: Fremont }, { level: city, name: Newark }, { level: city, name: Union City }] }
+  - id: acwd-ward-3
+    section: School and special districts
+    title: "Alameda County Water District, Ward 3"
+    kind: candidate
+    candidates: [Paul Sethy, Yang Shao]
+    jurisdiction: { level: district, name: Alameda County Water District, district: "3", within: [{ level: city, name: Fremont }, { level: city, name: Newark }, { level: city, name: Union City }] }
+  - id: bart-4
+    section: School and special districts
+    title: "BART Board, District 4"
+    kind: candidate
+    candidates: [Robert Raburn, Luis Reynoso]
+    jurisdiction: { level: district, name: BART, district: "4", within: [{ level: city, name: Oakland }, { level: city, name: San Leandro }, { level: city, name: Hayward }, { level: city, name: San Lorenzo }] }
+  - id: castro-valley-sanitary-board
+    section: School and special districts
+    title: Castro Valley Sanitary District Board
+    kind: candidate
+    seats: 2
+    candidates: [Kristy (Dooman) Woerz, Joseph Grcar, Ralph Johnson, Ken Owen, Darshan Saini]
+    jurisdiction: { level: district, name: Castro Valley Sanitary District, district: "at-large", within: [{ level: city, name: Castro Valley }] }
+  - id: ebrpd-ward-3
+    section: School and special districts
+    title: "East Bay Regional Park District, Ward 3"
+    kind: candidate
+    candidates: [Joseph Grcar, Rebecca Lewington, William Yragui]
+    jurisdiction: { level: district, name: East Bay Regional Park District, district: "3", within: [{ level: city, name: Hayward }, { level: city, name: Castro Valley }, { level: city, name: Union City }, { level: city, name: Fremont }, { level: city, name: Dublin }] }
+  - id: ebrpd-ward-5
+    section: School and special districts
+    title: "East Bay Regional Park District, Ward 5"
+    kind: candidate
+    candidates: [Bruce Henry, Olivia Sanwong]
+    jurisdiction: { level: district, name: East Bay Regional Park District, district: "5", within: [{ level: city, name: Dublin }, { level: city, name: Fremont }, { level: city, name: Livermore }, { level: city, name: Newark }, { level: city, name: Pleasanton }, { level: city, name: Sunol }] }
+  - id: eden-healthcare-area-3
+    section: School and special districts
+    title: "Eden Township Healthcare District, Area 3"
+    kind: candidate
+    candidates: [Narges Dillon, Joseph Grcar]
+    jurisdiction: { level: district, name: Eden Township Healthcare District, district: "3", within: [{ level: city, name: San Leandro }, { level: city, name: Hayward }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }] }
+  - id: fairview-fire-board
+    section: School and special districts
+    title: Fairview Fire Protection District Board
+    kind: candidate
+    seats: 2
+    candidates: [Michelle Biche, Vandana Singh Gautam, Michael D. Justice]
+    jurisdiction: { level: district, name: Fairview Fire Protection District, district: "at-large", within: [{ level: city, name: Fairview }] }
+  - id: hard-area-2
+    section: School and special districts
+    title: "Hayward Area Recreation and Park District, Area 2"
+    kind: candidate
+    candidates: [Amanda Alysia Daniels, Sara Lamnin]
+    jurisdiction: { level: district, name: Hayward Area Recreation and Park District, district: "2", within: [{ level: city, name: Hayward }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }] }
+  - id: hard-area-4
+    section: School and special districts
+    title: "Hayward Area Recreation and Park District, Area 4"
+    kind: candidate
+    candidates: ["Joseph \"Joe\" Giltner", "Paul W. Hodges, Jr."]
+    aliases: { "Paul W. Hodges, Jr.": [Paul Wayne Hodges] }
+    jurisdiction: { level: district, name: Hayward Area Recreation and Park District, district: "4", within: [{ level: city, name: Hayward }, { level: city, name: Castro Valley }, { level: city, name: San Lorenzo }] }
+  - id: larpd-board
+    section: School and special districts
+    title: Livermore Area Recreation and Park District Board
+    kind: candidate
+    seats: 3
+    candidates: [Timothy Barry, Larry Bird, Matt Bogdanowicz, Maryalice Summers Faltings, Philip Pierpont, Mike Ralph, Laureen Turner]
+    aliases: { Laureen Turner: [Laureen Ellen Turner] }
+    jurisdiction: { level: district, name: Livermore Area Recreation and Park District, district: "at-large", within: [{ level: city, name: Livermore }] }
+  - id: oro-loma-sanitary-1
+    section: School and special districts
+    title: "Oro Loma Sanitary District, Division 1"
+    kind: candidate
+    candidates: [Tiare Peña, Shelia Young]
+    jurisdiction: { level: district, name: Oro Loma Sanitary District, district: "1", within: [{ level: city, name: San Lorenzo }, { level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: Fairview }] }
+  - id: oro-loma-sanitary-3
+    section: School and special districts
+    title: "Oro Loma Sanitary District, Division 3"
+    kind: candidate
+    candidates: [Benny Lee, Fred Simon]
+    aliases: { Fred Simon: [Frederick Simon] }
+    jurisdiction: { level: district, name: Oro Loma Sanitary District, district: "3", within: [{ level: city, name: San Lorenzo }, { level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: Fairview }] }
+  - id: oro-loma-sanitary-5
+    section: School and special districts
+    title: "Oro Loma Sanitary District, Division 5"
+    kind: candidate
+    candidates: [Rita Duncan, "Koroush \"Cyrus\" Farsaei"]
+    jurisdiction: { level: district, name: Oro Loma Sanitary District, district: "5", within: [{ level: city, name: San Lorenzo }, { level: city, name: Hayward }, { level: city, name: San Leandro }, { level: city, name: Castro Valley }, { level: city, name: Fairview }] }
+  # ---------- School district measures ----------
+  - id: san-lorenzo-usd-measure-j
+    section: Local measures
+    title: San Lorenzo Unified School District Measure J
+    kind: measure
+    description: "Education Parcel Tax Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: district, name: San Lorenzo Unified School District, district: "at-large", within: [{ level: city, name: San Lorenzo }, { level: city, name: San Leandro }, { level: city, name: Hayward }] }
+  - id: sunol-glen-usd-measure-k
+    section: Local measures
+    title: Sunol Glen Unified School District Measure K
+    kind: measure
+    description: "General Obligation Bond Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: district, name: Sunol Glen Unified School District, district: "at-large", within: [{ level: city, name: Sunol }] }
+  # ---------- City of Alameda ----------
+  - id: alameda-mayor
+    section: Local candidates
+    title: City of Alameda Mayor
+    kind: candidate
+    candidates: [Tony Daysog, Tracy Jensen, Malia Vella]
+    jurisdiction: { level: city, name: Alameda }
+  - id: alameda-council
+    section: Local candidates
+    title: City of Alameda City Council
+    kind: candidate
+    seats: 2
+    candidates: [Thushan Amarasiriwardena, Maria L. Bondonno, Marcie Johnson, Tyler Savage, Steve Slauson, Amos White]
+    aliases: { Marcie Johnson: [Marcie Soslau Johnson] }
+    jurisdiction: { level: city, name: Alameda }
+  - id: alameda-measure-l
+    section: Local measures
+    title: City of Alameda Measure L
+    kind: measure
+    description: "General Obligation Bond Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Alameda }
+  - id: alameda-measure-m
+    section: Local measures
+    title: City of Alameda Measure M
+    kind: measure
+    description: "Charter Amendment: Amend and Repeal Outdated Provisions"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Alameda }
+  - id: alameda-measure-n
+    section: Local measures
+    title: City of Alameda Measure N
+    kind: measure
+    description: "Charter Amendment: Leases and Sales of Real Property"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Alameda }
+  # ---------- Albany (ranked-choice; council seats are filled by multi-winner RCV) ----------
+  - id: albany-council
+    section: Local candidates
+    title: Albany City Council
+    kind: candidate
+    seats: 2
+    rankedChoice: true
+    candidates: [Jon Destin, Katherine Enos, Robin D. López, Chris McDaniels, Aaron Tiedemann]
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-o
+    section: Local measures
+    title: Albany Measure O
+    kind: measure
+    description: "Requirement to Zoning Changes"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-p
+    section: Local measures
+    title: Albany Measure P
+    kind: measure
+    description: "Street Paving and Storm Drain Parcel Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-q
+    section: Local measures
+    title: Albany Measure Q
+    kind: measure
+    description: "EMS, ALS, Fire Protection Parcel Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-r
+    section: Local measures
+    title: Albany Measure R
+    kind: measure
+    description: "Business License Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-s
+    section: Local measures
+    title: Albany Measure S
+    kind: measure
+    description: "Real Property Transfer Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  - id: albany-measure-t
+    section: Local measures
+    title: Albany Measure T
+    kind: measure
+    description: "Street Trees and Streetlighting Parcel Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Albany }
+  # ---------- Berkeley (ranked-choice for council) ----------
+  - id: berkeley-council-1
+    section: Local candidates
+    title: "Berkeley City Council, District 1"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Laura Babitt, Ross Bernet, Moni Gangopadhyay, Steve Kromer, Daria Wrubel]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Berkeley }] }
+  - id: berkeley-council-4
+    section: Local candidates
+    title: "Berkeley City Council, District 4"
+    kind: candidate
+    rankedChoice: true
+    candidates: ["Majdi \"Gaith\" Abuhamdieh", Igor A. Tregub]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Berkeley }] }
+  - id: berkeley-council-7
+    section: Local candidates
+    title: "Berkeley City Council, District 7"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Aidan Hill, Syrak Micael]
+    jurisdiction: { level: district, name: City Council, district: "7", within: [{ level: city, name: Berkeley }] }
+  - id: berkeley-council-8
+    section: Local candidates
+    title: "Berkeley City Council, District 8"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Fred M. Feller, Mark Humbert, Mari Mendonca, Michael Wallman]
+    jurisdiction: { level: district, name: City Council, district: "8", within: [{ level: city, name: Berkeley }] }
+  - id: berkeley-auditor
+    section: Local candidates
+    title: Berkeley City Auditor
+    kind: candidate
+    rankedChoice: true
+    candidates: [Jenny Wong]
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-rent-board
+    section: Local candidates
+    title: Berkeley Rent Stabilization Board
+    kind: candidate
+    seats: 5
+    candidates: [Avery Arbaugh, Carole Marasovic, Ida Martinac, Nathan Mizell, Vylma Ortiz, Derek Rodriguez]
+    aliases: { Carole Marasovic: [Carole A. Marasovic] }
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-u
+    section: Local measures
+    title: Berkeley Measure U
+    kind: measure
+    description: "Infrastructure Bond"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-v
+    section: Local measures
+    title: Berkeley Measure V
+    kind: measure
+    description: "Sales Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-w
+    section: Local measures
+    title: Berkeley Measure W
+    kind: measure
+    description: "Charter Amendment"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-x
+    section: Local measures
+    title: Berkeley Measure X
+    kind: measure
+    description: "Rent Ordinance Amendment"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-y
+    section: Local measures
+    title: Berkeley Measure Y
+    kind: measure
+    description: "Initiative: Arts Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-z
+    section: Local measures
+    title: Berkeley Measure Z
+    kind: measure
+    description: "Initiative: Public Bank"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  - id: berkeley-measure-aa
+    section: Local measures
+    title: Berkeley Measure AA
+    kind: measure
+    description: "Initiative: Soda Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Berkeley }
+  # ---------- Dublin ----------
+  - id: dublin-mayor
+    section: Local candidates
+    title: Dublin Mayor
+    kind: candidate
+    candidates: [Sherry Hu, Michael McCorriston, Kiran Mohammad]
+    jurisdiction: { level: city, name: Dublin }
+  - id: dublin-council-2
+    section: Local candidates
+    title: "Dublin City Council, District 2"
+    kind: candidate
+    candidates: [Daniel Hor, Steve Lorey, Tejpreet Singh, Richard Thornbury]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Dublin }] }
+  - id: dublin-council-4
+    section: Local candidates
+    title: "Dublin City Council, District 4"
+    kind: candidate
+    candidates: [Kashef Qaadri, Shivraj Singh]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Dublin }] }
+  - id: dublin-usd-measure-i
+    section: Local measures
+    title: Dublin Unified School District Measure I
+    kind: measure
+    description: "Parcel Tax Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: district, name: Dublin Unified School District, district: "at-large", within: [{ level: city, name: Dublin }] }
+  # ---------- Emeryville ----------
+  - id: emeryville-council
+    section: Local candidates
+    title: Emeryville City Council
+    kind: candidate
+    seats: 2
+    candidates: [Corry Frydlewicz, David Mourra, Kalimah Atreyu Priforce, Brandon Soublet]
+    jurisdiction: { level: city, name: Emeryville }
+  - id: emeryville-measure-bb
+    section: Local measures
+    title: Emeryville Measure BB
+    kind: measure
+    description: "Business Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Emeryville }
+  # ---------- Fremont ----------
+  - id: fremont-council-2
+    section: Local candidates
+    title: "Fremont City Council, District 2"
+    kind: candidate
+    candidates: [Desrie Campbell, Keith Parker]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Fremont }] }
+  - id: fremont-council-3
+    section: Local candidates
+    title: "Fremont City Council, District 3"
+    kind: candidate
+    candidates: [Kathy Kimberlin, Vipin Sharma]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Fremont }] }
+  - id: fremont-council-4
+    section: Local candidates
+    title: "Fremont City Council, District 4"
+    kind: candidate
+    candidates: [Aziz Akbari, Ying Min Li, Anurag Mishra, Manisha Pathak]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Fremont }] }
+  # ---------- Hayward ----------
+  - id: hayward-mayor
+    section: Local candidates
+    title: Hayward Mayor
+    kind: candidate
+    candidates: [Mark Salinas, Tom Wong]
+    jurisdiction: { level: city, name: Hayward }
+  - id: hayward-council-1
+    section: Local candidates
+    title: "Hayward City Council, District 1"
+    kind: candidate
+    candidates: [Brian M. Schott, George Syrop]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Hayward }] }
+  - id: hayward-council-6
+    section: Local candidates
+    title: "Hayward City Council, District 6"
+    kind: candidate
+    candidates: [Julie Roche]
+    jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Hayward }] }
+  - id: hayward-measure-cc
+    section: Local measures
+    title: Hayward Measure CC
+    kind: measure
+    description: "Business Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Hayward }
+  # ---------- Livermore ----------
+  - id: livermore-council-2
+    section: Local candidates
+    title: "Livermore City Council, District 2"
+    kind: candidate
+    candidates: [Ben Barrientos, Narayan Tadimeti]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Livermore }] }
+  # ---------- Newark ----------
+  - id: newark-council
+    section: Local candidates
+    title: Newark City Council
+    kind: candidate
+    seats: 2
+    candidates: [Tonya Connolly, Noah Patrick Grushkin, Matthew Jorgens, Eve Marie Little]
+    jurisdiction: { level: city, name: Newark }
+  - id: newark-measure-dd
+    section: Local measures
+    title: Newark Measure DD
+    kind: measure
+    description: "Newark Essential Services Protection Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Newark }
+  # ---------- Oakland (ranked-choice) ----------
+  - id: oakland-mayor
+    section: Local candidates
+    title: Oakland Mayor
+    kind: candidate
+    rankedChoice: true
+    candidates: [Brenda F. Grisham, Barbara Lee, Mindy Ruth Pechenuk, Julius Robinson]
+    jurisdiction: { level: city, name: Oakland }
+  - id: oakland-council-2
+    section: Local candidates
+    title: "Oakland City Council, District 2"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Nate Adams, Charlene Wang]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Oakland }] }
+  - id: oakland-council-4
+    section: Local candidates
+    title: "Oakland City Council, District 4"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Janani Ramachandran]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Oakland }] }
+  - id: oakland-council-6
+    section: Local candidates
+    title: "Oakland City Council, District 6"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Kevin E. Jenkins, Nancy S. Sidebotham]
+    jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Oakland }] }
+  - id: oakland-auditor
+    section: Local candidates
+    title: Oakland City Auditor
+    kind: candidate
+    rankedChoice: true
+    candidates: [Michael C. Houston]
+    jurisdiction: { level: city, name: Oakland }
+  - id: oakland-measure-ee
+    section: Local measures
+    title: Oakland Measure EE
+    kind: measure
+    description: "Charter Amendment: Mayor and Council Powers"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Oakland }
+  - id: oakland-measure-ff
+    section: Local measures
+    title: Oakland Measure FF
+    kind: measure
+    description: "Real Property Transfer Tax: Foreclosure Exception"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Oakland }
+  # ---------- Piedmont ----------
+  - id: piedmont-council
+    section: Local candidates
+    title: Piedmont City Council
+    kind: candidate
+    seats: 3
+    candidates: [Nancy Beninati, Sunny Bostrom-Fleming, Adam Hundt, Tom Ramsey, Bill Reichle]
+    jurisdiction: { level: city, name: Piedmont }
+  - id: piedmont-measure-gg
+    section: Local measures
+    title: Piedmont Measure GG
+    kind: measure
+    description: "Real Property Conveyance Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Piedmont }
+  # ---------- Pleasanton ----------
+  - id: pleasanton-mayor
+    section: Local candidates
+    title: Pleasanton Mayor
+    kind: candidate
+    candidates: [Jack Balch, Julie Testa]
+    jurisdiction: { level: city, name: Pleasanton }
+  - id: pleasanton-council-3
+    section: Local candidates
+    title: "Pleasanton City Council, District 3"
+    kind: candidate
+    candidates: [Reena Gupta, Jamie Yee]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Pleasanton }] }
+  - id: pleasanton-measure-hh
+    section: Local measures
+    title: Pleasanton Measure HH
+    kind: measure
+    description: "Uniform Transient Occupancy Tax"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Pleasanton }
+  # ---------- San Leandro (ranked-choice) ----------
+  - id: san-leandro-mayor
+    section: Local candidates
+    title: San Leandro Mayor
+    kind: candidate
+    rankedChoice: true
+    candidates: [Juan González III, James Maes]
+    jurisdiction: { level: city, name: San Leandro }
+  - id: san-leandro-council-1
+    section: Local candidates
+    title: "San Leandro City Council, District 1"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Sbeydeh Viveros-Walton]
+    aliases: { Sbeydeh Viveros-Walton: [Sbeydeh Viveros Walton] }
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: San Leandro }] }
+  - id: san-leandro-council-2
+    section: Local candidates
+    title: "San Leandro City Council, District 2 (Short Term)"
+    kind: candidate
+    rankedChoice: true
+    candidates: [James Aguilar]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: San Leandro }] }
+  - id: san-leandro-council-3
+    section: Local candidates
+    title: "San Leandro City Council, District 3"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Lee Thomas, Joseph Trujillo]
+    aliases: { Joseph Trujillo: [Joseph Lawrence Trujillo] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: San Leandro }] }
+  - id: san-leandro-council-5
+    section: Local candidates
+    title: "San Leandro City Council, District 5"
+    kind: candidate
+    rankedChoice: true
+    candidates: [Xouhoa Bowen]
+    aliases: { Xouhoa Bowen: [Xoahoa Bowen] }
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: San Leandro }] }
+  # ---------- Union City ----------
+  - id: union-city-council-2
+    section: Local candidates
+    title: "Union City City Council, District 2"
+    kind: candidate
+    candidates: [Victor Lopez Pulido, Jaime Patino]
+    aliases: { Victor Lopez Pulido: [Victor Daniel Lopez Pulido] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Union City }] }
+  - id: union-city-council-3
+    section: Local candidates
+    title: "Union City City Council, District 3"
+    kind: candidate
+    candidates: [Cheris Crocker-Root, Jeff Wang]
+    aliases: { Cheris Crocker-Root: [Cheris Crocker Root] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Union City }] }
+  - id: union-city-council-4
+    section: Local candidates
+    title: "Union City City Council, District 4"
+    kind: candidate
+    candidates: [Vipan S. Bajwa, Sarabjit Kaur Cheema, Qasim Lodhi, Ann Yap-Jequinto]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Union City }] }
+  - id: union-city-measure-ii
+    section: Local measures
+    title: Union City Measure II
+    kind: measure
+    description: "Union City Essential Services Extension Measure"
+    link: https://alamedacountyca.gov/rov_app/measures
+    jurisdiction: { level: city, name: Union City }

@@ -98,6 +98,9 @@ function slotOf(c: Contest, areas: Area[]): Slot {
   if (j.level === "district" && STATE_DISTRICTS.includes(j.name)) return STATE_SLOT;
   const p = j.level === "district" ? j.within?.[0] : { level: j.level, name: j.name };
   if (!p) return STATE_SLOT;
+  if ((j.within?.length ?? 0) > 1) {
+    if (new Set(j.within!.map((x) => placeCounty(x, areas))).size > 1) return REGION_SLOT;
+  }
   if (p.level === "county") return { key: `county:${p.name}`, county: p.name, city: null };
   if ((j.within?.length ?? 0) > 1) {
     const county = placeCounty(p, areas);
@@ -112,6 +115,12 @@ export const areaCounties = (areas: AreaLike[]) => [...new Set(areas.map(countyO
 
 /** The county whose ballot file holds a contest; null for a statewide or regional one, undefined for a place in no area. */
 export function ballotCounty(c: Contest, areas: Area[]): string | null | undefined {
+  const j = c.jurisdiction;
+  // A local district spanning counties lives in the file of the first county in its `within`.
+  if (j.level === "district" && !STATE_DISTRICTS.includes(j.name) && (j.within?.length ?? 0) > 1) {
+    const counties = new Set(j.within!.map((x) => placeCounty(x, areas)));
+    if (counties.size > 1) return placeCounty(j.within![0], areas) ?? undefined;
+  }
   const slot = slotOf(c, areas);
   if (slot === STATE_SLOT || slot === REGION_SLOT) return null;
   return slot.county ?? undefined;

@@ -14,4 +14,4 @@ Every PR that changes what visitors see or what data the site shows adds an entr
 
 ## Ballot data
 
-Contests are split across `data/2026-11/ballot.yml` (statewide and regional) and `data/2026-11/ballot/<county>.yml` (one county each); areas are `data/areas/<id>.yml`. Adding a county adds files and never edits another county's. See "Ballot and area files" in `docs/runbook.md`.
+Contests are split across `data/2026-11/ballot.yml` (statewide and regional) and `data/2026-11/ballot/<county>.yml` (one county each); areas are `data/areas/<id>.yml`. Adding a county adds its own files; it edits another county's file only to widen a district that spans both counties (add its places to that contest's `within`) or to add a name alias. See "Ballot and area files" in `docs/runbook.md`.
