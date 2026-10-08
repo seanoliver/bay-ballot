@@ -41,7 +41,6 @@ export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, a
       const holders = found.filter((a) => a.kind === "city" && ps.every((p) => p.level === "city" && a.jurisdictions.some((x) => x.level === "city" && x.name === p.name)));
       if (holders.length === 1) return { area: holders[0], place: placeName(holders[0]) };
     }
-    // A contest wholly inside one county belongs to that county's page, when there is exactly one.
     const homes = new Set(ps.map((p) => placeCounty(p, areas)));
     const [home] = homes;
     if (homes.size === 1 && home) {
