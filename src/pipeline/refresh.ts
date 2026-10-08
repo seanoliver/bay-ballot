@@ -4,12 +4,12 @@ import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
-import { EndorsementFile, type ArchivedSource, type Guide, type HeldPick } from "@/lib/schema";
+import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
-import { pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
+import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchMode, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
 import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
@@ -87,6 +87,13 @@ function writeStored(p: string, text: string): void {
 
 const NOT_STORED = "page text not stored, so the next refresh re-extracts the whole guide";
 
+function changedOutside(url: string, old: string | null, fresh: string, outside: Ballot, guideAreas: string[], only: string[]): string | undefined {
+  if (old !== null) return pageGate(old, fresh, outside) === "relevant" ? `${url}: page changed outside ${only.join(", ")}; ${NOT_STORED}` : undefined;
+  if (isPdfDigest(fresh)) return `new page ${url} is a PDF without text; ${NOT_STORED}`;
+  const others = guideAreas.filter((a) => !only.includes(a)).join(", ");
+  return relevantChange("", fresh, outside) ? `new page ${url} also covers ${others}; ${NOT_STORED}` : undefined;
+}
+
 type Fetchedpage = { source: Source; stored: string; path: string; gate: Gate; outsideWarning?: string };
 
 async function refreshGuide(
@@ -120,12 +127,7 @@ async function refreshGuide(
     const p = pagePath(opts.root, opts.election, id, url);
     const stored = storedText(fetched, { ballot });
     const old = readStored(p);
-    const others = guide.areas.filter((a) => !opts.onlyAreas?.includes(a)).join(", ");
-    const outsideWarning = !outside
-      ? undefined
-      : old === null
-        ? relevantChange("", stored, outside) ? `new page ${url} also covers ${others}; ${NOT_STORED}` : undefined
-        : pageGate(old, stored, outside) === "relevant" ? `${url}: page changed outside ${opts.onlyAreas?.join(", ")}; ${NOT_STORED}` : undefined;
+    const outsideWarning = outside ? changedOutside(url, old, stored, outside, guide.areas, opts.onlyAreas ?? []) : undefined;
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
 
@@ -199,6 +201,9 @@ async function refreshGuide(
     result.diff = diffPicks(prev.picks, next.picks);
   }
 
+  if (scoped && !Object.keys(next.picks).some(inScope) && !(next.held ?? []).some((h) => inScope(h.contestId))) {
+    result.warnings?.push(`no endorsements found for ${opts.onlyAreas?.join(", ")}`);
+  }
   result.dataChanged = !sameFile(prev, next);
   if (result.dataChanged) {
     const file = path.join(opts.root, opts.election, "endorsements", `${id}.yml`);

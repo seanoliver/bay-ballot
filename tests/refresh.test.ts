@@ -537,13 +537,13 @@ describe("onlyAreas (widening a guide)", () => {
     ],
   };
 
-  type WideOpts = { held?: EndorsementFile["held"]; verdicts?: Record<string, VerifyOutput["picks"][number]["verdict"]>; missing?: VerifyOutput["missing"]; stored?: boolean; extra?: ExtractOutput["picks"] };
-  function wide(areas: string, { held = before.held, verdicts: over = {}, missing = [], stored = false, extra = [] }: WideOpts = {}) {
+  type WideOpts = { held?: EndorsementFile["held"]; verdicts?: Record<string, VerifyOutput["picks"][number]["verdict"]>; missing?: VerifyOutput["missing"]; stored?: boolean; extra?: ExtractOutput["picks"]; drop?: string[] };
+  function wide(areas: string, { held = before.held, verdicts: over = {}, missing = [], stored = false, extra = [], drop = [] }: WideOpts = {}) {
     const root = setup(["alpha"], { stored });
     fs.writeFileSync(path.join(root, "guides", "alpha.yml"), fs.readFileSync(path.join(root, "guides", "alpha.yml"), "utf8").replace("areas: [sf]", `areas: [${areas}]`));
     const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
-    fs.writeFileSync(file, toYaml({ ...before, held }));
-    const out = { ...widened, picks: [...widened.picks, ...extra] };
+    fs.writeFileSync(file, toYaml({ ...before, held, picks: Object.fromEntries(Object.entries(before.picks).filter(([c]) => !drop.includes(c))) }));
+    const out = { ...widened, picks: [...widened.picks, ...extra].filter((p) => !drop.includes(p.contestId)) };
     const stream = vi.fn((req: { model: string; messages: { content: { type: string; text?: string }[] }[] }) => {
       const audit = req.messages[0].content.at(-1)?.text ?? "";
       const ids = [...audit.matchAll(/"contestId":"([^"]+)"/g)].map((m) => m[1]);
@@ -627,6 +627,28 @@ describe("onlyAreas (widening a guide)", () => {
     expect(summarize(results, { date: "2026-10-07" })).toContain(
       `new page ${url("alpha")} also covers sf; page text not stored, so the next refresh re-extracts the whole guide`,
     );
+  });
+
+  it("doesn't store a new PDF without text, since it can't be checked for other areas, and warns", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const pdf = vi.fn(async (): Promise<Fetched> => ({ kind: "pdf", base64: Buffer.from("%PDF image only").toString("base64"), text: "" }));
+    const results = await runRefresh(deps(client, pdf), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
+    expect(summarize(results, { date: "2026-10-07" })).toContain(
+      `new page ${url("alpha")} is a PDF without text; page text not stored, so the next refresh re-extracts the whole guide`,
+    );
+  });
+
+  it("warns when the run finds no endorsements for the new areas", async () => {
+    const { root, client } = wide("sf, san-mateo", { drop: ["menlo-park-measure-p", "us-rep-16"] });
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(summarize(results, { date: "2026-10-07" })).toContain("- **no endorsements found for san-mateo**");
+  });
+
+  it("doesn't warn about an empty scope when the new areas have picks", async () => {
+    const { root, client } = wide("sf, san-mateo");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, onlyAreas: ["san-mateo"] });
+    expect(summarize(results, { date: "2026-10-07" })).not.toContain("no endorsements found");
   });
 
   it("stores a new page that covers only the new area", async () => {
