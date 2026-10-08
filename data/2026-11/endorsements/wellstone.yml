@@ -1,0 +1,140 @@
+guide: wellstone
+election: 2026-11
+status: published
+source: https://www.wellstoneclub.org/endorsements.html
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  attorney-general:
+    pick:
+      - Rob Bonta
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  controller:
+    pick:
+      - Malia M. Cohen
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-18:
+    pick:
+      - Mia Bonta
+  berkeley-auditor:
+    pick:
+      - Jenny Wong
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+      - Moni Gangopadhyay
+    ranked: true
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-council-8:
+    pick:
+      - Michael Wallman
+  berkeley-usd-board:
+    pick:
+      - Ka'Dijah A. Brown
+      - Sandy Park
+      - Jennifer Shanoski
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Nathan Mizell
+      - Vylma Ortiz
+      - Derek Rodriguez
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-auditor:
+    pick:
+      - Michael C. Houston
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  oakland-usd-4:
+    pick:
+      - Sylvia Pfeiffer Williams
+      - Kathryn Camp
+    ranked: true
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  peralta-ccd-trustee-area-5:
+    pick:
+      - Sandra Weese
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  rtm:
+    pick: Y
+  berkeley-measure-u:
+    pick: Y
+  berkeley-measure-w:
+    pick: Y
+  berkeley-measure-x:
+    pick: Y
+  berkeley-measure-y:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+  berkeley-measure-aa:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y

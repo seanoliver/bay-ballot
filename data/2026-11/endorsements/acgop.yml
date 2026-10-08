@@ -1,0 +1,10 @@
+guide: acgop
+election: 2026-11
+status: published
+source: https://www.alamedagop.org/candidates
+manual: true # the candidates page still shows the June primary field; only the two Union City picks are marked "Election is Nov. 3"
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  union-city-council-2: { pick: [Jaime Patino] }
+  union-city-council-3: { pick: [Jeff Wang] }

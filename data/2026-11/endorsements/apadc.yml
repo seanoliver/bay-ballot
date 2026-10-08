@@ -1,0 +1,45 @@
+guide: apadc
+election: 2026-11
+status: published
+source: https://apademcaucus.org/nov-2026-election-north-alameda-county-endorsed-candidates-for/
+extraSources:
+  - https://apademcaucus.org/nov-2026-election-east-and-south-alameda-county-endorsed-candidates/
+fetchWith: browser
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # apademcaucus.org returns 403 to plain and headless-browser fetches; picks hand-entered from both pages (read in a real browser). Left out: 'Livermore City Council, D2 – Evan Branning' (he filed for D1, which is not on the ballot).
+picks:
+  oakland-auditor: { pick: [Michael C. Houston] }
+  san-leandro-council-5: { pick: [Xouhoa Bowen] }
+  us-rep-12: { pick: [Lateefah Simon] }
+  insurance-commissioner: { pick: [Jane Kim] }
+  state-senate-10: { pick: [Scott Sakakihara] }
+  alameda-council: { pick: [Marcie Johnson] }
+  alameda-usd-board: { pick: [Gary Lym] }
+  berkeley-council-4: { pick: [Igor A. Tregub] }
+  berkeley-council-8: { pick: [Mark Humbert] }
+  oakland-council-2: { pick: [Charlene Wang] }
+  oakland-council-6: { pick: [Kevin E. Jenkins] }
+  ac-transit-ward-3: { pick: [Adriana Valencia] }
+  dublin-council-4: { pick: [Kashef Qaadri] }
+  dublin-usd-trustee-area-5: { pick: [Seema Badar] }
+  pleasanton-council-3: { pick: [Reena Gupta] }
+  castro-valley-usd-trustee-area-2: { pick: [Myla Long] }
+  san-leandro-mayor: { pick: [Juan González III] }
+  hayward-usd-trustee-area-4: { pick: [Michelle Fernelius] }
+  hard-area-2: { pick: [Sara Lamnin] }
+  fremont-council-4: { pick: [Aziz Akbari] }
+  union-city-council-2: { pick: [Victor Lopez Pulido] }
+  union-city-council-3: { pick: [Cheris Crocker-Root] }
+  union-city-council-4: { pick: [Vipan S. Bajwa] }
+  new-haven-usd-trustee-area-4: { pick: [Shruti Kumar] }
+  clpccd-trustee-area-2: { pick: [Linda Granger] }
+  clpccd-trustee-area-3: { pick: [Harris Mojadedi] }
+  ohlone-ccd-trustee-area-6: { pick: ["Suzanne \"Sue\" Lee Chan"] }
+  eden-healthcare-area-3: { pick: [Narges Dillon] }
+  fairview-fire-board: { pick: [Michelle Biche] }
+  ebmud-ward-7: { pick: [April Chan] }
+  ebrpd-ward-3: { pick: [Rebecca Lewington] }
+  acwd-ward-3: { pick: [Paul Sethy] }
+  oro-loma-sanitary-1: { pick: [Shelia Young] }
+  oro-loma-sanitary-3: { pick: [Benny Lee] }

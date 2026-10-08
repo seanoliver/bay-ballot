@@ -1,0 +1,112 @@
+guide: acdp
+election: 2026-11
+status: published
+source: https://acdems.org/wp-content/uploads/2026/09/ACDP-September-2026-Endorsements-Press-Release.docx.pdf # candidate press release, 2026-09-14
+extraSources:
+  - https://acdems.org/wp-content/uploads/2026/09/ACDP-November-2026-Ballot-Measure-Endorsements-Press-Release.docx-1.pdf # measure press release, 2026-09-14
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # acdems.org returns 403 to plain and headless-browser fetches; picks hand-entered from the two press-release PDFs (read in a real browser). Races not on the ballot (Livermore Mayor and D1) are left out.
+picks:
+  berkeley-auditor: { pick: [Jenny Wong] }
+  berkeley-usd-board: { pick: ["Ka'Dijah A. Brown", Sandy Park, Jennifer Shanoski] }
+  hayward-council-6: { pick: [Julie Roche] }
+  oakland-council-4: { pick: [Janani Ramachandran] }
+  oakland-auditor: { pick: [Michael C. Houston] }
+  san-leandro-council-1: { pick: [Sbeydeh Viveros-Walton] }
+  san-leandro-council-2: { pick: [James Aguilar] }
+  san-leandro-council-5: { pick: [Xouhoa Bowen] }
+  alameda-mayor: { pick: [Malia Vella] }
+  alameda-council: { pick: [Thushan Amarasiriwardena, Tyler Savage] }
+  albany-council: { pick: [Robin D. López, Aaron Tiedemann] }
+  berkeley-council-4: { pick: [Igor A. Tregub] }
+  berkeley-council-7: { pick: [Syrak Micael] }
+  berkeley-council-8: { pick: [Mark Humbert] }
+  berkeley-rent-board: { pick: [Avery Arbaugh, Ida Martinac, Carole Marasovic, Nathan Mizell, Vylma Ortiz] }
+  dublin-mayor: { pick: [Michael McCorriston] }
+  dublin-council-2: { pick: [Richard Thornbury] }
+  dublin-council-4: { pick: [Kashef Qaadri] }
+  emeryville-council: { pick: [David Mourra, Corry Frydlewicz] }
+  fremont-council-2: { pick: [Desrie Campbell] }
+  fremont-council-3: { pick: [Kathy Kimberlin] }
+  fremont-council-4: { pick: [Aziz Akbari] }
+  hayward-mayor: { pick: [Mark Salinas] }
+  hayward-council-1: { pick: [George Syrop] }
+  newark-council: { pick: [Matthew Jorgens] }
+  oakland-mayor: { pick: [Barbara Lee] }
+  oakland-council-2: { pick: [Charlene Wang] }
+  oakland-council-6: { pick: [Kevin E. Jenkins] }
+  piedmont-council: { pick: [Adam Hundt] }
+  pleasanton-council-3: { pick: [Jamie Yee] }
+  san-leandro-mayor: { pick: [Juan González III] }
+  union-city-council-2: { pick: [Victor Lopez Pulido] }
+  union-city-council-3: { pick: [Cheris Crocker-Root] }
+  union-city-council-4: { pick: [Sarabjit Kaur Cheema] }
+  clpccd-trustee-area-2: { pick: [Linda Granger] }
+  clpccd-trustee-area-3: { pick: [Harris Mojadedi] }
+  clpccd-trustee-area-6: { pick: [Hal G. Gin] }
+  ohlone-ccd-trustee-area-6: { pick: ["Suzanne \"Sue\" Lee Chan"] }
+  peralta-ccd-trustee-area-5: { pick: [Sandra Weese] }
+  alameda-usd-board: { pick: [Gary Lym, Carrie Hahnel] }
+  albany-usd-board: { pick: [Melissa Boyd, Josh Mahoney, Becky Hopwood] }
+  castro-valley-usd-trustee-area-2: { pick: [Myla Long] }
+  castro-valley-usd-trustee-area-3: { pick: [Eryka N Mathews-Cain] }
+  castro-valley-usd-trustee-area-4: { pick: [Faith Carroll] }
+  dublin-usd-trustee-area-3: { pick: [Tanner Frye] }
+  dublin-usd-trustee-area-5: { pick: [Seema Badar] }
+  emery-usd-board: { pick: [Christopher Keith Allen, Regina Chagolla, Kimberly Solis] }
+  hayward-usd-trustee-area-2: { pick: [Joann Guzman] }
+  hayward-usd-trustee-area-4: { pick: [Michelle Fernelius] }
+  livermore-vjusd-trustee-area-2: { pick: [Tara Boyce] }
+  livermore-vjusd-trustee-area-3: { pick: [Angela M. Brady] }
+  new-haven-usd-trustee-area-4: { pick: [Shruti Kumar] }
+  oakland-usd-4: { pick: [Kathryn Camp] }
+  pleasanton-usd-trustee-area-5: { pick: [Karen Fletcher] }
+  sunol-glen-usd-board: { pick: [Karen Ruth Newcomb, René Turnbull] }
+  ac-transit-ward-3: { pick: [Adriana Valencia] }
+  ac-transit-ward-4: { pick: [Sarah Syed] }
+  ac-transit-ward-5: { pick: [Murphy McCalley] }
+  acwd-ward-2: { pick: [Jason Miguel] }
+  acwd-ward-3: { pick: [Paul Sethy] }
+  bart-4: { pick: [Robert Raburn] }
+  castro-valley-sanitary-board: { pick: [Ralph Johnson, "Kristy (Dooman) Woerz"] }
+  ebmud-ward-3: { pick: [Marguerite Young] }
+  ebmud-ward-7: { pick: [Gary Wolff] }
+  ebrpd-ward-3: { pick: [Rebecca Lewington] }
+  ebrpd-ward-5: { pick: [Olivia Sanwong] }
+  eden-healthcare-area-3: { pick: [Narges Dillon] }
+  fairview-fire-board: { pick: [Michelle Biche, Michael D. Justice] }
+  hard-area-2: { pick: [Sara Lamnin] }
+  hard-area-4: { pick: ["Paul W. Hodges, Jr."] }
+  larpd-board: { pick: [Laureen Turner] }
+  oro-loma-sanitary-1: { pick: [Shelia Young] }
+  oro-loma-sanitary-3: { pick: [Fred Simon] }
+  oro-loma-sanitary-5: { pick: [Rita Duncan] }
+  rtm: { pick: Y }
+  dublin-usd-measure-i: { pick: Y }
+  san-lorenzo-usd-measure-j: { pick: Y }
+  sunol-glen-usd-measure-k: { pick: Y }
+  alameda-measure-l: { pick: Y }
+  alameda-measure-m: { pick: Y }
+  alameda-measure-n: { pick: Y }
+  albany-measure-o: { pick: Y }
+  albany-measure-p: { pick: Y }
+  albany-measure-q: { pick: Y }
+  albany-measure-r: { pick: Y }
+  albany-measure-s: { pick: Y }
+  albany-measure-t: { pick: Y }
+  berkeley-measure-u: { pick: Y }
+  berkeley-measure-v: { pick: Y }
+  berkeley-measure-w: { pick: Y }
+  berkeley-measure-x: { pick: Y }
+  berkeley-measure-y: { pick: Y }
+  berkeley-measure-z: { pick: Y }
+  berkeley-measure-aa: { pick: Y }
+  emeryville-measure-bb: { pick: Y }
+  hayward-measure-cc: { pick: Y }
+  newark-measure-dd: { pick: Y }
+  oakland-measure-ee: { pick: Y }
+  oakland-measure-ff: { pick: Y }
+  piedmont-measure-gg: { pick: Y }
+  pleasanton-measure-hh: { pick: Y }
+  union-city-measure-ii: { pick: Y }

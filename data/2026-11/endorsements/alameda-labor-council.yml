@@ -1,0 +1,278 @@
+guide: alameda-labor-council
+election: 2026-11
+status: published
+source: https://docs.google.com/document/d/17P9ht52TNggvTUvs5ZEtCeiWC6kNYrVF_uGE8MMCDvU/export?format=txt
+allowForeignSources: true
+fetchedAt: 2026-10-07
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  attorney-general:
+    pick:
+      - Rob Bonta
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-20:
+    pick:
+      - Liz Ortega
+  assembly-24:
+    pick:
+      - Alex Lee
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: Y
+  prop-45:
+    pick: N
+  alameda-mayor:
+    pick:
+      - Malia Vella
+  alameda-council:
+    pick:
+      - Thushan Amarasiriwardena
+      - Tyler Savage
+  alameda-usd-board:
+    pick:
+      - Carrie Hahnel
+      - Gary Lym
+  alameda-measure-l:
+    pick: Y
+  albany-council:
+    pick:
+      - Robin D. López
+      - Aaron Tiedemann
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  berkeley-usd-board:
+    pick:
+      - Ka'Dijah A. Brown
+      - Sandy Park
+      - Jennifer Shanoski
+  berkeley-rent-board:
+    pick:
+      - Avery Arbaugh
+      - Ida Martinac
+      - Vylma Ortiz
+      - Derek Rodriguez
+      - Nathan Mizell
+  berkeley-measure-u:
+    pick: Y
+  berkeley-measure-v:
+    pick: Y
+  berkeley-measure-y:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+  dublin-mayor:
+    pick:
+      - Michael McCorriston
+  dublin-council-4:
+    pick:
+      - Kashef Qaadri
+  dublin-usd-trustee-area-3:
+    pick:
+      - Tanner Frye
+  dublin-usd-trustee-area-5:
+    pick:
+      - Seema Badar
+  emery-usd-board:
+    pick:
+      - Regina Chagolla
+  fremont-council-2:
+    pick:
+      - Desrie Campbell
+  fremont-council-3:
+    pick:
+      - Kathy Kimberlin
+  fremont-council-4:
+    pick:
+      - Aziz Akbari
+  hayward-council-1:
+    pick:
+      - George Syrop
+  hayward-usd-trustee-area-4:
+    pick:
+      - Michelle Fernelius
+  hard-area-2:
+    pick:
+      - Sara Lamnin
+  hayward-measure-cc:
+    pick: Y
+  livermore-vjusd-trustee-area-5:
+    pick:
+      - Christiaan VandenHeuvel
+  newark-council:
+    pick:
+      - Eve Marie Little
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-council-6:
+    pick:
+      - Kevin E. Jenkins
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+  pleasanton-council-3:
+    pick:
+      - Jamie Yee
+      - Reena Gupta
+  san-leandro-council-1:
+    pick:
+      - Sbeydeh Viveros-Walton
+  san-leandro-council-2:
+    pick:
+      - James Aguilar
+  san-leandro-council-3:
+    pick:
+      - Joseph Trujillo
+  san-leandro-council-5:
+    pick:
+      - Xouhoa Bowen
+  union-city-council-2:
+    pick:
+      - Jaime Patino
+  union-city-council-3:
+    pick:
+      - Cheris Crocker-Root
+      - Jeff Wang
+  new-haven-usd-trustee-area-4:
+    pick:
+      - Shruti Kumar
+  new-haven-usd-trustee-area-5:
+    pick:
+      - Francis Rojas
+      - Deepti Garg
+  rtm:
+    pick: Y
+  ac-transit-ward-3:
+    pick:
+      - Joel B. Young
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+  ac-transit-ward-5:
+    pick:
+      - Murphy McCalley
+  bart-4:
+    pick:
+      - Robert Raburn
+  clpccd-trustee-area-2:
+    pick:
+      - Linda Granger
+  clpccd-trustee-area-3:
+    pick:
+      - Harris Mojadedi
+  clpccd-trustee-area-6:
+    pick:
+      - Hal G. Gin
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  ebmud-ward-7:
+    pick:
+      - Gary Wolff
+  ebrpd-ward-3:
+    pick:
+      - Rebecca Lewington
+  ebrpd-ward-5:
+    pick:
+      - Olivia Sanwong
+  eden-healthcare-area-3:
+    pick:
+      - Narges Dillon
+  ohlone-ccd-trustee-area-6:
+    pick:
+      - Sonia Salwan
+  oro-loma-sanitary-1:
+    pick:
+      - Tiare Peña
+  oro-loma-sanitary-3:
+    pick:
+      - Fred Simon
+  oro-loma-sanitary-5:
+    pick:
+      - Rita Duncan
+  peralta-ccd-trustee-area-5:
+    pick:
+      - Sandra Weese
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+      - Moni Gangopadhyay
+  oakland-usd-4:
+    pick:
+      - Sylvia Pfeiffer Williams
+      - Kathryn Camp

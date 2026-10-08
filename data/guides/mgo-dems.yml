@@ -1,0 +1,7 @@
+id: mgo-dems
+name: Metropolitan Greater Oakland Democratic Club
+shortName: "MGO Dems"
+description: A Democratic club in Oakland.
+type: club
+homepage: https://mgodems.org/
+areas: [alameda-county, oakland]

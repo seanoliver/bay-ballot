@@ -1,0 +1,7 @@
+id: lwv-alameda
+name: League of Women Voters of Alameda
+shortName: "LWV Alameda"
+description: The nonpartisan League of Women Voters for the city of Alameda, which takes positions on measures but never endorses candidates.
+type: civic
+homepage: https://www.lwvalameda.org/
+areas: [alameda-county]

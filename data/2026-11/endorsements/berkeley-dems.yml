@@ -1,0 +1,128 @@
+guide: berkeley-dems
+election: 2026-11
+status: published
+source: https://www.berkeleydemocraticclub.com/votebdc26/
+fetchedAt: 2026-10-07
+hasReasoning: true
+rejectedQuotes:
+  - text: However, the bank is not yet authorized to operate because California law requires state approval and FDIC insurance.
+    reason: "does not stand alone: opens with a connector (review 2026-10-07)"
+    contestId: berkeley-measure-z
+picks:
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+    quotes:
+      - text: In her first term in Congress, Lateefah Simon delivered federal investments for the East Bay, like the new community plaza at Ashby BART, transportation safety improvements, and local education and research projects.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Simon has a record of bringing federal resources home while advocating relentlessly for the communities she represents.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  assembly-14:
+    pick:
+      - Buffy Wicks
+    quotes:
+      - text: Assemblymember Buffy Wicks is a powerhouse in California politics, becoming one of the Legislature’s most influential voices on housing and affordability while serving as chair of the Assembly Appropriations Committee.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Over the past two years, she helped lead major reforms to make housing easier and faster to build.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-auditor:
+    pick:
+      - Jenny Wong
+    quotes:
+      - text: Since 2018, Jenny Wong has audited a variety of city services, including street maintenance, fire inspections, homelessness response, and staffing.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: With more than 25 years of auditing experience, Jenny has made audit findings and departments’ responses more accessible to the public, and audits completed under her leadership have earned national awards.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Berkeley needs her independent, careful oversight.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-council-1:
+    pick:
+      - Ross Bernet
+    quotes:
+      - text: Ross Bernet has spent years protecting the environment at the local, national, and international levels, working in diverse coalitions to solve vexing problems.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Berkeley would benefit from his judgment, environmental expertise, and focus on getting the basics right.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+    quotes:
+      - text: Since joining the City Council, Igor Tregub has worked to make downtown Berkeley a better place to live, work, and visit.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+    quotes:
+      - text: Syrak is a talented organizer who keeps students engaged in local politics through campus organizing and voter registration.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Syrak also worked with the Alameda Labor Council to organize campus support for Proposition 50 to fight back against Donald Trump’s attempt to rig elections.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-council-8:
+    pick:
+      - Mark Humbert
+    quotes:
+      - text: Councilmember Mark Humbert offers the experience City Hall needs.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-rent-board:
+    pick:
+      - Carole Marasovic
+    quotes:
+      - text: Carole Marasovic has been a long-time fixture in Berkeley politics and closely follows local legislation.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: As chair of the Homeless Panel of Experts, Carole has shown her dedication to housing security and offers a balanced, pragmatic approach, focusing on outcomes rather than ideology.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-usd-board:
+    pick:
+      - Ka'Dijah A. Brown
+      - Sandy Park
+      - Jennifer Shanoski
+    quotes:
+      - text: Brown and Shanoski are incumbents running for re-election and have increased the accessibility of bathrooms in the district, supported the construction of new facilities, supported the community with afterschool needs and transportation, and supported expanding Career Technical education for high school students.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Sandy Park is a 25 year veteran school teacher and administrator who wants to demystify the School Board and build a culture of shared decisionmaking.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  rtm:
+    pick: Y
+    quotes:
+      - text: The Bay Area needs public transit to get workers to jobs, students to school, and people across the region to the places they need to go.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Severe service cuts would be catastrophic.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: The Bay Area cannot afford to let transit collapse.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-u:
+    pick: Y
+    quotes:
+      - text: Measure U would repair and improve Berkeley’s aging infrastructure, including fire stations, emergency response facilities, sidewalks, parks, community centers, and public buildings.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-v:
+    pick: Y
+    quotes:
+      - text: Without the passage of Measure V, City Council will have to cut more positions.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Measure V adds a modest half-cent sales tax to prevent these cuts and protect public safety, youth, and vital community services.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-w:
+    pick: Y
+    quotes:
+      - text: Measure W is a noncontroversial measure that makes administrative changes to the charter.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-x:
+    pick: Y
+    quotes:
+      - text: Broadly, Measure X closes loopholes in the current Rent Stabilization Ordinance, improves its administration, and provides modest additional tenant protections.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-y:
+    pick: Y
+    quotes:
+      - text: Beyond direct artistic funding, Measure Y supports Berkeley’s creative economy and guarantees community benefits like free performances, after-school youth programming, and ticket discounts for residents and workers.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+  berkeley-measure-z:
+    pick: N
+  berkeley-measure-aa:
+    pick: Y
+    quotes:
+      - text: Over the past decade, the tax has funded school gardens, nutrition education, health screenings, and community programs benefiting children and families throughout Berkeley.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Berkeley has ten years of results showing what this tax can do.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/

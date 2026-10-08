@@ -1,0 +1,70 @@
+guide: oakland-rising-action
+election: 2026-11
+status: published
+source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+fetchedAt: 2026-10-07
+hasReasoning: true
+rejectedQuotes:
+  - text: Measure EE is a charter amendment that clarifies the Mayor and City Council's responsibilities, powers, and accountability structures.
+    reason: "descriptive: says what the measure does (review 2026-10-07)"
+    contestId: oakland-measure-ee
+picks:
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+    quotes:
+      - text: Barbara Lee’s progressive leadership is essential to improving the dysfunction in City Hall.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+      - text: Most importantly, Lee has advanced good governance for Oakland, especially fiscal actions to ensure voter-approved dollars work faster for us.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+  oakland-usd-2:
+    pick:
+      - Jennifer Brouhard
+    quotes:
+      - text: As School Board President, Jennifer has led the board to work together to advance the structural changes OUSD needs for long-term success.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+      - text: With four decades of experience as an Oakland educator, parent, grandparent, union leader, and school board member, Jennifer’s deep understanding of OUSD and its leadership is critical to moving our schools toward a healthier, stronger future.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+  oakland-usd-6:
+    pick:
+      - Valarie Bachelor
+    quotes:
+      - text: As Vice President of the Board, Valarie has been instrumental in building the policies and partnerships OUSD needs to keep its promises to Oakland students and families.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  oakland-measure-ee:
+    pick: Y
+  oakland-measure-ff:
+    pick: Y
+    quotes:
+      - text: Measure FF closes a business tax loophole that lets big real estate companies buy large numbers of Oakland properties at once without paying their fair share in taxes.
+        source: https://oaklandrisingaction.org/homepage/2026-oakland-progressive-voter-guide/
+  rtm:
+    pick: Y
