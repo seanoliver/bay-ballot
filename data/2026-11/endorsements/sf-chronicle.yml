@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
   lt-governor:
@@ -62,8 +62,6 @@ picks:
   prop-1:
     pick: Y
     quotes:
-      - text: Befitting the broad consensus on California’s affordability crisis, Prop 1 has no formal opposition.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-3:
@@ -74,7 +72,7 @@ picks:
   prop-4:
     pick: N
     quotes:
-      - text: And Prop 4 has a fatal flaw that opens the door to limited taxpayer funds being wasted on efforts that don’t meaningfully move the needle — at a time of widespread budget deficits.
+      - text: Prop 4 has a fatal flaw that opens the door to limited taxpayer funds being wasted on efforts that don’t meaningfully move the needle — at a time of widespread budget deficits.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-37:
     pick: Y
@@ -90,7 +88,7 @@ picks:
   prop-42:
     pick: N
     quotes:
-      - text: And you don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
+      - text: You don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-44:
     pick: N
@@ -131,9 +129,6 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-h:
     pick: Y
-    quotes:
-      - text: Proposition H would help stem the bleeding.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-i:
     pick: N
     quotes:
