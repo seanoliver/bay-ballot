@@ -1,0 +1,7 @@
+id: marin-dems
+name: Marin County Democratic Party
+shortName: "Marin Democrats"
+description: The official Democratic Party committee for Marin County.
+type: party
+homepage: https://marindemocrats.org/
+areas: [marin]

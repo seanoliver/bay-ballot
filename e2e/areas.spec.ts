@@ -150,6 +150,17 @@ test("the Counties filter hides a county's contests, keeps statewide ones, and p
   await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toBeVisible();
 });
 
+test("Marin has its own page and a box in the Counties filter", async ({ page }, info) => {
+  await page.goto(`${BALLOT}/marin`);
+  await expect(page.getByRole("heading", { level: 1, name: "Marin County ballot" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Marin County", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+  await openBallot(page);
+  if (isPhone(info)) await page.getByRole("button", { name: /Filters/ }).click();
+  const panel = isPhone(info) ? page.getByRole("dialog") : page.getByRole("complementary", { name: "Filters" });
+  await expect(panel.getByRole("group", { name: "Counties" }).getByRole("checkbox", { name: "Marin", exact: true })).toBeVisible();
+});
+
 test("area pages have no Counties filter", async ({ page }, info) => {
   test.skip(isPhone(info), "the sidebar is the same component on phone");
   await page.goto(`${BALLOT}/san-mateo`);

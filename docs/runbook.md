@@ -134,7 +134,7 @@ Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasRe
 Each county's data lives in files of its own, so branches adding different counties don't touch the same file.
 
 - `data/2026-11/ballot.yml`: the election header and the contests every county shares: state offices and propositions, Congress, State Senate, Assembly, Board of Equalization and Court of Appeal districts (`STATE_DISTRICTS` in `src/lib/areas.ts`), and `level: region` measures.
-- `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
+- `data/2026-11/ballot/<county-slug>.yml` (`san-francisco.yml`, `san-mateo.yml`, `santa-clara.yml`, `marin.yml`): a `contests:` list for one county. A contest belongs to the county of its jurisdiction: the county itself, a city in it, or a district whose first `within` place is in it. This includes BART and other special districts.
 - `data/areas/<area-id>.yml`: one area, with an `order` number. Areas are listed by `order` (then id), and that also sets the county order on the ballot pages.
 
 The site merges them: `ballot.yml`'s contests first, then each county file in area order. A county file's optional `placement:` maps one of its sections to a section of `ballot.yml`; those contests go right after that section instead of at the end. Only `san-francisco.yml` uses it, to keep the SF ballot worksheet's order.
@@ -143,15 +143,18 @@ The site merges them: `ballot.yml`'s contests first, then each county file in ar
 
 To add a county (Contra Costa, Alameda, Marin):
 
-1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40). Two areas with the same `order` are sorted by id.
+1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40, and 70 for Marin). Two areas with the same `order` are sorted by id.
 2. Add `data/2026-11/ballot/<county-slug>.yml` (for example `contra-costa.yml`) holding every contest that belongs to that county.
 3. Edit `ballot.yml` only for a shared contest: a new Congress or Assembly district, or a district or regional measure that now lists the new county in `within`.
 
 ## Pending follow-ups
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
+- mercury-news `ross-council` (Julie A McMillan, Robert Herbst) was added by hand on 2026-10-07 from the IJ's 9/27 Ross editorial, which the extractor missed. After the next re-extract of mercury-news, check that the pick and its quote survived; if not, add them back by hand.
+- Marin County races follow the San Mateo rule: a local race is on the ballot only when a guide takes a position. The Marin IJ publishes one editorial at a time; when a guide covers a Marin race that isn't in `data/2026-11/ballot/marin.yml`, add it from `data/2026-11/sources/Marin-Candidates-Nov2026.txt` and re-extract that guide. New IJ editorials need adding to mercury-news's `extraSources`.
 - San Mateo County local candidate races are on the ballot only when a guide takes a position on them. When a guide covers a race that isn't there (the Daily Journal publishes one editorial at a time), add the race to `data/2026-11/ballot/san-mateo.yml` from the registrar's roster (https://smcacre.gov/system/files/2026-09/52_candidateroster0903.pdf; a redacted text extract is in `data/2026-11/sources/SMC-Candidate-Roster-0903.txt`) and re-extract that guide. Refresh doesn't add races on its own yet.
 - palo-alto-forward's page has only one-line taglines and no quotable reasons, so `hasReasoning` is set to false by hand (2026-10-06). A re-extract can set it back; check it after one.
+- yimby-action's `hasReasoning` is set to false by hand (2026-10-07). Its only reason quote is the Marin YIMBY one on AD12, out of more than 40 picks, and true would count it as a guide that explains on SF and Peninsula contests. A re-extract can set it back; check it after one.
 - Santa Clara County contests come from sample ballots, not the registrar site: vote.santaclaracounty.gov and rovservices.sccgov.org block automated browsers. `data/2026-11/sources/SCC-Sample-Ballots-PA-MV.txt` lists the precincts and ballot styles sampled through the County Voter Information Guide (https://ca.omniballot.us/sites/06085/site/app/cvig/vg/info?pid=<precinct>). Omniballot throttles fast lookups, so sample one precinct at a time.
 - Not yet published for Palo Alto and Mountain View as of 2026-10-06: Palo Alto Weekly / Palo Alto Online, Mountain View Voice, and Mercury News local picks. LWV Los Altos-Mountain View and the Los Altos Town Crier have no Palo Alto or Mountain View positions yet.
 - Not yet published for San Mateo County as of 2026-10-06: The Almanac, Redwood City Pulse, Half Moon Bay Review, Coastsider (site down) and Mercury News local picks. Add them when they publish.

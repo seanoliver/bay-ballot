@@ -6,6 +6,22 @@ extraSources:
   - https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
   - https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   - https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+  - https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
+  - https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+  - https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+  - https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+  - https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+  - https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+  - https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+  - https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+  - https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+  - https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
+  - https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+  - https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+  - https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+  - https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  - https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+allowForeignSources: true # Marin IJ editorials (same Bay Area News Group)
 archived:
   - source: https://www.mercurynews.com/opinion/endorsements/
     snapshot: https://web.archive.org/web/20261006232819/https://www.mercurynews.com/opinion/endorsements/
@@ -15,7 +31,37 @@ archived:
     snapshot: https://web.archive.org/web/20261007005226/https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   - source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
     snapshot: https://web.archive.org/web/20261007005328/https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
-fetchedAt: 2026-10-06
+  - source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
+    snapshot: https://web.archive.org/web/20261007200857/https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
+  - source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+    snapshot: https://web.archive.org/web/20261007201012/https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+  - source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+    snapshot: https://web.archive.org/web/20261007201108/https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+  - source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+    snapshot: https://web.archive.org/web/20260907073614/https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+  - source: https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+    snapshot: https://web.archive.org/web/20261007201353/https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+  - source: https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+    snapshot: https://web.archive.org/web/20261007201442/https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+  - source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+    snapshot: https://web.archive.org/web/20261007201530/https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+  - source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+    snapshot: https://web.archive.org/web/20261007201606/https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+  - source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+    snapshot: https://web.archive.org/web/20261007201744/https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+  - source: https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
+    snapshot: https://web.archive.org/web/20261007201821/https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
+  - source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+    snapshot: https://web.archive.org/web/20261007201958/https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+  - source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+    snapshot: https://web.archive.org/web/20261007202341/https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+  - source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+    snapshot: https://web.archive.org/web/20261007202524/https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  - source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+    snapshot: https://web.archive.org/web/20261007202247/https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+  - source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+    snapshot: https://web.archive.org/web/20261007202709/https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+fetchedAt: 2026-10-07
 hasReasoning: true
 picks:
   lt-governor:
@@ -44,3 +90,126 @@ picks:
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
       - text: Hawks’ black box of a résumé does not inspire confidence she can manage California’s $162 billion investment portfolio.
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+  state-senate-2:
+    pick:
+      - Damon Connolly
+    quotes:
+      - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
+        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
+  us-rep-2:
+    pick:
+      - Jared Huffman
+    quotes:
+      - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
+        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+  assembly-12:
+    pick:
+      - Eric Lucan
+    quotes:
+      - text: Given his deep experience in leadership positions in Marin, including the bi-county Sonoma-Marin Area Rail Transit board, Lucan brings the most political leadership to the race.
+        source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+      - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
+        source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+  novato-usd-trustee-area-4:
+    pick:
+      - Abbey Picus
+    quotes:
+      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+      - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+  san-rafael-council-3:
+    pick:
+      - Daryoush Davidi
+    quotes:
+      - text: Davidi’s stronger connection with San Rafael’s business community would fill a lacking need on the current council.
+        source: https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+  novato-council-2:
+    pick:
+      - Rachel Farac
+  novato-council-4:
+    pick:
+      - Dan Christian
+    quotes:
+      - text: Christian stands out as a pragmatic choice, someone in touch with residents and the business community.
+        source: https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+  larkspur-council:
+    pick:
+      - Stephanie Andre
+      - Sarah Margulies
+      - Jeanne Friedel
+    quotes:
+      - text: Andre, Margulies and Friedel are solid experienced choices for the council.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+      - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+      - text: Andre, a former investment banker, has brought her business acumen to the council.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+  san-anselmo-council:
+    pick:
+      - Steve Burdo
+      - Will Dittmar
+    quotes:
+      - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+      - text: Dittmar would strengthen the council’s balance.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+  tiburon-council:
+    pick:
+      - Jack Ryan
+      - Kathleen Defever
+      - Chuck Hornbrook
+    quotes:
+      - text: The two newcomers and Ryan bring a complementary set of expertise that appears most likely to help the town tackle its biggest challenges.
+        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+      - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
+        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+  sausalito-council:
+    pick:
+      - Joan Cox
+      - Jill James Hoffman
+  marin-county-measure-p:
+    pick: Y
+    quotes:
+      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+      - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+  sausalito-measure-x:
+    pick: Y
+    quotes:
+      - text: Sausalito can no longer afford inaction.
+        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+  marin-healthcare-measure-cc:
+    pick: Y
+    quotes:
+      - text: Supporters of Measure CC are right, MarinHealth needs another push as it tries to gain steady footing in providing independent quality care.
+        source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  marin-healthcare-district-3:
+    pick:
+      - Brian Su
+    quotes:
+      - text: Dr. Brian Su has the institutional knowledge and the details down.
+        source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  marin-healthcare-district-1:
+    pick:
+      - Clayton Hess
+    quotes:
+      - text: Su and other board members are clearly being pushed by Dr. Clayton Hess, who has done his homework and brings fresh ideas.
+        source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+  san-rafael-measure-w:
+    pick: N
+    quotes:
+      - text: Measure W would raise that charge by five-fold to 1% – highest in the county.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+      - text: Affordability is a big concern.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+      - text: The big increase will bring in more than the city needs right now.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+  ross-council:
+    pick:
+      - Julie A McMillan
+      - Robert Herbst
+    quotes:
+      - text: McMillan and Herbst offer a balance and breadth of civic experience and perspectives.
+        source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/

@@ -1,0 +1,7 @@
+id: marin-gop
+name: Marin County Republican Party
+shortName: "Marin Republicans"
+description: The official Republican Party committee for Marin County.
+type: party
+homepage: https://maringop.org/
+areas: [marin]

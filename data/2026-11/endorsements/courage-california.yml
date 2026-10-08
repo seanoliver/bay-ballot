@@ -4,12 +4,15 @@ status: published
 source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
 extraSources:
   - https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  - https://www.progressivevotersguide.com/california/2026/general/county/marin
 archived:
   - source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
     snapshot: https://web.archive.org/web/20261006200128/https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   - source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
-fetchedAt: 2026-10-06
+  - source: https://www.progressivevotersguide.com/california/2026/general/county/marin
+    snapshot: https://web.archive.org/web/20261007203549/https://www.progressivevotersguide.com/california/2026/general/county/marin
+fetchedAt: 2026-10-07
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -142,3 +145,12 @@ picks:
     quotes:
       - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward

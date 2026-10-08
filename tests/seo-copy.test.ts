@@ -49,6 +49,8 @@ describe("familyName", () => {
     ["Phil Kim", "Kim"],
     ["Autumn Brown Garibay", "Brown Garibay"],
     ["Michael T. Nguyen", "Nguyen"],
+    ["Julie A McMillan", "McMillan"],
+    ["Herb W Morgan", "Morgan"],
     ["Dionjay (DJ) Brookter", "Brookter"],
     ['Emanuel "Manny" Yekutiel', "Yekutiel"],
     ["J.R. Eppler", "Eppler"],

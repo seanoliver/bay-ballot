@@ -198,13 +198,15 @@ test.describe("desktop keyboard", () => {
 
   test("arrow keys walk the list and keep the URL in step", async ({ page }) => {
     await openBallot(page);
+    const [first, second] = await page.locator("[id^=row-d-]").evaluateAll((els) => els.slice(0, 2).map((e) => e.id.replace("row-d-", "")));
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
-    await expect(page).toHaveURL(/[?&]c=us-rep-15/);
-    await expect(page.getByRole("region", { name: "United States Representative, District 15" })).toBeVisible();
-    await expect(page.locator("#row-d-us-rep-15")).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${second}(&|$)`));
+    const title = (await page.locator(`#row-d-${second}`).textContent())!.trim();
+    await expect(page.getByRole("region", { name: title, exact: true })).toBeVisible();
+    await expect(page.locator(`#row-d-${second}`)).toBeFocused();
     await page.keyboard.press("ArrowUp");
-    await expect(page).toHaveURL(/[?&]c=us-rep-11/);
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${first}(&|$)`));
   });
 
   test("typing in the guide search doesn't move the selection; / focuses it", async ({ page }) => {

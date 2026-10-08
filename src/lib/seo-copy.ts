@@ -41,7 +41,7 @@ export function familyName(name: string): string {
     .split(/[\s,]+/)
     .filter(Boolean);
   while (tokens.length > 1 && SUFFIX.test(tokens.at(-1) as string)) tokens.pop();
-  const rest = tokens.slice(1).filter((t) => !/^[A-Z]\.$/.test(t));
+  const rest = tokens.slice(1).filter((t) => !/^[A-Z]\.?$/.test(t));
   return rest.length ? rest.join(" ") : (tokens[0] ?? name);
 }
 

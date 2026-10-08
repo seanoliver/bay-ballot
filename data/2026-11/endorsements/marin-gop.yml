@@ -1,0 +1,42 @@
+guide: marin-gop
+election: 2026-11
+status: published
+source: https://maringop.org/elections/endorsements/ # "Marin GOP Recommendations for the 11/3/2026 General Election"; measure positions in page text
+extraSources:
+  - https://maringop.org/2026/09/15/marin-gop-endorses/ # candidates and props are two PNG cards on this post; no page text
+  - https://maringop.org/wp-content/uploads/2026/09/Artboard-1@4x-1.png
+  - https://maringop.org/wp-content/uploads/2026/09/Artboard-2@4x-1.png
+fetchedAt: 2026-10-07
+hasReasoning: false
+manual: true # picks hand-entered from the two slate images and the measures page; extract skips this guide
+picks:
+  us-rep-2: { pick: ["Robin Littau"] }
+  governor: { pick: ["Steve Hilton"] }
+  lt-governor: { pick: ["Gloria Romero"] }
+  secretary-of-state: { pick: ["Donald P. (Don) Wagner"] }
+  controller: { pick: ["Herb W Morgan"] }
+  treasurer: { pick: ["Jennifer Hawks"] }
+  attorney-general: { pick: ["Michael E. Gates"] }
+  state-senate-2: { pick: ["Tief Gibbs"] }
+  superintendent: { pick: ["Sonja Shaw"] }
+  prop-1: { pick: N }
+  prop-2: { pick: N }
+  prop-3: { pick: N }
+  prop-4: { pick: N }
+  prop-5: { pick: N }
+  prop-37: { pick: N }
+  prop-38: { pick: N }
+  prop-39: { pick: Y }
+  prop-40: { pick: N }
+  prop-41: { pick: Y }
+  prop-42: { pick: Y }
+  prop-43: { pick: Y }
+  prop-44: { pick: N }
+  prop-45: { pick: N }
+  marin-county-board-of-education-3: { pick: ["Craig Stuart Adams"] }
+  marin-county-measure-p: { pick: N }
+  novato-council-4: { pick: ["Chris Carpiniello"] }
+  novato-usd-trustee-area-4: { pick: ["Francis Drouillard"] }
+  marin-healthcare-district-1: { pick: ["Clayton Hess"] }
+  marin-healthcare-measure-cc: { pick: N }
+  richardson-bay-sanitary-director: { pick: ["John Turnacliff"] }
