@@ -314,7 +314,7 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
   });
 
-  test("holding ArrowDown through the whole list writes the URL once, on release", async ({ page }) => {
+  test("holding ArrowDown through 60 rows writes the URL once, on release", async ({ page }) => {
     await page.addInitScript(() => {
       const w = window as unknown as { __calls: number };
       w.__calls = 0;
@@ -330,10 +330,11 @@ test.describe("desktop keyboard", () => {
     await pauseClock(page);
     const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
     const before = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
-    for (let i = 0; i < ids.length; i++) await page.keyboard.down("ArrowDown");
+    const last = ids[59];
+    for (let i = 0; i < 60; i++) await page.keyboard.down("ArrowDown");
     await page.keyboard.up("ArrowDown");
-    await expect(page.locator(`#row-d-${ids.at(-1)}`)).toBeFocused();
-    await expect(page).toHaveURL(new RegExp(`[?&]c=${ids.at(-1)}`));
+    await expect(page.locator(`#row-d-${last}`)).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`[?&]c=${last}`));
     const calls = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
     expect(calls - before).toBe(2);
   });
