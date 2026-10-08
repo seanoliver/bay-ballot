@@ -206,7 +206,7 @@ describe("verifierPrompt", () => {
   });
   it("is deterministic for caching", () => expect(verifierPrompt(ballot)).toBe(prompt));
   it("treats a candidate labelled Open Endorsement as not endorsed, and an open seat as no signal", () => {
-    expect(prompt).toContain('A candidate labelled "Open Endorsement" is not endorsed; an "open seat" (a vacancy) says nothing about the pick.');
+    expect(prompt).toContain('A candidate labelled "Open Endorsement" (or "Open" in a column of endorsement statuses) is not endorsed; an "open seat" (a vacancy) says nothing about the pick.');
   });
 });
 

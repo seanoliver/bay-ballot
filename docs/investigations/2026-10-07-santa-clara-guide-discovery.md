@@ -178,7 +178,7 @@ That leaves **59 new local candidate contests**. Each has at least one guide pic
 | R | Orchard SD | Parcel tax | 2/3 | **new** | SCCDP Yes, SV DSA Yes, SVTA No |
 | S | El Camino Healthcare District | Director term limits | Majority | yes | (+ SV DSA Yes) |
 
-**10 new measures.** No county or San Jose measures are on the ballot. **Measure N** is a Los Gatos-Saratoga district measure that a few Palo Alto voters also see (Ballot Type 2 in `SCC-Sample-Ballots-PA-MV.txt`). Its `within` should be `{ level: county, name: Santa Clara }`, not a city.
+**10 new measures.** No county or San Jose measures are on the ballot. **Measure N** is a Los Gatos-Saratoga district measure that a few Palo Alto voters also see (Ballot Type 2 in `SCC-Sample-Ballots-PA-MV.txt`). Its `within` now lists the cities whose ballot styles carry it (Palo Alto, Cupertino, San Jose, Saratoga, Monte Sereno, Los Gatos), from the ballot-style audit.
 
 **Total new in `santa-clara.yml`: 59 candidate contests + 10 measures = 69.** Existing naming suggests ids like `cupertino-council`, `san-jose-council-5`, `santa-clara-mayor`, `milpitas-mayor`, `morgan-hill-council-b`, `valley-water-6`, `midpen-ward-1`, `sjusd-trustee-area-2`, `esuhsd-trustee-area-1`, `county-board-of-education-7`, `fhda-trustee-area-4`, `los-altos-measure-d` and `gilroy-usd-measure-m`. No collisions with existing ids were found.
 
