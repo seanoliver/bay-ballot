@@ -129,6 +129,9 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-h:
     pick: Y
+    quotes:
+      - text: Proposition H would help stem the bleeding.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-i:
     pick: N
     quotes:
