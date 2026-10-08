@@ -2,6 +2,9 @@ guide: greenbelt-alliance
 election: 2026-11
 status: published
 source: https://www.greenbelt.org/voter-guide-26/
+extraSources:
+  - https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
+  - https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
 fetchWith: browser
 archived:
   - source: https://www.greenbelt.org/voter-guide-26/
@@ -57,3 +60,21 @@ picks:
     quotes:
       - text: Greenbelt Alliance supports voting YES on Measure U in Contra Costa County to allow more senior homes near transit in Downtown Walnut Creek.
         source: https://www.greenbelt.org/voter-guide-26/
+  cupertino-measure-l:
+    pick: Y
+    quotes:
+      - text: The higher threshold protects against short-term political or financial pressure driving long-term irreversible decisions about land that belongs to the whole community.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
+      - text: Measure L comes at no cost to taxpayers and gives Cupertino residents a durable, voter-backed layer of protection for parks and open space, ensuring any future development in these valuable areas has to clear a high bar and earn broad community support first.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
+      - text: Protecting green space is protecting climate resilience.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-l-cupertino/
+  los-altos-measure-d:
+    pick: N
+    quotes:
+      - text: This measure takes away the City’s ability to implement critical policies that have been vetted through years of planning for the downtown’s future, and threatens progress for affordable housing and climate goals.
+        source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+      - text: The measure would take decisions out of the City Council and planning commissions’ hands on how to best plan new housing and critical infrastructure.
+        source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+      - text: Measure D weaponizes the initiative process to stifle infill housing and prevent improvement of existing use of urban space.
+        source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/

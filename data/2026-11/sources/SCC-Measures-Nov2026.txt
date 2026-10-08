@@ -1,0 +1,24 @@
+Santa Clara County Registrar of Voters, November 3, 2026 General Election: List of Local Measures.
+Source: https://vote.santaclaracounty.gov/list-local-measures-4 , retrieved 2026-10-07 in a browser (403 to curl).
+Extract: jurisdiction, measure letter, title and vote threshold. The full ballot questions are on the source page. There are no county measures.
+
+Measure RTM | Public Transit Revenue Measure District | Connect Bay Area Transit Initiative | Majority Vote Required
+Measure A | City of Morgan Hill | City Treasurer Change from Elective to Appointive Office | Majority Vote Required
+Measure B | City of Gilroy | Transient Occupancy Tax | Majority Vote Required
+Measure C | City of Santa Clara | Public Works Charter Amendment | Majority Vote Required
+Measure D | City of Los Altos | Citizen-Sponsored Initiative | Majority Vote Required
+Measure E | City of Mountain View | City Charter Amendment - Modernizing Provisions | Majority Vote Required
+Measure F | City of Mountain View | Transient Occupancy Tax | Majority Vote Required
+Measure G | City of Sunnyvale | City Charter Amendment - Public Works Contracting | Majority Vote Required
+Measure H | City of Sunnyvale | City Charter Amendment - City Manager's Authority to Settle Claims | Majority Vote Required
+Measure I | City of Sunnyvale | City Charter Amendment - City Council Vacancies | Majority Vote Required
+Measure J | City of Palo Alto | Transactions and Use Tax | Majority Vote Required
+Measure K | City of Milpitas | Local Funding -Business Tax Update | Majority Vote Required
+Measure L | City of Cupertino | General Plan Amendment | 2/3rds (66.67%) Vote Required
+Measure M | Gilroy Unified School District | School Bonds | 55% Vote Required
+Measure N | Los Gatos-Saratoga Union High School District | School Bonds | 55% Vote Required
+Measure O | Alum Rock Union Elementary School District | Parcel Tax | 2/3rds (66.67%) Vote Required
+Measure P | Alum Rock Union Elementary School District | General Obligation Bond | 55% Vote Required
+Measure Q | Cambrian School District | Parcel Tax | 2/3rds (66.67%) Vote Required
+Measure R | Orchard School District | Parcel Tax | 2/3rds (66.67%) Vote Required
+Measure S | El Camino Healthcare District | Limit District Directors to Four Four-Year Terms | Majority Vote Required

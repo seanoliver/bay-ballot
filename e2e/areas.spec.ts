@@ -287,11 +287,11 @@ test("the Counties filter lists all five counties", async ({ page }, info) => {
   for (const c of ["San Francisco", "San Mateo", "Santa Clara", "Contra Costa", "Marin"]) await expect(group.getByRole("checkbox", { name: c, exact: true })).toBeChecked();
 });
 
-test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Bay Area list", async ({ page }) => {
+test("a contest shared by Palo Alto and Mountain View names Santa Clara County and links back to the Santa Clara County list", async ({ page }) => {
   await page.goto(`${BALLOT}/valley-water-7`);
   await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
   await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
-  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toHaveAttribute("href", BALLOT);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
 });
 
 test("the Contra Costa page shows state and Contra Costa contests, and the Counties filter lists it", async ({ page }, info) => {
@@ -306,4 +306,41 @@ test("the Contra Costa page shows state and Contra Costa contests, and the Count
   await openBallot(page);
   const group = page.getByRole("complementary", { name: "Filters" }).getByRole("group", { name: "Counties" });
   await expect(group.getByRole("checkbox", { name: "Contra Costa", exact: true })).toBeChecked();
+});
+
+test("the San Jose page shows San Jose contests and no other city's", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-jose`);
+  await expect(page).toHaveTitle("San Jose endorsements (Nov 2026)");
+  await expect(page.getByRole("region", { name: "San Jose", exact: true })).toBeVisible();
+  await expect(contestRow(page, "San Jose City Council, District 5")).toBeVisible();
+  for (const other of ["Palo Alto", "Mountain View", "Cupertino"]) await expect(page.getByRole("region", { name: other, exact: true })).toHaveCount(0);
+  await expect(contestRow(page, "Mountain View Whisman School District Board")).toHaveCount(0);
+});
+
+test("the Santa Clara County page includes Palo Alto, Mountain View and San Jose", async ({ page }) => {
+  await page.goto(`${BALLOT}/santa-clara-county`);
+  await expect(page).toHaveTitle("Santa Clara County endorsements (Nov 2026)");
+  for (const place of ["Santa Clara County", "Cupertino", "Palo Alto", "Mountain View", "San Jose"]) {
+    await expect(page.getByRole("region", { name: place, exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole("region", { name: "San Mateo County", exact: true })).toHaveCount(0);
+});
+
+test("a Palo Alto contest page names Palo Alto and links back to the Palo Alto list", async ({ page }) => {
+  await page.goto(`${BALLOT}/palo-alto-council`);
+  await expect(page).toHaveTitle(/^Palo Alto Palo Alto City Council endorsements \(Nov 2026\)/);
+  await expect(page.getByRole("link", { name: "Palo Alto ballot" })).toHaveAttribute("href", `${BALLOT}/palo-alto`);
+  await expect(page.getByText(/^Most-endorsed for Palo Alto City Council by \d+ Palo Alto voter guides:/)).toBeVisible();
+});
+
+test("a San Jose contest page names San Jose and links back to the San Jose list", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-jose-council-5`);
+  await expect(page).toHaveTitle(/^San Jose City Council District 5 endorsements \(Nov 2026\)/);
+  await expect(page.getByRole("link", { name: "San Jose ballot" })).toHaveAttribute("href", `${BALLOT}/san-jose`);
+});
+
+test("a district in several Santa Clara cities links back to the Santa Clara County list", async ({ page }) => {
+  await page.goto(`${BALLOT}/pausd-trustee`);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
+  await expect(page.getByText(/by \d+ Santa Clara County voter guides?:/)).toBeVisible();
 });

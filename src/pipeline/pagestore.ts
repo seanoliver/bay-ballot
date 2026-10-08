@@ -72,11 +72,13 @@ const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 
 function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   const names = new Set<string>();
+  // A surname alone matches as written or in capitals, so "Park" or "PARK" counts but "the park" doesn't.
+  const surnames = new Set<string>();
   const add = (n: string) => {
     const bare = n.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " ").trim();
     names.add(bare);
     const surname = bare.split(/\s+/).filter((t) => !NAME_SUFFIX.test(t)).at(-1);
-    if (surname && surname.length >= 4) names.add(surname);
+    if (surname && surname.length >= 4) surnames.add(surname);
   };
   for (const c of ballot.contests) {
     for (const n of c.candidates) add(n);
@@ -84,7 +86,9 @@ function nameMarkers(ballot: Ballot, extra: Aliases): RegExp[] {
   }
   for (const list of Object.values(extra)) list.forEach(add);
   const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
-  return [...names].filter(Boolean).map((n) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, "iu"));
+  const re = (n: string, flags: string) => new RegExp(`(?<![\\p{L}\\p{N}])${esc(n)}(?![\\p{L}\\p{N}])`, flags);
+  const surnameOnly = [...surnames].filter((n) => !names.has(n));
+  return [...[...names].filter(Boolean).map((n) => re(n, "iu")), ...surnameOnly.flatMap((n) => [re(n, "u"), re(n.toUpperCase(), "u")])];
 }
 
 function ballotMarkers(ballot: Ballot, aliases: Aliases): RegExp[] {

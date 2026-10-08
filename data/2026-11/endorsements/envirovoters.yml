@@ -63,3 +63,36 @@ picks:
   us-rep-2:
     pick:
       - Jared Huffman
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
+  assembly-23:
+    pick:
+      - Marc Berman
+  assembly-24:
+    pick:
+      - Alex Lee
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+  assembly-28:
+    pick:
+      - Gail Pellerin
+  assembly-29:
+    pick:
+      - Robert Rivas
+  us-rep-16:
+    pick:
+      - Sam Liccardo
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  us-rep-18:
+    pick:
+      - Zoe Lofgren
+  us-rep-19:
+    pick:
+      - Jimmy Panetta

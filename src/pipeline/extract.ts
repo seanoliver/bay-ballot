@@ -71,6 +71,7 @@ export function systemPrompt(ballot: Ballot): string {
     "- Return one pick per contest the organization takes a position on. Use the contestId values from the ballot below exactly.",
     "- Copy candidate names exactly as printed on the page; they are matched to the ballot downstream.",
     '- Skip contests the organization does not mention, and contests where it takes no position, is "neutral", or says "no recommendation" or "no endorsement".',
+    '- A candidate labelled "Open Endorsement" (or "Open" in a column of endorsement statuses) is not endorsed: leave that candidate out, and skip the contest if no one else in it is endorsed ("X — Sole Endorsement, Y — Open Endorsement" is a pick of X alone). An "open seat" (a vacancy) does not affect the pick.',
     "- Measure and retention contests: set vote to Y or N and leave candidates empty. Candidate contests: set vote to null and list the endorsed candidates.",
     '- Emphatic phrasing still counts: "Oh Hell Yes!" or "Strong Yes" is Y, "Strong No" or "Hell No" is N, and "Retain all" on a retention contest is Y.',
     "- For a retention contest covering several judges where the organization's position is mixed (retain some, not others), do not give a Y or N: set vote to null and explain the position in note.",

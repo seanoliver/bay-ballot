@@ -1,0 +1,7 @@
+id: los-altos-town-crier
+name: Los Altos Town Crier
+shortName: "Town Crier"
+description: A weekly newspaper covering Los Altos, Los Altos Hills and Mountain View, whose editorial board endorses in local races and measures.
+type: newspaper
+homepage: https://www.losaltosonline.com/
+areas: [santa-clara-county, palo-alto, mountain-view]

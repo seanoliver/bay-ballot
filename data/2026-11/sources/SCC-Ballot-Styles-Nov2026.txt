@@ -1,0 +1,109 @@
+Santa Clara County Registrar of Voters, November 3, 2026 General Election: which cities' ballot styles carry each contest.
+Source: the registrar's published ballot styles (all 327), https://ca.omniballot.us/published/06085/1968/styles/<id>.json with ids 294259 to 294585, retrieved 2026-10-07.
+Method: a style's city is the city whose own contest (council, mayor or city measure) is on it. San Jose is identifiable only on District 5, 7 and 9 styles, Campbell only on District 3 to 5 styles, and Monte Sereno and unincorporated areas never, so those styles are "unidentified"; their 5-digit precinct prefixes are listed. Precincts 0007xxx and 0008xxx are San Jose (every identified style in that range is San Jose).
+Contests on every style (statewide offices and propositions, BOE 2, the 6th District Court of Appeal and RTM) are omitted.
+Format: contest | city (number of styles) ; ... | unidentified precinct prefixes
+
+Alum Rock Union SD, TA 3 | San Jose (3) | 4 styles: 00084,00089
+Alum Rock Union SD, TA 5 | San Jose (8) | 9 styles: 00054,00060,00064,00065,00078,00079
+Berryessa Union SD | Milpitas (1) ; San Jose (3) | 8 styles: 00054,00064,00065,00074,00075,00076,00077,00078
+Cambrian SD | Los Gatos (1) ; San Jose (2) | 3 styles: 00038,00058,00081
+Campbell Union SD, TA 4 | Campbell (3) ; Los Gatos (1) | 1 styles: 00038,00070
+Campbell Union SD, TA 5 | Campbell (3) ; Los Gatos (1) ; Saratoga (2) | 3 styles: 00037,00070
+City of Campbell Council, District 3 | Campbell (3) | 
+City of Campbell Council, District 4 | Campbell (3) | 
+City of Campbell Council, District 5 | Campbell (2) | 
+City of Cupertino Council | Cupertino (15) | 
+City of Gilroy Council, District 4 | Gilroy (1) | 
+City of Gilroy Council, District 5 | Gilroy (1) | 
+City of Gilroy Council, District 6 | Gilroy (2) | 
+City of Los Altos Council, D2 | Los Altos (2) | 
+City of Los Altos Council, D4 | Los Altos (1) | 
+City of Milpitas Council | Milpitas (2) | 
+City of Morgan Hill Council, District B | Morgan Hill (3) | 
+City of Morgan Hill Council, District D | Morgan Hill (3) | 
+City of Mountain View Council | Mountain View (5) | 
+City of Palo Alto Council | Palo Alto (7) | 
+City of San José Council, District 5 | San Jose (27) | 
+City of San José Council, District 7 | San Jose (10) | 
+City of San José Council, District 9 | San Jose (11) | 
+City of Santa Clara Council, District 2 | Santa Clara (3) | 
+City of Santa Clara Council, District 3 | Santa Clara (2) | 
+City of Saratoga Council | Saratoga (9) | 
+City of Sunnyvale Council, District 1 | Sunnyvale (8) | 
+City of Sunnyvale Council, District 3 | Sunnyvale (6) | 
+City of Sunnyvale Council, District 5 | Sunnyvale (4) | 
+Cupertino Sanitary District | Cupertino (7) ; Los Altos (1) ; Saratoga (3) ; Sunnyvale (2) | 4 styles: 00028,00066,00070
+East Side Union HSD, TA 1, Short Term | San Jose (12) | 8 styles: 00055,00060,00064,00065,00084,00089
+East Side Union HSD, TA 4 | Milpitas (1) ; San Jose (4) | 9 styles: 00054,00064,00073,00074,00075,00076,00077
+Evergreen SD | San Jose (3) | 6 styles: 00054,00073,00082,00083,00084,00085
+Foothill-De Anza CCD, Trustee Area 4 | Cupertino (8) ; Santa Clara (1) ; Saratoga (2) | 7 styles: 00066,00070
+Franklin-McKinley SD | San Jose (4) | 3 styles: 00054,00072,00074,00086
+Fremont Union HSD, TA 3 | Cupertino (9) ; Los Altos (4) ; Palo Alto (1) ; Sunnyvale (3) | 9 styles: 00028,00054,00066,00070
+Fremont Union HSD, TA 4 | Mountain View (1) ; Sunnyvale (10) | 
+Gavilan Joint CCD, Trustee Area 3 | Gilroy (2) ; Morgan Hill (2) | 10 styles: 00059,00060,00066
+Gilroy Unified SD, Trustee Area 3 | Gilroy (1) | 1 styles: 00059
+Gilroy Unified SD, Trustee Area 4 | Gilroy (2) | 
+Los Altos SD | Los Altos (3) ; Los Altos Hills (2) ; Mountain View (1) ; Palo Alto (2) ; Sunnyvale (1) | 2 styles: 00028
+Los Gatos-Saratoga Union HSD, TA 2 | Cupertino (1) ; Los Gatos (1) ; Palo Alto (1) ; Saratoga (2) | 6 styles: 00028,00037,00054,00057,00066
+Mayor, City of Milpitas | Milpitas (2) | 
+Mayor, City of Morgan Hill | Morgan Hill (11) | 
+Mayor, City of Santa Clara | Santa Clara (11) | 
+Measure A - City of Morgan Hill, Elected City Treasurer to an Appointive Position | Morgan Hill (11) | 
+Measure B - City of Gilroy, Transient Occupancy Tax | Gilroy (8) | 
+Measure C - City of Santa Clara, Public Works Charter Amendment | Santa Clara (11) | 
+Measure D - City of Los Altos, Citizen-Sponsored Initiative, Los Altos Downtown Parking Plaza Ordinance | Los Altos (7) | 
+Measure E - City of Mountain View, Charter Amendment, Modernize and Clarify Its Provisions | Mountain View (5) | 
+Measure F - City of Mountain View, Transient Occupancy Tax | Mountain View (5) | 
+Measure G - City of Sunnyvale, Charter Amendment, Public Works Contracts | Sunnyvale (27) | 
+Measure H - City of Sunnyvale, City Manager Settlement Authority | Sunnyvale (27) | 
+Measure I - City of Sunnyvale, Charter Amendment, Elections to Fill Council Vacancies | Sunnyvale (27) | 
+Measure J - City of Palo Alto, Transactions and Use Tax | Palo Alto (7) | 
+Measure K - City of Milpitas, Business Tax Modernization | Milpitas (2) | 
+Measure L - City of Cupertino, General Plan Amendment | Cupertino (15) | 
+Measure M - Gilroy Unified School District, School Bond | Gilroy (8) | 7 styles: 00059,00060
+Measure N - Los Gatos-Saratoga Union High School District, School Bond | Cupertino (1) ; Los Gatos (3) ; Palo Alto (1) ; Saratoga (4) | 11 styles: 00028,00037,00054,00057,00060,00066,00088
+Measure O - Alum Rock Union School District, Parcel Tax | San Jose (19) | 14 styles: 00054,00060,00064,00065,00074,00078,00079,00084,00089
+Measure P - Alum Rock Union School District, School Bond | San Jose (19) | 14 styles: 00054,00060,00064,00065,00074,00078,00079,00084,00089
+Measure Q - Cambrian School District, Parcel Tax | Los Gatos (1) ; San Jose (2) | 3 styles: 00038,00058,00081
+Measure R - Orchard School District, Parcel Tax |  | 4 styles: 00073,00074,00076
+Measure S - El Camino Healthcare District, Limit Number of Terms for Directors | Cupertino (2) ; Los Altos (6) ; Los Altos Hills (2) ; Mountain View (4) ; Palo Alto (2) ; Santa Clara (2) ; Sunnyvale (15) | 5 styles: 00028,00029,00066
+Member of the State Assembly, District 23 | Campbell (8) ; Los Altos (7) ; Los Altos Hills (4) ; Mountain View (5) ; Palo Alto (7) ; Saratoga (8) | 25 styles: 00025,00028,00029,00038,00054,00057,00066,00070
+Member of the State Assembly, District 24 | Milpitas (2) ; San Jose (11) | 20 styles: 00054,00060,00064,00065,00073,00074,00075,00076,00077,00078,00079
+Member of the State Assembly, District 25 | San Jose (28) ; Santa Clara (1) | 51 styles: 00053,00054,00055,00058,00059,00060,00064,00072,00073,00074,00080,00082,00083,00084,00085,00086,00087,00088,00089
+Member of the State Assembly, District 26 | Cupertino (15) ; Santa Clara (10) ; Sunnyvale (27) | 16 styles: 00028,00054,00055,00066,00070,00076,00077,00080,00081
+Member of the State Assembly, District 28 | Los Gatos (8) ; Morgan Hill (11) ; San Jose (9) ; Saratoga (1) | 37 styles: 00024,00037,00054,00057,00058,00059,00060,00066,00072,00074,00077,00080,00081,00087,00088,00089
+Member of the State Assembly, District 29 | Gilroy (8) | 8 styles: 00059,00060
+Midpeninsula Regional Open Space District, Ward 1 | Cupertino (6) ; Los Gatos (8) ; Saratoga (9) | 14 styles: 00028,00037,00038,00054,00057,00066
+Milpitas Unified SD | Milpitas (1) | 4 styles: 00054,00064,00076
+Morgan Hill Unified SD, Trustee Area 1 | Morgan Hill (2) | 3 styles: 00053,00054,00059,00060,00089
+Morgan Hill Unified SD, Trustee Area 2 | Morgan Hill (2) | 4 styles: 00059,00060,00089
+Morgan Hill Unified SD, Trustee Area 3 | Morgan Hill (1) | 2 styles: 00054,00066,00089
+Morgan Hill Unified SD, Trustee Area 4 | Morgan Hill (2) | 3 styles: 00059
+Mountain View Whisman SD | Mountain View (3) ; Palo Alto (2) ; Sunnyvale (2) | 2 styles: 00029,00054
+Mountain View-Los Altos Union HSD, TA 3 | Mountain View (1) | 
+Oak Grove SD, Trustee Area 2 |  | 2 styles: 00072
+Oak Grove SD, Trustee Area 3 |  | 3 styles: 00087,00088
+Oak Grove SD, Trustee Area 5 |  | 5 styles: 00053,00054,00058,00072
+Orchard SD |  | 4 styles: 00073,00074,00076
+Palo Alto Unified SD | Los Altos Hills (2) ; Palo Alto (1) | 1 styles: 00025
+San José Unified SD, Trustee Area 2 | Santa Clara (1) | 6 styles: 00073,00074,00080
+San José Unified SD, Trustee Area 4 | San Jose (6) | 4 styles: 00080,00081,00088,00089
+San José-Evergreen CCD, Trustee Area 2 | San Jose (19) | 14 styles: 00055,00060,00064,00065,00084,00089
+Santa Clara County BOE, Trustee Area 7 | Gilroy (8) ; Morgan Hill (11) ; San Jose (1) | 34 styles: 00053,00054,00058,00059,00060,00066,00072,00073,00082,00083,00084,00088,00089
+Santa Clara Unified SD, Trustee Area 1 | Santa Clara (1) ; Sunnyvale (1) | 2 styles: 00075,00076
+Santa Clara Valley Water, District 1 | Gilroy (8) ; Morgan Hill (11) ; San Jose (9) | 57 styles: 00053,00054,00055,00058,00059,00060,00064,00065,00066,00072,00073,00076,00077,00078,00079,00084,00085,00089
+Santa Clara Valley Water, District 6 | San Jose (29) | 18 styles: 00054,00065,00072,00074,00076,00081,00082,00083,00084,00086
+Santa Clara Valley Water, District 7 | Los Altos (7) ; Los Altos Hills (4) ; Los Gatos (8) ; Mountain View (5) ; Palo Alto (7) ; San Jose (1) ; Saratoga (1) | 24 styles: 00024,00025,00028,00029,00037,00054,00057,00060,00066,00088,00089
+Saratoga Union SD | Cupertino (1) ; Los Gatos (1) ; Palo Alto (1) ; Saratoga (4) | 5 styles: 00028,00037,00054,00057,00066
+State Senator, District 10 | Milpitas (2) ; San Jose (13) ; Santa Clara (10) ; Sunnyvale (27) | 25 styles: 00054,00060,00064,00065,00066,00073,00074,00075,00076,00077,00078,00079
+Sunnyvale SD, Trustee Area 3 | Sunnyvale (8) | 
+Town of Los Altos Hills Council | Los Altos Hills (4) | 
+Town of Los Gatos Council | Los Gatos (8) | 
+US Representative, District 16 | Campbell (8) ; Los Altos (7) ; Los Altos Hills (4) ; Los Gatos (8) ; Mountain View (5) ; Palo Alto (7) ; San Jose (19) ; Saratoga (9) | 41 styles: 00025,00028,00029,00037,00038,00054,00055,00057,00058,00066,00070,00080,00081,00082,00083,00084,00086,00087,00088,00089
+US Representative, District 17 | Cupertino (15) ; Milpitas (2) ; San Jose (7) ; Santa Clara (11) ; Sunnyvale (27) | 34 styles: 00028,00054,00055,00064,00066,00070,00073,00074,00075,00076,00077,00078,00079,00080
+US Representative, District 18 | Gilroy (8) ; Morgan Hill (11) ; San Jose (19) | 43 styles: 00053,00054,00055,00059,00060,00064,00065,00073,00074,00077,00078,00080,00084
+US Representative, District 19 | San Jose (3) | 39 styles: 00024,00053,00054,00055,00057,00058,00059,00060,00066,00072,00073,00084,00085,00087,00088,00089
+West Valley-Mission CCD, Trustee Area 3 | Santa Clara (2) | 3 styles: 00055,00070,00080,00081
+West Valley-Mission CCD, Trustee Area 7 | Los Gatos (3) ; San Jose (3) | 8 styles: 00037,00057,00058,00087,00088,00089
+Yosemite CCD, Trustee Area 4 |  | 1 styles: 00064

@@ -1,0 +1,380 @@
+guide: sv-dsa
+election: 2026-11
+status: published
+source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+allowForeignSources: true
+fetchedAt: 2026-10-07
+hasReasoning: true
+held:
+  - contestId: smcccd-measure-v
+    pick: Y
+    reason: unverified
+    evidence: 'The guide gives no position on Measure V by name; its blanket "Yes on all school bond measures and parcel taxes" names school districts, and SMCCCD is a community college district, so it does not unambiguously fit (decision 2026-10-07).'
+picks:
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+    quotes:
+      - text: Weber's long record of civil service began in academia where she founded the Africana studies department at SDSU (which she chaired for 40 years) and served as the president of the San Diego Board of Education for 8 years.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Secretary of State Weber has been instrumental in expanding voting rights, reversing disenfranchisement, and redistricting through the development of CA Prop 50.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+    quotes:
+      - text: Kim’s platform aims to replace forms of for-profit insurance with state-run programs that would provide affordable, available insurance for all, including a public option of auto insurance and a plan for Medicare for Kids.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+    quotes:
+      - text: We have backed Lieber in her multiple campaigns over the last few years because we know she is a champion of California residents.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: We feel comfortable with a guy who has a good amount of experience managing San Diego’s schools who has won the backing of the state’s teachers.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  us-rep-18:
+    pick:
+      - Zoe Lofgren
+  assembly-24:
+    pick:
+      - Alex Lee
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+  assembly-28:
+    pick:
+      - Gail Pellerin
+  prop-1:
+    pick: Y
+    quotes:
+      - text: The funds are necessary, given the current housing and affordability crises throughout the state.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-2:
+    pick: Y
+    quotes:
+      - text: In years where there is an economic surplus, California could put double the amount of money into savings.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-37:
+    pick: N
+    quotes:
+      - text: New home buyers are locked into a program with imperfect information.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-38:
+    pick: N
+    quotes:
+      - text: We should not be subsidizing the projects of the uber-rich, regardless if they are corporate aligned or non-profit aligned.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-39:
+    pick: N
+    quotes:
+      - text: California already has a secure end-to-end system to check people’s identities when they register and vote.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Most alarming is the requirement to put parts of your government id on mail-in ballots, a massive privacy threat.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-40:
+    pick: Y
+    quotes:
+      - text: We need to fund healthcare, not continue to allow the ultra-rich to buy ever more mansions and yachts, and invest in job-killing AI.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Without this funding, thousands of jobs will be lost, millions of Californians could lose coverage altogether, and care facilities across the state could be forced to close.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote Yes on Prop 40.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-41:
+    pick: N
+    quotes:
+      - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote no on Prop 41.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop 42 is written by, and is in service to the worst people in society - the billionaire class.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote no on Prop 42.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-43:
+    pick: N
+    quotes:
+      - text: With the federal government increasingly threatening the funding of our public services, we cannot let anti-tax sentiments choke out the last of our public services.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  prop-45:
+    pick: N
+    quotes:
+      - text: The CEQA does need some adjusting and 21st century modernizing, but to rely on a corporate authored measure like Prop 45 is stupendously detrimental.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  rtm:
+    pick: Y
+    quotes:
+      - text: If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations, longer waits, and abandoned routes.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  san-mateo-county-measure-j:
+    pick: Y
+  san-mateo-county-measure-u:
+    pick: Y
+  sequoia-uhsd-trustee-area-a:
+    pick:
+      - Amy Koo
+  east-palo-alto-council:
+    pick:
+      - Ruben Abrica
+      - Ofelia Bello
+    quotes:
+      - text: Ruben Abrica, the incumbent, has been a long term advocate for affordable housing.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  east-palo-alto-measure-o:
+    pick: Y
+  east-palo-alto-measure-cc:
+    pick: Y
+  menlo-park-council-4:
+    pick:
+      - Charlotte Reed
+    quotes:
+      - text: While she does not have a proven record, her position on affordable housing in downtown Menlo Park puts her well ahead of her venture capitalist opponent, Laura Melahn.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  menlo-park-measure-p:
+    pick: N
+  redwood-city-measure-e:
+    pick: Y
+    quotes:
+      - text: Housing for all means ensuring that people can afford to stay in their homes and not end up on the street.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  el-camino-healthcare-measure-s:
+    pick: Y
+  palo-alto-council:
+    pick:
+      - Raymond L. Goins
+  palo-alto-measure-j:
+    pick: Y
+  pausd-trustee:
+    pick:
+      - Linda Henigin
+  mountain-view-council:
+    pick:
+      - Erik Poicon
+      - IdaRose Sylvester
+      - James Kuszmaul
+  mountain-view-measure-f:
+    pick: Y
+    quotes:
+      - text: Mountain View is close to Levi’s Stadium and the tech titans, meaning that the majority of the tax burden will fall on wealthy travelers and not on the people of Mountain View, an ideal progressive tax.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  mvla-trustee-area-3:
+    pick:
+      - Thida Cornes
+  mvwsd-trustee:
+    pick:
+      - Devon Conley
+      - Sundar Subbarayan
+  fremont-uhsd-trustee-area-3:
+    pick:
+      - Rosa Kim
+  fremont-uhsd-trustee-area-4:
+    pick:
+      - Naomi Nakano-Matsumoto
+      - Ilanit Eliaz
+    quotes:
+      - text: Naomi Nakano-Matsumoto is a veteran trustee who has done a lot to help the district.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  campbell-council-3:
+    pick:
+      - Joseph "Joe" Brenner
+  cupertino-council:
+    pick:
+      - J.R. Fruen
+      - John Tang
+      - Seema Sharma Lindskog
+  cupertino-measure-l:
+    pick: Y
+    quotes:
+      - text: Part of making the Bay Area a livable area is to pair amenities with housing.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  gilroy-council-6:
+    pick:
+      - Rebeca G. Armendáriz
+  gilroy-measure-b:
+    pick: N
+    quotes:
+      - text: Considering the large unhoused/underhoused population that rely on these rooms, such a tax would hit these already struggling residents the hardest.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  los-altos-council-2:
+    pick:
+      - Anky van Deursen
+  los-altos-measure-d:
+    pick: N
+  los-altos-sd-trustee:
+    pick:
+      - David Poll
+    quotes:
+      - text: In a race where no one is serious about building informative websites, we recommend David Poll, since he at least has a decent platform and is endorsed by the teachers’ union.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  los-gatos-council:
+    pick:
+      - Rob Moore
+      - Jeff Suzuki
+  milpitas-mayor:
+    pick:
+      - Hon Lien
+  milpitas-council:
+    pick:
+      - Seema Kanani
+  milpitas-measure-k:
+    pick: Y
+  morgan-hill-council-d:
+    pick:
+      - Dolores Alvarado
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
+  san-jose-council-9:
+    pick:
+      - Gordon Chester
+  santa-clara-county-board-of-education-7:
+    pick:
+      - Raeena S. Lari
+  fhda-trustee-area-4:
+    pick:
+      - William "Bill" Wilson
+  wvm-trustee-area-3:
+    pick:
+      - Anne J. Kepner
+      - Colin Lee Elliott Glaves
+    quotes:
+      - text: Incumbent Anne Kepner is a progressive leader and has been advocating to make tuition free for the two colleges.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  wvm-trustee-area-7:
+    pick:
+      - Doug Robb
+  midpen-ward-1:
+    pick:
+      - Craig Gleason
+      - Tina Marie To
+  valley-water-6:
+    pick:
+      - Milan Balinton
+  valley-water-7:
+    pick:
+      - Pete Dailey
+    quotes:
+      - text: Rebecca Eisenberg’s conduct during this years-long escapade about a report detailing her behavior towards Valley Water employees makes her unfit to continue to be an elected official.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  esuhsd-trustee-area-1-short-term:
+    pick:
+      - Mer Curry Nuñez
+  esuhsd-trustee-area-4:
+    pick:
+      - Lorena Chavez
+  gilroy-usd-trustee-area-3:
+    pick:
+      - Michelle Nelson
+  gilroy-usd-trustee-area-4:
+    pick:
+      - Jane Stevens
+    quotes:
+      - text: We recommend Jane Stevens for this seat as she has a decent platform and the backing of the Gilroy Teachers Association.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  milpitas-usd-trustee:
+    pick:
+      - Chris Norwood
+  mhusd-trustee-area-1:
+    pick:
+      - Nancy Altman-Palm
+  mhusd-trustee-area-2:
+    pick:
+      - Gabriela "Gabby" Winter
+  mhusd-trustee-area-3:
+    pick:
+      - Sarah Northrup Gadus
+  mhusd-trustee-area-4:
+    pick:
+      - Glen R. Webb
+  sjusd-trustee-area-2:
+    pick:
+      - Tomara Hall
+  sjusd-trustee-area-4:
+    pick:
+      - Michael Melillo
+  alum-rock-sd-trustee-area-3:
+    pick:
+      - Delia Oseguera
+  alum-rock-sd-trustee-area-5:
+    pick:
+      - Jenny Ludwig
+  berryessa-sd-trustee:
+    pick:
+      - Shanna Brewer
+      - Jaria Jaug
+  campbell-union-sd-trustee-area-5:
+    pick:
+      - Vartika Chandra
+  evergreen-sd-trustee:
+    pick:
+      - Johnny Ray Reyna
+      - Monte Wright
+  oak-grove-sd-trustee-area-2:
+    pick:
+      - Victor A. Ramirez
+  oak-grove-sd-trustee-area-3:
+    pick:
+      - Sophie Freestone
+  oak-grove-sd-trustee-area-5:
+    pick:
+      - Paul Chun
+  orchard-sd-trustee:
+    pick:
+      - Lyseria Evelyn Phillips
+      - Jeff Tang
+      - Molly Eslao
+    quotes:
+      - text: We recommend Lyseria Phillips, a staunch union member firmly in favor of teacher’s protections and community building.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  saratoga-union-sd-trustee:
+    pick:
+      - Anna Goldberg
+      - Farnoush Drexel
+      - Vidya R. Vineet
+  sunnyvale-sd-trustee-area-3:
+    pick:
+      - Rommy Kushner
+  burlingame-sd-measure-r:
+    pick: Y
+  cabrillo-usd-measure-z:
+    pick: Y
+  jefferson-uhsd-measure-m:
+    pick: Y
+  pacifica-sd-measure-t:
+    pick: Y
+  san-carlos-sd-measure-k:
+    pick: Y
+  smfcsd-measure-w:
+    pick: Y
+  gilroy-usd-measure-m:
+    pick: Y
+  lgsuhsd-measure-n:
+    pick: Y
+  alum-rock-sd-measure-o:
+    pick: Y
+  alum-rock-sd-measure-p:
+    pick: Y
+  cambrian-sd-measure-q:
+    pick: Y
+  orchard-sd-measure-r:
+    pick: Y

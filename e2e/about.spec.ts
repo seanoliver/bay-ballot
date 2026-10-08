@@ -7,7 +7,7 @@ test("the About page opens with Sean's signed letter", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "About Bay Ballot" })).toBeVisible();
   const main = page.getByRole("main");
   await expect(
-    main.getByText("Endorsements for the November 3, 2026 election from voter guides in San Francisco, San Mateo County, Palo Alto, Mountain View, Contra Costa County and Marin County."),
+    main.getByText("Endorsements for the November 3, 2026 election from voter guides in San Francisco, San Mateo County, Santa Clara County (including San Jose, Palo Alto and Mountain View), Contra Costa County and Marin County."),
   ).toBeVisible();
   await expect(main.getByText("I've lived in San Francisco since 2012, and both my kids are in SFUSD.")).toBeVisible();
   await expect(main.getByText("It shows you what the people who spend time on this are recommending, and why.")).toBeVisible();

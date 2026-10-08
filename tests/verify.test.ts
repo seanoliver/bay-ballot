@@ -205,6 +205,19 @@ describe("verifierPrompt", () => {
     );
   });
   it("is deterministic for caching", () => expect(verifierPrompt(ballot)).toBe(prompt));
+  it("treats a candidate labelled Open Endorsement as not endorsed, and an open seat as no signal", () => {
+    expect(prompt).toContain('A candidate labelled "Open Endorsement" (or "Open" in a column of endorsement statuses) is not endorsed; an "open seat" (a vacancy) says nothing about the pick.');
+  });
+});
+
+describe("open endorsements in the extraction prompt", () => {
+  const prompt = systemPrompt(ballot);
+  it("leaves out a candidate labelled Open Endorsement, or Open in a column of statuses, and ignores open seats", () => {
+    expect(prompt).toContain(
+      '- A candidate labelled "Open Endorsement" (or "Open" in a column of endorsement statuses) is not endorsed: leave that candidate out, and skip the contest if no one else in it is endorsed ("X — Sole Endorsement, Y — Open Endorsement" is a pick of X alone). An "open seat" (a vacancy) does not affect the pick.',
+    );
+    expect(prompt).not.toContain('(or "Open") is not an endorsement');
+  });
 });
 
 describe("VerifyOutput schema", () => {

@@ -1,0 +1,25 @@
+Santa Clara County Registrar of Voters, November 3, 2026 General Election: Final Qualified List of State Eligible Candidates.
+Source: https://files.santaclaracounty.gov/exjcpb1296/2026-08/qualified-state-8.28.2026-qualified-state-v2.pdf?VersionId=JdB0.vgbC5DbHd657pQtExZjVdSHBAHy
+PDF footer: "Print Date and Time: 8/28/2026 10:30:40AM". Retrieved 2026-10-07 in a browser (the registrar's sites return 403 to curl).
+Extract: contest number, contest, whether it is printed on the ballot, vote-for count, and candidate names only. Ballot designations, party preferences, addresses, phone numbers, emails and websites in the source are omitted.
+
+1030 | Governor | On Ballot: Yes | Vote for 1 | Xavier Becerra ; Steve Hilton
+1040 | Lieutenant Governor | On Ballot: Yes | Vote for 1 | Fiona Ma ; Gloria Romero
+1050 | Secretary of State | On Ballot: Yes | Vote for 1 | Shirley N. Weber ; Donald P. (Don) Wagner
+1060 | Controller | On Ballot: Yes | Vote for 1 | Malia M. Cohen ; Herb W Morgan
+1070 | Treasurer | On Ballot: Yes | Vote for 1 | Eleni Kounalakis ; Jennifer Hawks
+1080 | Attorney General | On Ballot: Yes | Vote for 1 | Rob Bonta ; Michael E. Gates
+1090 | Insurance Commissioner | On Ballot: Yes | Vote for 1 | Ben Allen ; Jane Kim
+1100 | Member, State Board of Equalization, District 2 | On Ballot: Yes | Vote for 1 | Sally J. Lieber ; John Pimentel
+1129 | US Representative, District 16 | On Ballot: Yes | Vote for 1 | Sam Liccardo ; Peter Sundin Soulé
+1130 | US Representative, District 17 | On Ballot: Yes | Vote for 1 | Ro Khanna ; Ritesh Tandon
+1140 | US Representative, District 18 | On Ballot: Yes | Vote for 1 | Zoe Lofgren ; Shane Lewis
+1150 | US Representative, District 19 | On Ballot: Yes | Vote for 1 | Jimmy Panetta ; Peter Coe Verbica
+1200 | State Senator, District 10 | On Ballot: Yes | Vote for 1 | Scott Sakakihara ; Linda R. Price
+1299 | Member of the State Assembly, District 23 | On Ballot: Yes | Vote for 1 | Marc Berman ; David G. Johnson
+1300 | Member of the State Assembly, District 24 | On Ballot: Yes | Vote for 1 | Alex Lee ; Max Hsia
+1310 | Member of the State Assembly, District 25 | On Ballot: Yes | Vote for 1 | Ash Kalra ; Himat Singh Bainiwal
+1315 | Member of the State Assembly, District 26 | On Ballot: Yes | Vote for 1 | Patrick Ahrens ; Tim Gorsulowsky
+1330 | Member of the State Assembly, District 28 | On Ballot: Yes | Vote for 1 | Gail Pellerin ; Carol Pefley
+1340 | Member of the State Assembly, District 29 | On Ballot: Yes | Vote for 1 | Robert Rivas ; Dennis P. Sanchez
+3001 | State Superintendent of Public Instruction | On Ballot: Yes | Vote for 1 | Richard Barrera ; Sonja Shaw

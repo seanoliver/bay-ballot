@@ -85,6 +85,19 @@ describe("placeGroups", () => {
   });
 });
 
+describe("a district in several places", () => {
+  const ward = c("water-ward-1", {
+    level: "district", name: "Water Board", district: "1",
+    within: [{ level: "city", name: "Menlo Park" }, { level: "city", name: "Redwood City" }],
+  });
+  it("is in every area that lists one of its places", () => {
+    expect(ids(areasOf(ward, areas))).toEqual(["san-mateo"]);
+  });
+  it("sits under its county, not under its first city", () => {
+    expect(placeGroups([ward], areas).map((g) => [g.heading, g.county])).toEqual([["San Mateo County", "San Mateo"]]);
+  });
+});
+
 describe("Court of Appeal", () => {
   it("lists a Court of Appeal district under California", () => {
     const coa = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
@@ -106,6 +119,34 @@ describe("contestPlace", () => {
   it("is the Bay Area for a state-drawn district in several areas, even when they share a county", () => {
     const coa6 = c("court-of-appeal-6", { level: "district", name: "Court of Appeal", district: "6", within: [{ level: "county", name: "Santa Clara" }] });
     expect(contestPlace(coa6, all)).toEqual({ area: null, place: BAY_AREA });
+  });
+  describe("with a county page that lists every city", () => {
+    const SCC: Area = {
+      id: "santa-clara-county", name: "Santa Clara County", kind: "county",
+      jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "Palo Alto" }, { level: "city", name: "Mountain View" }, { level: "city", name: "San Jose" }],
+    };
+    const SJ: Area = { id: "san-jose", name: "San Jose", kind: "city", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "San Jose" }] };
+    const withCounty = [SF, SM, SCC, PA, MV, SJ];
+    it("is the city page for a contest in one city", () => {
+      const council = c("palo-alto-council", { level: "city", name: "Palo Alto" });
+      expect(contestPlace(council, withCounty)).toEqual({ area: PA, place: { name: "Palo Alto", short: "Palo Alto" } });
+      const ward = c("valley-water-6", { level: "district", name: "Santa Clara Valley Water District", district: "6", within: [{ level: "city", name: "San Jose" }] });
+      expect(contestPlace(ward, withCounty).area?.id).toBe("san-jose");
+    });
+    it("is the county page for a district in several of its cities", () => {
+      const lasd = c("los-altos-sd-trustee", { level: "district", name: "Los Altos School District", district: "at-large", within: [{ level: "city", name: "Palo Alto" }, { level: "city", name: "Mountain View" }] });
+      expect(contestPlace(lasd, withCounty)).toEqual({ area: SCC, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+    });
+    it("is the county page for a state-drawn district inside that county", () => {
+      const cd19 = c("us-rep-19", { level: "district", name: "Congress", district: "19", within: [{ level: "city", name: "San Jose" }] });
+      expect(contestPlace(cd19, withCounty)).toEqual({ area: SCC, place: { name: "Santa Clara County", short: "Santa Clara County" } });
+      const ad26 = c("assembly-26", { level: "district", name: "Assembly", district: "26", within: [{ level: "city", name: "San Jose" }, { level: "city", name: "Mountain View" }] });
+      expect(contestPlace(ad26, withCounty).area).toBe(SCC);
+    });
+    it("stays on the Bay Area for a district in two counties", () => {
+      const ad23 = c("assembly-23", { level: "district", name: "Assembly", district: "23", within: [{ level: "county", name: "San Mateo" }, { level: "city", name: "Palo Alto" }] });
+      expect(contestPlace(ad23, withCounty)).toEqual({ area: null, place: BAY_AREA });
+    });
   });
   it("is the Bay Area for statewide, regional and cross-county contests", () => {
     expect(contestPlace(prop1, all)).toEqual({ area: null, place: BAY_AREA });

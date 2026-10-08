@@ -61,6 +61,14 @@ describe("relevantChange", () => {
   it("ignores whitespace-only changes and reordering", () => {
     expect(relevantChange(page, page.replace(/ /g, "  "), ballot)).toBe(false);
   });
+  it("matches a surname alone in its own case or in capitals, not as a lowercase word", () => {
+    const added = (line: string) => `${page}\nThe club met downtown this week to talk about the year ahead.\nCoffee and snacks were served by volunteers from the neighborhood.\nThe next meeting is the second Tuesday of the month as usual.\nAll members and guests are welcome to attend and bring a friend.\n${line}`;
+    expect(relevantChange(page, added("We had a picnic in the park by a hall near the creek"), ballot)).toBe(false);
+    expect(relevantChange(page, added("Park spoke to the members about the city budget for an hour"), ballot)).toBe(true);
+    expect(relevantChange(page, added("VEENKER spoke to the members about the city budget for an hour"), ballot)).toBe(true);
+    expect(relevantChange(page, added("PARK spoke to the members about the city budget for an hour"), ballot)).toBe(true);
+    expect(relevantChange(page, added("ARMENDÁRIZ spoke to the members about the city budget for an hour"), ballot)).toBe(true);
+  });
   it("ignores unrelated text that names no contest and no endorsement", () => {
     expect(relevantChange(page, page.replace("fall picnic", "winter potluck on Saturday"), ballot)).toBe(false);
   });

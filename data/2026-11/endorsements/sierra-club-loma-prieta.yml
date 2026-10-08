@@ -3,7 +3,7 @@ election: 2026-11
 status: published
 source: https://www.sierraclub.org/loma-prieta/november-3-2026-sierra-club-california-and-loma-prieta-chapter-general-election
 fetchWith: browser
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-07
 hasReasoning: false
 picks:
   attorney-general:
@@ -93,3 +93,43 @@ picks:
     pick: N
   prop-45:
     pick: N
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  us-rep-18:
+    pick:
+      - Zoe Lofgren
+  us-rep-19:
+    pick:
+      - Jimmy Panetta
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+  assembly-28:
+    pick:
+      - Gail Pellerin
+  midpen-ward-1:
+    pick:
+      - Craig Gleason
+  fhda-trustee-area-4:
+    pick:
+      - Liangfang "Liang" Chao
+  los-altos-council-2:
+    pick:
+      - Lynette Lee Eng
+  santa-clara-mayor:
+    pick:
+      - Kathy Watanabe
+  cupertino-council:
+    pick:
+      - Tracy Kosolcharoen
+  saratoga-council:
+    pick:
+      - Ping Li
+      - Jeri Bromley
+  los-gatos-council:
+    pick:
+      - Rob Moore

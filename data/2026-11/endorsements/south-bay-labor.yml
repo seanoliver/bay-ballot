@@ -6,7 +6,7 @@ fetchWith: browser
 archived:
   - source: https://www.southbaylabor.org/2026_endorsements
     snapshot: https://web.archive.org/web/20261007005125/https://www.southbaylabor.org/2026_endorsements
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-07
 hasReasoning: false
 picks:
   governor:
@@ -68,3 +68,179 @@ picks:
   fremont-uhsd-trustee-area-4:
     pick:
       - Naomi Nakano-Matsumoto
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  us-rep-18:
+    pick:
+      - Zoe Lofgren
+  us-rep-19:
+    pick:
+      - Jimmy Panetta
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
+  assembly-24:
+    pick:
+      - Alex Lee
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+  assembly-28:
+    pick:
+      - Gail Pellerin
+  assembly-29:
+    pick:
+      - Robert Rivas
+  cupertino-council:
+    pick:
+      - J.R. Fruen
+      - Seema Sharma Lindskog
+      - John Tang
+  gilroy-council-4:
+    pick:
+      - Diana Sanchez Bentz
+  gilroy-council-5:
+    pick:
+      - Christina Tovar
+  gilroy-council-6:
+    pick:
+      - Rebeca G. Armendáriz
+  los-gatos-council:
+    pick:
+      - Jeff Suzuki
+      - Rob Moore
+  milpitas-council:
+    pick:
+      - Bill Chuan
+      - Seema Kanani
+  milpitas-mayor:
+    pick:
+      - Hon Lien
+  morgan-hill-council-b:
+    pick:
+      - Steven Hayes
+      - Yvonne Martinez Beltran
+  morgan-hill-council-d:
+    pick:
+      - Dolores Alvarado
+  santa-clara-council-2:
+    pick:
+      - Kimberley Williams
+      - Yvonne Inciarte
+  santa-clara-council-3:
+    pick:
+      - Kyle Madej
+  santa-clara-mayor:
+    pick:
+      - Armando "Gary" Ferraris
+  valley-water-1:
+    pick:
+      - John L. Varela
+  valley-water-6:
+    pick:
+      - Milan Balinton
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
+  san-jose-council-7:
+    pick:
+      - Bien Doan
+  san-jose-council-9:
+    pick:
+      - Gordon Chester
+  saratoga-council:
+    pick:
+      - Jeri Bromley
+  sunnyvale-council-1:
+    pick:
+      - Linda Sell
+  sunnyvale-council-3:
+    pick:
+      - Murali Srinivasan
+  sunnyvale-council-5:
+    pick:
+      - Richard Mehlinger
+  alum-rock-sd-trustee-area-3:
+    pick:
+      - Delia Oseguera
+  alum-rock-sd-trustee-area-5:
+    pick:
+      - Jenny Ludwig
+  berryessa-sd-trustee:
+    pick:
+      - Jaria Jaug
+  campbell-union-sd-trustee-area-5:
+    pick:
+      - Vartika Chandra
+  esuhsd-trustee-area-1-short-term:
+    pick:
+      - Mer Curry Nuñez
+  esuhsd-trustee-area-4:
+    pick:
+      - Lorena Chavez
+      - Tony Lam
+  fhda-trustee-area-4:
+    pick:
+      - William "Bill" Wilson
+  gavilan-trustee-area-3:
+    pick:
+      - Gabriel Gutierrez
+  gilroy-usd-trustee-area-3:
+    pick:
+      - Michelle Nelson
+  gilroy-usd-trustee-area-4:
+    pick:
+      - Jane Stevens
+  mhusd-trustee-area-1:
+    pick:
+      - Nancy Altman-Palm
+  mhusd-trustee-area-2:
+    pick:
+      - Gabriela "Gabby" Winter
+  mhusd-trustee-area-3:
+    pick:
+      - Art Cohen
+  mhusd-trustee-area-4:
+    pick:
+      - Glen R. Webb
+  oak-grove-sd-trustee-area-2:
+    pick:
+      - Victor A. Ramirez
+  oak-grove-sd-trustee-area-3:
+    pick:
+      - Sophie Freestone
+  oak-grove-sd-trustee-area-5:
+    pick:
+      - Paul Chun
+  orchard-sd-trustee:
+    pick:
+      - Lyseria Evelyn Phillips
+  sjusd-trustee-area-2:
+    pick:
+      - Jose Magana
+  sjusd-trustee-area-4:
+    pick:
+      - Mary J. Grunthaner
+      - Michael Melillo
+  scusd-trustee-area-1:
+    pick:
+      - Kamal Yassin
+  wvm-trustee-area-3:
+    pick:
+      - Anne J. Kepner
+      - Colin Lee Elliott Glaves
+  wvm-trustee-area-7:
+    pick:
+      - Doug Robb
+  evergreen-sd-trustee:
+    pick:
+      - Monte Wright
+      - Corinna Diener
+      - Magaly Fernández
+  fremont-uhsd-trustee-area-3:
+    pick:
+      - Rosa Kim
