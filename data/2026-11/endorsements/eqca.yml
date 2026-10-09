@@ -6,7 +6,7 @@ fetchFrom: local # serves GitHub's runners a page with no endorsements; refreshe
 archived:
   - source: https://www.eqca.org/our-endorsements/
     snapshot: https://web.archive.org/web/20261007195254/https://www.eqca.org/elections/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: false
 held:
   - contestId: orchard-sd-trustee
@@ -157,3 +157,18 @@ picks:
   san-leandro-council-2:
     pick:
       - James Aguilar
+  us-rep-1:
+    pick:
+      - Mike McGuire
+  us-rep-4:
+    pick:
+      - Mike Thompson
+  assembly-2:
+    pick:
+      - Chris Rogers
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
+  rohnert-park-council-2:
+    pick:
+      - Michael DeSimone

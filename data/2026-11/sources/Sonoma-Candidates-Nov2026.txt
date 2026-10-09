@@ -1,0 +1,224 @@
+Sonoma County Registrar of Voters, candidates on the ballot, November 3, 2026 General Election.
+Source: https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-3-2026-general-election-candidates-on-the-ballot (retrieved 2026-10-09 with curl)
+Redacted extract: contest, seats, number of candidates listed, and each candidate's name as the county prints it (in capitals). Party preference is kept for voter-nominated offices; for other offices only a ballot designation of "Incumbent" or "Appointed Incumbent" is kept. Other ballot designations and statement links are omitted.
+Statewide offices, the Board of Equalization, Supreme Court and the eleven 1st District Court of Appeal retentions are on the SoS certified list (CA-Certified-Candidates-Nov2026.pdf). Cotati City Council and Calistoga City Council are not on the ballot (as many candidates filed as seats).
+
+United States Representative, 1st District | vote for one | filed: 2
+    JAMES GALLAGHER (Republican)
+    MIKE MCGUIRE (Democratic)
+
+United States Representative, 2nd District | vote for one | filed: 2
+    JARED HUFFMAN (Democratic)
+    ROBIN LITTAU (Republican)
+
+United States Representative, 4th District | vote for one | filed: 2
+    ERIC JONES (Democratic)
+    MIKE THOMPSON (Democratic)
+
+State Senator, 2nd District | vote for one | filed: 2
+    DAMON CONNOLLY (Democratic)
+    TIEF GIBBS (Republican)
+
+Member of the State Assembly, 2nd District | vote for one | filed: 2
+    CHRIS ROGERS (Democratic)
+    MICHAEL GREER (Republican)
+
+Member of the State Assembly, 4th District | vote for one | filed: 1
+    CECILIA M. AGUIAR-CURRY (Democratic)
+
+Member of the State Assembly, 12th District | vote for one | filed: 2
+    ERIC LUCAN (Democratic)
+    JACKIE ELWARD (Democratic)
+
+Superintendent of Public Instruction | vote for one | filed: 2
+    SONJA SHAW
+    RICHARD BARRERA
+
+Member, Sonoma County Board of Education, Trustee Area 2 | vote for one | filed: 2
+    JONATHAN LENZ
+    CAITLIN QUINN
+
+Governing Board Member, Sonoma County Junior College District, Trustee Area 5 | vote for one | filed: 2
+    LETICIA CONTRERAS
+    DOROTHY BATTENFELD
+
+Governing Board Member, Sonoma County Junior College District, Trustee Area 7 | vote for one | filed: 2
+    KATELIYN RUTKOWSKI
+    MICHAEL VALDOVINOS
+
+Governing Board Member, Calistoga Joint Unified School District | vote for no more than two | filed: 4
+    IRENE PENA
+    REBECCA SAGER
+    CECILIA RAMIREZ
+    LAUREL RIOS (incumbent)
+
+Governing Board Member, Cotati-Rohnert Park Unified School District, Trustee Area 1 | vote for one | filed: 3
+    ANGELA MARIE SCARDINA
+    LEFF BROWN (incumbent)
+    NATHAN TOISTER
+
+Governing Board Member, Sonoma Valley Unified School District, Trustee Area 1 | vote for one | filed: 2
+    AMANDA RADZIK
+    SUSAN JOYCE MCINTOSH
+
+Governing Board Member, Windsor Unified School District | vote for no more than three | filed: 4
+    RICH CARNATION (incumbent)
+    STEPHANIE AHMAD (incumbent)
+    PATRICIA "TRISH" DONOHO
+    MICHAEL BROWN
+
+Governing Board Member, City of Santa Rosa High School District, Trustee Area 2 | vote for one | filed: 2
+    SHAUN A. DU FOSEE (appointed incumbent)
+    TERESA A. MEDINA
+
+Governing Board Member, Petaluma Joint Union High School District, Trustee Area 3 | vote for one | filed: 2
+    LAURA HOLMES
+    JOHN GARCIA
+
+Governing Board Member, Petaluma Joint Union High School District, Trustee Area 5 | vote for one | filed: 2
+    JOHN LA BARE
+    SARAH SEITCHIK SEBASTIAN
+
+Governing Board Member, West Sonoma County Union High School District, Trustee Area 5 | vote for one | filed: 2
+    DANI SHEEHAN-MEYER
+    LEWIS BUCHNER (incumbent)
+
+Governing Board Member, Harmony Union School District | vote for no more than three | filed: 4
+    JACQUELYN WILSON (appointed incumbent)
+    MICHAEL PODSHADLEY
+    TIFFANY DANIELLE MONROE
+    JASMIN TOKATLIAN
+
+Governing Board Member, Monte Rio Union School District, Full Term | vote for no more than two | filed: 3
+    MIKE WILDER
+    CRAIG BAKER
+    MELISSA FROST (appointed incumbent)
+
+Governing Board Member, Twin Hills Union School District | vote for no more than three | filed: 4
+    REBECCA HOUGHTON (incumbent)
+    JEFF HARDING (incumbent)
+    ANNA-MARIA GUZMAN
+    JOHN MOISE (incumbent)
+
+Governing Board Member, Two Rock Union School District | vote for no more than three | filed: 5
+    NICOLAS NOYES (incumbent)
+    JOEL RUIZ
+    LAURA B. GUTIERREZ
+    MAURICIO GUTIERREZ
+    JOHN C. MARTIN
+
+Governing Board Member, Waugh School District | vote for no more than three | filed: 4
+    CHRISTINE D. PIEPER (incumbent)
+    DYLAN LLOYD
+    DENISE BUGBEE (incumbent)
+    KEVIN GUSHUE
+
+County Supervisor, 2nd District | vote for one | filed: 2
+    JOANNA PAUN
+    SYLVIA LEMUS
+
+County Supervisor, 4th District | vote for one | filed: 2
+    TOM SCHWEDHELM
+    MELANIE BAGBY
+
+Member, City Council, City of Cloverdale | vote for no more than three | filed: 9
+    STEVE KAWA
+    KIMBERLY KERN
+    WILL CARTER
+    CHRIS PARKER
+    JENN NEYLON
+    COLLEEN SHIELDS
+    KELLY SPAGNOLA
+    MARJORIE A MORGENSTERN (incumbent)
+    ANDRÉS MARQUEZ (appointed incumbent)
+
+City Treasurer, City of Cloverdale | vote for one | There are no candidates for this office.
+
+Member, City Council, City of Healdsburg, District 2 | vote for one | filed: 3
+    ALEX WOOD
+    SCOTT PRATT
+    MATHEW LOPEZ
+
+Member, City Council, City of Healdsburg, District 4 | vote for one | filed: 1
+    CHRIS HERROD
+
+Mayor, City of Petaluma | vote for one | filed: 3
+    JOHN HANANIA
+    KEVIN MCDONNELL
+    SHELINA MOREDA
+
+Member, City Council, City of Petaluma, District 1 | vote for one | filed: 3
+    JANICE CADER THOMPSON
+    ALAN W. LAPIERRE
+    NATE MARTIN
+
+Member, City Council, City of Petaluma, District 2 | vote for one | filed: 2
+    BRENT NEWELL
+    JOHN SHRIBBS (incumbent)
+
+Member, City Council, City of Petaluma, District 3 | vote for one | filed: 2
+    KAREN NAU (incumbent)
+    ERIC VAZQUEZ
+
+Member, City Council, City of Rohnert Park, District 2 | vote for one | filed: 3
+    PAUL CAREY
+    MICHAEL DESIMONE
+    LINDA (KHOURY) TAMS
+
+Member, City Council, City of Rohnert Park, District 5 | vote for one | filed: 3
+    SUSAN HOLLINGSWORTH ADAMS (incumbent)
+    ARLENE G. LINDER
+    MAURICIO BARRETO
+
+Member, City Council, City of Santa Rosa, District 2 | vote for one | filed: 1
+    MARK STAPP
+
+Member, City Council, City of Santa Rosa, District 4 | vote for one | filed: 2
+    MELANIE JONES-CARTER
+    TERRY SANDERS
+
+Member, City Council, City of Santa Rosa, District 6 | vote for one | filed: 1
+    JEFF OKREPKIE
+
+Member, City Council, City of Sebastopol | vote for no more than three | filed: 7
+    IAN HOFF
+    JAMES WOODRUFF
+    KYREEN JORGENSEN
+    BRANDIE L. SOLOVAY
+    JILL MCLEWIS (incumbent)
+    SANDRA MAURER (incumbent)
+    ERIN MITCHELL
+
+Member, City Council, City of Sonoma, District 1 | vote for one | filed: 3
+    PEGGY HUTTON
+    JULIAN MACKIE
+    MICHAEL L. MENEFEE
+
+Mayor, Town of Windsor | vote for one | filed: 2
+    TANYA POTTER
+    RICK MASSELL
+
+Member, Town Council, Town of Windsor, District 1 | vote for one | filed: 2
+    EVAN KUBOTA
+    GINA FORTINO DICKSON
+
+Member, Town Council, Town of Windsor, District 4 | vote for one | filed: 1
+    MEREDITH RENNIE
+
+Director, Gold Ridge Fire Protection District | vote for no more than four | filed: 9
+    DAVID WARBURG
+    DOMENICO CARINALLI JR
+    STEVE E PETRUCCI
+    DOUG JONES
+    TARA DANIELS
+    SHANNON J SHAFFER-KILLEY
+    ROBERT GLOECKNER
+    KATHLEEN MOLLOY GILBRAITH
+    CHRISTINA GIBBS
+
+Director, Sonoma County Fire District | vote for no more than three | filed: 4
+    STEVE KLICK
+    RICHARD H. ALPERT
+    GARY SO
+    ROBERT M. BRIARE
+

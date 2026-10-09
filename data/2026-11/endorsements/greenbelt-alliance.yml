@@ -11,7 +11,7 @@ fetchWith: browser
 archived:
   - source: https://www.greenbelt.org/voter-guide-26/
     snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 rejectedQuotes:
   - text: Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.
@@ -89,3 +89,8 @@ picks:
         source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
       - text: The measure would take decisions out of the City Council and planning commissions’ hands on how to best plan new housing and critical infrastructure.
         source: https://www.greenbelt.org/blog/vote-no-on-measure-d-to-reject-voter-approval-for-parking-plaza-development-los-altos/
+  sonoma-county-measure-h:
+    pick: Y
+    quotes:
+      - text: Measure H, Parks for All, would continue funding for parks in Sonoma County and improve wildfire resilience and community well-being.
+        source: https://www.greenbelt.org/voter-guide-26/

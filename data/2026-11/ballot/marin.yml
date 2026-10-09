@@ -163,12 +163,6 @@ contests:
     candidates: [Kathleen Defever, Alice Fredericks, Chuck Hornbrook, Jack Ryan, Faris Jafar]
     seats: 3
     jurisdiction: { level: city, name: Tiburon }
-  - id: sonoma-county-board-of-education-2
-    section: School and special districts
-    title: Sonoma County Board of Education, Trustee Area 2
-    kind: candidate
-    candidates: [Jonathan Lenz, Caitlin Quinn]
-    jurisdiction: { level: district, name: Sonoma County Board of Education, district: "2", within: [{ level: county, name: Marin }] }
   - id: tamalpais-uhsd-trustee
     section: School and special districts
     title: Tamalpais Union High School District Board

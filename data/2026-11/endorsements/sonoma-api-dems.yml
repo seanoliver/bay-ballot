@@ -1,0 +1,67 @@
+guide: sonoma-api-dems
+election: 2026-11
+status: published
+source: https://www.socoapidemclub.com/ # "Endorsements" block on the homepage
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  us-rep-1:
+    pick:
+      - Mike McGuire
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  us-rep-4:
+    pick:
+      - Mike Thompson
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  assembly-12:
+    pick:
+      - Jackie Elward
+  sonoma-county-supervisor-2:
+    pick:
+      - Joanna Paun
+  sonoma-county-supervisor-4:
+    pick:
+      - Melanie Bagby
+  srjc-trustee-area-5:
+    pick:
+      - Dorothy Battenfeld
+  petaluma-juhsd-trustee-area-3:
+    pick:
+      - John Garcia
+  petaluma-juhsd-trustee-area-5:
+    pick:
+      - Sarah Seitchik Sebastian
+  healdsburg-council-4:
+    pick:
+      - Chris Herrod
+  petaluma-council-3:
+    pick:
+      - Eric Vazquez
+  rohnert-park-council-5:
+    pick:
+      - Susan Hollingsworth Adams
+  santa-rosa-council-2:
+    pick:
+      - Mark Stapp
+  santa-rosa-council-4:
+    pick:
+      - Melanie Jones-Carter
+  sonoma-council-1:
+    pick:
+      - Julian Mackie
+  prop-39:
+    pick: N
+  srjc-measure-ab:
+    pick: Y
+  sonoma-county-measure-h:
+    pick: Y
+  windsor-measure-i:
+    pick: Y
+  rohnert-park-measure-k:
+    pick: Y
+  santa-rosa-measure-l:
+    pick: Y

@@ -7,6 +7,7 @@ extraSources:
   - https://www.progressivevotersguide.com/california/2026/general/county/marin
   - https://www.progressivevotersguide.com/california/2026/general/county/contracosta
   - https://www.progressivevotersguide.com/california/2026/general/county/alameda
+  - https://www.progressivevotersguide.com/california/2026/general/county/sonoma
 archived:
   - source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
     snapshot: https://web.archive.org/web/20261006200128/https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
@@ -14,7 +15,7 @@ archived:
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   - source: https://www.progressivevotersguide.com/california/2026/general/county/marin
     snapshot: https://web.archive.org/web/20261007203549/https://www.progressivevotersguide.com/california/2026/general/county/marin
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -237,3 +238,15 @@ picks:
   san-jose-council-5:
     pick:
       - Peter Ortiz
+  assembly-2:
+    pick:
+      - Chris Rogers
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Rogers supported nearly all progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sonoma
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Aguiar-Curry supported most progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sonoma

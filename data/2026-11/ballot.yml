@@ -7,12 +7,25 @@ title: Bay Area General Election
 date: 2026-11-03
 contests:
   # ---------- Federal ----------
+  - id: us-rep-1
+    section: Federal
+    title: United States Representative, District 1
+    kind: candidate
+    candidates: [Mike McGuire, James Gallagher]
+    jurisdiction: { level: district, name: Congress, district: "1", within: [{ level: county, name: Sonoma }] }
   - id: us-rep-2
     section: Federal
     title: United States Representative, District 2
     kind: candidate
     candidates: [Jared Huffman, Robin Littau]
-    jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }] }
+    aliases: { Jared Huffman: [Jare Huffman] }
+    jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
+  - id: us-rep-4
+    section: Federal
+    title: United States Representative, District 4
+    kind: candidate
+    candidates: [Mike Thompson, Eric Jones]
+    jurisdiction: { level: district, name: Congress, district: "4", within: [{ level: county, name: Sonoma }] }
   - id: us-rep-8
     section: Federal
     title: United States Representative, District 8
@@ -129,13 +142,27 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }] }
   - id: state-senate-2
     section: State
     title: State Senate, District 2
     kind: candidate
     candidates: [Damon Connolly, Tief Gibbs]
-    jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }] }
+    jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
+  - id: assembly-2
+    section: State
+    title: State Assembly, District 2
+    kind: candidate
+    candidates: [Chris Rogers, Michael Greer]
+    aliases: { Michael Greer: [Mike Greer] }
+    jurisdiction: { level: district, name: Assembly, district: "2", within: [{ level: county, name: Sonoma }] }
+  - id: assembly-4
+    section: State
+    title: State Assembly, District 4
+    kind: candidate
+    candidates: [Cecilia M. Aguiar-Curry]
+    aliases: { Cecilia M. Aguiar-Curry: [Cecilia Aguiar-Curry] }
+    jurisdiction: { level: district, name: Assembly, district: "4", within: [{ level: county, name: Sonoma }] }
   - id: assembly-11
     section: State
     title: State Assembly, District 11
@@ -148,7 +175,7 @@ contests:
     title: State Assembly, District 12
     kind: candidate
     candidates: [Jackie Elward, Eric Lucan]
-    jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }] }
+    jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
   - id: assembly-14
     section: State
     title: State Assembly, District 14
@@ -267,7 +294,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)

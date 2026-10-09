@@ -1,0 +1,262 @@
+# Sources: data/2026-11/sources/Sonoma-Candidates-Nov2026.txt and Sonoma-Measures-Nov2026.txt (Sonoma County Registrar of Voters).
+# Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-09-sonoma-guide-discovery.md).
+# Districts that also reach Marin ballots (County Board of Education Area 2, Petaluma JUHSD Area 3, SRJC Measure AB) list Sonoma first, so they live here.
+contests:
+  - id: sonoma-county-supervisor-2
+    section: Local candidates
+    title: Sonoma County Board of Supervisors, District 2
+    kind: candidate
+    candidates: [Joanna Paun, Sylvia Lemus]
+    jurisdiction: { level: district, name: Supervisor, district: "2", within: [{ level: county, name: Sonoma }] }
+  - id: sonoma-county-supervisor-4
+    section: Local candidates
+    title: Sonoma County Board of Supervisors, District 4
+    kind: candidate
+    candidates: [Tom Schwedhelm, Melanie Bagby]
+    jurisdiction: { level: district, name: Supervisor, district: "4", within: [{ level: county, name: Sonoma }] }
+  - id: sonoma-county-measure-h
+    section: Local measures
+    title: Sonoma County Measure H
+    kind: measure
+    description: "Regional parks sales tax (continues the 1/8-cent tax until ended by voters)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9451_MeasH_SoCoRegParks_SalesTax_EN.pdf
+    jurisdiction: { level: county, name: Sonoma }
+  - id: cloverdale-council
+    section: Local candidates
+    title: Cloverdale City Council
+    kind: candidate
+    candidates: [Steve Kawa, Kimberly Kern, Will Carter, Chris Parker, Jenn Neylon, Colleen Shields, Kelly Spagnola, Marjorie A Morgenstern, Andrés Marquez]
+    seats: 3
+    aliases: { Marjorie A Morgenstern: [Marjorie Morgenstern, Marjorie A. Morgenstern], Andrés Marquez: [Andres Marquez, Andrés Márquez] }
+    jurisdiction: { level: city, name: Cloverdale }
+  - id: healdsburg-council-2
+    section: Local candidates
+    title: Healdsburg City Council, District 2
+    kind: candidate
+    candidates: [Alex Wood, Scott Pratt, Mathew Lopez]
+    aliases: { Mathew Lopez: [Mathew López] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Healdsburg }] }
+  - id: healdsburg-council-4
+    section: Local candidates
+    title: Healdsburg City Council, District 4
+    kind: candidate
+    candidates: [Chris Herrod]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Healdsburg }] }
+  - id: petaluma-mayor
+    section: Local candidates
+    title: Petaluma Mayor
+    kind: candidate
+    candidates: [John Hanania, Kevin McDonnell, Shelina Moreda]
+    jurisdiction: { level: city, name: Petaluma }
+  - id: petaluma-council-1
+    section: Local candidates
+    title: Petaluma City Council, District 1
+    kind: candidate
+    candidates: [Janice Cader Thompson, Alan W. LaPierre, Nate Martin]
+    aliases: { Janice Cader Thompson: [Janice Cader-Thompson], Alan W. LaPierre: [Alan LaPierre] }
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Petaluma }] }
+  - id: petaluma-council-2
+    section: Local candidates
+    title: Petaluma City Council, District 2
+    kind: candidate
+    candidates: [Brent Newell, John Shribbs]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Petaluma }] }
+  - id: petaluma-council-3
+    section: Local candidates
+    title: Petaluma City Council, District 3
+    kind: candidate
+    candidates: [Karen Nau, Eric Vazquez]
+    aliases: { Eric Vazquez: [Eric Vasquez] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Petaluma }] }
+  - id: rohnert-park-council-2
+    section: Local candidates
+    title: Rohnert Park City Council, District 2
+    kind: candidate
+    candidates: [Paul Carey, Michael DeSimone, Linda (Khoury) Tams]
+    aliases: { Linda (Khoury) Tams: [Linda Khoury Tams, Linda Khouty Tams, Khoury Tams] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Rohnert Park }] }
+  - id: rohnert-park-council-5
+    section: Local candidates
+    title: Rohnert Park City Council, District 5
+    kind: candidate
+    candidates: [Susan Hollingsworth Adams, Arlene G. Linder, Mauricio Barreto]
+    aliases: { Susan Hollingsworth Adams: [Susan Adams], Arlene G. Linder: [Arlene Linder] }
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Rohnert Park }] }
+  - id: rohnert-park-measure-k
+    section: Local measures
+    title: Rohnert Park Measure K
+    kind: measure
+    description: "Half-cent sales tax"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9611_MeasK_CityOfRohnertPark_SalesTax_EN.pdf
+    jurisdiction: { level: city, name: Rohnert Park }
+  - id: santa-rosa-council-2
+    section: Local candidates
+    title: Santa Rosa City Council, District 2
+    kind: candidate
+    candidates: [Mark Stapp]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Santa Rosa }] }
+  - id: santa-rosa-council-4
+    section: Local candidates
+    title: Santa Rosa City Council, District 4
+    kind: candidate
+    candidates: [Melanie Jones-Carter, Terry Sanders]
+    aliases: { Melanie Jones-Carter: [Melanie Jones Carter, Melanie Jone Carter] }
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Santa Rosa }] }
+  - id: santa-rosa-council-6
+    section: Local candidates
+    title: Santa Rosa City Council, District 6
+    kind: candidate
+    candidates: [Jeff Okrepkie]
+    jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Santa Rosa }] }
+  - id: santa-rosa-measure-l
+    section: Local measures
+    title: Santa Rosa Measure L
+    kind: measure
+    description: "Community Safety/Financial Stability Measure (reauthorizes the sales tax at 1 cent)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9561_MeasL_CityOfSantaRosa_SalesTax_EN.pdf
+    jurisdiction: { level: city, name: Santa Rosa }
+  - id: sebastopol-council
+    section: Local candidates
+    title: Sebastopol City Council
+    kind: candidate
+    candidates: [Ian Hoff, James Woodruff, Kyreen Jorgensen, Brandie L. Solovay, Jill McLewis, Sandra Maurer, Erin Mitchell]
+    seats: 3
+    aliases: { Brandie L. Solovay: [Brandie Solovay], Sandra Maurer: [Sandra Murer] }
+    jurisdiction: { level: city, name: Sebastopol }
+  - id: sonoma-council-1
+    section: Local candidates
+    title: Sonoma City Council, District 1
+    kind: candidate
+    candidates: [Peggy Hutton, Julian Mackie, Michael L. Menefee]
+    aliases: { Michael L. Menefee: [Michael Menefee] }
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Sonoma }] }
+  - id: windsor-mayor
+    section: Local candidates
+    title: Windsor Mayor
+    kind: candidate
+    candidates: [Tanya Potter, Rick Massell]
+    jurisdiction: { level: city, name: Windsor }
+  - id: windsor-council-1
+    section: Local candidates
+    title: Windsor Town Council, District 1
+    kind: candidate
+    candidates: [Evan Kubota, Gina Fortino Dickson]
+    jurisdiction: { level: district, name: Town Council, district: "1", within: [{ level: city, name: Windsor }] }
+  - id: windsor-measure-i
+    section: Local measures
+    title: Windsor Measure I
+    kind: measure
+    description: "1% sales tax"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9641_MeasI_TownOfWindsor_SalesTax_EN.pdf
+    jurisdiction: { level: city, name: Windsor }
+  - id: sonoma-county-board-of-education-2
+    section: School and special districts
+    title: Sonoma County Board of Education, Trustee Area 2
+    kind: candidate
+    candidates: [Jonathan Lenz, Caitlin Quinn]
+    jurisdiction: { level: district, name: Sonoma County Board of Education, district: "2", within: [{ level: county, name: Sonoma }, { level: county, name: Marin }] }
+  - id: srjc-trustee-area-5
+    section: School and special districts
+    title: Sonoma County Junior College District (SRJC), Trustee Area 5
+    kind: candidate
+    candidates: [Leticia Contreras, Dorothy Battenfeld]
+    jurisdiction: { level: district, name: Sonoma County Junior College District, district: "5", within: [{ level: county, name: Sonoma }] }
+  - id: srjc-measure-ab
+    section: School and special districts
+    title: Sonoma County Junior College District Measure AB
+    kind: measure
+    description: "$830 million facilities bond (Santa Rosa Junior College)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9311_MeasAB_SoCoJrCollDist_Bond_EN.pdf
+    jurisdiction: { level: district, name: Sonoma County Junior College District, district: "at-large", within: [{ level: county, name: Sonoma }, { level: county, name: Marin }] }
+  - id: petaluma-juhsd-trustee-area-3
+    section: School and special districts
+    title: Petaluma Joint Union High School District, Trustee Area 3
+    kind: candidate
+    candidates: [Laura Holmes, John Garcia]
+    jurisdiction: { level: district, name: Petaluma Joint Union High School District, district: "3", within: [{ level: county, name: Sonoma }, { level: county, name: Marin }] }
+  - id: petaluma-juhsd-trustee-area-5
+    section: School and special districts
+    title: Petaluma Joint Union High School District, Trustee Area 5
+    kind: candidate
+    candidates: [John La Bare, Sarah Seitchik Sebastian]
+    aliases: { Sarah Seitchik Sebastian: [Sarah Seitchik] }
+    jurisdiction: { level: district, name: Petaluma Joint Union High School District, district: "5", within: [{ level: county, name: Sonoma }] }
+  - id: santa-rosa-hsd-trustee-area-2
+    section: School and special districts
+    title: City of Santa Rosa High School District, Trustee Area 2
+    kind: candidate
+    candidates: [Shaun A. Du Fosee, Teresa A. Medina]
+    aliases: { Shaun A. Du Fosee: [Shaun Du Fosee, Shaun Du Fosse], Teresa A. Medina: [Teresa Medina] }
+    jurisdiction: { level: district, name: City of Santa Rosa High School District, district: "2", within: [{ level: county, name: Sonoma }] }
+  - id: sonoma-valley-usd-trustee-area-1
+    section: School and special districts
+    title: Sonoma Valley Unified School District, Trustee Area 1
+    kind: candidate
+    candidates: [Amanda Radzik, Susan Joyce McIntosh]
+    aliases: { Susan Joyce McIntosh: [Susan McIntosh] }
+    jurisdiction: { level: district, name: Sonoma Valley Unified School District, district: "1", within: [{ level: county, name: Sonoma }] }
+  - id: windsor-usd-trustee
+    section: School and special districts
+    title: Windsor Unified School District Board
+    kind: candidate
+    candidates: [Rich Carnation, Stephanie Ahmad, 'Patricia "Trish" Donoho', Michael Brown]
+    seats: 3
+    aliases: { 'Patricia "Trish" Donoho': [Trish Donoho, Patricia Donoho] }
+    jurisdiction: { level: district, name: Windsor Unified School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: windsor-usd-measure-j
+    section: School and special districts
+    title: Windsor Unified School District Measure J
+    kind: measure
+    description: "$96 million school bond"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9321_MeasJ_WindsorUnifSchlDist_Bond_EN.pdf
+    jurisdiction: { level: district, name: Windsor Unified School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: waugh-sd-trustee
+    section: School and special districts
+    title: Waugh School District Board
+    kind: candidate
+    candidates: [Christine D. Pieper, Dylan Lloyd, Denise Bugbee, Kevin Gushue]
+    seats: 3
+    aliases: { Christine D. Pieper: [Christine Pieper, Christin Pieper] }
+    jurisdiction: { level: district, name: Waugh School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: waugh-sd-measure-e
+    section: School and special districts
+    title: Waugh School District Measure E
+    kind: measure
+    description: "$16 million school bond"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9445_MeasE_WaughSchlDist_Bond_EN.pdf
+    jurisdiction: { level: district, name: Waugh School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: west-sonoma-uhsd-measure-g
+    section: School and special districts
+    title: West Sonoma County Union High School District Measure G
+    kind: measure
+    description: "Parcel tax renewal ($79 per parcel, 8 years)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9379_MeasG_WestSoCoUnionHghSchlDist_ParcelTax_EN.pdf
+    jurisdiction: { level: district, name: West Sonoma County Union High School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: harmony-union-sd-measure-m
+    section: School and special districts
+    title: Harmony Union School District Measure M
+    kind: measure
+    description: "Education parcel tax ($75 a year, 4 years)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9401_MeasM_HarmonyUnionSchlDist_ParcelTax_EN.pdf
+    jurisdiction: { level: district, name: Harmony Union School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: old-adobe-union-sd-measure-o
+    section: School and special districts
+    title: Old Adobe Union School District Measure O
+    kind: measure
+    description: "$48 million school bond"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9419_MeasO_OldAdobeUnionSchlDist_Bond_EN.pdf
+    jurisdiction: { level: district, name: Old Adobe Union School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: coast-life-support-measure-d
+    section: School and special districts
+    title: Coast Life Support District Measure D
+    kind: measure
+    description: "Emergency medical services parcel tax (Mendocino County is the lead county)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9761_MeasD_CoastLifeSuppDist_ParcelTax_EN.pdf
+    jurisdiction: { level: district, name: Coast Life Support District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: schell-vista-fire-measure-n
+    section: School and special districts
+    title: Schell-Vista Fire Protection District Measure N
+    kind: measure
+    description: "Appropriations limit (Ordinance No. 2026-01)"
+    link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9723_MeasN_Schell-VistaFireProtDist_AppropLimit_EN.pdf
+    jurisdiction: { level: district, name: Schell-Vista Fire Protection District, district: "at-large", within: [{ level: county, name: Sonoma }] }

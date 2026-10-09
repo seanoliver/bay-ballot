@@ -16,7 +16,7 @@ archived:
     snapshot: https://web.archive.org/web/20261007203156/https://marinyimby.org/endorsements/endorsements/statewide-offices/
   - source: https://marinyimby.org/endorsements/endorsements/local-ballot-measures/
     snapshot: https://web.archive.org/web/20261007203321/https://marinyimby.org/endorsements/endorsements/local-ballot-measures/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: false
 picks:
   attorney-general:
@@ -214,3 +214,12 @@ picks:
   bart-4:
     pick:
       - Robert Raburn
+  us-rep-1:
+    pick:
+      - Mike McGuire
+  assembly-2:
+    pick:
+      - Chris Rogers
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry

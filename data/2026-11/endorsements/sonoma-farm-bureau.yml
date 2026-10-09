@@ -1,0 +1,20 @@
+guide: sonoma-farm-bureau
+election: 2026-11
+status: published
+source: https://sonomafb.org/advocacy-2/ # "2026 SCFB Voter Guide" image; the page's two other 2026 images are the California Farm Bureau's statewide guide
+extraSources:
+  - https://sonomafb.org/wp-content/uploads/2026/10/SCFB-Voter-Guide-1.png
+fetchedAt: 2026-10-09
+hasReasoning: false
+manual: true # picks hand-entered from the voter guide image (read 2026-10-09); extract skips this guide. Comments quote each image line.
+picks:
+  us-rep-4: { pick: ["Mike Thompson"] } # "Mike Thompson / U.S. Congressional District 4"
+  us-rep-1: { pick: ["James Gallagher"] } # "James Gallagher / U.S. Congressional District 1"
+  sonoma-county-supervisor-2: { pick: ["Sylvia Lemus"] } # "Sylvia Lemus / Sonoma County Supervisor District 2"
+  sonoma-county-supervisor-4: { pick: ["Tom Schwedhelm"] } # "Tom Schwedhelm / Sonoma County Supervisor District 4"
+  assembly-12: { pick: ["Eric Lucan"] } # "Eric Lucan / CA District 12 Assembly"
+  santa-rosa-council-4: { pick: ["Terry Sanders"] } # "Terry Sanders / Santa Rosa City Council" (he runs only in District 4)
+  insurance-commissioner: { pick: ["Ben Allen"] } # "Ben Allen / Insurance Commissioner"
+  prop-40: { pick: N } # "OPPOSE PROP 40 - Imposes One-Time Tax on Certain Individuals and Trusts."
+  prop-43: { pick: Y } # "SUPPORT PROP 43 - Local Taxes: Limitations"
+  prop-45: { pick: Y } # "SUPPORT PROP 45 - Modifies Environmental Review for Certain Projects."

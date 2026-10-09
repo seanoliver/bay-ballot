@@ -1,0 +1,16 @@
+id: sonoma
+name: Sonoma County
+kind: county
+order: 80
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Sonoma }
+  - { level: city, name: Cloverdale }
+  - { level: city, name: Cotati }
+  - { level: city, name: Healdsburg }
+  - { level: city, name: Petaluma }
+  - { level: city, name: Rohnert Park }
+  - { level: city, name: Santa Rosa }
+  - { level: city, name: Sebastopol }
+  - { level: city, name: Sonoma }
+  - { level: city, name: Windsor }
