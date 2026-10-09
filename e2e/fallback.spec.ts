@@ -141,7 +141,8 @@ test.describe("Bay Area fallback", () => {
     const section = judicial(page);
     const block = section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true }).first();
     await expect(block.getByText("1 guide hidden")).toBeVisible();
-    await block.getByRole("button", { name: "Show all Bay Area guides on this contest" }).click();
+    await block.getByRole("button", { name: `Show all Bay Area guides on ${GROBAN}` }).click();
+    await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("aria-labelledby"))).toMatch(/^bay-[dm]-/);
     await expect(page).not.toHaveURL(/off=/);
     await expect(page).not.toHaveURL(/[?&]c=/);
     await expect(section.getByRole("group", { name: "4 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(2);
@@ -153,7 +154,7 @@ test.describe("Bay Area fallback", () => {
     await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
     const block = section.getByRole("group", { name: "Filters hide all 3 Bay Area guides" }).filter({ visible: true });
     await expect(block).toHaveCount(1);
-    await block.getByRole("button", { name: "Show all Bay Area guides on this contest" }).click();
+    await block.getByRole("button", { name: /^Show all Bay Area guides on / }).click();
     await expect(section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(1);
   });
 });

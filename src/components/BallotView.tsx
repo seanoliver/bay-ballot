@@ -550,7 +550,7 @@ const ContestRow = memo(function ContestRow({
           </a>
         </h4>
         {wide ? (
-          <BayBlock id={`bay-m-${contest.id}`} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
+          <BayBlock id={`bay-m-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
           </BayBlock>
         ) : skipped ? (
@@ -579,7 +579,7 @@ const ContestRow = memo(function ContestRow({
         </h4>
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         {wide ? (
-          <BayBlock id={`bay-d-${contest.id}`} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
+          <BayBlock id={`bay-d-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} />
           </BayBlock>
         ) : skipped ? (

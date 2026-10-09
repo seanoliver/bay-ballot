@@ -133,7 +133,7 @@ export function ContestDetail({
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
         {fallback?.scope === "area" ? <p className="mt-4 text-sm text-muted-foreground">{skippedLabel(fallback.place)}</p> : null}
         {bay ? (
-          <BayBlock id={`bay-${titleId ?? "sheet"}-${contest.id}`} shown={rows.length} total={fallback.total} onReveal={fallback.onReveal} className="mt-4">
+          <BayBlock id={`bay-${titleId ?? "sheet"}-${contest.id}`} title={contest.title} shown={rows.length} total={fallback.total} onReveal={fallback.onReveal} className="mt-4">
             {summary}
             <div className="mt-8">{guides}</div>
           </BayBlock>

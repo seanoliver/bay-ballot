@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { BAY_AREA } from "@/lib/areas";
 import { bayHeading, type Scope } from "@/lib/fallback";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,7 @@ export function ScopeSwitch({ place, scope, onChange, className }: { place: stri
 
 export function BayBlock({
   id,
+  title,
   shown,
   total,
   onReveal,
@@ -38,6 +39,7 @@ export function BayBlock({
   children,
 }: {
   id: string;
+  title: string;
   shown: number;
   total: number;
   onReveal: () => void;
@@ -46,9 +48,10 @@ export function BayBlock({
   children: ReactNode;
 }) {
   const { label, hidden } = bayHeading(shown, total);
+  const ref = useRef<HTMLDivElement>(null);
   return (
-    <div role="group" aria-labelledby={id} className={cn("border-l-2 border-foreground/25 pl-3", inline && "flex items-center gap-3 pl-2.5", className)}>
-      <p className={cn("text-xs text-muted-foreground", inline && "min-w-0 flex-1")}>
+    <div ref={ref} tabIndex={-1} role="group" aria-labelledby={id} className={cn("outline-none border-l-2 border-foreground/25 pl-3", inline && "flex items-center gap-3 pl-2.5", className)}>
+      <p aria-live="polite" className={cn("text-xs text-muted-foreground", inline && "min-w-0 flex-1")}>
         <span id={id} className="font-medium">
           {label}
         </span>
@@ -58,8 +61,12 @@ export function BayBlock({
             {" · "}
             <button
               type="button"
-              aria-label="Show all Bay Area guides on this contest"
-              onClick={onReveal}
+              aria-label={`Show all Bay Area guides on ${title}`}
+              onClick={() => {
+                // Show unmounts itself once nothing is hidden, so move focus to the block first.
+                ref.current?.focus();
+                onReveal();
+              }}
               className="relative z-10 -my-2.5 inline-block py-2.5 underline underline-offset-2 hover:text-foreground"
             >
               Show
