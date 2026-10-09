@@ -114,9 +114,13 @@ describe("resultHeadline", () => {
       detail: "2 guides",
     });
   });
-  it("a single endorsed candidate: no share, and says there are no other endorsements", () => {
+  it("unanimous: no share, and says Unanimous", () => {
     const rows = [row("A", ["Scott Wiener"]), row("B", ["Scott Wiener"]), row("C", ["Scott Wiener"])];
-    expect(resultHeadline(race, rows)).toEqual({ lead: "Scott Wiener", tone: "candidate", detail: "3 guides, no other endorsements" });
+    expect(resultHeadline(race, rows)).toEqual({ lead: "Scott Wiener", tone: "candidate", detail: "Unanimous · 3 of 3 guides" });
+    expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["Y", "X"])])).toEqual({ lead: "X, Y", tone: "candidate", detail: "Unanimous · 2 of 2 guides" });
+  });
+  it("one guide: says there are no other endorsements", () => {
+    expect(resultHeadline(race, [row("A", ["Scott Wiener"])])).toEqual({ lead: "Scott Wiener", tone: "candidate", detail: "1 guide, no other endorsements" });
   });
     it("multi-seat", () => {
     expect(resultHeadline(board, [row("A", ["X", "Y"]), row("B", ["X"])])).toEqual({ lead: "X, Y", tone: "candidate", detail: "2 guides" });

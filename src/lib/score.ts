@@ -96,3 +96,10 @@ export function tally(contest: Contest, entries: Entry[]): Tally {
     leaderRanked: top.fromRanked,
   };
 }
+
+// Two or more guides took a position and every one picked the same name (or, for multi-seat, the same set).
+export function unanimous(t: Tally, contest: Pick<Contest, "seats">): boolean {
+  if (t.kind !== "candidate" || t.total < 2 || t.counts.length === 0) return false;
+  if (contest.seats === 1 && t.counts.length > 1) return false;
+  return t.counts.every((c) => c.count === t.total);
+}

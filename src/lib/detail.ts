@@ -2,7 +2,7 @@ import { candidateSlots, slotTone, surname, type BarTone, type Slots } from "./b
 import { displayName, groupByPick, reasons, sourceLink } from "./display";
 import type { Row } from "./filters";
 import type { Contest, GuideType } from "./schema";
-import { tally } from "./score";
+import { tally, unanimous } from "./score";
 
 export type SideGuide = { id: string; name: string; short: string; type: GuideType; quoted: boolean };
 export type SideQuote = { guideId: string; guideName: string; type: GuideType; text: string; href: string };
@@ -83,8 +83,9 @@ export function resultHeadline(contest: Contest, rows: Row[]): ResultHeadline {
     return { lead: `${yes ? "Yes" : "No"} ${t.pct}%`, tone: yes ? "yes" : "no", detail: guides(t.total) };
   }
   if (t.counts.length === 0) return none;
-  if (contest.seats > 1) return { lead: t.counts.slice(0, contest.seats).map((c) => c.name).join(", "), tone: "candidate", detail: guides(t.total) };
-  if (t.counts.length === 1) return { lead: t.counts[0].name, tone: "candidate", detail: `${guides(t.counts[0].count)}, no other endorsements` };
+  const all = unanimous(t, contest) ? `Unanimous · ${t.total} of ${guides(t.total)}` : null;
+  if (contest.seats > 1) return { lead: t.counts.slice(0, contest.seats).map((c) => c.name).join(", "), tone: "candidate", detail: all ?? guides(t.total) };
+  if (t.counts.length === 1) return { lead: t.counts[0].name, tone: "candidate", detail: all ?? `${guides(t.counts[0].count)}, no other endorsements` };
   if (t.leader === null) return { lead: "Split", tone: "split", detail: guides(t.total) };
   return { lead: `${t.leader} ${t.pct}%`, tone: "candidate", detail: guides(t.total) };
 }

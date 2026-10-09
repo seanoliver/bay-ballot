@@ -2,7 +2,7 @@ import { barSegments, candidateSlots, surname, type BarSegment, type BarTone, ty
 import { cardDescription, contestHeadline } from "./display";
 import type { Row } from "./filters";
 import type { Contest } from "./schema";
-import { tally } from "./score";
+import { tally, unanimous } from "./score";
 
 export type ShareLegendItem = { label: string; count: number; tone: BarTone };
 export type ShareSeat = { label: string; count: number; pct: number; tone: BarTone };
@@ -66,14 +66,15 @@ export function shareCard(contest: Contest, rows: Row[], slots?: Slots): ShareCa
     };
   }
 
+  const all = unanimous(t, contest) ? `Unanimous · ${t.total} of ${guides(t.total)}` : null;
   if (contest.seats > 1) {
     const seats = segments.map((s) => ({ label: s.label, count: s.count, pct: s.pct, tone: s.tone }));
-    return { ...base, multi: true, seats, lead: `Top ${contest.seats} of ${t.counts.length} candidates`, leadTone: "candidate", sub: guides(t.total) };
+    return { ...base, multi: true, seats, lead: `Top ${contest.seats} of ${t.counts.length} candidates`, leadTone: "candidate", sub: all ?? guides(t.total) };
   }
 
   const legend = segments.map((s) => ({ label: s.key === "others" ? s.label : surname(s.label), count: s.count, tone: s.tone }));
   if (t.counts.length === 1) {
-    return { ...base, segments, legend, lead: t.counts[0].name, leadTone: "candidate", sub: `${guides(t.counts[0].count)}, no other endorsements` };
+    return { ...base, segments, legend, lead: t.counts[0].name, leadTone: "candidate", sub: all ?? `${guides(t.counts[0].count)}, no other endorsements` };
   }
   if (t.leader === null) return { ...base, segments, legend, lead: "Split", leadTone: "split", sub: guides(t.total) };
   return { ...base, segments, legend, lead: `${t.leader} ${t.pct}%`, leadTone: "candidate", sub: `${t.count} of ${guides(t.total)}` };
