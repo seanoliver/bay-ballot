@@ -174,8 +174,6 @@ picks:
     pick: N
   supreme-court-evans:
     pick: N
-  court-of-appeal-6:
-    pick: N
   us-rep-1:
     pick:
       - James Gallagher
@@ -366,7 +364,7 @@ picks:
     pick: N
     quotes:
       - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
   san-mateo-county-measure-aa:
     pick: N
     quotes:
@@ -548,7 +546,7 @@ picks:
     pick: N
     quotes:
       - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
+        source: https://www.reformcalifornia.org/voter-guides/alameda
   berkeley-measure-aa:
     pick: N
   emeryville-measure-bb:
@@ -726,3 +724,21 @@ picks:
   st-helena-council:
     pick:
       - Kate Spadarotto
+  harmony-union-sd-trustee:
+    pick:
+      - Michael Podshadley
+  two-rock-union-sd-trustee:
+    pick:
+      - Laura B. Gutierrez
+      - Nicolas Noyes
+  gold-ridge-fire-director:
+    pick:
+      - Doug Jones
+      - Robert Gloeckner
+  sonoma-county-fire-director:
+    pick:
+      - Richard H. Alpert
+  st-helena-measure-s:
+    pick: N
+  yountville-measure-y:
+    pick: N

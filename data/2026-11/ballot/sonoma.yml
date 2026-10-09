@@ -232,6 +232,13 @@ contests:
     description: "Parcel tax renewal ($79 per parcel, 8 years)"
     link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9379_MeasG_WestSoCoUnionHghSchlDist_ParcelTax_EN.pdf
     jurisdiction: { level: district, name: West Sonoma County Union High School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: harmony-union-sd-trustee
+    section: School and special districts
+    title: Harmony Union School District Board
+    kind: candidate
+    candidates: [Jacquelyn Wilson, Michael Podshadley, Tiffany Danielle Monroe, Jasmin Tokatlian]
+    seats: 3
+    jurisdiction: { level: district, name: Harmony Union School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
   - id: harmony-union-sd-measure-m
     section: School and special districts
     title: Harmony Union School District Measure M
@@ -239,6 +246,13 @@ contests:
     description: "Education parcel tax ($75 a year, 4 years)"
     link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9401_MeasM_HarmonyUnionSchlDist_ParcelTax_EN.pdf
     jurisdiction: { level: district, name: Harmony Union School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: two-rock-union-sd-trustee
+    section: School and special districts
+    title: Two Rock Union School District Board
+    kind: candidate
+    candidates: [Nicolas Noyes, Joel Ruiz, Laura B. Gutierrez, Mauricio Gutierrez, John C. Martin]
+    seats: 3
+    jurisdiction: { level: district, name: Two Rock Union School District, district: "at-large", within: [{ level: county, name: Sonoma }] }
   - id: old-adobe-union-sd-measure-o
     section: School and special districts
     title: Old Adobe Union School District Measure O
@@ -260,3 +274,17 @@ contests:
     description: "Appropriations limit (Ordinance No. 2026-01)"
     link: https://sonomacounty.gov/Main%20County%20Site/Administrative%20Support%20%26%20Fiscal%20Services/Registrar%20of%20Voters/Documents/Elections/2026/11-03-2026/SoCo_Nov2026GenElec_9723_MeasN_Schell-VistaFireProtDist_AppropLimit_EN.pdf
     jurisdiction: { level: district, name: Schell-Vista Fire Protection District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: gold-ridge-fire-director
+    section: School and special districts
+    title: Gold Ridge Fire Protection District Board
+    kind: candidate
+    candidates: [David Warburg, Domenico Carinalli Jr, Steve E Petrucci, Doug Jones, Tara Daniels, Shannon J Shaffer-Killey, Robert Gloeckner, Kathleen Molloy Gilbraith, Christina Gibbs]
+    seats: 4
+    jurisdiction: { level: district, name: Gold Ridge Fire Protection District, district: "at-large", within: [{ level: county, name: Sonoma }] }
+  - id: sonoma-county-fire-director
+    section: School and special districts
+    title: Sonoma County Fire District Board
+    kind: candidate
+    candidates: [Steve Klick, Richard H. Alpert, Gary So, Robert M. Briare]
+    seats: 3
+    jurisdiction: { level: district, name: Sonoma County Fire District, district: "at-large", within: [{ level: county, name: Sonoma }] }

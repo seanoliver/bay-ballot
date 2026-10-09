@@ -1,12 +1,12 @@
 # Sources: data/2026-11/sources/Napa-Candidates-Nov2026.txt and Napa-Measures-Nov2026.txt (Napa County Registrar of Voters).
 # Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-09-napa-guide-discovery.md).
-# Left out for now (no guide position): Calistoga Joint Unified School District, St. Helena Measure S, Yountville Measure Y.
+# Left out for now (no guide position): Calistoga Joint Unified School District.
 contests:
   - id: napa-county-measure-b
     section: Local measures
     title: Napa County Measure B
     kind: measure
-    description: "Wildfire preparedness, watershed protection and open space sales tax (1/2 cent, April 2027 to March 2045)"
+    description: "The Napa County Wildfire Preparedness, Watershed Protection and Open Space Preservation Act of 2026: a 1/2 cent sales tax, April 2027 to March 2045"
     link: https://www.napacounty.gov/2471/County-of-Napa---Measure-B
     jurisdiction: { level: county, name: Napa }
   - id: american-canyon-council
@@ -61,6 +61,20 @@ contests:
     candidates: [Robin McKee, Jessi Bugden, Matthew Chrzanowski, Hillery Bolt Trippe, Jill Turner]
     seats: 2
     aliases: { Hillery Bolt Trippe: [Hillery Trippe] }
+    jurisdiction: { level: city, name: Yountville }
+  - id: st-helena-measure-s
+    section: Local measures
+    title: St. Helena Measure S
+    kind: measure
+    description: "St. Helena City Services Measure: 1/2 cent sales tax, until ended by voters"
+    link: https://www.cityofsthelena.gov/985/Measure-S---Ballot-Question
+    jurisdiction: { level: city, name: St. Helena }
+  - id: yountville-measure-y
+    section: Local measures
+    title: Yountville Measure Y
+    kind: measure
+    description: "Town appropriations (Gann) limit update for four years; no new tax"
+    link: https://www.townofyountville.gov/659/Measure-Y-Town-Appropriations-Limit
     jurisdiction: { level: city, name: Yountville }
   - id: napa-valley-college-trustee-area-2
     section: School and special districts

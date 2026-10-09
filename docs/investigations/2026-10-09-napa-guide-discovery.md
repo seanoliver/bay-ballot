@@ -59,7 +59,7 @@ Not yet covered by the Press Democrat: AD4, every Napa school, college and city 
 | Guide (proposed id) | Type | Nov 2026 URL | Published? | Reasons? | Format | Bot block | Contests covered |
 |---|---|---|---|---|---|---|---|
 | North Bay Labor Council (existing `nbclc`) | union | https://www.nbclc.org/2026endorsements | **Yes** | List | HTML (Wix) | None | **CD4 Thompson, AD4 Aguiar-Curry.** The page has Sonoma, Marin, Mendocino and Lake sections but **no Napa County section**. Napa is not in its stated jurisdiction (the guide file says "Sonoma, Lake, Mendocino and Marin") |
-| Napa and Solano Counties Central Labor Council | union | https://unionhall.aflcio.org/nsclc | **Not published.** The newest item is "March 2020 Endorsements"; `/nsclc/endorsements` returns 404 | n/a | HTML | None | None |
+| Napa Solano Central Labor Council (existing `napa-solano-labor`, added for Solano) | union | https://napasolanoclc.org/elections/ ("Endorsements – General Election 2026") | **Yes** (corrected after review; this row first checked the stale AFL-CIO site, unionhall.aflcio.org/nsclc, whose newest item is "March 2020 Endorsements") | List | HTML (WordPress) | None | **CD4 Thompson, AD4 Aguiar-Curry.** Its **Napa County** section: American Canyon council Oro; Napa council D3 Luros; NVC Area 2 Heriverto "Eddy" Ruiz, Area 3 Pastula, Area 4 Johnson; NVUSD Area 1 Jankiewicz, Area 6 Gonzalez-Mares, Area 7 Dooley. Vallejo USD Areas 1 and 3 are listed under that heading but are Solano contests |
 | SEIU 1021 (existing `seiu-1021`) | union | https://www.seiu1021.org/post/election-endorsements-nov-3-2026 | **Yes** | List | HTML | None | **CD4 Thompson, AD4 Aguiar-Curry; Napa council D3 Luros; NVC TA2 Eddy Ruiz, TA3 Pastula, TA4 Johnson.** The NVC picks sit under the **SOLANO COUNTY** heading, after Vallejo, not under NAPA COUNTY |
 | Napa Valley Educators Association, Napa firefighters | union | None found | **Unverified.** Searches found no 2026 list | n/a | n/a | n/a | n/a |
 
@@ -94,9 +94,10 @@ Not yet covered by the Press Democrat: AD4, every Napa school, college and city 
 Guides with any Nov 2026 Napa pick, local or district (statewide-only guides excluded):
 - **Published, new:** 4. These are napa-dems, napa-gop, sierra-club-redwood and press-democrat.
 - **Published, existing and should be widened:** 8. These are nbclc, seiu-1021, courage-california, yimby-action, eqca, pp-norcal-action, 350-bay-area-action and greenbelt-alliance.
+- **Found after review:** napa-solano-labor (a new guide for Solano) has a Napa County section and is widened to Napa.
 - **Statewide only, widen by precedent:** lwv-ca.
 - **Statewide only, not widened:** envirovoters, ca-wfp, mercury-news, sf-chronicle, spur.
-- **Not published:** Napa Valley Register (declined to endorse), St. Helena Star, Weekly Calistogan, American Canyon Eagle, Democrats of Napa Valley, Napa-Solano CLC, LWV Napa County, Napa Chamber. Farm Bureau is neutral. The Land Trust is the measure's sponsor.
+- **Not published:** Napa Valley Register (declined to endorse), St. Helena Star, Weekly Calistogan, American Canyon Eagle, Democrats of Napa Valley, LWV Napa County, Napa Chamber. Farm Bureau is neutral. The Land Trust is the measure's sponsor.
 - **Unverified:** Calistoga Tribune, Yountville Sun, Napa Valley Marketplace, Progressive Women of Napa Valley, Indivisible Napa, Napa Valley Educators Association, Napa firefighters, Napa County Taxpayers Association.
 
 ---

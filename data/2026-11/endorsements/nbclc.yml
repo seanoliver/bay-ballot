@@ -148,3 +148,5 @@ picks:
     pick: Y
   windsor-measure-i:
     pick: Y
+  srjc-measure-ab:
+    pick: Y
