@@ -28,7 +28,7 @@ export default function AboutPage() {
       <article className="measure">
         <h1 className="text-xl font-semibold">About Bay Ballot</h1>
         <p className="mt-2 text-base text-muted-foreground">
-          Endorsements for the November 3, 2026 election from voter guides in San Francisco, San Mateo County, Santa Clara County (including San Jose, Palo Alto and Mountain View), Alameda County (including Oakland and Berkeley), Contra Costa County and Marin County.
+          Endorsements for the November 3, 2026 election from voter guides in San Francisco, San Mateo County, Santa Clara County (including San Jose, Palo Alto and Mountain View), Alameda County (including Oakland and Berkeley), Contra Costa County, Marin County, Sonoma County, Napa County and Solano County.
         </p>
         <div className="mt-4 rounded-xl border border-border bg-card p-5 sm:p-7">
           <div className="space-y-4 text-base">
@@ -43,7 +43,7 @@ export default function AboutPage() {
             </p>
             <p>
               So I turned it into Bay Ballot: one place for every voter guide in the Bay Area, side by side, one contest at a time, with the reasons
-              each guide gives in its own words. It starts with San Francisco, the Peninsula, the South Bay, the East Bay and Marin and will grow from there. It stays up to date as guides
+              each guide gives in its own words. It starts with San Francisco, the Peninsula, the South Bay, the East Bay and the North Bay and will grow from there. It stays up to date as guides
               publish, and it&apos;s free for everyone.
             </p>
             <p>It doesn&apos;t tell you how to vote. It shows you what the people who spend time on this are recommending, and why.</p>
