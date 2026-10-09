@@ -4,17 +4,6 @@ status: published
 source: https://www.empoweroakland.com/voter-guide
 fetchedAt: 2026-10-08
 hasReasoning: true
-held:
-  - contestId: oakland-usd-2
-    pick:
-      - Arielle Fleisher
-    reason: wrong-rank
-    evidence: "We recommend ranking Arielle Fleisher #1, and leaving the #2 spot blank."
-    quotes:
-      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
-        source: https://www.empoweroakland.com/voter-guide
-      - text: As an OUSD board member, she wants an open and transparent search for a permanent superintendent, budgets based on fiscal reality, and experienced teachers who can actually afford to live in Oakland.
-        source: https://www.empoweroakland.com/voter-guide
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
     reason: "descriptive: revenue estimate, no reason (review 2026-10-07)"
@@ -127,4 +116,13 @@ picks:
       - text: Oakland’s economy cannot recover if transit collapses.
         source: https://www.empoweroakland.com/voter-guide
       - text: With vehicle ownership costs pushing more people onto public transit, the region needs this safety net.
+        source: https://www.empoweroakland.com/voter-guide
+  oakland-usd-2:
+    pick:
+      - Arielle Fleisher
+    ranked: true
+    quotes:
+      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: As an OUSD board member, she wants an open and transparent search for a permanent superintendent, budgets based on fiscal reality, and experienced teachers who can actually afford to live in Oakland.
         source: https://www.empoweroakland.com/voter-guide
