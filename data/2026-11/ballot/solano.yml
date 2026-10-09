@@ -1,6 +1,5 @@
 # Sources: data/2026-11/sources/Solano-Notice-of-Election-Nov2026.txt, Solano-Candidates-Nov2026.txt and Solano-Measures-Nov2026.txt (Solano County Registrar of Voters).
 # Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-09-solano-guide-discovery.md).
-# Left out for now (no guide position): San Joaquin Delta College Trustee Area 4, River Delta USD Trustee Area 1 and the Dixon elected city clerk (uncontested).
 # Benicia's Y and Z follow the corrected notice of 8/10/2026 (Y = limited charter, Z = real property transfer tax); some guides copy the uncorrected 8/5 titles.
 contests:
   - id: solano-county-supervisor-4
