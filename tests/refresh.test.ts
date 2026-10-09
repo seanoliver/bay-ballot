@@ -9,7 +9,7 @@ import type { Fetched } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
-import { resultJson } from "@/pipeline/refresh";
+import { resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
 import type { EndorsementFile } from "@/lib/schema";
@@ -401,7 +401,49 @@ describe("resultJson", () => {
       deferred: ["b"],
       failed: [{ id: "a", error: "HTTP 503" }],
       shrunk: [{ id: "c", pageHash: "f".repeat(64) }],
+      review: ["c: picks shrank; file left unchanged"],
     });
+  });
+});
+
+describe("reviewReasons", () => {
+  const changed = (over: Partial<Extract<GuideResult, { status: "changed" }>> = {}): GuideResult => ({
+    id: "g",
+    status: "changed",
+    dataChanged: true,
+    diff: [],
+    notes: [],
+    held: [],
+    droppedByVerifier: 0,
+    missing: [],
+    usage: { extract: { input_tokens: 0, output_tokens: 0 } } as Extract<GuideResult, { status: "changed" }>["usage"],
+    ...over,
+  });
+
+  it("is empty for a clean run", () => {
+    expect(reviewReasons([changed({ diff: ["+ prop-a: Y", "q prop-b: 1 -> 2"] }), { id: "u", status: "unchanged" }])).toEqual([]);
+  });
+
+  it("names held picks even when another guide failed to fetch", () => {
+    const results: GuideResult[] = [
+      { id: "a", status: "failed", error: "HTTP 403" },
+      changed({ held: [{ contestId: "oakland-usd-2", pick: ["Arielle Fleisher"], reason: "wrong-rank", evidence: "x" }] }),
+    ];
+    expect(reviewReasons(results)).toEqual(["g: held oakland-usd-2 (wrong-rank)"]);
+    expect(resultJson(results, 1).review).toEqual(["g: held oakland-usd-2 (wrong-rank)"]);
+  });
+
+  it("names removed picks and picks the verifier says are missing", () => {
+    const r = changed({ diff: ["- ross-council: Julie A McMillan, Robert Herbst"], missing: [{ contestId: "fairfax-council", pick: "Bragman", evidence: "x" }] });
+    expect(reviewReasons([r])).toEqual(["g: removed ross-council", "g: verifier found fairfax-council on the page but not in the picks"]);
+  });
+
+  it("names shrunk guides, including ones skipped as already shrunk", () => {
+    const results: GuideResult[] = [
+      { id: "s", status: "shrunk", message: "x", notes: [], pageHash: "a".repeat(64), usage: { input_tokens: 0, output_tokens: 0 } as Extract<GuideResult, { status: "shrunk" }>["usage"] },
+      { id: "t", status: "shrunk-skipped", pageHash: "b".repeat(64) },
+    ];
+    expect(reviewReasons(results)).toEqual(["s: picks shrank; file left unchanged", "t: picks shrank; file left unchanged"]);
   });
 });
 
