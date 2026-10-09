@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, openBallot } from "./helpers";
+import { BALLOT, contestRow, isPhone, openBallot, waitForKeys } from "./helpers";
 
 test("the Bay Area list groups contests by place and the picker opens an area", async ({ page }) => {
   await openBallot(page);
@@ -94,7 +94,7 @@ test("the area picker doesn't prefetch other list pages", async ({ page }) => {
 test("arrow keys walk the SF page in its grouped order", async ({ page, isMobile }) => {
   test.skip(isMobile, "desktop only");
   await page.goto(`${BALLOT}/sf`);
-  await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", /ArrowDown/);
+  await waitForKeys(page);
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowDown");
   await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf\\?c=us-rep-15$`));

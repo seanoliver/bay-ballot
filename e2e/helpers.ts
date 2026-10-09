@@ -20,6 +20,11 @@ export async function openBallot(page: Page, query = "") {
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
 }
 
+/** The keyboard hook marks `<html>` once its listeners exist, after hydration. A key or click before that is dropped. */
+export async function waitForKeys(page: Page) {
+  await expect(page.locator("html[data-keys-ready]")).toHaveCount(1);
+}
+
 // Each row has a phone and a desktop link; take the visible one.
 export function contestRow(page: Page, title: string) {
   return page.getByRole("link", { name: title, exact: true }).filter({ visible: true }).first();
