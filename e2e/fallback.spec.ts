@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, watchErrors } from "./helpers";
+import { bayHeading } from "../src/lib/fallback";
+import { BALLOT, contestRow, guidesOn, isPhone, watchErrors } from "./helpers";
 
 const SAN_MATEO = `${BALLOT}/san-mateo`;
 const CONTRA_COSTA = `${BALLOT}/contra-costa`;
@@ -10,6 +11,8 @@ const FROM_BAY = /^\d+ guides? from across the Bay Area$/;
 const judicial = (page: Page) => page.getByRole("region", { name: "California: Judicial" });
 const scopeSwitch = (scope: ReturnType<typeof judicial>) => scope.getByRole("group", { name: "Show guides from" }).filter({ visible: true }).first();
 const bayBlocks = (scope: ReturnType<typeof judicial>) => scope.getByRole("group", { name: FROM_BAY }).filter({ visible: true });
+const bayBlockFor = (scope: ReturnType<typeof judicial>, contestId: string) =>
+  scope.locator(`[role=group][aria-labelledby$="-${contestId}"]`).filter({ visible: true });
 
 test.describe("Bay Area fallback", () => {
   test("a section the area's guides skipped entirely defaults to the Bay Area", async ({ page }) => {
@@ -137,24 +140,30 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("a Bay Area block says how many of its guides filters hide, and Show brings them back", async ({ page }) => {
-    await page.goto(`${SAN_MATEO}?off=contra-costa-gop`);
+    const groban = guidesOn("supreme-court-groban");
+    expect(groban.length, "Groban needs at least 2 Bay Area guides").toBeGreaterThanOrEqual(2);
+    await page.goto(`${SAN_MATEO}?off=${groban[0]}`);
     const section = judicial(page);
-    const block = section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true }).first();
+    const block = bayBlockFor(section, "supreme-court-groban");
+    await expect(block).toHaveAccessibleName(bayHeading(groban.length - 1, groban.length).label);
     await expect(block.getByText("1 guide hidden")).toBeVisible();
     await block.getByRole("button", { name: `Show all Bay Area guides on ${GROBAN}` }).click();
     await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("aria-labelledby"))).toMatch(/^bay-[dm]-/);
     await expect(page).not.toHaveURL(/off=/);
     await expect(page).not.toHaveURL(/[?&]c=/);
-    await expect(section.getByRole("group", { name: "4 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(2);
+    await expect(block).toHaveAccessibleName(bayHeading(groban.length, groban.length).label);
   });
 
   test("a Bay Area block whose guides are all hidden says so instead of showing zero", async ({ page }) => {
-    await page.goto(`${SAN_MATEO}?off=growsf,indivisible-marin,league-pissed-off-voters`);
+    const appeal = guidesOn("court-of-appeal-1");
+    expect(appeal.length, "the Court of Appeal needs a Bay Area guide").toBeGreaterThan(0);
+    await page.goto(`${SAN_MATEO}?off=${appeal.join(",")}`);
     const section = judicial(page);
     await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
-    const block = section.getByRole("group", { name: "Filters hide all 3 Bay Area guides" }).filter({ visible: true });
-    await expect(block).toHaveCount(1);
+    const block = bayBlockFor(section, "court-of-appeal-1");
+    await expect(block).toHaveAccessibleName(bayHeading(0, appeal.length).label);
     await block.getByRole("button", { name: /^Show all Bay Area guides on / }).click();
-    await expect(section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(1);
+    await expect(page).not.toHaveURL(/off=/);
+    await expect(bayBlockFor(section, "court-of-appeal-1")).toHaveAccessibleName(bayHeading(appeal.length, appeal.length).label);
   });
 });
