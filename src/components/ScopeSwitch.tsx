@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { BAY_AREA } from "@/lib/areas";
-import { bayLabel, type Scope } from "@/lib/fallback";
+import { bayHeading, type Scope } from "@/lib/fallback";
 import { cn } from "@/lib/utils";
 
 const SCOPES: Scope[] = ["area", "bay"];
@@ -28,13 +28,46 @@ export function ScopeSwitch({ place, scope, onChange, className }: { place: stri
   );
 }
 
-export function BayBlock({ id, count, inline = false, className, children }: { id: string; count: number; inline?: boolean; className?: string; children: ReactNode }) {
+export function BayBlock({
+  id,
+  shown,
+  total,
+  onReveal,
+  inline = false,
+  className,
+  children,
+}: {
+  id: string;
+  shown: number;
+  total: number;
+  onReveal: () => void;
+  inline?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  const { label, hidden } = bayHeading(shown, total);
   return (
     <div role="group" aria-labelledby={id} className={cn("border-l-2 border-foreground/25 pl-3", inline && "flex items-center gap-3 pl-2.5", className)}>
-      <p id={id} className={cn("text-xs font-medium text-muted-foreground", inline && "min-w-0 flex-1")}>
-        {bayLabel(count)}
+      <p className={cn("text-xs text-muted-foreground", inline && "min-w-0 flex-1")}>
+        <span id={id} className="font-medium">
+          {label}
+        </span>
+        {hidden ? ` · ${hidden}` : null}
+        {shown < total ? (
+          <>
+            {" · "}
+            <button
+              type="button"
+              aria-label="Show all Bay Area guides on this contest"
+              onClick={onReveal}
+              className="relative z-10 -my-2.5 inline-block py-2.5 underline underline-offset-2 hover:text-foreground"
+            >
+              Show
+            </button>
+          </>
+        ) : null}
       </p>
-      {children}
+      {shown > 0 ? children : null}
     </div>
   );
 }

@@ -121,4 +121,41 @@ test.describe("Bay Area fallback", () => {
     await page.keyboard.press("ArrowDown");
     await expect(page.locator("[aria-current=true]")).toHaveCount(1);
   });
+
+  test("the switch still works when the browser blocks storage", async ({ page }) => {
+    await page.addInitScript(() => {
+      Storage.prototype.setItem = () => {
+        throw new DOMException("blocked", "SecurityError");
+      };
+    });
+    await page.goto(SAN_MATEO);
+    const section = judicial(page);
+    const area = scopeSwitch(section).getByRole("button", { name: "San Mateo" });
+    await area.click();
+    await expect(area).toHaveAttribute("aria-pressed", "true");
+    await expect(bayBlocks(section)).toHaveCount(0);
+    await scopeSwitch(section).getByRole("button", { name: "Bay Area" }).click();
+    await expect(bayBlocks(section)).toHaveCount(3);
+  });
+
+  test("a Bay Area block says how many of its guides filters hide, and Show brings them back", async ({ page }) => {
+    await page.goto(`${SAN_MATEO}?off=contra-costa-gop`);
+    const section = judicial(page);
+    const block = section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true }).first();
+    await expect(block.getByText("1 guide hidden")).toBeVisible();
+    await block.getByRole("button", { name: "Show all Bay Area guides on this contest" }).click();
+    await expect(page).not.toHaveURL(/off=/);
+    await expect(page).not.toHaveURL(/[?&]c=/);
+    await expect(section.getByRole("group", { name: "4 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(2);
+  });
+
+  test("a Bay Area block whose guides are all hidden says so instead of showing zero", async ({ page }) => {
+    await page.goto(`${SAN_MATEO}?off=growsf,indivisible-marin,league-pissed-off-voters`);
+    const section = judicial(page);
+    await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
+    const block = section.getByRole("group", { name: "Filters hide all 3 Bay Area guides" }).filter({ visible: true });
+    await expect(block).toHaveCount(1);
+    await block.getByRole("button", { name: "Show all Bay Area guides on this contest" }).click();
+    await expect(section.getByRole("group", { name: "3 guides from across the Bay Area" }).filter({ visible: true })).toHaveCount(1);
+  });
 });

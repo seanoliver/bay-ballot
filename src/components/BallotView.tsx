@@ -8,7 +8,7 @@ import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
-import { activeEntries, EMPTY, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, positionGuides, revealGuides, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
@@ -192,11 +192,12 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   const sectionFallback = useMemo(() => new Map((fallback?.sections ?? []).map((s) => [s.id, s])), [fallback]);
   const fallbackOf = useMemo(() => new Map((fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => [id, s] as const))), [fallback]);
   const bay = useMemo(() => {
-    const out = new Map<string, { rows: Row[]; slots: Slots }>();
+    const out = new Map<string, BayResult>();
     if (!fallback) return out;
     for (const c of all) {
       if (!fallbackOf.has(c.id)) continue;
-      out.set(c.id, { rows: fallbackRows(c.id, fallback, filters), slots: candidateSlots(c, fallbackRows(c.id, fallback, EMPTY).map((r) => r.entry)) });
+      const every = fallbackRows(c.id, fallback, EMPTY);
+      out.set(c.id, { rows: fallbackRows(c.id, fallback, filters), total: every.length, slots: candidateSlots(c, every.map((r) => r.entry)) });
     }
     return out;
   }, [all, fallback, fallbackOf, filters]);
@@ -206,7 +207,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     const s = fallbackOf.get(c.id);
     const b = bay.get(c.id);
     if (!s || !b || !fallback) return undefined;
-    return { place: fallback.place, scope: sectionScope(chosen[scopeKey(s)], "bay"), onScope: (v: Scope) => setScope(s, v), rows: b.rows, slots: b.slots };
+    return { place: fallback.place, scope: sectionScope(chosen[scopeKey(s)], "bay"), onScope: (v: Scope) => setScope(s, v), onReveal: () => revealBay(c), ...b };
   };
   const setOffCounties = (off: string[]) => {
     markHomeVisit(area);
@@ -226,6 +227,14 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     markHomeVisit(area);
     applyFilters(f);
   };
+  const revealBay = (c: Contest) => {
+    if (fallback) setFilters(revealGuides(filters, positionGuides(c.id, fallback.guides, fallback.files).map((g) => g.id), fallback.files));
+  };
+  const revealBayRef = useRef(revealBay);
+  useLayoutEffect(() => {
+    revealBayRef.current = revealBay;
+  });
+  const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
   const filterProps = { filters, onChange: setFilters, guides, files, counties, typeGuides: allGuides };
   const carry = useCarriedQuery();
 
@@ -404,12 +413,18 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
               const scope = sf ? sectionScope(chosen[scopeKey(sf)], sf.initial) : undefined;
               return (
                 <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
-                  <div className="flex flex-wrap items-end justify-between gap-x-3">
+                  {sf && scope && fallback ? (
+                    <div className="flex flex-wrap items-end justify-between gap-x-3">
+                      <SectionHeading as="h3" id={nav[gi].sections[si].id}>
+                        {s.name}
+                      </SectionHeading>
+                      <ScopeSwitch className="mb-1.5" place={fallback.place} scope={scope} onChange={(v) => setScope(sf, v)} />
+                    </div>
+                  ) : (
                     <SectionHeading as="h3" id={nav[gi].sections[si].id}>
                       {s.name}
                     </SectionHeading>
-                    {sf && scope && fallback ? <ScopeSwitch className="mb-1.5" place={fallback.place} scope={scope} onChange={(v) => setScope(sf, v)} /> : null}
-                  </div>
+                  )}
                   <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
                     {s.contests.map((c) => (
                       <li key={c.id}>
@@ -423,6 +438,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
                           place={fallback?.place}
                           scope={sf?.contests.includes(c.id) ? scope : undefined}
                           bay={bay.get(c.id)}
+                          onRevealBay={onRevealBayStable}
                         />
                       </li>
                     ))}
@@ -496,6 +512,8 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   );
 }
 
+type BayResult = { rows: Row[]; slots: Slots; total: number };
+
 const ContestRow = memo(function ContestRow({
   href,
   contest,
@@ -506,6 +524,7 @@ const ContestRow = memo(function ContestRow({
   place,
   scope,
   bay,
+  onRevealBay,
 }: {
   href: string;
   contest: Contest;
@@ -515,21 +534,23 @@ const ContestRow = memo(function ContestRow({
   onClick: (e: MouseEvent<HTMLAnchorElement>, c: Contest) => void;
   place?: string;
   scope?: Scope;
-  bay?: { rows: Row[]; slots: Slots };
+  bay?: BayResult;
+  onRevealBay?: (c: Contest) => void;
 }) {
   const description = cardDescription(contest);
   const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
   const wide = scope === "bay" && bay ? bay : null;
+  const reveal = () => onRevealBay?.(contest);
   return (
     <>
-      <div className={cn("relative flex min-h-16 flex-wrap items-center gap-x-3 gap-y-2 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped) && "flex-wrap gap-y-2", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
         </h4>
         {wide ? (
-          <BayBlock id={`bay-m-${contest.id}`} count={wide.rows.length} inline className="basis-full">
+          <BayBlock id={`bay-m-${contest.id}`} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
           </BayBlock>
         ) : skipped ? (
@@ -558,7 +579,7 @@ const ContestRow = memo(function ContestRow({
         </h4>
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         {wide ? (
-          <BayBlock id={`bay-d-${contest.id}`} count={wide.rows.length} className="mt-2">
+          <BayBlock id={`bay-d-${contest.id}`} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} />
           </BayBlock>
         ) : skipped ? (

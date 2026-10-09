@@ -40,7 +40,7 @@ const BORDER: Record<BarTone, string> = {
   empty: "border-border",
 };
 
-export type DetailFallback = { place: string; scope: Scope; onScope: (s: Scope) => void; rows: Row[]; slots?: Slots };
+export type DetailFallback = { place: string; scope: Scope; onScope: (s: Scope) => void; onReveal: () => void; rows: Row[]; total: number; slots?: Slots };
 
 export function ContestDetail({
   election,
@@ -103,27 +103,28 @@ export function ContestDetail({
   ) : (
     <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
   );
+  const title = (
+    <Title id={titleId} tabIndex={titleId ? -1 : undefined} className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}>
+      {contest.title}
+    </Title>
+  );
   return (
     <div className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
+            <div className={cn("min-w-0", scopeSwitch && "flex-1")}>
               <p className="text-sm text-muted-foreground">{contest.section}</p>
-              <Title
-                id={titleId}
-                tabIndex={titleId ? -1 : undefined}
-                className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}
-              >
-                {contest.title}
-              </Title>
+              {scopeSwitch ? (
+                <div className="flex flex-col items-start gap-2 xl:flex-row xl:justify-between xl:gap-3">
+                  {title}
+                  <div className="shrink-0 xl:mt-1">{scopeSwitch}</div>
+                </div>
+              ) : (
+                title
+              )}
             </div>
-            {scopeSwitch || action ? (
-              <div className="flex shrink-0 items-start gap-2">
-                {scopeSwitch ? <div className="mt-6">{scopeSwitch}</div> : null}
-                {action}
-              </div>
-            ) : null}
+            {action}
           </div>
         ) : scopeSwitch ? (
           <div className="pt-3">{scopeSwitch}</div>
@@ -132,7 +133,7 @@ export function ContestDetail({
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
         {fallback?.scope === "area" ? <p className="mt-4 text-sm text-muted-foreground">{skippedLabel(fallback.place)}</p> : null}
         {bay ? (
-          <BayBlock id={`bay-${titleId ?? "sheet"}-${contest.id}`} count={rows.length} className="mt-4">
+          <BayBlock id={`bay-${titleId ?? "sheet"}-${contest.id}`} shown={rows.length} total={fallback.total} onReveal={fallback.onReveal} className="mt-4">
             {summary}
             <div className="mt-8">{guides}</div>
           </BayBlock>
