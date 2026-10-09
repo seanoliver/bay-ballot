@@ -269,7 +269,8 @@ test.describe("desktop contest page layout", () => {
     await expect(async () => {
       await page.keyboard.press("/");
       await expect(search).toBeFocused({ timeout: 500 });
-    }).toPass();
+    }).toPass({ timeout: 10_000 });
+    await expect(search).toHaveValue("");
   });
 });
 

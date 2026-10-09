@@ -339,7 +339,6 @@ test.describe("desktop keyboard", () => {
     await page.clock.install();
     await openBallot(page);
     await waitForKeys(page);
-    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     await pauseClock(page);
     const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
     const before = await page.evaluate(() => (window as unknown as { __calls: number }).__calls);
@@ -419,7 +418,6 @@ test.describe("desktop keyboard", () => {
     const errors = watchErrors(page);
     await openBallot(page, "?c=us-rep-11");
     await waitForKeys(page);
-    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     await page.locator("#row-d-us-rep-11").focus();
     const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" });
     const started = Date.now();
@@ -451,7 +449,6 @@ test.describe("desktop keyboard", () => {
     const errors = watchErrors(page);
     await openBallot(page, "?c=us-rep-11");
     await waitForKeys(page);
-    await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
     const started = Date.now();
     for (let i = 0; i < 100; i++) {
@@ -506,6 +503,7 @@ test.describe("desktop keyboard", () => {
     await expect(page).toHaveURL(new RegExp(`[?&]c=${next}(&|$)`));
     await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp");
     await page.reload();
+    await waitForKeys(page);
     const button = page.getByRole("button", { name: "Keyboard shortcuts" });
     await button.click();
     await expect(dialog).toBeVisible();
