@@ -34,7 +34,7 @@ function publishedFiles(election: string) {
     .filter((d) => d.status === "published");
 }
 
-/** Ids of the published guides with a pick on a contest, read from the data so tests survive a refresh. */
+/** Ids of the published guides with a pick on a contest. */
 export function guidesOn(contestId: string, election = "2026-11"): string[] {
   return publishedFiles(election)
     .filter((d) => d.picks?.[contestId])
