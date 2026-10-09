@@ -25,14 +25,29 @@ export function contestRow(page: Page, title: string) {
   return page.getByRole("link", { name: title, exact: true }).filter({ visible: true }).first();
 }
 
-/** Ids of the published guides with a pick on a contest, read from the data so tests survive a refresh. */
-export function guidesOn(contestId: string, election = "2026-11"): string[] {
+function publishedFiles(election: string) {
   const dir = path.join(process.cwd(), "data", election, "endorsements");
   return fs
     .readdirSync(dir)
     .filter((f) => f.endsWith(".yml"))
     .map((f) => parse(fs.readFileSync(path.join(dir, f), "utf8")))
-    .filter((d) => d.status === "published" && d.picks?.[contestId])
+    .filter((d) => d.status === "published");
+}
+
+/** Ids of the published guides with a pick on a contest, read from the data so tests survive a refresh. */
+export function guidesOn(contestId: string, election = "2026-11"): string[] {
+  return publishedFiles(election)
+    .filter((d) => d.picks?.[contestId])
     .map((d) => d.guide as string)
     .sort();
+}
+
+/** A published guide with no pick on the contest. */
+export function guideOff(contestId: string, election = "2026-11"): string {
+  const id = publishedFiles(election)
+    .filter((d) => !d.picks?.[contestId])
+    .map((d) => d.guide as string)
+    .sort()[0];
+  if (!id) throw new Error(`every published guide picks ${contestId}`);
+  return id;
 }
