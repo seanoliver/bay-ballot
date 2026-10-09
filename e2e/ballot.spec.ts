@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
+import { BALLOT, contestRow, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 test("ballot page has the header, logo, intro and footer", async ({ page }) => {
   const errors = watchErrors(page);
@@ -204,6 +204,7 @@ test.describe("desktop keyboard", () => {
 
   test("arrow keys walk the list and keep the URL in step", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const [first, second] = await page.locator("[id^=row-d-]").evaluateAll((els) => els.slice(0, 2).map((e) => e.id.replace("row-d-", "")));
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
@@ -217,6 +218,7 @@ test.describe("desktop keyboard", () => {
 
   test("typing in the guide search doesn't move the selection; / focuses it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await page.keyboard.press("/");
     const search = page.getByRole("complementary", { name: "Filters" }).getByRole("searchbox", { name: "Search guides" });
     await expect(search).toBeFocused();
@@ -228,6 +230,7 @@ test.describe("desktop keyboard", () => {
 
   test("? opens the shortcuts and Esc closes them", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
     await expect(dialog).toBeVisible();
@@ -237,6 +240,7 @@ test.describe("desktop keyboard", () => {
 
   test("with the shortcuts open, j and / do nothing", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
     await expect(dialog).toBeVisible();
@@ -251,6 +255,7 @@ test.describe("desktop keyboard", () => {
 
   test("j does nothing while a filter checkbox has focus", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox").first();
     await box.focus();
     await page.keyboard.press("j");
@@ -260,6 +265,7 @@ test.describe("desktop keyboard", () => {
 
   test("after clicking pane text, arrows are left to the browser", async ({ page, browserName }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const pane = page.locator("[data-keys=pane]");
     await pane.locator("p").filter({ visible: true }).first().click();
     await expect.poll(() => page.evaluate(() => document.activeElement === document.body)).toBe(true);
@@ -274,8 +280,7 @@ test.describe("desktop keyboard", () => {
 
   test("after clicking filter text, arrows do nothing", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
-    // A click before hydration isn't recorded, so the arrow would count as a page key.
-    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", /ArrowDown/);
+    await waitForKeys(page);
     await page.getByRole("complementary", { name: "Filters" }).getByText("Filters", { exact: true }).click();
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
@@ -283,6 +288,7 @@ test.describe("desktop keyboard", () => {
 
   test("Escape closes the details when nothing has focus", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await expect(page.getByRole("region", { name: "United States Representative, District 11" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=/);
@@ -291,6 +297,7 @@ test.describe("desktop keyboard", () => {
 
   test("right after Escape closes the shortcuts, j works", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.keyboard.press("Shift+?");
     await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
@@ -301,6 +308,7 @@ test.describe("desktop keyboard", () => {
 
   test("an open popover blocks shortcuts", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await page.getByRole("button", { name: "Includes ranked endorsements — show order" }).filter({ visible: true }).first().click();
     await expect(page.locator("[data-slot=popover-content]")).toBeVisible();
     await page.keyboard.press("j");
@@ -309,8 +317,10 @@ test.describe("desktop keyboard", () => {
 
   test("k on the first contest leaves the key to the browser", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const first = (await page.locator("[id^=row-d-]").first().getAttribute("id"))!.replace("row-d-", "");
     await openBallot(page, `?c=${first}`);
+    await waitForKeys(page);
     const prevented = await page.evaluate(() => !window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", cancelable: true })));
     expect(prevented).toBe(false);
     await expect(page).toHaveURL(new RegExp(`[?&]c=${first}`));
@@ -328,6 +338,7 @@ test.describe("desktop keyboard", () => {
     });
     await page.clock.install();
     await openBallot(page);
+    await waitForKeys(page);
     await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     await pauseClock(page);
     const ids = await page.locator("[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
@@ -343,6 +354,7 @@ test.describe("desktop keyboard", () => {
 
   test("the shortcuts hint is on the contest list once, after hydration", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await expect(page.locator("[aria-keyshortcuts]")).toHaveCount(1);
     await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", "ArrowDown ArrowUp j k g / Shift+?");
   });
@@ -350,6 +362,7 @@ test.describe("desktop keyboard", () => {
 
   test("a step is written on keyup, so a reload right after keeps it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.keyboard.press("ArrowDown");
     await page.reload();
@@ -358,6 +371,7 @@ test.describe("desktop keyboard", () => {
 
   test("leaving the page mid-hold writes the step, so Back restores it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.keyboard.down("ArrowDown");
     await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
@@ -373,6 +387,7 @@ test.describe("desktop keyboard", () => {
       await route.continue();
     });
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.keyboard.down("ArrowDown");
     await expect(page.locator(`#row-d-${next}`)).toHaveAttribute("aria-current", "true");
@@ -403,6 +418,7 @@ test.describe("desktop keyboard", () => {
     });
     const errors = watchErrors(page);
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     await page.locator("#row-d-us-rep-11").focus();
     const box = page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" });
@@ -434,6 +450,7 @@ test.describe("desktop keyboard", () => {
     });
     const errors = watchErrors(page);
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await expect(page.getByRole("region", { name: "Contests" })).toBeVisible();
     const before = await page.evaluate(() => (window as unknown as { __replaces: number }).__replaces);
     const started = Date.now();
@@ -453,6 +470,7 @@ test.describe("desktop keyboard", () => {
 
   test("Enter on the open contest moves into its details; a click still closes it", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     await page.locator("#row-d-us-rep-11").focus();
     await page.keyboard.press("Enter");
     await expect(page.locator("#detail-title")).toBeFocused();
@@ -463,12 +481,14 @@ test.describe("desktop keyboard", () => {
 
   test("the Keyboard shortcuts button is there with single keys on", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.getByRole("button", { name: "Keyboard shortcuts" }).click();
     await expect(page.getByRole("dialog", { name: "Keyboard shortcuts" })).toBeVisible();
   });
 
   test("single-key shortcuts can be turned off, and stay off", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
@@ -499,6 +519,7 @@ test.describe("desktop keyboard", () => {
 
   test("in the detail pane arrows don't switch contests but j does", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    await waitForKeys(page);
     const next = await after(page, "us-rep-11");
     await page.locator("[data-keys=pane]").locator("a, button").first().focus();
     await page.keyboard.press("ArrowDown");
@@ -682,6 +703,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("g opens the menu on the current section; arrows, Enter and Esc work in it", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     const menu = page.getByRole("menu");
     await expect(menu).toBeVisible();
@@ -700,8 +722,10 @@ test.describe("desktop keyboard section nav", () => {
 
   test("stepping up with k never leaves the selected row under the bar", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const last = (await page.locator("[id^=row-d-]").last().getAttribute("id"))!.replace("row-d-", "");
     await openBallot(page, `?c=${last}`);
+    await waitForKeys(page);
     await page.locator(`#row-d-${last}`).scrollIntoViewIfNeeded();
     const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
     for (let i = 0; i < 15; i++) {
@@ -713,6 +737,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("after a jump, j selects the first contest in that place and stays there", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
     await expect(page.locator("#place-county-san-francisco")).toBeFocused();
@@ -725,6 +750,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("a click on a row after a jump steps from that row", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
     await expect(page.locator("#place-county-san-francisco")).toBeFocused();
@@ -737,6 +763,7 @@ test.describe("desktop keyboard section nav", () => {
   test("Shift+Tab never leaves the focused link under the bar", async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Chromium");
     await openBallot(page);
+    await waitForKeys(page);
     await page.locator("footer a").last().focus();
     const navBottom = () => page.locator("[data-section-nav]").evaluate((el) => el.getBoundingClientRect().bottom);
     for (let i = 0; i < 30; i++) {
@@ -751,6 +778,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("a modified click on a menu item is left to the browser", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     const item = page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ });
     const prevented = await item.evaluate((el) => !el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true, ctrlKey: true })));
@@ -759,6 +787,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("k after a jump selects the last contest before that place", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     await page.getByRole("menu").getByRole("menuitem", { name: /^San Francisco/ }).click();
     await expect(page.locator("#place-county-san-francisco")).toBeFocused();
@@ -769,9 +798,11 @@ test.describe("desktop keyboard section nav", () => {
 
   test("stepping with j across a section boundary updates the bar", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const ids = await page.locator("[aria-label='California: Federal'] a[id^=row-d-]").evaluateAll((els) => els.map((e) => e.id.replace("row-d-", "")));
     const firstState = await page.locator("[aria-label='California: State'] a[id^=row-d-]").first().getAttribute("id");
     await openBallot(page, `?c=${ids.at(-1)}`);
+    await waitForKeys(page);
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
     await page.keyboard.press("j");
     await expect(page).toHaveURL(new RegExp(`[?&]c=${firstState!.replace("row-d-", "")}`));
@@ -780,6 +811,7 @@ test.describe("desktop keyboard section nav", () => {
 
   test("g does nothing when single-key shortcuts are off, and the dialog lists it", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
     await expect(dialog.getByText("Jump to a section")).toBeVisible();

@@ -20,6 +20,11 @@ export async function openBallot(page: Page, query = "") {
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
 }
 
+/** Desktop: the key hint appears after hydration, once the keyboard listeners exist. A key pressed earlier is dropped. */
+export async function waitForKeys(page: Page) {
+  await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", /ArrowDown/);
+}
+
 // Each row has a phone and a desktop link; take the visible one.
 export function contestRow(page: Page, title: string) {
   return page.getByRole("link", { name: title, exact: true }).filter({ visible: true }).first();

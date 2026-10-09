@@ -264,8 +264,12 @@ test.describe("desktop contest page layout", () => {
 
   test("/ focuses the guide search", async ({ page }) => {
     await openContest(page);
-    await page.keyboard.press("/");
-    await expect(page.getByRole("complementary", { name: "Filters" }).getByRole("searchbox", { name: "Search guides" })).toBeFocused();
+    const search = page.getByRole("complementary", { name: "Filters" }).getByRole("searchbox", { name: "Search guides" });
+    // The contest page has no hydration marker, and a "/" pressed before hydration is dropped, so retry the key.
+    await expect(async () => {
+      await page.keyboard.press("/");
+      await expect(search).toBeFocused({ timeout: 500 });
+    }).toPass();
   });
 });
 

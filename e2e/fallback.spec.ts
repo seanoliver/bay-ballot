@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { bayHeading } from "../src/lib/fallback";
-import { BALLOT, contestRow, guidesOn, isPhone, watchErrors } from "./helpers";
+import { BALLOT, contestRow, guidesOn, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const SAN_MATEO = `${BALLOT}/san-mateo`;
 const CONTRA_COSTA = `${BALLOT}/contra-costa`;
@@ -118,6 +118,7 @@ test.describe("Bay Area fallback", () => {
   test("desktop keyboard: arrow keys still step through contests after using the switch", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     await page.goto(SAN_MATEO);
+    await waitForKeys(page);
     await scopeSwitch(judicial(page)).getByRole("button", { name: "San Mateo" }).click();
     await page.keyboard.press("ArrowDown");
     await expect(page.locator("[aria-current=true]")).toHaveCount(1);
