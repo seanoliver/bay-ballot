@@ -25,7 +25,7 @@ contests:
     title: United States Representative, District 4
     kind: candidate
     candidates: [Mike Thompson, Eric Jones]
-    jurisdiction: { level: district, name: Congress, district: "4", within: [{ level: county, name: Sonoma }] }
+    jurisdiction: { level: district, name: Congress, district: "4", within: [{ level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: us-rep-8
     section: Federal
     title: United States Representative, District 8
@@ -130,6 +130,7 @@ contests:
     title: Attorney General
     kind: candidate
     candidates: [Rob Bonta, Michael E. Gates]
+    aliases: { Michael E. Gates: [Matt Gates] } # the Napa County GOP's slate prints "Matt Gates"
     jurisdiction: { level: state, name: California }
   - id: insurance-commissioner
     section: State
@@ -142,7 +143,7 @@ contests:
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: state-senate-2
     section: State
     title: State Senate, District 2
@@ -162,7 +163,7 @@ contests:
     kind: candidate
     candidates: [Cecilia M. Aguiar-Curry]
     aliases: { Cecilia M. Aguiar-Curry: [Cecilia Aguiar-Curry] }
-    jurisdiction: { level: district, name: Assembly, district: "4", within: [{ level: county, name: Sonoma }] }
+    jurisdiction: { level: district, name: Assembly, district: "4", within: [{ level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: assembly-11
     section: State
     title: State Assembly, District 11
@@ -294,7 +295,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)

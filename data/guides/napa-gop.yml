@@ -1,0 +1,7 @@
+id: napa-gop
+name: Napa County Republican Party
+shortName: "Napa Republicans"
+description: The official Republican Party committee for Napa County.
+type: party
+homepage: https://napagop.org/
+areas: [napa-county]

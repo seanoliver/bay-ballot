@@ -4,6 +4,7 @@ status: published
 source: https://350bayareaaction.org/electoral/endorsements-2026
 extraSources:
   - https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
+  - https://350bayareaaction.org/napa_county_wildfire_preparedness_act
 allowForeignSources: true
 archived:
   - source: https://350bayareaaction.org/electoral/endorsements-2026
@@ -160,3 +161,8 @@ picks:
   healdsburg-council-4:
     pick:
       - Chris Herrod
+  napa-county-measure-b:
+    pick: Y
+    quotes:
+      - text: Ensuring Napa has a dependable source of funds to help stave off catastrophic fires, and funds to enhance and preserve our regional parks with all their benefits, is a clear Yes for us.
+        source: https://350bayareaaction.org/napa_county_wildfire_preparedness_act

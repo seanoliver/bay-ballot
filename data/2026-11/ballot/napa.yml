@@ -1,0 +1,105 @@
+# Sources: data/2026-11/sources/Napa-Candidates-Nov2026.txt and Napa-Measures-Nov2026.txt (Napa County Registrar of Voters).
+# Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-09-napa-guide-discovery.md).
+# Left out for now (no guide position): Calistoga Joint Unified School District, St. Helena Measure S, Yountville Measure Y.
+contests:
+  - id: napa-county-measure-b
+    section: Local measures
+    title: Napa County Measure B
+    kind: measure
+    description: "Wildfire preparedness, watershed protection and open space sales tax (1/2 cent, April 2027 to March 2045)"
+    link: https://www.napacounty.gov/2471/County-of-Napa---Measure-B
+    jurisdiction: { level: county, name: Napa }
+  - id: american-canyon-council
+    section: Local candidates
+    title: American Canyon City Council
+    kind: candidate
+    candidates: [Jason Kishineff, Sindy Biederman, Robert Cole, Jim Giron, David Oro]
+    seats: 2
+    jurisdiction: { level: city, name: American Canyon }
+  - id: american-canyon-measure-p
+    section: Local measures
+    title: American Canyon Measure P
+    kind: measure
+    description: "City services sales tax (1%, until ended by voters)"
+    link: https://www.americancanyon.gov/Work/Elections-Central/Measure-P
+    jurisdiction: { level: city, name: American Canyon }
+  - id: napa-council-1
+    section: Local candidates
+    title: Napa City Council, District 1
+    kind: candidate
+    candidates: [Christopher DeNatale]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Napa }] }
+  - id: napa-council-3
+    section: Local candidates
+    title: Napa City Council, District 3
+    kind: candidate
+    candidates: [Mary Luros, Jim Hinton]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Napa }] }
+  - id: st-helena-mayor
+    section: Local candidates
+    title: St. Helena Mayor
+    kind: candidate
+    candidates: [Bonnie Schoch, Patrick Kenealy]
+    jurisdiction: { level: city, name: St. Helena }
+  - id: st-helena-council
+    section: Local candidates
+    title: St. Helena City Council
+    kind: candidate
+    candidates: [Kate Spadarotto, Joshua Parke, Daniel Hale, John Pedersen, Scott Diaz]
+    seats: 2
+    jurisdiction: { level: city, name: St. Helena }
+  - id: yountville-mayor
+    section: Local candidates
+    title: Yountville Mayor
+    kind: candidate
+    candidates: [Marjorie Mohler, Joe Tagliaboschi]
+    jurisdiction: { level: city, name: Yountville }
+  - id: yountville-council
+    section: Local candidates
+    title: Yountville Town Council
+    kind: candidate
+    candidates: [Robin McKee, Jessi Bugden, Matthew Chrzanowski, Hillery Bolt Trippe, Jill Turner]
+    seats: 2
+    aliases: { Hillery Bolt Trippe: [Hillery Trippe] }
+    jurisdiction: { level: city, name: Yountville }
+  - id: napa-valley-college-trustee-area-2
+    section: School and special districts
+    title: Napa Valley College, Trustee Area 2
+    kind: candidate
+    candidates: [Jeff Dodd, Heriverto Ruiz]
+    aliases: { Heriverto Ruiz: [Heriverto (Eddy) Ruiz, Eddy Ruiz] }
+    jurisdiction: { level: district, name: Napa Valley Community College District, district: "2", within: [{ level: county, name: Napa }] }
+  - id: napa-valley-college-trustee-area-3
+    section: School and special districts
+    title: Napa Valley College, Trustee Area 3
+    kind: candidate
+    candidates: [Emily Pastula, Elizabeth L Goff, Karina Servente]
+    aliases: { Elizabeth L Goff: [Elizabeth Goff, Elizabeth L. Goff] }
+    jurisdiction: { level: district, name: Napa Valley Community College District, district: "3", within: [{ level: county, name: Napa }] }
+  - id: napa-valley-college-trustee-area-4
+    section: School and special districts
+    title: Napa Valley College, Trustee Area 4
+    kind: candidate
+    candidates: [Cindy Johnson, 'William "Kyle" Iverson']
+    aliases: { 'William "Kyle" Iverson': [Kyle Iverson, William Iverson] }
+    jurisdiction: { level: district, name: Napa Valley Community College District, district: "4", within: [{ level: county, name: Napa }] }
+  - id: napa-valley-usd-trustee-area-1
+    section: School and special districts
+    title: Napa Valley Unified School District, Trustee Area 1
+    kind: candidate
+    candidates: [Robin Jankiewicz, Matthew McMann]
+    jurisdiction: { level: district, name: Napa Valley Unified School District, district: "1", within: [{ level: county, name: Napa }] }
+  - id: napa-valley-usd-trustee-area-6
+    section: School and special districts
+    title: Napa Valley Unified School District, Trustee Area 6
+    kind: candidate
+    candidates: [Elba Gonzalez-Mares, Tyrone Navarro]
+    jurisdiction: { level: district, name: Napa Valley Unified School District, district: "6", within: [{ level: county, name: Napa }] }
+  - id: napa-valley-usd-trustee-area-7
+    section: School and special districts
+    title: Napa Valley Unified School District, Trustee Area 7
+    kind: candidate
+    description: 2-year term
+    candidates: [David Hildebrandt, Jason M. Dooley, John Houser, Gabriel Champagne Affonso]
+    aliases: { Jason M. Dooley: [Jason Dooley] }
+    jurisdiction: { level: district, name: Napa Valley Unified School District, district: "7", within: [{ level: county, name: Napa }] }

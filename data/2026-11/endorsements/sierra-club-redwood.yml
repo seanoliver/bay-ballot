@@ -1,0 +1,46 @@
+guide: sierra-club-redwood
+election: 2026-11
+status: published
+source: https://www.sierraclub.org/redwood/endorsements
+fetchWith: browser # Incapsula answers plain fetches with a 302 stub
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  us-rep-4:
+    pick:
+      - Mike Thompson
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  superintendent:
+    pick:
+      - Richard Barrera
+  prop-1:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N
+  napa-county-measure-b:
+    pick: Y

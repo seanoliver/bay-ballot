@@ -1,0 +1,7 @@
+id: napa-dems
+name: Napa County Democratic Party
+shortName: "Napa Democrats"
+description: The official Democratic Party committee for Napa County.
+type: party
+homepage: http://napadems.org/
+areas: [napa-county]

@@ -7,6 +7,7 @@ extraSources:
   - https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
   - https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
   - https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
+  - https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
   - https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
   - https://www.pressdemocrat.com/2026/09/24/endorsement-for-santa-rosa-city-council-district-4-jones-carter-is-best-bet/
   - https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
@@ -17,6 +18,7 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
   - https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
   - https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
+  - https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
 fetchedAt: 2026-10-09
 hasReasoning: true
@@ -161,3 +163,15 @@ picks:
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
       - text: Mackie’s expertise and experience with budgeting — he is executive director of the nonprofit Sonoma Valley Commons — will be integral for the City Council as it moves forward, facing growing structural costs and stagnating revenue.
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
+  american-canyon-measure-p:
+    pick: N
+    quotes:
+      - text: The city’s leadership needs to do the work first, tightening the proverbial belt until there are no more belt holes left.
+        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
+      - text: Leaders also need to be more straightforward about their plans for the money.
+        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
+  napa-county-measure-b:
+    pick: Y
+    quotes:
+      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
+        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/

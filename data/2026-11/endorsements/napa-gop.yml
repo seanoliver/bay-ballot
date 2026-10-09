@@ -1,0 +1,58 @@
+guide: napa-gop
+election: 2026-11
+status: published
+source: https://napagop.org/2026-election-endorsements/
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  governor:
+    pick:
+      - Steve Hilton
+  lt-governor:
+    pick:
+      - Gloria Romero
+  attorney-general:
+    pick:
+      - Michael E. Gates
+  secretary-of-state:
+    pick:
+      - Donald P. (Don) Wagner
+  treasurer:
+    pick:
+      - Jennifer Hawks
+  controller:
+    pick:
+      - Herb W Morgan
+  superintendent:
+    pick:
+      - Sonja Shaw
+  prop-1:
+    pick: N
+  prop-2:
+    pick: N
+  prop-3:
+    pick: N
+  prop-4:
+    pick: N
+  prop-5:
+    pick: N
+  prop-37:
+    pick: N
+  prop-38:
+    pick: N
+  prop-39:
+    pick: Y
+  prop-40:
+    pick: N
+  prop-41:
+    pick: Y
+  prop-42:
+    pick: Y
+  prop-43:
+    pick: Y
+  prop-44:
+    pick: N
+  prop-45:
+    pick: Y
+  napa-county-measure-b:
+    pick: N
