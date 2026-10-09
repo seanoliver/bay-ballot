@@ -4,7 +4,7 @@ status: published
 source: https://www.losaltosonline.com/opinion/town-crier-endorsements/article_cddcbc6a-6f71-4a55-b19d-0aa447cdc306.html
 extraSources:
   - https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 rejectedQuotes:
   - text: The first is that Measure D is unnecessary.
@@ -40,9 +40,7 @@ picks:
   los-altos-measure-d:
     pick: N
     quotes:
-      - text: Instead, the text of Measure D was written in such a way that it impacts our Housing Element and therefore the mighty State of California.
-        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
-      - text: Instead, if Measure D passes, staff and elected officials will have less time to spend listening to what Los Altos residents want because they will have to spend more time listening to what lawyers, real estate developers and bureaucrats in state government want.
+      - text: Finally, passing Measure D is the exact opposite of getting a more responsive government and locally controlled planning.
         source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
   mountain-view-measure-e:
     pick: Y

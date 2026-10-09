@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 picks:
   supervisor-8:
@@ -31,14 +31,9 @@ picks:
     quotes:
       - text: Overall, Dorsey has been effective on the Board of Supervisors.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-10:
     pick:
       - Theo Ellington
-    quotes:
-      - text: Overall, we think Ellington would be a good supervisor.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-4:
     pick:
       - Alan Wong
@@ -48,28 +43,6 @@ picks:
   supervisor-2:
     pick:
       - Stephen Sherrill
-  lt-governor:
-    pick:
-      - Fiona Ma
-    quotes:
-      - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-      - text: Ma, a certified public accountant, has been an effective state treasurer.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-      - text: We think she has the experience to be a good lieutenant governor.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-  treasurer:
-    pick:
-      - Eleni Kounalakis
-    quotes:
-      - text: Kounalakis has an MBA and the business background to perform the duties.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-  superintendent:
-    pick:
-      - Richard Barrera
-    quotes:
-      - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
   board-of-education:
     pick:
       - Phil Kim
@@ -93,6 +66,26 @@ picks:
   college-board-partial:
     pick:
       - Ruth Ferguson
+  lt-governor:
+    pick:
+      - Fiona Ma
+    quotes:
+      - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+      - text: Ma, a certified public accountant, has been an effective state treasurer.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+    quotes:
+      - text: Kounalakis has an MBA and the business background to perform the duties.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
   concord-council-3:
     pick:
       - Robyn Kuslits
@@ -118,7 +111,7 @@ picks:
   prop-37:
     pick: Y
     quotes:
-      - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
+      - text: We think this is yet another option for homebuyers.
         source: https://www.ebar.com/story/170969/
   prop-38:
     pick: N
@@ -150,11 +143,10 @@ picks:
     quotes:
       - text: Prop 45 would weaken critical protections for air and water quality protection.
         source: https://www.ebar.com/story/170969/
+      - text: While the state does need more housing, laws enacted in recent years already allow for speedier approvals.
+        source: https://www.ebar.com/story/170969/
   rtm:
     pick: Y
-    quotes:
-      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-a:
     pick: Y
     quotes:
@@ -180,9 +172,7 @@ picks:
   prop-f:
     pick: N
     quotes:
-      - text: The mayor already has power over city departments.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: If the mayor wants to reorganize departments, there should be a public process for that.
+      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
@@ -196,7 +186,7 @@ picks:
   prop-h:
     pick: Y
     quotes:
-      - text: Prop H only funds Muni service, and San Franciscans are aware that the agency is facing severe fiscal challenges.
+      - text: Reliable public transportation is critical as San Francisco continues its economic recovery post COVID.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: A reliable Muni will help San Francisco workers and residents, as well as visitors who bring in tourist dollars.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
