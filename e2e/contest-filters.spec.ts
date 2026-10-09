@@ -271,8 +271,11 @@ test.describe("phone contest page layout", () => {
   test("the Filters button sits above the contest card and names the count", async ({ page }) => {
     await openContest(page, "?off=sf-gop");
     const button = page.getByRole("button", { name: /^Filters/ });
-    const [, counted, total] = (await button.textContent())!.match(/(\d+) of (\d+) guides counted/)!;
-    expect(Number(counted)).toBe(Number(total) - 1);
+    const gap = async () => {
+      const m = (await button.textContent())?.match(/(\d+) of (\d+) guides counted/);
+      return m ? Number(m[2]) - Number(m[1]) : null;
+    };
+    await expect.poll(gap).toBe(1);
     await expect(page.getByRole("complementary", { name: "Filters" })).toBeHidden();
   });
 
