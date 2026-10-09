@@ -142,18 +142,20 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           { cat summary.md; echo; echo "cc @seanoliver"; } > pr-body.md
           pr="$OPEN_PR"
-          if [ -n "$pr" ]; then
-            gh pr edit "$pr" --body-file pr-body.md
-            gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code $CODE); summary above is updated."
-          else
+          if [ -z "$pr" ]; then
             url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
             pr="${url##*/}"
           fi
-          if [ "$(printf '%s' "${REVIEW:-[]}" | jq 'length')" != "0" ]; then
-            gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
-            gh pr edit "$pr" --add-label needs-review
-          fi
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
+          # Best effort and before anything else can fail: gate needs `pr` and labels again.
+          if [ "$(printf '%s' "${REVIEW:-[]}" | jq 'length')" != "0" ]; then
+            gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force || echo "::warning::could not create the needs-review label"
+            gh pr edit "$pr" --add-label needs-review || echo "::warning::could not label PR #$pr"
+          fi
+          if [ -n "$OPEN_PR" ]; then
+            gh pr edit "$pr" --body-file pr-body.md
+            gh pr comment "$pr" --body "New refresh run $(date -u +%F) (exit code $CODE); summary above is updated."
+          fi
 
       - name: Open, update or close the review issue
         if: always() && steps.refresh.outcome != 'skipped'
