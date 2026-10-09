@@ -7,10 +7,11 @@ function Chip({ l }: { l: AreaLink }) {
     <Link
       href={l.href}
       prefetch={false}
-      aria-current={l.current ? "page" : undefined}
+      aria-current={l.current ? "page" : l.within ? "true" : undefined}
+      data-within={l.within || undefined}
       className={cn(
         "inline-flex min-h-10 items-center rounded-full px-3 ring-1 ring-foreground/15",
-        l.current ? "bg-foreground font-medium text-background" : l.within ? "bg-muted font-medium hover:bg-muted/70" : "hover:bg-muted",
+        l.current ? "bg-foreground font-medium text-background" : l.within ? "font-medium ring-2 ring-foreground/50 hover:bg-muted" : "hover:bg-muted",
       )}
     >
       {l.label}
@@ -19,16 +20,17 @@ function Chip({ l }: { l: AreaLink }) {
 }
 
 export function AreaPicker({ links }: { links: AreaLink[] }) {
-  const [bay, ...counties] = links;
+  const [bay, first, ...rest] = links;
   return (
     <nav aria-label="Area" className="mt-3 flex flex-wrap items-center gap-2 text-sm">
       <Chip l={bay} />
-      {counties.length ? (
-        <>
+      {first ? (
+        <span className="inline-flex items-center gap-2">
           <span className="ml-1 text-xs text-muted-foreground">Counties</span>
-          {counties.map((l) => <Chip key={l.href} l={l} />)}
-        </>
+          <Chip l={first} />
+        </span>
       ) : null}
+      {rest.map((l) => <Chip key={l.href} l={l} />)}
     </nav>
   );
 }

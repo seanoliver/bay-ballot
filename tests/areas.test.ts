@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, countyPages, inArea, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
 import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
@@ -66,6 +66,18 @@ describe("areaLinks", () => {
     expect(links.map((l) => l.label)).toEqual(["Bay Area", "San Francisco", "San Mateo", "Santa Clara"]);
     expect(links.find((l) => l.label === "Santa Clara")).toMatchObject({ current: false, within: true });
     expect(links.filter((l) => l.current)).toEqual([]);
+  });
+
+  it("does not mark the current county page as within itself", () => {
+    expect(areaLinks("2026-11", [SF, SM, SCC, PA], "santa-clara-county").find((l) => l.label === "Santa Clara")).toMatchObject({ current: true, within: false });
+  });
+
+  it("gives a city named for its county no second link when the county has a page", () => {
+    const city: Area = { id: "santa-clara", name: "Santa Clara", kind: "city", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "Santa Clara" }] };
+    expect(countyPages([SF, SM, SCC, city]).map((a) => a.id)).toEqual(["sf", "san-mateo", "santa-clara-county"]);
+    expect(areaLinks("2026-11", [SF, SM, SCC, city], "santa-clara").filter((l) => l.label === "Santa Clara")).toEqual([
+      { href: "/2026-11/santa-clara-county", label: "Santa Clara", current: false, within: true },
+    ]);
   });
 });
 

@@ -23,7 +23,8 @@ test("the area picker lists the Bay Area and counties, and marks a city page's c
   await expect(nav.getByRole("link", { name: "San Mateo", exact: true })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
   await expect(nav.getByRole("link", { name: "San Jose" })).toHaveCount(0);
   await page.goto(`${BALLOT}/san-jose`);
-  await expect(nav.getByRole("link", { name: "Santa Clara", exact: true })).toHaveClass(/bg-muted/);
+  await expect(nav.getByRole("link", { name: "Santa Clara", exact: true })).toHaveAttribute("data-within", "true");
+  await expect(nav.getByRole("link", { name: "San Mateo", exact: true })).not.toHaveAttribute("data-within");
   await expect(nav.locator("[aria-current=page]")).toHaveCount(0);
 });
 

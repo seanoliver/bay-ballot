@@ -3,7 +3,7 @@ import path from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
 import { Area, AreaFile, Ballot, CountyBallot, EndorsementFile, Guide, type Contest } from "./schema";
-import { areaCounties, areasOf, ballotCounty, inArea, placeCounty, STATE_DISTRICTS } from "./areas";
+import { areaCounties, areaCounty, areasOf, ballotCounty, countyPages, inArea, placeCounty, STATE_DISTRICTS } from "./areas";
 import { countySlug } from "./counties";
 import { matchName } from "./names";
 import { isRejected } from "./quote-key";
@@ -157,8 +157,11 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     }
   }
 
+  const counties = new Set(countyPages(d.areas).map(areaCounty));
   for (const a of d.areas) {
     if (contests.has(a.id)) errors.push(`area '${a.id}' collides with contest '${a.id}': both would be /${d.ballot.election}/${a.id}`);
+    const county = areaCounty(a);
+    if (county !== null && !counties.has(county)) errors.push(`area '${a.id}': ${county} County has no page, so the area picker can't reach it; add a county area`);
   }
   for (const c of d.ballot.contests) {
     if (areasOf(c, d.areas).length === 0) errors.push(`${c.id}: in no area (check its jurisdiction and data/areas/)`);

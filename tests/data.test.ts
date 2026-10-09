@@ -82,6 +82,11 @@ describe("data", () => {
     d.ballot.contests.push({ ...d.ballot.contests[0], id: "sf" });
     expect(validateElection(d).errors).toEqual(["area 'sf' collides with contest 'sf': both would be /2026-11/sf"]);
   });
+  it("fails when a city area's county has no page", () => {
+    const d = base();
+    d.areas.push({ id: "santa-rosa", name: "Santa Rosa", kind: "city", order: 90, jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Sonoma" }, { level: "city", name: "Santa Rosa" }] } as (typeof d.areas)[number]);
+    expect(validateElection(d).errors).toContain("area 'santa-rosa': Sonoma County has no page, so the area picker can't reach it; add a county area");
+  });
   it("checks guide areas and that each pick is in one of them", () => {
     const d = base();
     d.areas.push(SM);
