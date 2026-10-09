@@ -1,0 +1,14 @@
+id: solano
+name: Solano County
+kind: county
+order: 100
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Solano }
+  - { level: city, name: Benicia }
+  - { level: city, name: Dixon }
+  - { level: city, name: Fairfield }
+  - { level: city, name: Rio Vista }
+  - { level: city, name: Suisun City }
+  - { level: city, name: Vacaville }
+  - { level: city, name: Vallejo }

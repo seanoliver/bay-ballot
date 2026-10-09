@@ -1,0 +1,238 @@
+# Sources: data/2026-11/sources/Solano-Notice-of-Election-Nov2026.txt, Solano-Candidates-Nov2026.txt and Solano-Measures-Nov2026.txt (Solano County Registrar of Voters).
+# Only contests where at least one guide takes a position are listed (see docs/investigations/2026-10-09-solano-guide-discovery.md).
+# Left out for now (no guide position): San Joaquin Delta College Trustee Area 4, River Delta USD Trustee Area 1 and the Dixon elected city clerk (uncontested).
+# Benicia's Y and Z follow the corrected notice of 8/10/2026 (Y = limited charter, Z = real property transfer tax); some guides copy the uncorrected 8/5 titles.
+contests:
+  - id: solano-county-supervisor-4
+    section: Local candidates
+    title: Solano County Board of Supervisors, District 4
+    kind: candidate
+    candidates: ['Michael "Mike" Silva', John Carli]
+    jurisdiction: { level: district, name: Supervisor, district: "4", within: [{ level: county, name: Solano }] }
+  - id: solano-county-measure-e
+    section: Local measures
+    title: Solano County Measure E
+    kind: measure
+    description: "Business license tax on wind, solar, battery storage, natural gas extraction and data centers (about $353,000 a year, until ended by voters)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Measure_E_-_Impartial_Analysis_ordinance_for_commercial_energy_production_facilities_business_license_tax.pdf
+    jurisdiction: { level: county, name: Solano }
+  - id: solano-county-measure-h
+    section: Local measures
+    title: Solano County Measure H
+    kind: measure
+    description: "Transient occupancy (hotel) tax in unincorporated areas raised from 5% to 12%, until ended by voters"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Measure_H.Impartial_Analysis.Transient_Occupancy_Tax.2026.pdf
+    jurisdiction: { level: county, name: Solano }
+  - id: benicia-council
+    section: Local candidates
+    title: Benicia City Council
+    kind: candidate
+    candidates: [Terry Scott, Kari Birdseye, Justin Zollars]
+    seats: 2
+    jurisdiction: { level: city, name: Benicia }
+  - id: benicia-measure-x
+    section: Local measures
+    title: Benicia Measure X
+    kind: measure
+    description: "Business license tax modernization (exempts businesses with $100,000 or less in receipts; about $1.6 million in the first year)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Measure_X_City_Attorney_Impartial_Analysis_of_Business_License_Tax_Measure.pdf
+    jurisdiction: { level: city, name: Benicia }
+  - id: benicia-measure-y
+    section: Local measures
+    title: Benicia Measure Y
+    kind: measure
+    description: "Limited city charter, which lets Measure Z's transfer tax take effect if both pass"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/City_Attorney_s_Impartial_Analysis_-_Measure_Y__Limited_Charter_.pdf
+    jurisdiction: { level: city, name: Benicia }
+  - id: benicia-measure-z
+    section: Local measures
+    title: Benicia Measure Z
+    kind: measure
+    description: "Real property transfer tax (not on existing homes selling for $2 million or less; takes effect only if Measure Y also passes)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/City_Attorney_s_Impartial_Analysis_-_Measure_Z__RPTT_.pdf
+    jurisdiction: { level: city, name: Benicia }
+  - id: dixon-council-1
+    section: Local candidates
+    title: Dixon City Council, District 1
+    kind: candidate
+    candidates: [Jim Ernest, Emily Schroeder]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Dixon }] }
+  - id: dixon-council-2
+    section: Local candidates
+    title: Dixon City Council, District 2
+    kind: candidate
+    candidates: [Thom Bogue, Christina M. Cerna]
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Dixon }] }
+  - id: fairfield-mayor
+    section: Local candidates
+    title: Fairfield Mayor
+    kind: candidate
+    candidates: [Pam Bertani, Scott Tonnesen, Nikila Walker Gibson, George Kennedy]
+    aliases: { Scott Tonnesen: [Scott Tonneson], Nikila Walker Gibson: [Nikila Walker-Gibson] }
+    jurisdiction: { level: city, name: Fairfield }
+  - id: fairfield-council-1
+    section: Local candidates
+    title: Fairfield City Council, District 1
+    kind: candidate
+    candidates: [K. Patrice Williams, Nora Dizon]
+    jurisdiction: { level: district, name: City Council, district: "1", within: [{ level: city, name: Fairfield }] }
+  - id: fairfield-council-3
+    section: Local candidates
+    title: Fairfield City Council, District 3
+    kind: candidate
+    candidates: [Doug Carr, Robert Marin, Susan Bush]
+    aliases: { Robert Marin: [Bob Marin] }
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Fairfield }] }
+  - id: fairfield-council-5
+    section: Local candidates
+    title: Fairfield City Council, District 5
+    kind: candidate
+    candidates: [Doriss Panduro, Lynda Davis-Robinson]
+    aliases: { Doriss Panduro: [Doriss Lopez Panduro], Lynda Davis-Robinson: [Lynda Davis Robinson] }
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Fairfield }] }
+  - id: fairfield-measure-p
+    section: Local measures
+    title: Fairfield Measure P
+    kind: measure
+    description: "Extends the city sales tax and raises it by up to 1 cent (about $24 million a year, until ended by voters)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Fairfield_-_Final_Impartial_Analysis__Measure_P_-_Sales_Tax_Measure_.pdf
+    jurisdiction: { level: city, name: Fairfield }
+  - id: fairfield-measure-q
+    section: Local measures
+    title: Fairfield Measure Q
+    kind: measure
+    description: "Makes the city clerk an appointed office instead of an elected one"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Fairfield_-_Final_Impartial_Analysis__Measure_Q_.pdf
+    jurisdiction: { level: city, name: Fairfield }
+  - id: rio-vista-council
+    section: Local candidates
+    title: Rio Vista City Council
+    kind: candidate
+    candidates: [Rick Dolk, Robert Butler, Gloria J. Thibeaux, Leslie Codling-Dichet]
+    seats: 2
+    jurisdiction: { level: city, name: Rio Vista }
+  - id: rio-vista-measure-o
+    section: Local measures
+    title: Rio Vista Measure O
+    kind: measure
+    description: "Extends the 3/4-cent general services sales tax for three years from April 1, 2027"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Rio_Vista_City_Attorney_Impartial_Analysis_Measure_O_Redacted.pdf
+    jurisdiction: { level: city, name: Rio Vista }
+  - id: suisun-city-mayor
+    section: Local candidates
+    title: Suisun City Mayor
+    kind: candidate
+    candidates: [Alma Hernandez, Chauncey Banks, Michael Jefferson, Lilia Dardon, Amit Pal]
+    jurisdiction: { level: city, name: Suisun City }
+  - id: suisun-city-council
+    section: Local candidates
+    title: Suisun City Council
+    kind: candidate
+    candidates: [Princess Washington, Jenalee Dawson, Xenia Tom, Katrina Garcia]
+    seats: 2
+    jurisdiction: { level: city, name: Suisun City }
+  - id: vacaville-mayor
+    section: Local candidates
+    title: Vacaville Mayor
+    kind: candidate
+    candidates: [Sarah Chapman, Roy Stockton]
+    jurisdiction: { level: city, name: Vacaville }
+  - id: vacaville-council-2
+    section: Local candidates
+    title: Vacaville City Council, District 2
+    kind: candidate
+    candidates: [Gregory Ritchie II, Tom Chalk]
+    aliases: { Gregory Ritchie II: [Greg Ritchie] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Vacaville }] }
+  - id: vacaville-council-4
+    section: Local candidates
+    title: Vacaville City Council, District 4
+    kind: candidate
+    candidates: [John Vogel, Davonna Finley]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Vacaville }] }
+  - id: vacaville-council-6
+    section: Local candidates
+    title: Vacaville City Council, District 6
+    kind: candidate
+    candidates: [Jeanette Wylie, Kevin Puett]
+    aliases: { Jeanette Wylie: [Jeanette Wyle] }
+    jurisdiction: { level: district, name: City Council, district: "6", within: [{ level: city, name: Vacaville }] }
+  - id: vacaville-measure-v
+    section: Local measures
+    title: Vacaville Measure V
+    kind: measure
+    description: "Essential services measure: an additional 1-cent sales tax (about $28 million a year, until ended by voters)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Impartial_Analysis.FINAL_Measure_V.pdf
+    jurisdiction: { level: city, name: Vacaville }
+  - id: vallejo-council-2
+    section: Local candidates
+    title: Vallejo City Council, District 2
+    kind: candidate
+    candidates: ['Diosdado "JR" Matulac']
+    aliases: { 'Diosdado "JR" Matulac': [JR Matulac, J.R. Matulac] }
+    jurisdiction: { level: district, name: City Council, district: "2", within: [{ level: city, name: Vallejo }] }
+  - id: vallejo-council-4
+    section: Local candidates
+    title: Vallejo City Council, District 4
+    kind: candidate
+    candidates: [Charles Palmares, Brianna Rogers, Chris Platzer]
+    jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Vallejo }] }
+  - id: vallejo-council-5
+    section: Local candidates
+    title: Vallejo City Council, District 5
+    kind: candidate
+    candidates: [Tara Beasley Stansberry, Tanya Hall, Rebekah Truemper]
+    aliases: { Tara Beasley Stansberry: [Tara Beasley-Stansberry] }
+    jurisdiction: { level: district, name: City Council, district: "5", within: [{ level: city, name: Vallejo }] }
+  - id: solano-county-board-of-education-6
+    section: School and special districts
+    title: Solano County Board of Education, Trustee Area 6
+    kind: candidate
+    candidates: [Tamika Hamilton, Kathryn Kedarisetty]
+    jurisdiction: { level: district, name: Solano County Board of Education, district: "6", within: [{ level: county, name: Solano }] }
+  - id: solano-cc-trustee-area-4
+    section: School and special districts
+    title: Solano Community College, Trustee Area 4
+    kind: candidate
+    candidates: [Denis Honeychurch, Tony Yang]
+    jurisdiction: { level: district, name: Solano Community College District, district: "4", within: [{ level: county, name: Solano }] }
+  - id: benicia-usd-trustee-area-1
+    section: School and special districts
+    title: Benicia Unified School District, Trustee Area 1
+    kind: candidate
+    candidates: [Dan Smith, Barbara Jones]
+    jurisdiction: { level: district, name: Benicia Unified School District, district: "1", within: [{ level: county, name: Solano }] }
+  - id: dixon-usd-trustee
+    section: School and special districts
+    title: Dixon Unified School District
+    kind: candidate
+    candidates: [Jewel Fink, Julian Y. Cuevas, John Gabby, Phil Lockwood, Michael Ceremello Jr., Cheryl Sommers, Michael Monson]
+    seats: 3
+    aliases: { Michael Ceremello Jr.: [Michael J Ceremello, Jr.] }
+    jurisdiction: { level: district, name: Dixon Unified School District, district: "at-large", within: [{ level: county, name: Solano }] }
+  - id: dixon-usd-measure-u
+    section: Local measures
+    title: Dixon Unified School District Measure U
+    kind: measure
+    description: "$49 million school bond (55% vote)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Measure_U.Impartial_Analysis.Dixon_School_Bond.pdf
+    jurisdiction: { level: district, name: Dixon Unified School District, district: "at-large", within: [{ level: county, name: Solano }] }
+  - id: vallejo-city-usd-trustee-area-1
+    section: School and special districts
+    title: Vallejo City Unified School District, Trustee Area 1
+    kind: candidate
+    candidates: [Clarence John Martin Jr, Judith Lerner, Reba Jill Brown]
+    jurisdiction: { level: district, name: Vallejo City Unified School District, district: "1", within: [{ level: county, name: Solano }] }
+  - id: vallejo-city-usd-trustee-area-3
+    section: School and special districts
+    title: Vallejo City Unified School District, Trustee Area 3
+    kind: candidate
+    candidates: ['Rizal "Mr. Riz" V. Aliga', Irene Reynolds]
+    jurisdiction: { level: district, name: Vallejo City Unified School District, district: "3", within: [{ level: county, name: Solano }] }
+  - id: winters-jusd-measure-b
+    section: Local measures
+    title: Winters Joint Unified School District Measure B
+    kind: measure
+    description: "$29.9 million school bond (the district is run from Yolo County; Solano voters in it also vote)"
+    link: https://content.solanocounty.gov/sites/default/files/2026-08/Measure_B_Impartial_Analysis_-_Signed_Redacted.pdf
+    jurisdiction: { level: district, name: Winters Joint Unified School District, district: "at-large", within: [{ level: county, name: Solano }] }

@@ -44,3 +44,35 @@ picks:
     pick: N
   napa-county-measure-b:
     pick: Y
+  us-rep-8:
+    pick:
+      - John Garamendi
+  solano-county-supervisor-4:
+    pick:
+      - Michael "Mike" Silva
+  benicia-council:
+    pick:
+      - Kari Birdseye
+      - Terry Scott
+  rio-vista-council:
+    pick:
+      - Rick Dolk
+  suisun-city-council:
+    pick:
+      - Princess Washington
+      - Katrina Garcia
+  vacaville-mayor:
+    pick:
+      - Sarah Chapman
+  vacaville-council-6:
+    pick:
+      - Jeanette Wylie
+  vallejo-council-2:
+    pick:
+      - Diosdado "JR" Matulac
+  vallejo-council-4:
+    pick:
+      - Charles Palmares
+  vallejo-council-5:
+    pick:
+      - Rebekah Truemper

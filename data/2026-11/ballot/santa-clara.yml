@@ -465,6 +465,7 @@ contests:
     title: Oak Grove School District, Trustee Area 5
     kind: candidate
     candidates: [Paul Chun, Pradeep Kumar, Casino Fajardo]
+    aliases: { Pradeep Kumar: [Pardeep Kumar] } # Reform California's spelling
     jurisdiction: { level: district, name: Oak Grove School District, district: "5", within: [{ level: city, name: San Jose }] }
   - id: orchard-sd-trustee
     section: School and special districts

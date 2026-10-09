@@ -1,0 +1,7 @@
+id: solano-dems
+name: Solano County Democratic Party
+shortName: "Solano Democrats"
+description: The official Democratic Party committee for Solano County.
+type: party
+homepage: https://www.solanodemocrats.com/
+areas: [solano]

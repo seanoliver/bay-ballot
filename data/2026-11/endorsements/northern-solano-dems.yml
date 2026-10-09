@@ -1,0 +1,22 @@
+guide: northern-solano-dems
+election: 2026-11
+status: published
+source: https://sites.google.com/view/northernsolanodems/campaign-organizing-workgroup # "2026 Endorsement" image cards, no page text
+fetchedAt: 2026-10-09
+hasReasoning: false
+manual: true # picks hand-entered from the 19 image cards (read 2026-10-09); extract skips this guide. Comments quote each card. The Wanda Williams (BOS D3, decided in June), Nancy Dunn (Vacaville USD) and Kai Eusebio (Fairfield-Suisun USD) cards are stamped "ELECTED!" and have no November contest.
+picks:
+  solano-county-supervisor-4: { pick: ['Michael "Mike" Silva'] } # "Dr. Michael Silva / For Solano County Supervisor D4"
+  solano-county-board-of-education-6: { pick: ["Kathryn Kedarisetty"] } # "Kathryn Kedarisetty / Solano County Board of Education Area 6"
+  solano-cc-trustee-area-4: { pick: ["Tony Yang"] } # "Tony Yang / Solano Community College Board"
+  dixon-usd-trustee: { pick: ["Julian Y. Cuevas", "Jewel Fink"] } # "Julian Cuevas / For Re-election to Dixon USD Board"; "Jewel Fink / Dixon USD Board"
+  dixon-council-2: { pick: ["Christina M. Cerna"] } # "Christina Cerna / Dixon City Council D2"
+  fairfield-mayor: { pick: ["Nikila Walker Gibson"] } # "Nikila Walker Gibson / Fairfield Mayor"
+  fairfield-council-1: { pick: ["K. Patrice Williams"] } # "K Patrice Williams / For Fairfield City Council D1"
+  fairfield-council-3: { pick: ["Doug Carr"] } # "Doug Carr / Fairfield City Council D3"
+  fairfield-council-5: { pick: ["Doriss Panduro"] } # "Doriss Panduro / Fairfield City Council D5"
+  suisun-city-mayor: { pick: ["Alma Hernandez"] } # "Alma Hernandez / Suisun City Mayor"
+  suisun-city-council: { pick: ["Jenalee Dawson", "Princess Washington"] } # "Jenalee Dawson / Suisun City Council"; "Princess Washington / Suisun City Council"
+  vacaville-mayor: { pick: ["Sarah Chapman"] } # "Dr. Sarah Chapman / Vacaville Mayor"
+  vacaville-council-4: { pick: ["Davonna Finley"] } # "Davonna Finley / Vacaville City Council D4"
+  vacaville-council-6: { pick: ["Jeanette Wylie"] } # "Jeanette Wylie / For Re-election to Vacaville City Council D6"

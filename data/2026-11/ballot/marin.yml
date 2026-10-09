@@ -90,7 +90,7 @@ contests:
     title: Novato City Council, District 4
     kind: candidate
     candidates: [Pat Eklund, Luiggino Galletto, Chris Carpiniello, Dan Christian]
-    aliases: { Dan Christian: [Daniel Christian] }
+    aliases: { Dan Christian: [Daniel Christian], Chris Carpiniello: [Christopher Carpiniello] }
     jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Novato }] }
   - id: ross-council
     section: Local candidates
