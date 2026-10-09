@@ -1,7 +1,7 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
-import { bayHeading, eligible, scopeName, skippedLabel } from "../src/lib/fallback";
+import { bayHeading, eligible, parseScopes, scopeName, skippedLabel } from "../src/lib/fallback";
 import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, contestRow, guidesOn, isPhone, waitForKeys, watchErrors } from "./helpers";
 
@@ -43,7 +43,7 @@ const judicial = (page: Page) => page.getByRole("region", { name: "California: J
 const scopeSwitch = (scope: ReturnType<typeof judicial>) => scope.getByRole("group", { name: "Show guides from" }).filter({ visible: true }).first();
 const bayBlocks = (scope: ReturnType<typeof judicial>) => scope.getByRole("group", { name: FROM_BAY }).filter({ visible: true });
 const bayBlockFor = (scope: ReturnType<typeof judicial>, contestId: string) =>
-  scope.locator(`[role=group][aria-labelledby$="-${contestId}"]`).filter({ visible: true });
+  scope.locator(`[role=group][aria-labelledby="bay-d-${contestId}"], [role=group][aria-labelledby="bay-m-${contestId}"]`).filter({ visible: true });
 
 test.describe("Bay Area fallback", () => {
   test("a section the area's guides skipped entirely defaults to the Bay Area", async ({ page }) => {
@@ -77,24 +77,26 @@ test.describe("Bay Area fallback", () => {
   test("the switch toggles both ways, keeps focus, and is remembered across a reload", async ({ page }) => {
     test.skip(!FB, NO_FALLBACK);
     const n = FB!.contests.length;
+    const showsBay = async (scope: string) => {
+      await expect(bayBlocks(judicial(page))).toHaveCount(scope === "Bay Area" ? n : 0);
+      await expect(judicial(page).getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(scope === "Bay Area" ? 0 : n);
+    };
+    const stored = async () => parseScopes(await page.evaluate(() => localStorage.getItem("bb-scope")))[`${chosen!.area.id}:${JUDICIAL}`];
     await page.goto(AREA_URL);
     const sw = () => scopeSwitch(judicial(page));
     await expect(sw().getByRole("button", { name: DEFAULT })).toHaveAttribute("aria-pressed", "true");
-    const bay = sw().getByRole("button", { name: "Bay Area" });
-    await bay.click();
-    await expect(bay).toHaveAttribute("aria-pressed", "true");
-    await expect(bay).toBeFocused();
-    await expect(bayBlocks(judicial(page))).toHaveCount(n);
-    await page.reload();
-    await expect(sw().getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
-    const area = sw().getByRole("button", { name: NAME });
-    await area.click();
-    await expect(area).toBeFocused();
-    await expect(bayBlocks(judicial(page))).toHaveCount(0);
-    await expect(judicial(page).getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(n);
-    await expect(page).toHaveURL(new RegExp(`${AREA_URL}$`));
-    await page.reload();
-    await expect(sw().getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
+    for (const [scope, value] of [[OTHER, FB!.initial === "bay" ? "area" : "bay"], [DEFAULT, FB!.initial]] as const) {
+      const button = sw().getByRole("button", { name: scope });
+      await button.click();
+      await expect(button).toHaveAttribute("aria-pressed", "true");
+      await expect(button).toBeFocused();
+      await showsBay(scope);
+      await expect.poll(stored).toBe(value);
+      await expect(page).toHaveURL(new RegExp(`${AREA_URL}$`));
+      await page.reload();
+      await expect(sw().getByRole("button", { name: scope })).toHaveAttribute("aria-pressed", "true");
+      await showsBay(scope);
+    }
   });
 
   test("a remembered choice renders without hydration errors", async ({ page }) => {
@@ -109,14 +111,15 @@ test.describe("Bay Area fallback", () => {
   test("the reasons-only filter applies to the Bay Area tally", async ({ page }) => {
     const p = pairWhere((id) => guidesOn(id).some((g) => !data.endorsements[g].hasReasoning));
     test.skip(!p, "No fallback contest has a Bay Area guide without reasons in today's data");
+    const pool = guidesOn(p!.id);
+    const withReasons = pool.filter((g) => data.endorsements[g].hasReasoning).length;
     const url = `${BALLOT}/${p!.area.id}`;
-    const count = async () => Number((await bayBlockFor(judicial(page), p!.id).getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
     await chooseScope(page, "bay", p!.area.id);
     await page.goto(url);
-    const all = await count();
-    // The page is server-rendered unfiltered; the filter applies after hydration, so poll for it.
+    await expect(bayBlockFor(judicial(page), p!.id)).toHaveAccessibleName(bayHeading(pool.length, pool.length).label);
+    // The page is server-rendered unfiltered; the filter applies after hydration, and the name assertion retries until it does.
     await page.goto(`${url}?why=1`);
-    await expect.poll(count).toBeLessThan(all);
+    await expect(bayBlockFor(judicial(page), p!.id)).toHaveAccessibleName(bayHeading(withReasons, pool.length).label);
   });
 
   test("local contests never fall back to the Bay Area", async ({ page }) => {
