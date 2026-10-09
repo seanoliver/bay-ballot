@@ -29,7 +29,9 @@ export function useBallotKeys(onAction: (action: KeyAction) => boolean | void, {
     window.addEventListener("pointerdown", onPointer, true);
     window.addEventListener("focusin", onFocus);
     window.addEventListener("keydown", onKey);
+    document.documentElement.dataset.keysReady = "";
     return () => {
+      delete document.documentElement.dataset.keysReady;
       window.removeEventListener("pointerdown", onPointer, true);
       window.removeEventListener("focusin", onFocus);
       window.removeEventListener("keydown", onKey);

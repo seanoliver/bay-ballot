@@ -1,6 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { hiddenLabel } from "../src/lib/filters";
-import { BALLOT, contestRow, guideOff, guidesOn, isPhone, openBallot, watchErrors } from "./helpers";
+import { BALLOT, contestRow, guideOff, guidesOn, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
@@ -265,11 +265,9 @@ test.describe("desktop contest page layout", () => {
   test("/ focuses the guide search", async ({ page }) => {
     await openContest(page);
     const search = page.getByRole("complementary", { name: "Filters" }).getByRole("searchbox", { name: "Search guides" });
-    // The contest page has no hydration marker, and a "/" pressed before hydration is dropped, so retry the key.
-    await expect(async () => {
-      await page.keyboard.press("/");
-      await expect(search).toBeFocused({ timeout: 500 });
-    }).toPass({ timeout: 10_000 });
+    await waitForKeys(page);
+    await page.keyboard.press("/");
+    await expect(search).toBeFocused();
     await expect(search).toHaveValue("");
   });
 });

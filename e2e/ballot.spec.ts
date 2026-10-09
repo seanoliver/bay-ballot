@@ -575,6 +575,7 @@ test.describe("phone keyboard", () => {
 
   test("arrows and j are left to the browser", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const prevented = await page.evaluate(() =>
       ["ArrowDown", "j"].map((key) => !window.dispatchEvent(new KeyboardEvent("keydown", { key, cancelable: true }))),
     );
@@ -584,6 +585,7 @@ test.describe("phone keyboard", () => {
 
   test("no shortcut hint, contest region or key hints", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await expect(page.getByText("↑↓ to browse")).toBeHidden();
     await expect(page.getByRole("region", { name: "Contests" })).toHaveCount(0);
     await expect(page.locator("[aria-keyshortcuts]").filter({ visible: true })).toHaveCount(0);
@@ -615,6 +617,7 @@ test.describe("section nav", () => {
 
   test("the bar names the current place and section, and follows scrolling", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
     await page.locator("#section-state-judicial").scrollIntoViewIfNeeded();
     await page.evaluate(() => {
@@ -626,6 +629,7 @@ test.describe("section nav", () => {
 
   test("choosing a section jumps there and focuses its heading", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await bar(page).click();
     await expect(menu(page)).toBeVisible();
     await expect(menu(page).getByRole("menuitem", { name: /^California, \d+ contests?$/ })).toBeVisible();
@@ -639,6 +643,7 @@ test.describe("section nav", () => {
 
   test("works on an area page", async ({ page }) => {
     await page.goto(`${BALLOT}/sf`);
+    await waitForKeys(page);
     await expect(bar(page)).toHaveAccessibleName("Jump to a section. Now: California, Federal");
     await bar(page).click();
     await menu(page).getByRole("menuitem", { name: /^Local candidates/ }).click();
@@ -653,6 +658,7 @@ test.describe("section nav", () => {
   ] as const) {
     test(`on ${path} the menu lists every place on the page, and every item has a heading to jump to (${city})`, async ({ page }) => {
       await page.goto(path);
+      await waitForKeys(page);
       const places = await page.locator("[data-keys=list] h2").allTextContents();
       expect(places).toContain(county);
       await bar(page).click();
@@ -668,6 +674,7 @@ test.describe("section nav", () => {
 
   test("a link to a section lands with its heading below the bar", async ({ page }) => {
     await page.goto(`${BALLOT}#section-state-judicial`);
+    await waitForKeys(page);
     const heading = page.locator("#section-state-judicial");
     await expect(heading).toBeVisible();
     await expect
@@ -680,6 +687,7 @@ test.describe("section nav", () => {
 
   test("menu items name their place and contest count", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await bar(page).click();
     await expect(menu(page).getByRole("group", { name: "California" }).getByRole("menuitem", { name: /^Judicial, \d+ contests?$/ })).toHaveCount(1);
     await expect(menu(page).getByRole("menuitem", { name: /^Regional measures, 1 contest$/ })).toHaveCount(1);
@@ -688,6 +696,7 @@ test.describe("section nav", () => {
   test("with reduced motion the jump is instant", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openBallot(page);
+    await waitForKeys(page);
     await bar(page).click();
     await menu(page).getByRole("menuitem", { name: /^San Francisco/ }).click();
     const top = await page.locator("#place-county-san-francisco").evaluate((h) => Math.round(h.getBoundingClientRect().top));
@@ -827,6 +836,7 @@ test.describe("phone section nav", () => {
 
   test("g does nothing on a phone", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     await page.keyboard.press("g");
     await page.waitForTimeout(300);
     await expect(page.getByRole("menu")).toHaveCount(0);
@@ -834,6 +844,7 @@ test.describe("phone section nav", () => {
 
   test("the bar sticks to the top without covering the Filters button, and its menu jumps", async ({ page }) => {
     await openBallot(page);
+    await waitForKeys(page);
     const filters = page.getByRole("button", { name: /Filters/ });
     const nav = page.locator("[data-section-nav]");
     const [f, n] = [(await filters.boundingBox())!, (await nav.boundingBox())!];
