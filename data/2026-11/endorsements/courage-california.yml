@@ -34,6 +34,27 @@ rejectedQuotes:
   - text: California is already facing budget deficits, in part because of the deep cuts that Republicans enacted for health care and other critical services in H.R. 1 to subsidize massive tax breaks for the wealthy and corporations.
     reason: "does not stand alone: background, not the reason (audit 2026-10-06)"
 picks:
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  us-rep-8:
+    pick:
+      - John Garamendi
+  us-rep-9:
+    pick:
+      - Josh Harder
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  us-rep-12:
+    pick:
+      - Lateefah Simon
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+    quotes:
+      - text: Based on our Courage Score analysis, Dr. Wahab has supported most progressive bills that made it to a vote, and has earned the Courage All-Star designation.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   us-rep-15:
     pick:
       - Kevin Mullin
@@ -43,6 +64,15 @@ picks:
   us-rep-16:
     pick:
       - Sam Liccardo
+  us-rep-17:
+    pick:
+      - Ro Khanna
+  us-rep-18:
+    pick:
+      - Zoe Lofgren
+  us-rep-19:
+    pick:
+      - Jimmy Panetta
   governor:
     pick:
       - Xavier Becerra
@@ -73,17 +103,48 @@ picks:
     quotes:
       - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-      - text: Based on our Courage Score analysis, he supported the most progressive bills that made it to a vote and earned the Courage Score All-Star designation three times.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
+  state-senate-2:
+    pick:
+      - Damon Connolly
     quotes:
-      - text: As a member of the board, she has prioritized transparency and accountability, affordable housing, environmental protection, and veterans’ and homeowners’ services.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: Based on our Courage Score analysis, Asm. Connolly supported nearly all progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/marin
+  assembly-11:
+    pick:
+      - Lori D Wilson
+  assembly-12:
+    pick:
+      - Jackie Elward
+  assembly-14:
+    pick:
+      - Buffy Wicks
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Wicks supported most progressive bills that made it to a vote, and has previously been named to the Courage All-Star list.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/contracosta
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
+  assembly-18:
+    pick:
+      - Mia Bonta
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Bonta has supported most progressive bills that made it to a vote, and has been designated an All-Star.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   assembly-19:
     pick:
       - Catherine Stefani
+  assembly-20:
+    pick:
+      - Liz Ortega
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Ortega has supported most progressive bills that made it to a vote, and earned the designation of All-Star.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   assembly-21:
     pick:
       - Diane Papan
@@ -93,6 +154,36 @@ picks:
     quotes:
       - text: Based on our Courage Score analysis, Asm. Berman supported most progressive bills that made it to a vote.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  assembly-24:
+    pick:
+      - Alex Lee
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Lee supported nearly all progressive bills that made it to a vote and has been designated an All-Star this year.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  assembly-25:
+    pick:
+      - Ash Kalra
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Kalra has supported nearly all progressive bills that made it to a vote and has been designated a Courage All-Star this year.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  assembly-26:
+    pick:
+      - Patrick Ahrens
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Ahrens supported most progressive bills that made it to a floor vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  assembly-28:
+    pick:
+      - Gail Pellerin
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Pellerin supported most progressive bills that made it to a vote.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  assembly-29:
+    pick:
+      - Robert Rivas
+    quotes:
+      - text: Based on our Courage Score analysis, Asm. Rivas supported most progressive bills that made it to a vote, and has earned an Honorable Mention three times.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   superintendent:
     pick:
       - Richard Barrera
@@ -104,13 +195,11 @@ picks:
   prop-2:
     pick: Y
     quotes:
-      - text: VOTING YES will allow the state to stabilize its savings and continue to protect critical services, like education and public safety, from unexpected cuts.
+      - text: VOTING YES will ensure that California maintains a larger state-based stockpile of rainy day funds that can be easily accessed during difficult times.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-3:
     pick: Y
     quotes:
-      - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING YES will prevent a significant loss of revenue as federal cuts impact the state and Californians for years.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-4:
@@ -118,17 +207,12 @@ picks:
   prop-5:
     pick: Y
     quotes:
-      - text: VOTING YES will reform the process to potentially reduce the number of recall special elections and save taxpayer dollars.
+      - text: VOTING YES will limit the ways in which this tool can be weaponized and better protect the foundation of fair elections and representation that is essential to our democratic system.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N
   prop-39:
     pick: N
-    quotes:
-      - text: National and state data continues to show that voter fraud is extremely rare, making up a fraction of a percentage point of overall voting in the United States.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-      - text: VOTING NO will prevent the state from disenfranchising a registered voter if they cannot produce a document on demand.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-40:
     pick: Y
   prop-41:
@@ -147,75 +231,9 @@ picks:
     quotes:
       - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-  us-rep-2:
-    pick:
-      - Jared Huffman
-  state-senate-2:
-    pick:
-      - Damon Connolly
-  assembly-12:
-    pick:
-      - Jackie Elward
-  us-rep-8:
-    pick:
-      - John Garamendi
-  us-rep-9:
-    pick:
-      - Josh Harder
-  us-rep-10:
-    pick:
-      - Mark DeSaulnier
-  assembly-11:
-    pick:
-      - Lori D Wilson
-  assembly-14:
-    pick:
-      - Buffy Wicks
-  assembly-16:
-    pick:
-      - Rebecca Bauer-Kahan
   richmond-mayor:
     pick:
       - Claudia Jiménez
-  us-rep-18:
-    pick:
-      - Zoe Lofgren
-  us-rep-19:
-    pick:
-      - Jimmy Panetta
-  state-senate-10:
-    pick:
-      - Scott Sakakihara
-  assembly-24:
-    pick:
-      - Alex Lee
-  assembly-25:
-    pick:
-      - Ash Kalra
-  assembly-26:
-    pick:
-      - Patrick Ahrens
-  assembly-28:
-    pick:
-      - Gail Pellerin
-  assembly-29:
-    pick:
-      - Robert Rivas
   san-jose-council-5:
     pick:
       - Peter Ortiz
-  us-rep-12:
-    pick:
-      - Lateefah Simon
-  us-rep-14:
-    pick:
-      - Aisha Wahab
-  assembly-18:
-    pick:
-      - Mia Bonta
-  assembly-20:
-    pick:
-      - Liz Ortega
-  us-rep-17:
-    pick:
-      - Ro Khanna
