@@ -257,7 +257,6 @@ jobs:
           CI: $CI_URL"
             exit 0
           fi
-          # Exit 1 with nothing to review is a fetch error the next run can recover from, so it gets a comment but no needs-review label.
           if [ "$CODE" = "1" ]; then
             gh pr comment "$PR" --body "Not auto-merged: refresh exit code 1 (a fetch or run error); the next clean run can merge it. CI: $CI_URL"
             exit 0
