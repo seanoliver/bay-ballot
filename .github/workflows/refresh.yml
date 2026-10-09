@@ -149,7 +149,6 @@ jobs:
             url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
             pr="${url##*/}"
           fi
-          # Label here too: if gate never runs, the next run only sees its own changes and could merge these.
           if [ "$(printf '%s' "${REVIEW:-[]}" | jq 'length')" != "0" ]; then
             gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force
             gh pr edit "$pr" --add-label needs-review
