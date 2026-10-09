@@ -122,10 +122,19 @@ export function useStoredParam(name: string, storageKey: string): [string | null
   return [value, set];
 }
 
+// Holds choices the browser won't store; registered before any subscriber so another tab's write clears it first.
+const memo = new Map<string, string>();
+if (typeof window !== "undefined")
+  window.addEventListener("storage", (e) => {
+    if (e.key === null) memo.clear();
+    else memo.delete(e.key);
+  });
+
 export function useStoredKey(storageKey: string): [string | null, (v: string) => void] {
-  const value = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
+  const value = useSyncExternalStore(subscribe, () => memo.get(storageKey) ?? readKey(storageKey), () => null);
   const set = useCallback(
     (v: string) => {
+      memo.set(storageKey, v);
       writeKey(storageKey, v);
       window.dispatchEvent(new Event(CHANGE_EVENT));
     },
