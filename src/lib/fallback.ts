@@ -1,6 +1,6 @@
-import { BAY_AREA, type PlaceGroup } from "./areas";
-import { activeEntries, type Filters, type GuideInfo, type PickFile, type Row } from "./filters";
-import type { Area } from "./schema";
+import { BAY_AREA, STATE_DISTRICTS, type PlaceGroup } from "./areas";
+import { activeEntries, hiddenLabel, type Filters, type GuideInfo, type PickFile, type Row } from "./filters";
+import type { Area, Contest } from "./schema";
 import { navModel } from "./section-nav";
 
 export type Scope = "area" | "bay";
@@ -10,16 +10,17 @@ export type FallbackSection = { id: string; initial: Scope; contests: string[] }
 export type Fallback = { place: string; sections: FallbackSection[]; guides: GuideInfo[]; files: Record<string, PickFile> };
 type Pool = { guides: GuideInfo[]; files: Record<string, PickFile> };
 
-const WIDE = new Set(["state", "region"]);
+export function eligible({ jurisdiction: j }: Pick<Contest, "jurisdiction">): boolean {
+  return j.level === "state" || j.level === "region" || (j.level === "district" && STATE_DISTRICTS.includes(j.name));
+}
 const taken = (id: string, { guides, files }: Pool) => guides.some((g) => files[g.id]?.picks[id]);
 
 export function fallbackFor({ groups, place, local, bay }: { groups: PlaceGroup[]; place: string; local: Pool; bay: Pool }): Fallback | null {
   const nav = navModel(groups);
   const sections: FallbackSection[] = [];
   groups.forEach((g, gi) => {
-    if (!WIDE.has(g.key)) return;
     g.sections.forEach((s, si) => {
-      const contests = s.contests.filter((c) => !taken(c.id, local) && taken(c.id, bay)).map((c) => c.id);
+      const contests = s.contests.filter((c) => eligible(c) && !taken(c.id, local) && taken(c.id, bay)).map((c) => c.id);
       if (!contests.length) return;
       sections.push({ id: nav[gi].sections[si].id, initial: s.contests.some((c) => taken(c.id, local)) ? "area" : "bay", contests });
     });
@@ -56,5 +57,10 @@ export const sectionScope = (chosen: Scope | undefined, initial: Scope): Scope =
 export const scopeName = (area: Pick<Area, "name" | "shortName">) => area.shortName ?? area.name.replace(/ County$/, "");
 
 export const bayLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} from across the ${BAY_AREA.name}`;
+
+export function bayHeading(shown: number, total: number): { label: string; hidden: string | null } {
+  if (shown === 0) return { label: total === 1 ? `Filters hide the only ${BAY_AREA.name} guide` : `Filters hide all ${total} ${BAY_AREA.name} guides`, hidden: null };
+  return { label: bayLabel(shown), hidden: shown < total ? hiddenLabel(total - shown) : null };
+}
 
 export const skippedLabel = (place: string) => `No ${place} guide has taken a position yet.`;
