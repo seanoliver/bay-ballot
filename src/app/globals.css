@@ -207,6 +207,24 @@
   animation-delay: min(calc(var(--i, 0) * var(--motion-stagger)), 150ms);
 }
 
+/* The selected area chip's clear button widens in from nothing, so the chip grows instead of jumping. */
+@keyframes chip-clear {
+  from {
+    grid-template-columns: 0fr;
+    opacity: 0;
+    margin-left: -0.5rem;
+  }
+}
+@utility chip-clear {
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+  animation: chip-clear var(--motion-in) var(--ease-out) both;
+  & > * {
+    min-width: 0;
+  }
+}
+
 /* Thin, muted scrollbars for panes that scroll on their own. */
 @utility scrollbar-thin {
   scrollbar-width: thin;

@@ -19,13 +19,24 @@ test("the Bay Area list groups contests by place and the picker opens an area", 
 test("the area picker lists the Bay Area and counties, and marks a city page's county", async ({ page }) => {
   await openBallot(page);
   const nav = page.getByRole("navigation", { name: "Area" });
-  await expect(nav.getByText("Counties", { exact: true })).toBeVisible();
+  await expect(nav.getByRole("link", { name: /^Clear / })).toHaveCount(0);
   await expect(nav.getByRole("link", { name: "San Mateo", exact: true })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
   await expect(nav.getByRole("link", { name: "San Jose" })).toHaveCount(0);
   await page.goto(`${BALLOT}/san-jose`);
   await expect(nav.getByRole("link", { name: "Santa Clara", exact: true })).toHaveAttribute("data-within", "true");
   await expect(nav.getByRole("link", { name: "San Mateo", exact: true })).not.toHaveAttribute("data-within");
   await expect(nav.locator("[aria-current=page]")).toHaveCount(0);
+});
+
+test("a county page's chip clears back to the Bay Area", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-mateo`);
+  const nav = page.getByRole("navigation", { name: "Area" });
+  const chip = nav.getByRole("link", { name: "Clear San Mateo" });
+  await expect(chip).toHaveAttribute("aria-current", "page");
+  await expect(chip).toHaveAttribute("href", BALLOT);
+  await chip.click();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+  await expect(nav.getByRole("link", { name: "Bay Area" })).toHaveAttribute("aria-current", "page");
 });
 
 test("the SF page has its own title, canonical URL and contests", async ({ page }) => {
