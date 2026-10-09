@@ -55,18 +55,19 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("a section the area's guides partly covered defaults to the area, and only the skipped row changes", async ({ page }) => {
-    test.skip(!FB, NO_FALLBACK);
-    test.skip(FB!.initial !== "area", "the chosen section defaults to the Bay Area");
-    const n = FB!.contests.length;
-    await page.goto(AREA_URL);
+    const partly = fallbacks.find((x) => x.fb.initial === "area");
+    test.skip(!partly, "No area's guides cover only part of the judicial section in today's data");
+    const name = scopeName(partly!.area);
+    const n = partly!.fb.contests.length;
+    await page.goto(`${BALLOT}/${partly!.area.id}`);
     const section = judicial(page);
     const sw = scopeSwitch(section);
-    await expect(sw.getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
-    await expect(section.getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(n);
+    await expect(sw.getByRole("button", { name })).toHaveAttribute("aria-pressed", "true");
+    await expect(section.getByText(skippedLabel(name)).filter({ visible: true })).toHaveCount(n);
     await expect(bayBlocks(section)).toHaveCount(0);
     await sw.getByRole("button", { name: "Bay Area" }).click();
     await expect(bayBlocks(section)).toHaveCount(n);
-    await expect(section.getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(0);
+    await expect(section.getByText(skippedLabel(name)).filter({ visible: true })).toHaveCount(0);
   });
 
   test("the switch toggles both ways, keeps focus, and is remembered across a reload", async ({ page }) => {
@@ -128,7 +129,7 @@ test.describe("Bay Area fallback", () => {
     test.skip(!FB, NO_FALLBACK);
     const title = titleOf(FB!.contests[0]);
     await page.goto(AREA_URL);
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
+    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: DEFAULT })).toHaveAttribute("aria-pressed", "true");
     await contestRow(page, title).click();
     const detail = isPhone(info) ? page.getByRole("dialog", { name: title }) : page.getByRole("region", { name: title });
     const sw = detail.getByRole("group", { name: "Show guides from" });
@@ -142,10 +143,14 @@ test.describe("Bay Area fallback", () => {
 
   test("covered contests show no switch in their details", async ({ page }, info) => {
     test.skip(!FB, NO_FALLBACK);
-    test.skip(FB!.contests.includes("supreme-court-groban"), "Groban falls back in the chosen area");
+    const onPage = ballotViewProps(data, { area: chosen!.area }).ballot.contests;
+    const judicialIds = onPage.filter((c) => c.section === "Judicial" && guidesOn(c.id).length > 0).map((c) => c.id);
+    const covered = judicialIds.find((id) => !FB!.contests.includes(id));
+    test.skip(!covered, "Every judicial contest with a guide position falls back in the chosen area");
+    const title = titleOf(covered!);
     await page.goto(AREA_URL);
-    await contestRow(page, GROBAN).click();
-    const detail = isPhone(info) ? page.getByRole("dialog", { name: GROBAN }) : page.getByRole("region", { name: GROBAN });
+    await contestRow(page, title).click();
+    const detail = isPhone(info) ? page.getByRole("dialog", { name: title }) : page.getByRole("region", { name: title });
     await expect(detail).toBeVisible();
     await expect(detail.getByRole("group", { name: "Show guides from" })).toHaveCount(0);
   });

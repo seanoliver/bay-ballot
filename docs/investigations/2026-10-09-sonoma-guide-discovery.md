@@ -355,6 +355,8 @@ Decisions:
 6. **Area order and coordination** with any Napa or Solano branch for `us-rep-4`, `assembly-4` and area `order` numbers, and with the guide-widening pass (twelve shared guides gain `sonoma`; expect conflicts on their `areas:` lines).
 7. **The PD as a rolling source.** Like the Marin IJ, new editorials need adding to its `extraSources` as they appear (CD1, AD12 and the supervisor runoffs are still to come).
 
+Found after review (2026-10-09): Reform California's Sonoma page covers Harmony Union SD, Two Rock Union SD, Gold Ridge Fire and Sonoma County Fire, so those four contests were added (30 of 42 local contests now).
+
 ## Decisions (2026-10-09)
 
 Sean approved these for Sonoma, Napa and Solano together.

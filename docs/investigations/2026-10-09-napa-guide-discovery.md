@@ -249,6 +249,8 @@ Decisions:
 5. **NBCLC for Napa.** Its page covers CD4 and AD4 but has no Napa section, and Napa is formally in the Napa-Solano council's territory. Widen it for the two district picks, or leave it out.
 6. **Coordination with the Sonoma and Solano passes** on the shared contests (`us-rep-4`, `assembly-4`, BOE 2, Court of Appeal 1), on area order numbers, and on widening the same multi-county guides (nbclc, seiu-1021, courage-california, yimby-action, eqca, pp-norcal-action, 350-bay-area-action, greenbelt-alliance, lwv-ca) once.
 
+Found after review (2026-10-09): Reform California's Napa page takes positions on Measures B, P, S and Y, so all four measures now have a guide position and S and Y are on the ballot file.
+
 ## Decisions (2026-10-09)
 
 Sean approved these for Sonoma, Napa and Solano together.
