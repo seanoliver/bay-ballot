@@ -60,12 +60,23 @@ export function placeName(area: Pick<Area, "name" | "shortName"> | null): PlaceN
   return area ? { name: area.name, short: area.shortName ?? area.name } : BAY_AREA;
 }
 
-export type AreaLink = { href: string; label: string; current: boolean };
+export type AreaLink = { href: string; label: string; current: boolean; within: boolean };
 
-export function areaLinks(election: string, areas: Pick<Area, "id" | "name">[], current: string | null): AreaLink[] {
+// A county page, or a city that is its own county (SF).
+const isCountyPage = (a: AreaLike & Pick<Area, "kind">) =>
+  a.kind === "county" || (countyOf(a) !== null && a.jurisdictions.some((j) => j.level === "city" && j.name === countyOf(a)));
+
+/** The Bay Area, then one link per county, named for the county. City pages get no link; their county is marked `within`. */
+export function areaLinks(election: string, areas: Area[], current: string | null): AreaLink[] {
+  const here = areas.find((a) => a.id === current);
   return [
-    { href: `/${election}`, label: BAY_AREA.name, current: current === null },
-    ...areas.map((a) => ({ href: `/${election}/${a.id}`, label: a.name, current: current === a.id })),
+    { href: `/${election}`, label: BAY_AREA.name, current: current === null, within: false },
+    ...areas.filter(isCountyPage).map((a) => ({
+      href: `/${election}/${a.id}`,
+      label: countyOf(a) ?? a.name,
+      current: current === a.id,
+      within: here !== undefined && here.id !== a.id && countyOf(here) === countyOf(a),
+    })),
   ];
 }
 

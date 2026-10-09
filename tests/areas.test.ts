@@ -50,13 +50,22 @@ describe("placeName", () => {
 });
 
 describe("areaLinks", () => {
-  it("lists the Bay Area then each area, marking the current one", () => {
-    expect(areaLinks("2026-11", [SF, SM], "sf")).toEqual([
-      { href: "/2026-11", label: "Bay Area", current: false },
-      { href: "/2026-11/sf", label: "San Francisco", current: true },
-      { href: "/2026-11/san-mateo", label: "San Mateo County", current: false },
+  const SCC: Area = { ...SM, id: "santa-clara-county", name: "Santa Clara County", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }] };
+
+  it("lists the Bay Area then one link per county, named for the county, marking the current one", () => {
+    expect(areaLinks("2026-11", [SF, SM, PA], "sf")).toEqual([
+      { href: "/2026-11", label: "Bay Area", current: false, within: false },
+      { href: "/2026-11/sf", label: "San Francisco", current: true, within: false },
+      { href: "/2026-11/san-mateo", label: "San Mateo", current: false, within: false },
     ]);
     expect(areaLinks("2026-11", [SF], null)[0].current).toBe(true);
+  });
+
+  it("leaves city pages out, and marks the county a current city page is in", () => {
+    const links = areaLinks("2026-11", [SF, SM, SCC, PA], "palo-alto");
+    expect(links.map((l) => l.label)).toEqual(["Bay Area", "San Francisco", "San Mateo", "Santa Clara"]);
+    expect(links.find((l) => l.label === "Santa Clara")).toMatchObject({ current: false, within: true });
+    expect(links.filter((l) => l.current)).toEqual([]);
   });
 });
 
