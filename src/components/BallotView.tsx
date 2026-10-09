@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
+import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
@@ -17,12 +18,13 @@ import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
+import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { keepNumber } from "@/lib/display";
 import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredParam } from "./useBallotFilters";
+import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey, useStoredParam } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
@@ -58,9 +60,10 @@ type Props = {
   allGuides: FilterGuide[];
   files: Record<string, PickFile>;
   pending: string | null;
+  fallback?: Fallback | null;
 };
 
-export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending }: Props) {
+export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", COUNTIES_PARAM] });
   const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
   const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
@@ -184,6 +187,28 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     [all, guides, files],
   );
   const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const [scopeRaw, setScopeRaw] = useStoredKey(SCOPE_KEY);
+  const chosen = useMemo(() => parseScopes(scopeRaw), [scopeRaw]);
+  const sectionFallback = useMemo(() => new Map((fallback?.sections ?? []).map((s) => [s.id, s])), [fallback]);
+  const fallbackOf = useMemo(() => new Map((fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => [id, s] as const))), [fallback]);
+  const bay = useMemo(() => {
+    const out = new Map<string, { rows: Row[]; slots: Slots }>();
+    if (!fallback) return out;
+    for (const c of all) {
+      if (!fallbackOf.has(c.id)) continue;
+      out.set(c.id, { rows: fallbackRows(c.id, fallback, filters), slots: candidateSlots(c, fallbackRows(c.id, fallback, EMPTY).map((r) => r.entry)) });
+    }
+    return out;
+  }, [all, fallback, fallbackOf, filters]);
+  const scopeKey = (s: FallbackSection) => `${area}:${s.id}`;
+  const setScope = (s: FallbackSection, v: Scope) => setScopeRaw(withScope(scopeRaw, scopeKey(s), v));
+  // The pane defaults to the Bay Area: whoever opens a skipped contest came for its result.
+  const detailFallback = (c: Contest) => {
+    const s = fallbackOf.get(c.id);
+    const b = bay.get(c.id);
+    if (!s || !b || !fallback) return undefined;
+    return { place: fallback.place, scope: sectionScope(chosen[scopeKey(s)], "bay"), onScope: (v: Scope) => setScope(s, v), rows: b.rows, slots: b.slots };
+  };
   const setOffCounties = (off: string[]) => {
     markHomeVisit(area);
     setOffParam(toCountiesParam(off));
@@ -375,27 +400,37 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
         {listed.map((g, gi) => (
           <section key={g.key} aria-label={g.heading}>
             <SectionHeading id={nav[gi].id}>{g.heading}</SectionHeading>
-            {g.sections.map((s, si) => (
-              <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
-                <SectionHeading as="h3" id={nav[gi].sections[si].id}>
-                  {s.name}
-                </SectionHeading>
-                <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-                  {s.contests.map((c) => (
-                    <li key={c.id}>
-                      <ContestRow
-                        href={`/${election}/${c.id}${carry}`}
-                        contest={c}
-                        rows={rowsFor(c.id)}
-                        slots={slotsFor(c)}
-                        selected={c.id === selectedId}
-                        onClick={onRowClickStable}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
+            {g.sections.map((s, si) => {
+              const sf = sectionFallback.get(nav[gi].sections[si].id);
+              const scope = sf ? sectionScope(chosen[scopeKey(sf)], sf.initial) : undefined;
+              return (
+                <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
+                  <div className="flex flex-wrap items-end justify-between gap-x-3">
+                    <SectionHeading as="h3" id={nav[gi].sections[si].id}>
+                      {s.name}
+                    </SectionHeading>
+                    {sf && scope && fallback ? <ScopeSwitch className="mb-1.5" place={fallback.place} scope={scope} onChange={(v) => setScope(sf, v)} /> : null}
+                  </div>
+                  <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                    {s.contests.map((c) => (
+                      <li key={c.id}>
+                        <ContestRow
+                          href={`/${election}/${c.id}${carry}`}
+                          contest={c}
+                          rows={rowsFor(c.id)}
+                          slots={slotsFor(c)}
+                          selected={c.id === selectedId}
+                          onClick={onRowClickStable}
+                          place={fallback?.place}
+                          scope={sf?.contests.includes(c.id) ? scope : undefined}
+                          bay={bay.get(c.id)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
           </section>
         ))}
       </div>
@@ -422,6 +457,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
               pending={pending}
               titleId="detail-title"
               slots={slotsFor(shown)}
+              fallback={detailFallback(shown)}
               action={
                 <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
                   <X aria-hidden="true" className="size-5" />
@@ -451,7 +487,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
                 </SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
-                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} />
+                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} fallback={detailFallback(current)} />
               </div>
             </>
           ) : null}
@@ -468,6 +504,9 @@ const ContestRow = memo(function ContestRow({
   slots,
   selected,
   onClick,
+  place,
+  scope,
+  bay,
 }: {
   href: string;
   contest: Contest;
@@ -475,17 +514,30 @@ const ContestRow = memo(function ContestRow({
   slots: Slots;
   selected: boolean;
   onClick: (e: MouseEvent<HTMLAnchorElement>, c: Contest) => void;
+  place?: string;
+  scope?: Scope;
+  bay?: { rows: Row[]; slots: Slots };
 }) {
   const description = cardDescription(contest);
+  const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
+  const wide = scope === "bay" && bay ? bay : null;
   return (
     <>
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 flex-wrap items-center gap-x-3 gap-y-2 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
           <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
             {keepNumber(contest.title)}
           </a>
         </h4>
-        <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
+        {wide ? (
+          <BayBlock id={`bay-m-${contest.id}`} count={wide.rows.length} inline className="basis-full">
+            <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
+          </BayBlock>
+        ) : skipped ? (
+          <div className="basis-full">{skipped}</div>
+        ) : (
+          <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
+        )}
       </div>
       <div
         className={cn(
@@ -506,7 +558,15 @@ const ContestRow = memo(function ContestRow({
           </a>
         </h4>
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
-        <VerdictBar contest={contest} rows={rows} slots={slots} />
+        {wide ? (
+          <BayBlock id={`bay-d-${contest.id}`} count={wide.rows.length} className="mt-2">
+            <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} />
+          </BayBlock>
+        ) : skipped ? (
+          <div className="mt-1">{skipped}</div>
+        ) : (
+          <VerdictBar contest={contest} rows={rows} slots={slots} />
+        )}
       </div>
     </>
   );

@@ -122,6 +122,19 @@ export function useStoredParam(name: string, storageKey: string): [string | null
   return [value, set];
 }
 
+// Device-only: no URL write, so no history budget spent.
+export function useStoredKey(storageKey: string): [string | null, (v: string) => void] {
+  const value = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
+  const set = useCallback(
+    (v: string) => {
+      writeKey(storageKey, v);
+      window.dispatchEvent(new Event(CHANGE_EVENT));
+    },
+    [storageKey],
+  );
+  return [value, set];
+}
+
 const CARRIED = ["off", "offtypes", "why", COUNTIES_PARAM];
 
 export function useCarriedQuery(): string {
