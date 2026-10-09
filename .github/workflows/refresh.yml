@@ -27,6 +27,7 @@ jobs:
       sha: ${{ steps.pr.outputs.sha }}
       pr: ${{ steps.pr.outputs.pr }}
       code: ${{ steps.refresh.outputs.code }}
+      review: ${{ steps.refresh.outputs.review }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -108,6 +109,7 @@ jobs:
           set +e
           npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json --baseline "$RUNNER_TEMP/main/data"
           echo "code=$?" >> "$GITHUB_OUTPUT"
+          echo "review=$(node -e "try { console.log(JSON.stringify(require('./result.json').review ?? [])) } catch { console.log('[]') }")" >> "$GITHUB_OUTPUT"
 
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
       - name: Decide whether to commit
@@ -239,6 +241,7 @@ jobs:
       - name: Auto-merge a clean refresh, or leave it for review
         env:
           CODE: ${{ needs.refresh.outputs.code }}
+          REVIEW: ${{ needs.refresh.outputs.review }}
           CI: ${{ steps.ci.outcome == 'success' || steps.rerun.outcome == 'success' }}
           CI_URL: ${{ steps.ci.outputs.url }}
         run: |
@@ -247,7 +250,14 @@ jobs:
             gh pr edit "$PR" --add-label needs-review || true
             gh pr comment "$PR" --body "$1"
           }
-          # Exit 1 is a fetch error the next run can recover from, so it gets a comment but no needs-review label.
+          # Held, shrunk, removed or missing picks need a person whatever the exit code; a fetch error (exit 1) must not hide them.
+          if [ "$(printf '%s' "${REVIEW:-[]}" | jq 'length')" != "0" ]; then
+            review "Not auto-merged: refresh exit code $CODE, and these need review:
+          $(printf '%s' "$REVIEW" | jq -r 'map("- " + .) | join("\n")')
+          CI: $CI_URL"
+            exit 0
+          fi
+          # Exit 1 with nothing to review is a fetch error the next run can recover from, so it gets a comment but no needs-review label.
           if [ "$CODE" = "1" ]; then
             gh pr comment "$PR" --body "Not auto-merged: refresh exit code 1 (a fetch or run error); the next clean run can merge it. CI: $CI_URL"
             exit 0

@@ -407,7 +407,21 @@ export type ResultJson = {
   deferred: string[];
   failed: { id: string; error: string }[];
   shrunk: { id: string; pageHash: string }[];
+  review: string[];
 };
+
+/** What a person must look at before this refresh merges, independent of the exit code. */
+export function reviewReasons(results: GuideResult[]): string[] {
+  return results.flatMap((r) => {
+    if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
+    if (r.status !== "changed") return [];
+    return [
+      ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
+      ...r.diff.filter((d) => d.startsWith("- ")).map((d) => `${r.id}: removed ${d.slice(2).split(":")[0]}`),
+      ...r.missing.map((m) => `${r.id}: verifier found ${m.contestId} on the page but not in the picks`),
+    ];
+  });
+}
 
 export function resultJson(results: GuideResult[], exitCode: number): ResultJson {
   return {
@@ -416,5 +430,6 @@ export function resultJson(results: GuideResult[], exitCode: number): ResultJson
     deferred: results.filter((r) => r.status === "deferred").map((r) => r.id),
     failed: results.flatMap((r) => (r.status === "failed" ? [{ id: r.id, error: r.error }] : [])),
     shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
+    review: reviewReasons(results),
   };
 }
