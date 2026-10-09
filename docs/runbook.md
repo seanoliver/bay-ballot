@@ -61,6 +61,7 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 
 - `npm run bb -- fetch-check <guide...>` shows what each attempt got (status, bytes, which wall), writing nothing. Run it locally, and on a runner if needed, to compare.
 - As of 2026-10-07, these are blocked on the runners even in the browser: cadc, d11-dems, league-pissed-off-voters and milk-club (NationBuilder sites behind a Cloudflare challenge), and sf-chronicle (client challenge). sf-green-party gets through via the browser retry.
+- eqca (since 2026-10-08) is blocked differently: the runner gets a normal-looking page with no endorsements, so no wall is recognized and extraction returns 0 picks. The shrink guard catches it ("0 picks (previous 50)"). Treat an unexplained shrink on the runner as a possible wall and compare with a local `fetch-check`.
 - Those guides are marked `fetchFrom: local` in their endorsement files. The GitHub job skips them and lists them as "local only" (not a failure); the local job below refreshes them. `npm run bb -- extract <guide>` still works on them from a laptop.
 
 ### Local refresh on Sean's Mac

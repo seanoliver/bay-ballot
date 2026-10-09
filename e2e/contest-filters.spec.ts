@@ -1,5 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
+import { hiddenLabel } from "../src/lib/filters";
+import { BALLOT, contestRow, guideOff, guidesOn, isPhone, openBallot, watchErrors } from "./helpers";
 
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
@@ -85,15 +86,18 @@ test.describe("contest page filters", () => {
   });
 
   test("Show all turns the hidden guides back on and leaves other filters alone", async ({ page }) => {
-    await openContest(page, "?off=sf-gop,spur,abundant-sf");
-    const note = page.getByText("2 guides hidden");
+    const propB = guidesOn("prop-b");
+    const other = guideOff("prop-b");
+    expect(propB.length, "Prop B needs at least 2 guides").toBeGreaterThanOrEqual(2);
+    await openContest(page, `?off=${propB[0]},${propB[1]},${other}`);
+    const note = page.getByText(hiddenLabel(2));
     await expect(note).toBeVisible();
     await expect(page.locator("[aria-live=polite]").filter({ has: note })).toHaveCount(1);
     await page.getByRole("button", { name: SHOW_ALL }).click();
     await expect(page.getByText(/guides? hidden/)).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1, name: "Proposition B" })).toBeFocused();
-    await expect(page).toHaveURL(/[?&]off=abundant-sf(&|$)/);
-    await expect(page.getByText("29 of 29 guides counted").filter({ visible: true })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`[?&]off=${other}(&|$)`));
+    await expect(page.getByText(`${propB.length} of ${propB.length} guides counted`).filter({ visible: true })).toBeVisible();
   });
 
   test("Show all turns off the reasons-only filter when it hid guides here", async ({ page }) => {
@@ -269,9 +273,10 @@ test.describe("phone contest page layout", () => {
   test.skip(({ isMobile }) => !isMobile, "phone only");
 
   test("the Filters button sits above the contest card and names the count", async ({ page }) => {
-    await openContest(page, "?off=sf-gop");
-    const button = page.getByRole("button", { name: /^Filters/ });
-    await expect(button).toContainText(/28 of 29 guides counted/);
+    const propB = guidesOn("prop-b");
+    expect(propB.length, "Prop B needs a guide").toBeGreaterThan(0);
+    await openContest(page, `?off=${propB[0]}`);
+    await expect(page.getByRole("button", { name: /^Filters/ })).toContainText(`${propB.length - 1} of ${propB.length} guides counted`);
     await expect(page.getByRole("complementary", { name: "Filters" })).toBeHidden();
   });
 
@@ -291,6 +296,6 @@ test.describe("phone contest page layout", () => {
     await expect(sheet).toBeHidden();
     await expect(page).toHaveURL(/[?&]why=1/);
     await expect(page.getByText(/^\d+ guides hidden$/)).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Filters/ })).toContainText(/\d+ of 29 guides counted/);
+    await expect(page.getByRole("button", { name: /^Filters/ })).toContainText(/\d+ of \d+ guides counted/);
   });
 });
