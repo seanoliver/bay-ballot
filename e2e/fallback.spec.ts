@@ -1,14 +1,12 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
-import { bayHeading, scopeName } from "../src/lib/fallback";
+import { bayHeading, scopeName, skippedLabel } from "../src/lib/fallback";
 import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, contestRow, guidesOn, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const SAN_MATEO = `${BALLOT}/san-mateo`;
-const CONTRA_COSTA = `${BALLOT}/contra-costa`;
 const GROBAN = "Supreme Court Associate Justice Joshua Groban";
-const APPEAL = "1st District Court of Appeal (11 justices)";
 const FROM_BAY = /^\d+ guides? from across the Bay Area$/;
 const JUDICIAL = "section-state-judicial";
 
@@ -18,14 +16,23 @@ const judicialFallback = (areaId: string) => {
   const area = data.areas.find((a) => a.id === areaId)!;
   return ballotViewProps(data, { area }).fallback?.sections.find((s) => s.id === JUDICIAL) ?? null;
 };
-const SM = judicialFallback("san-mateo")!;
-const SM_DEFAULT = SM.initial === "bay" ? "Bay Area" : "San Mateo";
-const SM_OTHER = SM.initial === "bay" ? "San Mateo" : "Bay Area";
+// San Mateo when it falls back on a judicial contest, else the first area that does.
+const fallbacks = data.areas.flatMap((a) => {
+  const fb = judicialFallback(a.id);
+  return fb ? [{ area: a, fb }] : [];
+});
+const chosen = fallbacks.find((x) => x.area.id === "san-mateo") ?? fallbacks[0];
+const NO_FALLBACK = "No area falls back on a judicial contest in today's data";
+const FB = chosen?.fb;
+const AREA_URL = chosen ? `${BALLOT}/${chosen.area.id}` : "";
+const NAME = chosen ? scopeName(chosen.area) : "";
+const DEFAULT = FB?.initial === "bay" ? "Bay Area" : NAME;
+const OTHER = FB?.initial === "bay" ? NAME : "Bay Area";
 const titleOf = (id: string) => data.ballot.contests.find((c) => c.id === id)!.title;
 
 async function chooseScope(page: Page, scope: "area" | "bay") {
   await page.goto("/about");
-  await page.evaluate((v) => localStorage.setItem("bb-scope", `san-mateo:${v}`), `${JUDICIAL}=${scope}`);
+  await page.evaluate(([area, v]) => localStorage.setItem("bb-scope", `${area}:${v}`), [chosen!.area.id, `${JUDICIAL}=${scope}`]);
 }
 
 const judicial = (page: Page) => page.getByRole("region", { name: "California: Judicial" });
@@ -48,22 +55,26 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("a section the area's guides partly covered defaults to the area, and only the skipped row changes", async ({ page }) => {
-    await page.goto(CONTRA_COSTA);
+    test.skip(!FB, NO_FALLBACK);
+    test.skip(FB!.initial !== "area", "the chosen section defaults to the Bay Area");
+    const n = FB!.contests.length;
+    await page.goto(AREA_URL);
     const section = judicial(page);
     const sw = scopeSwitch(section);
-    await expect(sw.getByRole("button", { name: "Contra Costa" })).toHaveAttribute("aria-pressed", "true");
-    await expect(section.getByText("No Contra Costa guide has taken a position yet.").filter({ visible: true })).toHaveCount(1);
+    await expect(sw.getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
+    await expect(section.getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(n);
     await expect(bayBlocks(section)).toHaveCount(0);
     await sw.getByRole("button", { name: "Bay Area" }).click();
-    await expect(bayBlocks(section)).toHaveCount(1);
-    await expect(section.getByText("No Contra Costa guide has taken a position yet.").filter({ visible: true })).toHaveCount(0);
+    await expect(bayBlocks(section)).toHaveCount(n);
+    await expect(section.getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(0);
   });
 
   test("the switch toggles both ways, keeps focus, and is remembered across a reload", async ({ page }) => {
-    const n = SM.contests.length;
-    await page.goto(SAN_MATEO);
+    test.skip(!FB, NO_FALLBACK);
+    const n = FB!.contests.length;
+    await page.goto(AREA_URL);
     const sw = () => scopeSwitch(judicial(page));
-    await expect(sw().getByRole("button", { name: SM_DEFAULT })).toHaveAttribute("aria-pressed", "true");
+    await expect(sw().getByRole("button", { name: DEFAULT })).toHaveAttribute("aria-pressed", "true");
     const bay = sw().getByRole("button", { name: "Bay Area" });
     await bay.click();
     await expect(bay).toHaveAttribute("aria-pressed", "true");
@@ -71,33 +82,35 @@ test.describe("Bay Area fallback", () => {
     await expect(bayBlocks(judicial(page))).toHaveCount(n);
     await page.reload();
     await expect(sw().getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
-    const area = sw().getByRole("button", { name: "San Mateo" });
+    const area = sw().getByRole("button", { name: NAME });
     await area.click();
     await expect(area).toBeFocused();
     await expect(bayBlocks(judicial(page))).toHaveCount(0);
-    await expect(judicial(page).getByText("No San Mateo guide has taken a position yet.").filter({ visible: true })).toHaveCount(n);
-    await expect(page).toHaveURL(new RegExp(`${SAN_MATEO}$`));
+    await expect(judicial(page).getByText(skippedLabel(NAME)).filter({ visible: true })).toHaveCount(n);
+    await expect(page).toHaveURL(new RegExp(`${AREA_URL}$`));
     await page.reload();
-    await expect(sw().getByRole("button", { name: "San Mateo" })).toHaveAttribute("aria-pressed", "true");
+    await expect(sw().getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
   });
 
   test("a remembered choice renders without hydration errors", async ({ page }) => {
+    test.skip(!FB, NO_FALLBACK);
     const errors = watchErrors(page);
-    await chooseScope(page, SM.initial === "bay" ? "area" : "bay");
-    await page.goto(SAN_MATEO);
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: SM_OTHER })).toHaveAttribute("aria-pressed", "true");
+    await chooseScope(page, FB!.initial === "bay" ? "area" : "bay");
+    await page.goto(AREA_URL);
+    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: OTHER })).toHaveAttribute("aria-pressed", "true");
     expect(errors).toEqual([]);
   });
 
   test("the reasons-only filter applies to the Bay Area tally", async ({ page }) => {
-    const pool = guidesOn(SM.contests[0]);
+    test.skip(!FB, NO_FALLBACK);
+    const pool = guidesOn(FB!.contests[0]);
     expect(pool.some((g) => !data.endorsements[g].hasReasoning), "the Bay Area pool needs a guide without reasons").toBe(true);
-    const count = async () => Number((await bayBlockFor(judicial(page), SM.contests[0]).getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
+    const count = async () => Number((await bayBlockFor(judicial(page), FB!.contests[0]).getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
     await chooseScope(page, "bay");
-    await page.goto(SAN_MATEO);
+    await page.goto(AREA_URL);
     const all = await count();
     // The page is server-rendered unfiltered; the filter applies after hydration, so poll for it.
-    await page.goto(`${SAN_MATEO}?why=1`);
+    await page.goto(`${AREA_URL}?why=1`);
     await expect.poll(count).toBeLessThan(all);
   });
 
@@ -112,21 +125,25 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("the contest details carry the switch, defaulting to the Bay Area", async ({ page }, info) => {
-    await page.goto(CONTRA_COSTA);
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: "Contra Costa" })).toHaveAttribute("aria-pressed", "true");
-    await contestRow(page, APPEAL).click();
-    const detail = isPhone(info) ? page.getByRole("dialog", { name: APPEAL }) : page.getByRole("region", { name: APPEAL });
+    test.skip(!FB, NO_FALLBACK);
+    const title = titleOf(FB!.contests[0]);
+    await page.goto(AREA_URL);
+    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: NAME })).toHaveAttribute("aria-pressed", "true");
+    await contestRow(page, title).click();
+    const detail = isPhone(info) ? page.getByRole("dialog", { name: title }) : page.getByRole("region", { name: title });
     const sw = detail.getByRole("group", { name: "Show guides from" });
     await expect(sw.getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
     await expect(detail.getByRole("group", { name: FROM_BAY })).toBeVisible();
-    await sw.getByRole("button", { name: "Contra Costa" }).click();
-    await expect(sw.getByRole("button", { name: "Contra Costa" })).toBeFocused();
-    await expect(detail.getByText("No Contra Costa guide has taken a position yet.")).toBeVisible();
+    await sw.getByRole("button", { name: NAME }).click();
+    await expect(sw.getByRole("button", { name: NAME })).toBeFocused();
+    await expect(detail.getByText(skippedLabel(NAME))).toBeVisible();
     await expect(detail.getByRole("group", { name: FROM_BAY })).toHaveCount(0);
   });
 
   test("covered contests show no switch in their details", async ({ page }, info) => {
-    await page.goto(CONTRA_COSTA);
+    test.skip(!FB, NO_FALLBACK);
+    test.skip(FB!.contests.includes("supreme-court-groban"), "Groban falls back in the chosen area");
+    await page.goto(AREA_URL);
     await contestRow(page, GROBAN).click();
     const detail = isPhone(info) ? page.getByRole("dialog", { name: GROBAN }) : page.getByRole("region", { name: GROBAN });
     await expect(detail).toBeVisible();
@@ -141,35 +158,38 @@ test.describe("Bay Area fallback", () => {
 
   test("desktop keyboard: arrow keys still step through contests after using the switch", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
-    await page.goto(SAN_MATEO);
+    test.skip(!FB, NO_FALLBACK);
+    await page.goto(AREA_URL);
     await waitForKeys(page);
-    await scopeSwitch(judicial(page)).getByRole("button", { name: "San Mateo" }).click();
+    await scopeSwitch(judicial(page)).getByRole("button", { name: NAME }).click();
     await page.keyboard.press("ArrowDown");
     await expect(page.locator("[aria-current=true]")).toHaveCount(1);
   });
 
   test("the switch still works when the browser blocks storage", async ({ page }) => {
+    test.skip(!FB, NO_FALLBACK);
     await page.addInitScript(() => {
       Storage.prototype.setItem = () => {
         throw new DOMException("blocked", "SecurityError");
       };
     });
-    await page.goto(SAN_MATEO);
+    await page.goto(AREA_URL);
     const section = judicial(page);
-    const area = scopeSwitch(section).getByRole("button", { name: "San Mateo" });
+    const area = scopeSwitch(section).getByRole("button", { name: NAME });
     await area.click();
     await expect(area).toHaveAttribute("aria-pressed", "true");
     await expect(bayBlocks(section)).toHaveCount(0);
     await scopeSwitch(section).getByRole("button", { name: "Bay Area" }).click();
-    await expect(bayBlocks(section)).toHaveCount(SM.contests.length);
+    await expect(bayBlocks(section)).toHaveCount(FB!.contests.length);
   });
 
   test("a Bay Area block says how many of its guides filters hide, and Show brings them back", async ({ page }) => {
-    const id = SM.contests[0];
+    test.skip(!FB, NO_FALLBACK);
+    const id = FB!.contests[0];
     const pool = guidesOn(id);
     expect(pool.length, `${id} needs at least 2 Bay Area guides`).toBeGreaterThanOrEqual(2);
     await chooseScope(page, "bay");
-    await page.goto(`${SAN_MATEO}?off=${pool[0]}`);
+    await page.goto(`${AREA_URL}?off=${pool[0]}`);
     const block = bayBlockFor(judicial(page), id);
     await expect(block).toHaveAccessibleName(bayHeading(pool.length - 1, pool.length).label);
     await expect(block.getByText("1 guide hidden")).toBeVisible();
@@ -181,11 +201,12 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("a Bay Area block whose guides are all hidden says so instead of showing zero", async ({ page }) => {
-    const id = SM.contests[0];
+    test.skip(!FB, NO_FALLBACK);
+    const id = FB!.contests[0];
     const pool = guidesOn(id);
     expect(pool.length, `${id} needs a Bay Area guide`).toBeGreaterThan(0);
     await chooseScope(page, "bay");
-    await page.goto(`${SAN_MATEO}?off=${pool.join(",")}`);
+    await page.goto(`${AREA_URL}?off=${pool.join(",")}`);
     const section = judicial(page);
     await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
     const block = bayBlockFor(section, id);

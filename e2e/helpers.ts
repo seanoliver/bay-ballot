@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { parse } from "yaml";
+import { loadElection } from "../src/lib/data";
 
 export const BALLOT = "/2026-11";
 export const isPhone = (info: TestInfo) => info.project.name === "phone";
@@ -57,9 +58,7 @@ export function guideOff(contestId: string, election = "2026-11"): string {
   return id;
 }
 
-/** Every contest id on the 2026-11 ballot, from `ballot.yml` and the county files. */
+/** Every contest id on the 2026-11 ballot, as the app loads it. */
 export function contestIds(election = "2026-11"): string[] {
-  const dir = path.join(process.cwd(), "data", election);
-  const files = [path.join(dir, "ballot.yml"), ...fs.readdirSync(path.join(dir, "ballot")).filter((f) => f.endsWith(".yml")).map((f) => path.join(dir, "ballot", f))];
-  return files.flatMap((f) => ((parse(fs.readFileSync(f, "utf8")) as { contests?: { id: string }[] }).contests ?? []).map((c) => c.id));
+  return loadElection(path.join(process.cwd(), "data"), election).ballot.contests.map((c) => c.id);
 }
