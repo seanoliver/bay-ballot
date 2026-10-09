@@ -93,7 +93,7 @@ test.describe("contest page filters", () => {
     await expect(page.getByText(/guides? hidden/)).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1, name: "Proposition B" })).toBeFocused();
     await expect(page).toHaveURL(/[?&]off=abundant-sf(&|$)/);
-    await expect(page.getByText("29 of 29 guides counted").filter({ visible: true })).toBeVisible();
+    await expect(page.getByText(/(\d+) of \1 guides counted/).filter({ visible: true })).toBeVisible();
   });
 
   test("Show all turns off the reasons-only filter when it hid guides here", async ({ page }) => {
@@ -271,7 +271,8 @@ test.describe("phone contest page layout", () => {
   test("the Filters button sits above the contest card and names the count", async ({ page }) => {
     await openContest(page, "?off=sf-gop");
     const button = page.getByRole("button", { name: /^Filters/ });
-    await expect(button).toContainText(/28 of 29 guides counted/);
+    const [, counted, total] = (await button.textContent())!.match(/(\d+) of (\d+) guides counted/)!;
+    expect(Number(counted)).toBe(Number(total) - 1);
     await expect(page.getByRole("complementary", { name: "Filters" })).toBeHidden();
   });
 
@@ -291,6 +292,6 @@ test.describe("phone contest page layout", () => {
     await expect(sheet).toBeHidden();
     await expect(page).toHaveURL(/[?&]why=1/);
     await expect(page.getByText(/^\d+ guides hidden$/)).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Filters/ })).toContainText(/\d+ of 29 guides counted/);
+    await expect(page.getByRole("button", { name: /^Filters/ })).toContainText(/\d+ of \d+ guides counted/);
   });
 });
