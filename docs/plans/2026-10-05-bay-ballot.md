@@ -1381,6 +1381,7 @@ Commit `docs: refresh runbook`.
   - A cheaper model for steps that don't need the strongest one, such as verification.
   - Deterministic scripts for guides whose pages have a stable structure, so they skip the model.
   - Running heavy extraction locally on the maintainer's Claude subscription instead of the API (#63).
+- **Guides index page.** A `/guides` page listing every guide, linking to each `/guides/<id>` page. Each entry shows the guide's type, areas, number of picks, whether it publishes reasons, a link to its site, and years active where a source states it. Page-level stats: guide counts by type and area, and how many explain their picks. Do it together with better guide descriptions (#52), since both add the same per-guide facts.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
 - District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
