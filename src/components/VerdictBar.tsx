@@ -60,6 +60,7 @@ export function VerdictBar({ contest, rows, variant = "full", slots, count = tru
           {short.value ? <span className="shrink-0 tabular-nums">&nbsp;{short.value}</span> : null}
           {ranked ? <span className="-my-2.5 -mr-2.5 shrink-0">{ranked}</span> : null}
         </span>
+        {short.note ? <span className="-mt-1 text-xs font-medium">{short.note}</span> : null}
       </div>
     );
   }

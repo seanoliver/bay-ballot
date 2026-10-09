@@ -57,8 +57,8 @@ describe("shareCard", () => {
     const card = shareCard(race, [...many(15, ["Scott Wiener"]), ...many(12, ["Connie Chan"])]);
     expect(card).toMatchObject({ title: "U.S. Rep., District 11", lead: "Scott Wiener 56%", leadTone: "candidate", sub: "15 of 27 guides" });
     expect(card.legend).toEqual([
-      { label: "Wiener", count: 15, tone: "c2" },
-      { label: "Chan", count: 12, tone: "c1" },
+      { label: "Wiener", count: 15, tone: "c1" },
+      { label: "Chan", count: 12, tone: "c2" },
     ]);
   });
   it("marks ranked leads as the site does", () => {
@@ -69,10 +69,12 @@ describe("shareCard", () => {
     expect(card).toMatchObject({ lead: "Split", leadTone: "split", sub: "6 guides" });
     expect(shareCard(race, [row(["Scott Wiener"]), row(["Connie Chan"])])).toMatchObject({ lead: "Split", sub: "2 guides" });
   });
-  it("one endorsed candidate: no share, neutral, and says so", () => {
+  it("unanimous: no share, the candidate's color, and says Unanimous", () => {
     const card = shareCard(race, many(13, ["Scott Wiener"]));
-    expect(card).toMatchObject({ lead: "Scott Wiener", sub: "13 guides, no other endorsements" });
-    expect(card.segments.map((s) => s.tone)).toEqual(["other"]);
+    expect(card).toMatchObject({ lead: "Scott Wiener", sub: "Unanimous · 13 of 13 guides" });
+    expect(card.segments.map((s) => s.tone)).toEqual(["c1"]);
+    expect(shareCard(race, many(1, ["Scott Wiener"])).sub).toBe("1 guide, no other endorsements");
+    expect(shareCard(board, many(2, ["W", "X", "Y"])).sub).toBe("Unanimous · 2 of 2 guides");
   });
   it("multi-seat: the top `seats` names as rows with their share of guides", () => {
     const card = shareCard(board, [row(["W", "X", "Y", "Z"]), row(["W", "X", "Y"]), row(["W", "X"]), row(["W"])]);

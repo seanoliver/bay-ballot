@@ -1,5 +1,5 @@
 import type { Contest, Entry } from "./schema";
-import { tally, type CandidateCount, type Tally } from "./score";
+import { tally, unanimous, type CandidateCount, type Tally } from "./score";
 
 export type BarTone = "yes" | "no" | "c1" | "c2" | "c3" | "c4" | "other" | "empty";
 export type Slot = 1 | 2 | 3 | 4 | "other";
@@ -34,14 +34,9 @@ function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: Candidate
     return i === -1 ? Infinity : i;
   };
   const endorsed = counts.filter((c) => c.count > 0);
-  if (endorsed.length === 1) return new Map([[endorsed[0].name, "other"]]);
   const byCount = [...endorsed].sort((a, b) => b.count - a.count || order(a.name) - order(b.name) || a.name.localeCompare(b.name, "en"));
-  // The top four by count get slots, assigned in ballot order; the rest are "other".
-  const kept = byCount.slice(0, MAX_SLOTS);
-  const ranked = new Map(byCount.map((c, i) => [c.name, i]));
-  const slotted = [...kept].sort((a, b) => order(a.name) - order(b.name) || (ranked.get(a.name) ?? 0) - (ranked.get(b.name) ?? 0));
   const out: Slots = new Map();
-  slotted.forEach((c, i) => out.set(c.name, (i + 1) as Slot));
+  byCount.slice(0, MAX_SLOTS).forEach((c, i) => out.set(c.name, (i + 1) as Slot));
   for (const c of byCount.slice(MAX_SLOTS)) out.set(c.name, "other");
   return out;
 }
@@ -95,6 +90,7 @@ const single = (t: Tally, contest: Pick<Contest, "seats">) => t.kind === "candid
 export function barSummary(t: Tally, contest: Pick<Contest, "title" | "seats">): { aria: string } {
   if (isEmpty(t)) return { aria: `${contest.title}: no endorsements yet` };
   if (t.kind === "measure") return { aria: `${contest.title}: ${t.yes} Yes, ${t.no} No` };
+  if (unanimous(t, contest)) return { aria: `${contest.title}: ${t.counts.map((c) => c.name).join(", ")}, unanimous, ${t.total} of ${guidesOf(t.total)}` };
   if (contest.seats > 1) {
     return { aria: `${contest.title}: ${t.counts.slice(0, contest.seats).map((c) => `${c.name} ${c.count} of ${t.total}`).join(", ")}` };
   }
@@ -117,10 +113,13 @@ export function barLegend(t: Tally, contest: Pick<Contest, "seats" | "candidates
     };
   }
   const segments = barSegments(t, contest, slots);
+  const all = unanimous(t, contest);
   if (single(t, contest)) {
     const c = t.counts[0];
-    return { lead: { key: c.name, label: c.name, value: "", tone: segments[0].tone }, others: [], caption: `${guidesOf(c.count)}, no other endorsements` };
+    const caption = all ? `${c.count} of ${guidesOf(t.total)}` : `${guidesOf(c.count)}, no other endorsements`;
+    return { lead: { key: c.name, label: c.name, value: all ? "· Unanimous" : "", tone: segments[0].tone }, others: [], caption };
   }
+  if (all) return { lead: null, others: [], caption: `Unanimous · ${t.total} of ${guidesOf(t.total)}` };
   const items = segments.map((s): LegendItem => ({ key: s.key, label: s.label, value: String(s.count), tone: s.tone }));
   if (t.leader === null) return { lead: null, others: items, caption: `Split · ${guidesOf(t.total)}` };
   const [first, ...rest] = items;
@@ -138,19 +137,21 @@ export function surname(name: string): string {
   return tokens.at(-1) ?? name;
 }
 
-export function barShortParts(t: Tally, contest: Pick<Contest, "seats">): { label: string; value: string } {
+export function barShortParts(t: Tally, contest: Pick<Contest, "seats">): { label: string; value: string; note?: string } {
   if (isEmpty(t)) return { label: "None yet", value: "" };
   if (t.kind === "measure") {
     if (t.verdict === "split") return { label: "Split", value: "" };
     return { label: t.verdict === "Y" ? "Yes" : "No", value: `${t.pct}%` };
   }
+  if (unanimous(t, contest)) return { label: contest.seats > 1 ? `Top ${contest.seats}` : surname(t.counts[0].name), value: "", note: "Unanimous" };
   if (contest.seats > 1) return { label: `Top ${contest.seats}`, value: "" };
   if (single(t, contest)) return { label: surname(t.counts[0].name), value: `· ${t.counts[0].count}` };
   return t.leader === null ? { label: "Split", value: "" } : { label: surname(t.leader), value: `${t.pct}%` };
 }
 
 export function barShort(t: Tally, contest: Pick<Contest, "seats">): string {
-  const { label, value } = barShortParts(t, contest);
+  const { label, value, note } = barShortParts(t, contest);
+  if (note) return `${label} · ${note}`;
   return value ? `${label} ${value}` : label;
 }
 

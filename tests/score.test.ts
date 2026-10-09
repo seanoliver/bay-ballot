@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countedNames, tally } from "@/lib/score";
+import { countedNames, tally, unanimous } from "@/lib/score";
 import type { Contest, Entry } from "@/lib/schema";
 import type { Tally } from "@/lib/score";
 
@@ -89,5 +89,29 @@ describe("tally with partial ranking", () => {
     const partial: Entry = { pick: ["A", "B", "C"], ranked: true, rankedCount: 1, quotes: [] };
     const t = cand(tally(race, [partial]));
     expect(t.counts.map((c) => [c.name, c.count])).toEqual([["A", 1]]);
+  });
+});
+
+describe("unanimous", () => {
+  it("single seat: two or more guides, all for the same candidate", () => {
+    expect(unanimous(tally(race, [e(["A"]), e(["A"]), e(["A"])]), race)).toBe(true);
+    expect(unanimous(tally(race, [e(["A"]), e(["A"]), e(["B"])]), race)).toBe(false);
+  });
+  it("one guide is not unanimous", () => {
+    expect(unanimous(tally(race, [e(["A"])]), race)).toBe(false);
+    expect(unanimous(tally(board, [e(["A", "B"])]), board)).toBe(false);
+  });
+  it("ranked single seat: every guide's first choice is the same", () => {
+    expect(unanimous(tally(race, [e(["A", "B"], true), e(["A", "C"], true)]), race)).toBe(true);
+    expect(unanimous(tally(race, [e(["A", "B"], true), e(["B", "A"], true)]), race)).toBe(false);
+  });
+  it("multi-seat: every guide picked the same set", () => {
+    expect(unanimous(tally(board, [e(["A", "B", "C"]), e(["C", "B", "A"])]), board)).toBe(true);
+    expect(unanimous(tally(board, [e(["A", "B"]), e(["A"])]), board)).toBe(false);
+    expect(unanimous(tally(board, [e(["A", "B"]), e(["A", "C"])]), board)).toBe(false);
+  });
+  it("measures and empty races never are", () => {
+    expect(unanimous(tally(measure, [e("Y"), e("Y")]), measure)).toBe(false);
+    expect(unanimous(tally(race, []), race)).toBe(false);
   });
 });
