@@ -2,7 +2,7 @@ guide: lwv-bae
 election: 2026-11
 status: published
 source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
@@ -11,15 +11,24 @@ rejectedQuotes:
 picks:
   albany-measure-o:
     pick: Y
+    quotes:
+      - text: Measure O removes precisely the sort of neighborhood-level veto that this position identifies as a housing constraint.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-p:
     pick: Y
     quotes:
-      - text: The most compelling reason for supporting Measure P is LWVBAE’s adopted infrastructure and finance positions.
+      - text: "Measure P fits those positions unusually well: it protects a dedicated funding stream for existing streets and storm drains from a foreseeable 22% revenue loss."
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y
+    quotes:
+      - text: "In other words, Measure Q does not address a hypothetical fiscal problem: Albany has a reasonably foreseeable loss of roughly one-fifth of the dedicated revenue supporting EMS and fire protection."
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-r:
     pick: Y
+    quotes:
+      - text: A gross-receipts business tax generally fits those criteria better than Albany’s unusually old employee-count system.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-s:
     pick: Y
     quotes:
@@ -28,9 +37,7 @@ picks:
   albany-measure-t:
     pick: Y
     quotes:
-      - text: Urban canopy helps mitigate heat-island effects, provides habitat, sequesters carbon and improves pedestrian environments.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-      - text: Albany’s own streetlighting study found locations where inadequate illumination creates safety concerns for pedestrians and bicyclists and recommended improving poorly lit intersections and crosswalks.
+      - text: "Measure T has precisely that structure: dedicated ongoing funding plus a low-income exemption."
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-u:
     pick: Y
@@ -39,9 +46,6 @@ picks:
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-v:
     pick: Y
-    quotes:
-      - text: The LWVBAE position on revenue and taxation emphasizes “adequacy,” so municipalities have the revenue needed to carry out the basic functions of a properly managed city, which include maintaining public safety departments at reasonable staffing levels.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-w:
     pick: Y
     quotes:

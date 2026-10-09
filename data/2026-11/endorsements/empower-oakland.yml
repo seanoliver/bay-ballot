@@ -2,8 +2,19 @@ guide: empower-oakland
 election: 2026-11
 status: published
 source: https://www.empoweroakland.com/voter-guide
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
+held:
+  - contestId: oakland-usd-2
+    pick:
+      - Arielle Fleisher
+    reason: wrong-rank
+    evidence: "We recommend ranking Arielle Fleisher #1, and leaving the #2 spot blank."
+    quotes:
+      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: As an OUSD board member, she wants an open and transparent search for a permanent superintendent, budgets based on fiscal reality, and experienced teachers who can actually afford to live in Oakland.
+        source: https://www.empoweroakland.com/voter-guide
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
     reason: "descriptive: revenue estimate, no reason (review 2026-10-07)"
@@ -45,9 +56,9 @@ picks:
     pick:
       - Janani Ramachandran
     quotes:
-      - text: She has a consistent record of asking hard questions and following through.
+      - text: Janani Ramachandran is running unopposed, and she earned this on her track record rather than by default.
         source: https://www.empoweroakland.com/voter-guide
-      - text: When she found out that Oakland's HR department had left more than 1,000 applications for 911 dispatcher jobs unanswered, she made it public and kept pushing until hiring and response times improved.
+      - text: She has a consistent record of asking hard questions and following through.
         source: https://www.empoweroakland.com/voter-guide
   oakland-council-6:
     pick:
@@ -61,7 +72,7 @@ picks:
     pick:
       - Michael C. Houston
     quotes:
-      - text: He runs his office against stated goals and reports publicly against them, which is rarer in Oakland government than it should be.
+      - text: He is a certified internal auditor who has done government audit work since 2008 and ran Oakland's whistleblower program before winning the 2024 special election.
         source: https://www.empoweroakland.com/voter-guide
       - text: He focused his team on critical areas such as 911 response times, and under his leadership the share of audit recommendations the administration has actually implemented is up 20 points.
         source: https://www.empoweroakland.com/voter-guide
@@ -115,12 +126,5 @@ picks:
     quotes:
       - text: Oakland’s economy cannot recover if transit collapses.
         source: https://www.empoweroakland.com/voter-guide
-  oakland-usd-2:
-    pick:
-      - Arielle Fleisher
-    ranked: true
-    quotes:
-      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
-        source: https://www.empoweroakland.com/voter-guide
-      - text: As an OUSD board member, she wants an open and transparent search for a permanent superintendent, budgets based on fiscal reality, and experienced teachers who can actually afford to live in Oakland.
+      - text: With vehicle ownership costs pushing more people onto public transit, the region needs this safety net.
         source: https://www.empoweroakland.com/voter-guide

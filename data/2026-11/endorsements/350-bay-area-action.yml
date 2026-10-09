@@ -13,6 +13,21 @@ archived:
 fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
+  us-rep-8:
+    pick:
+      - John Garamendi
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
+  us-rep-14:
+    pick:
+      - Aisha Wahab
+  assembly-12:
+    pick:
+      - Jackie Elward
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
   prop-3:
     pick: Y
     quotes:
@@ -30,6 +45,9 @@ picks:
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-40:
     pick: Y
+    quotes:
+      - text: This measure will levy a one-time 5% tax on billionaires’ accumulated wealth to keep local hospitals and ERs open, fund food aid, and support K-14 public education.
+        source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-41:
     pick: N
     quotes:
@@ -37,6 +55,9 @@ picks:
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-42:
     pick: N
+    quotes:
+      - text: Tech billionaires, including Sergey Brin and Eric Schmidt, are the main supporters of the campaign to pass Prop 42, which would nullify Prop 40.
+        source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-43:
     pick: N
     quotes:
@@ -54,15 +75,6 @@ picks:
     quotes:
       - text: "WHY YES: It avoids catastrophic service cuts for AC Transit (16%), BART (70%), Caltrain, SamTrans, SF Muni (50%), and VTA."
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
-  us-rep-8:
-    pick:
-      - John Garamendi
-  us-rep-10:
-    pick:
-      - Mark DeSaulnier
-  assembly-16:
-    pick:
-      - Rebecca Bauer-Kahan
   antioch-council-1:
     pick:
       - Tamisha Torres-Walker
@@ -78,6 +90,9 @@ picks:
   concord-council-5:
     pick:
       - Laura Nakamura
+  orinda-council:
+    pick:
+      - Latika Malkani
   pittsburg-council:
     pick:
       - Sonja Shephard
@@ -87,15 +102,26 @@ picks:
   san-ramon-council-4:
     pick:
       - Marisol Rubio
-  orinda-council:
-    pick:
-      - Latika Malkani
   cccd-ward-1:
     pick:
       - Cameron Sasai
-  assembly-12:
+  berkeley-council-1:
     pick:
-      - Jackie Elward
+      - Ross Bernet
+      - Daria Wrubel
+    ranked: true
+  berkeley-council-4:
+    pick:
+      - Igor A. Tregub
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  oakland-council-2:
+    pick:
+      - Charlene Wang
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
   corte-madera-council:
     pick:
       - Eli Beckman
@@ -122,23 +148,3 @@ picks:
     pick:
       - Jill James Hoffman
       - Joan Cox
-  berkeley-council-1:
-    pick:
-      - Ross Bernet
-      - Daria Wrubel
-    ranked: true
-  berkeley-council-4:
-    pick:
-      - Igor A. Tregub
-  berkeley-council-7:
-    pick:
-      - Syrak Micael
-  oakland-council-2:
-    pick:
-      - Charlene Wang
-  oakland-council-4:
-    pick:
-      - Janani Ramachandran
-  us-rep-14:
-    pick:
-      - Aisha Wahab

@@ -7,7 +7,7 @@ Build enough housing to end the affordability crisis
 Clean, safe streets and fully staffed police
 Treatment and care for the drug crisis
 A faster, more transparent City Hall
-3,630
+4,716
 ballots cast (est.)
 0
 readers since
@@ -685,6 +685,23 @@ ShareTop
 What is it?
 Prop G would close Sunset Dunes Park and reopen the Upper Great Highway to cars for most of the week. It restores a version of the weekend compromise that ran from 2022 to 2024: the road will be closed to private vehicles from at through at , and on holidays.
 Reopening the road to cars would require a coastal development permit from the California Coastal Commission, and possibly other approvals.
+How many people actually use the park?
+Rec and Park says Sunset Dunes received 1.7M "visits" in its first year. That does not mean 1.7M people visited the new park. The infrared sensors count every pass, so one person can be counted several times. They also cannot tell whether a pass is new park activity or coastal activity that would have happened anyway. The figure measures traffic through the park, not the number of unique or new visitors.
+The National Park Service provides a longer baseline for Ocean Beach. NPS does not directly count everyone entering on foot or bike; it estimates them from vehicle traffic at 4 Ocean Beach parking lots. We applied that formula consistently to the agency's published traffic counts:
+How we calculated these estimatesCollapse details
+NPS's Ocean Beach counting instructions estimate foot and bike traffic from vehicle counts at 4 parking lots: Balboa, Fulton, Sloat, and Second Overlook. For each month, we add the 4 counts, subtract 150 vehicles, multiply by 1.7 people per vehicle, and then apply NPS's foot/bike formula:
+Monthly foot/bike estimate = 9.2 + 1.04 × ((4-lot vehicle count − 150) × 1.7)
+The 2015–2025 chart values are the 12 monthly estimates added together and rounded to the nearest 10,000.
+For 2026, the NPS traffic report currently includes January through June and marks current-year data as preliminary. Those 6 months total 504,700 reported vehicle detections across the 4 lots. From 2021 through 2025, the first half of the year accounted for 49.4% to 50.9% of the annual total, with a median of 50.3%. Dividing 504,700 by 50.3% and applying the NPS formula produces a base projection of 1.77M foot/bike visits.
+We then add 250,000 visits for Sunset Dunes: our central estimate of 500,000 incremental sensor detections divided by 2 passes per visit. This assumes those additional trips are not already captured by NPS's vehicle-based estimate. The result is 2.02M projected visits in 2026, with a seasonal range of about 2.00M to 2.05M. This is our projection, not an official NPS total. The NPS monthly comments also say the 2025 traffic counts were estimates based largely on rounded 2024 values, so this projection should be treated as a rough estimate rather than a measured trend. Because of limitations in the underlying NPS data, we cannot be 100% confident in these figures.
+The NPS series puts estimated Ocean Beach foot/bike traffic at about 1.4M to 1.9M per year before Sunset Dunes opened. NPS published 1.78M for 2024 and 1.77M for 2025, although its notes show that the 2025 traffic counts were estimates rather than new measurements. Our adjusted 2026 projection is 2.02M. These are modeled visits across all of Ocean Beach, so we cannot simply subtract them from the Sunset Dunes sensor count. But they show that the 1.7M headline sits on top of a large amount of existing coastal activity.
+To estimate the increase caused by Sunset Dunes, we use Rec and Park's before-and-after weekend comparisons and SFCTA's earlier weekday counts:
+Part of first-year count | Total detections | Estimated new share | Estimated new detections
+Weekends and holidays | ~800,000 | 41%–43% | ~330,000–340,000
+Weekdays | ~900,000 | 16%–47% | ~140,000–430,000
+Rec and Park's Q2, Q3, and Q4 reports say weekends in 2025 were 70% to 75% busier than the same periods in 2024. That means 41% to 43% of the 2025 weekend count was incremental. For weekdays, SFCTA measured 3,200 daily users during the prior full-time promenade and projected a lower long-run case of 2,000, compared with 3,800 in Sunset Dunes' first year. That makes the calculation:
+(~800,000 × 41%–43%) + (~900,000 × 16%–47%) = roughly 470,000–770,000 new detections
+The low end uses SFCTA's observed 3,200 weekday users and produces a point estimate near 480,000. The high end uses its conservative 2,000-user projection. We think Sunset Dunes was responsible for about 500,000 new sensor detections in its first year, with a plausible range of about 450,000 to 800,000. These are additional sensor passes, not unique people.
 Read the full annotated legal text →
 Click to show fiscal impacts and more detailsCollapse details
 Title and Summary (PDF)
@@ -702,7 +719,7 @@ This was placed on the ballot by collecting signatures from voters. It needs sim
 Placed on ballot by: Voter signature petition, certified by the Department of Elections on .
 Proponent: Richard Corriea, retired SFPD commander, per his signed proponent's statement filed with the Department of Elections on . The campaign is led by Great Highway for Everyone.
 Why vote No?
-San Francisco has voted on this twice. In 2022, we rejected a measure to keep cars on the Great Highway, 65% to 35%. In 2024, we passed Prop K, 55% to 45%, and built Sunset Dunes. The park is a hit: 1.7 million visits in its first year, more than half of them on weekdays (the very days Prop G would give back to cars).
+San Francisco has voted on this twice. In 2022, we rejected a measure to keep cars on the Great Highway, 65% to 35%. In 2024, we passed Prop K, 55% to 45%, and built Sunset Dunes. Rec and Park's sensors recorded 1.7M visits in its first year, more than half of them on weekdays (the very days Prop G would give back to cars). We estimate that about 500,000 of those sensor detections were new, which is still a lot of park use.
 Prop G asks the whole city to vote on the same question a third time, and it would not be the last. It writes a weekday-and-weekend schedule into law that only voters can change: the Board of Supervisors could amend technical details with eight votes, but it couldn't move the closing back to noon, where the old compromise had it. A schedule like that should be the Board's to adjust as conditions change. Instead, every tweak would mean another citywide election. Getting Prop G on the ballot took only about 10,600 signatures, 2% of registered voters. Prop D would raise that bar to 8%, so a small group can't keep putting a settled question back on your ballot.
 Vote no on Prop G. Let's all move on.
 Yes on Proposition H

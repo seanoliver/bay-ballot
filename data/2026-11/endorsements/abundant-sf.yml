@@ -9,24 +9,21 @@ archived:
     snapshot: https://web.archive.org/web/20261005220230/https://www.abundantsanfrancisco.org/vote/ballot-measures
   - source: https://www.abundantsanfrancisco.org/vote
     snapshot: https://web.archive.org/web/20261005220248/https://www.abundantsanfrancisco.org/vote
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-08
 hasReasoning: true
 picks:
   us-rep-11:
     pick:
       - Scott Wiener
-  supervisor-2:
+  assembly-17:
     pick:
-      - Stephen Sherrill
-  supervisor-4:
+      - Matt Haney
+  assembly-19:
     pick:
-      - Alan Wong
-  supervisor-6:
+      - Catherine Stefani
+  board-of-equalization-2:
     pick:
-      - Matt Dorsey
-  supervisor-10:
-    pick:
-      - Theo Ellington
+      - John Pimentel
   board-of-education:
     pick:
       - Phil Kim
@@ -40,18 +37,24 @@ picks:
   college-board-partial:
     pick:
       - Ruth Ferguson
-  assembly-17:
-    pick:
-      - Matt Haney
-  assembly-19:
-    pick:
-      - Catherine Stefani
   bart-8:
     pick:
       - Sara Barz
-  board-of-equalization-2:
+  supervisor-2:
     pick:
-      - John Pimentel
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-8:
+    pick:
+      - Gary McCoy
+  supervisor-10:
+    pick:
+      - Theo Ellington
   rtm:
     pick: Y
     quotes:
@@ -77,15 +80,11 @@ picks:
   prop-e:
     pick: Y
     quotes:
-      - text: This measure strengthens the City Administrator’s Office and consolidates contracting provisions to improve and speed up how the city procures services.
-        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
       - text: San Francisco has made strides in improving its permitting and contracting – expanding on that work is important to build trust with the public and improve outcomes for residents.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-f:
     pick: Y
     quotes:
-      - text: This measure gives the Mayor more flexibility to manage the structure of City Departments and to be a more effective administrator.
-        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
       - text: Our charter should set clear values and broad responsibilities, while empowering our leaders to be nimble and responsive to the needs of the city.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-g:

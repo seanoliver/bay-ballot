@@ -4,7 +4,7 @@ status: published
 source: https://www.losaltosonline.com/opinion/town-crier-endorsements/article_cddcbc6a-6f71-4a55-b19d-0aa447cdc306.html
 extraSources:
   - https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-08
 hasReasoning: true
 rejectedQuotes:
   - text: The first is that Measure D is unnecessary.
@@ -47,4 +47,6 @@ picks:
   mountain-view-measure-e:
     pick: Y
   mountain-view-measure-f:
+    pick: Y
+  el-camino-healthcare-measure-s:
     pick: Y
