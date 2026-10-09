@@ -60,18 +60,37 @@ export function placeName(area: Pick<Area, "name" | "shortName"> | null): PlaceN
   return area ? { name: area.name, short: area.shortName ?? area.name } : BAY_AREA;
 }
 
-export type AreaLink = { href: string; label: string; current: boolean };
+export type AreaLink = { href: string; label: string; current: boolean; within: boolean };
 
-export function areaLinks(election: string, areas: Pick<Area, "id" | "name">[], current: string | null): AreaLink[] {
+/** The page that stands for each county, in data order: its county page, or else a city that is its own county (SF). */
+export function countyPages(areas: Area[]): Area[] {
+  const hasCountyPage = (county: string) => areas.some((b) => b.kind === "county" && countyOf(b) === county);
+  return areas.filter((a) => {
+    const county = countyOf(a);
+    if (county === null) return false;
+    if (a.kind === "county") return true;
+    return !hasCountyPage(county) && a.jurisdictions.some((j) => j.level === "city" && j.name === county);
+  });
+}
+
+/** The Bay Area, then one link per county, named for the county. City pages get no link; their county is marked `within`. */
+export function areaLinks(election: string, areas: Area[], current: string | null): AreaLink[] {
+  const here = areas.find((a) => a.id === current);
   return [
-    { href: `/${election}`, label: BAY_AREA.name, current: current === null },
-    ...areas.map((a) => ({ href: `/${election}/${a.id}`, label: a.name, current: current === a.id })),
+    { href: `/${election}`, label: BAY_AREA.name, current: current === null, within: false },
+    ...countyPages(areas).map((a) => ({
+      href: `/${election}/${a.id}`,
+      label: countyOf(a) ?? a.name,
+      current: current === a.id,
+      within: here !== undefined && here.id !== a.id && countyOf(here) === countyOf(a),
+    })),
   ];
 }
 
 export type PlaceGroup = { key: string; heading: string; county: string | null; sections: Section[] };
 
 const countyOf = (a: AreaLike) => a.jurisdictions.find((j) => j.level === "county")?.name ?? null;
+export const areaCounty = countyOf;
 
 // A city area whose city is also its county (SF): city contests sit under the county.
 function consolidated(county: string, areas: Area[]): boolean {

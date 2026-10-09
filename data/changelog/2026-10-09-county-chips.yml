@@ -1,0 +1,4 @@
+date: 2026-10-09
+type: new
+title: "The area picker lists counties only"
+details: "The picker shows the Bay Area and one button per county, under a Counties label, so it takes fewer rows on a phone. City pages like San Jose are no longer in the picker; on a city page its county is shaded."

@@ -148,7 +148,7 @@ The site merges them: `ballot.yml`'s contests first, then each county file in ar
 
 To add a county (Contra Costa, Alameda, Marin):
 
-1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40, 50 for Contra Costa and 70 for Marin). Two areas with the same `order` are sorted by id.
+1. Add `data/areas/<id>.yml` for each new area, with an `order` after the existing ones (now 10 to 40, 50 for Contra Costa and 70 for Marin). Two areas with the same `order` are sorted by id. Every county needs a `kind: county` area (or, like SF, a city that is its own county): the area picker links counties only, and `validate` fails if a city page's county has no page.
 2. Add `data/2026-11/ballot/<county-slug>.yml` (for example `contra-costa.yml`) holding every contest that belongs to that county.
 3. Edit `ballot.yml` only for a shared contest: a new Congress or Assembly district, or a district or regional measure that now lists the new county in `within`.
 4. Edit another county's file only to add the new county's places to a local district that spans both (as Alameda did for EBMUD Wards 3 and 7 in `contra-costa.yml`), or to add a candidate name alias.
