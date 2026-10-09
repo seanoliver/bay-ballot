@@ -122,7 +122,6 @@ export function useStoredParam(name: string, storageKey: string): [string | null
   return [value, set];
 }
 
-// Device-only: no URL write, so no history budget spent.
 export function useStoredKey(storageKey: string): [string | null, (v: string) => void] {
   const value = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
   const set = useCallback(

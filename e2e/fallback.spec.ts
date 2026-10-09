@@ -1,7 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { BALLOT, contestRow, isPhone, watchErrors } from "./helpers";
 
-// San Mateo's guides skipped every Judicial contest; Contra Costa's covered two of three.
 const SAN_MATEO = `${BALLOT}/san-mateo`;
 const CONTRA_COSTA = `${BALLOT}/contra-costa`;
 const GROBAN = "Supreme Court Associate Justice Joshua Groban";

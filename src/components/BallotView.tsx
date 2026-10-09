@@ -202,7 +202,6 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   }, [all, fallback, fallbackOf, filters]);
   const scopeKey = (s: FallbackSection) => `${area}:${s.id}`;
   const setScope = (s: FallbackSection, v: Scope) => setScopeRaw(withScope(scopeRaw, scopeKey(s), v));
-  // The pane defaults to the Bay Area: whoever opens a skipped contest came for its result.
   const detailFallback = (c: Contest) => {
     const s = fallbackOf.get(c.id);
     const b = bay.get(c.id);
