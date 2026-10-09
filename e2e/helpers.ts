@@ -56,3 +56,10 @@ export function guideOff(contestId: string, election = "2026-11"): string {
   if (!id) throw new Error(`every published guide picks ${contestId}`);
   return id;
 }
+
+/** Every contest id on the 2026-11 ballot, from `ballot.yml` and the county files. */
+export function contestIds(election = "2026-11"): string[] {
+  const dir = path.join(process.cwd(), "data", election);
+  const files = [path.join(dir, "ballot.yml"), ...fs.readdirSync(path.join(dir, "ballot")).filter((f) => f.endsWith(".yml")).map((f) => path.join(dir, "ballot", f))];
+  return files.flatMap((f) => ((parse(fs.readFileSync(f, "utf8")) as { contests?: { id: string }[] }).contests ?? []).map((c) => c.id));
+}

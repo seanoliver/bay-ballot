@@ -1,6 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { hiddenLabel } from "../src/lib/filters";
-import { BALLOT, contestRow, guideOff, guidesOn, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
+import { BALLOT, contestIds, contestRow, guideOff, guidesOn, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
@@ -138,7 +138,9 @@ test.describe("contest page filters", () => {
   });
 
   test("a contest no guide took a position on has no Filters", async ({ page }) => {
-    await page.goto(`${BALLOT}/court-of-appeal-6`);
+    const empty = contestIds().find((id) => guidesOn(id).length === 0);
+    test.skip(!empty, "every contest has a guide position in today's data");
+    await page.goto(`${BALLOT}/${empty}`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.getByRole("complementary", { name: "Filters" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^Filters/ })).toHaveCount(0);

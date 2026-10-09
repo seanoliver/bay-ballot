@@ -1,5 +1,8 @@
+import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
-import { bayHeading } from "../src/lib/fallback";
+import { loadElection } from "../src/lib/data";
+import { bayHeading, scopeName } from "../src/lib/fallback";
+import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, contestRow, guidesOn, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const SAN_MATEO = `${BALLOT}/san-mateo`;
@@ -7,6 +10,23 @@ const CONTRA_COSTA = `${BALLOT}/contra-costa`;
 const GROBAN = "Supreme Court Associate Justice Joshua Groban";
 const APPEAL = "1st District Court of Appeal (11 justices)";
 const FROM_BAY = /^\d+ guides? from across the Bay Area$/;
+const JUDICIAL = "section-state-judicial";
+
+// Which judicial contests each area falls back on comes from the data, so a refresh can't break these tests.
+const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
+const judicialFallback = (areaId: string) => {
+  const area = data.areas.find((a) => a.id === areaId)!;
+  return ballotViewProps(data, { area }).fallback?.sections.find((s) => s.id === JUDICIAL) ?? null;
+};
+const SM = judicialFallback("san-mateo")!;
+const SM_DEFAULT = SM.initial === "bay" ? "Bay Area" : "San Mateo";
+const SM_OTHER = SM.initial === "bay" ? "San Mateo" : "Bay Area";
+const titleOf = (id: string) => data.ballot.contests.find((c) => c.id === id)!.title;
+
+async function chooseScope(page: Page, scope: "area" | "bay") {
+  await page.goto("/about");
+  await page.evaluate((v) => localStorage.setItem("bb-scope", `san-mateo:${v}`), `${JUDICIAL}=${scope}`);
+}
 
 const judicial = (page: Page) => page.getByRole("region", { name: "California: Judicial" });
 const scopeSwitch = (scope: ReturnType<typeof judicial>) => scope.getByRole("group", { name: "Show guides from" }).filter({ visible: true }).first();
@@ -16,14 +36,14 @@ const bayBlockFor = (scope: ReturnType<typeof judicial>, contestId: string) =>
 
 test.describe("Bay Area fallback", () => {
   test("a section the area's guides skipped entirely defaults to the Bay Area", async ({ page }) => {
+    const skipped = data.areas.find((a) => judicialFallback(a.id)?.initial === "bay");
+    test.skip(!skipped, "No area's guides skip the whole judicial section in today's data; tests/fallback.test.ts covers the rule");
     const errors = watchErrors(page);
-    await page.goto(SAN_MATEO);
-    const section = judicial(page);
-    const sw = scopeSwitch(section);
+    await page.goto(`${BALLOT}/${skipped!.id}`);
+    const sw = scopeSwitch(judicial(page));
     await expect(sw.getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
-    await expect(sw.getByRole("button", { name: "San Mateo" })).toHaveAttribute("aria-pressed", "false");
-    await expect(bayBlocks(section)).toHaveCount(3);
-    await expect(section.getByText("No San Mateo guide has taken a position yet.").filter({ visible: true })).toHaveCount(0);
+    await expect(sw.getByRole("button", { name: scopeName(skipped!) })).toHaveAttribute("aria-pressed", "false");
+    await expect(bayBlocks(judicial(page))).toHaveCount(judicialFallback(skipped!.id)!.contests.length);
     expect(errors).toEqual([]);
   });
 
@@ -40,36 +60,40 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("the switch toggles both ways, keeps focus, and is remembered across a reload", async ({ page }) => {
+    const n = SM.contests.length;
     await page.goto(SAN_MATEO);
-    const section = judicial(page);
-    const area = scopeSwitch(section).getByRole("button", { name: "San Mateo" });
+    const sw = () => scopeSwitch(judicial(page));
+    await expect(sw().getByRole("button", { name: SM_DEFAULT })).toHaveAttribute("aria-pressed", "true");
+    const bay = sw().getByRole("button", { name: "Bay Area" });
+    await bay.click();
+    await expect(bay).toHaveAttribute("aria-pressed", "true");
+    await expect(bay).toBeFocused();
+    await expect(bayBlocks(judicial(page))).toHaveCount(n);
+    await page.reload();
+    await expect(sw().getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
+    const area = sw().getByRole("button", { name: "San Mateo" });
     await area.click();
-    await expect(area).toHaveAttribute("aria-pressed", "true");
     await expect(area).toBeFocused();
-    await expect(bayBlocks(section)).toHaveCount(0);
-    await expect(section.getByText("No San Mateo guide has taken a position yet.").filter({ visible: true })).toHaveCount(3);
+    await expect(bayBlocks(judicial(page))).toHaveCount(0);
+    await expect(judicial(page).getByText("No San Mateo guide has taken a position yet.").filter({ visible: true })).toHaveCount(n);
     await expect(page).toHaveURL(new RegExp(`${SAN_MATEO}$`));
     await page.reload();
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: "San Mateo" })).toHaveAttribute("aria-pressed", "true");
-    const bay = scopeSwitch(judicial(page)).getByRole("button", { name: "Bay Area" });
-    await bay.click();
-    await expect(bay).toBeFocused();
-    await expect(bayBlocks(judicial(page))).toHaveCount(3);
-    await page.reload();
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: "Bay Area" })).toHaveAttribute("aria-pressed", "true");
+    await expect(sw().getByRole("button", { name: "San Mateo" })).toHaveAttribute("aria-pressed", "true");
   });
 
   test("a remembered choice renders without hydration errors", async ({ page }) => {
     const errors = watchErrors(page);
-    await page.goto("/about");
-    await page.evaluate(() => localStorage.setItem("bb-scope", "san-mateo:section-state-judicial=area"));
+    await chooseScope(page, SM.initial === "bay" ? "area" : "bay");
     await page.goto(SAN_MATEO);
-    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: "San Mateo" })).toHaveAttribute("aria-pressed", "true");
+    await expect(scopeSwitch(judicial(page)).getByRole("button", { name: SM_OTHER })).toHaveAttribute("aria-pressed", "true");
     expect(errors).toEqual([]);
   });
 
   test("the reasons-only filter applies to the Bay Area tally", async ({ page }) => {
-    const count = async () => Number((await bayBlocks(judicial(page)).first().getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
+    const pool = guidesOn(SM.contests[0]);
+    expect(pool.some((g) => !data.endorsements[g].hasReasoning), "the Bay Area pool needs a guide without reasons").toBe(true);
+    const count = async () => Number((await bayBlockFor(judicial(page), SM.contests[0]).getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
+    await chooseScope(page, "bay");
     await page.goto(SAN_MATEO);
     const all = await count();
     // The page is server-rendered unfiltered; the filter applies after hydration, so poll for it.
@@ -137,34 +161,37 @@ test.describe("Bay Area fallback", () => {
     await expect(area).toHaveAttribute("aria-pressed", "true");
     await expect(bayBlocks(section)).toHaveCount(0);
     await scopeSwitch(section).getByRole("button", { name: "Bay Area" }).click();
-    await expect(bayBlocks(section)).toHaveCount(3);
+    await expect(bayBlocks(section)).toHaveCount(SM.contests.length);
   });
 
   test("a Bay Area block says how many of its guides filters hide, and Show brings them back", async ({ page }) => {
-    const groban = guidesOn("supreme-court-groban");
-    expect(groban.length, "Groban needs at least 2 Bay Area guides").toBeGreaterThanOrEqual(2);
-    await page.goto(`${SAN_MATEO}?off=${groban[0]}`);
-    const section = judicial(page);
-    const block = bayBlockFor(section, "supreme-court-groban");
-    await expect(block).toHaveAccessibleName(bayHeading(groban.length - 1, groban.length).label);
+    const id = SM.contests[0];
+    const pool = guidesOn(id);
+    expect(pool.length, `${id} needs at least 2 Bay Area guides`).toBeGreaterThanOrEqual(2);
+    await chooseScope(page, "bay");
+    await page.goto(`${SAN_MATEO}?off=${pool[0]}`);
+    const block = bayBlockFor(judicial(page), id);
+    await expect(block).toHaveAccessibleName(bayHeading(pool.length - 1, pool.length).label);
     await expect(block.getByText("1 guide hidden")).toBeVisible();
-    await block.getByRole("button", { name: `Show all Bay Area guides on ${GROBAN}` }).click();
+    await block.getByRole("button", { name: `Show all Bay Area guides on ${titleOf(id)}` }).click();
     await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("aria-labelledby"))).toMatch(/^bay-[dm]-/);
     await expect(page).not.toHaveURL(/off=/);
     await expect(page).not.toHaveURL(/[?&]c=/);
-    await expect(block).toHaveAccessibleName(bayHeading(groban.length, groban.length).label);
+    await expect(block).toHaveAccessibleName(bayHeading(pool.length, pool.length).label);
   });
 
   test("a Bay Area block whose guides are all hidden says so instead of showing zero", async ({ page }) => {
-    const appeal = guidesOn("court-of-appeal-1");
-    expect(appeal.length, "the Court of Appeal needs a Bay Area guide").toBeGreaterThan(0);
-    await page.goto(`${SAN_MATEO}?off=${appeal.join(",")}`);
+    const id = SM.contests[0];
+    const pool = guidesOn(id);
+    expect(pool.length, `${id} needs a Bay Area guide`).toBeGreaterThan(0);
+    await chooseScope(page, "bay");
+    await page.goto(`${SAN_MATEO}?off=${pool.join(",")}`);
     const section = judicial(page);
     await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
-    const block = bayBlockFor(section, "court-of-appeal-1");
-    await expect(block).toHaveAccessibleName(bayHeading(0, appeal.length).label);
+    const block = bayBlockFor(section, id);
+    await expect(block).toHaveAccessibleName(bayHeading(0, pool.length).label);
     await block.getByRole("button", { name: /^Show all Bay Area guides on / }).click();
     await expect(page).not.toHaveURL(/off=/);
-    await expect(bayBlockFor(section, "court-of-appeal-1")).toHaveAccessibleName(bayHeading(appeal.length, appeal.length).label);
+    await expect(bayBlockFor(section, id)).toHaveAccessibleName(bayHeading(pool.length, pool.length).label);
   });
 });
