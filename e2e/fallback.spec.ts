@@ -160,8 +160,8 @@ test.describe("Bay Area fallback", () => {
     await page.goto(`${SAN_MATEO}?off=${appeal.join(",")}`);
     const section = judicial(page);
     await expect(section.getByText(/^0 guides from across/)).toHaveCount(0);
-    const block = section.getByRole("group", { name: bayHeading(0, appeal.length).label }).filter({ visible: true });
-    await expect(block).toHaveCount(1);
+    const block = bayBlockFor(section, "court-of-appeal-1");
+    await expect(block).toHaveAccessibleName(bayHeading(0, appeal.length).label);
     await block.getByRole("button", { name: /^Show all Bay Area guides on / }).click();
     await expect(page).not.toHaveURL(/off=/);
     await expect(bayBlockFor(section, "court-of-appeal-1")).toHaveAccessibleName(bayHeading(appeal.length, appeal.length).label);

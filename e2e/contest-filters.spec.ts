@@ -1,5 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
-import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
+import { hiddenLabel } from "../src/lib/filters";
+import { BALLOT, contestRow, guidesOn, isPhone, openBallot, watchErrors } from "./helpers";
 
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
@@ -85,8 +86,11 @@ test.describe("contest page filters", () => {
   });
 
   test("Show all turns the hidden guides back on and leaves other filters alone", async ({ page }) => {
-    await openContest(page, "?off=sf-gop,spur,abundant-sf");
-    const note = page.getByText("2 guides hidden");
+    const propB = guidesOn("prop-b");
+    expect(propB, "abundant-sf must have no Prop B pick").not.toContain("abundant-sf");
+    expect(propB.length, "Prop B needs at least 3 guides").toBeGreaterThanOrEqual(3);
+    await openContest(page, `?off=${propB[0]},${propB[1]},abundant-sf`);
+    const note = page.getByText(hiddenLabel(2));
     await expect(note).toBeVisible();
     await expect(page.locator("[aria-live=polite]").filter({ has: note })).toHaveCount(1);
     await page.getByRole("button", { name: SHOW_ALL }).click();
@@ -269,7 +273,7 @@ test.describe("phone contest page layout", () => {
   test.skip(({ isMobile }) => !isMobile, "phone only");
 
   test("the Filters button sits above the contest card and names the count", async ({ page }) => {
-    await openContest(page, "?off=sf-gop");
+    await openContest(page, `?off=${guidesOn("prop-b")[0]}`);
     const button = page.getByRole("button", { name: /^Filters/ });
     const gap = async () => {
       const m = (await button.textContent())?.match(/(\d+) of (\d+) guides counted/);
