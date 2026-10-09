@@ -1,0 +1,131 @@
+guide: indivisible-sonoma
+election: 2026-11
+status: published
+source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+extraSources:
+  - https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  - https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+allowForeignSources: true # Google Drive PDF and the chapter's Substack
+fetchedAt: 2026-10-09
+hasReasoning: true
+picks:
+  us-rep-1:
+    pick:
+      - Mike McGuire
+    quotes:
+      - text: We believe he will be an energetic opponent to the fascist caucus across the aisle and reform-minded on many of the key changes we need to see to our political system, such as expanding the Supreme Court.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  us-rep-4:
+    pick:
+      - Mike Thompson
+    quotes:
+      - text: We’re pleased to see him promising to pass single payer healthcare, if given the majority.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+      - text: Thompson’s challenger didn’t impress us as being ready for the job.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Under his leadership as board president, San Diego Unified has become a national model for student success.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  assembly-12:
+    pick:
+      - Jackie Elward
+    quotes:
+      - text: Elward has served on the Rohnert Park City Council since 2020, including a term as Mayor, and is on the Board of Directors for Sonoma Clean Power and Sonoma County Continuum of Care.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  sonoma-county-supervisor-2:
+    pick:
+      - Joanna Paun
+    quotes:
+      - text: Paun has served on school boards, including as board president.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  sonoma-county-supervisor-4:
+    pick:
+      - Melanie Bagby
+  santa-rosa-council-4:
+    pick:
+      - Melanie Jones-Carter
+    quotes:
+      - text: Jones-Carter is also one of the four founders of the Benton Street Improvement Association, bringing signs of hope to our county and beyond since 2017.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  sonoma-county-measure-h:
+    pick: Y
+    quotes:
+      - text: Measure H also removes the sunset clause, so Park maintenance will continue to be funded without future risk.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  coast-life-support-measure-d:
+    pick: Y
+    quotes:
+      - text: Funding for Measure D will help ensure the continued availability of emergency ambulance and life support services in a large, geographically-challenging rural service area where rapid access to emergency medical care is essential.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+  srjc-measure-ab:
+    pick: Y
+    quotes:
+      - text: The quality of educational facilities and equipment is a big determiner of the quality of education.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+      - text: Measure AB takes a significant step toward improving infrastructure and making sure students at SRJC have the best chance to stay prepared for changes in the job market.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+    quotes:
+      - text: Allows state policymakers to save more in strong revenue years to better protect vital public services during economic downturns, since deposits in the key reserves would no longer count as spending for the Gann Limit calculations.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+    quotes:
+      - text: Creates affordable homeownership opportunities for working and middle-class Californians and encourages new home construction—with ZERO COST TO TAXPAYERS.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-38:
+    pick: N
+    quotes:
+      - text: The billionaire founders of that non-profit are co-sponsors of Prop 38 and have written the proposition to so narrowly define the criteria for the $4B that only their non-profit is eligible.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-39:
+    pick: N
+    quotes:
+      - text: "Make no mistake: Prop 39 will make voting harder, riskier, and more expensive for Californians because that’s what it was designed to do."
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-40:
+    pick: Y
+    quotes:
+      - text: Right now, families across California are one hospital closure away from losing the care they depend on.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+      - text: "Federal healthcare cuts have blown a $30 billion hole in Medi-Cal funding, and Prop 40 is our chance to fix it directly: a one-time 5% tax on the roughly 200 Californians worth over $1 billion."
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-41:
+    pick: N
+    quotes:
+      - text: Propositions 41 and 42 aren’t independent policy proposals; they exist to cancel out Proposition 40.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+      - text: Under California’s rules, if either measure gets more “yes” votes than Prop 40, the billionaire tax could be nullified even if it also passes.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+    quotes:
+      - text: Prop 44 could worsen health disparities rather than reduce them, and would potentially put safety-net clinics, which serve low-income and uninsured patients, out of business, because it requires affected clinics to pay a penalty to the state if they fall short of the new health care spending minimum.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  prop-45:
+    pick: N
+    quotes:
+      - text: Prop 45 shifts power from public agencies to developers and nearly eliminates the courts’ ability to prevent toxic contamination of air and water.
+        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends

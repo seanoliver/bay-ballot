@@ -5,7 +5,7 @@ source: https://vote.eastbaydsa.org/simple-guide.html
 archived:
   - source: https://vote.eastbaydsa.org/simple-guide.html
     snapshot: https://web.archive.org/web/20261007195003/https://vote.eastbaydsa.org/simple-guide
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 rejectedQuotes:
   - text: Measure I seeks to provide local funding for Dublin schools that cannot be taken by the state, is locally controlled, and is subject to independent oversight.
@@ -196,3 +196,21 @@ picks:
         source: https://vote.eastbaydsa.org/simple-guide.html
   pleasanton-measure-hh:
     pick: Y
+  solano-county-measure-e:
+    pick: Y
+  solano-county-measure-h:
+    pick: Y
+  benicia-measure-x:
+    pick: Y
+  benicia-measure-y:
+    pick: Y
+  benicia-measure-z:
+    pick: Y
+    quotes:
+      - text: Transfer taxes constitute a tax on the sale of property, which when implemented as a progressive tax, tends to function as a means of taxing wealth.
+        source: https://vote.eastbaydsa.org/simple-guide.html
+  winters-jusd-measure-b:
+    pick: Y
+    quotes:
+      - text: Funding public schools is of the utmost importance to supporting working communities.
+        source: https://vote.eastbaydsa.org/simple-guide.html

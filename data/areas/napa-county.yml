@@ -1,0 +1,12 @@
+id: napa-county
+name: Napa County
+kind: county
+order: 90
+jurisdictions:
+  - { level: state, name: California }
+  - { level: county, name: Napa }
+  - { level: city, name: American Canyon }
+  - { level: city, name: Calistoga }
+  - { level: city, name: Napa }
+  - { level: city, name: St. Helena }
+  - { level: city, name: Yountville }

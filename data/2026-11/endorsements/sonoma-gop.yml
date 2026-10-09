@@ -1,0 +1,46 @@
+guide: sonoma-gop
+election: 2026-11
+status: published
+source: https://www.sonomacountygop.org/ # homepage, "The Sonoma County Republican Party November 2026 Voter Guide": two PNG images, no page text
+extraSources:
+  - https://www.sonomacountygop.org/s/cc_images/teaserbox_908396352.PNG # "Sonoma County Republican Candidate Voter Guide"
+  - https://www.sonomacountygop.org/s/cc_images/teaserbox_908396353.PNG # "Sonoma County Republican Proposition and Measures Voter Guide"
+fetchedAt: 2026-10-09
+hasReasoning: false
+manual: true # picks hand-entered from the two images (read 2026-10-09); extract skips this guide. Comments quote each image line. Measures J and N are marked "N/A" and have no pick.
+picks:
+  us-rep-1: { pick: ["James Gallagher"] } # "US Congress District 1 / Congressman James Gallagher"
+  us-rep-2: { pick: ["Robin Littau"] } # "US Congress District 2 / Robin Littau"
+  governor: { pick: ["Steve Hilton"] } # "California Governor / Steve Hilton"
+  lt-governor: { pick: ["Gloria Romero"] } # "California Lt. Governor / Gloria Romero"
+  controller: { pick: ["Herb W Morgan"] } # "California Controller / Herb Morgan"
+  attorney-general: { pick: ["Michael E. Gates"] } # "California Attorney General / Michael Gates"
+  treasurer: { pick: ["Jennifer Hawks"] } # "California Treasurer / Jennifer Hawks"
+  secretary-of-state: { pick: ["Donald P. (Don) Wagner"] } # "California Secretary State / Don Wagner"
+  superintendent: { pick: ["Sonja Shaw"] } # "California Superintendent of Public Instruction / Sonja Shaw"
+  assembly-2: { pick: ["Michael Greer"] } # "State Assembly District 2 / Mike Greer"
+  state-senate-2: { pick: ["Tief Gibbs"] } # "State Senate District 2 / Tief Gibbs"
+  prop-1: { pick: N } # "No Prop 1 Housing Bond"
+  prop-2: { pick: N } # "No Prop 2 Increase Rainy Day Fund"
+  prop-3: { pick: N } # "No Prop 3 Permanent Tax on High Income"
+  prop-4: { pick: N } # "No Prop 4 Publicly Financed Campaigns"
+  prop-5: { pick: N } # "No Prop 5 State Official Recall Reform"
+  prop-37: { pick: N } # "No Prop 37 Low Cost Home Loans"
+  prop-38: { pick: N } # "No Prop 38 Medical Research Bond"
+  prop-39: { pick: Y } # "Yes Prop 39 Voter ID Requirement"
+  prop-40: { pick: N } # "No Prop 40 Billionaire Tax"
+  prop-41: { pick: Y } # "Yes Prop 41 Program Audit Requirements"
+  prop-42: { pick: Y } # "Yes Prop 42 Ban New Taxes on Property"
+  prop-43: { pick: Y } # "Yes Prop 43 Increase Tax Vote Threshold"
+  prop-44: { pick: N } # "No Prop 44 Increase Clinic Funding"
+  prop-45: { pick: N } # "No Prop 45 Certain Environmental Reviews"
+  coast-life-support-measure-d: { pick: N } # "No Measure D Coast Life Support Parcel Tax"
+  waugh-sd-measure-e: { pick: N } # "No Measure E Waugh School Bond"
+  west-sonoma-uhsd-measure-g: { pick: N } # "No Measure G West County HS Parcel Tax"
+  sonoma-county-measure-h: { pick: N } # "No Measure H County Parks Sales Tax"
+  srjc-measure-ab: { pick: N } # "No Measure AB SRJC District Bond"
+  windsor-measure-i: { pick: N } # "No Measure I Town of Windsor Sales Tax"
+  rohnert-park-measure-k: { pick: N } # "No Measure K City of Rohnert Park Sales Tax"
+  santa-rosa-measure-l: { pick: N } # "No Measure L City of Santa Rosa Sales Tax"
+  harmony-union-sd-measure-m: { pick: N } # "No Measure M Harmony School Parcel Tax"
+  old-adobe-union-sd-measure-o: { pick: N } # "No Measure O Old Adobe School Bond"

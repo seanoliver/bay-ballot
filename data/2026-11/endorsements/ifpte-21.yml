@@ -2,7 +2,7 @@ guide: ifpte-21
 election: 2026-11
 status: published
 source: https://ifpte21.org/endorsements/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: false
 picks:
   governor:
@@ -89,3 +89,6 @@ picks:
   san-leandro-council-2:
     pick:
       - James Aguilar
+  solano-county-supervisor-4:
+    pick:
+      - Michael "Mike" Silva

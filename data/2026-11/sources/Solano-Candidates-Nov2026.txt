@@ -1,0 +1,180 @@
+Solano County Registrar of Voters, Candidate Filed Log, November 3, 2026 General Election ("AS OF 8/20/2026", printed 8/27/2026).
+Source: https://content.solanocounty.gov/sites/default/files/2026-07/CANDIDATE_FILED_LOG_Nov_3_2026_7.13.26.pdf (retrieved 2026-10-09 with curl; the file name says 7.13.26 but the content is the 8/20 version)
+Redacted extract: contest, seats, ON/OFF THE BALLOT as the log marks it, and each candidate's name as the log prints it. Party preference is kept for voter-nominated offices; "(incumbent)" marks the log's incumbent column. Ballot designations, filing dates and statement codes are omitted. Incumbents who did not file and filers who did not complete filing are left out.
+Statewide offices, Board of Equalization District 1, the Supreme Court and the eleven 1st District Court of Appeal retentions are on the SoS certified list (CA-Certified-Candidates-Nov2026.pdf): BOE District 1 is Nelson Esparza (Democratic) and Shannon Grove (Republican).
+OFF THE BALLOT contests had no more candidates than seats and are not printed. Board of Supervisors District 3 was decided in June.
+
+FEDERAL
+U.S. Congress - District 8 | vote for 1 | ON THE BALLOT
+    John Garamendi (Democratic)
+    Rudy Recile (Republican)
+
+STATE
+Member State Assembly District 11 | vote for 1 | ON THE BALLOT
+    Lori D Wilson (Democratic)
+    Jenny Leilani Callison (No Party Preference)
+
+BOARD OF SUPERVISORS
+District 4 | vote for 1 | ON THE BALLOT
+    Michael "Mike" Silva
+    John Carli
+
+BOARD OF EDUCATION
+Solano County Board of Education, Trustee Area 3 | vote for 1 | OFF THE BALLOT
+    Dana Dean (incumbent)
+Solano County Board of Education, Trustee Area 4 | vote for 1 | OFF THE BALLOT
+    Teresa Lavell (incumbent)
+Solano County Board of Education, Trustee Area 6 | vote for 1 | ON THE BALLOT
+    Tamika Hamilton
+    Kathryn Kedarisetty
+Yolo County Board of Education, Trustee Area 2 | vote for 1 | OFF THE BALLOT (filed in Yolo County)
+    Melissa Moreno (incumbent)
+Yolo County Board of Education, Trustee Area 5 | vote for 1 | OFF THE BALLOT (filed in Yolo County)
+    Julian Munoz (incumbent)
+
+COMMUNITY COLLEGE DISTRICTS
+San Joaquin Delta Community College, Trustee Area 4 | vote for 1 | ON THE BALLOT (filed in San Joaquin County)
+    Charles R. Jennings (incumbent)
+    Tony Shah
+Solano Community College, Trustee Area 1 | vote for 1 | OFF THE BALLOT
+    Karimah Karah (incumbent)
+Solano Community College, Trustee Area 2 | vote for 1 | OFF THE BALLOT
+    Annie M. Young (incumbent)
+Solano Community College, Trustee Area 4 | vote for 1 | ON THE BALLOT
+    Denis Honeychurch (incumbent)
+    Tony Yang
+Solano Community College, Trustee Area 6 | vote for 1 | OFF THE BALLOT
+    Amber M. Cargo-Reed (incumbent)
+
+UNIFIED SCHOOL DISTRICTS
+Benicia Unified School District, Trustee Area 1 | vote for 1 | ON THE BALLOT
+    Dan Smith
+    Barbara Jones
+Benicia Unified School District, Trustee Area 4 | vote for 1 | OFF THE BALLOT
+    Erin Fernandez
+Benicia Unified School District, Trustee Area 5 | vote for 1 | OFF THE BALLOT
+    Amy Hirsh (incumbent)
+Dixon Unified School District (at large) | vote for 3 | ON THE BALLOT
+    Jewel Fink (incumbent)
+    Julian Y. Cuevas (incumbent)
+    John Gabby (incumbent)
+    Phil Lockwood
+    Michael Ceremello Jr.
+    Cheryl Sommers
+    Michael Monson
+Fairfield/Suisun Unified School District, Trustee Area 4 | vote for 1 | OFF THE BALLOT
+    Tom Ewen
+Fairfield/Suisun Unified School District, Trustee Area 5 | vote for 1 | OFF THE BALLOT
+    MaryDelores Wilson
+Fairfield/Suisun Unified School District, Trustee Area 7 | vote for 1 | OFF THE BALLOT
+    Kai Eusebio (incumbent)
+River Delta Unified School District, Trustee Area 1 | vote for 1 | ON THE BALLOT
+    Dan Mahoney (incumbent)
+    Michael A Mimiaga
+River Delta Unified School District, Trustee Area 3 | vote for 1 | OFF THE BALLOT
+    (no candidate filed)
+Travis Unified School District, Trustee Area 1 | vote for 1 | OFF THE BALLOT
+    (no candidate filed)
+Travis Unified School District, Trustee Area 2 | vote for 2 | OFF THE BALLOT
+    Matthew Bidou (incumbent)
+    Tierra Ekstrom
+Vacaville Unified School District, Trustee Area 1 | vote for 1 | OFF THE BALLOT
+    Nancy Dunn (incumbent)
+Vacaville Unified School District, Trustee Area 3 | vote for 1 | OFF THE BALLOT
+    John Jansen (incumbent)
+Vacaville Unified School District, Trustee Area 5 | vote for 1 | OFF THE BALLOT
+    Santiago Serrato (incumbent)
+Vallejo City Unified School District, Trustee Area 1 | vote for 1 | ON THE BALLOT
+    Clarence John Martin Jr
+    Judith Lerner
+    Reba Jill Brown
+Vallejo City Unified School District, Trustee Area 3 | vote for 1 | ON THE BALLOT
+    Rizal "Mr. Riz" V. Aliga
+    Irene Reynolds
+Vallejo City Unified School District, Trustee Area 5 | vote for 1 | OFF THE BALLOT
+    John Fox (incumbent)
+Winters Joint Unified School District, Trustee Area 2 | vote for 1 | OFF THE BALLOT (filed in Yolo County)
+    Carrie Green (incumbent)
+Winters Joint Unified School District, Trustee Area 3 | vote for 1 | OFF THE BALLOT (filed in Yolo County)
+    Joedy Michael (incumbent)
+
+SPECIAL DISTRICTS
+Cordelia Fire Protection District (at large) | vote for 3 | OFF THE BALLOT
+    Mark Giugni (incumbent)
+    Jim Frische (incumbent)
+    Dave Carpenter (incumbent)
+Rural North Vacaville Water District (at large) | vote for 3 | OFF THE BALLOT
+    Eileen Uthe-Smith (incumbent)
+    Alan Hanger (incumbent)
+    Anne Putney
+Solano Irrigation District, Division 1 | vote for 1 | OFF THE BALLOT
+    John D. Kluge (incumbent)
+Solano Irrigation District, Division 5 | vote for 1 | OFF THE BALLOT
+    Derrick Lum (incumbent)
+
+CITIES (as reported by each City Clerk)
+City of Benicia, Councilmember (at large) | vote for 2 | ON THE BALLOT
+    Terry Scott (incumbent)
+    Kari Birdseye (incumbent)
+    Justin Zollars
+City of Dixon, Councilmember, District 1 | vote for 1 | ON THE BALLOT
+    Jim Ernest (incumbent)
+    Emily Schroeder
+City of Dixon, Councilmember, District 2 | vote for 1 | ON THE BALLOT
+    Thom Bogue (incumbent)
+    Christina M. Cerna
+City of Dixon, Elected City Clerk (at large) | vote for 1 | ON THE BALLOT
+    Lupe Ruiz
+City of Fairfield, Mayor (at large) | vote for 1 | ON THE BALLOT
+    Pam Bertani
+    Scott Tonnesen
+    Nikila Walker Gibson
+    George Kennedy
+City of Fairfield, Councilmember, District 1 | vote for 1 | ON THE BALLOT
+    K. Patrice Williams (incumbent)
+    Nora Dizon
+City of Fairfield, Councilmember, District 3 | vote for 1 | ON THE BALLOT
+    Doug Carr (incumbent)
+    Robert Marin
+    Susan Bush
+City of Fairfield, Councilmember, District 5 | vote for 1 | ON THE BALLOT
+    Doriss Panduro (incumbent)
+    Lynda Davis-Robinson
+City of Rio Vista, Councilmember (at large) | vote for 2 | ON THE BALLOT
+    Rick Dolk (incumbent)
+    Robert Butler
+    Gloria J. Thibeaux
+    Leslie Codling-Dichet
+City of Suisun City, Mayor, full term (at large) | vote for 1 | ON THE BALLOT
+    Alma Hernandez (incumbent)
+    Chauncey Banks
+    Michael Jefferson
+    Lilia Dardon
+    Amit Pal
+City of Suisun City, Councilmember (at large) | vote for 2 | ON THE BALLOT
+    Princess Washington (incumbent)
+    Jenalee Dawson (incumbent)
+    Xenia Tom
+    Katrina Garcia
+City of Vacaville, Mayor (at large) | vote for 1 | ON THE BALLOT
+    Sarah Chapman
+    Roy Stockton
+City of Vacaville, Councilmember, District 2 | vote for 1 | ON THE BALLOT
+    Gregory Ritchie II (incumbent)
+    Tom Chalk
+City of Vacaville, Councilmember, District 4 | vote for 1 | ON THE BALLOT
+    John Vogel
+    Davonna Finley
+City of Vacaville, Councilmember, District 6 | vote for 1 | ON THE BALLOT
+    Jeanette Wylie (incumbent)
+    Kevin Puett
+City of Vallejo, Councilmember, District 2 | vote for 1 | ON THE BALLOT
+    Diosdado "JR" Matulac (incumbent)
+City of Vallejo, Councilmember, District 4 | vote for 1 | ON THE BALLOT
+    Charles Palmares (incumbent)
+    Brianna Rogers
+    Chris Platzer
+City of Vallejo, Councilmember, District 5 | vote for 1 | ON THE BALLOT
+    Tara Beasley Stansberry
+    Tanya Hall
+    Rebekah Truemper

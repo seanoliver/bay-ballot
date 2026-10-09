@@ -7,18 +7,31 @@ title: Bay Area General Election
 date: 2026-11-03
 contests:
   # ---------- Federal ----------
+  - id: us-rep-1
+    section: Federal
+    title: United States Representative, District 1
+    kind: candidate
+    candidates: [Mike McGuire, James Gallagher]
+    jurisdiction: { level: district, name: Congress, district: "1", within: [{ level: county, name: Sonoma }] }
   - id: us-rep-2
     section: Federal
     title: United States Representative, District 2
     kind: candidate
     candidates: [Jared Huffman, Robin Littau]
-    jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }] }
+    aliases: { Jared Huffman: [Jare Huffman] }
+    jurisdiction: { level: district, name: Congress, district: "2", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
+  - id: us-rep-4
+    section: Federal
+    title: United States Representative, District 4
+    kind: candidate
+    candidates: [Mike Thompson, Eric Jones]
+    jurisdiction: { level: district, name: Congress, district: "4", within: [{ level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: us-rep-8
     section: Federal
     title: United States Representative, District 8
     kind: candidate
     candidates: [John Garamendi, Rudy Recile]
-    jurisdiction: { level: district, name: Congress, district: "8", within: [{ level: county, name: Contra Costa }] }
+    jurisdiction: { level: district, name: Congress, district: "8", within: [{ level: county, name: Contra Costa }, { level: county, name: Solano }] }
   - id: us-rep-9
     section: Federal
     title: United States Representative, District 9
@@ -117,6 +130,7 @@ contests:
     title: Attorney General
     kind: candidate
     candidates: [Rob Bonta, Michael E. Gates]
+    aliases: { Michael E. Gates: [Matt Gates] } # the Napa County GOP's slate prints "Matt Gates"
     jurisdiction: { level: state, name: California }
   - id: insurance-commissioner
     section: State
@@ -124,31 +138,51 @@ contests:
     kind: candidate
     candidates: [Ben Allen, Jane Kim]
     jurisdiction: { level: state, name: California }
+  - id: board-of-equalization-1
+    section: State
+    title: Board of Equalization, District 1
+    kind: candidate
+    candidates: [Nelson Esparza, Shannon Grove]
+    jurisdiction: { level: district, name: Board of Equalization, district: "1", within: [{ level: county, name: Solano }] }
   - id: board-of-equalization-2
     section: State
     title: Board of Equalization, District 2
     kind: candidate
     candidates: [Sally J. Lieber, John Pimentel]
-    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
+    jurisdiction: { level: district, name: Board of Equalization, district: "2", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Santa Clara }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: state-senate-2
     section: State
     title: State Senate, District 2
     kind: candidate
     candidates: [Damon Connolly, Tief Gibbs]
-    jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }] }
+    jurisdiction: { level: district, name: State Senate, district: "2", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
+  - id: assembly-2
+    section: State
+    title: State Assembly, District 2
+    kind: candidate
+    candidates: [Chris Rogers, Michael Greer]
+    aliases: { Michael Greer: [Mike Greer] }
+    jurisdiction: { level: district, name: Assembly, district: "2", within: [{ level: county, name: Sonoma }] }
+  - id: assembly-4
+    section: State
+    title: State Assembly, District 4
+    kind: candidate
+    candidates: [Cecilia M. Aguiar-Curry]
+    aliases: { Cecilia M. Aguiar-Curry: [Cecilia Aguiar-Curry] }
+    jurisdiction: { level: district, name: Assembly, district: "4", within: [{ level: county, name: Sonoma }, { level: county, name: Napa }] }
   - id: assembly-11
     section: State
     title: State Assembly, District 11
     kind: candidate
     candidates: [Lori D Wilson, Jenny Leilani Callison]
-    aliases: { Lori D Wilson: [Lori D. Wilson, Lori Wilson] }
-    jurisdiction: { level: district, name: Assembly, district: "11", within: [{ level: county, name: Contra Costa }] }
+    aliases: { Lori D Wilson: [Lori D. Wilson, Lori Wilson], Jenny Leilani Callison: [Jenny Callion] } # the Solano County GOP prints "Jenny Callion"
+    jurisdiction: { level: district, name: Assembly, district: "11", within: [{ level: county, name: Contra Costa }, { level: county, name: Solano }] }
   - id: assembly-12
     section: State
     title: State Assembly, District 12
     kind: candidate
     candidates: [Jackie Elward, Eric Lucan]
-    jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }] }
+    jurisdiction: { level: district, name: Assembly, district: "12", within: [{ level: county, name: Marin }, { level: county, name: Sonoma }] }
   - id: assembly-14
     section: State
     title: State Assembly, District 14
@@ -205,12 +239,14 @@ contests:
     title: State Assembly, District 21
     kind: candidate
     candidates: [Diane Papan, Jabra J Muhawieh]
+    aliases: { Jabra J Muhawieh: [Jabra John Muhawieh] } # Reform California
     jurisdiction: { level: district, name: Assembly, district: "21", within: [{ level: county, name: San Mateo }] }
   - id: assembly-23
     section: State
     title: State Assembly, District 23
     kind: candidate
     candidates: [Marc Berman, David G. Johnson]
+    aliases: { David G. Johnson: [Dave Johnson] } # Reform California
     jurisdiction: { level: district, name: Assembly, district: "23", within: [{ level: county, name: San Mateo }, { level: county, name: Santa Clara }] }
   - id: assembly-24
     section: State
@@ -247,6 +283,7 @@ contests:
     title: Superintendent of Public Instruction
     kind: candidate
     candidates: [Richard Barrera, Sonja Shaw]
+    aliases: { Sonja Shaw: [Sonya Shaw] } # the Solano County GOP prints "Sonya Shaw"
     jurisdiction: { level: state, name: California }
 
   # ---------- Judicial ----------
@@ -267,7 +304,7 @@ contests:
     title: 1st District Court of Appeal (11 justices)
     kind: retention
     description: "Retention of Monique Langhorne Wilson, Charles A. Smiley, Kathleen M. Banke (Div. One); Therese M. Stewart, Tara M. Desautels (Div. Two); Ioana Petrou, Victor A. Rodriguez (Div. Three); Tracie L. Brown (Div. Four); Danny Y. Chou, Mark Simons, Gordon Burns (Div. Five)."
-    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }] }
+    jurisdiction: { level: district, name: Court of Appeal, district: "1", within: [{ level: county, name: San Francisco }, { level: county, name: San Mateo }, { level: county, name: Marin }, { level: county, name: Contra Costa }, { level: county, name: Alameda }, { level: county, name: Sonoma }, { level: county, name: Napa }, { level: county, name: Solano }] }
   - id: court-of-appeal-6
     section: Judicial
     title: 6th District Court of Appeal (5 justices)

@@ -1,0 +1,116 @@
+guide: napa-solano-labor
+election: 2026-11
+status: published
+source: https://napasolanoclc.org/elections/
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  us-rep-8:
+    pick:
+      - John Garamendi
+  assembly-11:
+    pick:
+      - Lori D Wilson
+  solano-county-supervisor-4:
+    pick:
+      - Michael "Mike" Silva
+  solano-county-board-of-education-6:
+    pick:
+      - Kathryn Kedarisetty
+  solano-cc-trustee-area-4:
+    pick:
+      - Tony Yang
+  benicia-council:
+    pick:
+      - Terry Scott
+  dixon-council-1:
+    pick:
+      - Emily Schroeder
+  dixon-council-2:
+    pick:
+      - Christina M. Cerna
+  dixon-usd-trustee:
+    pick:
+      - Julian Y. Cuevas
+  fairfield-mayor:
+    pick:
+      - Scott Tonnesen
+  fairfield-council-1:
+    pick:
+      - K. Patrice Williams
+  fairfield-council-3:
+    pick:
+      - Doug Carr
+  fairfield-council-5:
+    pick:
+      - Doriss Panduro
+  suisun-city-mayor:
+    pick:
+      - Alma Hernandez
+  suisun-city-council:
+    pick:
+      - Jenalee Dawson
+      - Princess Washington
+  vacaville-mayor:
+    pick:
+      - Sarah Chapman
+  vacaville-council-6:
+    pick:
+      - Jeanette Wylie
+  vallejo-council-2:
+    pick:
+      - Diosdado "JR" Matulac
+  vallejo-council-4:
+    pick:
+      - Brianna Rogers
+  vallejo-council-5:
+    pick:
+      - Rebekah Truemper
+  vallejo-city-usd-trustee-area-1:
+    pick:
+      - Judith Lerner
+  vallejo-city-usd-trustee-area-3:
+    pick:
+      - Irene Reynolds
+  solano-county-measure-e:
+    pick: Y
+  solano-county-measure-h:
+    pick: Y
+  benicia-measure-x:
+    pick: Y
+  benicia-measure-y:
+    pick: Y
+  benicia-measure-z:
+    pick: Y
+  fairfield-measure-p:
+    pick: Y
+  us-rep-4:
+    pick:
+      - Mike Thompson
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
+  american-canyon-council:
+    pick:
+      - David Oro
+  napa-council-3:
+    pick:
+      - Mary Luros
+  napa-valley-college-trustee-area-2:
+    pick:
+      - Heriverto Ruiz
+  napa-valley-college-trustee-area-3:
+    pick:
+      - Emily Pastula
+  napa-valley-college-trustee-area-4:
+    pick:
+      - Cindy Johnson
+  napa-valley-usd-trustee-area-1:
+    pick:
+      - Robin Jankiewicz
+  napa-valley-usd-trustee-area-6:
+    pick:
+      - Elba Gonzalez-Mares
+  napa-valley-usd-trustee-area-7:
+    pick:
+      - Jason M. Dooley

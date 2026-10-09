@@ -1,0 +1,129 @@
+Napa County Registrar of Voters, Roster of Candidates, General Election 11/3/2026 (contests 3110 to 5501, qualified candidates only, printed 8/13/2026).
+Source: https://www.napacounty.gov/DocumentCenter/View/46087/November-3-2026---List-of-Qualified-Candidates (linked from https://www.napacounty.gov/2328/Qualified-List-of-Candidates; retrieved 2026-10-09 in a browser, since napacounty.gov returns 403 to curl)
+Redacted extract: contest number and name, seats, "On Ballot", and each candidate's name as the county prints it (in capitals). A ballot designation of "Incumbent" or "Appointed Incumbent" is kept; other designations, mailing addresses and contact details are omitted.
+The roster covers local contests only. Congress District 4, Assembly District 4, the Board of Equalization, statewide offices and the court retentions are on the SoS certified list (CA-Certified-Candidates-Nov2026.pdf). The June 2, 2026 primary results (https://www.napacounty.gov/4186/June-2-2026-Election-Results) show Napa has one contest each for Congress (District 4), Assembly (District 4) and Board of Equalization (District 2), and no State Senate contest.
+"On Ballot: No" contests had no more candidates than seats and are not printed.
+
+3110 Napa County Board of Education, Trustee Area 1 | vote for 1 | On Ballot: No
+    DON J HUFFMAN (incumbent)
+
+3120 Napa County Board of Education, Trustee Area 2 | vote for 1 | On Ballot: No
+    JANNA WALDINGER (incumbent)
+
+3140 Napa County Board of Education, Trustee Area 4 | vote for 1 | On Ballot: No
+    NADINE WADE (appointed incumbent)
+
+3220 Napa Valley College, Trustee Area No. 2 | vote for 1 | On Ballot: Yes
+    JEFF DODD
+    HERIVERTO RUIZ
+
+3230 Napa Valley College, Trustee Area No. 3 | vote for 1 | On Ballot: Yes
+    EMILY PASTULA
+    ELIZABETH L GOFF
+    KARINA SERVENTE
+
+3240 Napa Valley College, Trustee Area No. 4 | vote for 1 | On Ballot: Yes
+    CINDY JOHNSON
+    WILLIAM "KYLE" IVERSON
+
+3250 Napa Valley College, Trustee Area No. 5 | vote for 1 | On Ballot: No
+    LOTTE COSCA (appointed incumbent)
+
+3310 Napa Valley Unified School District, Trustee Area No. 1 | vote for 1 | On Ballot: Yes
+    ROBIN JANKIEWICZ (incumbent)
+    MATTHEW MCMANN
+
+3330 Napa Valley Unified School District, Trustee Area No. 3 | vote for 1 | On Ballot: No
+    KATHERINE HYDE SHELTON
+
+3360 Napa Valley Unified School District, Trustee Area No. 6 | vote for 1 | On Ballot: Yes
+    ELBA GONZALEZ-MARES
+    TYRONE NAVARRO
+
+3370 Napa Valley Unified School District, Trustee Area No. 7 | vote for 1 | On Ballot: Yes
+    DAVID HILDEBRANDT
+    JASON M. DOOLEY
+    JOHN HOUSER
+    GABRIEL CHAMPAGNE AFFONSO
+
+3410 St Helena Unified School District, Governing Board Member | vote for 3 | On Ballot: No
+    LAURA SYMON (incumbent)
+    SHAWN MOURA (incumbent)
+    JEANMARIE WOLF (incumbent)
+
+3510 Calistoga Joint Unified School District, Governing Board Member | vote for 2 | On Ballot: Yes
+    CECILIA RAMIREZ
+    LAUREL RIOS (incumbent)
+    IRENE PENA
+    REBECCA SAGER
+
+3810 Pope Valley Union School District, Governing Board Member | vote for 2 | On Ballot: No
+    SHASTA TORREY (incumbent)
+    BRIAN VARNER
+
+5030 City Council, City of American Canyon | vote for 2 | On Ballot: Yes
+    JASON KISHINEFF
+    SINDY BIEDERMAN
+    ROBERT COLE
+    JIM GIRON
+    DAVID ORO
+
+5040 Mayor, City of Calistoga | vote for 1 | On Ballot: No
+    KEVIN EISENBERG
+
+5060 City Council, City of Calistoga | vote for 2 | On Ballot: No
+    LANA RICHARDSON
+    SCOTT COOPER
+
+5071 City Council District 1, City of Napa | vote for 1 | On Ballot: Yes
+    CHRISTOPHER DENATALE (appointed incumbent)
+
+5073 City Council District 3, City of Napa | vote for 1 | On Ballot: Yes
+    MARY LUROS
+    JIM HINTON
+
+5100 Mayor, City of St Helena | vote for 1 | On Ballot: Yes
+    BONNIE SCHOCH
+    PATRICK KENEALY
+
+5120 City Council, City of St Helena | vote for 2 | On Ballot: Yes
+    KATE SPADAROTTO (appointed incumbent)
+    JOSHUA PARKE
+    DANIEL HALE
+    JOHN PEDERSEN
+    SCOTT DIAZ (appointed incumbent)
+
+5130 Mayor, Town of Yountville | vote for 1 | On Ballot: Yes
+    MARJORIE MOHLER
+    JOE TAGLIABOSCHI
+
+5150 Member of Town Council, Town of Yountville | vote for 2 | On Ballot: Yes
+    ROBIN MCKEE (incumbent)
+    JESSI BUGDEN
+    MATTHEW CHRZANOWSKI
+    HILLERY BOLT TRIPPE
+    JILL TURNER
+
+5210 Circle Oaks Water District, Board Member | vote for 2 | On Ballot: No
+    EVA VALENTI-BIRD (appointed incumbent)
+    LISA M HACKETT (appointed incumbent)
+
+5220 Congress Valley Water District, Board Member | vote for 3 | On Ballot: No
+    ERIK ERICKSON
+    ADAM JOFFE (incumbent)
+    ROBERT EDWIN LEE
+
+5250 Los Carneros Water District, Board Member | vote for 2 | On Ballot: No
+    WILL DRAYTON (incumbent)
+    JIM LINCOLN (incumbent)
+
+5301 Napa County Regional Park & Open Space Director, Ward 1 | vote for 1 | On Ballot: No
+    BRAD WAGENKNECHT
+
+5305 Napa County Regional Park & Open Space Director, Ward 5 | vote for 1 | On Ballot: No
+    BARRY CHRISTIAN
+
+5501 Spanish Flat Water District, Board Member | vote for 3 | On Ballot: No
+    CHERYL BEAN (incumbent)
+    JULIA ROBINSON (incumbent)
+    MEGAN JEPSEN (incumbent)

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { parse } from "yaml";
+import { loadElection } from "../src/lib/data";
 
 export const BALLOT = "/2026-11";
 export const isPhone = (info: TestInfo) => info.project.name === "phone";
@@ -55,4 +56,9 @@ export function guideOff(contestId: string, election = "2026-11"): string {
     .sort()[0];
   if (!id) throw new Error(`every published guide picks ${contestId}`);
   return id;
+}
+
+/** Every contest id on the 2026-11 ballot, as the app loads it. */
+export function contestIds(election = "2026-11"): string[] {
+  return loadElection(path.join(process.cwd(), "data"), election).ballot.contests.map((c) => c.id);
 }

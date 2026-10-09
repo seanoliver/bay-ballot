@@ -1,0 +1,43 @@
+guide: napa-dems
+election: 2026-11
+status: published
+source: http://napadems.org/home/ # http only: https serves a *.web-hosting.com certificate and fails verification. The homepage carries the endorsement results.
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  napa-valley-college-trustee-area-2:
+    pick:
+      - Jeff Dodd
+  napa-valley-college-trustee-area-3:
+    pick:
+      - Karina Servente
+  napa-valley-usd-trustee-area-1:
+    pick:
+      - Robin Jankiewicz
+  napa-valley-usd-trustee-area-6:
+    pick:
+      - Elba Gonzalez-Mares
+  napa-valley-usd-trustee-area-7:
+    pick:
+      - Jason M. Dooley
+  american-canyon-council:
+    pick:
+      - David Oro
+  napa-council-1:
+    pick:
+      - Christopher DeNatale
+  napa-council-3:
+    pick:
+      - Mary Luros
+  yountville-mayor:
+    pick:
+      - Marjorie Mohler
+  yountville-council:
+    pick:
+      - Robin McKee
+  st-helena-mayor:
+    pick:
+      - Bonnie Schoch
+  st-helena-council:
+    pick:
+      - John Pedersen

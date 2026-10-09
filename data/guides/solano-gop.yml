@@ -1,0 +1,7 @@
+id: solano-gop
+name: Solano County Republican Party
+shortName: "Solano Republicans"
+description: The official Republican Party committee for Solano County. Its voter guide lists endorsed and recommended candidates; both count as picks here.
+type: party
+homepage: https://solanorepublicanparty.com/
+areas: [solano]

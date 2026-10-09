@@ -5,7 +5,7 @@ source: https://www.plannedparenthoodaction.org/planned-parenthood-northern-cali
 archived:
   - source: https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements
     snapshot: https://web.archive.org/web/20261007195423/https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund/endorsements
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-09
 hasReasoning: false
 picks:
   assembly-11:
@@ -42,3 +42,33 @@ picks:
   san-rafael-council-2:
     pick:
       - Eli Hill
+  assembly-2:
+    pick:
+      - Chris Rogers
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
+  sonoma-county-supervisor-2:
+    pick:
+      - Joanna Paun
+  sonoma-county-supervisor-4:
+    pick:
+      - Melanie Bagby
+  santa-rosa-council-4:
+    pick:
+      - Melanie Jones-Carter
+  napa-council-3:
+    pick:
+      - Mary Luros
+  solano-county-supervisor-4:
+    pick:
+      - Michael "Mike" Silva
+  vallejo-council-2:
+    pick:
+      - Diosdado "JR" Matulac
+  vallejo-council-4:
+    pick:
+      - Brianna Rogers
+  vallejo-council-5:
+    pick:
+      - Rebekah Truemper

@@ -1,0 +1,59 @@
+Solano County Registrar of Voters, Notice of Election, November 3, 2026 General Election (dated 7/8/2026), and Notice of Extensions (dated 8/7/2026).
+Sources: https://www.solanocounty.gov/2026-november-general-election-notice-election and https://www.solanocounty.gov/notice-extensions-offices-november-3-2026-ballot (retrieved 2026-10-09 with curl)
+Text copy of the offices listed. Filing instructions, addresses and contact details are omitted. Solano is in Board of Equalization District 1, Congress District 8 and Assembly District 11, and has no State Senate contest. Solano is not part of the Regional Transit Measure (RTM).
+
+NOTICE OF ELECTION (7/8/2026)
+A General Election will be held in the County of Solano, State of California, on November 3, 2026 for the following offices:
+
+Voter Nominated Offices:
+    Governor
+    Lieutenant Governor
+    Secretary of State
+    State Controller
+    State Treasurer
+    Attorney General
+    Insurance Commissioner
+    1st Board of Equalization
+    Representative in Congress - District 8
+    Member of the Assembly - District 11
+    Appellate and Supreme Court Justices
+
+Nonpartisan Offices:
+    State Superintendent of Public Instruction
+    Board of Supervisors – District 4
+    Solano County Board of Education - Trustee Areas 3, 4, and 6
+    Yolo County Board of Education – Trustee Areas 2 and 5
+    San Joaquin Delta College – Trustee Area 4
+    Solano Community College – Trustee Areas 1, 2, 4, and 6
+    Benicia Unified School District – Trustee Areas 1, 4, and 5
+    Dixon Unified School District
+    Fairfield-Suisun Unified School District – Trustee Areas 4, 5, and 7
+    River Delta Unified School District – Trustee Areas 1 and 3
+    Travis Unified School District – Trustee Areas 1 and 2
+    Vacaville Unified School District – Trustee Areas 1, 3, and 5
+    Vallejo City Unified School District – Trustee Areas 1, 3, and 5
+    Winters Joint Unified School District – Trustee Areas 2 and 3
+    Cordelia Fire Protection District
+    Solano Irrigation District – Divisions 1 and 5
+    Rural North Vacaville Water District
+
+City offices (Benicia, Dixon, Fairfield, Rio Vista, Suisun City, Vacaville, Vallejo) are filed with each City Clerk and listed in Solano-Candidates-Nov2026.txt.
+
+NOTICE OF EXTENSIONS (8/7/2026)
+Offices whose filing period was extended to August 12, 2026 (the incumbent did not file):
+    Solano County Board of Education, Trustee Area 6
+    Benicia Unified School District, Trustee Area 1
+    Benicia Unified School District, Trustee Area 4
+    Fairfield-Suisun Unified School District, Trustee Area 4
+    Fairfield-Suisun Unified School District, Trustee Area 5
+    River Delta Unified School District, Trustee Area 3
+    Travis Unified School District, Trustee Area 2
+    Vallejo City Unified School District, Trustee Area 1
+    Vallejo City Unified School District, Trustee Area 3
+    Rural North Vacaville Water District
+    City of Dixon Elected City Clerk
+    City of Fairfield Mayor
+    City of Rio Vista Councilmember
+    City of Vacaville Mayor
+    City of Vacaville Councilmember, District 4
+    City of Vallejo Councilmember, District 5

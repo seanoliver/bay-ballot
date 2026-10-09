@@ -1,0 +1,78 @@
+guide: solano-dems
+election: 2026-11
+status: published
+source: https://www.solanodemocrats.com/endorsements
+fetchedAt: 2026-10-09
+hasReasoning: false
+picks:
+  solano-county-supervisor-4:
+    pick:
+      - Michael "Mike" Silva
+  solano-county-board-of-education-6:
+    pick:
+      - Kathryn Kedarisetty
+  solano-cc-trustee-area-4:
+    pick:
+      - Tony Yang
+  benicia-usd-trustee-area-1:
+    pick:
+      - Dan Smith
+  dixon-usd-trustee:
+    pick:
+      - Julian Y. Cuevas
+      - Jewel Fink
+  vallejo-city-usd-trustee-area-1:
+    pick:
+      - Judith Lerner
+  benicia-council:
+    pick:
+      - Kari Birdseye
+      - Terry Scott
+  dixon-council-2:
+    pick:
+      - Christina M. Cerna
+  fairfield-council-1:
+    pick:
+      - K. Patrice Williams
+  fairfield-council-3:
+    pick:
+      - Doug Carr
+  fairfield-council-5:
+    pick:
+      - Doriss Panduro
+  suisun-city-mayor:
+    pick:
+      - Alma Hernandez
+  suisun-city-council:
+    pick:
+      - Princess Washington
+      - Jenalee Dawson
+  vacaville-mayor:
+    pick:
+      - Sarah Chapman
+  vacaville-council-4:
+    pick:
+      - Davonna Finley
+  vacaville-council-6:
+    pick:
+      - Jeanette Wylie
+  vallejo-council-4:
+    pick:
+      - Brianna Rogers
+  vallejo-council-5:
+    pick:
+      - Rebekah Truemper
+  solano-county-measure-e:
+    pick: Y
+  solano-county-measure-h:
+    pick: Y
+  dixon-usd-measure-u:
+    pick: Y
+  vacaville-measure-v:
+    pick: Y
+  benicia-measure-x:
+    pick: Y
+  benicia-measure-y:
+    pick: Y
+  benicia-measure-z:
+    pick: Y

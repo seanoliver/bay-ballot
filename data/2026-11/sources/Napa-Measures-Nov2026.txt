@@ -1,0 +1,26 @@
+Napa County Registrar of Voters, local measures, November 3, 2026 General Election.
+Source: https://www.napacounty.gov/2319/Local-Measures (retrieved 2026-10-09 in a browser, since napacounty.gov returns 403 to curl). The county hosts Measure B's documents; for P, S and Y it links to the city and town sites, quoted below.
+Each entry: letter and jurisdiction, ballot question or title as published, and the vote required where a source states it. Napa is not part of the Regional Transit Measure (RTM). The City of Napa and Calistoga have no measures.
+
+Measure B – County of Napa (citizen initiative)
+    Title: The Napa County Wildfire Preparedness, Watershed Protection and Open Space Preservation Act of 2026. An initiative imposing a one-half percent (1/2%) sales tax for wildfire preparedness, watershed protection, and open space preservation.
+    Summary (Ballot Title and Summary): Impose a countywide retail transaction and use tax ("sales tax") at the rate of one-half of one percent (1/2%) ... for eighteen (18) years, beginning on April 1, 2027 and expiring on March 31, 2045. ... mandate allocation of 50% of sales tax proceeds to Napa County and 50% of the sales tax proceeds to the Napa County Regional Park and Open Space District.
+    Vote required: "if approved by a simple majority (50% plus one vote) of the voters voting on November 3, 2026" (Impartial Analysis by the County Counsel)
+    Ballot Title and Summary: https://www.napacounty.gov/DocumentCenter/View/40594/Measure-B---Ballot-Title-and-Summary---Napa-County-PDF
+    Impartial Analysis: https://www.napacounty.gov/DocumentCenter/View/46097/Measure-B---Impartial-Analysis---Napa-County-PDF
+    Page: https://www.napacounty.gov/2471/County-of-Napa---Measure-B
+
+Measure P – City of American Canyon
+    Question: Shall an ordinance funding American Canyon's general City services, such as maintaining 911 response/neighborhood police patrols; preventing crime; reducing wildfire risk by managing brush/other flammable vegetation; addressing speeding/unsafe driving; keeping public areas/parks safe/clean; maintaining and expanding safe places for children to play; maintaining parks, trails, youth/adult recreation, senior programming, amongst others; by establishing a 1% sales tax, providing approximately $3,700,000 annually until ended by voters, requiring audits, spending disclosures, funds locally controlled, be adopted?
+    Vote required: not stated on the city page (a general tax)
+    Page: https://www.americancanyon.gov/Work/Elections-Central/Measure-P (403 to curl; read in a browser)
+
+Measure S – City of St. Helena ("St. Helena City Services Measure")
+    Question: To maintain/improve St. Helena's long-term finances and maintain 911 fire/public safety response, St. Helena's infrastructure including repairing roads/potholes/sidewalks; reducing local wildfire risk by managing brush/other fuels; maintain parks; supporting local businesses; for other general city services; shall the measure be adopted establishing a ½¢ locally controlled sales tax, generating approximately $2,000,000 annually until ended by voters, requiring independent audits, public spending disclosure, all funds benefiting St. Helena residents?
+    Vote required: not stated on the city page (a general tax)
+    Page: https://www.cityofsthelena.gov/985/Measure-S---Ballot-Question
+
+Measure Y – Town of Yountville
+    Subject: "The measure asks Yountville voters whether to update the Town's appropriations limit, sometimes referred to as the Gann Limit, for a four-year period." It does not create a new tax or increase existing tax rates.
+    Vote required: not stated on the town page
+    Page: https://www.townofyountville.gov/659/Measure-Y-Town-Appropriations-Limit

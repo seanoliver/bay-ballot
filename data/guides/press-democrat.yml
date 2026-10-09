@@ -1,0 +1,7 @@
+id: press-democrat
+name: The Press Democrat
+shortName: "Press Democrat"
+description: The Santa Rosa daily newspaper, whose editorial board endorses in Sonoma and Napa County races and measures and on some state propositions.
+type: newspaper
+homepage: https://www.pressdemocrat.com/
+areas: [sonoma, napa-county]

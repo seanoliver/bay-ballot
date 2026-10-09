@@ -1,0 +1,7 @@
+id: reform-california
+name: Reform California
+shortName: "Reform California"
+description: A conservative advocacy group led by Carl DeMaio. Its "Plain English" voter guide, published county by county, rates candidates and takes positions on state and local measures.
+type: advocacy
+homepage: https://www.reformcalifornia.org/
+areas: [sf, san-mateo, palo-alto, mountain-view, marin, contra-costa, santa-clara-county, san-jose, alameda-county, oakland, berkeley, sonoma, napa-county, solano]

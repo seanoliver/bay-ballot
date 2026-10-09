@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 picks:
   supervisor-8:
@@ -207,3 +207,6 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-j:
     pick: Y
+  vallejo-council-5:
+    pick:
+      - Tara Beasley Stansberry

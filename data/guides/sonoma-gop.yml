@@ -1,0 +1,7 @@
+id: sonoma-gop
+name: Sonoma County Republican Party
+shortName: "Sonoma Republicans"
+description: The official Republican Party committee for Sonoma County.
+type: party
+homepage: https://www.sonomacountygop.org/
+areas: [sonoma]
