@@ -98,7 +98,7 @@ contests:
     kind: candidate
     candidates: [Robert Herbst, Jeffrey Kuhn, Julie A McMillan, Paul J. Roesler]
     seats: 2
-    aliases: { Julie A McMillan: [Julie McMillan, Julie A. McMillan], Paul J. Roesler: [Paul Roesler] }
+    aliases: { Julie A McMillan: [Julie McMillan, Julie A. McMillan], Paul J. Roesler: [Paul Roesler], Robert Herbst: [Bob Herbst] }
     jurisdiction: { level: city, name: Ross }
   - id: ross-measure-u
     section: Local measures
