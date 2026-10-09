@@ -66,14 +66,12 @@ test.describe("Bay Area fallback", () => {
   });
 
   test("the reasons-only filter applies to the Bay Area tally", async ({ page }) => {
+    const count = async () => Number((await bayBlocks(judicial(page)).first().getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
+    await page.goto(SAN_MATEO);
+    const all = await count();
+    // The page is server-rendered unfiltered; the filter applies after hydration, so poll for it.
     await page.goto(`${SAN_MATEO}?why=1`);
-    const label = bayBlocks(judicial(page)).first().getByText(FROM_BAY);
-    const filtered = Number((await label.textContent())!.match(/^\d+/)![0]);
-    await page.goto(`${SAN_MATEO}`);
-    await page.evaluate(() => localStorage.removeItem("bb-filters"));
-    await page.reload();
-    const all = Number((await bayBlocks(judicial(page)).first().getByText(FROM_BAY).textContent())!.match(/^\d+/)![0]);
-    expect(filtered).toBeLessThan(all);
+    await expect.poll(count).toBeLessThan(all);
   });
 
   test("local contests never fall back to the Bay Area", async ({ page }) => {
