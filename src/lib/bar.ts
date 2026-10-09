@@ -35,12 +35,9 @@ function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: Candidate
   };
   const endorsed = counts.filter((c) => c.count > 0);
   const byCount = [...endorsed].sort((a, b) => b.count - a.count || order(a.name) - order(b.name) || a.name.localeCompare(b.name, "en"));
-  // The top four by count get slots, assigned in ballot order; the rest are "other".
-  const kept = byCount.slice(0, MAX_SLOTS);
-  const ranked = new Map(byCount.map((c, i) => [c.name, i]));
-  const slotted = [...kept].sort((a, b) => order(a.name) - order(b.name) || (ranked.get(a.name) ?? 0) - (ranked.get(b.name) ?? 0));
+  // Slots follow standing across all guides (leader = 1); callers pass unfiltered entries so a filter never repaints a name.
   const out: Slots = new Map();
-  slotted.forEach((c, i) => out.set(c.name, (i + 1) as Slot));
+  byCount.slice(0, MAX_SLOTS).forEach((c, i) => out.set(c.name, (i + 1) as Slot));
   for (const c of byCount.slice(MAX_SLOTS)) out.set(c.name, "other");
   return out;
 }

@@ -57,8 +57,8 @@ describe("shareCard", () => {
     const card = shareCard(race, [...many(15, ["Scott Wiener"]), ...many(12, ["Connie Chan"])]);
     expect(card).toMatchObject({ title: "U.S. Rep., District 11", lead: "Scott Wiener 56%", leadTone: "candidate", sub: "15 of 27 guides" });
     expect(card.legend).toEqual([
-      { label: "Wiener", count: 15, tone: "c2" },
-      { label: "Chan", count: 12, tone: "c1" },
+      { label: "Wiener", count: 15, tone: "c1" },
+      { label: "Chan", count: 12, tone: "c2" },
     ]);
   });
   it("marks ranked leads as the site does", () => {
