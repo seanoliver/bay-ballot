@@ -25,13 +25,13 @@ function Chip({ l, shape, bayHref }: { l: AreaLink; shape?: Shape; bayHref?: str
       data-within={l.within || undefined}
       className={cn(
         "inline-flex min-h-10 items-center gap-2 rounded-full pr-3 pl-2.5 ring-1 ring-foreground/15",
-        l.current ? "bg-foreground font-medium text-background" : l.within ? "font-medium ring-2 ring-foreground/50 hover:bg-muted" : "hover:bg-muted",
+        l.current ? cn("bg-foreground font-medium text-background", clears && "hover:bg-foreground/85") : l.within ? "font-medium ring-2 ring-foreground/50 hover:bg-muted" : "hover:bg-muted",
       )}
     >
       <Outline shape={shape} />
       {l.label}
       {clears ? (
-        <span aria-hidden="true" className="chip-clear -mr-1">
+        <span aria-hidden="true" className="chip-clear -mr-1 shrink-0">
           <span className="grid size-5 place-items-center rounded-full bg-background/20">
             <X className="size-3" strokeWidth={2.5} />
           </span>

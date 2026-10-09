@@ -24,6 +24,7 @@ test("the area picker lists the Bay Area and counties, and marks a city page's c
   await expect(nav.getByRole("link", { name: "San Jose" })).toHaveCount(0);
   await page.goto(`${BALLOT}/san-jose`);
   await expect(nav.getByRole("link", { name: "Santa Clara", exact: true })).toHaveAttribute("data-within", "true");
+  await expect(nav.getByRole("link", { name: "Santa Clara", exact: true })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
   await expect(nav.getByRole("link", { name: "San Mateo", exact: true })).not.toHaveAttribute("data-within");
   await expect(nav.locator("[aria-current=page]")).toHaveCount(0);
 });
@@ -39,11 +40,26 @@ test("a county page's chip clears back to the Bay Area", async ({ page }) => {
   await expect(nav.getByRole("link", { name: "Bay Area" })).toHaveAttribute("aria-current", "page");
 });
 
+test("the clear button widens in from zero width", async ({ page }) => {
+  await page.goto(`${BALLOT}/san-mateo`);
+  const x = page.getByRole("link", { name: "Clear San Mateo" }).locator(".chip-clear");
+  const at = (t: "start" | "end") =>
+    x.evaluate((el, t) => {
+      const [a] = el.getAnimations();
+      if (!a) return el.getBoundingClientRect().width;
+      a.pause();
+      a.currentTime = t === "start" ? 0 : Number(a.effect?.getTiming().duration);
+      return el.getBoundingClientRect().width;
+    }, t);
+  expect(await at("start")).toBe(0);
+  expect(await at("end")).toBe(20);
+});
+
 test("the SF page has its own title, canonical URL and contests", async ({ page }) => {
   await page.goto(`${BALLOT}/sf`);
   await expect(page).toHaveTitle("San Francisco endorsements (Nov 2026)");
   await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", `https://bayballot.com${BALLOT}/sf`);
-  await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "San Francisco" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Clear San Francisco" })).toHaveAttribute("href", BALLOT);
   await expect(page.getByText(/November 3, 2026 · \d+ guides · \d+ contests · \d+ endorsements/)).toBeVisible();
   await expect(contestRow(page, "Proposition B")).toBeVisible();
 });

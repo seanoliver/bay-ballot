@@ -210,19 +210,15 @@
 /* The selected area chip's clear button widens in from nothing, so the chip grows instead of jumping. */
 @keyframes chip-clear {
   from {
-    grid-template-columns: 0fr;
-    opacity: 0;
+    width: 0;
     margin-left: -0.5rem;
+    opacity: 0;
   }
 }
 @utility chip-clear {
-  display: grid;
-  grid-template-columns: 1fr;
+  width: 1.25rem;
   overflow: hidden;
   animation: chip-clear var(--motion-in) var(--ease-out) both;
-  & > * {
-    min-width: 0;
-  }
 }
 
 /* Thin, muted scrollbars for panes that scroll on their own. */
