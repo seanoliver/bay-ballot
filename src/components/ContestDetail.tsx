@@ -6,11 +6,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideGuide, type SideQuote } from "@/lib/detail";
 import { cardDescription, contestHeadline, officialLink } from "@/lib/display";
+import { skippedLabel, type Scope } from "@/lib/fallback";
 import type { Row } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
+import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
 import { useCarriedQuery } from "./useBallotFilters";
 import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
@@ -38,18 +40,21 @@ const BORDER: Record<BarTone, string> = {
   empty: "border-border",
 };
 
+export type DetailFallback = { place: string; scope: Scope; onScope: (s: Scope) => void; onReveal: () => void; rows: Row[]; total: number; slots?: Slots };
+
 export function ContestDetail({
   election,
   contest,
-  rows,
+  rows: areaRows,
   pending,
   heading = "h2",
   titleId,
   answer,
-  slots,
+  slots: areaSlots,
   pageLink = true,
   shortNames = true,
   action,
+  fallback,
 }: {
   election: string;
   contest: Contest;
@@ -62,7 +67,11 @@ export function ContestDetail({
   pageLink?: boolean;
   shortNames?: boolean;
   action?: ReactNode;
+  fallback?: DetailFallback;
 }) {
+  const bay = fallback?.scope === "bay";
+  const rows = bay ? fallback.rows : areaRows;
+  const slots = bay ? fallback.slots : areaSlots;
   const description = cardDescription(contest);
   const official = officialLink(contest);
   const result = resultHeadline(contest, rows);
@@ -70,47 +79,69 @@ export function ContestDetail({
   const ranked = contestHeadline(contest, rows).headline.ranked;
   const multi = contest.kind === "candidate" && contest.seats > 1;
   const Title = heading || "h2";
+  const scopeSwitch = fallback ? <ScopeSwitch place={fallback.place} scope={fallback.scope} onChange={fallback.onScope} /> : null;
+  const summary = (
+    <>
+      <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <p className={cn("flex items-center text-lg font-semibold", LEAD_TEXT[result.tone])}>
+          {result.lead}
+          {ranked ? <RankedPopover rows={rows} /> : null}
+        </p>
+        {result.detail ? <p className="text-sm text-muted-foreground">{result.detail}</p> : null}
+      </div>
+      <VerdictBar contest={contest} rows={rows} slots={slots} count={false} size="detail" legend={false} className="mt-2" />
+      {multi ? null : <Legend segments={barSegments(tally(contest, rows.map((r) => r.entry)), contest, slots)} />}
+    </>
+  );
+  const guides = sides.length ? (
+    <div>
+      {sides.map((side) => (
+        <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} />
+      ))}
+      {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} /> : null}
+    </div>
+  ) : (
+    <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
+  );
+  const title = (
+    <Title id={titleId} tabIndex={titleId ? -1 : undefined} className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}>
+      {contest.title}
+    </Title>
+  );
   return (
     <div className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
+            <div className={cn("min-w-0", scopeSwitch && "flex-1")}>
               <p className="text-sm text-muted-foreground">{contest.section}</p>
-              <Title
-                id={titleId}
-                tabIndex={titleId ? -1 : undefined}
-                className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}
-              >
-                {contest.title}
-              </Title>
+              {scopeSwitch ? (
+                <div className="flex flex-col items-start gap-2 xl:flex-row xl:justify-between xl:gap-3">
+                  {title}
+                  <div className="shrink-0 xl:mt-1">{scopeSwitch}</div>
+                </div>
+              ) : (
+                title
+              )}
             </div>
             {action}
           </div>
+        ) : scopeSwitch ? (
+          <div className="pt-3">{scopeSwitch}</div>
         ) : null}
         {description ? <p className="measure mt-1 text-sm text-muted-foreground">{description}</p> : null}
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
-        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-          <p className={cn("flex items-center text-lg font-semibold", LEAD_TEXT[result.tone])}>
-            {result.lead}
-            {ranked ? <RankedPopover rows={rows} /> : null}
-          </p>
-          {result.detail ? <p className="text-sm text-muted-foreground">{result.detail}</p> : null}
-        </div>
-        <VerdictBar contest={contest} rows={rows} slots={slots} count={false} size="detail" legend={false} className="mt-2" />
-        {multi ? null : <Legend segments={barSegments(tally(contest, rows.map((r) => r.entry)), contest, slots)} />}
+        {fallback?.scope === "area" ? <p className="mt-4 text-sm text-muted-foreground">{skippedLabel(fallback.place)}</p> : null}
+        {bay ? (
+          <BayBlock id={`bay-${titleId ?? "sheet"}-${contest.id}`} title={contest.title} shown={rows.length} total={fallback.total} onReveal={fallback.onReveal} className="mt-4">
+            {summary}
+            <div className="mt-8">{guides}</div>
+          </BayBlock>
+        ) : null}
+        {fallback ? null : summary}
       </div>
 
-      {sides.length ? (
-        <div>
-          {sides.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} />
-          ))}
-          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} /> : null}
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
-      )}
+      {fallback ? null : guides}
 
       <Footer pending={pending} official={official} page={pageLink ? `/${election}/${contest.id}` : null} />
     </div>
