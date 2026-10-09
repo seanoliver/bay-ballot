@@ -191,7 +191,7 @@ async function refreshGuide(
     result.held = applied.held;
     result.droppedByVerifier = applied.droppedQuotes.length;
     const picked = (c: string) => c in next.picks || (next.held ?? []).some((h) => h.contestId === c);
-    result.missing = scoped ? applied.missing.filter((m) => inScope(m.contestId) && !picked(m.contestId)) : applied.missing;
+    result.missing = applied.missing.filter((m) => inScope(m.contestId) && !picked(m.contestId));
     result.notes = [
       ...notes,
       ...applied.droppedQuotes.map((d) => `${d.contestId}: verifier dropped quote (${d.reason}): "${d.text.slice(0, 80)}"`),
@@ -415,9 +415,14 @@ export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
     if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
     if (r.status !== "changed") return [];
+    const held = new Set(r.held.map((h) => h.contestId));
     return [
       ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
-      ...r.diff.filter((d) => d.startsWith("- ")).map((d) => `${r.id}: removed ${d.slice(2).split(":")[0]}`),
+      ...r.diff
+        .filter((d) => d.startsWith("- "))
+        .map((d) => d.slice(2).split(":")[0])
+        .filter((id) => !held.has(id))
+        .map((id) => `${r.id}: removed ${id}`),
       ...r.missing.map((m) => `${r.id}: verifier found ${m.contestId} on the page but not in the picks`),
     ];
   });

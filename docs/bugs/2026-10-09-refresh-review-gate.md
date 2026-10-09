@@ -29,4 +29,4 @@ Refresh PR #91 had two held picks and one wrongly removed pick (Mercury News, Ro
 
 ## Guardrail
 
-The gate checks `review` before the exit code, and `tests/refresh.test.ts` covers a held pick alongside a fetch failure.
+The gate checks `review` before the exit code, and `tests/refresh.test.ts` covers a held pick alongside a fetch failure. The refresh job also labels the PR as soon as it opens or updates it (#103), so the label holds even if `gate` never runs.
