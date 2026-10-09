@@ -248,6 +248,25 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(2);
   });
 
+  it("reports a verifier 'missing' contest only when it is neither picked nor held", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const missing = [
+      { contestId: "prop-b", pick: "N", evidence: "No on Prop B" },
+      { contestId: "prop-c", pick: "Y", evidence: "Yes on Prop C" },
+      { contestId: "prop-a", pick: "Y", evidence: "Yes on Prop A" },
+    ];
+    const client = { messages: { stream: vi.fn((req: { model: string }) => ({
+      finalMessage: async () => ({
+        stop_reason: "end_turn", stop_details: null,
+        usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+        content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? { ...verifyOut(true), missing } : extractOut) }],
+      }),
+    })) } } as unknown as ExtractClient;
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "x") })), { root, election: ELECTION });
+    const r = results[0] as Extract<GuideResult, { status: "changed" }>;
+    expect(r.missing.map((m) => m.contestId)).toEqual(["prop-a"]);
+  });
+
   it("re-verifies a guide with held picks even when the extracted picks didn't change", async () => {
     const root = setup(["alpha"]);
     const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
@@ -436,6 +455,11 @@ describe("reviewReasons", () => {
   it("names removed picks and picks the verifier says are missing", () => {
     const r = changed({ diff: ["- ross-council: Julie A McMillan, Robert Herbst"], missing: [{ contestId: "fairfax-council", pick: "Bragman", evidence: "x" }] });
     expect(reviewReasons([r])).toEqual(["g: removed ross-council", "g: verifier found fairfax-council on the page but not in the picks"]);
+  });
+
+  it("lists a pick moved to held once, as held, not also as removed", () => {
+    const r = changed({ diff: ["- oakland-usd-2: Arielle Fleisher"], held: [{ contestId: "oakland-usd-2", pick: ["Arielle Fleisher"], reason: "wrong-rank", evidence: "x" }] });
+    expect(reviewReasons([r])).toEqual(["g: held oakland-usd-2 (wrong-rank)"]);
   });
 
   it("names shrunk guides, including ones skipped as already shrunk", () => {

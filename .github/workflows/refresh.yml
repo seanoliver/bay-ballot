@@ -146,8 +146,8 @@ jobs:
             url="$(gh pr create --base main --head "$BRANCH" --title "data: daily refresh" --body-file pr-body.md)"
             pr="${url##*/}"
           fi
+          # Before anything else can fail: gate needs `pr`, and labels again. Labeling is best effort.
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
-          # Best effort and before anything else can fail: gate needs `pr` and labels again.
           if [ "$(printf '%s' "${REVIEW:-[]}" | jq 'length')" != "0" ]; then
             gh label create needs-review --color d93f0b --description "Data refresh needs a human look" --force || echo "::warning::could not create the needs-review label"
             gh pr edit "$pr" --add-label needs-review || echo "::warning::could not label PR #$pr"
