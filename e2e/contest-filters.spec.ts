@@ -109,14 +109,6 @@ test.describe("contest page filters", () => {
     await expect(page).toHaveURL(/[?&]off=abundant-sf/);
   });
 
-  test("a filter change on a contest page keeps the hidden counties in the URL", async ({ page }, info) => {
-    await openContest(page, "?offc=san-mateo");
-    const panel = await filterPanel(page, info);
-    await panel.getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
-    await expect(page).toHaveURL(/[?&]why=1/);
-    await expect(page).toHaveURL(/[?&]offc=san-mateo/);
-  });
-
   test("a filter change on an area list keeps guides hidden outside that area", async ({ page }, info) => {
     await page.goto(`${BALLOT}/sf?off=courage-california`);
     await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { COUNTIES_PARAM } from "@/lib/counties";
 import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
@@ -21,6 +20,13 @@ function writeKey(key: string, v: string) {
   } catch {
   }
 }
+
+// The Counties filter's saved choice, from before the area chips replaced it.
+if (typeof window !== "undefined")
+  try {
+    window.localStorage.removeItem("bb-counties");
+  } catch {
+  }
 
 // Counted in browser history calls, which throw past 100 in 10 seconds: Next adds a replaceState after each of our writes and after every popstate.
 export const HISTORY_BUDGET = historyBudget({ max: 90, windowMs: 10_000 });
@@ -104,24 +110,6 @@ export function useQueryParam(name: string): [string | null, (v: string | null) 
   return [value, set];
 }
 
-export function useStoredParam(name: string, storageKey: string): [string | null, (v: string) => void] {
-  const query = useQuery();
-  const stored = useSyncExternalStore(subscribe, () => readKey(storageKey), () => null);
-  const p = new URLSearchParams(query);
-  const value = p.has(name) ? p.get(name) : stored;
-  const set = useCallback(
-    (v: string) => {
-      writeKey(storageKey, v);
-      const q = new URLSearchParams(currentSearch());
-      if (v) q.set(name, v);
-      else q.delete(name);
-      replaceQuery(q.toString());
-    },
-    [name, storageKey],
-  );
-  return [value, set];
-}
-
 // Holds choices the browser won't store; registered before any subscriber so another tab's write clears it first.
 const memo = new Map<string, string>();
 if (typeof window !== "undefined")
@@ -143,7 +131,7 @@ export function useStoredKey(storageKey: string): [string | null, (v: string) =>
   return [value, set];
 }
 
-const CARRIED = ["off", "offtypes", "why", COUNTIES_PARAM];
+const CARRIED = ["off", "offtypes", "why"];
 
 export function useCarriedQuery(): string {
   return carryQuery(useQuery(), CARRIED);

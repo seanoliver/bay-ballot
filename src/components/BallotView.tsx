@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { COUNTIES_KEY, COUNTIES_PARAM, countyOptions, hiddenCountyOf, parseCounties, toggleCounty, viewCounties, showCountyFilter, toCountiesParam, visibleGroups } from "@/lib/counties";
 import { cardDescription } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, positionGuides, revealGuides, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
@@ -24,7 +23,7 @@ import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey, useStoredParam } from "./useBallotFilters";
+import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
@@ -64,23 +63,13 @@ type Props = {
 };
 
 export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null }: Props) {
-  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", COUNTIES_PARAM] });
-  const options = useMemo(() => (area === null ? countyOptions(groups) : []), [area, groups]);
-  const [offParam, setOffParam] = useStoredParam(COUNTIES_PARAM, COUNTIES_KEY);
-  const offCounties = useMemo(() => parseCounties(offParam, options), [offParam, options]);
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
-  const view = useMemo(() => viewCounties(groups, offCounties, requested), [groups, offCounties, requested]);
-  const listed = useMemo(() => visibleGroups(groups, view.off), [groups, view.off]);
   useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
   const [announce, setAnnounce] = useState("");
-  const [announcedFor, setAnnouncedFor] = useState<string | null>(null);
-  if (view.revealed && requested !== announcedFor) {
-    setAnnouncedFor(requested);
-    setAnnounce(`Showing ${view.revealed.name} contests for this link`);
-  }
   const paneRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   // Pane motion only follows a click or key: a pane opened by ?c= on load appears without animating.
@@ -89,8 +78,8 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const all = useMemo(() => listed.flatMap((g) => g.sections.flatMap((s) => s.contests)), [listed]);
-  const nav = useMemo(() => navModel(listed), [listed]);
+  const all = useMemo(() => groups.flatMap((g) => g.sections.flatMap((s) => s.contests)), [groups]);
+  const nav = useMemo(() => navModel(groups), [groups]);
   const [navSection, setNavSection] = useState<string | null>(null);
   const [navOpen, setNavOpen] = useState(false);
   const [navStuck, setNavStuck] = useState(false);
@@ -209,20 +198,6 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     if (!s || !b || !fallback) return undefined;
     return { place: fallback.place, scope: sectionScope(chosen[scopeKey(s)], "bay"), onScope: (v: Scope) => setScope(s, v), onReveal: () => revealBay(c), ...b };
   };
-  const setOffCounties = (off: string[]) => {
-    markHomeVisit(area);
-    setOffParam(toCountiesParam(off));
-    const sel = stepped ?? requested;
-    if (sel !== null && hiddenCountyOf(groups, off, sel)) {
-      stepWrite.cancel();
-      setStepped(null);
-      setRequested(null);
-    }
-  };
-  const onToggleCounty = (id: string) => setOffCounties(view.revealed?.id === id ? offCounties : toggleCounty(offCounties, id));
-  const counties = showCountyFilter(options)
-    ? { options, off: view.off, saved: offCounties, onToggle: onToggleCounty, onShowAll: () => setOffCounties([]) }
-    : undefined;
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);
@@ -235,7 +210,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     revealBayRef.current = revealBay;
   });
   const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
-  const filterProps = { filters, onChange: setFilters, guides, files, counties, typeGuides: allGuides };
+  const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides };
   const carry = useCarriedQuery();
 
   useEffect(() => {
@@ -292,15 +267,9 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   const closePane = () => {
     if (selectedId === null) return;
     const row = document.getElementById(`row-d-${selectedId}`);
-    const hiding = view.revealed;
     select(null);
-    if (hiding) {
-      setAnnounce(`Details closed. ${hiding.name} contests hidden again`);
-      focusTarget(listRef.current)?.focus();
-    } else {
-      setAnnounce("Details closed");
-      row?.focus();
-    }
+    setAnnounce("Details closed");
+    row?.focus();
   };
 
   const onEscape = (e: KeyboardEvent) => {
@@ -405,7 +374,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
           ) : null}
         </div>
         <SectionNav places={nav} current={navSection} open={navOpen} stuck={navStuck} onOpenChange={setNavOpen} onJump={jumpTo} />
-        {listed.map((g, gi) => (
+        {groups.map((g, gi) => (
           <section key={g.key} aria-label={g.heading}>
             <SectionHeading id={nav[gi].id}>{g.heading}</SectionHeading>
             {g.sections.map((s, si) => {

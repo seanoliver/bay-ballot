@@ -32,6 +32,8 @@ An area is a named set of jurisdictions: `sf` = {state, county:San Francisco, ci
 
 ## County filter
 
+Removed on 2026-10-09: the area chips cover picking a county. A stale `?offc=` or `bb-counties` is ignored, and the stored key is cleared on load.
+
 On the Bay Area list, the filter column gets a "Counties" group of checkboxes (San Francisco, San Mateo, Santa Clara), shown once more than one county has data. Unchecking a county hides its county, city and district contests; statewide contests always stay. It works like the guide-type groups: stored in the URL and on the device, with an "All counties" reset. On an area page the group is hidden, since the page is already one area. The address filter, when set, takes precedence and the group shows the address's county as the only one checked.
 
 ## Guides
