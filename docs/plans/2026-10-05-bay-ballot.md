@@ -1382,6 +1382,11 @@ Commit `docs: refresh runbook`.
   - Deterministic scripts for guides whose pages have a stable structure, so they skip the model.
   - Running heavy extraction locally on the maintainer's Claude subscription instead of the API (#63).
 - **Guides index page.** A `/guides` page listing every guide, linking to each `/guides/<id>` page. Each entry shows the guide's type, areas, number of picks, whether it publishes reasons, a link to its site, and years active where a source states it. Page-level stats: guide counts by type and area, and how many explain their picks. Do it together with better guide descriptions (#52), since both add the same per-guide facts.
+- **Guide discovery spike.** A time-boxed spike on finding guides we don't track yet. Try each method on one area, count the new published guides it finds and the time it takes, and keep the methods that pay off as inputs to the automated search (#38). Methods to try:
+  - Reverse lookup: candidates' and measure campaigns' own endorsement lists name the clubs, unions and papers that back them.
+  - Slate mailer organizations registered with the Secretary of State and FPPC.
+  - Directories: county party chartered clubs, central labor council affiliates, and League of Women Voters chapters.
+  - Roundups from local news and CalMatters, and aggregator sites.
 - Trust / Neutral / Avoid per guide (mockup view C; `lean` field already reserved).
 - District map (click your district) as an alternative to typing an address.
 - Other Bay Area counties (contests already carry `jurisdiction`).
