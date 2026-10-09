@@ -6,14 +6,14 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
-      - text: Given the ramblings of her opponent, we cautiously recommend Ma for lieutenant governor.
+      - text: But she has the competence and experience to smoothly assume the duties of the state’s No. 2 office.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   secretary-of-state:
     pick:
@@ -51,14 +51,6 @@ picks:
     quotes:
       - text: Richard Barrera is an increasingly rare California progressive who brings all parties to the table, a skill that the new state superintendent of public instruction will need as the role of the office changes.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  us-rep-11:
-    pick:
-      - Scott Wiener
-    quotes:
-      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-      - text: Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-1:
     pick: Y
     quotes:
@@ -74,6 +66,8 @@ picks:
     quotes:
       - text: Prop 4 has a fatal flaw that opens the door to limited taxpayer funds being wasted on efforts that don’t meaningfully move the needle — at a time of widespread budget deficits.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-5:
+    pick: N
   prop-37:
     pick: Y
     quotes:
@@ -85,18 +79,39 @@ picks:
     pick: N
   prop-41:
     pick: N
+    quotes:
+      - text: But really it’s a cheap ruse to nullify Prop 40, the billionaire wealth tax.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-42:
     pick: N
     quotes:
+      - text: In reality, it’s just another poison-pill measure aimed at killing Prop 40, the billionaire wealth tax.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: You don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-44:
     pick: N
+    quotes:
+      - text: But it creates a complex administrative and legal regime that will drain limited staff time and resources from nonprofit clinics while distracting from patient care.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   rtm:
     pick: Y
     quotes:
       - text: The Bay Area does not work without consistent, reliable, well-functioning public transit.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supervisor-4:
+    pick:
+      - Alan Wong
   prop-a:
     pick: Y
     quotes:
@@ -110,7 +125,7 @@ picks:
   prop-c:
     pick: Y
     quotes:
-      - text: Prop C will not solve San Francisco’s housing crisis, but it is part of a concerted and thoughtful city-directed effort to stem the bleeding.
+      - text: "And it is the only measure on the November ballot that will provide something the city desperately needs: a predictable source of public investment at a time when the cost of building and preserving housing keeps rising."
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-d:
     pick: Y
