@@ -274,6 +274,8 @@ test.describe("desktop keyboard", () => {
 
   test("after clicking filter text, arrows do nothing", async ({ page }) => {
     await openBallot(page, "?c=us-rep-11");
+    // A click before hydration isn't recorded, so the arrow would count as a page key.
+    await expect(page.getByRole("region", { name: "Contests" })).toHaveAttribute("aria-keyshortcuts", /ArrowDown/);
     await page.getByRole("complementary", { name: "Filters" }).getByText("Filters", { exact: true }).click();
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/[?&]c=us-rep-11/);
