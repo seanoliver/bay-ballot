@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { BALLOT, contestRow, isPhone, openBallot, watchErrors } from "./helpers";
 
-// Every SF guide that took a position on Assessor-Recorder endorses Joaquín Torres.
 const TITLE = "Assessor-Recorder";
 const ID = "assessor";
 const COUNT = /Unanimous · (\d+) of \1 guides/;

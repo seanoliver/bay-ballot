@@ -35,7 +35,6 @@ function slotsFromCounts(contest: Pick<Contest, "candidates">, counts: Candidate
   };
   const endorsed = counts.filter((c) => c.count > 0);
   const byCount = [...endorsed].sort((a, b) => b.count - a.count || order(a.name) - order(b.name) || a.name.localeCompare(b.name, "en"));
-  // Slots follow standing across all guides (leader = 1); callers pass unfiltered entries so a filter never repaints a name.
   const out: Slots = new Map();
   byCount.slice(0, MAX_SLOTS).forEach((c, i) => out.set(c.name, (i + 1) as Slot));
   for (const c of byCount.slice(MAX_SLOTS)) out.set(c.name, "other");
