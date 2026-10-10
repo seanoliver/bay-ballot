@@ -61,6 +61,8 @@ Oakland Mayor
 Barbara Lee
 Richmond Mayor
 Claudia Jimenez
+San Leandro City Council
+James Aguilar, District 2
 East Bay Municipal Utility District (EBMUD)
 Luz Gomez, Ward 2
 Marguerite Young, Ward 3
@@ -97,8 +99,6 @@ Seema Lindskog
 San Jose City Council
 Peter Ortiz, District 5
 Gordon Chester, District 9
-San Leandro City Council
-James Aguilar, District 2
 Sunnyvale City Council
 Linda Sell, District 1
 Murali Srinivasan, District 3

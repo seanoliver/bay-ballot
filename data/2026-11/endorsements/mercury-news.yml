@@ -69,27 +69,30 @@ held:
     pick: N
     reason: unclear-match
     evidence: "Only a sidebar headline on Marin IJ pages (\"Endorsement: No on Proposition 40's reckless wealth tax\"). The editorial says \"Written by the Southern California News Group editorial board\", not this guide's boards (review 2026-10-09)."
-  - contestId: superintendent
+  - contestId: san-jose-council-9
     pick:
-      - Richard Barrera
-    reason: not-found
-    evidence: 'Only a headline and truncated blurb: "Barrera vs. Shaw: This candidate ... offers a practical path forward" / "Barrera is a detail-oriented incrementalist..." (no explicit endorsement shown)'
+      - Genny Altwer
+    reason: old-election
+    evidence: Elect Genny Altwer to City Council. May 28, 2026 (primary)
+  - contestId: us-rep-14
+    pick:
+      - Aisha Wahab
+    reason: old-election
+    evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
+      - text: What convinces us that Ma can actually move the needle on her agenda items is the fact that she has already been knee-deep advancing them in a senior executive capacity.
+        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
   insurance-commissioner:
     pick:
       - Ben Allen
     quotes:
-      - text: Further, unlike Kim, Allen has already been working on these issues in the Legislature.
-        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
       - text: Californians cannot afford Kim’s experiment.
-        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
-      - text: There is only one candidate who grasps the complexity of this crisis and has the legislative experience to address it.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
     pick:
@@ -102,13 +105,16 @@ picks:
   state-senate-2:
     pick:
       - Damon Connolly
+    quotes:
+      - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
+        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
   us-rep-2:
     pick:
       - Jared Huffman
     quotes:
       - text: His leadership and record of representation are well-known.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
-      - text: He’s proven that he can represent the varied and sometimes conflicting interests in his district.
+      - text: Huffman is up for the challenge, including the addition of those Republican-leaning counties.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
   assembly-12:
     pick:
@@ -123,8 +129,6 @@ picks:
       - Abbey Picus
     quotes:
       - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
-      - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
         source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
   san-rafael-council-3:
     pick:
@@ -149,8 +153,6 @@ picks:
     quotes:
       - text: Andre, Margulies and Friedel are solid experienced choices for the council.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
-      - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
-        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
   san-anselmo-council:
     pick:
       - Steve Burdo
@@ -174,31 +176,15 @@ picks:
       - Robert Herbst
       - Julie A McMillan
     quotes:
-      - text: Having Herbst on the council will provide a voice and vote for his side of the debate.
+      - text: McMillan and Herbst offer a balance and breadth of civic experience and perspectives.
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
-  fairfax-council:
-    pick:
-      - Larry Bragman
-      - Matt Da Cunha
-  tamalpais-uhsd-trustee:
-    pick:
-      - Leslie J. Harlander
-      - Brian A. Sutherland
-      - Valerie Wynn
   marin-county-measure-p:
     pick: Y
     quotes:
-      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
-        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
       - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
         source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
   sausalito-measure-x:
     pick: Y
-    quotes:
-      - text: Measure X is a positive step in the right direction.
-        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
-      - text: Sausalito can no longer afford inaction.
-        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-healthcare-measure-cc:
     pick: Y
     quotes:
@@ -223,3 +209,15 @@ picks:
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
     pick: N
+  tamalpais-uhsd-trustee:
+    pick:
+      - Leslie J. Harlander
+      - Brian A. Sutherland
+      - Valerie Wynn
+  fairfax-council:
+    pick:
+      - Larry Bragman
+      - Matt Da Cunha
+  superintendent:
+    pick:
+      - Richard Barrera

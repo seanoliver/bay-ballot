@@ -17,6 +17,8 @@ picks:
     pick:
       - Fiona Ma
     quotes:
+      - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: Ma, a certified public accountant, has been an effective state treasurer.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: We think she has the experience to be a good lieutenant governor.
@@ -31,6 +33,8 @@ picks:
     pick:
       - Richard Barrera
     quotes:
+      - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
   supervisor-8:
@@ -39,7 +43,7 @@ picks:
       - Michael T. Nguyen
     ranked: true
     quotes:
-      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
+      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
       - text: Nguyen impressed us with his commitment to social housing.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
@@ -98,6 +102,9 @@ picks:
     pick: Y
   prop-2:
     pick: Y
+    quotes:
+      - text: The state has seen its economy go from a $100 billion surplus to a $50 billion deficit within a few years.
+        source: https://www.ebar.com/story/170969/
   prop-3:
     pick: Y
   prop-4:
@@ -140,8 +147,6 @@ picks:
   prop-45:
     pick: N
     quotes:
-      - text: While the state does need more housing, laws enacted in recent years already allow for speedier approvals.
-        source: https://www.ebar.com/story/170969/
       - text: Prop 45 would weaken critical protections for air and water quality protection.
         source: https://www.ebar.com/story/170969/
   rtm:
@@ -160,29 +165,28 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-c:
     pick: Y
-    quotes:
-      - text: Speaking of the Housing Trust Fund, voters can renew this important program through 2058 and increase the annual funding for affordable housing to $125 million.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-d:
     pick: Y
   prop-e:
     pick: Y
     quotes:
+      - text: On the whole, Prop E is a good start.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: However, on balance, the city’s contracting system is in need of fixing.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-f:
     pick: N
     quotes:
-      - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
+      - text: However, we can’t support it, and believe it is a mayoral power grab.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: If the mayor wants to reorganize departments, there should be a public process for that.
+      - text: The mayor already has power over city departments.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-g:
     pick: N
     quotes:
       - text: The park is there; the city controller’s office estimates it would cost millions of dollars to remove it and reconstruct the roadway, along with an annual cost of about $1.4 million.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: Environmental groups that pushed for Prop K’s passage are opposed to Prop G.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-h:
     pick: Y
