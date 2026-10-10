@@ -89,6 +89,7 @@ On 2026-10-10 Sean moved every model call to the subscription, including the dai
 - **Install:** `curl -fsSL https://claude.ai/install.sh | bash -s 2.1.296`, with `DISABLE_UPDATES=1` so the version stays pinned.
 - **Fallback narrowed:** only a usage limit falls back to the API, for the rest of the run. Missing CLI, bad login, timeouts and schema failures fail the call, so a broken token can't quietly bill the API.
 - **Alerting:** `result.json` gains `apiCost`, rounded up to the cent so one small call still counts. Above zero, the GitHub job opens or comments on a "Refresh used the API" issue mentioning Sean, and the local job sends a notification.
+- **Review fixes:** a call on extra usage reports a rejected rate-limit event with `isUsingOverage: true` and succeeds, so only a failed call with a rejected, non-overage event counts as the limit (read from the 2.1.296 binary). A bare `rate_limit` or `billing_error` (throttle, 429, failed payment) fails just that call. The per-call timeout dropped from 30 to 10 minutes so two hung calls can't use up the 90-minute job. `apiFallbackCalls` counts API calls whose guide later failed, which `apiCost` can't price.
 - **Unverified:** a full CI run on the token. The first scheduled run after merge is the test; a failure shows as every guide failing with "claude-code not logged in".
 
 ## Gotchas

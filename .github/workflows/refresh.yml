@@ -124,17 +124,19 @@ jobs:
           npm run bb -- refresh --summary summary.md --result result.json --shrunk-state shrunk-state.json --baseline "$RUNNER_TEMP/main/data"
           echo "code=$?" >> "$GITHUB_OUTPUT"
           echo "api_cost=$(node -e "try { console.log(require('./result.json').apiCost ?? 0) } catch { console.log(0) }")" >> "$GITHUB_OUTPUT"
+          echo "api_calls=$(node -e "try { console.log(require('./result.json').apiFallbackCalls ?? 0) } catch { console.log(0) }")" >> "$GITHUB_OUTPUT"
           echo "review=$(node -e "try { console.log(JSON.stringify(require('./result.json').review ?? [])) } catch { console.log('[]') }")" >> "$GITHUB_OUTPUT"
 
       - name: Alert when the run used the API
-        if: steps.refresh.outputs.api_cost != '' && steps.refresh.outputs.api_cost != '0'
+        if: (steps.refresh.outputs.api_cost != '' && steps.refresh.outputs.api_cost != '0') || (steps.refresh.outputs.api_calls != '' && steps.refresh.outputs.api_calls != '0')
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COST: ${{ steps.refresh.outputs.api_cost }}
+          CALLS: ${{ steps.refresh.outputs.api_calls }}
         run: |
           title="Refresh used the API"
-          body="The Claude subscription's usage limit was reached during the refresh on $(date -u +%F), so the rest of the run used the API, about \$$COST. Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          body="The Claude subscription's usage limit was reached during the refresh on $(date -u +%F), so the rest of the run used the API: $CALLS calls, about \$$COST (calls in guides that then failed are not priced). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
 
           cc @seanoliver"
           issue="$(gh issue list --state open --app github-actions --search "in:title \"$title\"" --json number,title --jq "map(select(.title == \"$title\")) | .[0].number // empty")"

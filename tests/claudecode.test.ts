@@ -252,6 +252,37 @@ describe("claudeCodeClient", () => {
     expect(t.log.mock.calls[0][0]).toMatch(/^claude-code usage limit reached \(claude-sonnet-5-5\): .*; falling back to the API for the rest of this run$/);
   });
 
+  it("keeps a call that ran on extra usage instead of paying the API for it again", async () => {
+    const overage = ok(extractOut);
+    overage.stdout = lines({ type: "rate_limit_event", rate_limit_info: { status: "rejected", isUsingOverage: true } }) + "\n" + overage.stdout;
+    const t = setup([overage]);
+    expect(onSubscription((await extract(t.client, ballot, guide, sources)).usage)).toBe(true);
+    expect(t.makeApi).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["a throttle", "rate_limit"],
+    ["a billing error", "billing_error"],
+  ])("fails just that call on %s with no usage-limit event, without using the API", async (_name, error) => {
+    const t = setup([fail(lines(
+      { type: "assistant", message: { content: [{ type: "text", text: "API Error" }] }, error },
+      { type: "result", subtype: "success", is_error: true, result: "API Error" },
+    ))]);
+    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow("claude-code failed");
+    await extract(t.client, ballot, guide, sources);
+    expect(t.run).toHaveBeenCalledTimes(2);
+    expect(t.makeApi).not.toHaveBeenCalled();
+  });
+
+  it("counts API calls past the usage limit, including ones that then fail", async () => {
+    const t = setup([LIMITED]);
+    expect(t.client.apiCalls()).toBe(0);
+    await extract(t.client, ballot, guide, sources);
+    t.api.stream.mockImplementationOnce(() => ({ finalMessage: async () => { throw new Error("network"); } }));
+    await expect(verify(t.client, ballot, guide, file, sources)).rejects.toThrow("network");
+    expect(t.client.apiCalls()).toBe(2);
+  });
+
   it("throws instead of using the API at the usage limit when fallback is off", async () => {
     const t = setup([LIMITED], { fallback: false });
     await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow("claude-code usage limit reached (claude-sonnet-5-5): Claude usage limit reached; API fallback is off");
@@ -323,5 +354,6 @@ describe("cost", () => {
     expect(resultJson([r], 0).apiCost).toBeGreaterThan(0);
     const sub = await extract(setup([]).client, ballot, guide, sources);
     expect(resultJson([{ ...r, usage: { extract: sub.usage } }], 0).apiCost).toBe(0);
+    expect(resultJson([], 1, { apiFallbackCalls: 3 }).apiFallbackCalls).toBe(3);
   });
 });

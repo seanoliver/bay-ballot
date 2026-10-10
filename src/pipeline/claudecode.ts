@@ -17,6 +17,11 @@ export function modelVia(flagValue: string | undefined, envValue: string | undef
   throw new Error(`--via must be 'api' or 'claude-code', not '${v}'`);
 }
 
+export type ClaudeCodeClient = ExtractClient & {
+  /** Calls sent to the API after the usage limit, including ones that later failed. */
+  apiCalls: () => number;
+};
+
 export type RunResult = { code: number | null; stdout: string; stderr: string; timedOut: boolean; missing: boolean };
 export type Run = (bin: string, args: string[], opts: { env: Env; cwd: string; input: string; timeoutMs: number }) => Promise<RunResult>;
 
@@ -29,7 +34,8 @@ export type ClaudeCodeOptions = {
   timeoutMs?: number;
 };
 
-const TIMEOUT_MS = 30 * 60 * 1000;
+// An extract takes about a minute; two hung calls must not use up the CI job's 90 minutes.
+const TIMEOUT_MS = 10 * 60 * 1000;
 
 /** CLAUDE_BIN, else the native install, else PATH. Never a shell, so an alias for another account can't apply. */
 export function claudeBin(env: Env = process.env): string {
@@ -147,11 +153,17 @@ export function readOutput(params: Params, out: RunResult): Anthropic.Messages.M
     }
   });
   const errors = lines.flatMap((l) => (l.type === "assistant" && typeof l.error === "string" ? [l.error] : []));
-  const limited = lines.some((l) => l.type === "rate_limit_event" && (l.rate_limit_info as { status?: string } | undefined)?.status === "rejected");
+  // The CLI's usage-limit refusal is a rejected event with isUsingOverage false. A rejected event with isUsingOverage
+  // true means the call ran on extra usage and succeeded; a throttle or 429 with no such event is an ordinary failure.
+  const limited = lines.some((l) => {
+    const info = l.type === "rate_limit_event" ? (l.rate_limit_info as { status?: string; isUsingOverage?: boolean } | undefined) : undefined;
+    return info?.status === "rejected" && info.isUsingOverage !== true;
+  });
   const result = lines.findLast((l) => l.type === "result") as CliResult | undefined;
   const detail = (result?.result || out.stderr.trim().split("\n").at(-1) || `exit code ${out.code}`).slice(0, 200);
+  const failed = !result || result.is_error || result.subtype !== "success";
   if (errors.includes("authentication_failed")) return { kind: "auth", detail };
-  if (limited || errors.includes("rate_limit") || errors.includes("billing_error")) return { kind: "limit", detail };
+  if (failed && limited) return { kind: "limit", detail };
   if (result?.subtype === "error_max_structured_output_retries") return { kind: "schema", detail: "the CLI gave up on the schema" };
   if (!result || result.is_error) return { kind: "error", detail };
   if (result.stop_reason === "refusal" || result.stop_reason === "max_tokens") return toMessage(params, result);
@@ -205,12 +217,13 @@ const REASON: Record<Failure["kind"], string> = {
  * A model client that runs each call through `claude -p` on Sean's subscription. Only a usage limit sends calls to
  * the API, and then for the rest of the run; any other failure fails the call, so a broken login never bills the API.
  */
-export function claudeCodeClient(opts: ClaudeCodeOptions): ExtractClient {
+export function claudeCodeClient(opts: ClaudeCodeOptions): ClaudeCodeClient {
   const env = opts.env ?? process.env;
   const run = opts.run ?? runCli;
   const log = opts.log ?? ((l: string) => console.warn(l));
   let api: ExtractClient | undefined;
   let stuck: Failure | undefined;
+  let apiCalls = 0;
 
   async function viaCli(params: Params): Promise<Anthropic.Messages.Message | Failure> {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "bb-claude-code-"));
@@ -238,9 +251,11 @@ export function claudeCodeClient(opts: ClaudeCodeOptions): ExtractClient {
     if (!opts.fallback) throw new Error(`${why}; API fallback is off`);
     if (fresh) log(`${why}; falling back to the API for the rest of this run`);
     api ??= opts.fallback();
+    // Counted before the call: a guide that fails after reaching the API has no usage to price, and still billed.
+    apiCalls++;
     return api.messages.stream(params).finalMessage();
   }
 
   const stream = (params: Params) => ({ finalMessage: () => finalMessage(params) });
-  return { messages: { stream } } as unknown as ExtractClient;
+  return { messages: { stream }, apiCalls: () => apiCalls } as unknown as ClaudeCodeClient;
 }

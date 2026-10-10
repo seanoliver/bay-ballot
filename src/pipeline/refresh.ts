@@ -435,6 +435,8 @@ export type ResultJson = {
   review: string[];
   /** Estimated API dollars this run. */
   apiCost: number;
+  /** Calls sent to the API because the subscription's usage limit was reached, including calls whose guide then failed. */
+  apiFallbackCalls: number;
 };
 
 /** What a person must look at before this refresh merges, independent of the exit code. */
@@ -456,7 +458,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
   });
 }
 
-export function resultJson(results: GuideResult[], exitCode: number): ResultJson {
+export function resultJson(results: GuideResult[], exitCode: number, { apiFallbackCalls = 0 } = {}): ResultJson {
   return {
     exitCode,
     extracted: results.filter((r) => r.status === "changed").map((r) => r.id),
@@ -467,5 +469,6 @@ export function resultJson(results: GuideResult[], exitCode: number): ResultJson
     // Above zero only when calls went to the API: --via api, or the subscription's usage limit was reached.
     // Rounded up to the cent, so a single small call still counts.
     apiCost: Math.ceil(costOf(results) * 100) / 100,
+    apiFallbackCalls,
   };
 }

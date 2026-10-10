@@ -78,11 +78,15 @@ type Totals = { guides: number; confirmed: number; held: number; quotes: number;
 const totals: Totals = { guides: 0, confirmed: 0, held: 0, quotes: 0, missing: 0, tokens: [0, 0, 0, 0] };
 
 const apiClient = () => makeClient(resolveApiKey(".env.local"));
+/** Calls the subscription client sent to the API past its usage limit; result.json reports it so the run can alert. */
+let apiFallbackCalls = () => 0;
 
 function modelClient(): ExtractClient {
   if (modelVia(option("--via"), process.env.BAYBALLOT_MODEL_VIA) === "api") return apiClient();
   console.log(`Model calls go through Claude Code on the subscription${flag("--no-fallback") ? " (no API fallback)" : ", using the API only if its usage limit is reached"}.`);
-  return claudeCodeClient({ fallback: flag("--no-fallback") ? null : apiClient });
+  const client = claudeCodeClient({ fallback: flag("--no-fallback") ? null : apiClient });
+  apiFallbackCalls = client.apiCalls;
+  return client;
 }
 
 async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[]> {
@@ -262,7 +266,7 @@ async function runRefreshCmd(): Promise<void> {
   const summaryPath = option("--summary");
   if (summaryPath) fs.writeFileSync(summaryPath, md);
   const resultPath = option("--result");
-  if (resultPath) fs.writeFileSync(resultPath, JSON.stringify(resultJson(results, code), null, 2));
+  if (resultPath) fs.writeFileSync(resultPath, JSON.stringify(resultJson(results, code, { apiFallbackCalls: apiFallbackCalls() }), null, 2));
   console.log(`\n${totalsLine(results)}`);
   errors.forEach((e) => console.error(`ERROR ${e}`));
   process.exitCode = code;

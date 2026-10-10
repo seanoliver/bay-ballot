@@ -205,9 +205,10 @@ log "refresh exit code $code"
 summary_line="$(grep -m1 '^\*\*Result:\*\*' "$work/summary.md" 2>/dev/null | sed 's/\*\*Result:\*\* //')"
 [ -n "$summary_line" ] || summary_line="exit code $code"
 api_cost="$(node -e 'try { console.log(require(process.argv[1]).apiCost ?? 0) } catch { console.log(0) }' "$work/result.json")"
-if [ "$MODEL_VIA" = "claude-code" ] && [ "$api_cost" != "0" ]; then
-  log "subscription usage limit reached; this run spent about \$$api_cost on the API"
-  notify "Subscription limit reached: the refresh spent about \$$api_cost on the API"
+api_calls="$(node -e 'try { console.log(require(process.argv[1]).apiFallbackCalls ?? 0) } catch { console.log(0) }' "$work/result.json")"
+if [ "$MODEL_VIA" = "claude-code" ] && { [ "$api_cost" != "0" ] || [ "$api_calls" != "0" ]; }; then
+  log "subscription usage limit reached; $api_calls calls went to the API, about \$$api_cost"
+  notify "Subscription limit reached: the refresh made $api_calls API calls, about \$$api_cost"
 fi
 
 if [ -f "$work/result.json" ] && ! $dry_run; then
