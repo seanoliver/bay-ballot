@@ -19,7 +19,9 @@ Heavy local runs (county launches, widening guides) bill the API key; the six-co
 `src/pipeline/claudecode.ts`, `claudeCodeClient({ fallback })`:
 
 - **Binary:** `CLAUDE_BIN`, else `~/.local/bin/claude` (the native install), else `claude` on PATH. Spawned directly, never through a shell, so Sean's `claude` alias for the work account can't apply.
-- **Flags (checked against `claude --help`, v2.1.296):** `-p --input-format stream-json --output-format stream-json --verbose --model <request model> --system-prompt-file <tmp> --tools "" --strict-mcp-config --safe-mode --no-session-persistence --json-schema <schema> [--effort <effort>]`.
+- **Flags (checked against `claude --help`, v2.1.296):** `-p --input-format stream-json --output-format stream-json --verbose --model <request model> --system-prompt-file <tmp> --tools "" --strict-mcp-config --safe-mode --setting-sources "" --no-session-persistence --json-schema <schema> --effort <effort>`.
+  - `--effort` is always passed: the request's effort, else the API's default for the model (`high` for Sonnet 5.5, `medium` for Opus 5.5 and Haiku 5.5, per the API's effort docs). Without it Claude Code uses the user's `effortLevel` setting; see "Quality comparison".
+  - `--setting-sources ""` loads no user, project or local settings file, so their `effortLevel`, `model` or `env` can't change the call. The login still works.
   - `--system-prompt-file` replaces the default system prompt, like `--system-prompt`. It isn't listed in `--help`, but `--bare`'s help text names `--system-prompt[-file]` and a test call confirmed it. A file because the extract prompt holds the guide's ballot as JSON (97 KB for the whole ballot), too long to pass safely as one argument.
   - `--tools ""` leaves only `StructuredOutput` (the init line lists `"tools": ["StructuredOutput"]`).
   - `--safe-mode` turns off CLAUDE.md, skills, plugins, hooks and MCP servers while keeping the normal login. Not `--bare`: it reads only `ANTHROPIC_API_KEY` or an `apiKeyHelper`, never the subscription login.
@@ -35,7 +37,8 @@ Heavy local runs (county launches, widening guides) bill the API key; the six-co
 - This use is Sean running Claude Code himself on his own Mac with his own login. CI keeps the API key: the GitHub job never passes `--via`, and a subscription login shouldn't be copied to shared runners.
 - `claude -p` usage draws from the same five-hour and weekly limits as interactive use. A burst of ~20 guides is about 40 calls; when the limit is hit, the run finishes on the API (or fails per guide with `--no-fallback`).
 - `--json-schema` enforcement is Claude Code's, not the API's constrained decoding. The API path can't return schema-invalid JSON; the CLI path can, which is why the client re-validates and retries.
-- No temperature or thinking control: the CLI sets its own. The API path doesn't set temperature either. Whether the CLI enables thinking for the extract call by default wasn't measured.
+- No temperature or thinking control beyond `--effort`. The API path doesn't set temperature either.
+- Claude Code adds about 580 input tokens of its own to every call, even with the system prompt replaced and no tools ("Be brief." / "Say hi." measured 596 input tokens; the API would see about 10). `--json-schema` adds about 490 more for the `StructuredOutput` tool. The model would not quote that text back, so what it says is unknown.
 
 ## Smoke test
 
@@ -46,8 +49,34 @@ One guide (bike-east-bay, 5 picks, one HTML page) in a throwaway copy of the rep
 - No rate limiting was seen. Five-hour utilization was 11% before the smoke test.
 - One quality note: the Claude Code extract kept "Without Measure RTM's operations funding, the Bay Area will face a true emergency:", a sentence ending in a colon, which the verifier confirmed. No API run was made to compare, so this may be ordinary run-to-run variation.
 
+## Quality comparison
+
+The coordinator ran spur, ca-wfp and east-bay-dsa with `--force-extract` on both paths from the same commit. Picks were identical on base, API and Claude Code for all three. Quotes were not:
+
+| Guide | Committed | API | Claude Code, before fix | Claude Code, after fix |
+|---|---|---|---|---|
+| spur | 50 | 54 | 21 | 30 |
+| east-bay-dsa | 27 | 31 | 0 | 11 |
+| ca-wfp | 0 | 0 | 0 | not rerun |
+
+The quote checks were not the cause: the Claude Code run of east-bay-dsa dropped no quotes, because the model returned none.
+
+**Root cause (confirmed): effort.** The extract request sets no effort, so the API uses Sonnet 5.5's default, `high`. Claude Code instead applied `"effortLevel": "medium"` from `~/.claude-personal/settings.json`; `--safe-mode` doesn't skip settings. Raw output for east-bay-dsa, same pages and prompt, captured from the CLI before `toEntries`:
+
+- Before (medium): 64 picks, 0 quotes; 952 thinking tokens, 4,862 output tokens.
+- With `--effort high`: 64 picks, 40 quotes; 4,103 thinking tokens, 8,881 output tokens.
+
+**Remaining gap (unresolved).** After the fix, a full `bb extract` of east-bay-dsa kept 11 quotes: the extractor returned about 15, the checks dropped 3 and the verifier 1. The debug run on the same pages returned 40, so quote counts on this path vary a lot between runs; the API's two east-bay-dsa results (27, 31) were close together. Likely contributors, none tested:
+
+- Structured output arrives as one `StructuredOutput` tool call, not as constrained text, and effort also shortens tool-call arguments.
+- Claude Code's own ~580 tokens of added context, and the ~490-token tool definition.
+- Thinking settings the CLI chooses that `--effort` doesn't pin.
+
+Until that is understood, treat `--via claude-code` as giving the same picks with fewer quotes. Use it for pick-only work (new guides, widening), not for runs where quotes matter, or re-check quotes with the API path.
+
 ## Gotchas
 
+- `--safe-mode` keeps the user's settings files. Without `--setting-sources ""`, `effortLevel` and `env` from `~/.claude-personal/settings.json` applied to every call.
 - In this sandboxed agent environment, a `#!/usr/bin/env node` script given an argument over ~1,000 characters was SIGKILLed on exec (exit 137), from a shell, from tsx and from vitest. The real Claude Code binary was not affected with a 3 KB `--json-schema`. Tests use `#!/bin/sh` stubs for that reason.
 - A not-logged-in CLI exits 1 but still prints a `result` line with `is_error: true` and `result: "Not logged in · Please run /login"`, and `subtype: "success"`. Check `is_error`, not `subtype`.
 - The launchd job needs the personal login readable from a background session (macOS keychain). Run `BAYBALLOT_MODEL_VIA=claude-code npm run local-refresh` by hand once before relying on the scheduled job.
