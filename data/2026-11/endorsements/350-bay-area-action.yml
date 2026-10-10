@@ -49,6 +49,8 @@ picks:
     quotes:
       - text: The proposal is in effect minority rule as it allows a third of the voters to stop a special tax favored by close to two-thirds of the voters.
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
+      - text: This proposition requires a two-thirds supermajority for citizen-initiated local special tax measures, which would hobble residents’ ability to fund climate-related projects and programs.
+        source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-45:
     pick: N
     quotes:
@@ -56,6 +58,9 @@ picks:
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   rtm:
     pick: Y
+    quotes:
+      - text: "WHY YES: It avoids catastrophic service cuts for AC Transit (16%), BART (70%), Caltrain, SamTrans, SF Muni (50%), and VTA."
+        source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   berkeley-council-1:
     pick:
       - Ross Bernet
@@ -159,3 +164,8 @@ picks:
   us-rep-14:
     pick:
       - Aisha Wahab
+  napa-county-measure-b:
+    pick: Y
+    quotes:
+      - text: Ensuring Napa has a dependable source of funds to help stave off catastrophic fires, and funds to enhance and preserve our regional parks with all their benefits, is a clear Yes for us.
+        source: https://350bayareaaction.org/napa_county_wildfire_preparedness_act

@@ -310,6 +310,9 @@ picks:
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-2:
     pick: Y
+    quotes:
+      - text: In years where there is an economic surplus, California could put double the amount of money into savings.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-3:
     pick: Y
   prop-4:
@@ -318,6 +321,8 @@ picks:
     pick: N
     quotes:
       - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: New home buyers are locked into a program with imperfect information.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-38:
     pick: N
@@ -339,6 +344,8 @@ picks:
       - text: We need to fund healthcare, not continue to allow the ultra-rich to buy ever more mansions and yachts, and invest in job-killing AI.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: Without this funding, thousands of jobs will be lost, millions of Californians could lose coverage altogether, and care facilities across the state could be forced to close.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote Yes on Prop 40.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-41:
     pick: N

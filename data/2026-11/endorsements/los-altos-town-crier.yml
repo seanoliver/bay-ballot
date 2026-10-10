@@ -39,6 +39,11 @@ picks:
       - Pete Dailey
   los-altos-measure-d:
     pick: N
+    quotes:
+      - text: Instead, the text of Measure D was written in such a way that it impacts our Housing Element and therefore the mighty State of California.
+        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
+      - text: Instead, if Measure D passes, staff and elected officials will have less time to spend listening to what Los Altos residents want because they will have to spend more time listening to what lawyers, real estate developers and bureaucrats in state government want.
+        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
   mountain-view-measure-e:
     pick: Y
   mountain-view-measure-f:

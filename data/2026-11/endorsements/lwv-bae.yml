@@ -21,8 +21,14 @@ picks:
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y
+    quotes:
+      - text: "In other words, Measure Q does not address a hypothetical fiscal problem: Albany has a reasonably foreseeable loss of roughly one-fifth of the dedicated revenue supporting EMS and fire protection."
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-r:
     pick: Y
+    quotes:
+      - text: A gross-receipts business tax generally fits those criteria better than Albany’s unusually old employee-count system.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-s:
     pick: Y
     quotes:
@@ -45,6 +51,8 @@ picks:
     quotes:
       - text: The measure is aligned with the League’s long commitment to expanding opportunities for citizens to run for public office, without the lack of personal wealth standing in the way as a prohibitive barrier.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Investing in Berkeley’s public financing of campaign system expands opportunities and helps to reduce the outsized influence Big Money has in our political system.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-x:
     pick: Y
   berkeley-measure-aa:
@@ -56,6 +64,8 @@ picks:
     pick: Y
     quotes:
       - text: The passing of Measure BB will modernize the nearly 42-year-old business license tax system and benefit the city of Emeryville immensely and address the structural deficit without creating a new tax for residents.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: LWVBAE’s position on City Finances supports taxes that have receipts as a basis.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   rtm:
     pick: Y

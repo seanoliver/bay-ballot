@@ -47,11 +47,15 @@ picks:
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
       - text: Nguyen impressed us with his commitment to social housing.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-6:
     pick:
       - Matt Dorsey
     quotes:
       - text: Overall, Dorsey has been effective on the Board of Supervisors.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-10:
     pick:
@@ -119,6 +123,8 @@ picks:
     quotes:
       - text: We think this is yet another option for homebuyers.
         source: https://www.ebar.com/story/170969/
+      - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
+        source: https://www.ebar.com/story/170969/
   prop-38:
     pick: N
     quotes:
@@ -151,6 +157,9 @@ picks:
         source: https://www.ebar.com/story/170969/
   rtm:
     pick: Y
+    quotes:
+      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-a:
     pick: Y
     quotes:
@@ -188,12 +197,16 @@ picks:
     quotes:
       - text: The park is there; the city controller’s office estimates it would cost millions of dollars to remove it and reconstruct the roadway, along with an annual cost of about $1.4 million.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: Sea level rise and erosion are already a threat that will eventually overwhelm the roadway, as well as the cost to constantly remove sand from it.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-h:
     pick: Y
     quotes:
       - text: Reliable public transportation is critical as San Francisco continues its economic recovery post COVID.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: A reliable Muni will help San Francisco workers and residents, as well as visitors who bring in tourist dollars.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: Prop H only funds Muni service, and San Franciscans are aware that the agency is facing severe fiscal challenges.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-i:
     pick: Y
