@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
+import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
@@ -309,7 +310,7 @@ const RATES = {
 };
 
 function usageCost(u: Usage | undefined, r: (typeof RATES)["extract"]): number {
-  if (!u) return 0;
+  if (!u || onSubscription(u)) return 0;
   return (
     (u.input_tokens * r.in + u.output_tokens * r.out + (u.cache_creation_input_tokens ?? 0) * r.cacheWrite + (u.cache_read_input_tokens ?? 0) * r.cacheRead) /
     1e6
@@ -326,6 +327,18 @@ export function costOf(results: GuideResult[]): number {
           : sum,
     0,
   );
+}
+
+export function subscriptionCalls(results: GuideResult[]): number {
+  const usages = results.flatMap((r) => (r.status === "changed" ? [r.usage.extract, r.usage.verify] : r.status === "shrunk" ? [r.usage] : []));
+  return usages.filter((u) => u && onSubscription(u)).length;
+}
+
+/** API dollars only: calls made through Claude Code are counted, not priced. */
+export function costText(results: GuideResult[]): string {
+  const api = `$${costOf(results).toFixed(2)}`;
+  const n = subscriptionCalls(results);
+  return n ? `${api} API, plus ${n} call${n === 1 ? "" : "s"} on the Claude subscription` : api;
 }
 
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
@@ -356,7 +369,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     `|---|---|---|---|---|---|---|`,
     `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
     "",
-    `Estimated model cost: $${costOf(results).toFixed(2)}`,
+    `Estimated model cost: ${costText(results)}`,
   ];
   if (changed.length) {
     lines.push("", "## Re-extracted");
@@ -420,6 +433,10 @@ export type ResultJson = {
   failed: { id: string; error: string }[];
   shrunk: { id: string; pageHash: string }[];
   review: string[];
+  /** Estimated API dollars this run. */
+  apiCost: number;
+  /** Calls sent to the API because the subscription's usage limit was reached, including calls whose guide then failed. */
+  apiFallbackCalls: number;
 };
 
 /** What a person must look at before this refresh merges, independent of the exit code. */
@@ -441,7 +458,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
   });
 }
 
-export function resultJson(results: GuideResult[], exitCode: number): ResultJson {
+export function resultJson(results: GuideResult[], exitCode: number, { apiFallbackCalls = 0 } = {}): ResultJson {
   return {
     exitCode,
     extracted: results.filter((r) => r.status === "changed").map((r) => r.id),
@@ -449,5 +466,9 @@ export function resultJson(results: GuideResult[], exitCode: number): ResultJson
     failed: results.flatMap((r) => (r.status === "failed" ? [{ id: r.id, error: r.error }] : [])),
     shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
     review: reviewReasons(results),
+    // Above zero only when calls went to the API: --via api, or the subscription's usage limit was reached.
+    // Rounded up to the cent, so a single small call still counts; rounded first so float error can't add a cent.
+    apiCost: Math.ceil(Math.round(costOf(results) * 1e6) / 1e4) / 100,
+    apiFallbackCalls,
   };
 }

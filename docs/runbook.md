@@ -52,9 +52,9 @@ Nothing is ever pushed straight to `main`.
 - **Shrunk** means a guide's picks dropped to under half (usually a page that failed to render). Check the page; re-run locally with `--browser` or `--force` if the drop is real.
 - **CI failed:** the PR comment links the CI run. Run `npm run validate` and `npm test` on the branch and fix what they report. If no CI run appeared within 2 minutes, the comment says so; rerun CI with `gh workflow run ci.yml --ref data/refresh`.
 
-**Cost:** a day with no relevant change costs $0 (no model calls; only page fetches). A re-extracted guide averages about $0.05 to extract (Sonnet 5.5) plus about $0.11 to verify (Opus 5.5) when its data changed, so about $0.16. The longest guides (growsf, spur) cost about $0.30 to extract and $0.50 to verify. The 20-guide budget keeps a run under about $4 typically, and under $10 even if every changed guide were a long one. The PR summary shows each run's estimate.
+**Cost:** model calls run on Sean's Claude subscription, so a normal run costs no API money; the PR summary counts the calls ("$0.00 API, plus 12 calls on the Claude subscription"). A day with no relevant change makes no model calls. Past the subscription's usage limit, the rest of the run uses the API at about $0.16 per re-extracted guide ($0.80 for the longest, growsf and spur), and the run opens a "Refresh used the API" issue.
 
-**Setup it relies on:** the repository secret `BAYBALLOT_ANTHROPIC_API_KEY`, and Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests". The workflow file must be on `main` for the schedule to fire.
+**Setup it relies on:** the repository secrets `CLAUDE_CODE_OAUTH_TOKEN` (model calls on Sean's subscription; see "Model calls") and `BAYBALLOT_ANTHROPIC_API_KEY` (used only past the subscription's usage limit), and Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests". The workflow file must be on `main` for the schedule to fire.
 
 ### When a guide fails to fetch on the runner
 
@@ -92,6 +92,7 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
   - A watchdog stops a run after 2 hours.
   - `git fetch` is retried 3 times, 30 seconds apart, and SSH never prompts.
 - **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`).
+  - Model calls go through the Claude subscription (see "Model calls"). When a run used the API because the usage limit was reached, it sends a macOS notification with the amount. `BAYBALLOT_MODEL_VIA=api` puts every call on the API; for the launchd job, set it in the shell that runs `npm run local-refresh:install`, which records it (and `BAYBALLOT_CLAUDE_CONFIG_DIR` and `CLAUDE_BIN` if set) in the job.
   - `--dry-run` fetches and gates pages only: no model calls, no commit, no PR, no issue.
   - `--ref <branch>` tests another branch's code and is always a dry run.
 - **Logs:** `~/Library/Logs/bay-ballot-refresh.log`, trimmed to the last 2,500 lines once it passes 5,000.
@@ -111,6 +112,20 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
 - `npm run bb -- pages --seed` stores today's page text for every guide without extracting, e.g. after adding a guide's `extraSources` by hand.
 - Locally the API key comes from `.env.local` (`BAYBALLOT_ANTHROPIC_API_KEY=...`), never from `ANTHROPIC_API_KEY`.
 - `npm run bb -- discover` lists guides with no Nov 2026 source yet. Set `source:` for any that have published.
+
+### Model calls
+
+- `extract`, `refresh` and `verify` run each model call through Claude Code headless (`claude -p`) on Sean's personal subscription, locally and in the GitHub job. `--via api` (or `BAYBALLOT_MODEL_VIA=api`) puts every call on the API instead.
+  - Only the model call moves. Prompts, schemas, models (extract on Sonnet, verify on Opus), quote checks and the verifier are unchanged.
+  - It runs `CLAUDE_BIN`, else `~/.local/bin/claude`, else `claude` on PATH, never through the shell, so the `claude` alias for the work account doesn't apply. It uses the login in `~/.claude-personal` (override with `BAYBALLOT_CLAUDE_CONFIG_DIR`), and strips every `ANTHROPIC_*`, `CLAUDE_CODE_*` and `BAYBALLOT_*` variable from the CLI's environment, so it can bill only that login. Check the login with `CLAUDE_CONFIG_DIR=~/.claude-personal ~/.local/bin/claude auth status`.
+  - **GitHub job:** the runner has no login. It installs Claude Code 2.1.296 and authenticates with the `CLAUDE_CODE_OAUTH_TOKEN` secret, passed to the CLI as `BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN`. Create the token with `CLAUDE_CONFIG_DIR=~/.claude-personal ~/.local/bin/claude setup-token` and store it with `gh secret set CLAUDE_CODE_OAUTH_TOKEN`. It lasts a year; when it expires, every guide fails with "claude-code not logged in" and the review issue opens.
+  - **Usage limit:** once the subscription's limit is reached, the rest of the run uses the API key (`.env.local` locally, the `BAYBALLOT_ANTHROPIC_API_KEY` secret in CI) and logs one line starting `claude-code usage limit reached`. `result.json` records the spend as `apiCost`. The GitHub job then opens or comments on a "Refresh used the API" issue that mentions Sean; the local job sends a notification. `--no-fallback` fails the guide instead.
+  - **Usage limit, exactly:** a `rate_limit_event` with `status: "rejected"` and `isUsingOverage` false on a call that failed. A call served on extra usage reports `rejected` with `isUsingOverage: true` and succeeds; it is kept. `result.json` also records `apiFallbackCalls`, which counts API calls whose guide then failed, so the alert fires on either number.
+  - **Any other failure** (CLI missing, not logged in, a 10-minute timeout, output that fails the schema twice, a throttle or billing error) fails that guide's call and never uses the API.
+  - **launchd job:** it switches to the subscription when this lands, because `bb` now defaults to it. Check once that a background job can read the personal login: `launchctl kickstart gui/$(id -u)/com.bayballot.local-refresh`, then look for "claude-code not logged in" in the log.
+  - Picks match the API path. Quotes vary more between runs, and on some guides it keeps about a quarter fewer per pick (spur: 35 to 46 against 55); see the investigation.
+  - The cost line counts these calls instead of pricing them: "Estimated model cost $0.40 API, plus 6 calls on the Claude subscription".
+  - Background: `docs/investigations/2026-10-10-claude-code-provider.md`.
 
 ## Manual guides
 

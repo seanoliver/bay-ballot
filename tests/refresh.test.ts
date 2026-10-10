@@ -462,6 +462,8 @@ describe("resultJson", () => {
       failed: [{ id: "a", error: "HTTP 503" }],
       shrunk: [{ id: "c", pageHash: "f".repeat(64) }],
       review: ["c: picks shrank; file left unchanged"],
+      apiCost: 0,
+      apiFallbackCalls: 0,
     });
   });
 });

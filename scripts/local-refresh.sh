@@ -17,6 +17,8 @@ MAX_LOG_LINES=5000
 LOCK_STALE_SECS=$((3 * 3600))
 WATCHDOG_SECS="${BB_WATCHDOG_SECS:-7200}"
 FETCH_RETRY_DELAY="${BB_FETCH_RETRY_DELAY:-30}"
+# claude-code (default): model calls on Sean's Claude subscription, using the API key only past its usage limit. api: every call on the API.
+MODEL_VIA="${BAYBALLOT_MODEL_VIA:-claude-code}"
 export GIT_SSH_COMMAND='ssh -o BatchMode=yes -o ConnectTimeout=30'
 
 dry_run=false
@@ -30,6 +32,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 [ "$ref" = "origin/main" ] || dry_run=true
+case "$MODEL_VIA" in api|claude-code) ;; *) print -u2 "BAYBALLOT_MODEL_VIA must be api or claude-code, not '$MODEL_VIA'"; exit 64 ;; esac
 
 log() { print -r -- "$(date '+%Y-%m-%d %H:%M:%S') $*"; }
 notify() {
@@ -87,7 +90,7 @@ watchdog=$!
 fail() { log "ERROR: $*"; notify "Bay Ballot: local refresh failed: $*"; exit 1; }
 gh_() { gh "$@" --repo "$REPO"; }
 
-log "local refresh starting (dry run: $dry_run, ref: $ref)"
+log "local refresh starting (dry run: $dry_run, ref: $ref, models via: $MODEL_VIA)"
 for cmd in git gh node npm npx pdftotext; do command -v "$cmd" >/dev/null || fail "$cmd not on PATH"; done
 [ -d "$SOURCE_REPO" ] || fail "no source checkout at $SOURCE_REPO"
 common="$(git -C "$SOURCE_REPO" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" ||
@@ -194,12 +197,19 @@ git archive origin/main data | tar -x -C "$work" || fail "could not extract main
 extra=()
 $dry_run && extra=(--no-extract)
 [ -f "$SHRUNK_STATE" ] && extra+=(--shrunk-state "$SHRUNK_STATE")
+extra+=(--via "$MODEL_VIA")
 npm run -s bb -- refresh --local-only --baseline "$work/data" --summary "$work/summary.md" --result "$work/result.json" "${extra[@]}"
 code=$?
 log "refresh exit code $code"
 [ -f "$work/summary.md" ] && cat "$work/summary.md"
 summary_line="$(grep -m1 '^\*\*Result:\*\*' "$work/summary.md" 2>/dev/null | sed 's/\*\*Result:\*\* //')"
 [ -n "$summary_line" ] || summary_line="exit code $code"
+api_cost="$(node -e 'try { console.log(require(process.argv[1]).apiCost ?? 0) } catch { console.log(0) }' "$work/result.json")"
+api_calls="$(node -e 'try { console.log(require(process.argv[1]).apiFallbackCalls ?? 0) } catch { console.log(0) }' "$work/result.json")"
+if [ "$MODEL_VIA" = "claude-code" ] && { [ "$api_cost" != "0" ] || [ "$api_calls" != "0" ]; }; then
+  log "subscription usage limit reached; $api_calls calls went to the API, about \$$api_cost"
+  notify "Subscription limit reached: the refresh made $api_calls API calls, about \$$api_cost"
+fi
 
 if [ -f "$work/result.json" ] && ! $dry_run; then
   node -e 'const r = require(process.argv[1]); console.log(JSON.stringify(Object.fromEntries(r.shrunk.map((s) => [s.id, s.pageHash]))))' \
