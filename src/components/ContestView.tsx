@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import Link from "next/link";
 import type { PlaceName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
-import { COUNTIES_PARAM } from "@/lib/counties";
 import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { answerSentence } from "@/lib/seo-copy";
@@ -33,7 +32,7 @@ type Props = {
 
 export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
-  const { filters, setFilters: applyFilters } = useBallotFilters({ guides, keep: [COUNTIES_PARAM] });
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides });
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);

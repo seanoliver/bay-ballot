@@ -215,8 +215,8 @@ describe("guideGroups", () => {
 
 describe("filterQuery", () => {
   it("keeps only the params that change the filters, so selecting a contest doesn't rebuild them", () => {
-    expect(filterQuery("?off=sf-gop&c=prop-b&offc=san-mateo&why=1", ["c", "offc"])).toBe("off=sf-gop&why=1");
-    expect(filterQuery("?c=prop-b", ["c", "offc"])).toBe(filterQuery("?c=prop-c", ["c", "offc"]));
+    expect(filterQuery("?off=sf-gop&c=prop-b&why=1", ["c"])).toBe("off=sf-gop&why=1");
+    expect(filterQuery("?c=prop-b", ["c"])).toBe(filterQuery("?c=prop-c", ["c"]));
     expect(filterQuery("", ["c"])).toBe("");
   });
 });
@@ -286,7 +286,7 @@ describe("hiddenLabel", () => {
 
 describe("carryQuery", () => {
   it("keeps the filter params for a link to another page, and drops the rest", () => {
-    expect(carryQuery("?off=sf-gop&c=prop-b&why=1&offc=marin", ["off", "offtypes", "why", "offc"])).toBe("?off=sf-gop&why=1&offc=marin");
+    expect(carryQuery("?off=sf-gop&c=prop-b&why=1", ["off", "offtypes", "why"])).toBe("?off=sf-gop&why=1");
     expect(carryQuery("?offtypes=club", ["off", "offtypes", "why"])).toBe("?offtypes=club");
   });
   it("is empty when there's nothing to carry", () => {
