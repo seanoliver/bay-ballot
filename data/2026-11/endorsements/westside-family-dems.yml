@@ -3,8 +3,8 @@ election: 2026-11
 status: published
 source: https://westsidefamilysf.com/current-endorsements
 archived:
-  - source: https://westsidefamilysf.com/november-2026-endorsements
-    snapshot: https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements
+  - source: https://westsidefamilysf.com/current-endorsements
+    snapshot: https://web.archive.org/web/20261010181405/https://westsidefamilysf.com/current-endorsements
 fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
