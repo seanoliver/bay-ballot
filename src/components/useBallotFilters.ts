@@ -67,6 +67,24 @@ export function replaceQuery(q: string): void {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
+/** Moves to another list page without a navigation; false when the history budget is spent. */
+export function pushPath(href: string, { replace = false }: { replace?: boolean } = {}): boolean {
+  if (!HISTORY_BUDGET.tryNote(WRITE_COST)) return false;
+  try {
+    if (replace) window.history.replaceState(null, "", href);
+    else window.history.pushState(null, "", href);
+  } catch {
+    return false;
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+  return true;
+}
+
+// Not usePathname: it updates in a transition, a frame after the query.
+export function useLocationPath(serverPath: string): string {
+  return useSyncExternalStore(subscribe, () => window.location.pathname, () => serverPath);
+}
+
 export function useQuery(): string {
   return useSyncExternalStore(subscribe, readQuery, () => "");
 }
@@ -131,7 +149,7 @@ export function useStoredKey(storageKey: string): [string | null, (v: string) =>
   return [value, set];
 }
 
-const CARRIED = ["off", "offtypes", "why"];
+export const CARRIED = ["off", "offtypes", "why"];
 
 export function useCarriedQuery(): string {
   return carryQuery(useQuery(), CARRIED);

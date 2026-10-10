@@ -73,3 +73,44 @@ describe("replaceQuery", () => {
     expect(w.replaceState).toHaveBeenCalledTimes(44);
   });
 });
+
+describe("pushPath", () => {
+  function stubHistory() {
+    const w = stubWindow();
+    const pushState = vi.fn((_d: unknown, _u: string, url: string) => w.replaceState(_d, _u, url));
+    (window as unknown as { history: { pushState: typeof pushState } }).history.pushState = pushState;
+    return { ...w, pushState };
+  }
+
+  it("pushes the path and announces the change", async () => {
+    const w = stubHistory();
+    const { pushPath, currentSearch } = await import("@/components/useBallotFilters");
+    expect(pushPath("/2026-11/sonoma?why=1")).toBe(true);
+    expect(w.pushState).toHaveBeenCalledWith(null, "", "/2026-11/sonoma?why=1");
+    expect(w.location.pathname).toBe("/2026-11/sonoma");
+    expect(currentSearch()).toBe("?why=1");
+    expect(w.dispatchEvent).toHaveBeenCalledTimes(1);
+  });
+  it("replaces instead when asked", async () => {
+    const w = stubHistory();
+    const { pushPath } = await import("@/components/useBallotFilters");
+    expect(pushPath("/2026-11/sf", { replace: true })).toBe(true);
+    expect(w.pushState).not.toHaveBeenCalled();
+    expect(w.replaceState).toHaveBeenCalledWith(null, "", "/2026-11/sf");
+  });
+  it("refuses once the history budget is spent, so the caller can navigate normally", async () => {
+    const w = stubHistory();
+    const { pushPath, replaceQuery } = await import("@/components/useBallotFilters");
+    for (let i = 0; i < 45; i++) replaceQuery(`c=x${i}`);
+    expect(pushPath("/2026-11/sonoma")).toBe(false);
+    expect(w.pushState).not.toHaveBeenCalled();
+  });
+  it("refuses when the browser throws", async () => {
+    const w = stubHistory();
+    w.pushState.mockImplementation(() => {
+      throw new DOMException("too many calls", "SecurityError");
+    });
+    const { pushPath } = await import("@/components/useBallotFilters");
+    expect(pushPath("/2026-11/sonoma")).toBe(false);
+  });
+});

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { BallotView } from "@/components/BallotView";
-import { areaLinks, placeName } from "@/lib/areas";
+import { AreaBallot } from "@/components/AreaBallot";
+import { viewFor } from "@/lib/area-view";
+import { placeName } from "@/lib/areas";
 import type { ElectionData } from "@/lib/data";
-import { electionIntro } from "@/lib/display";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import type { Area } from "@/lib/schema";
 import { areaDescription, areaTitle } from "@/lib/seo-copy";
-import { ballotViewProps } from "@/lib/site-data";
+import { ballotViewProps, electionSnapshot, snapshotUrl } from "@/lib/site-data";
 
 export function listMetadata(d: ElectionData, electionId: string, area: Area | null): Metadata {
   const { ballot, guides, files } = ballotViewProps(d, { area });
@@ -18,15 +18,9 @@ export function listMetadata(d: ElectionData, electionId: string, area: Area | n
   };
 }
 
+// The Bay Area page carries every area's data; an area page carries its own and fetches the rest when idle.
 export function ListPage({ d, electionId, area }: { d: ElectionData; electionId: string; area: Area | null }) {
-  const { ballot, ...view } = ballotViewProps(d, { area });
-  return (
-    <BallotView
-      election={electionId}
-      area={area?.id ?? null}
-      links={areaLinks(electionId, d.areas, area?.id ?? null)}
-      intro={electionIntro(ballot, view.files, { place: placeName(area).name })}
-      {...view}
-    />
-  );
+  const snapshot = electionSnapshot(d);
+  if (!area) return <AreaBallot election={electionId} snapshot={snapshot} />;
+  return <AreaBallot election={electionId} initial={viewFor(snapshot, area.id)} snapshotUrl={snapshotUrl(snapshot)} />;
 }

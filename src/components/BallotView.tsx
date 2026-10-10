@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { cardDescription } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
-import { activeEntries, EMPTY, positionGuides, revealGuides, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, positionGuides, revealGuides, toQuery, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
@@ -60,12 +60,20 @@ type Props = {
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
+  /** True while the list still shows the area being left. */
+  busy?: boolean;
+  onSwitch?: (href: string, opts?: { replace?: boolean }) => boolean;
+  onIntent?: () => void;
 };
 
-export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null }: Props) {
+// Per view, so switching back to an area reuses its rows and bars.
+const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
+const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
+
+export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
-  useHomeRedirect({ election, area });
+  useHomeRedirect({ election, area, onSwitch });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);
@@ -168,13 +176,23 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   const selectedId = pickSelected(all.map((c) => c.id), stepped ?? requested);
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
-  const rowsById = useMemo(() => new Map(all.map((c) => [c.id, activeEntries(c.id, guides, files, filters)])), [all, guides, files, filters]);
+  const rowsById = useMemo(() => {
+    const key = toQuery(filters);
+    const hit = rowsCache.get(groups);
+    if (hit?.filters === key) return hit.rows;
+    const rows = new Map(all.map((c) => [c.id, activeEntries(c.id, guides, files, filters)]));
+    rowsCache.set(groups, { filters: key, rows });
+    return rows;
+  }, [groups, all, guides, files, filters]);
   const rowsFor = (id: string) => rowsById.get(id) ?? activeEntries(id, guides, files, filters);
   // EMPTY, not `filters`: a filter must never repaint a candidate.
-  const slotsById = useMemo(
-    () => new Map(all.map((c) => [c.id, candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry))])),
-    [all, guides, files],
-  );
+  const slotsById = useMemo(() => {
+    const hit = slotsCache.get(groups);
+    if (hit) return hit;
+    const slots = new Map(all.map((c) => [c.id, candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry))]));
+    slotsCache.set(groups, slots);
+    return slots;
+  }, [groups, all, guides, files]);
   const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
   const [scopeRaw, setScopeRaw] = useStoredKey(SCOPE_KEY);
   const chosen = useMemo(() => parseScopes(scopeRaw), [scopeRaw]);
@@ -215,7 +233,21 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
 
   useEffect(() => {
     paneRef.current?.scrollTo({ top: 0 });
-  }, [selectedId]);
+  }, [selectedId, area]);
+
+  // The area changes in place after a chip click or Back: drop what belonged to the old list.
+  const [shownArea, setShownArea] = useState(area);
+  if (shownArea !== area) {
+    setShownArea(area);
+    setStepped(null);
+    setExiting(null);
+    setAnimate(false);
+    setAnnounce(`Showing ${intro.title}`);
+  }
+  useEffect(() => {
+    stepWrite.cancel();
+    jumpedTo.current = null;
+  }, [area, stepWrite]);
 
   useEffect(() => () => clearTimeout(exitTimer.current), []);
 
@@ -329,7 +361,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
         current
           ? "lg:grid-cols-[17rem_minmax(0,calc((100%-20rem)/2.15))_minmax(0,1fr)]"
           : "lg:grid-cols-[17rem_minmax(0,min(48rem,calc(100%-20rem)))_minmax(0,1fr)]",
-        animate && "lg:transition-[grid-template-columns] lg:duration-(--motion-in) lg:ease-(--ease-out)",
+        animate && !busy && "lg:transition-[grid-template-columns] lg:duration-(--motion-in) lg:ease-(--ease-out)",
       )}
     >
       <p aria-live="polite" className="sr-only">
@@ -339,7 +371,9 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
 
       <div
         ref={listRef}
-        className="min-w-0 pb-10 outline-none lg:col-start-2"
+        // Dims the contests only if the next area takes a moment to draw.
+        className={cn("min-w-0 pb-10 outline-none lg:col-start-2", busy && "[&>section]:opacity-60 [&>section]:transition-opacity [&>section]:delay-150")}
+        aria-busy={busy || undefined}
         role={desktop ? "region" : undefined}
         aria-label={desktop ? "Contests" : undefined}
         aria-keyshortcuts={desktop ? (singleKeys ? "ArrowDown ArrowUp j k g / Shift+?" : "ArrowDown ArrowUp") : undefined}
@@ -355,7 +389,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={links} />
+          <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>

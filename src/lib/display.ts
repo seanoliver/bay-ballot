@@ -1,5 +1,5 @@
 import { latestFetchDay } from "./seo";
-import type { Ballot, Contest, EndorsementFile, Entry, Guide, Quote } from "./schema";
+import type { Ballot, Contest, EndorsementFile, Entry, Quote } from "./schema";
 import type { Row } from "./filters";
 import { countedNames, tally } from "./score";
 import type { Tally } from "./score";
@@ -76,7 +76,7 @@ export function rankedDetails(rows: Row[]): RankedDetail[] {
   return out;
 }
 
-export function pendingNote(guides: Guide[]): string | null {
+export function pendingNote(guides: readonly unknown[]): string | null {
   const n = guides.length;
   if (n === 0) return null;
   return n === 1 ? "1 guide hasn't published yet." : `${n} guides haven't published yet.`;

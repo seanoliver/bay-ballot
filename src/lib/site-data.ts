@@ -1,9 +1,7 @@
+import { createHash } from "node:crypto";
 import path from "node:path";
-import { areaGuides, inArea, placeGroups } from "./areas";
+import { areaContests, snapshotOf, viewFor, type ElectionSnapshot } from "./area-view";
 import { listElections, loadElection, type ElectionData } from "./data";
-import { pendingNote } from "./display";
-import { fallbackFor, scopeName } from "./fallback";
-import { pendingGuides, publishedFiles, publishedGuides, type FilterGuide, type GuideInfo } from "./filters";
 import type { Area } from "./schema";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
@@ -31,32 +29,37 @@ export function election(id: string): ElectionData | undefined {
   return d;
 }
 
+// Cached per load, so the metadata and the page share one snapshot and its memoized views.
+const snapshots = new WeakMap<ElectionData, ElectionSnapshot>();
+export function electionSnapshot(d: ElectionData): ElectionSnapshot {
+  let s = snapshots.get(d);
+  if (!s) {
+    s = snapshotOf(d);
+    snapshots.set(d, s);
+  }
+  return s;
+}
+
+// Versioned by content, so a browser never pairs one deploy's page with another's data.
+const urls = new WeakMap<ElectionSnapshot, string>();
+export function snapshotUrl(s: ElectionSnapshot): string {
+  let url = urls.get(s);
+  if (!url) {
+    url = `/${s.election}/snapshot.json?v=${createHash("sha1").update(JSON.stringify(s)).digest("hex").slice(0, 10)}`;
+    urls.set(s, url);
+  }
+  return url;
+}
+
 export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area | null } = {}) {
-  const inScope = area ? areaGuides(d.guides, area) : d.guides;
-  const published = publishedGuides(inScope, d.endorsements);
-  const ids = new Set(published.map((g) => g.id));
-  const contests = area ? d.ballot.contests.filter((c) => inArea(c, area)) : d.ballot.contests;
-  const groups = placeGroups(contests, d.areas);
-  const info = (gs: typeof published) => gs.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type }));
-  const guides = info(published);
-  const files = Object.fromEntries(Object.entries(publishedFiles(d.endorsements)).filter(([id]) => ids.has(id)));
+  const { groups, guides, allGuides, files, pending, fallback } = viewFor(electionSnapshot(d), area?.id ?? null);
   return {
-    ballot: { ...d.ballot, contests },
+    ballot: { ...d.ballot, contests: areaContests(d.ballot.contests, area) },
     groups,
     guides,
-    // Every guide in the election, so filters on an area page don't forget guides hidden elsewhere.
-    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, type }): FilterGuide => ({ id, type })),
+    allGuides,
     files,
-    pending: pendingNote(pendingGuides(inScope, d.endorsements)),
-    ...(area
-      ? {
-          fallback: fallbackFor({
-            groups,
-            place: scopeName(area),
-            local: { guides, files },
-            bay: { guides: info(publishedGuides(d.guides, d.endorsements)), files: publishedFiles(d.endorsements) },
-          }),
-        }
-      : {}),
+    pending,
+    ...(area ? { fallback } : {}),
   };
 }
