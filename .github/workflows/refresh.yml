@@ -79,12 +79,10 @@ jobs:
       - name: Install Chromium for browser-fetched guides
         run: npx playwright install --with-deps chromium
 
-      # Model calls run through Claude Code on Sean's subscription. Pinned, with updates off, so a CLI
-      # release can't change the calls between runs.
+      # Model calls run through Claude Code on Sean's subscription. Pinned, and the Refresh step sets
+      # DISABLE_UPDATES so the CLI can't update itself mid-run. Not here: it stops the installer too.
       - name: Install Claude Code
         if: steps.base.outputs.stop != 'true'
-        env:
-          DISABLE_UPDATES: "1"
         run: |
           curl -fsSL https://claude.ai/install.sh | bash -s 2.1.296
           "$HOME/.local/bin/claude" --version
