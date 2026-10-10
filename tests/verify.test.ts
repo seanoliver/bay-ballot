@@ -151,6 +151,16 @@ describe("applyVerdicts", () => {
       expect(r.file.picks["supervisor-8"]).toBeUndefined();
       expect(r.file.held).toEqual([{ ...heldD8, reason: "wrong-rank", evidence: "Dual endorsement." }]);
     });
+    it("never releases an unclear-match hold, even when the verifier confirms the pick", () => {
+      const unclear = { ...heldD8, reason: "unclear-match" as const, evidence: "decision" };
+      const r = applyVerdicts({ ...withHeld, held: [unclear] }, {
+        ...base,
+        picks: [...base.picks, { contestId: "supervisor-8", verdict: "confirmed", evidence: "#1 McCoy #2 Nguyen" }],
+      });
+      expect(r.file.picks["supervisor-8"]).toBeUndefined();
+      expect(r.file.held).toEqual([unclear]);
+      expect(r.confirmed).toBe(1);
+    });
     it("keeps a held pick held when the verifier says nothing about it", () => {
       const r = applyVerdicts(withHeld, base);
       expect(r.file.held).toEqual([heldD8]);
@@ -169,6 +179,16 @@ describe("applyVerdicts", () => {
       expect(audit).toContain('"contestId":"supervisor-8"');
       expect(audit).toContain('"held":true');
       expect(audit).toContain('"text":"McCoy has fixed our parks for a decade."');
+    });
+    it("does not send unclear-match holds to the verifier", async () => {
+      const finalMessage = vi.fn().mockResolvedValue({
+        stop_reason: "end_turn", stop_details: null, usage: {}, content: [{ type: "text", text: JSON.stringify(base) }],
+      });
+      const stream = vi.fn().mockReturnValue({ finalMessage });
+      const unclear = { ...heldD8, reason: "unclear-match" as const };
+      await verify({ messages: { stream } } as unknown as ExtractClient, ballot, guide, { ...withHeld, held: [unclear] }, []);
+      const audit = stream.mock.calls[0][0].messages[0].content.at(-1).text as string;
+      expect(audit).not.toContain('"contestId":"supervisor-8"');
     });
   });
 

@@ -103,7 +103,7 @@ function auditText(guide: Guide, file: EndorsementFile): string {
   });
   const picks = [
     ...Object.entries(file.picks).map(([contestId, e]) => describe(contestId, e, false)),
-    ...(file.held ?? []).map((h) => describe(h.contestId, heldEntry(h), true)),
+    ...(file.held ?? []).filter((h) => h.reason !== "unclear-match").map((h) => describe(h.contestId, heldEntry(h), true)),
   ];
   return [
     `Organization: ${guide.name} (${guide.homepage})`,
@@ -197,7 +197,7 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
 
   const stillHeld: HeldPick[] = [];
   for (const h of file.held ?? []) {
-    const v = out.picks.find((p) => p.contestId === h.contestId);
+    const v = h.reason === "unclear-match" ? undefined : out.picks.find((p) => p.contestId === h.contestId);
     if (v?.verdict === "confirmed" && !(h.contestId in picks)) {
       picks[h.contestId] = heldEntry(h);
       confirmed++;

@@ -57,6 +57,8 @@ export type GuideResult =
       diff: string[];
       notes: string[];
       held: HeldPick[];
+      /** Unclear-match holds whose contest the guide now picks differently. */
+      unclear?: string[];
       droppedByVerifier: number;
       missing: VerifyOutput["missing"];
       warnings?: string[];
@@ -164,6 +166,11 @@ async function refreshGuide(
     if (snaps.length) archived = snaps;
   }
 
+  const unclear = (prev.held ?? []).flatMap((h) =>
+    h.reason === "unclear-match" && inScope(h.contestId) && picks[h.contestId] && !isDeepStrictEqual(picks[h.contestId].pick, h.pick)
+      ? [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(picks[h.contestId].pick)}`]
+      : [],
+  );
   let next = EndorsementFile.parse(
     scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived),
   );
@@ -174,13 +181,14 @@ async function refreshGuide(
     diff: diffPicks(prev.picks, next.picks),
     notes,
     held: [],
+    ...(unclear.length ? { unclear } : {}),
     droppedByVerifier: 0,
     missing: [],
     usage: { extract: usage },
     warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
   };
 
-  const hasHeld = (next.held ?? []).some((h) => inScope(h.contestId));
+  const hasHeld = (next.held ?? []).some((h) => h.reason !== "unclear-match" && inScope(h.contestId));
   const changedIds = Object.keys(next.picks).filter((c) => inScope(c) && !isDeepStrictEqual(prev.picks[c], next.picks[c]));
   const picksChanged = scoped ? changedIds.length > 0 : !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0;
   if (opts.verify !== false && (picksChanged || hasHeld)) {
@@ -418,6 +426,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
     const held = new Set(r.held.map((h) => h.contestId));
     return [
       ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
+      ...(r.unclear ?? []).map((e) => `${r.id}: unclear-match hold on ${e}`),
       ...r.diff
         .filter((d) => d.startsWith("- "))
         .map((d) => d.slice(2).split(":")[0])

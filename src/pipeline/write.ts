@@ -18,7 +18,7 @@ export function nextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
-  const held = (prev.held ?? []).filter((h) => picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick));
+  const held = (prev.held ?? []).filter((h) => h.reason === "unclear-match" || (picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick)));
   if (held.length) {
     picks = { ...picks };
     for (const h of held) delete picks[h.contestId];

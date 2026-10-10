@@ -91,6 +91,14 @@ describe("nextFile", () => {
     expect(n.picks["prop-c"].pick).toBe("Y");
   });
 
+  it("keeps an unclear-match hold even when the extracted pick changes", () => {
+    const held = [{ contestId: "prop-c", pick: "N" as const, reason: "unclear-match" as const, evidence: "Write-up describes another measure." }];
+    const changed = { ...picks, "prop-c": { pick: "Y" as const, ranked: false, quotes: [] } };
+    const n = nextFile({ ...prev, held }, changed, true, "2026-10-05");
+    expect(n.held).toEqual(held);
+    expect(n.picks["prop-c"]).toBeUndefined();
+  });
+
   it("keeps manual", () => {
     expect(nextFile({ ...prev, manual: true }, picks, true, "2026-10-05").manual).toBe(true);
   });
