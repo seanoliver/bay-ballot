@@ -86,7 +86,10 @@ async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[
 
 async function verifyAndWrite(client: Anthropic, data: ElectionData, guide: Guide, file: EndorsementFile, sources: Source[]): Promise<void> {
   const { output, usage } = await verify(client, guideBallot(data.ballot, guide, data.areas), guide, file, sources);
-  const r = applyVerdicts(file, output);
+  const applied = applyVerdicts(file, output);
+  // Held contests are asked about only when the verifier sees them, so it may report an unclear-match hold as missing.
+  const isHeld = new Set((applied.file.held ?? []).map((h) => h.contestId));
+  const r = { ...applied, missing: applied.missing.filter((m) => !isHeld.has(m.contestId)) };
   const path_ = endorsementPath(guide.id);
   if (!isDeepStrictEqual(r.file, file)) fs.writeFileSync(path_, toYaml(EndorsementFile.parse(r.file), { previous: fs.readFileSync(path_, "utf8") }));
 

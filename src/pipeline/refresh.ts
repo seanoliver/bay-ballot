@@ -293,6 +293,7 @@ function describe(r: GuideResult): string {
         `${r.id}: ${r.dataChanged ? "changed" : "re-extracted, no data change"}`,
         ...r.diff.map((l) => `  ${l}`),
         ...r.held.map((h) => `  !! HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}`),
+        ...(r.unclear ?? []).map((u) => `  !! unclear-match hold on ${u}`),
         ...(r.warnings ?? []).map((w) => `  !! ${w}`),
         ...r.notes.map((n) => `${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`),
       ].join("\n");
@@ -328,7 +329,7 @@ export function costOf(results: GuideResult[]): number {
 
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
-  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && r.held.length > 0))) return 2;
+  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length)))) return 2;
   return 0;
 }
 
@@ -336,12 +337,13 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
   const held = changed.reduce((n, r) => n + r.held.length, 0);
+  const unclear = changed.reduce((n, r) => n + (r.unclear?.length ?? 0), 0);
   const code = exitCodeFor(results);
   const would = by("would-extract").length;
   const isDryRun = dryRun || would > 0;
   const verdict =
     code === 1 ? "errors"
-    : code === 2 ? `needs review (${held} held)`
+    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
     : "clean";
   const lines = [
@@ -361,6 +363,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
       lines.push("", `### ${r.id}`, r.dataChanged ? "" : "_Pages changed; extracted data is the same._");
       for (const d of r.diff) lines.push(`- ${d}`);
       for (const h of r.held) lines.push(`- **HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}**`);
+      for (const u of r.unclear ?? []) lines.push(`- **unclear-match hold on ${u}**`);
       for (const w of r.warnings ?? []) lines.push(`- **${w}**`);
       if (r.droppedByVerifier) lines.push(`- verifier dropped ${r.droppedByVerifier} quote(s)`);
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);

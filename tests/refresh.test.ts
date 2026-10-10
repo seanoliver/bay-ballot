@@ -306,6 +306,8 @@ describe("runRefresh", () => {
     expect(file.held).toEqual([{ contestId: "prop-c", pick: "N", reason: "unclear-match", evidence: "decision" }]);
     expect(file.picks["prop-c"]).toBeUndefined();
     expect(reviewReasons(results)).toEqual(["alpha: unclear-match hold on prop-c: held N, guide now picks Y"]);
+    expect(exitCodeFor(results)).toBe(2);
+    expect(summarize(results, { date: "2026-10-09" })).toContain("- **unclear-match hold on prop-c: held N, guide now picks Y**");
   });
 
   it("stops extracting after the budget and defers the rest without storing their pages", async () => {
