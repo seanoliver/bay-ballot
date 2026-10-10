@@ -22,6 +22,10 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
+    reason: 'does not stand alone: "he" is unclear, since the editorial covers Pratt, Wood and López in turn (review 2026-10-10)'
+    contestId: healdsburg-council-2
 picks:
   us-rep-4:
     pick:
@@ -91,8 +95,6 @@ picks:
     pick:
       - Mathew Lopez
     quotes:
-      - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
-        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
       - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:

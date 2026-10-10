@@ -16,6 +16,12 @@ rejectedQuotes:
   - text: However, we can’t support it, and believe it is a mayoral power grab.
     reason: 'does not stand alone: opens with "However" and its subject is "it" (review 2026-10-10)'
     contestId: prop-f
+  - text: We think this is yet another option for homebuyers.
+    reason: 'does not stand alone: "this" refers back to the previous passage (review 2026-10-10)'
+    contestId: prop-37
+  - text: However, on balance, the city’s contracting system is in need of fixing.
+    reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
+    contestId: prop-e
 picks:
   lt-governor:
     pick:
@@ -125,8 +131,6 @@ picks:
   prop-37:
     pick: Y
     quotes:
-      - text: We think this is yet another option for homebuyers.
-        source: https://www.ebar.com/story/170969/
       - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
         source: https://www.ebar.com/story/170969/
   prop-38:
@@ -184,8 +188,6 @@ picks:
     pick: Y
     quotes:
       - text: On the whole, Prop E is a good start.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: However, on balance, the city’s contracting system is in need of fixing.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-f:
     pick: N
