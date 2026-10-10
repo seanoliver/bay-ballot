@@ -270,7 +270,7 @@ fi
 log "PR #$pr updated"
 
 reasons=()
-[ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks or a shrunk result, 1 = error)")
+[ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks, a changed unclear-match hold, or a shrunk result, 1 = error)")
 outside="$(git diff --name-only --no-renames origin/main...HEAD)" || outside="(could not list the PR's files)"
 outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 [ -z "$outside" ] || reasons+=("files outside data/: ${(f)outside}")

@@ -92,7 +92,8 @@ export type ArchivedSource = z.infer<typeof ArchivedSource>;
 export const HeldPick = z.object({
   contestId: Slug,
   pick: Entry.shape.pick,
-  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified"]),
+  // `unclear-match`: a person decided the guide's text may not mean this contest. No extract or verifier run releases it.
+  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified", "unclear-match"]),
   evidence: z.string(),
   ranked: z.boolean().optional(),
   rankedCount: z.number().int().positive().optional(),

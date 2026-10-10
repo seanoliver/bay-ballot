@@ -8,7 +8,7 @@ hasReasoning: true
 held:
   - contestId: smcccd-measure-v
     pick: Y
-    reason: unverified
+    reason: unclear-match
     evidence: The guide gives no position on Measure V by name; its blanket "Yes on all school bond measures and parcel taxes" names school districts, and SMCCCD is a community college district, so it does not unambiguously fit (decision 2026-10-07).
 rejectedQuotes:
   - text: The tax restructuring would also lower taxes for smaller businesses.

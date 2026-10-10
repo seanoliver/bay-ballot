@@ -11,7 +11,7 @@ held:
   - contestId: santa-clara-mayor
     pick:
       - Kevin Park
-    reason: unverified
+    reason: unclear-match
     evidence: The PDF lists "KEVIN PARK / SANTA CLARA CITY COUNCIL", but he runs only for Mayor of Santa Clara; the guide labels him Santa Clara City Council (review 2026-10-07).
 picks:
   us-rep-11:

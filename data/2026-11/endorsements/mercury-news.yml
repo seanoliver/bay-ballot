@@ -67,7 +67,7 @@ hasReasoning: true
 held:
   - contestId: prop-40
     pick: N
-    reason: unverified
+    reason: unclear-match
     evidence: "Only a sidebar headline on Marin IJ pages (\"Endorsement: No on Proposition 40's reckless wealth tax\"). The editorial says \"Written by the Southern California News Group editorial board\", not this guide's boards (review 2026-10-09)."
 picks:
   lt-governor:

@@ -281,6 +281,47 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(0);
   });
 
+  it("keeps an unclear-match hold through a re-extract that returns the same pick, without verifying it", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: prop-c\n    pick: Y\n    reason: unclear-match\n    evidence: decision\npicks:\n"));
+    const { client, stream } = fakeClient(extractOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5"]);
+    const file = parse(fs.readFileSync(f, "utf8"));
+    expect(file.held).toEqual([{ contestId: "prop-c", pick: "Y", reason: "unclear-match", evidence: "decision" }]);
+    expect(Object.keys(file.picks)).toEqual(["prop-b"]);
+    expect(reviewReasons(results)).toEqual([]);
+  });
+
+  it("flags an unclear-match hold for review when the guide now picks differently", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: prop-c\n    pick: N\n    reason: unclear-match\n    evidence: decision\npicks:\n"));
+    const { client } = fakeClient(extractOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    const file = parse(fs.readFileSync(f, "utf8"));
+    expect(file.held).toEqual([{ contestId: "prop-c", pick: "N", reason: "unclear-match", evidence: "decision" }]);
+    expect(file.picks["prop-c"]).toBeUndefined();
+    expect(reviewReasons(results)).toEqual(["alpha: unclear-match hold on prop-c: held N, guide now picks Y"]);
+    expect(exitCodeFor(results)).toBe(2);
+    expect(summarize(results, { date: "2026-10-09" })).toContain("- **unclear-match hold on prop-c: held N, guide now picks Y**");
+  });
+
+  it("flags an unclear-match hold whose contest the guide no longer picks, and keeps it", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: prop-z\n    pick: N\n    reason: unclear-match\n    evidence: decision\npicks:\n"));
+    const { client } = fakeClient(extractOut);
+    const page = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([{ contestId: "prop-z", pick: "N", reason: "unclear-match", evidence: "decision" }]);
+    expect(reviewReasons(results)).toEqual(["alpha: unclear-match hold on prop-z: held N, guide no longer picks this contest"]);
+    expect(exitCodeFor(results)).toBe(2);
+  });
+
   it("stops extracting after the budget and defers the rest without storing their pages", async () => {
     const root = setup(["alpha", "beta"], { stored: false });
     const { client } = fakeClient();
