@@ -66,13 +66,20 @@ The quote checks were not the cause: the Claude Code run of east-bay-dsa dropped
 - Before (medium): 64 picks, 0 quotes; 952 thinking tokens, 4,862 output tokens.
 - With `--effort high`: 64 picks, 40 quotes; 4,103 thinking tokens, 8,881 output tokens.
 
-**Remaining gap (unresolved).** After the fix, a full `bb extract` of east-bay-dsa kept 11 quotes: the extractor returned about 15, the checks dropped 3 and the verifier 1. The debug run on the same pages returned 40, so quote counts on this path vary a lot between runs; the API's two east-bay-dsa results (27, 31) were close together. Likely contributors, none tested:
+**Repeat runs after the fix.** Extract only (no verifier), on one cached copy of each guide's pages, counting quotes the extractor returned and quotes that passed the code checks:
 
-- Structured output arrives as one `StructuredOutput` tool call, not as constrained text, and effort also shortens tool-call arguments.
-- Claude Code's own ~580 tokens of added context, and the ~490-token tool definition.
-- Thinking settings the CLI chooses that `--effort` doesn't pin.
+| Guide | API (1 run) | Claude Code (3 runs) | Claude Code, schema in prompt (3 runs) |
+|---|---|---|---|
+| east-bay-dsa, 43 picks | 27 raw, 26 kept | 24 / 36 / 23 raw; 22 / 34 / 21 kept | 48 / 36 / 43 raw; 46 / 33 / 41 kept |
+| spur, 23 picks | 56 raw, 55 kept | 36 / 47 / 41 raw; 35 / 46 / 41 kept | 27 / 29 / 31 raw, all kept |
 
-Until that is understood, treat `--via claude-code` as giving the same picks with fewer quotes. Use it for pick-only work (new guides, widening), not for runs where quotes matter, or re-check quotes with the API path.
+Picks were identical in every run. On spur every pick kept at least one quote on both paths, so the gap is fewer quotes per pick (about 1.8 against 2.4). On east-bay-dsa, picks without a quote were 17 on the API and 9 to 22 on Claude Code.
+
+The earlier "11 quotes" was one low run followed by verifier drops: east-bay-dsa varies between runs on this path, and its average is close to the API's.
+
+**Schema in the prompt (rejected).** Dropping `--json-schema` and putting the schema in the system prompt, so the answer arrives as plain text, raised east-bay-dsa and lowered spur. It also adds a parse step the API path doesn't have. The code was not kept.
+
+Treat `--via claude-code` as giving the same picks, and on some guides about a quarter fewer quotes per pick. That is fine for new guides and widening. For a run whose main purpose is quotes, use the API.
 
 ## Gotchas
 

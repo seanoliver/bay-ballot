@@ -116,7 +116,7 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
   - It runs `CLAUDE_BIN`, else `~/.local/bin/claude`, else `claude` on PATH, never through the shell, so the `claude` alias for the work account doesn't apply. It uses the login in `~/.claude-personal` (override with `BAYBALLOT_CLAUDE_CONFIG_DIR`), and strips every `ANTHROPIC_*` and `CLAUDE_CODE_*` variable and `BAYBALLOT_ANTHROPIC_API_KEY` from the CLI's environment, so it can bill only that login. Check the login with `CLAUDE_CONFIG_DIR=~/.claude-personal ~/.local/bin/claude auth status`.
   - If the CLI is missing, not logged in or out of usage, the call and the rest of the run go to the API key in `.env.local`. A timeout (30 minutes) or output that fails the schema twice sends just that call to the API. Each fallback logs one line starting `claude-code`.
   - `--no-fallback` turns that off, so a failed call fails the guide instead. Use it to compare the two paths.
-  - Picks match the API path, but in the 2026-10-10 comparison this path kept fewer quotes (spur 30 vs 54, east-bay-dsa 11 vs 31). Prefer it for pick-only work and use the API when quotes matter; see the investigation.
+  - Picks match the API path. Quotes vary more between runs, and on some guides it keeps about a quarter fewer per pick (spur: 35 to 46 against 55). Use the API for a run whose main purpose is quotes; see the investigation.
   - The cost line counts these calls instead of pricing them: "Estimated model cost $0.40 API, plus 6 calls on the Claude subscription".
   - Background: `docs/investigations/2026-10-10-claude-code-provider.md`.
 - `npm run bb -- discover` lists guides with no Nov 2026 source yet. Set `source:` for any that have published.
