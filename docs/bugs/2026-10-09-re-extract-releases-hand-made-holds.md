@@ -25,7 +25,7 @@ On a commit before this fix, run the extract above and diff `data/2026-11/endors
 
 ## Verification
 
-- `npx vitest run`: 1057 passed, including new tests in `tests/write.test.ts`, `tests/verify.test.ts`, and `tests/refresh.test.ts`.
+- `npx vitest run`: 1058 passed, including new tests in `tests/write.test.ts`, `tests/verify.test.ts`, and `tests/refresh.test.ts`.
 - The refresh test re-extracts a guide with an `unclear-match` hold and the same pick: only the extract model runs, the hold stays, and `review` is empty. With a different pick, the hold stays and `review` names it.
 
 ## Guardrail

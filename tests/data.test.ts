@@ -168,6 +168,13 @@ describe("data", () => {
     const ok = validateElection(withFile(base(), {}, { status: "pending", held: [{ ...held[0], contestId: "prop-b" }] }));
     expect(ok.errors).toEqual([]);
   });
+  it("rejects a contest that is both picked and held, or held twice", () => {
+    const held = [{ contestId: "prop-b", pick: "Y" as const, reason: "unclear-match" as const, evidence: "x" }];
+    const both = validateElection(withFile(base(), { "prop-b": e("Y") }, { held }));
+    expect(both.errors).toEqual(["g/prop-b: both picked and held; remove one"]);
+    const twice = validateElection(withFile(base(), {}, { status: "pending", held: [held[0], held[0]] }));
+    expect(twice.errors).toEqual(["g/prop-b: held twice"]);
+  });
   it("does not warn on ranked picks beyond seats", () => {
     const d = base();
     d.ballot.contests.push({ id: "sup", section: "S", title: "Sup", kind: "candidate", candidates: ["A One", "B Two"], seats: 1, rankedChoice: true, jurisdiction: juris });
