@@ -79,6 +79,19 @@ held:
       - Aisha Wahab
     reason: old-election
     evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
+  - contestId: tamalpais-uhsd-trustee
+    pick:
+      - Leslie J. Harlander
+      - Brian A. Sutherland
+      - Valerie Wynn
+    reason: not-found
+    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Harlander, Sutherland, Wynn best for Tam Union board seats"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
+  - contestId: fairfax-council
+    pick:
+      - Larry Bragman
+      - Matt Da Cunha
+    reason: not-found
+    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Bragman, Da Cunha best for Fairfax Town Council"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
 picks:
   lt-governor:
     pick:
@@ -237,15 +250,6 @@ picks:
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
     pick: N
-  tamalpais-uhsd-trustee:
-    pick:
-      - Leslie J. Harlander
-      - Brian A. Sutherland
-      - Valerie Wynn
-  fairfax-council:
-    pick:
-      - Larry Bragman
-      - Matt Da Cunha
   superintendent:
     pick:
       - Richard Barrera

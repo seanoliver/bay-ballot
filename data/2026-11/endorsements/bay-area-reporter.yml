@@ -12,6 +12,10 @@ extraSources:
 fetchWith: browser
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: However, we can’t support it, and believe it is a mayoral power grab.
+    reason: 'does not stand alone: opens with "However" and its subject is "it" (review 2026-10-10)'
+    contestId: prop-f
 picks:
   lt-governor:
     pick:
@@ -186,11 +190,11 @@ picks:
   prop-f:
     pick: N
     quotes:
-      - text: However, we can’t support it, and believe it is a mayoral power grab.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: The mayor already has power over city departments.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-g:
     pick: N
