@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
+import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
@@ -309,7 +310,7 @@ const RATES = {
 };
 
 function usageCost(u: Usage | undefined, r: (typeof RATES)["extract"]): number {
-  if (!u) return 0;
+  if (!u || onSubscription(u)) return 0;
   return (
     (u.input_tokens * r.in + u.output_tokens * r.out + (u.cache_creation_input_tokens ?? 0) * r.cacheWrite + (u.cache_read_input_tokens ?? 0) * r.cacheRead) /
     1e6
@@ -326,6 +327,18 @@ export function costOf(results: GuideResult[]): number {
           : sum,
     0,
   );
+}
+
+export function subscriptionCalls(results: GuideResult[]): number {
+  const usages = results.flatMap((r) => (r.status === "changed" ? [r.usage.extract, r.usage.verify] : r.status === "shrunk" ? [r.usage] : []));
+  return usages.filter((u) => u && onSubscription(u)).length;
+}
+
+/** API dollars only: calls made through Claude Code are counted, not priced. */
+export function costText(results: GuideResult[]): string {
+  const api = `$${costOf(results).toFixed(2)}`;
+  const n = subscriptionCalls(results);
+  return n ? `${api} API, plus ${n} call${n === 1 ? "" : "s"} on the Claude subscription` : api;
 }
 
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
@@ -356,7 +369,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     `|---|---|---|---|---|---|---|`,
     `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
     "",
-    `Estimated model cost: $${costOf(results).toFixed(2)}`,
+    `Estimated model cost: ${costText(results)}`,
   ];
   if (changed.length) {
     lines.push("", "## Re-extracted");
