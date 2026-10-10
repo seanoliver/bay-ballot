@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
@@ -67,6 +68,25 @@ export function replaceQuery(q: string): void {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
+/** Moves to another list page without a navigation; false when the history budget is spent. */
+export function pushPath(href: string): boolean {
+  if (!HISTORY_BUDGET.tryNote(WRITE_COST)) return false;
+  try {
+    window.history.pushState(null, "", href);
+  } catch {
+    return false;
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+  return true;
+}
+
+// Read from location, since usePathname updates in a transition a frame after the query. Subscribing to it still
+// re-renders on router navigations, whose history writes fire no event.
+export function useLocationPath(serverPath: string): string {
+  usePathname();
+  return useSyncExternalStore(subscribe, () => window.location.pathname, () => serverPath);
+}
+
 export function useQuery(): string {
   return useSyncExternalStore(subscribe, readQuery, () => "");
 }
@@ -131,7 +151,7 @@ export function useStoredKey(storageKey: string): [string | null, (v: string) =>
   return [value, set];
 }
 
-const CARRIED = ["off", "offtypes", "why"];
+export const CARRIED = ["off", "offtypes", "why"];
 
 export function useCarriedQuery(): string {
   return carryQuery(useQuery(), CARRIED);

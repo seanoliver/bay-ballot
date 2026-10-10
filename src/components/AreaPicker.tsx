@@ -14,12 +14,17 @@ function Outline({ shape }: { shape?: Shape }) {
 }
 
 /** The selected county links back to the Bay Area; its ✕ widens in when the page opens. */
-function Chip({ l, shape, bayHref }: { l: AreaLink; shape?: Shape; bayHref?: string }) {
+function Chip({ l, shape, bayHref, onSwitch }: { l: AreaLink; shape?: Shape; bayHref?: string; onSwitch?: (href: string) => boolean }) {
   const clears = l.current && bayHref !== undefined;
+  const href = clears ? bayHref : l.href;
   return (
     <Link
-      href={clears ? bayHref : l.href}
+      href={href}
       prefetch={false}
+      // Switched in place when the page can; otherwise a normal navigation.
+      onNavigate={(e) => {
+        if (onSwitch?.(href)) e.preventDefault();
+      }}
       aria-current={l.current ? "page" : l.within ? "true" : undefined}
       aria-label={clears ? `Clear ${l.label}` : undefined}
       data-within={l.within || undefined}
@@ -41,13 +46,14 @@ function Chip({ l, shape, bayHref }: { l: AreaLink; shape?: Shape; bayHref?: str
   );
 }
 
-export function AreaPicker({ links }: { links: AreaLink[] }) {
+/** `onIntent` fires when a visitor may be about to pick an area, to fetch what a switch needs. */
+export function AreaPicker({ links, onSwitch, onIntent }: { links: AreaLink[]; onSwitch?: (href: string) => boolean; onIntent?: () => void }) {
   const [bay, ...counties] = links;
   return (
-    <nav aria-label="Area" className="mt-3 flex flex-wrap gap-2 text-sm">
-      <Chip l={bay} shape={BAY_AREA_SHAPE} />
+    <nav aria-label="Area" className="mt-3 flex flex-wrap gap-2 text-sm" onPointerEnter={onIntent} onFocus={onIntent} onTouchStart={onIntent}>
+      <Chip l={bay} shape={BAY_AREA_SHAPE} onSwitch={onSwitch} />
       {counties.map((l) => (
-        <Chip key={l.href} l={l} shape={COUNTY_SHAPES[l.label]} bayHref={bay.href} />
+        <Chip key={l.href} l={l} shape={COUNTY_SHAPES[l.label]} bayHref={bay.href} onSwitch={onSwitch} />
       ))}
     </nav>
   );
