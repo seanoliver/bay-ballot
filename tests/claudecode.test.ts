@@ -131,8 +131,18 @@ describe("cliArgs", () => {
     expect(args.filter((a) => a.includes("append-system-prompt"))).toEqual([]);
   });
 
-  it("disables every tool, MCP server, customization and saved session, and never uses --bare", () => {
+  it("uses the API's default effort when the request sets none", () => {
+    const effortOf = (model: string) => {
+      const a = cliArgs({ ...params, model, output_config: { format: params.output_config.format } }, "/tmp/system.txt");
+      return a[a.indexOf("--effort") + 1];
+    };
+    expect(effortOf("claude-sonnet-5-5")).toBe("high");
+    expect(effortOf("claude-opus-5-5")).toBe("medium");
+  });
+
+  it("disables every tool, MCP server, customization, settings file and saved session, and never uses --bare", () => {
     expect(value("--tools")).toBe("");
+    expect(value("--setting-sources")).toBe("");
     for (const f of ["--strict-mcp-config", "--safe-mode", "--no-session-persistence"]) expect(args).toContain(f);
     expect(args).not.toContain("--bare");
   });
@@ -157,7 +167,8 @@ describe("claudeCodeClient", () => {
     expect(bin).toBe("claude");
     expect(args[args.indexOf("--model") + 1]).toBe(MODEL);
     expect(JSON.parse(args[args.indexOf("--json-schema") + 1]).properties.picks.type).toBe("array");
-    expect(args).not.toContain("--effort");
+    // The API's default for Sonnet when extract sets none, not Sean's effortLevel setting.
+    expect(args[args.indexOf("--effort") + 1]).toBe("high");
     expect(opts.env).not.toHaveProperty("ANTHROPIC_API_KEY");
     expect(opts.env).not.toHaveProperty("BAYBALLOT_ANTHROPIC_API_KEY");
     expect(opts.env.CLAUDE_CONFIG_DIR).toBe("/home/sean/.claude-personal");

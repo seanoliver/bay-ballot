@@ -55,10 +55,13 @@ type Params = Anthropic.Messages.MessageStreamParams;
 export const systemText = (params: Params) =>
   typeof params.system === "string" ? params.system : (params.system ?? []).map((b) => b.text).join("\n\n");
 
+/** The API's effort when a request sets none. Claude Code would use the user's effortLevel setting instead. */
+export const apiDefaultEffort = (model: string) => (/opus-5-5|haiku-5-5/.test(model) ? "medium" : "high");
+
 /** The system prompt goes in a file: with a whole ballot in it, it is too long to pass safely as an argument. */
 export function cliArgs(params: Params, systemFile: string): string[] {
   const schema = params.output_config?.format?.schema;
-  const effort = params.output_config?.effort;
+  const effort = params.output_config?.effort ?? apiDefaultEffort(params.model);
   return [
     "-p",
     // stream-json input carries PDF document blocks as they are; it requires stream-json output.
@@ -70,9 +73,11 @@ export function cliArgs(params: Params, systemFile: string): string[] {
     "--tools", "",
     "--strict-mcp-config",
     "--safe-mode",
+    // No user, project or local settings: effortLevel, model or env there would change the call.
+    "--setting-sources", "",
     "--no-session-persistence",
     ...(schema ? ["--json-schema", JSON.stringify(schema)] : []),
-    ...(effort ? ["--effort", effort] : []),
+    "--effort", effort,
   ];
 }
 
