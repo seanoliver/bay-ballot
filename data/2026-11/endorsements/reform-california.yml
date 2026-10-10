@@ -742,3 +742,60 @@ picks:
     pick: N
   yountville-measure-y:
     pick: N
+  morgan-hill-measure-a:
+    pick: N
+    quotes:
+      - text: Steals the voters' power to hire and fire the officer who watches Morgan Hill's money, leaving that decision to the officials doing the spending.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  santa-clara-measure-c:
+    pick: N
+    quotes:
+      - text: Lets a quarter-million dollars of public work be awarded with no competitive bidding and no council vote, and swaps the objective lowest-responsible-bidder standard for subjective best-value scoring that is nearly impossible to challenge after the fact — in a city with a documented contracting controversy record.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  sunnyvale-measure-g:
+    pick: N
+    quotes:
+      - text: Replaces the charter's specific limits on how public works contracts are awarded with authority to use any method state law allows, deleting a taxpayer protection Sunnyvale voters put in the charter on purpose.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  sunnyvale-measure-h:
+    pick: N
+  sunnyvale-measure-i:
+    pick: N
+    quotes:
+      - text: Extends how long an unelected appointee holds a council seat by eliminating the option of filling it at an earlier consolidated election, letting appointees build incumbency advantage on the public's time.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  reed-union-sd-measure-o:
+    pick: N
+    quotes:
+      - text: Authorizes costly bond funded by taxpayer dollars despite massive levels of wasteful spending and awarding contracts without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  corte-madera-measure-q:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  mill-valley-measure-t:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  marin-csa-29-measure-z:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  inverness-pud-measure-aa:
+    pick: N
+    quotes:
+      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  stinson-beach-cwd-measure-ee:
+    pick: N
+    quotes:
+      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  upper-bay-prd-measure-ff:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
