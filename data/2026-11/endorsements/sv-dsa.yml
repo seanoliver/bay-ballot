@@ -3,13 +3,17 @@ election: 2026-11
 status: published
 source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
 allowForeignSources: true
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 held:
   - contestId: smcccd-measure-v
     pick: Y
     reason: unclear-match
     evidence: The guide gives no position on Measure V by name; its blanket "Yes on all school bond measures and parcel taxes" names school districts, and SMCCCD is a community college district, so it does not unambiguously fit (decision 2026-10-07).
+  - contestId: east-palo-alto-measure-o
+    pick: Y
+    reason: unclear-match
+    evidence: The guide's "Measure O - East Palo Alto" write-up describes a 1.5% tax on landlords' rental revenue, which was the city's 2016 Measure O. The 2026 Measure O is a general obligation bond, so the Yes may not be meant for it (decision 2026-10-09).
 rejectedQuotes:
   - text: The tax restructuring would also lower taxes for smaller businesses.
     reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
@@ -147,8 +151,6 @@ picks:
     quotes:
       - text: Ruben Abrica, the incumbent, has been a long term advocate for affordable housing.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-  east-palo-alto-measure-o:
-    pick: Y
   east-palo-alto-measure-cc:
     pick: Y
   menlo-park-council-4:
@@ -416,3 +418,11 @@ picks:
     pick: Y
   union-city-measure-ii:
     pick: Y
+  menlo-park-city-sd-trustee:
+    pick:
+      - Jed Scolnick
+      - Maya Herstein
+      - Andrew Barnes
+    quotes:
+      - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub

@@ -103,6 +103,13 @@ contests:
     candidates: [Boris Lipkin, Richard F. Wahl, Megha Chawla, Shivani Tripathi]
     seats: 3
     jurisdiction: { level: district, name: San Carlos School District, district: "at-large", within: [{ level: city, name: San Carlos }] }
+  - id: menlo-park-city-sd-trustee
+    section: School and special districts
+    title: Menlo Park City School District Board
+    kind: candidate
+    candidates: [Jed Scolnick, Maya Herstein, Sherwin Chen, Andrew Barnes]
+    seats: 3
+    jurisdiction: { level: district, name: Menlo Park City School District, district: "at-large", within: [{ level: county, name: San Mateo }] }
   - id: granada-csd-director
     section: School and special districts
     title: Granada Community Services District Board
@@ -198,7 +205,7 @@ contests:
     section: Local measures
     title: East Palo Alto Measure O
     kind: measure
-    description: "Bond Measure"
+    description: "Bond for a civic center (police station, library, City Hall), water and stormwater systems, and park land"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: East Palo Alto }
   - id: east-palo-alto-measure-cc
