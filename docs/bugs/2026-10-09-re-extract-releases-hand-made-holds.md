@@ -20,7 +20,7 @@ On a commit before this fix, run the extract above and diff `data/2026-11/endors
 - `src/lib/schema.ts`: new hold reason `unclear-match`, for a person's decision that the guide's text may not mean this contest.
 - `src/pipeline/verify.ts`: `unclear-match` holds are not sent to the verifier and are never released or re-labeled.
 - `src/pipeline/write.ts`: `nextFile` keeps an `unclear-match` hold even when the extracted pick changes.
-- `src/pipeline/refresh.ts`: these holds don't trigger a verify. When the guide now picks differently, `review` gets "unclear-match hold on …", the PR body and log say so, and the exit code is 2, so both the cloud refresh and `scripts/local-refresh.sh` label the PR for a person.
+- `src/pipeline/refresh.ts`: these holds don't trigger a verify. When the guide now picks differently or no longer picks the contest, `review` gets "unclear-match hold on …", the PR body and log say so, and the exit code is 2, so both the cloud refresh and `scripts/local-refresh.sh` label the PR for a person.
 - Data: the four holds made in review (sv-dsa `smcccd-measure-v`, eqca `orchard-sd-trustee`, ca-wfp `santa-clara-mayor`, mercury-news `prop-40`) moved from `unverified` to `unclear-match`.
 
 ## Verification

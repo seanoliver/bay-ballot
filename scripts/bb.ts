@@ -138,7 +138,7 @@ async function runVerify(): Promise<void> {
         console.log(`${id}: skipped (manual)`);
         continue;
       }
-      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held?.length ?? 0) === 0) {
+      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held ?? []).filter((h) => h.reason !== "unclear-match").length === 0) {
         console.log(`${id}: skipped (no source or no picks)`);
         continue;
       }

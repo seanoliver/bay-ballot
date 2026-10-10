@@ -269,7 +269,7 @@ jobs:
             exit 0
           fi
           if [ "$CODE" != "0" ] || [ "$CI" != "true" ]; then
-            review "Not auto-merged: refresh exit code $CODE (2 = held picks or a shrunk result); CI $([ "$CI" = "true" ] && echo passed || echo "failed or didn't start"): $CI_URL"
+            review "Not auto-merged: refresh exit code $CODE (2 = held picks, a changed unclear-match hold, or a shrunk result); CI $([ "$CI" = "true" ] && echo passed || echo "failed or didn't start"): $CI_URL"
             exit 0
           fi
           # Read at merge time: a label added while CI ran must stop the merge.

@@ -166,11 +166,12 @@ async function refreshGuide(
     if (snaps.length) archived = snaps;
   }
 
-  const unclear = (prev.held ?? []).flatMap((h) =>
-    h.reason === "unclear-match" && inScope(h.contestId) && picks[h.contestId] && !isDeepStrictEqual(picks[h.contestId].pick, h.pick)
-      ? [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(picks[h.contestId].pick)}`]
-      : [],
-  );
+  const unclear = (prev.held ?? []).flatMap((h) => {
+    if (h.reason !== "unclear-match" || !inScope(h.contestId)) return [];
+    const now = picks[h.contestId];
+    if (!now) return [`${h.contestId}: held ${showPick(h.pick)}, guide no longer picks this contest`];
+    return isDeepStrictEqual(now.pick, h.pick) ? [] : [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(now.pick)}`];
+  });
   let next = EndorsementFile.parse(
     scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived),
   );
