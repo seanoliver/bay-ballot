@@ -1,11 +1,11 @@
 guide: westside-family-dems
 election: 2026-11
 status: published
-source: https://westsidefamilysf.com/november-2026-endorsements
+source: https://westsidefamilysf.com/current-endorsements
 archived:
   - source: https://westsidefamilysf.com/november-2026-endorsements
     snapshot: https://web.archive.org/web/20261005224436/https://westsidefamilysf.com/november-2026-endorsements
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
   us-rep-11:
@@ -13,21 +13,21 @@ picks:
       - Scott Wiener
     quotes:
       - text: A long-time staple of the San Francisco political scene, Wiener is known for being one of the most effective people in local government.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: In the state Senate, he has managed to pass bills once thought impossible, especially on the issue of housing.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   assembly-17:
     pick:
       - Matt Haney
     quotes:
       - text: Matt Haney is running unopposed, but we can still recognize his contributions in the Assembly, especially around housing, homelessness, and public safety.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   assembly-19:
     pick:
       - Catherine Stefani
     quotes:
       - text: As a city supervisor Stefani focused on improving public safety, housing, small business conditions, and government oversight, and she has continued that important work in the Assembly.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   board-of-education:
     pick:
       - Phil Kim
@@ -35,11 +35,11 @@ picks:
       - Tim Tung
     quotes:
       - text: Phil Kim has performed well as Board of Education president since his appointment in August 2024, including spearheading a 4-3 board vote to bring back eighth grade algebra.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: Autumn Brown Garibay shows unusual tenacity and willingness to tackle the hard issues, coupled with pragmatic ideas and a drive to get things done.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: Tim Tung is similarly pragmatic and outcomes-focused, and will bring badly needed fiscal expertise to the BOE.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   college-board:
     pick:
       - Elijah Ball
@@ -47,11 +47,11 @@ picks:
       - Monroe Lace
     quotes:
       - text: Ball is a campus designer, who can help City College deal with its large portfolio of cash-draining properties.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: Tam is a finance expert, well-qualified to understand City College’s large financial problems.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: And Lace is a public school teacher who can help boost enrollment by building bridges between SFUSD and City College.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   college-board-partial:
     pick:
       - Ruth Ferguson
@@ -59,8 +59,8 @@ picks:
     pick:
       - Sara Barz
     quotes:
-      - text: BART faces both short-term and long-term fiscal, infrastructural, and governance problems, and we need Sara on the BART Board and help fix them.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+      - text: While Sara is a passionate advocate for public transit, she’s also a level-headed leader who explores all sides of issues and looks for fair, reasonable conclusions.
+        source: https://westsidefamilysf.com/current-endorsements
   assessor:
     pick:
       - Joaquín Torres
@@ -69,67 +69,68 @@ picks:
       - Alan Wong
     quotes:
       - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: Appointed last year by Mayor Lurie, Wong has voted in support of the Family Zoning plan, supports increased police staffing to boost public safety and reduce overtime costs, has worked to cut red tape for small businesses, and has already taken innovative steps like creating a process for San Franciscans to propose repeal or revision of unhelpful laws.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-a:
     pick: Y
     quotes:
       - text: The cleanup items in Prop A were meant to be non-controversial improvements that are widely agreed upon, and the measure does a good job of that.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: We support Prop A as a basic good governance reform measure.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-b:
     pick: N
     quotes:
       - text: While public banks aren’t necessarily bad, this proposal is a solution in search of a problem.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: San Francisco is served by many community banks, which already focus on community needs.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
+      - text: This city is still struggling to get the basics right, and our leaders shouldn’t get distracted with a difficult, sophisticated, and expensive project that doesn’t seem to solve any real problems.
+        source: https://westsidefamilysf.com/current-endorsements
   prop-c:
     pick: Y
+    quotes:
+      - text: We hope that expanding the Housing Trust Fund will support development of subsidized housing not only by directly funding new developments, but also by providing a reliable long-term income stream that gives federal, state, and nonprofit partners confidence that if they contribute to projects in SF, those projects will succeed.
+        source: https://westsidefamilysf.com/current-endorsements
   prop-d:
     pick: Y
     quotes:
       - text: This city’s ballots are choked with unnecessary ballot measures, many of which are imposed as bargaining chips, attempts to sabotage rival measures, or ways to confuse voters.
-        source: https://westsidefamilysf.com/november-2026-endorsements
-      - text: Prop D would raise the threshold for ballot access in several ways, while still making SF’s ballot more accessible than almost anywhere else in the country.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
+      - text: The reason we have more measures than other cities is that the city makes it extremely easy to put things on the ballot.
+        source: https://westsidefamilysf.com/current-endorsements
   prop-e:
     pick: Y
     quotes:
       - text: Today, having a contract approved in San Francisco can take 18 months and require approval from up to 14 separate reviewing departments.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: Prop E would ease the complexity by centralizing contracting authority under the City Administrator, extending the City Administrator’s term, and increasing the threshold for contracts that require Board of Supervisors review and approval.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-f:
     pick: Y
     quotes:
       - text: City management in San Francisco is spread across 130 boards and 50 department heads, diffusing responsibility until nobody is accountable.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: Prop F doesn’t just empower the mayor, it makes the mayor accountable.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-g:
     pick: N
   prop-h:
     pick: Y
     quotes:
       - text: Muni needs more funding and we can’t allow the city to lose mobility at this critical time.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-i:
     pick: N
     quotes:
       - text: San Francisco’s budget is already choked with set-asides, severely limiting our government’s flexibility.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   prop-j:
     pick: Y
     quotes:
       - text: While we have serious reservations about raising taxes on property, the city is facing a budget deficit and removing this exception is a reasonable way to help address it.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
   rtm:
     pick: Y
     quotes:
       - text: BART now faces a financial shortfall, and if the gap isn’t closed it may have to make severe cuts.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
       - text: We cannot afford to slash BART, especially not at this critical time.
-        source: https://westsidefamilysf.com/november-2026-endorsements
+        source: https://westsidefamilysf.com/current-endorsements
