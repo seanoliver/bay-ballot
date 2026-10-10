@@ -205,7 +205,7 @@ contests:
     section: Local measures
     title: East Palo Alto Measure O
     kind: measure
-    description: "Bond for a civic center (police station, library, City Hall), water and stormwater systems, and park land"
+    description: "Bond for a civic center (police station, library, City Hall), water and stormwater systems, and park land and improvements"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: East Palo Alto }
   - id: east-palo-alto-measure-cc
