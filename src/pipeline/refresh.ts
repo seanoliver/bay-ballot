@@ -433,6 +433,8 @@ export type ResultJson = {
   failed: { id: string; error: string }[];
   shrunk: { id: string; pageHash: string }[];
   review: string[];
+  /** Estimated API dollars this run. */
+  apiCost: number;
 };
 
 /** What a person must look at before this refresh merges, independent of the exit code. */
@@ -462,5 +464,8 @@ export function resultJson(results: GuideResult[], exitCode: number): ResultJson
     failed: results.flatMap((r) => (r.status === "failed" ? [{ id: r.id, error: r.error }] : [])),
     shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
     review: reviewReasons(results),
+    // Above zero only when calls went to the API: --via api, or the subscription's usage limit was reached.
+    // Rounded up to the cent, so a single small call still counts.
+    apiCost: Math.ceil(costOf(results) * 100) / 100,
   };
 }

@@ -8,11 +8,11 @@ import type { ExtractClient } from "./extract";
 
 type Env = Record<string, string | undefined>;
 
-/** Where model calls go: the Anthropic API (the default, and the only option in CI) or Claude Code on Sean's subscription. */
+/** Where model calls go: Claude Code on Sean's subscription (the default, locally and in CI) or the Anthropic API. */
 export type ModelVia = "api" | "claude-code";
 
 export function modelVia(flagValue: string | undefined, envValue: string | undefined): ModelVia {
-  const v = flagValue ?? (envValue?.trim() || undefined) ?? "api";
+  const v = flagValue ?? (envValue?.trim() || undefined) ?? "claude-code";
   if (v === "api" || v === "claude-code") return v;
   throw new Error(`--via must be 'api' or 'claude-code', not '${v}'`);
 }
@@ -21,7 +21,7 @@ export type RunResult = { code: number | null; stdout: string; stderr: string; t
 export type Run = (bin: string, args: string[], opts: { env: Env; cwd: string; input: string; timeoutMs: number }) => Promise<RunResult>;
 
 export type ClaudeCodeOptions = {
-  /** The API client to use when Claude Code fails; null turns fallback off. Called at most once. */
+  /** The API client to use once the subscription's usage limit is reached; null turns fallback off. Called at most once. */
   fallback: (() => ExtractClient) | null;
   log?: (line: string) => void;
   env?: Env;
@@ -38,15 +38,20 @@ export function claudeBin(env: Env = process.env): string {
   return fs.existsSync(local) ? local : "claude";
 }
 
-/** Only the personal login may bill: drop every API key, token, base URL and third-party provider switch. */
+/**
+ * Only Sean's subscription may bill: drop every API key, token, base URL and third-party provider switch.
+ * CI has no login, so it passes his `claude setup-token` token as BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN. A
+ * CLAUDE_CODE_OAUTH_TOKEN already in the shell could belong to another account, so it is dropped with the rest.
+ */
 export function childEnv(env: Env, maxTokens: number): Env {
   const kept = Object.entries(env).filter(
-    ([k]) => !k.startsWith("ANTHROPIC_") && !k.startsWith("CLAUDE_CODE_") && k !== "BAYBALLOT_ANTHROPIC_API_KEY" && k !== "CLAUDE_CONFIG_DIR",
+    ([k]) => !k.startsWith("ANTHROPIC_") && !k.startsWith("CLAUDE_CODE_") && !k.startsWith("BAYBALLOT_") && k !== "CLAUDE_CONFIG_DIR",
   );
   return {
     ...Object.fromEntries(kept),
     CLAUDE_CONFIG_DIR: env.BAYBALLOT_CLAUDE_CONFIG_DIR || path.join(env.HOME ?? os.homedir(), ".claude-personal"),
     CLAUDE_CODE_MAX_OUTPUT_TOKENS: String(maxTokens),
+    ...(env.BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN ? { CLAUDE_CODE_OAUTH_TOKEN: env.BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN } : {}),
   };
 }
 
@@ -185,7 +190,7 @@ const runCli: Run = (bin, args, { env, cwd, input, timeoutMs }) =>
     child.stdin.end(input);
   });
 
-/** Failures that will repeat on every call, so the rest of the run goes straight to the API. */
+/** Failures that will repeat on every call: after one, the rest of the run skips the CLI. */
 const STICKY = new Set<Failure["kind"]>(["missing", "auth", "limit"]);
 const REASON: Record<Failure["kind"], string> = {
   missing: "CLI not found",
@@ -196,7 +201,10 @@ const REASON: Record<Failure["kind"], string> = {
   error: "failed",
 };
 
-/** A model client that runs each call through `claude -p` on Sean's subscription, falling back to the API per call. */
+/**
+ * A model client that runs each call through `claude -p` on Sean's subscription. Only a usage limit sends calls to
+ * the API, and then for the rest of the run; any other failure fails the call, so a broken login never bills the API.
+ */
 export function claudeCodeClient(opts: ClaudeCodeOptions): ExtractClient {
   const env = opts.env ?? process.env;
   const run = opts.run ?? runCli;
@@ -226,8 +234,9 @@ export function claudeCodeClient(opts: ClaudeCodeOptions): ExtractClient {
     if (!("kind" in r)) return r;
     if (STICKY.has(r.kind)) stuck = r;
     const why = `claude-code ${REASON[r.kind]} (${params.model}): ${r.detail}`;
-    if (!opts.fallback) throw new Error(`${why}; fallback is off`);
-    if (fresh) log(`${why}; falling back to the API${STICKY.has(r.kind) ? " for the rest of this run" : " for this call"}`);
+    if (r.kind !== "limit") throw new Error(why);
+    if (!opts.fallback) throw new Error(`${why}; API fallback is off`);
+    if (fresh) log(`${why}; falling back to the API for the rest of this run`);
     api ??= opts.fallback();
     return api.messages.stream(params).finalMessage();
   }

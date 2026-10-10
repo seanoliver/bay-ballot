@@ -23,10 +23,10 @@ import { parse as parseYaml } from "yaml";
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
 const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--archive] [--force] [--force-extract] [--no-verify]
-                                              [--only-areas <area[,area...]>] [--via api|claude-code] [--no-fallback]
+                                              [--only-areas <area[,area...]>] [--via claude-code|api] [--no-fallback]
        npm run bb -- refresh [--summary <file.md>] [--result <file.json>] [--shrunk-state <file.json>] [--baseline <data dir>] [--archive]
-                             [--local-only] [--no-extract] [--via api|claude-code] [--no-fallback]
-       npm run bb -- verify <guide...> | --all [--browser] [--via api|claude-code] [--no-fallback]
+                             [--local-only] [--no-extract] [--via claude-code|api] [--no-fallback]
+       npm run bb -- verify <guide...> | --all [--browser] [--via claude-code|api] [--no-fallback]
        npm run bb -- pages --seed [<guide...>]
        npm run bb -- fetch-check <guide...> | --all [--browser]   (fetch only; prints what came back, writes nothing)
        npm run bb -- discover
@@ -57,10 +57,11 @@ verify has a separate model audit each guide's picks and quotes against its page
 Unconfirmed picks move to 'held' (not published) and unconfirmed quotes are dropped;
 the command exits non-zero when anything is held.
 
---via claude-code (or BAYBALLOT_MODEL_VIA=claude-code) sends extract and verify model calls
-through Claude Code on Sean's personal subscription (CLAUDE_CONFIG_DIR ~/.claude-personal, or
-BAYBALLOT_CLAUDE_CONFIG_DIR) instead of the API. A call the CLI can't answer falls back to the
-API key in .env.local, unless --no-fallback. The default, and CI, is --via api.`;
+Model calls go through Claude Code on Sean's personal subscription (CLAUDE_CONFIG_DIR
+~/.claude-personal, or BAYBALLOT_CLAUDE_CONFIG_DIR; in CI, the BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN
+token). When the subscription's usage limit is reached, the rest of the run uses the API key
+in .env.local, unless --no-fallback; any other Claude Code failure fails the call. --via api
+(or BAYBALLOT_MODEL_VIA=api) uses the API for every call.`;
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
@@ -80,7 +81,7 @@ const apiClient = () => makeClient(resolveApiKey(".env.local"));
 
 function modelClient(): ExtractClient {
   if (modelVia(option("--via"), process.env.BAYBALLOT_MODEL_VIA) === "api") return apiClient();
-  console.log(`Model calls go through Claude Code on the subscription${flag("--no-fallback") ? " (no API fallback)" : ", falling back to the API"}.`);
+  console.log(`Model calls go through Claude Code on the subscription${flag("--no-fallback") ? " (no API fallback)" : ", using the API only if its usage limit is reached"}.`);
   return claudeCodeClient({ fallback: flag("--no-fallback") ? null : apiClient });
 }
 

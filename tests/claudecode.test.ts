@@ -7,7 +7,7 @@ import { loadElection } from "@/lib/data";
 import type { EndorsementFile, Guide } from "@/lib/schema";
 import { childEnv, claudeBin, claudeCodeClient, cliArgs, modelVia, systemText, onSubscription, type Run, type RunResult } from "@/pipeline/claudecode";
 import { extract, MODEL, type ExtractClient, type ExtractOutput, type Source } from "@/pipeline/extract";
-import { costOf, costText, type GuideResult } from "@/pipeline/refresh";
+import { costOf, costText, resultJson, type GuideResult } from "@/pipeline/refresh";
 import { verify, VERIFY_MODEL, type VerifyOutput } from "@/pipeline/verify";
 
 const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
@@ -70,10 +70,10 @@ function setup(results: RunResult[], { fallback = true } = {}) {
 }
 
 describe("modelVia", () => {
-  it("defaults to the API", () => expect(modelVia(undefined, undefined)).toBe("api"));
+  it("defaults to the subscription", () => expect(modelVia(undefined, undefined)).toBe("claude-code"));
   it("reads BAYBALLOT_MODEL_VIA, and the flag wins over it", () => {
-    expect(modelVia(undefined, "claude-code")).toBe("claude-code");
-    expect(modelVia("api", "claude-code")).toBe("api");
+    expect(modelVia(undefined, "api")).toBe("api");
+    expect(modelVia("claude-code", "api")).toBe("claude-code");
   });
   it("rejects anything else", () => expect(() => modelVia("claude", undefined)).toThrow("--via must be 'api' or 'claude-code', not 'claude'"));
 });
@@ -102,6 +102,11 @@ describe("childEnv", () => {
       expect(env).not.toHaveProperty(k);
     }
     expect(env).toMatchObject({ HOME: "/home/sean", PATH: "/usr/bin", CLAUDE_CODE_MAX_OUTPUT_TOKENS: "64000" });
+  });
+
+  it("passes only BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN on as the subscription token", () => {
+    expect(childEnv({ ...parent, BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN: "personal-oauth" }, 1)).toMatchObject({ CLAUDE_CODE_OAUTH_TOKEN: "personal-oauth" });
+    expect(childEnv({ ...parent, BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN: "personal-oauth" }, 1)).not.toHaveProperty("BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN");
   });
 
   it("points at ~/.claude-personal, not the shell's config dir, unless BAYBALLOT_CLAUDE_CONFIG_DIR says otherwise", () => {
@@ -206,48 +211,50 @@ describe("claudeCodeClient", () => {
     expect(t.makeApi).not.toHaveBeenCalled();
   });
 
-  it("falls back to the API for the call when the output fails the schema twice", async () => {
+  it("fails the call without using the API when the output fails the schema twice, and tries the CLI on the next", async () => {
     const t = setup([ok({ picks: [] }), fail(lines({ type: "result", subtype: "error_max_structured_output_retries", is_error: true }))]);
-    const r = await extract(t.client, ballot, guide, sources);
-    expect(r.output).toEqual(extractOut);
-    expect(onSubscription(r.usage)).toBe(false);
+    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow(/^claude-code output failed the schema twice \(claude-sonnet-5-5\)/);
     expect(t.run).toHaveBeenCalledTimes(2);
-    expect(t.api.stream.mock.calls[0][0].model).toBe(MODEL);
-    expect(t.log).toHaveBeenCalledOnce();
-    expect(t.log.mock.calls[0][0]).toMatch(/^claude-code output failed the schema twice \(claude-sonnet-5-5\): .*; falling back to the API for this call$/);
+    expect(t.makeApi).not.toHaveBeenCalled();
 
-    await extract(t.client, ballot, guide, sources);
+    expect((await extract(t.client, ballot, guide, sources)).output).toEqual(extractOut);
     expect(t.run).toHaveBeenCalledTimes(3);
   });
 
-  it("falls back for a timed-out call and tries the CLI again on the next", async () => {
+  it("fails a timed-out call without using the API, and tries the CLI on the next", async () => {
     const t = setup([{ code: null, stdout: "", stderr: "", timedOut: true, missing: false }]);
-    await extract(t.client, ballot, guide, sources);
+    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow("claude-code timed out");
     await extract(t.client, ballot, guide, sources);
     expect(t.run).toHaveBeenCalledTimes(2);
-    expect(t.api.stream).toHaveBeenCalledOnce();
-    expect(t.log.mock.calls[0][0]).toContain("claude-code timed out");
+    expect(t.makeApi).not.toHaveBeenCalled();
   });
 
   it.each([
     ["CLI not found", { code: null, stdout: "", stderr: "spawn claude ENOENT", timedOut: false, missing: true }],
     ["not logged in", NOT_LOGGED_IN],
-    ["usage limit reached", LIMITED],
-  ])("uses the API for the rest of the run once the CLI is %s, logging it once", async (reason, result) => {
+  ])("fails every call once the CLI is %s, without using the API", async (reason, result) => {
     const t = setup([result]);
-    await extract(t.client, ballot, guide, sources);
+    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow(`claude-code ${reason}`);
+    await expect(verify(t.client, ballot, guide, file, sources)).rejects.toThrow(`claude-code ${reason}`);
+    expect(t.run).toHaveBeenCalledOnce();
+    expect(t.makeApi).not.toHaveBeenCalled();
+  });
+
+  it("uses the API for the rest of the run once the usage limit is reached, logging it once", async () => {
+    const t = setup([LIMITED]);
+    const r = await extract(t.client, ballot, guide, sources);
+    expect(onSubscription(r.usage)).toBe(false);
     await verify(t.client, ballot, guide, file, sources);
     expect(t.run).toHaveBeenCalledOnce();
     expect(t.api.stream.mock.calls.map((c) => c[0].model)).toEqual([MODEL, VERIFY_MODEL]);
     expect(t.makeApi).toHaveBeenCalledOnce();
     expect(t.log).toHaveBeenCalledOnce();
-    expect(t.log.mock.calls[0][0]).toContain(`claude-code ${reason}`);
-    expect(t.log.mock.calls[0][0]).toContain("for the rest of this run");
+    expect(t.log.mock.calls[0][0]).toMatch(/^claude-code usage limit reached \(claude-sonnet-5-5\): .*; falling back to the API for the rest of this run$/);
   });
 
-  it("throws instead of using the API when fallback is off", async () => {
+  it("throws instead of using the API at the usage limit when fallback is off", async () => {
     const t = setup([LIMITED], { fallback: false });
-    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow("claude-code usage limit reached (claude-sonnet-5-5): Claude usage limit reached; fallback is off");
+    await expect(extract(t.client, ballot, guide, sources)).rejects.toThrow("claude-code usage limit reached (claude-sonnet-5-5): Claude usage limit reached; API fallback is off");
     expect(t.api.stream).not.toHaveBeenCalled();
   });
 });
@@ -279,21 +286,19 @@ describe("the default runner", () => {
     expect(JSON.parse(read("input")).message.content.at(-1).text).toContain("Organization: GrowSF");
   });
 
-  it("falls back when the binary doesn't exist", async () => {
+  it("reports a binary that doesn't exist", async () => {
     const api = apiFake();
-    const log = vi.fn();
-    const client = claudeCodeClient({ fallback: () => api.client, log, env: { ...process.env, CLAUDE_BIN: "/nonexistent/claude" } });
-    expect((await extract(client, ballot, guide, sources)).output).toEqual(extractOut);
-    expect(log.mock.calls[0][0]).toContain("claude-code CLI not found");
+    const client = claudeCodeClient({ fallback: () => api.client, env: { ...process.env, CLAUDE_BIN: "/nonexistent/claude" } });
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow("claude-code CLI not found");
+    expect(api.stream).not.toHaveBeenCalled();
   });
 
-  it("kills a CLI that runs past the timeout and falls back", async () => {
+  it("kills a CLI that runs past the timeout", async () => {
     const { bin } = stub("exec sleep 60");
     const api = apiFake();
-    const log = vi.fn();
-    const client = claudeCodeClient({ fallback: () => api.client, log, timeoutMs: 200, env: { ...process.env, CLAUDE_BIN: bin } });
-    expect((await extract(client, ballot, guide, sources)).output).toEqual(extractOut);
-    expect(log.mock.calls[0][0]).toContain("claude-code timed out");
+    const client = claudeCodeClient({ fallback: () => api.client, timeoutMs: 200, env: { ...process.env, CLAUDE_BIN: bin } });
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow("claude-code timed out");
+    expect(api.stream).not.toHaveBeenCalled();
   });
 });
 
@@ -309,5 +314,14 @@ describe("cost", () => {
     expect(costText([changed(e.usage, v.usage)])).toBe("$0.00 API, plus 2 calls on the Claude subscription");
     const apiUsage = { ...e.usage, input_tokens: 1_000_000 };
     expect(costText([changed(apiUsage)])).toBe("$2.00");
+  });
+
+  it("records API spend in result.json, so a fallback at the usage limit can alert", async () => {
+    const t = setup([LIMITED]);
+    const e = await extract(t.client, ballot, guide, sources);
+    const r: GuideResult = { id: "growsf", status: "changed", dataChanged: false, diff: [], notes: [], held: [], droppedByVerifier: 0, missing: [], usage: { extract: e.usage } };
+    expect(resultJson([r], 0).apiCost).toBeGreaterThan(0);
+    const sub = await extract(setup([]).client, ballot, guide, sources);
+    expect(resultJson([{ ...r, usage: { extract: sub.usage } }], 0).apiCost).toBe(0);
   });
 });

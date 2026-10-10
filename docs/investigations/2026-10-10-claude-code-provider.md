@@ -28,13 +28,13 @@ Heavy local runs (county launches, widening guides) bill the API key; the six-co
   - The user message goes on stdin as one stream-json line. The working directory is an empty temp dir.
 - **Environment:** every `ANTHROPIC_*` and `CLAUDE_CODE_*` variable, `CLAUDE_CONFIG_DIR` and `BAYBALLOT_ANTHROPIC_API_KEY` are removed; `CLAUDE_CONFIG_DIR` is set to `~/.claude-personal` (or `BAYBALLOT_CLAUDE_CONFIG_DIR`), and `CLAUDE_CODE_MAX_OUTPUT_TOKENS` to the request's `max_tokens`. A stray `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN` or Bedrock/Vertex switch would otherwise decide who pays.
 - **Result mapping:** one text block holding `JSON.stringify(structured_output)`, which is what `extract()` and `verify()` parse; `stop_reason` `end_turn` (or `refusal` / `max_tokens` passed through); usage from the CLI, zero where absent. The usage object is marked as subscription usage, so `costOf` doesn't price it and the summary says "$0.40 API, plus 6 calls on the Claude subscription".
-- **Fallback:** CLI missing, not logged in (`error: "authentication_failed"`), usage limit (`rate_limit` / `billing_error` or a rejected rate-limit event): this call and the rest of the run go to the API, logged once. Timeout (30 minutes) or other failure: this call only. Output that fails the schema is retried once, then that call falls back. A refusal is returned to the caller, which throws as it does on the API path. `--no-fallback` throws instead.
-- **Switch:** `--via api|claude-code` on `extract`, `refresh` and `verify`, or `BAYBALLOT_MODEL_VIA`; default `api`. `local-refresh.sh` passes `BAYBALLOT_MODEL_VIA` through as `--via`, and `npm run local-refresh:install` records it in the launchd job when set in the installing shell.
+- **Fallback:** CLI missing, not logged in (`error: "authentication_failed"`), usage limit (`rate_limit` / `billing_error` or a rejected rate-limit event): this call and the rest of the run go to the API, logged once. Timeout (30 minutes) or other failure: this call only. Output that fails the schema is retried once, then that call falls back. A refusal is returned to the caller, which throws as it does on the API path. `--no-fallback` throws instead. (Superseded below: only a usage limit falls back now.)
+- **Switch:** `--via api|claude-code` on `extract`, `refresh` and `verify`, or `BAYBALLOT_MODEL_VIA`; default `api`. (Superseded: the default is now `claude-code`.) `local-refresh.sh` passes `BAYBALLOT_MODEL_VIA` through as `--via`, and `npm run local-refresh:install` records it in the launchd job when set in the installing shell.
 
 ## Terms and limits
 
 - Anthropic's help article "Use the Claude Agent SDK with your Claude plan" (update of 2026-10-07) says Max and Team plans now include monthly API credits covering `claude -p`, and "You can still use the Claude Agent SDK, `claude -p`, and third-party apps with your subscription limits." Its 2026-06-15 note says the earlier plan to move `claude -p` to a separate credit was paused.
-- This use is Sean running Claude Code himself on his own Mac with his own login. CI keeps the API key: the GitHub job never passes `--via`, and a subscription login shouldn't be copied to shared runners.
+- First version: local only, with CI on the API key. Superseded on 2026-10-10 (see "Moving CI to the subscription").
 - `claude -p` usage draws from the same five-hour and weekly limits as interactive use. A burst of ~20 guides is about 40 calls; when the limit is hit, the run finishes on the API (or fails per guide with `--no-fallback`).
 - `--json-schema` enforcement is Claude Code's, not the API's constrained decoding. The API path can't return schema-invalid JSON; the CLI path can, which is why the client re-validates and retries.
 - No temperature or thinking control beyond `--effort`. The API path doesn't set temperature either.
@@ -80,6 +80,16 @@ The earlier "11 quotes" was one low run followed by verifier drops: east-bay-dsa
 **Schema in the prompt (rejected).** Dropping `--json-schema` and putting the schema in the system prompt, so the answer arrives as plain text, raised east-bay-dsa and lowered spur. It also adds a parse step the API path doesn't have. The code was not kept.
 
 Treat `--via claude-code` as giving the same picks, and on some guides about a quarter fewer quotes per pick. That is fine for new guides and widening. For a run whose main purpose is quotes, use the API.
+
+## Moving CI to the subscription
+
+On 2026-10-10 Sean moved every model call to the subscription, including the daily GitHub job, to stop paying API prices on top of Max.
+
+- **Auth in CI:** Anthropic's GitHub Actions docs list `CLAUDE_CODE_OAUTH_TOKEN`, created with `claude setup-token`, for Pro and Max plans. The job sets it from a repository secret through `BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN`, because `childEnv` drops any `CLAUDE_CODE_*` variable it inherits (one in Sean's shell could be the work account's).
+- **Install:** `curl -fsSL https://claude.ai/install.sh | bash -s 2.1.296`, with `DISABLE_UPDATES=1` so the version stays pinned.
+- **Fallback narrowed:** only a usage limit falls back to the API, for the rest of the run. Missing CLI, bad login, timeouts and schema failures fail the call, so a broken token can't quietly bill the API.
+- **Alerting:** `result.json` gains `apiCost`, rounded up to the cent so one small call still counts. Above zero, the GitHub job opens or comments on a "Refresh used the API" issue mentioning Sean, and the local job sends a notification.
+- **Unverified:** a full CI run on the token. The first scheduled run after merge is the test; a failure shows as every guide failing with "claude-code not logged in".
 
 ## Gotchas
 
