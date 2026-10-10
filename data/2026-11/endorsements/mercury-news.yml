@@ -62,20 +62,23 @@ archived:
     snapshot: https://web.archive.org/web/20261007202247/https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
   - source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
     snapshot: https://web.archive.org/web/20261007202709/https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 held:
   - contestId: prop-40
     pick: N
     reason: unclear-match
     evidence: "Only a sidebar headline on Marin IJ pages (\"Endorsement: No on Proposition 40's reckless wealth tax\"). The editorial says \"Written by the Southern California News Group editorial board\", not this guide's boards (review 2026-10-09)."
+  - contestId: superintendent
+    pick:
+      - Richard Barrera
+    reason: not-found
+    evidence: 'Only a headline and truncated blurb: "Barrera vs. Shaw: This candidate ... offers a practical path forward" / "Barrera is a detail-oriented incrementalist..." (no explicit endorsement shown)'
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
-      - text: What convinces us that Ma can actually move the needle on her agenda items is the fact that she has already been knee-deep advancing them in a senior executive capacity.
-        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
   insurance-commissioner:
@@ -94,31 +97,18 @@ picks:
     quotes:
       - text: Kounalakis’ background, which spans state politics, international affairs and private industry, is well suited for the job.
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
-      - text: In an interview with our editorial board, Kounalakis demonstrated a clear command of this office’s responsibilities — from bond issuances and housing tax credit programs to state employee pension governance and infrastructure finance.
-        source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
       - text: Hawks’ black box of a résumé does not inspire confidence she can manage California’s $162 billion investment portfolio.
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
-  superintendent:
-    pick:
-      - Richard Barrera
-    quotes:
-      - text: Barrera is a detail-oriented incrementalist focused on student absenteeism and mental health while rival Sonja Shaw is a brash culture warrior more interested in girls’ locker rooms than the nitty gritty of state school reform.
-        source: https://www.mercurynews.com/opinion/endorsements/
   state-senate-2:
     pick:
       - Damon Connolly
-    quotes:
-      - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
-        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
-      - text: In Sacramento, he worked to end the misguided and costly bike lane trial on the Richmond-San Rafael Bridge and advanced tougher safety rules for e-bikes and youths who ride them.
-        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
   us-rep-2:
     pick:
       - Jared Huffman
     quotes:
-      - text: Huffman is up for the challenge, including the addition of those Republican-leaning counties.
+      - text: His leadership and record of representation are well-known.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
-      - text: How Littau’s moderate politics would function in Congress, where partisan lines have rarely been deeper, is a huge unknown.
+      - text: He’s proven that he can represent the varied and sometimes conflicting interests in his district.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
   assembly-12:
     pick:
@@ -126,17 +116,15 @@ picks:
     quotes:
       - text: Given his deep experience in leadership positions in Marin, including the bi-county Sonoma-Marin Area Rail Transit board, Lucan brings the most political leadership to the race.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
-      - text: But the breadth of Elward’s governmental experience and knowledge of Marin, more than half the district’s population, and its local issues is limited compared to Lucan.
-        source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
       - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
   novato-usd-trustee-area-4:
     pick:
       - Abbey Picus
     quotes:
-      - text: Her experience as an educator, having three children in Novato public schools and having served four years as a trustee make Abbey Picus the clear choice for the Novato Union School District board.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
       - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+      - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
         source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
   san-rafael-council-3:
     pick:
@@ -159,7 +147,7 @@ picks:
       - Sarah Margulies
       - Jeanne Friedel
     quotes:
-      - text: Andre, a former investment banker, has brought her business acumen to the council.
+      - text: Andre, Margulies and Friedel are solid experienced choices for the council.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
       - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
@@ -170,8 +158,6 @@ picks:
     quotes:
       - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
-      - text: In this race, Dittmar stands out as someone who provides the perspective of organizational leadership, an awareness of issues facing local businesses and a knowledge of the financial struggles facing many households.
-        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
       - text: Dittmar would strengthen the council’s balance.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
   tiburon-council:
@@ -179,15 +165,33 @@ picks:
       - Jack Ryan
       - Kathleen Defever
       - Chuck Hornbrook
-    quotes:
-      - text: The two newcomers and Ryan bring a complementary set of expertise that appears most likely to help the town tackle its biggest challenges.
-        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
-      - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
-        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
   sausalito-council:
     pick:
       - Joan Cox
       - Jill James Hoffman
+  ross-council:
+    pick:
+      - Robert Herbst
+      - Julie A McMillan
+    quotes:
+      - text: Having Herbst on the council will provide a voice and vote for his side of the debate.
+        source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+  fairfax-council:
+    pick:
+      - Larry Bragman
+      - Matt Da Cunha
+  tamalpais-uhsd-trustee:
+    pick:
+      - Leslie J. Harlander
+      - Brian A. Sutherland
+      - Valerie Wynn
+  marin-county-measure-p:
+    pick: Y
+    quotes:
+      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+      - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
   sausalito-measure-x:
     pick: Y
     quotes:
@@ -195,13 +199,6 @@ picks:
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
       - text: Sausalito can no longer afford inaction.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
-  marin-county-measure-p:
-    pick: Y
-    quotes:
-      - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
-        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
-      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
-        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
   marin-healthcare-measure-cc:
     pick: Y
     quotes:
@@ -222,16 +219,7 @@ picks:
   san-rafael-measure-w:
     pick: N
     quotes:
-      - text: Measure W would raise that charge by five-fold to 1% – highest in the county.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: The big increase will bring in more than the city needs right now.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-      - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-  ross-council:
-    pick:
-      - Julie A McMillan
-      - Robert Herbst
-    quotes:
-      - text: McMillan and Herbst offer a balance and breadth of civic experience and perspectives.
-        source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+  rtm:
+    pick: N

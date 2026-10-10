@@ -5,7 +5,7 @@ source: https://bikeeastbay.org/election2026/
 archived:
   - source: https://bikeeastbay.org/election2026/
     snapshot: https://web.archive.org/web/20261007195707/https://bikeeastbay.org/election2026/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
   rtm:
@@ -14,8 +14,6 @@ picks:
       - text: Transit agency cuts will cause hours of gridlock traffic for drivers.
         source: https://bikeeastbay.org/election2026/
       - text: Cuts will devastate the Bay Area’s economic recovery and climate goals.
-        source: https://bikeeastbay.org/election2026/
-      - text: Our public transit connects people to jobs, schools, healthcare, and to one another.
         source: https://bikeeastbay.org/election2026/
   prop-43:
     pick: N

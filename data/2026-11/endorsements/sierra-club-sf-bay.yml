@@ -5,93 +5,29 @@ source: https://www.sierraclub.org/sfbay/2026-endorsements
 extraSources:
   - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
+  us-rep-2:
+    pick:
+      - Jared Huffman
+  us-rep-10:
+    pick:
+      - Mark DeSaulnier
   us-rep-11:
     pick:
       - Scott Wiener
     quotes:
       - text: Senator Scott Wiener, with his prolific legislative history and bold, detailed agenda, is the climate champion we need.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Sen. Wiener has championed numerous Sierra Club priorities over his 9 years in the California Senate.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: Critically, Wiener has jumped into the fray three times in three years to save the Bay Area’s public transit systems from financial collapse, including authoring the law that authorized the Connect Bay Area regional funding measure.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-  secretary-of-state:
+  us-rep-12:
     pick:
-      - Shirley N. Weber
-  controller:
+      - Lateefah Simon
+  us-rep-14:
     pick:
-      - Malia M. Cohen
-  treasurer:
-    pick:
-      - Eleni Kounalakis
-  attorney-general:
-    pick:
-      - Rob Bonta
-  insurance-commissioner:
-    pick:
-      - Ben Allen
-  assembly-17:
-    pick:
-      - Matt Haney
-  assembly-19:
-    pick:
-      - Catherine Stefani
-  superintendent:
-    pick:
-      - Richard Barrera
-  bart-8:
-    pick:
-      - Sara Barz
-    quotes:
-      - text: Few first-time candidates for any office arrive this prepared.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Barz is a transit professional who has worked inside the San Francisco County Transportation Authority, the City of Oakland, and the Metropolitan Transportation Commission, and now works as a transit product manager.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-  supervisor-2:
-    pick:
-      - Stephen Sherrill
-    quotes:
-      - text: In 2025, Sherrill voted with the Sierra Club on every vote where the Club took a public position.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Where San Francisco builds and how its buildings run are central to the Club's climate work, and Sherrill has been a reliable vote on both.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: In just his first 18 months Supervisor Sherrill has built up a strong environmental record, and the Sierra Club is excited to help him extend that into a second term.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-  supervisor-6:
-    pick:
-      - Matt Dorsey
-    quotes:
-      - text: Many of the key questions central to climate change in San Francisco get answered first in District 6, and Supervisor Dorsey has been addressing them well.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: On the Club's 2024 legislative scorecard he supported the Sierra Club position on 9 of 11 votes and ballot measures, tied with district 7 Supervisor Melgar for the second-highest score on the Board.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Dorsey pairs a strong environmental record with a race in which he faces no significant opposition.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-  supervisor-8:
-    pick:
-      - Gary McCoy
-    quotes:
-      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: McCoy has a long history of support for sustainable streets and transportation projects.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: McCoy backs the Safer, Better 17th Street proposal including the parking removal it requires, and wants the D8 segments of the Biking and Rolling Plans’ North Star network completed by 2030.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-  supervisor-10:
-    pick:
-      - J.R. Eppler
-      - Theo Ellington
-    ranked: true
-    quotes:
-      - text: J.R. Eppler is our first choice because his record and positions best align with the Sierra Club.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Eppler has also supported building the kind of transit-oriented housing that allows more residents to access the district’s schools, shops, and parks without a car.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Ellington has also backed several environmental transportation and housing priorities.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - Aisha Wahab
   prop-1:
     pick: Y
   prop-4:
@@ -106,6 +42,83 @@ picks:
     pick: N
   rtm:
     pick: Y
+  assembly-12:
+    pick:
+      - Jackie Elward
+  assembly-16:
+    pick:
+      - Rebecca Bauer-Kahan
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  assembly-24:
+    pick:
+      - Alex Lee
+  attorney-general:
+    pick:
+      - Rob Bonta
+  controller:
+    pick:
+      - Malia M. Cohen
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  superintendent:
+    pick:
+      - Richard Barrera
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  ac-transit-ward-3:
+    pick:
+      - Adriana Valencia
+  ac-transit-ward-4:
+    pick:
+      - Sarah Syed
+  bart-8:
+    pick:
+      - Sara Barz
+    quotes:
+      - text: Few first-time candidates for any office arrive this prepared.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Barz is a transit professional who has worked inside the San Francisco County Transportation Authority, the City of Oakland, and the Metropolitan Transportation Commission, and now works as a transit product manager.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  cccd-ward-3:
+    pick:
+      - Becca Barrett
+  ebmud-ward-3:
+    pick:
+      - Marguerite Young
+  ebmud-ward-7:
+    pick:
+      - Gary Wolff
+  ebrpd-ward-5:
+    pick:
+      - Olivia Sanwong
+  ebrpd-ward-7:
+    pick:
+      - Colin J. Coffey
+  oro-loma-sanitary-5:
+    pick:
+      - Rita Duncan
+  alameda-measure-l:
+    pick: Y
+  berkeley-measure-aa:
+    pick: Y
+  berkeley-measure-u:
+    pick: Y
   prop-c:
     pick: Y
     quotes:
@@ -118,106 +131,15 @@ picks:
   prop-g:
     pick: N
     quotes:
-      - text: The ballot measure is a park removal.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: A dune system cannot be restored two days a week.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
+      - text: The ballot measure is a park removal.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-h:
     pick: Y
   prop-i:
     pick: Y
-  us-rep-2:
-    pick:
-      - Jared Huffman
-  assembly-12:
-    pick:
-      - Jackie Elward
-  state-senate-2:
-    pick:
-      - Damon Connolly
   sausalito-measure-x:
-    pick: Y
-  corte-madera-council:
-    pick:
-      - Eli Beckman
-  larkspur-council:
-    pick:
-      - Stephanie Andre
-      - Sarah Margulies
-  mill-valley-council:
-    pick:
-      - Max Perrey
-  novato-council-2:
-    pick:
-      - Rachel Farac
-  san-rafael-council-2:
-    pick:
-      - Eli Hill
-  sausalito-council:
-    pick:
-      - Adrian Brinton
-  us-rep-10:
-    pick:
-      - Mark DeSaulnier
-  cccd-ward-3:
-    pick:
-      - Becca Barrett
-  ebmud-ward-3:
-    pick:
-      - Marguerite Young
-  ebmud-ward-7:
-    pick:
-      - Gary Wolff
-  ebrpd-ward-7:
-    pick:
-      - Colin J. Coffey
-  concord-council-5:
-    pick:
-      - Laura Nakamura
-  concord-council-3:
-    pick:
-      - Robyn Kuslits
-  el-cerrito-council:
-    pick:
-      - Gabe Quinto
-      - Carolyn Wysinger
-  richmond-mayor:
-    pick:
-      - Claudia Jiménez
-  san-ramon-council-4:
-    pick:
-      - Marisol Rubio
-  assembly-16:
-    pick:
-      - Rebecca Bauer-Kahan
-  us-rep-12:
-    pick:
-      - Lateefah Simon
-  us-rep-14:
-    pick:
-      - Aisha Wahab
-  assembly-18:
-    pick:
-      - Mia Bonta
-  assembly-24:
-    pick:
-      - Alex Lee
-  ac-transit-ward-3:
-    pick:
-      - Adriana Valencia
-  ac-transit-ward-4:
-    pick:
-      - Sarah Syed
-  ebrpd-ward-5:
-    pick:
-      - Olivia Sanwong
-  alameda-measure-l:
-    pick: Y
-  berkeley-measure-aa:
-    pick: Y
-  berkeley-measure-u:
     pick: Y
   albany-council:
     pick:
@@ -237,12 +159,25 @@ picks:
   berkeley-council-8:
     pick:
       - Mark Humbert
+  concord-council-5:
+    pick:
+      - Laura Nakamura
+  concord-council-3:
+    pick:
+      - Robyn Kuslits
+  corte-madera-council:
+    pick:
+      - Eli Beckman
   dublin-mayor:
     pick:
       - Kiran Mohammad
   dublin-council-4:
     pick:
       - Kashef Qaadri
+  el-cerrito-council:
+    pick:
+      - Gabe Quinto
+      - Carolyn Wysinger
   emeryville-council:
     pick:
       - David Mourra
@@ -252,9 +187,19 @@ picks:
   hayward-council-6:
     pick:
       - Julie Roche
+  larkspur-council:
+    pick:
+      - Stephanie Andre
+      - Sarah Margulies
   livermore-council-2:
     pick:
       - Ben Barrientos
+  mill-valley-council:
+    pick:
+      - Max Perrey
+  novato-council-2:
+    pick:
+      - Rachel Farac
   oakland-mayor:
     pick:
       - Barbara Lee
@@ -273,9 +218,57 @@ picks:
   pleasanton-council-3:
     pick:
       - Reena Gupta
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+    quotes:
+      - text: In 2025, Sherrill voted with the Sierra Club on every vote where the Club took a public position.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Where San Francisco builds and how its buildings run are central to the Club's climate work, and Sherrill has been a reliable vote on both.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: In 2025 he voted for the environmental position on every vote where the Sierra Club took a public position.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: On the Club's 2024 legislative scorecard he supported the Sierra Club position on 9 of 11 votes and ballot measures, tied with district 7 Supervisor Melgar for the second-highest score on the Board.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-8:
+    pick:
+      - Gary McCoy
+    quotes:
+      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: McCoy has a long history of support for sustainable streets and transportation projects.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+  supervisor-10:
+    pick:
+      - J.R. Eppler
+      - Theo Ellington
+    ranked: true
+    quotes:
+      - text: J.R. Eppler is our first choice because his record and positions best align with the Sierra Club.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Eppler has also supported building the kind of transit-oriented housing that allows more residents to access the district’s schools, shops, and parks without a car.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Ellington has also backed several environmental transportation and housing priorities.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   san-leandro-mayor:
     pick:
       - Juan González III
   san-leandro-council-3:
     pick:
       - Joseph Trujillo
+  san-rafael-council-2:
+    pick:
+      - Eli Hill
+  san-ramon-council-4:
+    pick:
+      - Marisol Rubio
+  sausalito-council:
+    pick:
+      - Adrian Brinton

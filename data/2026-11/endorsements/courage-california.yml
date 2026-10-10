@@ -17,7 +17,7 @@ archived:
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   - source: https://www.progressivevotersguide.com/california/2026/general/county/marin
     snapshot: https://web.archive.org/web/20261007203549/https://www.progressivevotersguide.com/california/2026/general/county/marin
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -55,15 +55,9 @@ picks:
   us-rep-14:
     pick:
       - Aisha Wahab
-    quotes:
-      - text: Based on our Courage Score analysis, Dr. Wahab has supported most progressive bills that made it to a vote, and has earned the Courage All-Star designation.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   us-rep-15:
     pick:
       - Kevin Mullin
-    quotes:
-      - text: Mullin previously served as a state assemblymember from 2012-2022, and earned a lifetime 96 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   us-rep-16:
     pick:
       - Sam Liccardo
@@ -89,14 +83,11 @@ picks:
     pick:
       - Shirley N. Weber
     quotes:
-      - text: Based on our Courage Score analysis, Sec. Weber supported nearly all progressive bills that made it to a vote.
+      - text: She has sued local governments for violating election laws, successfully defended against the Trump administration’s attempt to seize California’s voter data, and supported the Prop 50 redistricting effort to counter the Republican-led undemocratic gerrymandering campaigns.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   controller:
     pick:
       - Malia M. Cohen
-    quotes:
-      - text: As chair of the San Francisco Employee Retirement System, she led the effort to divest from fossil fuels.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   treasurer:
     pick:
       - Eleni Kounalakis
@@ -106,15 +97,27 @@ picks:
     quotes:
       - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+  board-of-equalization-1:
+    pick:
+      - Nelson Esparza
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: He has led efforts to pass four major school bonds and a first-in-the-nation affordable housing initiative for educators.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   state-senate-2:
     pick:
       - Damon Connolly
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Connolly supported nearly all progressive bills that made it to a vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/marin
+  assembly-2:
+    pick:
+      - Chris Rogers
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
   assembly-11:
     pick:
       - Lori D Wilson
@@ -124,9 +127,6 @@ picks:
   assembly-14:
     pick:
       - Buffy Wicks
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Wicks supported most progressive bills that made it to a vote, and has previously been named to the Courage All-Star list.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/contracosta
   assembly-16:
     pick:
       - Rebecca Bauer-Kahan
@@ -136,60 +136,33 @@ picks:
   assembly-18:
     pick:
       - Mia Bonta
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Bonta has supported most progressive bills that made it to a vote, and has been designated an All-Star.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   assembly-19:
     pick:
       - Catherine Stefani
   assembly-20:
     pick:
       - Liz Ortega
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Ortega has supported most progressive bills that made it to a vote, and earned the designation of All-Star.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
   assembly-21:
     pick:
       - Diane Papan
   assembly-23:
     pick:
       - Marc Berman
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Berman supported most progressive bills that made it to a vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   assembly-24:
     pick:
       - Alex Lee
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Lee supported nearly all progressive bills that made it to a vote and has been designated an All-Star this year.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   assembly-25:
     pick:
       - Ash Kalra
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Kalra has supported nearly all progressive bills that made it to a vote and has been designated a Courage All-Star this year.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   assembly-26:
     pick:
       - Patrick Ahrens
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Ahrens supported most progressive bills that made it to a floor vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   assembly-28:
     pick:
       - Gail Pellerin
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Pellerin supported most progressive bills that made it to a vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   assembly-29:
     pick:
       - Robert Rivas
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Rivas supported most progressive bills that made it to a vote, and has earned an Honorable Mention three times.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
-  superintendent:
-    pick:
-      - Richard Barrera
   prop-1:
     pick: Y
     quotes:
@@ -203,7 +176,7 @@ picks:
   prop-3:
     pick: Y
     quotes:
-      - text: VOTING YES will prevent a significant loss of revenue as federal cuts impact the state and Californians for years.
+      - text: Proposition 3 continues the existing tax rates without raising them for any individual or household.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-4:
     pick: Y
@@ -216,6 +189,9 @@ picks:
     pick: N
   prop-39:
     pick: N
+    quotes:
+      - text: National and state data continues to show that voter fraud is extremely rare, making up a fraction of a percentage point of overall voting in the United States.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-40:
     pick: Y
   prop-41:
@@ -226,32 +202,14 @@ picks:
     pick: N
   prop-44:
     pick: N
-    quotes:
-      - text: Estimates indicate that noncompliance fees could total $1.7 billion in the first year if Proposition 44 passes, and many FQHC clinics would likely be forced to close or substantially cut services as a result.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-45:
     pick: N
     quotes:
       - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-  richmond-mayor:
-    pick:
-      - Claudia Jiménez
   san-jose-council-5:
     pick:
       - Peter Ortiz
-  assembly-2:
+  richmond-mayor:
     pick:
-      - Chris Rogers
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Rogers supported nearly all progressive bills that made it to a vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sonoma
-  assembly-4:
-    pick:
-      - Cecilia M. Aguiar-Curry
-    quotes:
-      - text: Based on our Courage Score analysis, Asm. Aguiar-Curry supported most progressive bills that made it to a vote.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sonoma
-  board-of-equalization-1:
-    pick:
-      - Nelson Esparza
+      - Claudia Jiménez
