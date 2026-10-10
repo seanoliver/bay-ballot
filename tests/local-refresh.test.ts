@@ -347,6 +347,16 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     expect(r.calls.filter((c) => c.startsWith("gh"))).toEqual([]);
   });
 
+  it("sends model calls through the API unless BAYBALLOT_MODEL_VIA opts in to Claude Code", () => {
+    const t = setup();
+    const refresh = (calls: string[]) => calls.find((c) => c.startsWith("npm run -s bb -- refresh")) ?? "";
+    expect(refresh(t.run().calls)).not.toContain("--via");
+    expect(refresh(t.run({ BAYBALLOT_MODEL_VIA: "claude-code" }).calls)).toContain("--via claude-code");
+    const bad = t.run({ BAYBALLOT_MODEL_VIA: "claude" });
+    expect(bad.code).toBe(64);
+    expect(bad.calls).toEqual([]);
+  });
+
   it("does not write .env.local on a dry run", () => {
     const t = setup();
     t.run({}, ["--dry-run"]);

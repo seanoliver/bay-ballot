@@ -17,6 +17,8 @@ MAX_LOG_LINES=5000
 LOCK_STALE_SECS=$((3 * 3600))
 WATCHDOG_SECS="${BB_WATCHDOG_SECS:-7200}"
 FETCH_RETRY_DELAY="${BB_FETCH_RETRY_DELAY:-30}"
+# api (default) or claude-code: model calls on Sean's Claude subscription, falling back to the API key.
+MODEL_VIA="${BAYBALLOT_MODEL_VIA:-api}"
 export GIT_SSH_COMMAND='ssh -o BatchMode=yes -o ConnectTimeout=30'
 
 dry_run=false
@@ -30,6 +32,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 [ "$ref" = "origin/main" ] || dry_run=true
+case "$MODEL_VIA" in api|claude-code) ;; *) print -u2 "BAYBALLOT_MODEL_VIA must be api or claude-code, not '$MODEL_VIA'"; exit 64 ;; esac
 
 log() { print -r -- "$(date '+%Y-%m-%d %H:%M:%S') $*"; }
 notify() {
@@ -87,7 +90,7 @@ watchdog=$!
 fail() { log "ERROR: $*"; notify "Bay Ballot: local refresh failed: $*"; exit 1; }
 gh_() { gh "$@" --repo "$REPO"; }
 
-log "local refresh starting (dry run: $dry_run, ref: $ref)"
+log "local refresh starting (dry run: $dry_run, ref: $ref, models via: $MODEL_VIA)"
 for cmd in git gh node npm npx pdftotext; do command -v "$cmd" >/dev/null || fail "$cmd not on PATH"; done
 [ -d "$SOURCE_REPO" ] || fail "no source checkout at $SOURCE_REPO"
 common="$(git -C "$SOURCE_REPO" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" ||
@@ -194,6 +197,7 @@ git archive origin/main data | tar -x -C "$work" || fail "could not extract main
 extra=()
 $dry_run && extra=(--no-extract)
 [ -f "$SHRUNK_STATE" ] && extra+=(--shrunk-state "$SHRUNK_STATE")
+[ "$MODEL_VIA" = "api" ] || extra+=(--via "$MODEL_VIA")
 npm run -s bb -- refresh --local-only --baseline "$work/data" --summary "$work/summary.md" --result "$work/result.json" "${extra[@]}"
 code=$?
 log "refresh exit code $code"

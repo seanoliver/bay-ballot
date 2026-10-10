@@ -37,6 +37,10 @@ case "${1:-}" in
     plutil -replace StandardOutPath -string "$LOG" "$tmp_plist"
     plutil -replace StandardErrorPath -string "$LOG" "$tmp_plist"
     plutil -replace EnvironmentVariables.PATH -string "$job_path" "$tmp_plist"
+    # Opt-ins set in the installing shell are recorded in the job, since launchd doesn't see that shell.
+    for var in BAYBALLOT_MODEL_VIA BAYBALLOT_CLAUDE_CONFIG_DIR CLAUDE_BIN; do
+      if [ -n "${(P)var:-}" ]; then plutil -replace "EnvironmentVariables.$var" -string "${(P)var}" "$tmp_plist"; fi
+    done
     plutil -lint "$tmp_plist" >/dev/null
     mv -f "$tmp_plist" "$PLIST"
 
