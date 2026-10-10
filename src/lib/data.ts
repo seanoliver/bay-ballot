@@ -191,7 +191,12 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       warnings.push(`${id}: pending file has picks`);
     }
     const guide = d.guides.find((g) => g.id === id);
+    const heldIds = new Set<string>();
     for (const h of e.held ?? []) {
+      // A re-extract keeps a hold and drops the matching pick, so a pick left beside its hold would vanish.
+      if (h.contestId in e.picks) errors.push(`${id}/${h.contestId}: both picked and held; remove one`);
+      if (heldIds.has(h.contestId)) errors.push(`${id}/${h.contestId}: held twice`);
+      heldIds.add(h.contestId);
       const c = contests.get(h.contestId);
       if (!c) errors.push(`${id}: held pick for unknown contest '${h.contestId}'`);
       else if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {

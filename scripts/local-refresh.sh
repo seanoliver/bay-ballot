@@ -271,6 +271,9 @@ log "PR #$pr updated"
 
 reasons=()
 [ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks, a changed unclear-match hold, or a shrunk result, 1 = error)")
+# The contests behind the code, which a later run's body would no longer show.
+review="$(node -e 'try { for (const r of require(process.argv[1]).review ?? []) console.log(r) } catch {}' "$work/result.json")"
+[ -z "$review" ] || reasons+=("${(@f)review}")
 outside="$(git diff --name-only --no-renames origin/main...HEAD)" || outside="(could not list the PR's files)"
 outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 [ -z "$outside" ] || reasons+=("files outside data/: ${(f)outside}")

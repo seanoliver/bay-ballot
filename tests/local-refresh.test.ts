@@ -34,7 +34,7 @@ done
 print -r -- "# Data refresh (stub)" > "$summary"
 if [ "\${STUB_CHANGE:-0}" = "1" ]; then
   print -r -- "changed: $RANDOM" >> data/2026-11/endorsements/x.yml
-  print -r -- '{"exitCode":0,"extracted":["x"],"deferred":[],"failed":[],"shrunk":[]}' > "$result"
+  print -r -- '{"exitCode":0,"extracted":["x"],"deferred":[],"failed":[],"shrunk":[],"review":['"\${STUB_REVIEW:-}"']}' > "$result"
 else
   print -r -- '{"exitCode":0,"extracted":[],"deferred":[],"failed":[],"shrunk":[]}' > "$result"
 fi
@@ -157,6 +157,13 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     const r = t.run({ STUB_CHANGE: "1", STUB_CODE: "2" });
     expect(r.code).toBe(2);
     expect(r.calls.some((c) => c.startsWith("gh pr edit 77 --add-label needs-review"))).toBe(true);
+  });
+
+  it("names each review reason from result.json in the needs-review comment", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", STUB_CODE: "2", STUB_REVIEW: '"x: unclear-match hold on prop-c: held N, guide now picks Y"' });
+    const comment = r.calls.find((c) => c.startsWith("gh pr comment 77 --body Needs review:"));
+    expect(comment).toContain("x: unclear-match hold on prop-c: held N, guide now picks Y");
   });
 
   it("labels the PR needs-review and runs none of its code when its branch changes files outside data/", () => {
