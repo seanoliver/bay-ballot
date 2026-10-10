@@ -489,6 +489,13 @@ contests:
     kind: candidate
     candidates: [Michelle Maginot, Rommy Kushner]
     jurisdiction: { level: district, name: Sunnyvale School District, district: "3", within: [{ level: city, name: Sunnyvale }] }
+  - id: morgan-hill-measure-a
+    section: Local measures
+    title: Morgan Hill Measure A
+    kind: measure
+    description: "Make the city treasurer appointed rather than elected"
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
+    jurisdiction: { level: city, name: Morgan Hill }
   - id: gilroy-measure-b
     section: Local measures
     title: Gilroy Measure B
@@ -496,6 +503,13 @@ contests:
     description: "Transient occupancy tax (hotel tax) increase"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Gilroy }
+  - id: santa-clara-measure-c
+    section: Local measures
+    title: Santa Clara Measure C
+    kind: measure
+    description: "Charter amendment: public works contracting"
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
+    jurisdiction: { level: city, name: Santa Clara }
   - id: los-altos-measure-d
     section: Local measures
     title: Los Altos Measure D
@@ -503,6 +517,27 @@ contests:
     description: "Citizen initiative: voter approval to sell, lease or alter the downtown parking plazas"
     link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Los Altos }
+  - id: sunnyvale-measure-g
+    section: Local measures
+    title: Sunnyvale Measure G
+    kind: measure
+    description: "Charter amendment: public works contracting"
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
+    jurisdiction: { level: city, name: Sunnyvale }
+  - id: sunnyvale-measure-h
+    section: Local measures
+    title: Sunnyvale Measure H
+    kind: measure
+    description: "Charter amendment: city manager's authority to settle claims"
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
+    jurisdiction: { level: city, name: Sunnyvale }
+  - id: sunnyvale-measure-i
+    section: Local measures
+    title: Sunnyvale Measure I
+    kind: measure
+    description: "Charter amendment: city council vacancies"
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
+    jurisdiction: { level: city, name: Sunnyvale }
   - id: milpitas-measure-k
     section: Local measures
     title: Milpitas Measure K
