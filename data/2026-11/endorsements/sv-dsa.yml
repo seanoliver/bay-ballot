@@ -3,7 +3,7 @@ election: 2026-11
 status: published
 source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
 allowForeignSources: true
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-09
 hasReasoning: true
 held:
   - contestId: smcccd-measure-v
@@ -416,3 +416,11 @@ picks:
     pick: Y
   union-city-measure-ii:
     pick: Y
+  menlo-park-city-sd-trustee:
+    pick:
+      - Jed Scolnick
+      - Maya Herstein
+      - Andrew Barnes
+    quotes:
+      - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
