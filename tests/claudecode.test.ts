@@ -274,6 +274,17 @@ describe("claudeCodeClient", () => {
     expect(t.makeApi).not.toHaveBeenCalled();
   });
 
+  it("reports no fallback when the API client can't be built", async () => {
+    const onFallback = vi.fn();
+    const client = claudeCodeClient({
+      fallback: () => { throw new Error("no BAYBALLOT_ANTHROPIC_API_KEY"); },
+      onFallback, run: vi.fn<Run>(async () => LIMITED), log: () => {}, env: { HOME: "/home/sean" },
+    });
+    await expect(extract(client, ballot, guide, sources)).rejects.toThrow("no BAYBALLOT_ANTHROPIC_API_KEY");
+    expect(onFallback).not.toHaveBeenCalled();
+    expect(client.apiCalls()).toBe(0);
+  });
+
   it("calls onFallback once, when the first call goes to the API", async () => {
     const onFallback = vi.fn();
     const run = vi.fn<Run>(async () => LIMITED);
@@ -286,7 +297,7 @@ describe("claudeCodeClient", () => {
 
   it("treats an assistant usage_limit_reached error as the usage limit", async () => {
     const t = setup([fail(lines(
-      { type: "assistant", message: { content: [{ type: "text", text: "limit" }] }, error: "rate_limit", apiError: "usage_limit_reached" },
+      { type: "assistant", message: { content: [{ type: "text", text: "limit" }] }, error: "rate_limit", is_api_error_message: true, api_error: "usage_limit_reached" },
       { type: "result", subtype: "success", is_error: true, result: "limit" },
     ))]);
     await extract(t.client, ballot, guide, sources);

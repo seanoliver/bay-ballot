@@ -156,7 +156,8 @@ export function readOutput(params: Params, out: RunResult): Anthropic.Messages.M
     }
   });
   const errors = lines.flatMap((l) => (l.type === "assistant" && typeof l.error === "string" ? [l.error] : []));
-  const limitError = lines.some((l) => l.type === "assistant" && l.apiError === "usage_limit_reached");
+  // stream-json writes the CLI's internal apiError as api_error, on the assistant line and on the result line.
+  const limitError = lines.some((l) => (l.type === "assistant" || l.type === "result") && l.api_error === "usage_limit_reached");
   // The CLI's usage-limit refusal is a rejected event with isUsingOverage false. A rejected event with isUsingOverage
   // true means the call ran on extra usage and succeeded; a throttle or 429 with no such event is an ordinary failure.
   const limited = lines.some((l) => {
@@ -259,11 +260,12 @@ export function claudeCodeClient(opts: ClaudeCodeOptions): ClaudeCodeClient {
     const why = `claude-code ${REASON[r.kind]} (${params.model}): ${r.detail}`;
     if (r.kind !== "limit") throw new Error(why);
     if (!opts.fallback) throw new Error(`${why}; API fallback is off`);
+    // Built before onFallback: with no API key it throws here, and no API call is reported.
+    api ??= opts.fallback();
     if (fresh) {
       log(`${why}; falling back to the API for the rest of this run`);
       opts.onFallback?.();
     }
-    api ??= opts.fallback();
     // Counted before the call: a guide that fails after reaching the API has no usage to price, and still billed.
     apiCalls++;
     return api.messages.stream(params).finalMessage();
