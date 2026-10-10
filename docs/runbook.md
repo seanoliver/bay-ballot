@@ -92,6 +92,7 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
   - A watchdog stops a run after 2 hours.
   - `git fetch` is retried 3 times, 30 seconds apart, and SSH never prompts.
 - **By hand:** `npm run local-refresh` (or `scripts/local-refresh.sh`).
+  - `BAYBALLOT_MODEL_VIA=claude-code npm run local-refresh` makes the model calls on the Claude subscription, falling back to the API key (see "Running it locally"). For the launchd job, set it in the shell that runs `npm run local-refresh:install`; the install records it (and `BAYBALLOT_CLAUDE_CONFIG_DIR` and `CLAUDE_BIN` if set) in the job. Without it, the job uses the API as before.
   - `--dry-run` fetches and gates pages only: no model calls, no commit, no PR, no issue.
   - `--ref <branch>` tests another branch's code and is always a dry run.
 - **Logs:** `~/Library/Logs/bay-ballot-refresh.log`, trimmed to the last 2,500 lines once it passes 5,000.
@@ -110,6 +111,13 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
 - `npm run bb -- verify --all` re-audits every guide without re-extracting; `verify <guide>` does one.
 - `npm run bb -- pages --seed` stores today's page text for every guide without extracting, e.g. after adding a guide's `extraSources` by hand.
 - Locally the API key comes from `.env.local` (`BAYBALLOT_ANTHROPIC_API_KEY=...`), never from `ANTHROPIC_API_KEY`.
+- **Model calls on the Claude subscription (local only):** `--via claude-code` on `extract`, `refresh` or `verify` (or `BAYBALLOT_MODEL_VIA=claude-code`) runs each model call through Claude Code headless (`claude -p`) on Sean's personal subscription instead of the API. The default is `--via api`, and the GitHub job always uses the API.
+  - Only the model call moves. Prompts, schemas, models (extract on Sonnet, verify on Opus), quote checks and the verifier are unchanged.
+  - It runs `CLAUDE_BIN`, else `~/.local/bin/claude`, else `claude` on PATH, never through the shell, so the `claude` alias for the work account doesn't apply. It uses the login in `~/.claude-personal` (override with `BAYBALLOT_CLAUDE_CONFIG_DIR`), and strips every `ANTHROPIC_*` and `CLAUDE_CODE_*` variable and `BAYBALLOT_ANTHROPIC_API_KEY` from the CLI's environment, so it can bill only that login. Check the login with `CLAUDE_CONFIG_DIR=~/.claude-personal ~/.local/bin/claude auth status`.
+  - If the CLI is missing, not logged in or out of usage, the call and the rest of the run go to the API key in `.env.local`. A timeout (30 minutes) or output that fails the schema twice sends just that call to the API. Each fallback logs one line starting `claude-code`.
+  - `--no-fallback` turns that off, so a failed call fails the guide instead. Use it to compare the two paths.
+  - The cost line counts these calls instead of pricing them: "Estimated model cost $0.40 API, plus 6 calls on the Claude subscription".
+  - Background: `docs/investigations/2026-10-10-claude-code-provider.md`.
 - `npm run bb -- discover` lists guides with no Nov 2026 source yet. Set `source:` for any that have published.
 
 ## Manual guides
