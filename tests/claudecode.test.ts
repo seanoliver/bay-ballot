@@ -274,6 +274,25 @@ describe("claudeCodeClient", () => {
     expect(t.makeApi).not.toHaveBeenCalled();
   });
 
+  it("calls onFallback once, when the first call goes to the API", async () => {
+    const onFallback = vi.fn();
+    const run = vi.fn<Run>(async () => LIMITED);
+    const api = apiFake();
+    const client = claudeCodeClient({ fallback: () => api.client, onFallback, run, log: () => {}, env: { HOME: "/home/sean" } });
+    await extract(client, ballot, guide, sources);
+    await verify(client, ballot, guide, file, sources);
+    expect(onFallback).toHaveBeenCalledOnce();
+  });
+
+  it("treats an assistant usage_limit_reached error as the usage limit", async () => {
+    const t = setup([fail(lines(
+      { type: "assistant", message: { content: [{ type: "text", text: "limit" }] }, error: "rate_limit", apiError: "usage_limit_reached" },
+      { type: "result", subtype: "success", is_error: true, result: "limit" },
+    ))]);
+    await extract(t.client, ballot, guide, sources);
+    expect(t.makeApi).toHaveBeenCalledOnce();
+  });
+
   it("counts API calls past the usage limit, including ones that then fail", async () => {
     const t = setup([LIMITED]);
     expect(t.client.apiCalls()).toBe(0);
@@ -322,6 +341,34 @@ describe("the default runner", () => {
     const client = claudeCodeClient({ fallback: () => api.client, env: { ...process.env, CLAUDE_BIN: "/nonexistent/claude" } });
     await expect(extract(client, ballot, guide, sources)).rejects.toThrow("claude-code CLI not found");
     expect(api.stream).not.toHaveBeenCalled();
+  });
+
+  it("keeps a character that the CLI's output splits across two writes", async () => {
+    const out: ExtractOutput = { ...extractOut, picks: [{ ...extractOut.picks[0], quotes: ["José says “no”."] }] };
+    const line = Buffer.from(JSON.stringify({ type: "result", subtype: "success", is_error: false, usage: USAGE, structured_output: out }));
+    const cut = line.indexOf(Buffer.from("é")) + 1;
+    const { dir, bin } = stub(`cat > /dev/null\ncat part1\nsleep 0.2\ncat part2`);
+    fs.writeFileSync(path.join(dir, "part1"), line.subarray(0, cut));
+    fs.writeFileSync(path.join(dir, "part2"), Buffer.concat([line.subarray(cut), Buffer.from("\n")]));
+    const client = claudeCodeClient({ fallback: null, env: { ...process.env, CLAUDE_BIN: bin } });
+    expect((await extract(client, ballot, guide, sources)).output.picks[0].quotes).toEqual(["José says “no”."]);
+  });
+
+  it("force-kills a CLI that ignores SIGTERM", async () => {
+    const { dir, bin } = stub("trap '' TERM\ntouch ready\nwhile :; do sleep 1; done");
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    try {
+      const client = claudeCodeClient({ fallback: null, timeoutMs: 100, env: { ...process.env, CLAUDE_BIN: bin } });
+      const call = expect(extract(client, ballot, guide, sources)).rejects.toThrow("claude-code timed out");
+      // SIGTERM must arrive after the trap is set, or the stub dies of it and the test proves nothing.
+      while (!fs.existsSync(path.join(dir, "ready"))) await new Promise((r) => setImmediate(r));
+      await vi.advanceTimersByTimeAsync(100);
+      await new Promise((r) => setImmediate(r));
+      await vi.advanceTimersByTimeAsync(10_000);
+      await call;
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("kills a CLI that runs past the timeout", async () => {

@@ -467,8 +467,8 @@ export function resultJson(results: GuideResult[], exitCode: number, { apiFallba
     shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
     review: reviewReasons(results),
     // Above zero only when calls went to the API: --via api, or the subscription's usage limit was reached.
-    // Rounded up to the cent, so a single small call still counts.
-    apiCost: Math.ceil(costOf(results) * 100) / 100,
+    // Rounded up to the cent, so a single small call still counts; rounded first so float error can't add a cent.
+    apiCost: Math.ceil(Math.round(costOf(results) * 1e6) / 1e4) / 100,
     apiFallbackCalls,
   };
 }

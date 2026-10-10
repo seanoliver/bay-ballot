@@ -82,6 +82,7 @@ jobs:
       # Model calls run through Claude Code on Sean's subscription. Pinned, with updates off, so a CLI
       # release can't change the calls between runs.
       - name: Install Claude Code
+        if: steps.base.outputs.stop != 'true'
         env:
           DISABLE_UPDATES: "1"
         run: |
@@ -113,7 +114,10 @@ jobs:
       - name: Refresh
         id: refresh
         if: steps.base.outputs.stop != 'true'
+        # Under the job's 90, so the alert step still runs if this one is stopped.
+        timeout-minutes: 75
         env:
+          BAYBALLOT_FALLBACK_MARKER: ${{ runner.temp }}/api-fallback
           # From `claude setup-token` on Sean's personal login; it expires after a year.
           BAYBALLOT_CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # Used only once the subscription's usage limit is reached; the next step alerts when it was.
@@ -128,15 +132,17 @@ jobs:
           echo "review=$(node -e "try { console.log(JSON.stringify(require('./result.json').review ?? [])) } catch { console.log('[]') }")" >> "$GITHUB_OUTPUT"
 
       - name: Alert when the run used the API
-        if: (steps.refresh.outputs.api_cost != '' && steps.refresh.outputs.api_cost != '0') || (steps.refresh.outputs.api_calls != '' && steps.refresh.outputs.api_calls != '0')
+        if: always() && steps.refresh.outcome != 'skipped'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COST: ${{ steps.refresh.outputs.api_cost }}
           CALLS: ${{ steps.refresh.outputs.api_calls }}
         run: |
+          # The marker is written when the first call goes to the API, so it survives a refresh that was stopped.
+          if [ ! -f "$RUNNER_TEMP/api-fallback" ] && [ "${COST:-0}" = "0" ] && [ "${CALLS:-0}" = "0" ]; then exit 0; fi
           title="Refresh used the API"
-          body="The Claude subscription's usage limit was reached during the refresh on $(date -u +%F), so the rest of the run used the API: $CALLS calls, about \$$COST (calls in guides that then failed are not priced). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          body="The Claude subscription's usage limit was reached during the refresh on $(date -u +%F), so the rest of the run used the API: ${CALLS:-an unknown number of} calls, about \$${COST:-?} (calls in guides that then failed are not priced; blank if the refresh was stopped). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
 
           cc @seanoliver"
           issue="$(gh issue list --state open --app github-actions --search "in:title \"$title\"" --json number,title --jq "map(select(.title == \"$title\")) | .[0].number // empty")"

@@ -29,6 +29,8 @@ export type ClaudeCodeOptions = {
   /** The API client to use once the subscription's usage limit is reached; null turns fallback off. Called at most once. */
   fallback: (() => ExtractClient) | null;
   log?: (line: string) => void;
+  /** Called once, when the first call goes to the API: before any of it is billed or can fail. */
+  onFallback?: () => void;
   env?: Env;
   run?: Run;
   timeoutMs?: number;
@@ -36,6 +38,7 @@ export type ClaudeCodeOptions = {
 
 // An extract takes about a minute; two hung calls must not use up the CI job's 90 minutes.
 const TIMEOUT_MS = 10 * 60 * 1000;
+const KILL_GRACE_MS = 10 * 1000;
 
 /** CLAUDE_BIN, else the native install, else PATH. Never a shell, so an alias for another account can't apply. */
 export function claudeBin(env: Env = process.env): string {
@@ -153,12 +156,13 @@ export function readOutput(params: Params, out: RunResult): Anthropic.Messages.M
     }
   });
   const errors = lines.flatMap((l) => (l.type === "assistant" && typeof l.error === "string" ? [l.error] : []));
+  const limitError = lines.some((l) => l.type === "assistant" && l.apiError === "usage_limit_reached");
   // The CLI's usage-limit refusal is a rejected event with isUsingOverage false. A rejected event with isUsingOverage
   // true means the call ran on extra usage and succeeded; a throttle or 429 with no such event is an ordinary failure.
   const limited = lines.some((l) => {
     const info = l.type === "rate_limit_event" ? (l.rate_limit_info as { status?: string; isUsingOverage?: boolean } | undefined) : undefined;
     return info?.status === "rejected" && info.isUsingOverage !== true;
-  });
+  }) || limitError;
   const result = lines.findLast((l) => l.type === "result") as CliResult | undefined;
   const detail = (result?.result || out.stderr.trim().split("\n").at(-1) || `exit code ${out.code}`).slice(0, 200);
   const failed = !result || result.is_error || result.subtype !== "success";
@@ -183,22 +187,28 @@ const runCli: Run = (bin, args, { env, cwd, input, timeoutMs }) =>
     let stdout = "";
     let stderr = "";
     let timedOut = false;
+    let kill: NodeJS.Timeout | undefined;
+    const done = (r: RunResult) => {
+      clearTimeout(timer);
+      clearTimeout(kill);
+      resolve(r);
+    };
     const timer = setTimeout(() => {
       timedOut = true;
       child.kill("SIGTERM");
+      // A CLI that ignores SIGTERM, or a grandchild holding the pipes open, must not hang the run.
+      kill = setTimeout(() => {
+        child.kill("SIGKILL");
+        done({ code: null, stdout, stderr, timedOut, missing: false });
+      }, KILL_GRACE_MS);
     }, timeoutMs);
-    child.stdout.on("data", (d: Buffer) => (stdout += d.toString()));
-    child.stderr.on("data", (d: Buffer) => (stderr += d.toString()));
+    // Decoded as a stream: a character split across two chunks would otherwise turn into U+FFFD and fail the quote checks.
+    child.stdout.setEncoding("utf8").on("data", (d: string) => (stdout += d));
+    child.stderr.setEncoding("utf8").on("data", (d: string) => (stderr += d));
     // A CLI that exits before reading its input closes the pipe; the exit code reports the failure.
     child.stdin.on("error", () => {});
-    child.on("error", (e: NodeJS.ErrnoException) => {
-      clearTimeout(timer);
-      resolve({ code: null, stdout, stderr: stderr || e.message, timedOut, missing: e.code === "ENOENT" });
-    });
-    child.on("close", (code) => {
-      clearTimeout(timer);
-      resolve({ code, stdout, stderr, timedOut, missing: false });
-    });
+    child.on("error", (e: NodeJS.ErrnoException) => done({ code: null, stdout, stderr: stderr || e.message, timedOut, missing: e.code === "ENOENT" }));
+    child.on("close", (code) => done({ code, stdout, stderr, timedOut, missing: false }));
     child.stdin.end(input);
   });
 
@@ -249,7 +259,10 @@ export function claudeCodeClient(opts: ClaudeCodeOptions): ClaudeCodeClient {
     const why = `claude-code ${REASON[r.kind]} (${params.model}): ${r.detail}`;
     if (r.kind !== "limit") throw new Error(why);
     if (!opts.fallback) throw new Error(`${why}; API fallback is off`);
-    if (fresh) log(`${why}; falling back to the API for the rest of this run`);
+    if (fresh) {
+      log(`${why}; falling back to the API for the rest of this run`);
+      opts.onFallback?.();
+    }
     api ??= opts.fallback();
     // Counted before the call: a guide that fails after reaching the API has no usage to price, and still billed.
     apiCalls++;

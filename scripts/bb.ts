@@ -82,9 +82,15 @@ const apiClient = () => makeClient(resolveApiKey(".env.local"));
 let apiFallbackCalls = () => 0;
 
 function modelClient(): ExtractClient {
+  if (args.some((a) => a.startsWith("--via=")) || (flag("--via") && !option("--via"))) throw new Error("use --via api or --via claude-code");
   if (modelVia(option("--via"), process.env.BAYBALLOT_MODEL_VIA) === "api") return apiClient();
   console.log(`Model calls go through Claude Code on the subscription${flag("--no-fallback") ? " (no API fallback)" : ", using the API only if its usage limit is reached"}.`);
-  const client = claudeCodeClient({ fallback: flag("--no-fallback") ? null : apiClient });
+  // CI sets the marker path so it can alert even if the job is killed before result.json is written.
+  const marker = process.env.BAYBALLOT_FALLBACK_MARKER;
+  const client = claudeCodeClient({
+    fallback: flag("--no-fallback") ? null : apiClient,
+    onFallback: marker ? () => fs.writeFileSync(marker, `${new Date().toISOString()}\n`) : undefined,
+  });
   apiFallbackCalls = client.apiCalls;
   return client;
 }
