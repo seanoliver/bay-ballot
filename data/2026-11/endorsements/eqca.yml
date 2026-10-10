@@ -12,7 +12,7 @@ held:
   - contestId: orchard-sd-trustee
     pick:
       - Lyseria Evelyn Phillips
-    reason: unverified
+    reason: unclear-match
     evidence: 'The page lists "Orchard School Board, At-Large: Lyseria Kursave". No candidate of that name is on the ballot; Lyseria Evelyn Phillips may be the same person, but the page does not say so (review 2026-10-07).'
 picks:
   us-rep-8:
