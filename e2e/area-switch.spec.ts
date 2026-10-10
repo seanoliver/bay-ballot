@@ -63,6 +63,37 @@ test.describe("area switching", () => {
     expect(errors).toEqual([]);
   });
 
+  test("a chip past the history budget navigates and shows the area its URL names", async ({ page }) => {
+    await openBallot(page);
+    await page.waitForLoadState("networkidle");
+    const navigations = watchNavigations(page);
+    // Each switch costs two of the 90 history calls allowed per 10 s, so the 46th falls back to a navigation.
+    for (let i = 0; i < 23 && navigations.length === 0; i++) {
+      await pressChip(page, "Sonoma");
+      await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+      await expect(heading(page, "Sonoma County ballot")).toBeVisible();
+      // The 46th call lands here, a navigation back to the page that was first loaded.
+      await pressChip(page, "Clear Sonoma");
+      await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+      await expect(heading(page, "Bay Area ballot")).toBeVisible();
+    }
+    await pressChip(page, "San Mateo");
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}/san-mateo$`));
+    expect(navigations.length).toBeGreaterThan(0);
+    await expect(heading(page, "San Mateo County ballot")).toBeVisible();
+    await expect(area(page).getByRole("link", { name: "Clear San Mateo" })).toHaveAttribute("aria-current", "page");
+  });
+
+  test("the current area's chip adds no history entry", async ({ page }) => {
+    await openBallot(page);
+    await page.waitForLoadState("networkidle");
+    const before = await page.evaluate(() => history.length);
+    await pressChip(page, "Bay Area");
+    await pressChip(page, "Bay Area");
+    expect(await page.evaluate(() => history.length)).toBe(before);
+    await expect(heading(page, "Bay Area ballot")).toBeVisible();
+  });
+
   test("an area page switches in place once it has every area's data", async ({ page }) => {
     await openArea(page, "san-jose");
     await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));

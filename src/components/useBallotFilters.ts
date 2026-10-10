@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { carryQuery, FILTERS_KEY, filterQuery, initialFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
@@ -80,8 +81,10 @@ export function pushPath(href: string, { replace = false }: { replace?: boolean 
   return true;
 }
 
-// Not usePathname: it updates in a transition, a frame after the query.
+// Read from location, since usePathname updates in a transition a frame after the query. Subscribing to it still
+// re-renders on router navigations, whose history writes fire no event.
 export function useLocationPath(serverPath: string): string {
+  usePathname();
   return useSyncExternalStore(subscribe, () => window.location.pathname, () => serverPath);
 }
 

@@ -26,6 +26,9 @@ function loadSnapshot(url: string): Promise<ElectionSnapshot | null> {
   return p;
 }
 
+// With Save-Data on, a chip navigates to its own small page instead of fetching every area's data.
+const saveData = () => (navigator as { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
 // Scroll by path, so Back and Forward between areas land where the visitor left each one.
 const scrolls = new Map<string, number>();
 
@@ -46,10 +49,10 @@ export function AreaBallot({ election, ...props }: Props) {
   const head = useMemo(() => (areaId === initial.area || !snap ? initial : areaHead(snap, areaId)), [areaId, initial, snap]);
 
   const load = useCallback(() => {
-    if (url && !loaded.has(url)) void loadSnapshot(url).then((s) => s && setFetched(s));
+    if (url && !loaded.has(url) && !saveData()) void loadSnapshot(url).then((s) => s && setFetched(s));
   }, [url, setFetched]);
   useEffect(() => {
-    if (!url || (navigator as { connection?: { saveData?: boolean } }).connection?.saveData) return;
+    if (!url) return;
     if (!("requestIdleCallback" in window)) {
       const t = setTimeout(load, 2000);
       return () => clearTimeout(t);
@@ -65,6 +68,7 @@ export function AreaBallot({ election, ...props }: Props) {
     }
     const target = areaFromPath(snap, href);
     if (target === undefined) return false;
+    if (target === areaFromPath(snap, window.location.pathname)) return true;
     const q = new URLSearchParams(carryQuery(currentSearch(), CARRIED));
     const c = new URLSearchParams(currentSearch()).get("c");
     if (c && hasContest(snap, target, c)) q.set("c", c);
