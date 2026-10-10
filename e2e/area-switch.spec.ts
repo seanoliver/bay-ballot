@@ -5,7 +5,7 @@ import { loadElection } from "../src/lib/data";
 import { scopeName } from "../src/lib/fallback";
 import { FILTER_SEARCH } from "../src/components/frame";
 import { ballotViewProps } from "../src/lib/site-data";
-import { BALLOT, isPhone, openBallot, watchErrors } from "./helpers";
+import { BALLOT, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
 const area = (page: Page) => page.getByRole("navigation", { name: "Area" });
@@ -22,11 +22,18 @@ function watchNavigations(page: Page): string[] {
   return seen;
 }
 
+// Switching needs Next's history patch, which hydration installs; a switch before it is undone.
+async function openList(page: Page, query = "") {
+  await openBallot(page, query);
+  await waitForKeys(page);
+}
+
 // An area page fetches every area's data when idle; a chip switches in place only after that.
 async function openArea(page: Page, id: string) {
   const snapshot = page.waitForResponse((r) => new URL(r.url()).pathname === `${BALLOT}/snapshot.json`);
   await page.goto(`${BALLOT}/${id}`);
   await snapshot;
+  await waitForKeys(page);
 }
 
 // Scrolls and lets the scroll event land, as a visitor's scrolling would before they press Back.
@@ -46,7 +53,7 @@ async function pressChip(page: Page, name: string) {
 test.describe("area switching", () => {
   test("a chip switches areas with no navigation, keeping the page", async ({ page }) => {
     const errors = watchErrors(page);
-    await openBallot(page);
+    await openList(page);
     await page.waitForLoadState("networkidle");
     await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
     const navigations = watchNavigations(page);
@@ -64,7 +71,7 @@ test.describe("area switching", () => {
   });
 
   test("a chip past the history budget navigates and shows the area its URL names", async ({ page }) => {
-    await openBallot(page);
+    await openList(page);
     await page.waitForLoadState("networkidle");
     // 45 switches spend the 90 history calls allowed per 10 s; one synchronous burst, so the window can't roll over.
     await area(page).evaluate((nav) => {
@@ -97,7 +104,7 @@ test.describe("area switching", () => {
   });
 
   test("the current area's chip adds no history entry", async ({ page }) => {
-    await openBallot(page);
+    await openList(page);
     await page.waitForLoadState("networkidle");
     const before = await page.evaluate(() => history.length);
     await pressChip(page, "Bay Area");
@@ -124,7 +131,7 @@ test.describe("area switching", () => {
   });
 
   test("Back and Forward switch areas and restore each one's scroll; a chip leaves scroll alone", async ({ page }) => {
-    await openBallot(page);
+    await openList(page);
     await scrollTo(page, 1500);
     await pressChip(page, "Sonoma");
     await expect(heading(page, "Sonoma County ballot")).toBeAttached();
@@ -143,7 +150,7 @@ test.describe("area switching", () => {
   });
 
   test("the clear button widens in after a switch", async ({ page }) => {
-    await openBallot(page);
+    await openList(page);
     await area(page).getByRole("link", { name: "Marin", exact: true }).click();
     const x = area(page).getByRole("link", { name: "Clear Marin" }).locator(".chip-clear");
     const start = await x.evaluate((el) => {
@@ -157,7 +164,7 @@ test.describe("area switching", () => {
   });
 
   test("a reload after a switch renders that area's page", async ({ page }) => {
-    await openBallot(page);
+    await openList(page);
     await area(page).getByRole("link", { name: "Napa", exact: true }).click();
     await expect(heading(page, "Napa County ballot")).toBeVisible();
     await page.reload();
@@ -167,14 +174,14 @@ test.describe("area switching", () => {
 
   test("an open contest stays open when the new area has it, and closes when it doesn't", async ({ page }, info) => {
     test.skip(isPhone(info), "the details pane is desktop only");
-    await openBallot(page, "?c=governor");
+    await openList(page, "?c=governor");
     await expect(page.getByRole("region", { name: "Governor" })).toBeVisible();
     await area(page).getByRole("link", { name: "Sonoma", exact: true }).click();
     await expect(heading(page, "Sonoma County ballot")).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma\\?c=governor$`));
     await expect(page.getByRole("region", { name: "Governor" })).toBeVisible();
 
-    await openBallot(page, "?c=prop-b");
+    await openList(page, "?c=prop-b");
     await expect(page.getByRole("region", { name: "Proposition B" })).toBeVisible();
     await area(page).getByRole("link", { name: "Sonoma", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
@@ -182,7 +189,7 @@ test.describe("area switching", () => {
   });
 
   test("filters and the filter search survive a switch", async ({ page }, info) => {
-    await openBallot(page, "?why=1");
+    await openList(page, "?why=1");
     if (!isPhone(info)) await page.locator(FILTER_SEARCH).fill("press");
     await area(page).getByRole("link", { name: "Sonoma", exact: true }).click();
     await expect(heading(page, "Sonoma County ballot")).toBeVisible();
@@ -199,7 +206,7 @@ test.describe("area switching", () => {
     const saved = fb!.initial === "bay" ? "area" : "bay";
     await page.goto("/about");
     await page.evaluate(([k, v]) => localStorage.setItem("bb-scope", `${k}=${v}`), [`${a.id}:${JUDICIAL}`, saved]);
-    await openBallot(page);
+    await openList(page);
     const chip = a.jurisdictions.find((j) => j.level === "county")!.name;
     await area(page).getByRole("link", { name: chip, exact: true }).click();
     await expect(heading(page, `${a.name} ballot`)).toBeVisible();
@@ -217,7 +224,7 @@ test.describe("area switching", () => {
       filters: await p.locator("aside[aria-label=Filters]").innerText(),
       hrefs: await p.locator("[data-keys=list] a[href]").evaluateAll((as) => as.map((a) => a.getAttribute("href"))),
     });
-    await openBallot(page);
+    await openList(page);
     for (const a of data.areas) {
       await page.evaluate((href) => {
         window.history.pushState(null, "", href);
