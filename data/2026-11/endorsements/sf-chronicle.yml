@@ -84,6 +84,9 @@ picks:
       - Alan Wong
   prop-1:
     pick: Y
+    quotes:
+      - text: But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-3:
     pick: Y
     quotes:
@@ -116,14 +119,21 @@ picks:
   prop-42:
     pick: N
     quotes:
+      - text: In reality, it’s just another poison-pill measure aimed at killing Prop 40, the billionaire wealth tax.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: You don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-44:
     pick: N
+    quotes:
+      - text: But it creates a complex administrative and legal regime that will drain limited staff time and resources from nonprofit clinics while distracting from patient care.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   rtm:
     pick: Y
     quotes:
       - text: The Bay Area does not work without consistent, reliable, well-functioning public transit.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-a:
     pick: Y
@@ -152,8 +162,14 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-g:
     pick: N
+    quotes:
+      - text: The editorial board endorsed a yes vote on Prop K in 2024, and we still believe that Sunset Dunes offers San Francisco the opportunity to build a transformative public space.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-h:
     pick: Y
+    quotes:
+      - text: Proposition H would help stem the bleeding.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-i:
     pick: N
     quotes:
