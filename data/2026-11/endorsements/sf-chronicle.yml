@@ -6,14 +6,14 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
-      - text: But she has the competence and experience to smoothly assume the duties of the state’s No. 2 office.
+      - text: Given the ramblings of her opponent, we cautiously recommend Ma for lieutenant governor.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   secretary-of-state:
     pick:
@@ -51,11 +51,39 @@ picks:
     quotes:
       - text: Richard Barrera is an increasingly rare California progressive who brings all parties to the table, a skill that the new state superintendent of public instruction will need as the role of the office changes.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  prop-1:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supreme-court-groban:
     pick: Y
     quotes:
-      - text: But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supreme-court-evans:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  court-of-appeal-1:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  court-of-appeal-6:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supervisor-4:
+    pick:
+      - Alan Wong
+  prop-1:
+    pick: Y
   prop-3:
     pick: Y
     quotes:
@@ -68,6 +96,9 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-5:
     pick: N
+    quotes:
+      - text: The process can certainly be improved, but the problem isn’t so dire that voters need to accept Prop 5’s glaring flaw.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-37:
     pick: Y
     quotes:
@@ -85,33 +116,15 @@ picks:
   prop-42:
     pick: N
     quotes:
-      - text: In reality, it’s just another poison-pill measure aimed at killing Prop 40, the billionaire wealth tax.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: You don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-44:
     pick: N
-    quotes:
-      - text: But it creates a complex administrative and legal regime that will drain limited staff time and resources from nonprofit clinics while distracting from patient care.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  us-rep-11:
-    pick:
-      - Scott Wiener
-    quotes:
-      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-      - text: Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   rtm:
     pick: Y
     quotes:
       - text: The Bay Area does not work without consistent, reliable, well-functioning public transit.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-      - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  supervisor-4:
-    pick:
-      - Alan Wong
   prop-a:
     pick: Y
     quotes:
@@ -125,7 +138,7 @@ picks:
   prop-c:
     pick: Y
     quotes:
-      - text: "And it is the only measure on the November ballot that will provide something the city desperately needs: a predictable source of public investment at a time when the cost of building and preserving housing keeps rising."
+      - text: Prop C will not solve San Francisco’s housing crisis, but it is part of a concerted and thoughtful city-directed effort to stem the bleeding.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-d:
     pick: Y
@@ -139,14 +152,8 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-g:
     pick: N
-    quotes:
-      - text: The editorial board endorsed a yes vote on Prop K in 2024, and we still believe that Sunset Dunes offers San Francisco the opportunity to build a transformative public space.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-h:
     pick: Y
-    quotes:
-      - text: Proposition H would help stem the bleeding.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-i:
     pick: N
     quotes:
