@@ -62,7 +62,7 @@ type Props = {
   fallback?: Fallback | null;
   /** True while the list still shows the area being left. */
   busy?: boolean;
-  onSwitch?: (href: string, opts?: { replace?: boolean }) => boolean;
+  onSwitch?: (href: string) => boolean;
   onIntent?: () => void;
 };
 
@@ -73,7 +73,7 @@ const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string,
 export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
-  useHomeRedirect({ election, area, onSwitch });
+  useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
   const [sheetOpen, setSheetOpen] = useHistorySheet();
   const sheetTitleRef = useRef<HTMLHeadingElement>(null);

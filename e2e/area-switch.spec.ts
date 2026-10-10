@@ -66,22 +66,34 @@ test.describe("area switching", () => {
   test("a chip past the history budget navigates and shows the area its URL names", async ({ page }) => {
     await openBallot(page);
     await page.waitForLoadState("networkidle");
+    // 45 switches spend the 90 history calls allowed per 10 s; one synchronous burst, so the window can't roll over.
+    await area(page).evaluate((nav) => {
+      const chip = (name: string) => [...nav.querySelectorAll("a")].find((a) => a.textContent === name)!;
+      for (let i = 0; i < 45; i++) chip(i % 2 ? "San Mateo" : "Sonoma").click();
+    });
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+    await expect(heading(page, "Sonoma County ballot")).toBeVisible();
     const navigations = watchNavigations(page);
-    // Each switch costs two of the 90 history calls allowed per 10 s, so the 46th falls back to a navigation.
-    for (let i = 0; i < 23 && navigations.length === 0; i++) {
-      await pressChip(page, "Sonoma");
-      await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
-      await expect(heading(page, "Sonoma County ballot")).toBeVisible();
-      // The 46th call lands here, a navigation back to the page that was first loaded.
-      await pressChip(page, "Clear Sonoma");
-      await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
-      await expect(heading(page, "Bay Area ballot")).toBeVisible();
-    }
-    await pressChip(page, "San Mateo");
-    await expect(page).toHaveURL(new RegExp(`${BALLOT}/san-mateo$`));
+    // Lands on the page that was first loaded, whose route Next already has mounted.
+    await pressChip(page, "Clear Sonoma");
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+    await expect(heading(page, "Bay Area ballot")).toBeVisible();
+    await expect(page).toHaveTitle("Bay Area endorsements (Nov 2026)");
     expect(navigations.length).toBeGreaterThan(0);
-    await expect(heading(page, "San Mateo County ballot")).toBeVisible();
-    await expect(area(page).getByRole("link", { name: "Clear San Mateo" })).toHaveAttribute("aria-current", "page");
+  });
+
+  test("a returning visitor's redirect keeps its title, and Back from another page returns to it", async ({ page }) => {
+    await page.goto("/about");
+    await page.evaluate(() => localStorage.setItem("bb-filters", "why=1"));
+    await page.goto(BALLOT);
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf$`));
+    await expect(heading(page, "San Francisco ballot")).toBeVisible();
+    await expect(page).toHaveTitle("San Francisco endorsements (Nov 2026)");
+    await page.getByRole("link", { name: "About" }).click();
+    await expect(page).toHaveURL(/\/about$/);
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf$`));
+    await expect(heading(page, "San Francisco ballot")).toBeVisible();
   });
 
   test("the current area's chip adds no history entry", async ({ page }) => {

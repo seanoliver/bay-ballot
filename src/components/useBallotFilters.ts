@@ -69,11 +69,10 @@ export function replaceQuery(q: string): void {
 }
 
 /** Moves to another list page without a navigation; false when the history budget is spent. */
-export function pushPath(href: string, { replace = false }: { replace?: boolean } = {}): boolean {
+export function pushPath(href: string): boolean {
   if (!HISTORY_BUDGET.tryNote(WRITE_COST)) return false;
   try {
-    if (replace) window.history.replaceState(null, "", href);
-    else window.history.pushState(null, "", href);
+    window.history.pushState(null, "", href);
   } catch {
     return false;
   }

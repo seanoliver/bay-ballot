@@ -20,14 +20,10 @@ export function markHomeVisit(area: string | null) {
   home.mark(stores(), area);
 }
 
-type Switch = (href: string, opts: { replace: boolean }) => boolean;
-
-export function useHomeRedirect({ election, area, onSwitch }: { election: string; area: string | null; onSwitch?: Switch }) {
+export function useHomeRedirect({ election, area }: { election: string; area: string | null }) {
   const router = useRouter();
   useEffect(() => {
     const target = home.visit(stores(), { area, query: window.location.search });
-    if (!target) return;
-    const href = `/${election}/${target}`;
-    if (!onSwitch?.(href, { replace: true })) router.replace(href);
-  }, [election, area, router, onSwitch]);
+    if (target) router.replace(`/${election}/${target}`);
+  }, [election, area, router]);
 }

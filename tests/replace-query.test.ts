@@ -91,13 +91,6 @@ describe("pushPath", () => {
     expect(currentSearch()).toBe("?why=1");
     expect(w.dispatchEvent).toHaveBeenCalledTimes(1);
   });
-  it("replaces instead when asked", async () => {
-    const w = stubHistory();
-    const { pushPath } = await import("@/components/useBallotFilters");
-    expect(pushPath("/2026-11/sf", { replace: true })).toBe(true);
-    expect(w.pushState).not.toHaveBeenCalled();
-    expect(w.replaceState).toHaveBeenCalledWith(null, "", "/2026-11/sf");
-  });
   it("refuses once the history budget is spent, so the caller can navigate normally", async () => {
     const w = stubHistory();
     const { pushPath, replaceQuery } = await import("@/components/useBallotFilters");

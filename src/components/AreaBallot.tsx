@@ -49,7 +49,10 @@ export function AreaBallot({ election, ...props }: Props) {
   const head = useMemo(() => (areaId === initial.area || !snap ? initial : areaHead(snap, areaId)), [areaId, initial, snap]);
 
   const load = useCallback(() => {
-    if (url && !loaded.has(url) && !saveData()) void loadSnapshot(url).then((s) => s && setFetched(s));
+    if (!url) return;
+    const cached = loaded.get(url);
+    if (cached) setFetched(cached);
+    else if (!saveData()) void loadSnapshot(url).then((s) => s && setFetched(s));
   }, [url, setFetched]);
   useEffect(() => {
     if (!url) return;
@@ -61,7 +64,7 @@ export function AreaBallot({ election, ...props }: Props) {
     return () => cancelIdleCallback(id);
   }, [url, load]);
 
-  const onSwitch = (href: string, { replace = false }: { replace?: boolean } = {}) => {
+  const onSwitch = (href: string) => {
     if (!snap) {
       load();
       return false;
@@ -74,13 +77,13 @@ export function AreaBallot({ election, ...props }: Props) {
     if (c && hasContest(snap, target, c)) q.set("c", c);
     markHomeVisit(target);
     const search = q.toString();
-    return pushPath(search ? `${href}?${search}` : href, { replace });
+    return pushPath(search ? `${href}?${search}` : href);
   };
   const switchRef = useRef(onSwitch);
   useLayoutEffect(() => {
     switchRef.current = onSwitch;
   });
-  const onSwitchStable = useCallback((href: string, opts?: { replace?: boolean }) => switchRef.current(href, opts), []);
+  const onSwitchStable = useCallback((href: string) => switchRef.current(href), []);
 
   const restore = useRef(false);
   useEffect(() => {
