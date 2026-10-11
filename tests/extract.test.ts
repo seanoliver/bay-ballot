@@ -25,7 +25,7 @@ describe("systemPrompt", () => {
     for (const part of [
       "Copy two consecutive sentences as one quote only when the second needs the first for its condition or subject",
       "a fact cited as a reason",
-      "But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, Speaking of, That leaves us, Resulting",
+      "But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, In addition, As a result, On the other hand, Nevertheless, Nonetheless, Lastly, Second(ly), Third(ly), Besides, Speaking of, That leaves us, Resulting",
       "Summary openers (Overall, In short, Ultimately)",
       "\"this funding\" for the measure's own money",
       "When it names several, They is fine but a He/She quote must also name one of them.",
@@ -501,6 +501,15 @@ describe("keepPrevQuotes", () => {
     const r = keep({ "prop-g": entry("N", gone, q2) }, { "prop-g": entry("N", q2) });
     expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
     expect(r.notes).toEqual([`prop-g: previous quote not kept (not-found): "${gone}"`]);
+  });
+
+  it("does not repeat a note for a previous quote toEntries already dropped in this run", () => {
+    const but = "But the closure cost nothing and the park is already full every weekend.";
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q2} ${but}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", but, q2) }, { "prop-g": entry("N", q2) }, ballot.contests, p, {
+      noted: [{ contestId: "prop-g", text: but }],
+    });
+    expect(r.notes).toEqual([]);
   });
 
   it("notes why a previously published quote that now fails the quote rule is not kept", () => {

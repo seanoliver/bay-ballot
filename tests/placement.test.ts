@@ -372,3 +372,27 @@ describe("per-item badges that look like sidebar labels", () => {
     expect(misplacedUnder(q, "insurance-commissioner", [page(text, url)], contests)).toBe("board-of-equalization-2");
   });
 });
+
+describe("an inline ad in the middle of a list (SMDJ layout)", () => {
+  it("skips the ad's headlines but not the candidate name the list resumes with", () => {
+    const url = "https://www.smdailyjournal.com/endorsements";
+    const text = [
+      "San Mateo Union High School District, Area 5:",
+      "Alison Proctor",
+      "South San Francisco Unified School District, Area C:",
+      "Recommended for you",
+      "+2",
+      "[DJ Q&A: Linda Crose-Andersen]",
+      "Local News",
+      "DJ Q&A: Linda Crose-Andersen",
+      "[State voters to decide on taxes]",
+      "Local News",
+      "State voters to decide on taxes",
+      "Chialin Hsieh",
+      "Hsieh has the classroom experience the district board has been missing for years.",
+    ].join("\n");
+    const q = quote("Hsieh has the classroom experience the district board has been missing for years.", url);
+    expect(misplacedUnder(q, "ssfusd-trustee-area-c", [page(text, url)], contests)).toBeNull();
+    expect(misplacedUnder(q, "sequoia-uhsd-trustee-area-a", [page(text, url)], contests)).toBe("ssfusd-trustee-area-c");
+  });
+});

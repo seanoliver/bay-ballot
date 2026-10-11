@@ -155,7 +155,7 @@ async function refreshGuide(
     Object.fromEntries(Object.entries(extracted.picks).filter(([c]) => inScope(c))),
     ballot.contests,
     pageTexts,
-    { ownNames: [guide.name], rejected: prev.rejectedQuotes },
+    { ownNames: [guide.name], rejected: prev.rejectedQuotes, noted: extracted.dropped },
   );
   const picks = kept.picks;
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));

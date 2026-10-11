@@ -176,7 +176,7 @@ export function isSubstantive(text: string): boolean {
 }
 
 const SELF_CONTAINED_NOUNS =
-  "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter|office|race";
+  "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter|office|race|november|fall|spring|summer|cycle|session|time";
 const selfReference = (nouns: string) =>
   new RegExp(`^\\W*(?:this|that|these|those)\\s+(?:${nouns})(?:s|['’]s)?(?![\\p{L}\\p{N}])`, "iu");
 const SELF_REFERENCE = selfReference(SELF_CONTAINED_NOUNS);
@@ -186,8 +186,8 @@ const IT = /^\W*it\b/i;
 const PRONOUN = /^\W*(?:he|she|his|her|him|they|their|them)\b/i;
 const PLURAL_PRONOUN = /^\W*(?:they|their|them)\b/i;
 const CONNECTOR = new RegExp(
-  "^\\W*(?:(but|and|moreover|furthermore|additionally|finally|still|yet|plus|meanwhile|likewise|similarly|thus|therefore|resulting|speaking\\s+of)\\b" +
-    "|(however|further)\\s*,|(instead)\\b(?!\\s+of\\b)|(so)\\b(?!\\s+(?:far|many|much|long)\\b))",
+  "^\\W*(?:(but|and|moreover|furthermore|additionally|finally|still|yet|plus|meanwhile|likewise|similarly|therefore|resulting|nevertheless|nonetheless|lastly|secondly|thirdly|besides|as\\s+a\\s+result|on\\s+the\\s+other\\s+hand|speaking\\s+of)\\b" +
+    "|(however|further|second|third)\\s*,|(in\\s+addition)\\b(?!\\s+to\\b)|(instead)\\b(?!\\s+of\\b)|(thus)\\b(?!\\s+far\\b)|(so)\\b(?!-|\\s+(?:far|many|much|long)\\b))",
   "i",
 );
 const MID_HOWEVER = /,\s*however\s*[,.!?]/i;
@@ -197,7 +197,8 @@ const MAX_SENTENCES = 2;
 export function sentencesOf(text: string): string[] {
   const masked = text
     .replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_"))
-    .replace(/\b(?:Sen|Rep|Asm|Gov|Lt|Gen|Sec|Sup|Supv|Supt|Atty|Asst|Calif|Dept|Dist|Assn|Hon|Prof|Mt|Ft|Inc|Co|Corp|Ave|Blvd|etc|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\./g, (a) => a.replace(/\./g, "_"))
+    .replace(/\b[ap]\.m\./gi, (a) => a.replace(/\./g, "_"))
+    .replace(/\b(?:Props?|Ste|v|Etc|Sen|Rep|Asm|Gov|Lt|Gen|Sec|Sup|Supv|Supt|Atty|Asst|Calif|Dept|Dist|Assn|Hon|Prof|Mt|Ft|Inc|Co|Corp|Ave|Blvd|etc|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\./g, (a) => a.replace(/\./g, "_"))
     .replace(/(?<!\b(?:Measure|Prop|Proposition)\s+)(?<![\p{L}\p{N}])\p{Lu}\.(?=\s)/gu, (a) => a.replace(/\./g, "_"));
   const out: string[] = [];
   let from = 0;

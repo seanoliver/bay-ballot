@@ -152,7 +152,12 @@ function sidebarLines(lines: { text: string }[]): Set<number> {
   const out = new Set<number>();
   lines.forEach((l, i) => {
     if (!SIDEBAR_LABEL.test(l.text)) return;
-    for (let j = i + 1; j < lines.length && j <= i + SIDEBAR_LINES && lines[j].text.trim().length <= HEADING_LINE_MAX; j++) out.add(j);
+    for (let j = i + 1; j < lines.length && j <= i + SIDEBAR_LINES; j++) {
+      const t = lines[j].text.trim();
+      if (t.length > HEADING_LINE_MAX || t.endsWith(":")) break;
+      // A short line such as a candidate name can be the article resuming after an inline ad.
+      if (t.length >= 30 || t.split(/\s+/).length >= 5) out.add(j);
+    }
   });
   return out;
 }

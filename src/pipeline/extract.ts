@@ -93,7 +93,7 @@ export function systemPrompt(ballot: Ballot): string {
     "  - Subject: it names the pick or is clearly about it. In a two-way race, criticism of or contrast with the named opponent counts. In a multi-seat race, never quote a sentence about a candidate the organization did not pick. Under a measure, a sentence about the problem the measure addresses is fine.",
     "  - Pronouns: He/She/They is fine when the pick names one candidate. When it names several, They is fine but a He/She quote must also name one of them.",
     "  - Pointing back: no this/that/these/those/it/such, or definite phrase (\"the system\", \"the money\", \"the price tag\", \"the incumbents\"), that refers to earlier text. Fine: \"this measure/office/race\", \"it\" for the measure under its own pick, \"the council/board/district\" for the body the contest elects, \"this funding\" for the measure's own money.",
-    "  - Connectors: never open with a word that continues a prior sentence (But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, Speaking of, That leaves us, Resulting), or use a parenthetical \", however,\" against it. Summary openers (Overall, In short, Ultimately) and \"also\" are fine.",
+    "  - Connectors: never open with a word that continues a prior sentence (But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, In addition, As a result, On the other hand, Nevertheless, Nonetheless, Lastly, Second(ly), Third(ly), Besides, Speaking of, That leaves us, Resulting), or use a parenthetical \", however,\" against it. Summary openers (Overall, In short, Ultimately) and \"also\" are fine.",
     "- Quotes must be in the organization's own voice. Never quote text it attributes to opponents, critics, candidates or anyone else.",
     "- Never paraphrase, summarize, shorten, or join sentences that are not consecutive on the page.",
     "- At most 3 quotes per pick. If no sentence on the pages meets these rules for a pick, return an empty quotes array.",
@@ -134,15 +134,18 @@ export function contestProblem(q: KeptQuote, c: Contest, pick: Entry["pick"], pa
   return other ? `wrong-contest, under ${other}` : null;
 }
 
+export type NotedQuote = { contestId: string; text: string };
+
 export function toEntries(
   out: ExtractOutput,
   contests: Contest[],
   pages: Page[],
   { ownNames = [] }: { ownNames?: string[] } = {},
-): { picks: Record<string, Entry>; notes: string[] } {
+): { picks: Record<string, Entry>; notes: string[]; dropped: NotedQuote[] } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const picks: Record<string, Entry> = {};
   const notes: string[] = [];
+  const dropped: NotedQuote[] = [];
 
   for (const p of out.picks) {
     const note = p.note?.trim();
@@ -180,10 +183,16 @@ export function toEntries(
     }
 
     const verified = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
-    for (const d of verified.dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
+    for (const d of verified.dropped) {
+      notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
+      dropped.push({ contestId: c.id, text: d.quote });
+    }
     const kept = verified.kept.filter((q) => {
       const reason = contestProblem(q, c, pick, pages, contests);
-      if (reason) notes.push(`${c.id}: dropped quote (${reason}): "${clip(q.text)}"`);
+      if (reason) {
+        notes.push(`${c.id}: dropped quote (${reason}): "${clip(q.text)}"`);
+        dropped.push({ contestId: c.id, text: q.text });
+      }
       return !reason;
     });
 
@@ -197,7 +206,7 @@ export function toEntries(
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
     picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
-  return { picks, notes };
+  return { picks, notes, dropped };
 }
 
 // Must normalize like verifyQuotes, or a quote that differs only in dashes or spacing is kept twice.
@@ -222,7 +231,11 @@ export function keepPrevQuotes(
   picks: Record<string, Entry>,
   contests: Contest[],
   pages: Page[],
-  { ownNames = [], rejected = [] }: { ownNames?: string[]; rejected?: { text: string; contestId?: string }[] } = {},
+  {
+    ownNames = [],
+    rejected = [],
+    noted = [],
+  }: { ownNames?: string[]; rejected?: { text: string; contestId?: string }[]; noted?: NotedQuote[] } = {},
 ): { picks: Record<string, Entry>; notes: string[] } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const out = { ...picks };
@@ -247,8 +260,9 @@ export function keepPrevQuotes(
       if (i !== -1) at = i + 1;
       else {
         const why = problem(q);
-        if (why) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
-        else {
+        if (why) {
+          if (!noted.some((n) => n.contestId === id && sameQuote(n.text, q.text))) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
+        } else {
           quotes.splice(at++, 0, q);
           restored.push(q);
         }

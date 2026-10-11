@@ -406,7 +406,11 @@ describe("standsAlone", () => {
     ["Instead, the measure streamlines destructive sprawl developments.", "Instead"],
     ["Speaking of housing, the measure would block new homes near transit.", "Speaking of"],
     ["Resulting cuts to Muni would worsen the city's congestion and gridlock.", "Resulting"],
-    ...["Additionally", "Finally", "Still", "Yet", "So", "Plus", "Meanwhile", "Likewise", "Similarly", "Thus", "Therefore"].map(
+    ...[
+      "Additionally", "Finally", "Still", "Yet", "So", "Plus", "Meanwhile", "Likewise", "Similarly", "Thus", "Therefore",
+      "In addition", "As a result", "On the other hand", "Nevertheless", "Nonetheless", "Lastly", "Second", "Secondly",
+      "Third", "Thirdly", "Besides",
+    ].map(
       (w) => [`${w}, the plan does nothing for public transit riders.`, w],
     ),
   ])("drops a quote opening with a connector: %s", (q, word) => {
@@ -434,6 +438,11 @@ describe("standsAlone", () => {
     "Instead of raising taxes, the measure trims the administrative budget.",
     "Also on the ballot, Prop D would add needed oversight to city contracts.",
     "So far, the city has spent nothing on the promised repairs under Prop D.",
+    "So-called reform measures like Prop D rarely deliver what they promise.",
+    "Thus far, the city has spent nothing on the promised repairs under Prop D.",
+    "In addition to cutting fees, Prop D caps what the city can charge renters.",
+    "This November, voters can finally fix the ballot process with Prop D.",
+    "This fall, Prop D gives voters a chance to fix the ballot process.",
   ])("keeps summary openers, 'Instead of' and 'Also': %s", (q) => expect(standsAlone(q, propD)).toBe(true));
 
   it("allows this office/race for a candidate contest and this funding only for a measure", () => {
@@ -465,6 +474,10 @@ describe("sentencesOf", () => {
     expect(sentencesOf("Vote by Nov. 3 to keep Prop. 50 alive! Then tell a friend.")).toHaveLength(2);
     expect(sentencesOf("Asm. Wicks supported the bill from the start.")).toHaveLength(1);
     expect(sentencesOf("Polls close at 8 p.m. on Election Day across the county.")).toHaveLength(1);
+    expect(sentencesOf("polls close at 8 p.m. on Tuesday")).toHaveLength(1);
+    expect(sentencesOf("Polls close at 8 p.m. Tuesday in every county.")).toHaveLength(1);
+    expect(sentencesOf("We say vote no on Props. 41 and 42 this fall.")).toHaveLength(1);
+    expect(sentencesOf("The case, Smith v. Jones, set the rule. Etc. Ste. 200 is the office.")).toHaveLength(2);
   });
   it("ends a sentence after a measure letter", () => {
     expect(sentencesOf("We support Measure A. It will fix roads.")).toHaveLength(2);
