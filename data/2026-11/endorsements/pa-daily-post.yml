@@ -31,9 +31,6 @@ rejectedQuotes:
   - text: Vote “Yes” on Measure P to protect our businesses, preserve our parking, and demand a smarter approach to housing growth.
     reason: call to vote; gives no reason (review 2026-10-06)
     contestId: menlo-park-measure-p
-  - text: The district desperately needs structural and cultural reform, and both Wang and Craig bring the independent vision, fiscal realism and commitment to academic excellence required to steer the district back on track.
-    reason: 'does not stand alone: "The district" refers back to the previous sentence (review 2026-10-10)'
-    contestId: pausd-trustee
   - text: We are most enthusiastic about Bryna Chang, the current Planning and Transportation Commission chair.
     reason: not a reason on its own (review 2026-10-10)
     contestId: palo-alto-council
@@ -67,6 +64,8 @@ picks:
       - Avery Wang
       - John Craig
     quotes:
+      - text: The district desperately needs structural and cultural reform, and both Wang and Craig bring the independent vision, fiscal realism and commitment to academic excellence required to steer the district back on track.
+        source: https://padailypost.com/2026/10/05/daily-post-editorial-wang-and-craig-for-school-board/
       - text: Avery Wang, in particular, has been a tireless champion for advanced math opportunities.
         source: https://padailypost.com/2026/10/05/daily-post-editorial-wang-and-craig-for-school-board/
       - text: We strongly favor Wang and Craig for their unwavering emphasis on merit and the rebuilding of an educational meritocracy.

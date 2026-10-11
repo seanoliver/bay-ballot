@@ -48,6 +48,15 @@ rejectedQuotes:
   - text: Leaders also need to be more straightforward about their plans for the money.
     reason: 'does not stand alone: "the money" refers back to the previous passage (review 2026-10-10)'
     contestId: american-canyon-measure-p
+  - text: Unlike other ballot measures, this is not a new tax; it’s an extension of a countywide sales tax we already pay.
+    reason: 'does not stand alone: a bare "this" refers back instead of naming the measure (review 2026-10-10)'
+    contestId: sonoma-county-measure-h
+  - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
+    reason: 'does not stand alone: does not name or describe the pick (review 2026-10-10)'
+    contestId: healdsburg-council-2
+  - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
+    reason: 'does not stand alone: does not name the pick and leans on the next sentence (review 2026-10-10)'
+    contestId: rohnert-park-council-2
 picks:
   us-rep-4:
     pick:
@@ -100,8 +109,6 @@ picks:
   sonoma-county-measure-h:
     pick: Y
     quotes:
-      - text: Unlike other ballot measures, this is not a new tax; it’s an extension of a countywide sales tax we already pay.
-        source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
       - text: The Sonoma County’s regional parks sales tax delivers a lot for a little.
         source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
   cloverdale-council:
@@ -121,8 +128,6 @@ picks:
       - Mathew Lopez
     quotes:
       - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
-        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
-      - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
     pick:
@@ -146,8 +151,6 @@ picks:
     pick:
       - Linda (Khoury) Tams
     quotes:
-      - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
-        source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
       - text: While DeSimone could be an asset to the council, Khoury Tams’ experiences both on the Rohnert Park Chamber of Commerce, Rohnert Park City Advisory Committee and Rancho Cotate Booster Club shows she has an understanding of how the city works — and how it doesn’t.
         source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-council-5:
