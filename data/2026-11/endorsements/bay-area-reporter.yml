@@ -37,13 +37,23 @@ rejectedQuotes:
   - text: Speaking of the Housing Trust Fund, voters can renew this important program through 2058 and increase the annual funding for affordable housing to $125 million.
     reason: 'does not stand alone: opens with "Speaking of", which points back to the previous measure (review 2026-10-10)'
     contestId: prop-c
+  - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
+    reason: 'does not stand alone: opens with "But" (review 2026-10-10)'
+    contestId: lt-governor
+  - text: But Wong is listening to his constituents, and that’s a priority for a district supervisor.
+    reason: 'does not stand alone: opens with "But" (review 2026-10-10)'
+    contestId: supervisor-4
+  - text: Many of these clinics serve vulnerable populations and could be undone by restrictions.
+    reason: 'does not stand alone: "these clinics" refers back to the previous passage (review 2026-10-10)'
+    contestId: prop-44
+  - text: The reality, however, is that San Francisco needs more affordable housing, and Prop I is one way to help fund that.
+    reason: 'does not stand alone: "however" sets it against the previous sentence (review 2026-10-10)'
+    contestId: prop-i
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
-      - text: But compared to the other candidate in the race, Democrat-turned-Republican state Senator Gloria Romero (East Los Angeles), Ma is the better candidate.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: Ma, a certified public accountant, has been an effective state treasurer.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: We think she has the experience to be a good lieutenant governor.
@@ -88,9 +98,6 @@ picks:
   supervisor-4:
     pick:
       - Alan Wong
-    quotes:
-      - text: But Wong is listening to his constituents, and that’s a priority for a district supervisor.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-2:
     pick:
       - Stephen Sherrill
@@ -161,9 +168,6 @@ picks:
     pick: N
   prop-44:
     pick: N
-    quotes:
-      - text: Many of these clinics serve vulnerable populations and could be undone by restrictions.
-        source: https://www.ebar.com/story/170969/
   prop-45:
     pick: N
     quotes:
@@ -217,8 +221,5 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-i:
     pick: Y
-    quotes:
-      - text: The reality, however, is that San Francisco needs more affordable housing, and Prop I is one way to help fund that.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-j:
     pick: Y

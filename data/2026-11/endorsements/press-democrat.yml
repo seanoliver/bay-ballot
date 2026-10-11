@@ -38,6 +38,9 @@ rejectedQuotes:
   - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
     reason: 'does not stand alone: "this new funding source" refers back to the previous passage (review 2026-10-10)'
     contestId: napa-county-measure-b
+  - text: Moreover, people should be able to decide whether or not they want their money to go toward supporting a candidate.
+    reason: 'does not stand alone: opens with "Moreover" (review 2026-10-10)'
+    contestId: prop-4
 picks:
   us-rep-4:
     pick:
@@ -60,8 +63,6 @@ picks:
     pick: N
     quotes:
       - text: Our tax dollars should not be spent on election campaigns.
-        source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-no-on-prop-4-taxpayer-dollars-should-not-support-campaigns/
-      - text: Moreover, people should be able to decide whether or not they want their money to go toward supporting a candidate.
         source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-no-on-prop-4-taxpayer-dollars-should-not-support-campaigns/
   prop-40:
     pick: Y

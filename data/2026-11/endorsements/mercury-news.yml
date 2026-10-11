@@ -108,6 +108,9 @@ rejectedQuotes:
   - text: But the breadth of Elward’s governmental experience and knowledge of Marin, more than half the district’s population, and its local issues is limited compared to Lucan.
     reason: 'does not stand alone: opens with "But" (review 2026-10-10)'
     contestId: assembly-12
+  - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
+    reason: 'does not stand alone: "those positions" refers back (review 2026-10-10)'
+    contestId: state-senate-2
 picks:
   lt-governor:
     pick:
