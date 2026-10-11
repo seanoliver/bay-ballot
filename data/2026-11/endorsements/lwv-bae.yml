@@ -2,7 +2,7 @@ guide: lwv-bae
 election: 2026-11
 status: published
 source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
@@ -36,9 +36,6 @@ picks:
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-t:
     pick: Y
-    quotes:
-      - text: "Measure T has precisely that structure: dedicated ongoing funding plus a low-income exemption."
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-u:
     pick: Y
     quotes:
@@ -46,6 +43,9 @@ picks:
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-v:
     pick: Y
+    quotes:
+      - text: The LWVBAE position on revenue and taxation emphasizes “adequacy,” so municipalities have the revenue needed to carry out the basic functions of a properly managed city, which include maintaining public safety departments at reasonable staffing levels.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-w:
     pick: Y
     quotes:

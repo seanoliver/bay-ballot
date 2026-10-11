@@ -2,7 +2,7 @@ guide: empower-oakland
 election: 2026-11
 status: published
 source: https://www.empoweroakland.com/voter-guide
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
@@ -15,11 +15,25 @@ rejectedQuotes:
     reason: "does not stand alone: opens with a connector (review 2026-10-07)"
     contestId: rtm
 picks:
+  oakland-usd-2:
+    pick:
+      - Arielle Fleisher
+    ranked: true
+    quotes:
+      - text: Arielle Fleisher is an OUSD parent, a PTA member, co-leader of her neighborhood council, and founder of a 300+ member moms group.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: Fleisher would be a welcome addition, and much needed breath of fresh air, to a board in desperate need of overhaul.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
+        source: https://www.empoweroakland.com/voter-guide
   oakland-usd-4:
     pick:
       - Mike Hutchinson
       - Kathryn Camp
     ranked: true
+    quotes:
+      - text: Incumbent board member Mike Hutchinson has often been in the minority vote of the board’s 4-3 majority.
+        source: https://www.empoweroakland.com/voter-guide
   oakland-usd-6:
     pick:
       - Alexandra Williams
@@ -37,9 +51,11 @@ picks:
     pick:
       - Charlene Wang
     quotes:
-      - text: She is a workhorse for her constituents who tirelessly gathers feedback from the community and then puts that into practice at City Hall.
+      - text: Charlene Wang has been a force on the city council since taking office in 2025.
         source: https://www.empoweroakland.com/voter-guide
-      - text: On homelessness, she has expanded shelter capacity so that when an encampment is closed, people have somewhere to go.
+      - text: Charlene is perfect for this district as she is both progressive and practical.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: She is a workhorse for her constituents who tirelessly gathers feedback from the community and then puts that into practice at City Hall.
         source: https://www.empoweroakland.com/voter-guide
   oakland-council-4:
     pick:
@@ -53,6 +69,8 @@ picks:
     pick:
       - Kevin E. Jenkins
     quotes:
+      - text: Our endorsement also reflects Kevin’s willingness to pursue greater accountability and effectiveness within City Hall.
+        source: https://www.empoweroakland.com/voter-guide
       - text: During his tenure, he’s demonstrated an ability to help lead Oakland through its most unstable stretch in recent history.
         source: https://www.empoweroakland.com/voter-guide
       - text: He has supported reforms designed to clarify responsibility, strengthen oversight, improve access to objective fiscal analysis, and make city government more responsive to residents.
@@ -61,6 +79,8 @@ picks:
     pick:
       - Michael C. Houston
     quotes:
+      - text: Michael Houston is unopposed for the second time, and he still completed our questionnaire and participated in the endorsement process, demonstrating his commitment to transparency and engaging with his constituents.
+        source: https://www.empoweroakland.com/voter-guide
       - text: He is a certified internal auditor who has done government audit work since 2008 and ran Oakland's whistleblower program before winning the 2024 special election.
         source: https://www.empoweroakland.com/voter-guide
       - text: He focused his team on critical areas such as 911 response times, and under his leadership the share of audit recommendations the administration has actually implemented is up 20 points.
@@ -77,6 +97,8 @@ picks:
     pick:
       - Adriana Valencia
     quotes:
+      - text: Adriana Valencia brings an infectious energy and user-centered perspective to the AC Transit Board.
+        source: https://www.empoweroakland.com/voter-guide
       - text: Her focus on transparency and accountability is demonstrated by her public-interest lawsuit against AC Transit over Brown Act violations following a closed-door $500,000 executive payout.
         source: https://www.empoweroakland.com/voter-guide
   ac-transit-ward-4:
@@ -116,13 +138,4 @@ picks:
       - text: Oakland’s economy cannot recover if transit collapses.
         source: https://www.empoweroakland.com/voter-guide
       - text: With vehicle ownership costs pushing more people onto public transit, the region needs this safety net.
-        source: https://www.empoweroakland.com/voter-guide
-  oakland-usd-2:
-    pick:
-      - Arielle Fleisher
-    ranked: true
-    quotes:
-      - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
-        source: https://www.empoweroakland.com/voter-guide
-      - text: As an OUSD board member, she wants an open and transparent search for a permanent superintendent, budgets based on fiscal reality, and experienced teachers who can actually afford to live in Oakland.
         source: https://www.empoweroakland.com/voter-guide

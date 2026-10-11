@@ -12,16 +12,16 @@ archived:
     snapshot: https://web.archive.org/web/20261007194556/https://contracosta.news/2026/10/05/editorial-bishop-mello-and-zickuhr-give-brentwood-the-reset-it-needs/
   - source: https://contracosta.news/2026/10/05/editorial-pittsburg-must-look-at-the-big-picture-not-a-pixel/
     snapshot: https://web.archive.org/web/20261007194616/https://contracosta.news/2026/10/05/editorial-pittsburg-must-look-at-the-big-picture-not-a-pixel/
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-10
 hasReasoning: true
 picks:
   antioch-council-1:
     pick:
       - Tamisha Torres-Walker
     quotes:
-      - text: Strip away the political teams, Facebook wars, personalities and old grudges, and I believe Torres-Walker genuinely wants Antioch to succeed for everyone — key word, EVERYONE!
-        source: https://contracosta.news/2026/10/05/editorial-the-antioch-endorsements-i-never-thought-id-make/
       - text: If you look at the city council as a bowl of soup, Torres-Walker makes the recipe complete as she represents an entire community that would otherwise be ignored by the city and that can’t happen ever again.
+        source: https://contracosta.news/2026/10/05/editorial-the-antioch-endorsements-i-never-thought-id-make/
+      - text: Strip away the political teams, Facebook wars, personalities and old grudges, and I believe Torres-Walker genuinely wants Antioch to succeed for everyone — key word, EVERYONE!
         source: https://contracosta.news/2026/10/05/editorial-the-antioch-endorsements-i-never-thought-id-make/
       - text: Unlike Torres-Walker, Motts has failed to take any type of accountability for her past record or votes.
         source: https://contracosta.news/2026/10/05/editorial-the-antioch-endorsements-i-never-thought-id-make/

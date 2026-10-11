@@ -6,7 +6,7 @@ fetchWith: browser
 archived:
   - source: https://www.sflaborcouncil.org/news-details/webview/our-endorsements/single/9251
     snapshot: https://web.archive.org/web/20261005222225/https://www.sflaborcouncil.org/en/news-details/webview/our-endorsements/single/9251
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-10
 hasReasoning: false
 picks:
   prop-b:
@@ -16,6 +16,8 @@ picks:
   prop-h:
     pick: Y
   prop-j:
+    pick: Y
+  rtm:
     pick: Y
   supervisor-2:
     pick:
