@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "Bay Ballot — every Bay Area voter guide in one place",
   description: "What Bay Area voter guides recommend for each contest, side by side, with quotes that link to their source.",
   twitter: { card: "summary_large_image" },
+  referrer: "strict-origin",
   alternates: { canonical: "/" },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main>{children}</main>
         <SiteFooter />
         {/* Not unconditional: off Vercel the script 404s and fails the e2e console-error checks. */}
-        {process.env.VERCEL ? <SiteAnalytics /> : null}
+        {process.env.VERCEL ? <SiteAnalytics ahrefs={process.env.VERCEL_ENV === "production"} /> : null}
       </body>
     </html>
   );
