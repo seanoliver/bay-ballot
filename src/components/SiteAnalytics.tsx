@@ -35,6 +35,7 @@ function AhrefsAnalytics() {
       src="https://analytics.ahrefs.com/analytics.js"
       data-key={AHREFS_KEY}
       data-no-pageview-auto=""
+      data-page-location={typeof window === "undefined" ? undefined : scrubUrl(window.location.href)}
       onReady={() => setReady(true)}
     />
   );
