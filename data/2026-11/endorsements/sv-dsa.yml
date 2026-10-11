@@ -18,9 +18,6 @@ rejectedQuotes:
   - text: The tax restructuring would also lower taxes for smaller businesses.
     reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
     contestId: newark-measure-dd
-  - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
-    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
-    contestId: union-city-measure-ii
   - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
     reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
     contestId: union-city-council-4
@@ -39,6 +36,9 @@ rejectedQuotes:
   - text: The funds are necessary, given the current housing and affordability crises throughout the state.
     reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-10)'
     contestId: prop-1
+  - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
+    reason: about a candidate the guide did not pick (review 2026-10-10)
+    contestId: menlo-park-city-sd-trustee
 picks:
   secretary-of-state:
     pick:
@@ -283,9 +283,6 @@ picks:
       - Jed Scolnick
       - Maya Herstein
       - Andrew Barnes
-    quotes:
-      - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   mvwsd-trustee:
     pick:
       - Devon Conley
@@ -414,6 +411,9 @@ picks:
     pick: Y
   union-city-measure-ii:
     pick: Y
+    quotes:
+      - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   rtm:
     pick: Y
     quotes:
