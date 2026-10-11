@@ -29,11 +29,11 @@ function setup() {
     const r = spawnSync("zsh", ["-f", SCRIPT, "install"], { env: env as NodeJS.ProcessEnv, encoding: "utf8" });
     return { code: r.status, out: `${r.stdout}${r.stderr}` };
   };
-  const topic = () => {
-    const r = spawnSync("plutil", ["-extract", "EnvironmentVariables.BAYBALLOT_NTFY_TOPIC", "raw", "-o", "-", plist], { encoding: "utf8" });
+  const envVar = (name: string) => {
+    const r = spawnSync("plutil", ["-extract", `EnvironmentVariables.${name}`, "raw", "-o", "-", plist], { encoding: "utf8" });
     return r.status === 0 ? r.stdout.trim() : null;
   };
-  return { install, topic };
+  return { install, topic: () => envVar("BAYBALLOT_NTFY_TOPIC"), envVar };
 }
 
 describe.skipIf(!hasZsh || !isMac)("local-refresh-launchd.sh install", { timeout: 20_000 }, () => {
@@ -53,6 +53,17 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh-launchd.sh install", { timeout
     expect(t.topic()).toBe(TOPIC);
     expect(r.out).toContain("Kept BAYBALLOT_NTFY_TOPIC from the installed job.");
     expect(r.out).not.toContain(TOPIC);
+  });
+
+  it("keeps the installed ntfy server when reinstalled from a shell without it", () => {
+    const t = setup();
+    t.install({ BAYBALLOT_NTFY_TOPIC: TOPIC, BAYBALLOT_NTFY_SERVER: "https://ntfy.example.org" });
+    const r = t.install();
+    expect(r.code).toBe(0);
+    expect(t.envVar("BAYBALLOT_NTFY_SERVER")).toBe("https://ntfy.example.org");
+    expect(r.out).toContain("Kept BAYBALLOT_NTFY_SERVER from the installed job.");
+    expect(t.install({ BAYBALLOT_NTFY_SERVER: "https://ntfy.other.org" }).code).toBe(0);
+    expect(t.envVar("BAYBALLOT_NTFY_SERVER")).toBe("https://ntfy.other.org");
   });
 
   it("says phone notifications are off when neither the shell nor the installed job has a topic", () => {
