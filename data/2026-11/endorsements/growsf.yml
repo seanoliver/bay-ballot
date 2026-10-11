@@ -7,6 +7,31 @@ archived:
     snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
 fetchedAt: 2026-10-08
 hasReasoning: true
+rejectedQuotes:
+  - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
+    reason: 'does not stand alone: "the recall" refers to the 2021 recall described in the previous sentence, which itself points back ("that field") (review 2026-10-11)'
+    contestId: prop-5
+  - text: Nobody is in charge of the rules, so nobody can fix them.
+    reason: 'does not stand alone: "the rules" refers to the purchasing rules described in the previous sentences (review 2026-10-11)'
+    contestId: prop-e
+  - text: "Funding it directly is the better deal, and the price is reasonable: most homeowners pay $129 per year, and a rent-controlled tenant pays at most $65 per year."
+    reason: 'does not stand alone: "it" means Muni, named only in the previous paragraph (review 2026-10-11)'
+    contestId: prop-h
+  - text: Though Torres is running unopposed, he has earned the seat on the merits.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: assessor
+  - text: Overall, we think building up the rainy day fund is the right choice.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: prop-2
+  - text: For this, the Legislative Analyst's Office estimates it will cost in the tens of millions to low hundreds of millions of dollars per year, all to chase a non-existent problem, all while making your own ballot easier to reject.
+    reason: 'does not stand alone: "For this" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: prop-39
+  - text: "And after all these errors, remember what Prop B actually provides toward building a bank: nothing."
+    reason: 'does not stand alone: opens with "And" and "these errors" refers back (review 2026-10-11)'
+    contestId: prop-b
+  - text: The lower tax is what makes every kind of home cheaper to build, which puts downward pressure on rents across the city.
+    reason: 'does not stand alone: "The lower tax" refers back to the tax cut described earlier (review 2026-10-11)'
+    contestId: prop-c
 picks:
   us-rep-11:
     pick:
@@ -36,7 +61,7 @@ picks:
     quotes:
       - text: "Fiona Ma started her public service career in San Francisco, serving as the Sunset's Supervisor from 2002 to 2006, and has since held office at every level of California government: six years in the Assembly, where she had more than 60 bills signed into law and served as Speaker pro Tempore, a term on the Board of Equalization, and two terms as State Treasurer."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: The Treasurer's job turns out to be direct preparation for this one.
+      - text: The Treasurer's job turns out to be direct preparation for this one. Ma chairs the committee that allocates the tax credits that make affordable housing possible, sits on the California Housing Finance Agency board, issued the state's first-ever bonds for community college student housing, and launched the Dream for All down payment program for first-time homebuyers.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   secretary-of-state:
     pick:
@@ -152,7 +177,7 @@ picks:
     pick:
       - Joaquín Torres
     quotes:
-      - text: Though Torres is running unopposed, he has earned the seat on the merits.
+      - text: Torres inherited an in-progress $55 million replacement of the office's decades-old technology, started under his predecessor Carmen Chu, and carried it to completion.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   public-defender:
     pick:
@@ -193,7 +218,7 @@ picks:
   prop-2:
     pick: Y
     quotes:
-      - text: Overall, we think building up the rainy day fund is the right choice.
+      - text: Both OpenAI and Anthropic are poised to launch record-shattering IPOs in the coming year. If voters enact Prop 2, then the state will save more of that money than it otherwise would, without raising taxes.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-3:
     pick: Y
@@ -210,14 +235,12 @@ picks:
     quotes:
       - text: San Francisco already runs recalls the way Prop 5 proposes.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-37:
     pick: Y
     quotes:
       - text: Prop 37 will help restart condo construction, which has fallen to just 3% of new multifamily construction.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: But borrowers repay the loans, and if the program fails, taxpayers won't owe anything.
+      - text: It's an experiment, and the Legislative Analyst's Office cannot say whether it will spur construction. But borrowers repay the loans, and if the program fails, taxpayers won't owe anything.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-38:
     pick: N
@@ -229,12 +252,12 @@ picks:
   prop-39:
     pick: N
     quotes:
-      - text: For this, the Legislative Analyst's Office estimates it will cost in the tens of millions to low hundreds of millions of dollars per year, all to chase a non-existent problem, all while making your own ballot easier to reject.
+      - text: "In-person impersonation, the only fraud a photo ID check can stop, is about the rarest event in American elections: a Brennan Center review of the Heritage Foundation's database of proven fraud cases found just 10 cases across billions of votes."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-40:
     pick: N
     quotes:
-      - text: A clinic cannot make payroll with revenue that is tied up in court.
+      - text: No state has taxed net worth this way, and the measure schedules its own court fight to run into late 2027. A clinic cannot make payroll with revenue that is tied up in court.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-41:
     pick: Y
@@ -286,12 +309,12 @@ picks:
     quotes:
       - text: San Francisco does not need a public bank, especially when the law creating it, Prop B, is riddled with errors.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: "And after all these errors, remember what Prop B actually provides toward building a bank: nothing."
+      - text: San Francisco is facing a $643M two-year deficit, and the Controller prices the corporation and bank at $310M to $460M over eight years.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-c:
     pick: Y
     quotes:
-      - text: The lower tax is what makes every kind of home cheaper to build, which puts downward pressure on rents across the city.
+      - text: "We typically oppose set-asides, but this one is built well: growth caps at 3% per year once the fund reaches $125M, and the Board can freeze or trim contributions in bad budget years."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-d:
     pick: Y
@@ -303,8 +326,6 @@ picks:
   prop-e:
     pick: Y
     quotes:
-      - text: Nobody is in charge of the rules, so nobody can fix them.
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: "Prop E puts one person in charge: The City Administrator will write one purchasing rulebook, every department will follow it, and either the Board of Supervisors or the Mayor can reject bad rules."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-f:
@@ -322,8 +343,6 @@ picks:
   prop-h:
     pick: Y
     quotes:
-      - text: "Funding it directly is the better deal, and the price is reasonable: most homeowners pay $129 per year, and a rent-controlled tenant pays at most $65 per year."
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: The real choice is whether Muni gets its own funding or its deficit quietly eats the rest of the budget.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-i:

@@ -21,12 +21,12 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
   - https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
+archived:
+  - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
+    snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
 fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
-  - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
-    reason: 'does not stand alone: "he" is unclear, since the editorial covers Pratt, Wood and López in turn (review 2026-10-10)'
-    contestId: healdsburg-council-2
   - text: The Press Democrat believes that’s a fair price to continue to pay to extend the value the SRJC provides to the community.
     reason: 'does not stand alone: "that" refers to the price in the previous sentence (review 2026-10-10)'
     contestId: srjc-measure-ab
@@ -36,9 +36,6 @@ rejectedQuotes:
   - text: What it would do is give a minority of voters a veto over funding local services such as parks, fire protection and child care that most of their neighbors want.
     reason: 'does not stand alone: "What it would do" points back to the previous passage (review 2026-10-10)'
     contestId: prop-43
-  - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
-    reason: 'does not stand alone: "this new funding source" refers back to the previous passage (review 2026-10-10)'
-    contestId: napa-county-measure-b
   - text: Moreover, people should be able to decide whether or not they want their money to go toward supporting a candidate.
     reason: 'does not stand alone: opens with "Moreover" (review 2026-10-10)'
     contestId: prop-4
@@ -57,12 +54,18 @@ rejectedQuotes:
   - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
     reason: 'does not stand alone: does not name the pick and leans on the next sentence (review 2026-10-10)'
     contestId: rohnert-park-council-2
+  - text: Marquez is a true proponent for the people.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: cloverdale-council
+  - text: "The price tag is a sticker shock, but it’s important to remember the value that SRJC brings to Sonoma County and beyond: The college generates an economic impact of roughly $1.8 billion annually, representing more than 5% of Sonoma County’s gross regional product."
+    reason: 'does not stand alone: "The price tag" refers back to the $830 million in the previous paragraph (review 2026-10-11)'
+    contestId: srjc-measure-ab
 picks:
   us-rep-4:
     pick:
       - Mike Thompson
     quotes:
-      - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C..
+      - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C.. We think Jones has great ideas, but we recommend he gain experience at the municipal or county level first; his communities would greatly benefit.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: Thompson also has a stronger stance on gun control than Jones.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
@@ -117,8 +120,6 @@ picks:
       - Chris Parker
       - Will Carter
     quotes:
-      - text: Marquez is a true proponent for the people.
-        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
       - text: Parker has extensive experience with the city’s budgeting process and, with a seat at the table, could bring his ideas for managing the city’s deficit to the forefront.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
       - text: During his short tenure on the council, Marquez has been a fierce advocate for safeguarding a regional water supply, plus transparency and policy change for the council.
@@ -127,6 +128,8 @@ picks:
     pick:
       - Mathew Lopez
     quotes:
+      - text: López, a bilingual speaker, is running on a campaign of sustainable housing, smart city planning, economic development and improved transit. While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
+        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
       - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
@@ -157,7 +160,7 @@ picks:
     pick:
       - Susan Hollingsworth Adams
     quotes:
-      - text: The two-time council member has been a fiscal stalwart, thinking critically about every dollar the council has to spend.
+      - text: Although residents are frustrated with the city’s current financial status and might desire blaming and punishing council members, doing so would be disingenuous, especially in Hollingsworth Adams’ case. The two-time council member has been a fiscal stalwart, thinking critically about every dollar the council has to spend.
         source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-measure-k:
     pick: Y
@@ -193,12 +196,15 @@ picks:
   srjc-measure-ab:
     pick: Y
     quotes:
-      - text: "The price tag is a sticker shock, but it’s important to remember the value that SRJC brings to Sonoma County and beyond: The college generates an economic impact of roughly $1.8 billion annually, representing more than 5% of Sonoma County’s gross regional product."
+      - text: Roughly one in 17 jobs in the county are filled by an SRJC alum or supported by college operations.
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
       - text: Students who attend the junior college gain about $7.20 in lifetime earnings for every dollar they spend on their education.
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
   napa-county-measure-b:
     pick: Y
+    quotes:
+      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
+        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:
     pick: N
     quotes:

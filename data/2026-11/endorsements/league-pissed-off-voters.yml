@@ -8,6 +8,31 @@ archived:
     snapshot: https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
 fetchedAt: 2026-10-05
 hasReasoning: true
+rejectedQuotes:
+  - text: Clearly everyone can see that Lieber knows what she’s doing.
+    reason: bare verdict that leans on the list of endorsers before it; gives no reason (review 2026-10-11)
+    contestId: board-of-equalization-2
+  - text: This is cash we’re already counting on, so if it doesn’t pass, we’re screwed [gritted teeth emoji].
+    reason: 'does not stand alone: "This" refers back to the tax, and the sentence before it opens with "And" (review 2026-10-11)'
+    contestId: prop-3
+  - text: Mayor Lurie already has a track record of demanding shady sweetheart contracts for his political allies (see OpenGov contract).
+    reason: 'does not stand alone: leans on "This is a problem." and the contract threshold before it, and does not name the measure (review 2026-10-11)'
+    contestId: prop-e
+  - text: Now she’s the incumbent, and doing a great job.
+    reason: bare verdict that leans on the previous sentence; gives no reason (review 2026-10-11)
+    contestId: board-of-equalization-2
+  - text: So, Prop 3 is basically just asking if we can stick with this modestly higher tax rate for the top 2% to fund, well, everything.
+    reason: 'does not stand alone: opens with "So" (review 2026-10-11)'
+    contestId: prop-3
+  - text: If Prop A passes, this voter-mandated oversight committee would be removed from the protection of the city charter and could be dissolved by a simple majority vote of the Board of Supervisors.
+    reason: 'does not stand alone: "this voter-mandated oversight committee" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: prop-a
+  - text: Lucrative city contracts will be awarded without citizen oversight.
+    reason: 'does not stand alone: depends on the condition in the previous sentence ("If Prop A passes"), which itself points back ("this voter-mandated oversight committee") (review 2026-10-11)'
+    contestId: prop-a
+  - text: And even if you like this mayor, no mayor should have this much power.
+    reason: 'does not stand alone: opens with "And" and "this much power" refers back (review 2026-10-11)'
+    contestId: prop-f
 picks:
   us-rep-11:
     pick:
@@ -31,7 +56,7 @@ picks:
     pick:
       - Jane Kim
     quotes:
-      - text: "And though she admits she doesn’t have a background in the insurance industry, that’s actually a plus: we believe California’s Insurance Commissioner needs to take on the big insurers, not cozy up to them."
+      - text: "Jane Kim, the former S.F. supervisor and California director of the Working Families Party, is a force in city and state progressive politics. And though she admits she doesn’t have a background in the insurance industry, that’s actually a plus: we believe California’s Insurance Commissioner needs to take on the big insurers, not cozy up to them."
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: Jane Kim is proposing to create a public insurer for natural disasters, much like the system in New Zealand, and she promises to use the office to rein in the powerful industry and develop new, functional alternatives.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
@@ -39,9 +64,7 @@ picks:
     pick:
       - Sally J. Lieber
     quotes:
-      - text: Now she’s the incumbent, and doing a great job.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: Clearly everyone can see that Lieber knows what she’s doing.
+      - text: The Board of Equalization can hold corporations accountable by ensuring they pay their taxes; since Lieber came on, the Board has also made a major commitment to rigorously examine the programs and mechanisms that help fund affordable housing.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   superintendent:
     pick:
@@ -74,7 +97,7 @@ picks:
       - Leah LaCroix
       - Bunny McFadden
     quotes:
-      - text: Leah LaCroix has put in the work.
+      - text: Leah LaCroix has put in the work. From her time on the SF Youth Commission, she helped deliver the successful Free Muni for Youth program, building coalitions to support this important legislation.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: Leah has the policy chops and patience to bring community voices into long Board of Trustee meetings, and we know she’ll fight like hell to protect and grow City College.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
@@ -111,9 +134,7 @@ picks:
   prop-3:
     pick: Y
     quotes:
-      - text: So, Prop 3 is basically just asking if we can stick with this modestly higher tax rate for the top 2% to fund, well, everything.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: This is cash we’re already counting on, so if it doesn’t pass, we’re screwed [gritted teeth emoji].
+      - text: Prop 3 would extend an existing tax on high-earning Californians (individuals making $361K or more annually, and couples making more than $721K). Set to expire in 2030, this tax generates billions of dollars each year for the state’s General Fund and pays for public services including schools, health care, and prisons (yeahhhh, we don’t love that part).
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-4:
     pick: Y
@@ -151,7 +172,7 @@ picks:
   prop-41:
     pick: N
     quotes:
-      - text: "But, as usual, the real purpose of the measure is buried in the fine print: it’s a poison pill to retroactively invalidate Proposition 40, the billionaire tax."
+      - text: "Proposition 41 sounds like a good idea since it has all the hallmarks of good governance—ensuring audits of programs funded by new taxes, and enforcing state spending caps to limit waste. But, as usual, the real purpose of the measure is buried in the fine print: it’s a poison pill to retroactively invalidate Proposition 40, the billionaire tax."
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-42:
     pick: N
@@ -171,9 +192,7 @@ picks:
   prop-a:
     pick: N
     quotes:
-      - text: If Prop A passes, this voter-mandated oversight committee would be removed from the protection of the city charter and could be dissolved by a simple majority vote of the Board of Supervisors.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: Lucrative city contracts will be awarded without citizen oversight.
+      - text: Prop A specifically targets the Our City, Our Home Oversight Committee. This committee was created in 2019 by an overwhelming majority of San Francisco voters to provide citizen oversight over the new Our City, Our Home homeless services fund.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-b:
     pick: Y
@@ -194,14 +213,12 @@ picks:
   prop-e:
     pick: N
     quotes:
-      - text: Mayor Lurie already has a track record of demanding shady sweetheart contracts for his political allies (see OpenGov contract).
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: Prop E also gives the City Administrator sweeping new powers and extends their term from 5 to 10 years.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-f:
     pick: N
     quotes:
-      - text: And even if you like this mayor, no mayor should have this much power.
+      - text: Prop F would also allow the mayor to merge city departments on a whim, potentially without any checks and balances or even a hearing.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-h:
     pick: Y

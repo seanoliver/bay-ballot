@@ -8,32 +8,44 @@ rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
     reason: "does not stand alone: refers to an earlier passage (review 2026-10-07)"
     contestId: berkeley-measure-v
+  - text: Based on the League of Women Voters of California position on the State and Local Government Finance System, the League supports this measure.
+    reason: "bare verdict: names the position it relies on but gives no reason (review 2026-10-11)"
+    contestId: albany-measure-s
+  - text: Measure O removes precisely the sort of neighborhood-level veto that this position identifies as a housing constraint.
+    reason: 'does not stand alone: "this position" refers back to the previous sentences (review 2026-10-11)'
+    contestId: albany-measure-o
+  - text: "Measure P fits those positions unusually well: it protects a dedicated funding stream for existing streets and storm drains from a foreseeable 22% revenue loss."
+    reason: 'does not stand alone: "those positions" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: albany-measure-p
+  - text: A gross-receipts business tax generally fits those criteria better than Albany’s unusually old employee-count system.
+    reason: 'does not stand alone: "those criteria" refers back to the previous sentences (review 2026-10-11)'
+    contestId: albany-measure-r
+  - text: "In other words, Measure Q does not address a hypothetical fiscal problem: Albany has a reasonably foreseeable loss of roughly one-fifth of the dedicated revenue supporting EMS and fire protection."
+    reason: 'does not stand alone: "In other words" continues the previous sentence, which itself points back ("the property", "that revenue") (review 2026-10-11)'
+    contestId: albany-measure-q
 picks:
   albany-measure-o:
     pick: Y
     quotes:
-      - text: Measure O removes precisely the sort of neighborhood-level veto that this position identifies as a housing constraint.
+      - text: LWVBAE’s housing position states the cities should expand their housing stock and “identify and limit constraints on new housing construction,” specifically including the “power of residents to block project approval.”
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-p:
     pick: Y
     quotes:
-      - text: "Measure P fits those positions unusually well: it protects a dedicated funding stream for existing streets and storm drains from a foreseeable 22% revenue loss."
+      - text: Golden Gate Fields currently generates about $287,000—nearly 22% of all revenue from the street/storm-drain tax. If it becomes publicly owned, that parcel-tax revenue would otherwise disappear.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y
     quotes:
-      - text: "In other words, Measure Q does not address a hypothetical fiscal problem: Albany has a reasonably foreseeable loss of roughly one-fifth of the dedicated revenue supporting EMS and fire protection."
+      - text: Golden Gate Fields currently contributes about $400,000 annually to the EMS tax—nearly 20% of its total revenue.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-r:
     pick: Y
     quotes:
-      - text: A gross-receipts business tax generally fits those criteria better than Albany’s unusually old employee-count system.
+      - text: An employee-based tax can effectively penalize businesses for hiring workers, while a receipts-based tax relates the tax more directly to the scale of the business’s economic activity.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-s:
     pick: Y
-    quotes:
-      - text: Based on the League of Women Voters of California position on the State and Local Government Finance System, the League supports this measure.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-t:
     pick: Y
   berkeley-measure-u:

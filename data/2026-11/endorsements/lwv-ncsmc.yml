@@ -12,7 +12,7 @@ rejectedQuotes:
   - text: The League of Women Voters believes responsibility for redistricting preferably should be vested in an independent special commission, with a membership that reflects the diversity of the unit of government, including citizens at large, representatives of public interest groups, and members of minority groups.
     reason: "not the chapter's own words: LWV position boilerplate (audit 2026-10-06)"
   - text: Measure J also requires the Board to conduct at least one public meeting with adequate notice and to receive public comment prior to any appointment.
-    reason: descriptive and does not stand alone (audit 2026-10-06)
+    reason: describes what the measure does; gives no reason (review 2026-10-11)
 picks:
   san-mateo-county-measure-u:
     pick: Y
