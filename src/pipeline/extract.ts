@@ -3,10 +3,10 @@ import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
 import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
 import { matchName, type Aliases } from "@/lib/names";
-import { isRejected, quoteKey } from "@/lib/quote-key";
+import { isRejected, MIN_CONTAINED } from "@/lib/quote-key";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
-import { standsAlone, verifyQuotes, type KeptQuote, type Page } from "./quotes";
+import { normalizeWithMap, standsAlone, verifyQuotes, type KeptQuote, type Page } from "./quotes";
 
 export const ExtractOutput = z.object({
   hasReasoning: z
@@ -194,6 +194,22 @@ export function toEntries(
   return { picks, notes };
 }
 
+// Must normalize like verifyQuotes, or a quote that differs only in dashes or spacing is kept twice.
+const quoteNorm = (text: string) => normalizeWithMap(text).norm;
+
+function sameQuote(a: string, b: string): boolean {
+  const x = quoteNorm(a);
+  const y = quoteNorm(b);
+  return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
+}
+
+function samePick(a: Entry, b: Entry): boolean {
+  if (Array.isArray(a.pick) && Array.isArray(b.pick) && !a.ranked && !b.ranked) {
+    return a.pick.length === b.pick.length && a.pick.every((n) => (b.pick as string[]).includes(n));
+  }
+  return isDeepStrictEqual(a.pick, b.pick);
+}
+
 /** Call before the verifier: a restored quote is only audited if the verifier sees it. */
 export function keepPrevQuotes(
   prev: Record<string, Entry>,
@@ -208,7 +224,7 @@ export function keepPrevQuotes(
   for (const [id, entry] of Object.entries(picks)) {
     const old = prev[id];
     const c = byId.get(id);
-    if (!old || !c || !isDeepStrictEqual(old.pick, entry.pick)) continue;
+    if (!old || !c || !samePick(old, entry)) continue;
     const valid = (q: KeptQuote) => {
       if (isRejected(q.text, id, rejected)) return false;
       const page = pages.find((p) => p.url === q.source);
@@ -216,11 +232,10 @@ export function keepPrevQuotes(
       return verifyQuotes([q.text], [page], { ownNames }).kept.length === 1 && !contestProblem(q, c, entry.pick, pages, contests);
     };
     const quotes = [...entry.quotes];
-    const keys = () => quotes.map((q) => quoteKey(q.text));
     const restored: KeptQuote[] = [];
     let at = 0;
     for (const q of old.quotes) {
-      const i = keys().indexOf(quoteKey(q.text));
+      const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
       if (i !== -1) at = i + 1;
       else if (valid(q)) {
         quotes.splice(at++, 0, q);
@@ -228,9 +243,8 @@ export function keepPrevQuotes(
       }
     }
     if (restored.length === 0) continue;
-    const oldKeys = new Set(old.quotes.map((q) => quoteKey(q.text)));
     while (quotes.length > MAX_QUOTES) {
-      const newest = quotes.findLastIndex((q) => !oldKeys.has(quoteKey(q.text)));
+      const newest = quotes.findLastIndex((q) => !old.quotes.some((o) => sameQuote(o.text, q.text)));
       const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);
       notes.push(`${id}: dropped new quote to keep the previous ones (limit ${MAX_QUOTES}): "${clip(cut.text)}"`);
     }

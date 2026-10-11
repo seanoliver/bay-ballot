@@ -504,4 +504,27 @@ describe("keepPrevQuotes", () => {
     const r = keep({ "prop-g": entry("N", q1), rtm: entry("Y", transit) }, { "prop-g": entry("N") });
     expect(Object.keys(r.picks)).toEqual(["prop-g"]);
   });
+
+  const dashed = "Closing the road was a mistake - a costly one - for every west side family.";
+  const d8 = "Gary McCoy has spent a decade fixing parks and streets across the district.";
+  const pg2: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q1} ${q2} ${dashed}\nDistrict 8\n${d8}` }];
+  const keep2 = (prev: Record<string, Entry>, picks: Record<string, Entry>) => keepPrevQuotes(prev, picks, ballot.contests, pg2);
+
+  it("does not restore a quote the model returned with a different dash style", () => {
+    const em = dashed.replace(/ - /g, " — ");
+    expect(keep2({ "prop-g": entry("N", em) }, { "prop-g": entry("N", dashed) }).picks["prop-g"].quotes).toEqual([quote(dashed)]);
+  });
+
+  it("does not restore a quote that overlaps one the model returned", () => {
+    const joined = `${q1} ${q2}`;
+    expect(keep2({ "prop-g": entry("N", q1) }, { "prop-g": entry("N", joined) }).picks["prop-g"].quotes).toEqual([quote(joined)]);
+  });
+
+  it("matches an unranked multi-name pick in any order, and a ranked one only in the same order", () => {
+    const names = ["Gary McCoy", "Darshini Patel"];
+    const sup = (pick: string[], ranked: boolean, ...texts: string[]): Entry => ({ pick, ranked, quotes: texts.map((t) => quote(t)) });
+    const swapped = [...names].reverse();
+    expect(keep2({ "supervisor-8": sup(names, false, d8) }, { "supervisor-8": sup(swapped, false) }).picks["supervisor-8"].quotes).toEqual([quote(d8)]);
+    expect(keep2({ "supervisor-8": sup(names, true, d8) }, { "supervisor-8": sup(swapped, true) }).picks["supervisor-8"].quotes).toEqual([]);
+  });
 });
