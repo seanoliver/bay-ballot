@@ -20,6 +20,7 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
   - https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
+  - https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
 fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
@@ -69,6 +70,13 @@ picks:
     quotes:
       - text: Five percent of a billionaire’s wealth is a lot of money, but no billionaire will become poor paying it.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
+  prop-41:
+    pick: N
+    quotes:
+      - text: There is an interesting case to make that new taxes should fit within the spending limit, but retroactively creating that system to target one tax on about 200 billionaires is not the right way to get there.
+        source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
+  prop-42:
+    pick: N
   prop-43:
     pick: N
     quotes:
