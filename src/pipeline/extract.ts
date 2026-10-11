@@ -1,10 +1,12 @@
 import type Anthropic from "@anthropic-ai/sdk";
+import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
 import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
 import { matchName, type Aliases } from "@/lib/names";
+import { isRejected, quoteKey } from "@/lib/quote-key";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
-import { standsAlone, verifyQuotes, type Page } from "./quotes";
+import { standsAlone, verifyQuotes, type KeptQuote, type Page } from "./quotes";
 
 export const ExtractOutput = z.object({
   hasReasoning: z
@@ -120,6 +122,13 @@ function candidateNames(id: string, raw: string[], official: string[], aliases: 
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
 
+/** The checks that tie a page-verified quote to its contest; null when it passes. */
+function contestProblem(q: KeptQuote, c: Contest, pick: Entry["pick"], pages: Page[], contests: Contest[]): string | null {
+  if (!standsAlone(q.text, c, { names: Array.isArray(pick) ? pick : [] })) return "not-standalone";
+  const other = misplacedUnder(q, c.id, pages, contests);
+  return other ? `wrong-contest, under ${other}` : null;
+}
+
 export function toEntries(
   out: ExtractOutput,
   contests: Contest[],
@@ -168,13 +177,9 @@ export function toEntries(
     const verified = verifyQuotes(p.quotes.slice(0, MAX_QUOTES), pages, { ownNames });
     for (const d of verified.dropped) notes.push(`${c.id}: dropped quote (${d.reason}): "${clip(d.quote)}"`);
     const kept = verified.kept.filter((q) => {
-      if (!standsAlone(q.text, c, { names: Array.isArray(pick) ? pick : [] })) {
-        notes.push(`${c.id}: dropped quote (not-standalone): "${clip(q.text)}"`);
-        return false;
-      }
-      const other = misplacedUnder(q, c.id, pages, contests);
-      if (other) notes.push(`${c.id}: dropped quote (wrong-contest, under ${other}): "${clip(q.text)}"`);
-      return !other;
+      const reason = contestProblem(q, c, pick, pages, contests);
+      if (reason) notes.push(`${c.id}: dropped quote (${reason}): "${clip(q.text)}"`);
+      return !reason;
     });
 
     let ranked = isCandidate && p.ranked && Array.isArray(pick) && pick.length > 1;
@@ -188,6 +193,58 @@ export function toEntries(
     picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
   return { picks, notes };
+}
+
+/**
+ * The model rewrites its quote list on every re-extract, so it often omits quotes that are still on the page.
+ * Puts back a previous quote when the pick is unchanged, the quote still passes every extractor check on its
+ * own source page, and it is not in rejectedQuotes. Restored quotes keep their old place among the quotes that
+ * stayed; the model's new quotes give way first when the pick would go over the limit. Runs before the verifier,
+ * so a restored quote is audited like any other.
+ */
+export function keepPrevQuotes(
+  prev: Record<string, Entry>,
+  picks: Record<string, Entry>,
+  contests: Contest[],
+  pages: Page[],
+  { ownNames = [], rejected = [] }: { ownNames?: string[]; rejected?: { text: string; contestId?: string }[] } = {},
+): { picks: Record<string, Entry>; notes: string[] } {
+  const byId = new Map(contests.map((c) => [c.id, c]));
+  const out = { ...picks };
+  const notes: string[] = [];
+  for (const [id, entry] of Object.entries(picks)) {
+    const old = prev[id];
+    const c = byId.get(id);
+    if (!old || !c || !isDeepStrictEqual(old.pick, entry.pick)) continue;
+    const valid = (q: KeptQuote) => {
+      if (isRejected(q.text, id, rejected)) return false;
+      const page = pages.find((p) => p.url === q.source);
+      if (!page) return false;
+      return verifyQuotes([q.text], [page], { ownNames }).kept.length === 1 && !contestProblem(q, c, entry.pick, pages, contests);
+    };
+    const quotes = [...entry.quotes];
+    const keys = () => quotes.map((q) => quoteKey(q.text));
+    const restored: KeptQuote[] = [];
+    let at = 0;
+    for (const q of old.quotes) {
+      const i = keys().indexOf(quoteKey(q.text));
+      if (i !== -1) at = i + 1;
+      else if (valid(q)) {
+        quotes.splice(at++, 0, q);
+        restored.push(q);
+      }
+    }
+    if (restored.length === 0) continue;
+    const oldKeys = new Set(old.quotes.map((q) => quoteKey(q.text)));
+    while (quotes.length > MAX_QUOTES) {
+      const newest = quotes.findLastIndex((q) => !oldKeys.has(quoteKey(q.text)));
+      const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);
+      notes.push(`${id}: dropped new quote to keep the previous ones (limit ${MAX_QUOTES}): "${clip(cut.text)}"`);
+    }
+    for (const q of restored) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
+    out[id] = { ...entry, quotes };
+  }
+  return { picks: out, notes };
 }
 
 type UserContent = Anthropic.Messages.ContentBlockParam[];
