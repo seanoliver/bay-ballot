@@ -8,7 +8,7 @@ Bay Ballot loads Ahrefs Web Analytics in production. Some URLs carry an address 
 
 ## Key findings
 
-Read from the script itself: `https://analytics.ahrefs.com/analytics.js`, downloaded 2026-10-10 (6,947 bytes, checked in as `e2e/fixtures/ahrefs-analytics.js`).
+Read from the script itself: `https://analytics.ahrefs.com/analytics.js`, downloaded 2026-10-10 (6,947 bytes; checked in with a source header as `e2e/fixtures/ahrefs-analytics.js`).
 
 - **Attributes it reads**, all from its own `<script>` tag (`document.currentScript`):
   - `data-key`: the site key, sent as `k`. An event with neither `data-key` nor `data-domain` is dropped.
