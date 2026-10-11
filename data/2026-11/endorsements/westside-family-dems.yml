@@ -7,6 +7,13 @@ archived:
     snapshot: https://web.archive.org/web/20261010181405/https://westsidefamilysf.com/current-endorsements
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: While we have serious reservations about raising taxes on property, the city is facing a budget deficit and removing this exception is a reasonable way to help address it.
+    reason: 'does not stand alone: "this exception" refers back to the previous sentences (review 2026-10-11)'
+    contestId: prop-j
+  - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+    reason: "gives no reason: a bare verdict (review 2026-10-11)"
+    contestId: supervisor-4
 picks:
   us-rep-11:
     pick:
@@ -36,9 +43,7 @@ picks:
     quotes:
       - text: Phil Kim has performed well as Board of Education president since his appointment in August 2024, including spearheading a 4-3 board vote to bring back eighth grade algebra.
         source: https://westsidefamilysf.com/current-endorsements
-      - text: Autumn Brown Garibay shows unusual tenacity and willingness to tackle the hard issues, coupled with pragmatic ideas and a drive to get things done.
-        source: https://westsidefamilysf.com/current-endorsements
-      - text: Tim Tung is similarly pragmatic and outcomes-focused, and will bring badly needed fiscal expertise to the BOE.
+      - text: Autumn Brown Garibay shows unusual tenacity and willingness to tackle the hard issues, coupled with pragmatic ideas and a drive to get things done. Tim Tung is similarly pragmatic and outcomes-focused, and will bring badly needed fiscal expertise to the BOE.
         source: https://westsidefamilysf.com/current-endorsements
   college-board:
     pick:
@@ -48,9 +53,7 @@ picks:
     quotes:
       - text: Ball is a campus designer, who can help City College deal with its large portfolio of cash-draining properties.
         source: https://westsidefamilysf.com/current-endorsements
-      - text: Tam is a finance expert, well-qualified to understand City College’s large financial problems.
-        source: https://westsidefamilysf.com/current-endorsements
-      - text: And Lace is a public school teacher who can help boost enrollment by building bridges between SFUSD and City College.
+      - text: Tam is a finance expert, well-qualified to understand City College’s large financial problems. And Lace is a public school teacher who can help boost enrollment by building bridges between SFUSD and City College.
         source: https://westsidefamilysf.com/current-endorsements
   college-board-partial:
     pick:
@@ -68,14 +71,12 @@ picks:
     pick:
       - Alan Wong
     quotes:
-      - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+      - text: Appointed last year by Mayor Lurie, Wong has voted in support of the Family Zoning plan, supports increased police staffing to boost public safety and reduce overtime costs, has worked to cut red tape for small businesses, and has already taken innovative steps like creating a process for San Franciscans to propose repeal or revision of unhelpful laws.
         source: https://westsidefamilysf.com/current-endorsements
   prop-a:
     pick: Y
     quotes:
-      - text: The cleanup items in Prop A were meant to be non-controversial improvements that are widely agreed upon, and the measure does a good job of that.
-        source: https://westsidefamilysf.com/current-endorsements
-      - text: We support Prop A as a basic good governance reform measure.
+      - text: The cleanup items in Prop A were meant to be non-controversial improvements that are widely agreed upon, and the measure does a good job of that. We support Prop A as a basic good governance reform measure.
         source: https://westsidefamilysf.com/current-endorsements
   prop-b:
     pick: N
@@ -125,7 +126,7 @@ picks:
   prop-j:
     pick: Y
     quotes:
-      - text: While we have serious reservations about raising taxes on property, the city is facing a budget deficit and removing this exception is a reasonable way to help address it.
+      - text: The measure includes carve-outs for single-family homes and small buildings to ensure that individual homeowners aren’t penalized; instead, the burden is expected to fall on banks and other corporations.
         source: https://westsidefamilysf.com/current-endorsements
   rtm:
     pick: Y

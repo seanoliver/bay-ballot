@@ -15,9 +15,6 @@ held:
     reason: unclear-match
     evidence: The guide's "Measure O - East Palo Alto" write-up describes a 1.5% tax on landlords' rental revenue, which was the city's 2016 Measure O. The 2026 Measure O is a general obligation bond, so the Yes may not be meant for it (decision 2026-10-09).
 rejectedQuotes:
-  - text: The tax restructuring would also lower taxes for smaller businesses.
-    reason: 'does not stand alone: "The tax restructuring" refers back (review 2026-10-10)'
-    contestId: newark-measure-dd
   - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
     reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
     contestId: union-city-council-4
@@ -33,12 +30,12 @@ rejectedQuotes:
   - text: Rebecca Eisenberg’s conduct during this years-long escapade about a report detailing her behavior towards Valley Water employees makes her unfit to continue to be an elected official.
     reason: 'does not stand alone: "this years-long escapade" refers back to the previous passage (review 2026-10-10)'
     contestId: valley-water-7
-  - text: The funds are necessary, given the current housing and affordability crises throughout the state.
-    reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-10)'
-    contestId: prop-1
   - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
     reason: about a candidate the guide did not pick (review 2026-10-10)
     contestId: menlo-park-city-sd-trustee
+  - text: The funds are necessary, given the current housing and affordability crises throughout the state.
+    reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-11)'
+    contestId: prop-1
 picks:
   secretary-of-state:
     pick:
@@ -94,7 +91,7 @@ picks:
     quotes:
       - text: Incumbent Craig Gleason is a dedicated public servant with an extensive history of building up and out the open spaces in the Santa Cruz Mountains.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-      - text: Tina Marie To is a marine ecologist and enthusiastic volunteer.
+      - text: Tina Marie To is a marine ecologist and enthusiastic volunteer. She helped facilitate the transition of her childhood community into the Sierra Azul Open Space above Los Gatos.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   santa-clara-county-board-of-education-7:
     pick:
@@ -317,7 +314,7 @@ picks:
   prop-2:
     pick: Y
     quotes:
-      - text: In years where there is an economic surplus, California could put double the amount of money into savings.
+      - text: It is a straightforward increase of the percentage of the budget the state is allowed to keep in the Rainy Day Fund. In years where there is an economic surplus, California could put double the amount of money into savings.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-3:
     pick: Y
@@ -378,7 +375,7 @@ picks:
   redwood-city-measure-e:
     pick: Y
     quotes:
-      - text: Housing for all means ensuring that people can afford to stay in their homes and not end up on the street.
+      - text: This measure would implement rent control on certain residential rentals in Redwood City and provide more protections for renters. Housing for all means ensuring that people can afford to stay in their homes and not end up on the street.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   mountain-view-measure-f:
     pick: Y
@@ -394,7 +391,7 @@ picks:
   cupertino-measure-l:
     pick: Y
     quotes:
-      - text: Part of making the Bay Area a livable area is to pair amenities with housing.
+      - text: Part of making the Bay Area a livable area is to pair amenities with housing. This includes keeping our current parklands as parks and building dense housing near them, not on them.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   menlo-park-measure-p:
     pick: N
@@ -406,6 +403,9 @@ picks:
     pick: Y
   newark-measure-dd:
     pick: Y
+    quotes:
+      - text: Measure DD would implement a business tax increase of up to 0.3% on gross receipts to raise an estimated $6 million annually to fund police/fire services, street infrastructure, and weather emergency preparedness. The tax restructuring would also lower taxes for smaller businesses.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   union-city-measure-ii:
     pick: Y
     quotes:
@@ -414,9 +414,7 @@ picks:
   rtm:
     pick: Y
     quotes:
-      - text: If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-      - text: Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations, longer waits, and abandoned routes.
+      - text: If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes. Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations, longer waits, and abandoned routes.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   burlingame-sd-measure-r:
     pick: Y

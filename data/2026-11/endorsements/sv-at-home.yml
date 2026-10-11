@@ -24,6 +24,9 @@ rejectedQuotes:
   - text: Affordable housing and transit go hand-in-hand.
     reason: slogan; gives no reason (audit 2026-10-06)
     contestId: rtm
+  - text: Additionally, Measure E corrects an error in the City’s rent stabilization program language in the Charter, which currently is supposed to reference the Tenant Relocation Assistant program in the municipal code, but unfortunately references the wrong section of the municipal code.
+    reason: 'does not stand alone: opens with "Additionally" (review 2026-10-11)'
+    contestId: mountain-view-measure-e
 picks:
   prop-1:
     pick: Y
@@ -46,7 +49,7 @@ picks:
   mountain-view-measure-e:
     pick: Y
     quotes:
-      - text: Additionally, Measure E corrects an error in the City’s rent stabilization program language in the Charter, which currently is supposed to reference the Tenant Relocation Assistant program in the municipal code, but unfortunately references the wrong section of the municipal code.
+      - text: Mountain View Charter Amendment includes non-controversial clean-up charter amendments that will improve Council meeting efficiency, align with state law, and modernize outdated language.
         source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
   mountain-view-measure-f:
     pick: Y
@@ -60,7 +63,7 @@ picks:
     quotes:
       - text: Prop 39 is a voter suppression measure which will make it harder for people to vote — especially people who are lower income and/or renters.
         source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
-      - text: Prop 39 would be a big step backwards.
+      - text: California has a good tradition of strengthening our democracy. Prop 39 would be a big step backwards.
         source: https://siliconvalleyathome.org/action-fund/2026-election-voter-guide/
   prop-42:
     pick: N
