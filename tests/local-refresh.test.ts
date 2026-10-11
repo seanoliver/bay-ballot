@@ -506,7 +506,7 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () =
   }
 
   it("sends a review push when the refresh branch conflicts with main, even if labelling fails", () => {
-    for (const extra of [{}, { GH_FAIL: "--add-label" }]) {
+    for (const extra of [{}, { GH_FAIL: "--add-label" }] as Record<string, string>[]) {
       const t = setup();
       conflictWithMain(t);
       const r = t.run({ GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic", ...extra });
