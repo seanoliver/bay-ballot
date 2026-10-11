@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { parse } from "yaml";
 
-type Step = { name?: string; if?: string; run?: string };
+type Step = { name?: string; if?: string; run?: string; env?: Record<string, string> };
 const workflow = parse(fs.readFileSync(path.join(__dirname, "..", ".github", "workflows", "refresh.yml"), "utf8"));
 const steps: Step[] = workflow.jobs.refresh.steps;
 const step = (name: string) => {
@@ -92,5 +92,18 @@ describe.skipIf(!hasBash)("refresh.yml phone notification steps", () => {
     expect(args).toContain("Click: https://github.com/o/r/pull/12");
     expect(args).toContain("conflicts with main");
     expect(stdin).toBe('url = "https://ntfy.sh/bb-topic"');
+  });
+
+  it("link the open refresh PR when this run committed nothing", () => {
+    expect(step("Send the phone notification").env?.PR).toBe("${{ steps.pr.outputs.pr || steps.base.outputs.pr }}");
+    const r = runStep("Send the phone notification", { CODE: "0", PR: "12", PR_STEP: "skipped" });
+    expect(r.calls[0]).toContain("--click https://github.com/o/r/pull/12");
+  });
+});
+
+describe("ci.yml", () => {
+  it("does not run on pushes to the runs branch", () => {
+    const ci = parse(fs.readFileSync(path.join(__dirname, "..", ".github", "workflows", "ci.yml"), "utf8"));
+    expect(ci.on.push["branches-ignore"]).toContain("runs");
   });
 });

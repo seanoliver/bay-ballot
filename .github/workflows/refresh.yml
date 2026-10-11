@@ -236,7 +236,7 @@ jobs:
         env:
           BAYBALLOT_NTFY_TOPIC: ${{ secrets.BAYBALLOT_NTFY_TOPIC }}
           CODE: ${{ steps.refresh.outputs.code }}
-          PR: ${{ steps.pr.outputs.pr }}
+          PR: ${{ steps.pr.outputs.pr || steps.base.outputs.pr }}
           CHANGES_STEP: ${{ steps.changes.outcome }}
           PR_STEP: ${{ steps.pr.outcome }}
           ISSUE_STEP: ${{ steps.review_issue.outcome }}
