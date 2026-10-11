@@ -13,6 +13,13 @@ extraSources:
   - https://www.reformcalifornia.org/voter-guides/napa
 fetchedAt: 2026-10-09
 hasReasoning: true
+rejectedQuotes:
+  - text: Prop 39 is a bipartisan solution for Voter ID!
+    reason: slogan; gives no reason (review 2026-10-11)
+    contestId: prop-39
+  - text: Makes the Mayor the City's chief executive with a legislative veto, makes the City Council a full-time position with salaries set by the Ethics Commission, and creates an Independent Budget Analyst office.
+    reason: describes what the measure does; gives no reason (review 2026-10-11)
+    contestId: oakland-measure-ee
 picks:
   prop-1:
     pick: N
@@ -31,7 +38,7 @@ picks:
   prop-3:
     pick: N
     quotes:
-      - text: Worse, Prop 3 does nothing to reform wasteful spending in the programs it purports to fund, so taxpayers will not see better services.
+      - text: Makes permanent California’s highest-in-the-nation income tax rates at a time when California is losing employers, jobs and taxpayers to other states and seeing lower tax revenues as a result. Worse, Prop 3 does nothing to reform wasteful spending in the programs it purports to fund, so taxpayers will not see better services.
         source: https://www.reformcalifornia.org/voter-guides/solano
   prop-4:
     pick: N
@@ -46,7 +53,7 @@ picks:
   prop-37:
     pick: N
     quotes:
-      - text: Worse, Prop 37 makes the State of California one of the biggest mortgage lenders in America overnight – and taxpayers are left holding the bag for any losses.
+      - text: Provides taxpayer-funded subsidies to developers without reforming costly mandates that make housing so expensive. Worse, Prop 37 makes the State of California one of the biggest mortgage lenders in America overnight – and taxpayers are left holding the bag for any losses.
         source: https://www.reformcalifornia.org/voter-guides/solano
   prop-38:
     pick: Y
@@ -58,14 +65,12 @@ picks:
   prop-39:
     pick: Y
     quotes:
-      - text: Prop 39 is a bipartisan solution for Voter ID!
-        source: https://www.reformcalifornia.org/voter-guides/solano
       - text: Prop 39 requires cleaning up and auditing of voter rolls and citizenship verification of anyone registering to vote.
         source: https://www.reformcalifornia.org/voter-guides/solano
   prop-40:
     pick: N
     quotes:
-      - text: Worse, Prop 40 creates the first-in-the-nation Wealth Tax (or Savings Tax) on Californians.
+      - text: Prop 40 is deceptively being sold as the "Billionaire's Tax" but it is really the "Everybody Tax!" Worse, Prop 40 creates the first-in-the-nation Wealth Tax (or Savings Tax) on Californians.
         source: https://www.reformcalifornia.org/voter-guides/solano
       - text: Prop 40 allows government to tax the value of your savings, checking account, 401k, stock portfolio, and current equity in your home.
         source: https://www.reformcalifornia.org/voter-guides/solano
@@ -566,9 +571,6 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/alameda
   oakland-measure-ee:
     pick: Y
-    quotes:
-      - text: Makes the Mayor the City's chief executive with a legislative veto, makes the City Council a full-time position with salaries set by the Ethics Commission, and creates an Independent Budget Analyst office.
-        source: https://www.reformcalifornia.org/voter-guides/alameda
   oakland-measure-ff:
     pick: N
   piedmont-measure-gg:

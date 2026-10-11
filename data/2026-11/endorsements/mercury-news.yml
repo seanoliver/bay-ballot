@@ -108,12 +108,21 @@ rejectedQuotes:
   - text: The big increase will bring in more than the city needs right now.
     reason: 'does not stand alone: "The big increase" refers back to the previous passage (review 2026-10-10)'
     contestId: san-rafael-measure-w
+  - text: His leadership and record of representation are well-known.
+    reason: "bare verdict: says his record is well known without saying what it is (review 2026-10-11)"
+    contestId: us-rep-2
+  - text: Andre, Margulies and Friedel are solid experienced choices for the council.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: larkspur-council
+  - text: Larry Bragman and Matt Da Cunha stand out as the two candidates the town needs at this time.
+    reason: 'bare verdict; gives no reason. No other sentence about the picks stands alone: the rest point back ("Toward that same end", "His election") or quote the candidate (review 2026-10-11)'
+    contestId: fairfax-council
 picks:
   lt-governor:
     pick:
       - Fiona Ma
     quotes:
-      - text: What convinces us that Ma can actually move the needle on her agenda items is the fact that she has already been knee-deep advancing them in a senior executive capacity.
+      - text: As state treasurer, she has chaired the bond finance committees which determine how to pay for new housing, new schools and environmental protection programs, among several other core state priorities.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
@@ -121,7 +130,7 @@ picks:
     pick:
       - Ben Allen
     quotes:
-      - text: Californians cannot afford Kim’s experiment.
+      - text: He co-authored Prop. 4, a $10 billion statewide wildfire prevention and climate resilience bond approved by voters in 2024.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
     pick:
@@ -143,8 +152,6 @@ picks:
     pick:
       - Jared Huffman
     quotes:
-      - text: His leadership and record of representation are well-known.
-        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
       - text: How Littau’s moderate politics would function in Congress, where partisan lines have rarely been deeper, is a huge unknown.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
       - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
@@ -186,8 +193,6 @@ picks:
       - Sarah Margulies
       - Jeanne Friedel
     quotes:
-      - text: Andre, Margulies and Friedel are solid experienced choices for the council.
-        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
       - text: Andre, a former investment banker, has brought her business acumen to the council.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
       - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
@@ -232,7 +237,7 @@ picks:
   sausalito-measure-x:
     pick: Y
     quotes:
-      - text: Sausalito can no longer afford inaction.
+      - text: Permitting new industrial construction for expanded business proposals is one way to gather tax dollars to address the impacts of climate change.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-healthcare-measure-cc:
     pick: Y
@@ -270,9 +275,6 @@ picks:
     pick:
       - Larry Bragman
       - Matt Da Cunha
-    quotes:
-      - text: Larry Bragman and Matt Da Cunha stand out as the two candidates the town needs at this time.
-        source: https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   tamalpais-uhsd-trustee:
     pick:
       - Leslie J. Harlander

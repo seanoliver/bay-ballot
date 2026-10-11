@@ -34,15 +34,16 @@ rejectedQuotes:
   - text: We are most enthusiastic about Bryna Chang, the current Planning and Transportation Commission chair.
     reason: not a reason on its own (review 2026-10-10)
     contestId: palo-alto-council
+  - text: Despite our reservations about the incumbents’ past performance, the combination of Chang’s fiery advocacy for neighborhood safety, Lauing’s steady hand and Veenker’s experience offers the most capable leadership for our city’s future.
+    reason: 'does not stand alone: "the incumbents" refers back to the earlier passage, and the rest restates the picks (review 2026-10-11)'
+    contestId: palo-alto-council
 picks:
   menlo-park-measure-p:
     pick: Y
     quotes:
       - text: By requiring voter approval before the city can sell, lease, or permanently alter our eight downtown parking lots, this measure establishes a vital safeguard for our vibrant commercial core.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
-      - text: Wiping out 556 essential parking spaces would hand a death sentence to the mom-and-pop storefronts, hardware stores and restaurants that are already struggling with rising vacancies.
-        source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
-      - text: The city’s current plan to replace Plaza 1, 2, and 3 with high-density public housing is a gamble Menlo Park cannot afford to take.
+      - text: The city’s current plan to replace Plaza 1, 2, and 3 with high-density public housing is a gamble Menlo Park cannot afford to take. Wiping out 556 essential parking spaces would hand a death sentence to the mom-and-pop storefronts, hardware stores and restaurants that are already struggling with rising vacancies.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
   palo-alto-council:
     pick:
@@ -51,8 +52,6 @@ picks:
       - Vicki Veenker
     quotes:
       - text: Chang brings a refreshing, urgent focus to neighborhood safety, sparked by her firsthand experience watching dangerous near-misses during traffic duty at Hoover Elementary.
-        source: https://padailypost.com/2026/10/03/daily-post-editorial-elect-chang-lauing-veenker-to-council/
-      - text: Despite our reservations about the incumbents’ past performance, the combination of Chang’s fiery advocacy for neighborhood safety, Lauing’s steady hand and Veenker’s experience offers the most capable leadership for our city’s future.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-elect-chang-lauing-veenker-to-council/
   palo-alto-measure-j:
     pick: N
@@ -74,7 +73,7 @@ picks:
     pick:
       - Pete Dailey
     quotes:
-      - text: Northern Santa Clara County needs a serious, collaborative professional, and Pete Dailey fits the bill perfectly.
+      - text: Northern Santa Clara County needs a serious, collaborative professional, and Pete Dailey fits the bill perfectly. He brings stable, proven government experience from the Los Altos City Council and a personal commitment to water safety stemming from witnessing devastating flooding during his youth.
         source: https://padailypost.com/2026/09/29/daily-post-editorial-elect-pete-dailey-to-valley-water-board/
       - text: The most damning indicator of Eisenberg’s unfitness for public office is her blatant and unlawful theft of confidential documents.
         source: https://padailypost.com/2026/09/29/daily-post-editorial-elect-pete-dailey-to-valley-water-board/

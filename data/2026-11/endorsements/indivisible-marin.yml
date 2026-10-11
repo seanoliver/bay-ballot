@@ -13,7 +13,7 @@ fetchedAt: 2026-10-07
 hasReasoning: true
 rejectedQuotes:
   - text: Assemblymember Connolly is a long term North Bay community and political leader.
-    reason: "not substantive: résumé only (review 2026-10-07)"
+    reason: "background: names no record or qualification; gives no reason (review 2026-10-11)"
     contestId: state-senate-2
   - text: Recall elections would no longer include a question about who should fill the vacancy (generally won with a relatively small plurality of voters).
     reason: "describes what the measure does; gives no reason (review 2026-10-07)"
@@ -21,6 +21,9 @@ rejectedQuotes:
   - text: Expanded and upgraded emergency room, intensive care, hospital, and other medical facilities to care for trauma, heart attack, stroke, and other patients and attract qualified doctors and nurses, with no funds for administrator salaries.
     reason: "restates the ballot question; gives no reason (review 2026-10-07)"
     contestId: marin-healthcare-measure-cc
+  - text: But Proposition 40's one-time, California-only wealth tax is a flawed mechanism.
+    reason: 'does not stand alone: opens with "But"; the sentence it answers is on a different line of the PDF text (review 2026-10-11)'
+    contestId: prop-40
 picks:
   us-rep-2:
     pick:
@@ -67,8 +70,6 @@ picks:
   prop-40:
     pick: N
     quotes:
-      - text: But Proposition 40's one-time, California-only wealth tax is a flawed mechanism.
-        source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
       - text: Extreme wealth is a national problem that calls for a durable national solution.
         source: https://indivisiblemarin.org/s/IndiMarin-Voting-Guide-for-California-2026-Midterms.pdf
   prop-41:
