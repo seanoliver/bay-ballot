@@ -314,7 +314,6 @@ type Rates = (typeof RATES)["extract"];
 const tokenCost = (u: Usage, r: Rates) =>
   (u.input_tokens * r.in + u.output_tokens * r.out + (u.cache_creation_input_tokens ?? 0) * r.cacheWrite + (u.cache_read_input_tokens ?? 0) * r.cacheRead) / 1e6;
 
-/** Every model call the results kept usage for, with the rates its model is priced at. */
 export function modelUsages(results: GuideResult[]): { usage: Usage; rates: Rates }[] {
   return results.flatMap((r) =>
     r.status === "changed"
@@ -329,7 +328,6 @@ export function costOf(results: GuideResult[]): number {
   return modelUsages(results).reduce((sum, { usage, rates }) => (onSubscription(usage) ? sum : sum + tokenCost(usage, rates)), 0);
 }
 
-/** What the run's calls would cost at API rates, subscription calls included. Not money spent. */
 export function apiEquivalentCost(results: GuideResult[]): number {
   return roundUpToCent(modelUsages(results).reduce((sum, { usage, rates }) => sum + tokenCost(usage, rates), 0));
 }

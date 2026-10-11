@@ -61,7 +61,6 @@ describe("reportJson calls, tokens and cost", () => {
   });
 
   it("does not count a fallback API call twice when its usage was kept", async () => {
-    // Past the usage limit, each API call is counted in apiFallbackCalls and also leaves priced usage.
     const results = [changed("a", apiUsage(100), apiUsage(100))];
     expect(reportJson(results, 0, { apiFallbackCalls: 2 }).calls).toEqual({ subscription: 0, api: 2 });
   });
@@ -77,7 +76,6 @@ describe("reportJson calls, tokens and cost", () => {
   });
 
   it("prices all usage at API rates, rounded up to the cent, without calling it spend", async () => {
-    // 1M input on extract ($2) plus 100k output on verify ($2), both on the subscription.
     const results = [changed("a", await subUsage(1_000_000), await subUsage(0, 100_000)), changed("b", await subUsage(1))];
     const r = reportJson(results, 0);
     expect(r.apiEquivalentCost).toBe(4.01);

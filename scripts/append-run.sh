@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Appends one run record (a JSON line) to runs.ndjson on the remote's `runs` branch.
-# Usage: append-run.sh <record.json> <remote url> <author name> <author email>
-# Works in its own temporary repository, so the caller's checkout, branch and index are never touched.
 # Always exits 0: a run whose history could not be recorded still succeeded.
 set -u
 
@@ -57,7 +54,6 @@ EOF
     echo "Recorded the run on the $BRANCH branch."
     exit 0
   fi
-  # Another job pushed first: start again from its commit.
   echo "push to $BRANCH was rejected (attempt $attempt of $ATTEMPTS); retrying" >&2
 done
 warn "the push failed $ATTEMPTS times: $(grep -m1 -E 'rejected|error|fatal' "$tmp/push-error")"

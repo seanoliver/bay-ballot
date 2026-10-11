@@ -37,7 +37,6 @@ function setup() {
   git(p("caller"), "commit", "-q", "-m", "main");
   git(p("caller"), "remote", "add", "origin", p("origin.git"));
   git(p("caller"), "push", "-q", "origin", "HEAD:refs/heads/main");
-  // Someone's work in progress: a branch, a staged change and an untracked file.
   git(p("caller"), "switch", "-q", "-c", "data/refresh");
   fs.writeFileSync(p("caller", "a.txt"), "staged\n");
   git(p("caller"), "add", "a.txt");
@@ -93,7 +92,6 @@ describe.skipIf(!hasBash)("append-run.sh", () => {
     t.git(t.root, "clone", "-q", "--branch", "runs", t.p("origin.git"), "other");
     fs.appendFileSync(t.p("other", "runs.ndjson"), `${JSON.stringify({ n: "other" })}\n`);
     t.git(t.p("other"), "commit", "-q", "-am", "other job");
-    // A git on PATH that lets the other job push first, once, just before this script's push.
     fs.writeFileSync(t.p("bin", "git"), `#!/bin/sh
 case " $* " in *" push "*)
   if [ ! -e "${t.p("raced")}" ]; then : > "${t.p("raced")}"; "${REAL_GIT}" -C "${t.p("other")}" push -q origin HEAD:refs/heads/runs; fi ;;

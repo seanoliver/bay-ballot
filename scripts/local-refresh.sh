@@ -69,19 +69,17 @@ if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 work="$(mktemp -d)"
 watchdog=""
 pr=""
-# True once the worktree holds main's code (plus data), so bb may run for the report.
+# Set only once the worktree holds main's code: before that, bb would run the refresh branch's code.
 reporting=false
 stopped_by=""
 conflict=false
 
-# Only before bb can run. Afterwards, report_run sends the push with bb notify.
 phone() {
   [ -n "${BAYBALLOT_NTFY_TOPIC:-}" ] || return 0
   curl -fsS -m 10 -o /dev/null -H "Title: $1" -H "Priority: $2" -H "Tags: $3" --data-binary "$4" \
     "${BAYBALLOT_NTFY_SERVER:-https://ntfy.sh}/$BAYBALLOT_NTFY_TOPIC" || log "warning: could not send the phone notification"
 }
 
-# The phone push and the runs branch line; neither can change the run's exit code.
 report_run() {
   local -a extra
   local remote name email

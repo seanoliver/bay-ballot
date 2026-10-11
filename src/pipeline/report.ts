@@ -8,13 +8,11 @@ export type Alert = { level: "high" | "review"; text: string };
 export type RunCounts = {
   checked: number;
   unchanged: number;
-  /** Re-extracted: the pages changed. */
   extracted: number;
   dataChanged: number;
   deferred: number;
   skipped: number;
   failed: number;
-  /** Shrunk this run, or shrunk earlier with pages unchanged since. */
   shrunk: number;
   held: number;
   review: number;
@@ -22,15 +20,12 @@ export type RunCounts = {
 
 export type RunTokens = { input: number; output: number; cacheRead: number; cacheWrite: number };
 
-/** result.json as `bb refresh` writes it: the refresh's own fields plus the run report. */
 export type ReportJson = ResultJson & {
   durationSec: number;
   counts: RunCounts;
   calls: { subscription: number; api: number };
   tokens: RunTokens;
-  /** What every call would have cost at API rates, subscription calls included. Not money spent. */
   apiEquivalentCost: number;
-  /** Failed guides whose error came from Claude Code, not from fetching. */
   modelFailures: string[];
   digest: string;
   alerts: Alert[];
@@ -72,7 +67,6 @@ function tokens(results: GuideResult[]): RunTokens {
   return t;
 }
 
-/** "claude-code not logged in (model): detail" -> "not logged in". */
 const modelReason = (error: string) => error.replace(/^claude-code /, "").split(" (")[0];
 
 function alerts(results: GuideResult[], r: Omit<ReportJson, "digest" | "alerts">): Alert[] {
@@ -80,7 +74,6 @@ function alerts(results: GuideResult[], r: Omit<ReportJson, "digest" | "alerts">
   if (r.apiCost > 0 || r.apiFallbackCalls > 0) out.push({ level: "high", text: `Used the API: ${plural(r.calls.api, "call")}, about $${r.apiCost.toFixed(2)}` });
   if (r.modelFailures.length) {
     const errors = r.failed.filter((f) => r.modelFailures.includes(f.id)).map((f) => modelReason(f.error));
-    // Nothing reached a model, and every attempt was refused for the login.
     const expired = r.counts.extracted === 0 && results.every((g) => g.status !== "shrunk") && errors.every((e) => e === "not logged in");
     out.push({
       level: "high",
@@ -126,7 +119,6 @@ export function reportJson(
   return { ...report, digest: digest(report), alerts: alerts(results, report) };
 }
 
-/** result.json with a run report, or null when it is missing, unreadable, or from before reports. */
 export function readReport(file: string): ReportJson | null {
   try {
     const r = JSON.parse(fs.readFileSync(file, "utf8")) as Partial<ReportJson>;

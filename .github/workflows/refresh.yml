@@ -227,7 +227,7 @@ jobs:
             gh issue close "$issue" --comment "Refresh run $(date -u +%F) was clean; closing."
           fi
 
-      # Also writes the run's record for the next step. Sends nothing when the BAYBALLOT_NTFY_TOPIC secret is unset.
+      # Also writes the record the next step appends.
       - name: Send the phone notification
         if: always() && steps.refresh.outcome != 'skipped'
         continue-on-error: true
@@ -246,7 +246,6 @@ jobs:
           npm run -s bb -- notify --scope cloud --result result.json --click "$click" \
             --record "$RUNNER_TEMP/run-record.json" --run-url "$run_url" "${extra[@]}"
 
-      # Only to the runs branch, never main or the refresh branch.
       - name: Record the run on the runs branch
         if: always() && steps.refresh.outcome != 'skipped'
         continue-on-error: true

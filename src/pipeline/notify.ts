@@ -3,7 +3,6 @@ import { CRASHED, readReport, type ReportJson } from "./report";
 type Env = Record<string, string | undefined>;
 type Fetch = (url: string, init: RequestInit) => Promise<Response>;
 
-/** A phone push: ntfy's priority 2 is low (no sound), 3 default, 5 urgent. */
 export type Push = { title: string; priority: 2 | 3 | 5; tags: string; body: string };
 
 const CONFLICT = "The refresh branch conflicts with main, so the run stopped without refreshing. Resolve it by hand.";

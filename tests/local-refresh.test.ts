@@ -147,7 +147,6 @@ const runsLog = (t: ReturnType<typeof setup>) => t.git(t.root, "--git-dir", t.p(
 
 const writes = (calls: string[]) => calls.filter((c) => /^(PUSH|gh pr (create|edit|comment|merge)|gh issue (create|edit|comment|close)|gh label)/.test(c));
 
-// Each test runs the real script, git and a history push; 5 seconds is too tight on a busy machine.
 describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () => {
   it("commits, pushes only its branch, opens a PR, notifies, and never touches auto-merge", () => {
     const t = setup();
@@ -429,7 +428,6 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () =
     expect(call).not.toContain("--crashed");
     expect(r.calls.some((c) => c.startsWith("curl"))).toBe(false);
     expect(runsLog(t)).toEqual(['{"scope":"local","stub":true}']);
-    // The runs branch is pushed from its own clone, never the worktree's branch or main.
     expect(r.calls.filter((c) => c.startsWith("PUSH"))).toEqual(["PUSH refs/heads/data/refresh-local"]);
     expect(t.git(t.root, "--git-dir", t.p("origin.git"), "log", "-1", "--format=%an", "runs").trim()).toBe("Test");
   });
@@ -472,7 +470,6 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () =
   it("sends a review push when the refresh branch conflicts with main", () => {
     const t = setup();
     t.run({ STUB_CHANGE: "1" });
-    // main changes the same line the refresh branch did.
     t.git(t.p("source"), "fetch", "-q", "origin");
     t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/main");
     fs.writeFileSync(t.p("other", "data", "2026-11", "endorsements", "x.yml"), "a: main\n");
