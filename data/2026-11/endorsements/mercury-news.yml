@@ -105,6 +105,9 @@ rejectedQuotes:
   - text: Affordability is a big concern.
     reason: not a reason on its own (review 2026-10-10)
     contestId: san-rafael-measure-w
+  - text: The big increase will bring in more than the city needs right now.
+    reason: 'does not stand alone: "The big increase" refers back to the previous passage (review 2026-10-10)'
+    contestId: san-rafael-measure-w
 picks:
   lt-governor:
     pick:
@@ -251,8 +254,6 @@ picks:
   san-rafael-measure-w:
     pick: N
     quotes:
-      - text: The big increase will bring in more than the city needs right now.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
