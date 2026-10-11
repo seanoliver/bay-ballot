@@ -21,6 +21,9 @@ rejectedQuotes:
   - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
     reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
     contestId: union-city-measure-ii
+  - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
+    reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
+    contestId: union-city-council-4
 picks:
   secretary-of-state:
     pick:
@@ -165,9 +168,6 @@ picks:
   union-city-council-4:
     pick:
       - Sarabjit Kaur Cheema
-    quotes:
-      - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   fhda-trustee-area-4:
     pick:
       - William "Bill" Wilson
