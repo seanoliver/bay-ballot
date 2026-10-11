@@ -31,7 +31,7 @@ rejectedQuotes:
     reason: 'does not stand alone: "this funding" refers back to the federal money in the previous passage, not the measure (review 2026-10-10)'
     contestId: prop-40
   - text: Rebecca Eisenberg’s conduct during this years-long escapade about a report detailing her behavior towards Valley Water employees makes her unfit to continue to be an elected official.
-    reason: 'does not stand alone: "this years-long escapade" refers back, and it is about the opponent, not the pick (review 2026-10-10)'
+    reason: 'does not stand alone: "this years-long escapade" refers back to the previous passage (review 2026-10-10)'
     contestId: valley-water-7
   - text: The funds are necessary, given the current housing and affordability crises throughout the state.
     reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-10)'
