@@ -58,7 +58,7 @@ EOF
   fi
   printf '%s\n' "$line" >> "$repo/runs.ndjson"
   g add README.md runs.ndjson vercel.json || warn "git add failed"
-  g commit -q -m "run: $(date -u +%FT%TZ)" || warn "commit failed"
+  g commit -q -m "run: $(date -u +%FT%TZ) [skip ci]" || warn "commit failed"
   if g push -q "$remote" "HEAD:refs/heads/$BRANCH" 2>"$tmp/push-error"; then
     echo "Recorded the run on the $BRANCH branch."
     exit 0

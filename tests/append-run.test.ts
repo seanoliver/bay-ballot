@@ -71,6 +71,7 @@ describe.skipIf(!hasBash)("append-run.sh", () => {
     expect(JSON.parse(origin("show", "runs:vercel.json"))).toEqual({ $schema: "https://openapi.vercel.sh/vercel.json", git: { deploymentEnabled: false } });
     expect(origin("rev-list", "--count", "runs")).toBe("1");
     expect(origin("log", "-1", "--format=%an <%ae>", "runs")).toBe("Run Bot <bot@example.com>");
+    expect(origin("log", "-1", "--format=%s", "runs")).toContain("[skip ci]");
     expect(t.callerState()).toEqual(before);
     expect(fs.readFileSync(t.p("caller", "notes.txt"), "utf8")).toBe("untracked\n");
   });
