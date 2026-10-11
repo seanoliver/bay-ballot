@@ -6,7 +6,7 @@ import { matchName, type Aliases } from "@/lib/names";
 import { isRejected, MIN_CONTAINED } from "@/lib/quote-key";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
-import { normalizeWithMap, standsAlone, verifyQuotes, type KeptQuote, type Page } from "./quotes";
+import { normalizeWithMap, standaloneProblem, verifyQuotes, type KeptQuote, type Page } from "./quotes";
 
 export const ExtractOutput = z.object({
   hasReasoning: z
@@ -28,7 +28,7 @@ export const ExtractOutput = z.object({
       quotes: z
         .array(z.string())
         .describe(
-          "up to 3 complete sentences copied exactly from the pages, in the organization's own voice, explaining this pick; empty if none",
+          "up to 3 quotes copied exactly from the pages, each one sentence (or two consecutive sentences when the second needs the first), in the organization's own voice, giving a reason for this pick; empty if none",
         ),
       note: z
         .string()
@@ -85,13 +85,18 @@ export function systemPrompt(ballot: Ballot): string {
     '- Image alt text in square brackets next to an item, such as "[YES]" or "[NO]", is a valid signal of the pick.',
     "- hasReasoning is true if the organization explains its picks anywhere on these pages, false if it only lists them.",
     "",
+    // The quote rules must match the runbook's quote rule and the verifier prompt, or re-extracts bring back rejected quotes.
     "Quotes:",
-    "- Each quote must be a complete sentence copied character-for-character from the pages.",
-    "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
-    "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
+    "- A quote is one complete sentence copied character-for-character from the pages. Copy two consecutive sentences as one quote only when the second needs the first for its condition or subject (\"If we don't approve this funding measure, commutes will get longer. Transit service will be cut by up to 70%.\"). Never more than two.",
+    "- Each quote must give a reason for the pick: a policy argument, the candidate's record or qualifications, a consequence of the vote, or a fact cited as a reason. Never quote announcements, slogans, calls to vote, thanks, bare verdicts (\"X and Y stand out as the candidates the town needs\") or background (\"Wynn taught in the district\").",
+    "- Each quote must make sense shown alone under its contest and pick:",
+    "  - Subject: it names the pick or is clearly about it. In a two-way race, criticism of or contrast with the named opponent counts. In a multi-seat race, never quote a sentence about a candidate the organization did not pick. Under a measure, a sentence about the problem the measure addresses is fine.",
+    "  - Pronouns: He/She/They is fine when the pick names one candidate. When it names several, a He/She quote must also name one of them.",
+    "  - Pointing back: no this/that/these/those/it/such, or definite phrase (\"the system\", \"the money\", \"the price tag\", \"the incumbents\"), that refers to earlier text. Fine: \"this measure/office/race\", \"it\" for the measure under its own pick, \"the council/board/district\" for the body the contest elects, \"this funding\" for the measure's own money.",
+    "  - Connectors: never open with a word that continues a prior sentence (But, However, And, Moreover, Further, Furthermore, Instead, Speaking of, That leaves us, Resulting), or set a mid-sentence \"however\" against it. Summary openers (Overall, In short, Ultimately) and \"also\" are fine.",
     "- Quotes must be in the organization's own voice. Never quote text it attributes to opponents, critics, candidates or anyone else.",
-    "- Never paraphrase, summarize, shorten or combine sentences.",
-    "- At most 3 quotes per pick. If the pages give no reasons for a pick, return an empty quotes array.",
+    "- Never paraphrase, summarize, shorten, or join sentences that are not consecutive on the page.",
+    "- At most 3 quotes per pick. If no sentence on the pages meets these rules for a pick, return an empty quotes array.",
     "",
     "Ballot contests (JSON):",
     JSON.stringify(contests),
@@ -122,8 +127,9 @@ function candidateNames(id: string, raw: string[], official: string[], aliases: 
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
 
-function contestProblem(q: KeptQuote, c: Contest, pick: Entry["pick"], pages: Page[], contests: Contest[]): string | null {
-  if (!standsAlone(q.text, c, { names: Array.isArray(pick) ? pick : [] })) return "not-standalone";
+export function contestProblem(q: KeptQuote, c: Contest, pick: Entry["pick"], pages: Page[], contests: Contest[]): string | null {
+  const alone = standaloneProblem(q.text, c, { names: Array.isArray(pick) ? pick : [] });
+  if (alone) return `not-standalone: ${alone}`;
   const other = misplacedUnder(q, c.id, pages, contests);
   return other ? `wrong-contest, under ${other}` : null;
 }

@@ -321,3 +321,28 @@ describe("quotes under a letter shared across areas", () => {
     expect(misplacedUnder(q("Term limits keep the board accountable."), "san-bruno-measure-s", [page], ballot.contests)).toBe("el-camino-healthcare-measure-s");
   });
 });
+
+describe("related-article sidebars", () => {
+  const url = "https://www.mercurynews.com/barrera";
+  const lines = [
+    "Endorsement: Elect Richard Barrera California’s superintendent of public instruction",
+    "Of the two candidates on the ballot, Richard Barrera is best suited to these ends.",
+    "Related Articles",
+    "Hilton makes history in California governor’s race. But not the kind he had in mind.",
+    "Election 2026: Measure N seeks to upgrade aging infrastructure for West Valley schools",
+    "Hernandez loses endorsement after ‘racist dog whistle’ remarks at debate",
+    "Opinion: California has a chance to change the odds for cancer. Vote ‘yes’ on Prop. 38.",
+    "Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives. He’s endorsed by the California Democratic Party and supported by a long list of labor unions.",
+  ];
+  const q = quote("Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.", url);
+
+  it("ignores contest headlines in a Related Articles block (Mercury News Barrera editorial)", () => {
+    expect(misplacedUnder(q, "superintendent", [page(lines.join("\n"), url)], contests)).toBeNull();
+  });
+  it("still reads a real section heading after the sidebar's paragraph ends it", () => {
+    const p = page([...lines, "Measure N", "NO", "The bond would raise property taxes for decades without a plan."].join("\n"), url);
+    expect(misplacedUnder(quote("The bond would raise property taxes for decades without a plan.", url), "superintendent", [p], contests)).toMatch(
+      /-measure-n$/,
+    );
+  });
+});

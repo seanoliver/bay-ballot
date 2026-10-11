@@ -213,16 +213,19 @@ describe("verifierPrompt", () => {
       expect(prompt).toContain(c);
     }
   });
-  it("tells the auditor how quotes are displayed", () => {
-    expect(prompt).toContain(
-      'A quote is always shown under its contest and pick. "It" or "This measure" referring to that contest\'s measure, and "He" or "She" when the pick names a single candidate, are not not-standalone.',
-    );
-    expect(prompt).toContain(
-      "For a pick that names several candidates, a quote starting with He/She/His/Her is standalone only if the same quote names one of the endorsed candidates.",
-    );
-    expect(prompt).toContain(
-      "Mark not-substantive only when the sentence gives no reason at all; a fact cited as a reason for the position counts as a reason.",
-    );
+  it("states the quote rule: reason, two-sentence context, connectors, pointing back, pronouns and subject", () => {
+    for (const part of [
+      "gives a reason for the pick",
+      "bare verdicts",
+      "It has more than two sentences, or its first sentence needs an earlier sentence to make sense.",
+      "But, However, And, Moreover, Further, Furthermore, Instead, Speaking of, That leaves us, Resulting",
+      "Overall, In short, Ultimately",
+      '"this funding" for the contest\'s own measure\'s money',
+      "A He/She quote under a pick of several candidates names none of them",
+      "In a two-way race, a quote criticizing the named opponent is about the pick",
+    ]) {
+      expect(prompt).toContain(part);
+    }
   });
   it("is deterministic for caching", () => expect(verifierPrompt(ballot)).toBe(prompt));
   it("treats a candidate labelled Open Endorsement as not endorsed, and an open seat as no signal", () => {

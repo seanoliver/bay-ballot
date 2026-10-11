@@ -144,6 +144,19 @@ function pageMarkers(page: Page, contests: Contest[]): Marker[] {
   return m;
 }
 
+// A sidebar label, then up to SIDEBAR_LINES short headline lines, until the first paragraph-length line.
+const SIDEBAR_LABEL = /^\s*(?:related(?:\s+(?:articles|stories|posts|coverage|content|links))?|more\s+in\s+[^.]{1,40}|most\s+popular|you\s+may\s+also\s+like|recommended(?:\s+for\s+you)?|read\s+next)\s*:?\s*$/i;
+const SIDEBAR_LINES = 12;
+
+function sidebarLines(lines: { text: string }[]): Set<number> {
+  const out = new Set<number>();
+  lines.forEach((l, i) => {
+    if (!SIDEBAR_LABEL.test(l.text)) return;
+    for (let j = i + 1; j < lines.length && j <= i + SIDEBAR_LINES && lines[j].text.trim().length <= HEADING_LINE_MAX; j++) out.add(j);
+  });
+  return out;
+}
+
 function headingMarkers(text: string, contests: Contest[]): Marker[] {
   const lines: { start: number; text: string }[] = [];
   let at = 0;
@@ -151,6 +164,7 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
     lines.push({ start: at, text: line });
     at += line.length + 1;
   }
+  const sidebar = sidebarLines(lines);
   const lineIndex = (pos: number) => lines.findLastIndex((l) => l.start <= pos);
 
   const found: { start: number; end: number; id: string; line: number }[] = [];
@@ -159,7 +173,7 @@ function headingMarkers(text: string, contests: Contest[]): Marker[] {
       for (const m of text.matchAll(new RegExp(re.source, `${re.flags}g`))) {
         const li = lineIndex(m.index);
         const line = lines[li];
-        if (m.index - line.start > HEADING_CHARS || !isHeadingLine(line.text)) continue;
+        if (m.index - line.start > HEADING_CHARS || !isHeadingLine(line.text) || sidebar.has(li)) continue;
         found.push({ start: m.index, end: m.index + m[0].length, id: c.id, line: li });
       }
     }
