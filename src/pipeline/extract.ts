@@ -122,7 +122,6 @@ function candidateNames(id: string, raw: string[], official: string[], aliases: 
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
 
-/** The checks that tie a page-verified quote to its contest; null when it passes. */
 function contestProblem(q: KeptQuote, c: Contest, pick: Entry["pick"], pages: Page[], contests: Contest[]): string | null {
   if (!standsAlone(q.text, c, { names: Array.isArray(pick) ? pick : [] })) return "not-standalone";
   const other = misplacedUnder(q, c.id, pages, contests);
@@ -195,13 +194,7 @@ export function toEntries(
   return { picks, notes };
 }
 
-/**
- * The model rewrites its quote list on every re-extract, so it often omits quotes that are still on the page.
- * Puts back a previous quote when the pick is unchanged, the quote still passes every extractor check on its
- * own source page, and it is not in rejectedQuotes. Restored quotes keep their old place among the quotes that
- * stayed; the model's new quotes give way first when the pick would go over the limit. Runs before the verifier,
- * so a restored quote is audited like any other.
- */
+/** Call before the verifier: a restored quote is only audited if the verifier sees it. */
 export function keepPrevQuotes(
   prev: Record<string, Entry>,
   picks: Record<string, Entry>,

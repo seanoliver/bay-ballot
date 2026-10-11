@@ -134,7 +134,6 @@ describe("runRefresh", () => {
     const file = withPropBQuote(root);
     const { client } = fakeClient(extractOut);
     const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), { root, election: ELECTION, forceExtract: true });
-    // The fake verifier returns no quote verdicts, so the kept quote is dropped as unverified.
     expect(results[0]).toMatchObject({ status: "changed", droppedByVerifier: 1 });
     expect(parse(fs.readFileSync(file, "utf8")).picks["prop-b"].quotes).toBeUndefined();
   });
