@@ -16,7 +16,7 @@ held:
     evidence: The guide's "Measure O - East Palo Alto" write-up describes a 1.5% tax on landlords' rental revenue, which was the city's 2016 Measure O. The 2026 Measure O is a general obligation bond, so the Yes may not be meant for it (decision 2026-10-09).
 rejectedQuotes:
   - text: The tax restructuring would also lower taxes for smaller businesses.
-    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
+    reason: 'does not stand alone: "The tax restructuring" refers back (review 2026-10-10)'
     contestId: newark-measure-dd
   - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
     reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
@@ -314,9 +314,6 @@ picks:
       - Rommy Kushner
   prop-1:
     pick: Y
-    quotes:
-      - text: It authorizes a $11.25 billion bond that is focused on adding and preserving affordable housing.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-2:
     pick: Y
     quotes:
