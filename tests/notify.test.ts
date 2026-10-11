@@ -27,7 +27,7 @@ function resultFile(content: unknown) {
 }
 
 function run(content: unknown, opts: Partial<Parameters<typeof notify>[0]> = {}) {
-  const fetch = vi.fn(async (_url: string, _init: RequestInit) => new Response("{}", { status: 200 }));
+  const fetch = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(async () => new Response("{}", { status: 200 }));
   const log = vi.fn();
   const done = notify({ resultPath: resultFile(content), scope: "cloud", env: { BAYBALLOT_NTFY_TOPIC: "bb-topic" }, fetch, log, ...opts });
   return { done, fetch, log, headers: () => fetch.mock.calls[0][1].headers as Record<string, string> };
