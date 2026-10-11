@@ -91,9 +91,9 @@ export function systemPrompt(ballot: Ballot): string {
     "- Each quote must give a reason for the pick: a policy argument, the candidate's record or qualifications, a consequence of the vote, or a fact cited as a reason. Never quote announcements, slogans, calls to vote, thanks, bare verdicts (\"X and Y stand out as the candidates the town needs\") or background (\"Wynn taught in the district\").",
     "- Each quote must make sense shown alone under its contest and pick:",
     "  - Subject: it names the pick or is clearly about it. In a two-way race, criticism of or contrast with the named opponent counts. In a multi-seat race, never quote a sentence about a candidate the organization did not pick. Under a measure, a sentence about the problem the measure addresses is fine.",
-    "  - Pronouns: He/She/They is fine when the pick names one candidate. When it names several, a He/She quote must also name one of them.",
+    "  - Pronouns: He/She/They is fine when the pick names one candidate. When it names several, They is fine but a He/She quote must also name one of them.",
     "  - Pointing back: no this/that/these/those/it/such, or definite phrase (\"the system\", \"the money\", \"the price tag\", \"the incumbents\"), that refers to earlier text. Fine: \"this measure/office/race\", \"it\" for the measure under its own pick, \"the council/board/district\" for the body the contest elects, \"this funding\" for the measure's own money.",
-    "  - Connectors: never open with a word that continues a prior sentence (But, However, And, Moreover, Further, Furthermore, Instead, Speaking of, That leaves us, Resulting), or set a mid-sentence \"however\" against it. Summary openers (Overall, In short, Ultimately) and \"also\" are fine.",
+    "  - Connectors: never open with a word that continues a prior sentence (But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, Speaking of, That leaves us, Resulting), or use a parenthetical \", however,\" against it. Summary openers (Overall, In short, Ultimately) and \"also\" are fine.",
     "- Quotes must be in the organization's own voice. Never quote text it attributes to opponents, critics, candidates or anyone else.",
     "- Never paraphrase, summarize, shorten, or join sentences that are not consecutive on the page.",
     "- At most 3 quotes per pick. If no sentence on the pages meets these rules for a pick, return an empty quotes array.",
@@ -231,11 +231,13 @@ export function keepPrevQuotes(
     const old = prev[id];
     const c = byId.get(id);
     if (!old || !c || !samePick(old, entry)) continue;
-    const valid = (q: KeptQuote) => {
-      if (isRejected(q.text, id, rejected)) return false;
+    const problem = (q: KeptQuote): string | null => {
+      if (isRejected(q.text, id, rejected)) return "in rejectedQuotes";
       const page = pages.find((p) => p.url === q.source);
-      if (!page) return false;
-      return verifyQuotes([q.text], [page], { ownNames }).kept.length === 1 && !contestProblem(q, c, entry.pick, pages, contests);
+      if (!page) return "source page no longer fetched";
+      const checked = verifyQuotes([q.text], [page], { ownNames });
+      if (checked.kept.length !== 1) return checked.dropped[0]?.reason ?? "not-found";
+      return contestProblem(q, c, entry.pick, pages, contests);
     };
     const quotes = [...entry.quotes];
     const restored: KeptQuote[] = [];
@@ -243,9 +245,13 @@ export function keepPrevQuotes(
     for (const q of old.quotes) {
       const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
       if (i !== -1) at = i + 1;
-      else if (valid(q)) {
-        quotes.splice(at++, 0, q);
-        restored.push(q);
+      else {
+        const why = problem(q);
+        if (why) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
+        else {
+          quotes.splice(at++, 0, q);
+          restored.push(q);
+        }
       }
     }
     if (restored.length === 0) continue;

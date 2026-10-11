@@ -346,3 +346,29 @@ describe("related-article sidebars", () => {
     );
   });
 });
+
+describe("per-item badges that look like sidebar labels", () => {
+  it("keeps a heading after a bare Recommended badge (East Bay DSA layout)", () => {
+    const url = "https://vote.eastbaydsa.org/simple-guide.html";
+    const text = [
+      "Insurance Commissioner",
+      "Reviewed Copy link Print race",
+      "TL;DR: California DSA recommends Jane Kim for Insurance Commissioner.",
+      "JK",
+      "Jane Kim",
+      "Recommended",
+      "Recommendation Source: California DSA",
+      "Analysis coming soon",
+      "Board of Equalization - District 2",
+      "Reviewed Copy link Print race",
+      "TL;DR: California DSA recommends Sally Lieber for Board of Equalization - District 2.",
+      "SL",
+      "Sally Lieber",
+      "RecommendedDistrict 2",
+      "Lieber has fought utility rate hikes for working families across the district.",
+    ].join("\n");
+    const q = quote("Lieber has fought utility rate hikes for working families across the district.", url);
+    expect(misplacedUnder(q, "board-of-equalization-2", [page(text, url)], contests)).toBeNull();
+    expect(misplacedUnder(q, "insurance-commissioner", [page(text, url)], contests)).toBe("board-of-equalization-2");
+  });
+});

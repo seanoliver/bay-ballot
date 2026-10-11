@@ -17,18 +17,18 @@ The quote rule grew in `docs/runbook.md` through review decisions, but the pipel
 
 ## Repro
 
-On the old code, `npm run bb -- quote-lint` (added here) run against `main`'s data does not flag the 20 published quotes that open with a connector, and it flags the two Barrera quotes as `wrong-contest, under lgsuhsd-measure-n`. `tests/placement.test.ts` "ignores contest headlines in a Related Articles block" fails on the old `placement.ts`.
+On the old code, `npm run bb -- quote-lint` (added here) run against `main`'s data does not flag the 26 published quotes that open with a connector, and it flags the two Barrera quotes as `wrong-contest, under lgsuhsd-measure-n`. `tests/placement.test.ts` "ignores contest headlines in a Related Articles block" fails on the old `placement.ts`.
 
 ## Fix
 
 - Both prompts state the 2026-10-11 rule (reason, two-sentence context, pronouns, pointing back, connectors, subject). They are worded independently, since the verifier must not share text with the extractor.
-- `standaloneProblem` in `src/pipeline/quotes.ts` returns why a quote fails: more than two sentences, a connector opener, a mid-sentence "however" in the first sentence, an opening demonstrative other than the allowed "this measure/office/race" (and "this funding" under a measure), "it" outside a measure, or a he/she quote under a multi-name pick that names none of its candidates. A two-sentence quote is judged by its first sentence. Reason and subject stay with the verifier.
-- `misplacedUnder` skips up to 12 short lines after a sidebar label ("Related Articles", "More in ...", "Most Popular" and similar), stopping at the first paragraph-length line.
+- `standaloneProblem` in `src/pipeline/quotes.ts` returns why a quote fails: more than two sentences, a connector opener, a parenthetical ", however," in the first sentence, an opening demonstrative other than the allowed "this measure/office/race" (and "this funding" under a measure), "it" outside a measure, or a he/she quote under a multi-name pick that names none of its candidates. A two-sentence quote is judged by its first sentence. Reason and subject stay with the verifier.
+- `misplacedUnder` skips up to 12 short lines after a sidebar label ("Related Articles", "More in ...", "Most Popular" and similar, but not a bare "Recommended", which some guides use as a per-candidate badge), stopping at the first paragraph-length line. `keepPrevQuotes` notes each previous quote it declines to restore and why.
 - `npm run bb -- quote-lint [--guide <id>]` runs the same checks over every published quote against the stored page text.
 
 ## Verification
 
-`npm run bb -- quote-lint` over 960 published quotes: 17 failures with the old checks, 27 with the new. 20 newly flagged quotes (2.1%), all connector or pointing-back openers the runbook rejects. 8 "It ..." quotes under measures are no longer flagged, and the 2 Barrera quotes now pass. Tests in `tests/quotes.test.ts`, `tests/extract.test.ts`, `tests/verify.test.ts`, `tests/placement.test.ts` and `tests/quotelint.test.ts`.
+`npm run bb -- quote-lint` over 960 published quotes: 17 failures with the old checks, 33 with the new. 26 newly flagged quotes (2.7%), all connector openers the runbook rejects. 8 "It ..." quotes under measures are no longer flagged, and the 2 Barrera quotes now pass. Tests in `tests/quotes.test.ts`, `tests/extract.test.ts`, `tests/verify.test.ts`, `tests/placement.test.ts` and `tests/quotelint.test.ts`.
 
 ## Guardrail
 

@@ -25,10 +25,10 @@ describe("systemPrompt", () => {
     for (const part of [
       "Copy two consecutive sentences as one quote only when the second needs the first for its condition or subject",
       "a fact cited as a reason",
-      "But, However, And, Moreover, Further, Furthermore, Instead, Speaking of, That leaves us, Resulting",
+      "But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, Speaking of, That leaves us, Resulting",
       "Summary openers (Overall, In short, Ultimately)",
       "\"this funding\" for the measure's own money",
-      "When it names several, a He/She quote must also name one of them.",
+      "When it names several, They is fine but a He/She quote must also name one of them.",
       "In a two-way race, criticism of or contrast with the named opponent counts.",
     ]) {
       expect(prompt).toContain(part);
@@ -500,7 +500,16 @@ describe("keepPrevQuotes", () => {
     const gone = "The old page said the closure saved the city money on road repairs.";
     const r = keep({ "prop-g": entry("N", gone, q2) }, { "prop-g": entry("N", q2) });
     expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
-    expect(r.notes).toEqual([]);
+    expect(r.notes).toEqual([`prop-g: previous quote not kept (not-found): "${gone}"`]);
+  });
+
+  it("notes why a previously published quote that now fails the quote rule is not kept", () => {
+    const but = "But the closure cost nothing and the park is already full every weekend.";
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G
+${q2} ${but}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", but, q2) }, { "prop-g": entry("N", q2) }, ballot.contests, p);
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+    expect(r.notes).toEqual([`prop-g: previous quote not kept (not-standalone: opens with "But"): "${but}"`]);
   });
 
   it("does not keep a quote whose source page is no longer one of the guide's pages", () => {

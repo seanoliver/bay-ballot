@@ -184,19 +184,24 @@ const MEASURE_SELF_REFERENCE = selfReference(`${SELF_CONTAINED_NOUNS}|funding`);
 const DEMONSTRATIVE = /^\W*(?:this|that|these|those|such)\b/i;
 const IT = /^\W*it\b/i;
 const PRONOUN = /^\W*(?:he|she|his|her|him|they|their|them)\b/i;
-const CONNECTOR = /^\W*(?:(but|and|moreover|furthermore|resulting|speaking\s+of)\b|(however|further)\s*,|(instead)\b(?!\s+of\b))/i;
-const MID_HOWEVER = /[,;—–]\s*however\b|\bhowever\s*[,;.]/i;
+const PLURAL_PRONOUN = /^\W*(?:they|their|them)\b/i;
+const CONNECTOR = new RegExp(
+  "^\\W*(?:(but|and|moreover|furthermore|additionally|finally|still|yet|plus|meanwhile|likewise|similarly|thus|therefore|resulting|speaking\\s+of)\\b" +
+    "|(however|further)\\s*,|(instead)\\b(?!\\s+of\\b)|(so)\\b(?!\\s+(?:far|many|much|long)\\b))",
+  "i",
+);
+const MID_HOWEVER = /,\s*however\s*[,.!?]/i;
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 const MAX_SENTENCES = 2;
 
 export function sentencesOf(text: string): string[] {
   const masked = text
     .replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_"))
-    .replace(/\b(?:Sen|Rep|Gov|Lt|Gen|Supt|Dept|Dist|Assn|Hon|Prof|Mt|Ft|Inc|Co|Corp|Ave|Blvd|etc|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\./g, (a) => a.replace(/\./g, "_"))
-    .replace(/(?<![\p{L}\p{N}])\p{Lu}\.(?=\s)/gu, (a) => a.replace(/\./g, "_"));
+    .replace(/\b(?:Sen|Rep|Asm|Gov|Lt|Gen|Sec|Sup|Supv|Supt|Atty|Asst|Calif|Dept|Dist|Assn|Hon|Prof|Mt|Ft|Inc|Co|Corp|Ave|Blvd|etc|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\./g, (a) => a.replace(/\./g, "_"))
+    .replace(/(?<!\b(?:Measure|Prop|Proposition)\s+)(?<![\p{L}\p{N}])\p{Lu}\.(?=\s)/gu, (a) => a.replace(/\./g, "_"));
   const out: string[] = [];
   let from = 0;
-  for (const m of masked.matchAll(/[.!?。！？]+["”’)\]]*(?=\s+\S|$)/g)) {
+  for (const m of masked.matchAll(/[.!?。！？]+["”’)\]]*(?=\s+["“‘'(]?[\p{Lu}\p{N}]|$)/gu)) {
     const end = m.index + m[0].length;
     out.push(text.slice(from, end).trim());
     from = end;
@@ -230,7 +235,7 @@ export function standaloneProblem(text: string, contest: Contest, { names }: { n
   if (sentences.length > MAX_SENTENCES) return `more than ${MAX_SENTENCES} sentences`;
   const first = sentences[0] ?? t;
   const connector = t.match(CONNECTOR);
-  if (connector) return `opens with "${(connector[1] ?? connector[2] ?? connector[3]).replace(/\s+/g, " ")}"`;
+  if (connector) return `opens with "${connector.slice(1).find(Boolean)!.replace(/\s+/g, " ")}"`;
   if (MID_HOWEVER.test(first)) return 'sets "however" against an earlier sentence';
   const measure = contest.kind === "measure";
   if (DEMONSTRATIVE.test(t)) {
@@ -239,7 +244,7 @@ export function standaloneProblem(text: string, contest: Contest, { names }: { n
   }
   if (IT.test(t)) return measure || namesSubject(t, contest) ? null : 'opens with "it" pointing back';
   if (PRONOUN.test(t)) {
-    if (names?.length === 1) return null;
+    if (names?.length === 1 || (names && names.length > 1 && PLURAL_PRONOUN.test(t))) return null;
     if (namesSubject(t, contest, names?.length ? names : undefined)) return null;
     return names && names.length > 1 ? "pronoun names none of the endorsed candidates" : "pronoun with no subject";
   }

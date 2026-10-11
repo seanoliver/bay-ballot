@@ -386,6 +386,8 @@ describe("standsAlone", () => {
     expect(standaloneProblem("She has worked alongside Cheung on the budget for years.", boe, { names })).toBe(
       "pronoun names none of the endorsed candidates",
     );
+    expect(standsAlone("They bring fresh energy and deep roots in the neighborhood schools.", boe, { names })).toBe(true);
+    expect(standsAlone("Their plan would reopen two shuttered campuses next fall.", boe, { names })).toBe(true);
   });
 
   it('lets "it" mean the measure under its own pick, but not a candidate race', () => {
@@ -404,15 +406,25 @@ describe("standsAlone", () => {
     ["Instead, the measure streamlines destructive sprawl developments.", "Instead"],
     ["Speaking of housing, the measure would block new homes near transit.", "Speaking of"],
     ["Resulting cuts to Muni would worsen the city's congestion and gridlock.", "Resulting"],
+    ...["Additionally", "Finally", "Still", "Yet", "So", "Plus", "Meanwhile", "Likewise", "Similarly", "Thus", "Therefore"].map(
+      (w) => [`${w}, the plan does nothing for public transit riders.`, w],
+    ),
   ])("drops a quote opening with a connector: %s", (q, word) => {
     expect(standaloneProblem(q, propD)).toBe(`opens with "${word}"`);
   });
 
-  it("drops \"That leaves us\" and a mid-sentence however set against the prior sentence", () => {
+  it("drops \"That leaves us\" and a parenthetical however set against the prior sentence", () => {
     expect(standsAlone("That leaves us with only one choice for the council seat.", boe)).toBe(false);
     expect(standaloneProblem("The measure, however, would leave the city with no reserve.", propD)).toBe(
       'sets "however" against an earlier sentence',
     );
+    expect(standsAlone("That is not enough to fix the deficit, however.", propD)).toBe(false);
+  });
+
+  it("keeps a however that joins two clauses or means 'no matter how'", () => {
+    expect(standsAlone("The measure raises fees; however, it caps them for small businesses.", propD)).toBe(true);
+    expect(standsAlone("However long the audit takes, Prop D keeps the reserve intact.", propD)).toBe(true);
+    expect(standsAlone("Prop D protects the reserve however much the budget shrinks.", propD)).toBe(true);
   });
 
   it.each([
@@ -421,6 +433,7 @@ describe("standsAlone", () => {
     "Ultimately, the measure protects renters from sudden displacement.",
     "Instead of raising taxes, the measure trims the administrative budget.",
     "Also on the ballot, Prop D would add needed oversight to city contracts.",
+    "So far, the city has spent nothing on the promised repairs under Prop D.",
   ])("keeps summary openers, 'Instead of' and 'Also': %s", (q) => expect(standsAlone(q, propD)).toBe(true));
 
   it("allows this office/race for a candidate contest and this funding only for a measure", () => {
@@ -450,6 +463,12 @@ describe("sentencesOf", () => {
     expect(sentencesOf("Housing Dept. and Planning Dept. are both understaffed.")).toHaveLength(1);
     expect(sentencesOf("Richard J. Barrera has a plan for the U.S. Dept. of Education. It is good.")).toHaveLength(2);
     expect(sentencesOf("Vote by Nov. 3 to keep Prop. 50 alive! Then tell a friend.")).toHaveLength(2);
+    expect(sentencesOf("Asm. Wicks supported the bill from the start.")).toHaveLength(1);
+    expect(sentencesOf("Polls close at 8 p.m. on Election Day across the county.")).toHaveLength(1);
+  });
+  it("ends a sentence after a measure letter", () => {
+    expect(sentencesOf("We support Measure A. It will fix roads.")).toHaveLength(2);
+    expect(sentencesOf("We oppose Prop B. It costs too much.")).toHaveLength(2);
   });
 });
 

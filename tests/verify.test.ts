@@ -218,7 +218,7 @@ describe("verifierPrompt", () => {
       "gives a reason for the pick",
       "bare verdicts",
       "It has more than two sentences, or its first sentence needs an earlier sentence to make sense.",
-      "But, However, And, Moreover, Further, Furthermore, Instead, Speaking of, That leaves us, Resulting",
+      "But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, Speaking of, That leaves us, Resulting",
       "Overall, In short, Ultimately",
       '"this funding" for the contest\'s own measure\'s money',
       "A He/She quote under a pick of several candidates names none of them",
