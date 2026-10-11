@@ -20,6 +20,7 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
   - https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
+  - https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
 fetchedAt: 2026-10-10
 hasReasoning: true
 rejectedQuotes:
@@ -41,6 +42,21 @@ rejectedQuotes:
   - text: Moreover, people should be able to decide whether or not they want their money to go toward supporting a candidate.
     reason: 'does not stand alone: opens with "Moreover" (review 2026-10-10)'
     contestId: prop-4
+  - text: Students would lose even more if the higher rates were to expire.
+    reason: 'does not stand alone: "the higher rates" and "even more" refer back to the previous passage (review 2026-10-10)'
+    contestId: prop-3
+  - text: Leaders also need to be more straightforward about their plans for the money.
+    reason: 'does not stand alone: "the money" refers back to the previous passage (review 2026-10-10)'
+    contestId: american-canyon-measure-p
+  - text: Unlike other ballot measures, this is not a new tax; it’s an extension of a countywide sales tax we already pay.
+    reason: 'does not stand alone: a bare "this" refers back instead of naming the measure (review 2026-10-10)'
+    contestId: sonoma-county-measure-h
+  - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
+    reason: 'does not stand alone: does not name or describe the pick (review 2026-10-10)'
+    contestId: healdsburg-council-2
+  - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
+    reason: 'does not stand alone: does not name the pick and leans on the next sentence (review 2026-10-10)'
+    contestId: rohnert-park-council-2
 picks:
   us-rep-4:
     pick:
@@ -55,8 +71,6 @@ picks:
   prop-3:
     pick: Y
     quotes:
-      - text: Students would lose even more if the higher rates were to expire.
-        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: More Sonoma County school districts are in financial crisis than in any other county.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
   prop-4:
@@ -69,6 +83,13 @@ picks:
     quotes:
       - text: Five percent of a billionaire’s wealth is a lot of money, but no billionaire will become poor paying it.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
+  prop-41:
+    pick: N
+    quotes:
+      - text: There is an interesting case to make that new taxes should fit within the spending limit, but retroactively creating that system to target one tax on about 200 billionaires is not the right way to get there.
+        source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
+  prop-42:
+    pick: N
   prop-43:
     pick: N
     quotes:
@@ -88,8 +109,6 @@ picks:
   sonoma-county-measure-h:
     pick: Y
     quotes:
-      - text: Unlike other ballot measures, this is not a new tax; it’s an extension of a countywide sales tax we already pay.
-        source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
       - text: The Sonoma County’s regional parks sales tax delivers a lot for a little.
         source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
   cloverdale-council:
@@ -109,8 +128,6 @@ picks:
       - Mathew Lopez
     quotes:
       - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
-        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
-      - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
     pick:
@@ -134,8 +151,6 @@ picks:
     pick:
       - Linda (Khoury) Tams
     quotes:
-      - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
-        source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
       - text: While DeSimone could be an asset to the council, Khoury Tams’ experiences both on the Rohnert Park Chamber of Commerce, Rohnert Park City Advisory Committee and Rancho Cotate Booster Club shows she has an understanding of how the city works — and how it doesn’t.
         source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-council-5:
@@ -190,6 +205,4 @@ picks:
       - text: Right now, because residents cannot look at city operations and say they’re lean and mean, the Press Democrat recommends a No vote on Measure P.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
       - text: The city’s leadership needs to do the work first, tightening the proverbial belt until there are no more belt holes left.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
-      - text: Leaders also need to be more straightforward about their plans for the money.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/

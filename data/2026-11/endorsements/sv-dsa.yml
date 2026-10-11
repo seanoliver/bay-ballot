@@ -16,11 +16,29 @@ held:
     evidence: The guide's "Measure O - East Palo Alto" write-up describes a 1.5% tax on landlords' rental revenue, which was the city's 2016 Measure O. The 2026 Measure O is a general obligation bond, so the Yes may not be meant for it (decision 2026-10-09).
 rejectedQuotes:
   - text: The tax restructuring would also lower taxes for smaller businesses.
-    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
+    reason: 'does not stand alone: "The tax restructuring" refers back (review 2026-10-10)'
     contestId: newark-measure-dd
-  - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
-    reason: "does not stand alone: 'also' refers to an earlier passage (review 2026-10-08)"
-    contestId: union-city-measure-ii
+  - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
+    reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
+    contestId: union-city-council-4
+  - text: Considering the large unhoused/underhoused population that rely on these rooms, such a tax would hit these already struggling residents the hardest.
+    reason: 'does not stand alone: "these rooms" and "such a tax" refer back to the previous sentences (review 2026-10-10)'
+    contestId: gilroy-measure-b
+  - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
+    reason: 'does not stand alone: a bare "this" refers back instead of naming the measure (review 2026-10-10)'
+    contestId: prop-37
+  - text: Without this funding, thousands of jobs will be lost, millions of Californians could lose coverage altogether, and care facilities across the state could be forced to close.
+    reason: 'does not stand alone: "this funding" refers back to the federal money in the previous passage, not the measure (review 2026-10-10)'
+    contestId: prop-40
+  - text: Rebecca Eisenberg’s conduct during this years-long escapade about a report detailing her behavior towards Valley Water employees makes her unfit to continue to be an elected official.
+    reason: 'does not stand alone: "this years-long escapade" refers back to the previous passage (review 2026-10-10)'
+    contestId: valley-water-7
+  - text: The funds are necessary, given the current housing and affordability crises throughout the state.
+    reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-10)'
+    contestId: prop-1
+  - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
+    reason: about a candidate the guide did not pick (review 2026-10-10)
+    contestId: menlo-park-city-sd-trustee
 picks:
   secretary-of-state:
     pick:
@@ -87,9 +105,6 @@ picks:
   valley-water-7:
     pick:
       - Pete Dailey
-    quotes:
-      - text: Rebecca Eisenberg’s conduct during this years-long escapade about a report detailing her behavior towards Valley Water employees makes her unfit to continue to be an elected official.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   campbell-council-3:
     pick:
       - Joseph "Joe" Brenner
@@ -165,9 +180,6 @@ picks:
   union-city-council-4:
     pick:
       - Sarabjit Kaur Cheema
-    quotes:
-      - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   fhda-trustee-area-4:
     pick:
       - William "Bill" Wilson
@@ -271,9 +283,6 @@ picks:
       - Jed Scolnick
       - Maya Herstein
       - Andrew Barnes
-    quotes:
-      - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   mvwsd-trustee:
     pick:
       - Devon Conley
@@ -305,9 +314,6 @@ picks:
       - Rommy Kushner
   prop-1:
     pick: Y
-    quotes:
-      - text: The funds are necessary, given the current housing and affordability crises throughout the state.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-2:
     pick: Y
     quotes:
@@ -320,8 +326,6 @@ picks:
   prop-37:
     pick: N
     quotes:
-      - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: New home buyers are locked into a program with imperfect information.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-38:
@@ -342,8 +346,6 @@ picks:
     pick: Y
     quotes:
       - text: We need to fund healthcare, not continue to allow the ultra-rich to buy ever more mansions and yachts, and invest in job-killing AI.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-      - text: Without this funding, thousands of jobs will be lost, millions of Californians could lose coverage altogether, and care facilities across the state could be forced to close.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote Yes on Prop 40.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
@@ -371,9 +373,6 @@ picks:
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   gilroy-measure-b:
     pick: N
-    quotes:
-      - text: Considering the large unhoused/underhoused population that rely on these rooms, such a tax would hit these already struggling residents the hardest.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   los-altos-measure-d:
     pick: N
   redwood-city-measure-e:
@@ -409,6 +408,9 @@ picks:
     pick: Y
   union-city-measure-ii:
     pick: Y
+    quotes:
+      - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   rtm:
     pick: Y
     quotes:

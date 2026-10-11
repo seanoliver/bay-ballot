@@ -6,6 +6,8 @@ extraSources:
   - https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
   - https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   - https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+  - https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+  - https://www.mercurynews.com/2026/10/09/endorsement-no-on-measure-rtm-transit-tax-bart-manufactured-crisis-vta-doesnt-have-one/
   - https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
   - https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
   - https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
@@ -21,6 +23,8 @@ extraSources:
   - https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   - https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
   - https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+  - https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
+  - https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
   - https://www.eastbaytimes.com/opinion/endorsements/
 allowForeignSources: true # Marin IJ editorials (same Bay Area News Group)
 archived:
@@ -79,19 +83,6 @@ held:
       - Aisha Wahab
     reason: old-election
     evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
-  - contestId: tamalpais-uhsd-trustee
-    pick:
-      - Leslie J. Harlander
-      - Brian A. Sutherland
-      - Valerie Wynn
-    reason: not-found
-    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Harlander, Sutherland, Wynn best for Tam Union board seats"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
-  - contestId: fairfax-council
-    pick:
-      - Larry Bragman
-      - Matt Da Cunha
-    reason: not-found
-    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Bragman, Da Cunha best for Fairfax Town Council"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
@@ -111,6 +102,12 @@ rejectedQuotes:
   - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
     reason: 'does not stand alone: "those positions" refers back (review 2026-10-10)'
     contestId: state-senate-2
+  - text: Affordability is a big concern.
+    reason: not a reason on its own (review 2026-10-10)
+    contestId: san-rafael-measure-w
+  - text: The big increase will bring in more than the city needs right now.
+    reason: 'does not stand alone: "The big increase" refers back to the previous passage (review 2026-10-10)'
+    contestId: san-rafael-measure-w
 picks:
   lt-governor:
     pick:
@@ -257,14 +254,27 @@ picks:
   san-rafael-measure-w:
     pick: N
     quotes:
-      - text: The big increase will bring in more than the city needs right now.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-      - text: Affordability is a big concern.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
     pick: N
   superintendent:
     pick:
       - Richard Barrera
+    quotes:
+      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+  fairfax-council:
+    pick:
+      - Larry Bragman
+      - Matt Da Cunha
+    quotes:
+      - text: Larry Bragman and Matt Da Cunha stand out as the two candidates the town needs at this time.
+        source: https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
+  tamalpais-uhsd-trustee:
+    pick:
+      - Leslie J. Harlander
+      - Brian A. Sutherland
+      - Valerie Wynn

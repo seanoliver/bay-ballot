@@ -7,6 +7,13 @@ extraSources:
 fetchWith: browser
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
+    reason: 'does not stand alone: opens with "And" (review 2026-10-10)'
+    contestId: prop-c
+  - text: Few first-time candidates for any office arrive this prepared.
+    reason: 'does not stand alone: names no one and leans on the next sentence (review 2026-10-10)'
+    contestId: bart-8
 picks:
   us-rep-2:
     pick:
@@ -93,8 +100,6 @@ picks:
     pick:
       - Sara Barz
     quotes:
-      - text: Few first-time candidates for any office arrive this prepared.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: Barz is a transit professional who has worked inside the San Francisco County Transportation Authority, the City of Oakland, and the Metropolitan Transportation Commission, and now works as a transit product manager.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   cccd-ward-3:
@@ -127,8 +132,6 @@ picks:
       - text: Building homes in San Francisco is a climate issue.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: If passed, it would expand the Housing Trust Fund from $52 million to $125 million a year and extend it for thirty years, dedicating more than $3 billion to building and preserving affordable housing in San Francisco.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-g:
     pick: N

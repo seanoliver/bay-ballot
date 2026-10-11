@@ -13,6 +13,12 @@ rejectedQuotes:
   - text: The second is that Measure D was poorly drafted.
     reason: 'does not stand alone: "The second is" points to a list (review 2026-10-07)'
     contestId: los-altos-measure-d
+  - text: Instead, the text of Measure D was written in such a way that it impacts our Housing Element and therefore the mighty State of California.
+    reason: 'does not stand alone: opens with "Instead" (review 2026-10-10)'
+    contestId: los-altos-measure-d
+  - text: Instead, if Measure D passes, staff and elected officials will have less time to spend listening to what Los Altos residents want because they will have to spend more time listening to what lawyers, real estate developers and bureaucrats in state government want.
+    reason: 'does not stand alone: opens with "Instead" (review 2026-10-10)'
+    contestId: los-altos-measure-d
 picks:
   los-altos-council-2:
     pick:
@@ -40,9 +46,7 @@ picks:
   los-altos-measure-d:
     pick: N
     quotes:
-      - text: Instead, the text of Measure D was written in such a way that it impacts our Housing Element and therefore the mighty State of California.
-        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
-      - text: Instead, if Measure D passes, staff and elected officials will have less time to spend listening to what Los Altos residents want because they will have to spend more time listening to what lawyers, real estate developers and bureaucrats in state government want.
+      - text: 'While the specific impacts of Measure D remain cloudy – lawsuits, Builder’s Remedy, Housing Element recertifications, zoning changes – one thing is certain: Mitigating those impacts will be done by elected officials and city staff at the expense of doing something else for the city.'
         source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
   mountain-view-measure-e:
     pick: Y
