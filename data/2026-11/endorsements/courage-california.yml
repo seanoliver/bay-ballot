@@ -33,7 +33,8 @@ rejectedQuotes:
   - text: Barrera has been a member of the San Diego Unified School District Board of Education since 2008, and serves as its president.
     reason: "not substantive: résumé only (audit 2026-10-06)"
   - text: Federal funding has become increasingly unreliable during the current administration.
-    reason: "does not stand alone: no reference to Prop 2 (audit 2026-10-06)"
+    reason: background, not a reason on its own (review 2026-10-11)
+    contestId: prop-2
   - text: California is already facing budget deficits, in part because of the deep cuts that Republicans enacted for health care and other critical services in H.R. 1 to subsidize massive tax breaks for the wealthy and corporations.
     reason: "does not stand alone: background, not the reason (audit 2026-10-06)"
 picks:
@@ -232,7 +233,7 @@ picks:
   prop-5:
     pick: Y
     quotes:
-      - text: VOTING YES will limit the ways in which this tool can be weaponized and better protect the foundation of fair elections and representation that is essential to our democratic system.
+      - text: Recall elections are sometimes abused as a tool for political gamesmanship, allowing for the strategic removal of someone who has won a fair election, often by the people and interests who opposed the candidate in the original election. VOTING YES will limit the ways in which this tool can be weaponized and better protect the foundation of fair elections and representation that is essential to our democratic system.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N

@@ -14,6 +14,9 @@ rejectedQuotes:
   - text: Moreover for BART, the contingency plan would be to close 15 stations and cut services by as much as 70%.
     reason: "does not stand alone: opens with a connector (review 2026-10-07)"
     contestId: rtm
+  - text: Incumbent board member Mike Hutchinson has often been in the minority vote of the board’s 4-3 majority.
+    reason: background, not a reason (review 2026-10-11)
+    contestId: oakland-usd-4
 picks:
   oakland-usd-2:
     pick:
@@ -31,9 +34,6 @@ picks:
       - Mike Hutchinson
       - Kathryn Camp
     ranked: true
-    quotes:
-      - text: Incumbent board member Mike Hutchinson has often been in the minority vote of the board’s 4-3 majority.
-        source: https://www.empoweroakland.com/voter-guide
   oakland-usd-6:
     pick:
       - Alexandra Williams
@@ -91,7 +91,7 @@ picks:
     quotes:
       - text: Before Robert Raburn ever held office, he spent a decade chairing Alameda County’s Measure B Citizens Watchdog Committee (the body that makes sure voter-approved transportation dollars actually go where voters were told they’d go).
         source: https://www.empoweroakland.com/voter-guide
-      - text: Raburn’s institutional knowledge, fiscal discipline, and real relationships in these neighborhoods are assets we cannot afford to throw away this cycle.
+      - text: Now is not the moment to hand District 4’s seat (with some of the most at-risk stations in the system) to someone learning the budget from scratch. Raburn’s institutional knowledge, fiscal discipline, and real relationships in these neighborhoods are assets we cannot afford to throw away this cycle.
         source: https://www.empoweroakland.com/voter-guide
   ac-transit-ward-3:
     pick:
