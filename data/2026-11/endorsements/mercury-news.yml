@@ -125,6 +125,9 @@ rejectedQuotes:
   - text: Larry Bragman and Matt Da Cunha stand out as the two candidates the town needs at this time.
     reason: 'bare verdict; gives no reason. No other sentence about the picks stands alone: the rest point back ("Toward that same end", "His election") or quote the candidate (review 2026-10-11)'
     contestId: fairfax-council
+  - text: What convinces us that Ma can actually move the needle on her agenda items is the fact that she has already been knee-deep advancing them in a senior executive capacity.
+    reason: 'does not stand alone: "her agenda items" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: lt-governor
 picks:
   lt-governor:
     pick:

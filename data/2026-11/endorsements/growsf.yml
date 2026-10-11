@@ -17,6 +17,21 @@ rejectedQuotes:
   - text: "Funding it directly is the better deal, and the price is reasonable: most homeowners pay $129 per year, and a rent-controlled tenant pays at most $65 per year."
     reason: 'does not stand alone: "it" means Muni, named only in the previous paragraph (review 2026-10-11)'
     contestId: prop-h
+  - text: Though Torres is running unopposed, he has earned the seat on the merits.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: assessor
+  - text: Overall, we think building up the rainy day fund is the right choice.
+    reason: bare verdict; gives no reason (review 2026-10-11)
+    contestId: prop-2
+  - text: For this, the Legislative Analyst's Office estimates it will cost in the tens of millions to low hundreds of millions of dollars per year, all to chase a non-existent problem, all while making your own ballot easier to reject.
+    reason: 'does not stand alone: "For this" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: prop-39
+  - text: "And after all these errors, remember what Prop B actually provides toward building a bank: nothing."
+    reason: 'does not stand alone: opens with "And" and "these errors" refers back (review 2026-10-11)'
+    contestId: prop-b
+  - text: The lower tax is what makes every kind of home cheaper to build, which puts downward pressure on rents across the city.
+    reason: 'does not stand alone: "The lower tax" refers back to the tax cut described earlier (review 2026-10-11)'
+    contestId: prop-c
 picks:
   us-rep-11:
     pick:

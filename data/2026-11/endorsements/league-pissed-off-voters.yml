@@ -18,6 +18,21 @@ rejectedQuotes:
   - text: Mayor Lurie already has a track record of demanding shady sweetheart contracts for his political allies (see OpenGov contract).
     reason: 'does not stand alone: leans on "This is a problem." and the contract threshold before it, and does not name the measure (review 2026-10-11)'
     contestId: prop-e
+  - text: Now she’s the incumbent, and doing a great job.
+    reason: bare verdict that leans on the previous sentence; gives no reason (review 2026-10-11)
+    contestId: board-of-equalization-2
+  - text: So, Prop 3 is basically just asking if we can stick with this modestly higher tax rate for the top 2% to fund, well, everything.
+    reason: 'does not stand alone: opens with "So" (review 2026-10-11)'
+    contestId: prop-3
+  - text: If Prop A passes, this voter-mandated oversight committee would be removed from the protection of the city charter and could be dissolved by a simple majority vote of the Board of Supervisors.
+    reason: 'does not stand alone: "this voter-mandated oversight committee" refers back to the previous paragraph (review 2026-10-11)'
+    contestId: prop-a
+  - text: Lucrative city contracts will be awarded without citizen oversight.
+    reason: 'does not stand alone: depends on the condition in the previous sentence ("If Prop A passes"), which itself points back ("this voter-mandated oversight committee") (review 2026-10-11)'
+    contestId: prop-a
+  - text: And even if you like this mayor, no mayor should have this much power.
+    reason: 'does not stand alone: opens with "And" and "this much power" refers back (review 2026-10-11)'
+    contestId: prop-f
 picks:
   us-rep-11:
     pick:
@@ -178,8 +193,6 @@ picks:
     pick: N
     quotes:
       - text: Prop A specifically targets the Our City, Our Home Oversight Committee. This committee was created in 2019 by an overwhelming majority of San Francisco voters to provide citizen oversight over the new Our City, Our Home homeless services fund.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: Lucrative city contracts will be awarded without citizen oversight.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-b:
     pick: Y
