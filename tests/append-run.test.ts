@@ -67,7 +67,8 @@ describe.skipIf(!hasBash)("append-run.sh", () => {
     expect(r.code).toBe(0);
     expect(t.runs()).toEqual([{ date: "2026-10-10", scope: "cloud" }]);
     const origin = (...a: string[]) => t.git(t.root, "--git-dir", t.p("origin.git"), ...a);
-    expect(origin("ls-tree", "--name-only", "runs").split("\n")).toEqual(["README.md", "runs.ndjson"]);
+    expect(origin("ls-tree", "--name-only", "runs").split("\n")).toEqual(["README.md", "runs.ndjson", "vercel.json"]);
+    expect(JSON.parse(origin("show", "runs:vercel.json"))).toEqual({ $schema: "https://openapi.vercel.sh/vercel.json", git: { deploymentEnabled: false } });
     expect(origin("rev-list", "--count", "runs")).toBe("1");
     expect(origin("log", "-1", "--format=%an <%ae>", "runs")).toBe("Run Bot <bot@example.com>");
     expect(t.callerState()).toEqual(before);
@@ -103,6 +104,37 @@ exec "${REAL_GIT}" "$@"
     expect(fs.existsSync(t.p("raced"))).toBe(true);
     expect(r.out).toContain("retrying");
     expect(t.runs()).toEqual([{ n: 1 }, { n: "other" }, { n: 2 }]);
+  });
+
+  it("adds vercel.json to a runs branch that lacks it, in the same commit as the next line", () => {
+    const t = setup();
+    t.run({ n: 1 });
+    t.git(t.root, "clone", "-q", "--branch", "runs", t.p("origin.git"), "old");
+    t.git(t.p("old"), "rm", "-q", "vercel.json");
+    t.git(t.p("old"), "commit", "-q", "-m", "an older runs branch");
+    t.git(t.p("old"), "push", "-q", "origin", "HEAD:refs/heads/runs");
+    t.run({ n: 2 });
+    const origin = (...a: string[]) => t.git(t.root, "--git-dir", t.p("origin.git"), ...a);
+    expect(origin("diff-tree", "--no-commit-id", "--name-only", "-r", "runs").split("\n")).toEqual(["runs.ndjson", "vercel.json"]);
+    expect(t.runs()).toEqual([{ n: 1 }, { n: 2 }]);
+  });
+
+  it("matches only refs/heads/runs, not a branch like foo/runs", () => {
+    const t = setup();
+    t.git(t.p("caller"), "push", "-q", "origin", "HEAD:refs/heads/foo/runs");
+    const r = t.run({ n: 1 });
+    expect(r.code).toBe(0);
+    expect(t.runs()).toEqual([{ n: 1 }]);
+    expect(t.git(t.root, "--git-dir", t.p("origin.git"), "rev-list", "--count", "runs")).toBe("1");
+  });
+
+  it("ignores the user's hooks", () => {
+    const t = setup();
+    fs.mkdirSync(t.p("hooks"));
+    fs.writeFileSync(t.p("hooks", "pre-commit"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });
+    fs.appendFileSync(t.p("gitconfig"), `[core]\n\thooksPath = ${t.p("hooks")}\n`);
+    expect(t.run({ n: 1 }).code).toBe(0);
+    expect(t.runs()).toEqual([{ n: 1 }]);
   });
 
   it("warns and exits 0 when the remote can't be reached or the record is bad", () => {

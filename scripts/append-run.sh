@@ -18,20 +18,20 @@ unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_COMMON_DIR
 tmp="$(mktemp -d)" || warn "mktemp failed"
 trap 'rm -rf "$tmp"' EXIT
 repo="$tmp/repo"
-g() { git -C "$repo" -c user.name="$name" -c user.email="$email" -c commit.gpgsign=false "$@"; }
+# No hooks: a global hooksPath must not block or change the history commit.
+g() { git -C "$repo" -c user.name="$name" -c user.email="$email" -c commit.gpgsign=false -c core.hooksPath=/dev/null "$@"; }
 
 for attempt in $(seq "$ATTEMPTS"); do
   rm -rf "$repo"
   git init -q "$repo" || warn "git init failed"
-  git ls-remote --exit-code --heads "$remote" "$BRANCH" >/dev/null 2>&1
-  case $? in
-    0)
-      g fetch -q --depth 1 "$remote" "refs/heads/$BRANCH" || warn "could not fetch the $BRANCH branch"
-      g checkout -q -b "$BRANCH" FETCH_HEAD || warn "could not check out the $BRANCH branch"
-      ;;
-    2)
-      g checkout -q --orphan "$BRANCH"
-      cat > "$repo/README.md" <<'EOF'
+  heads="$(git ls-remote --heads "$remote" 2>/dev/null)" || warn "could not reach the remote"
+  # A pattern would also match refs/heads/foo/runs; compare the full ref name.
+  if printf '%s\n' "$heads" | awk -v ref="refs/heads/$BRANCH" '$2 == ref { found = 1 } END { exit !found }'; then
+    g fetch -q --depth 1 "$remote" "refs/heads/$BRANCH" || warn "could not fetch the $BRANCH branch"
+    g checkout -q -b "$BRANCH" FETCH_HEAD || warn "could not check out the $BRANCH branch"
+  else
+    g checkout -q --orphan "$BRANCH"
+    cat > "$repo/README.md" <<'EOF'
 # Refresh run history
 
 One JSON line per data refresh run in `runs.ndjson`, appended by `scripts/append-run.sh` on `main`
@@ -43,12 +43,21 @@ No page text or quotes. The record's shape is `RunRecord` in `src/pipeline/repor
 
 Read it with `git show origin/runs:runs.ndjson`. This branch never merges into `main`.
 EOF
-      : > "$repo/runs.ndjson"
-      ;;
-    *) warn "could not reach the remote" ;;
-  esac
+    : > "$repo/runs.ndjson"
+  fi
+  # Vercel reads vercel.json from the pushed commit; without it every history push is a preview deploy.
+  if [ ! -f "$repo/vercel.json" ]; then
+    cat > "$repo/vercel.json" <<'EOF'
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": false
+  }
+}
+EOF
+  fi
   printf '%s\n' "$line" >> "$repo/runs.ndjson"
-  g add README.md runs.ndjson || warn "git add failed"
+  g add README.md runs.ndjson vercel.json || warn "git add failed"
   g commit -q -m "run: $(date -u +%FT%TZ)" || warn "commit failed"
   if g push -q "$remote" "HEAD:refs/heads/$BRANCH" 2>"$tmp/push-error"; then
     echo "Recorded the run on the $BRANCH branch."
