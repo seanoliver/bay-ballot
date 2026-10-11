@@ -309,29 +309,34 @@ const RATES = {
   verify: { in: 4, out: 20, cacheWrite: 5, cacheRead: 0.2 },
 };
 
-function usageCost(u: Usage | undefined, r: (typeof RATES)["extract"]): number {
-  if (!u || onSubscription(u)) return 0;
-  return (
-    (u.input_tokens * r.in + u.output_tokens * r.out + (u.cache_creation_input_tokens ?? 0) * r.cacheWrite + (u.cache_read_input_tokens ?? 0) * r.cacheRead) /
-    1e6
+type Rates = (typeof RATES)["extract"];
+
+const tokenCost = (u: Usage, r: Rates) =>
+  (u.input_tokens * r.in + u.output_tokens * r.out + (u.cache_creation_input_tokens ?? 0) * r.cacheWrite + (u.cache_read_input_tokens ?? 0) * r.cacheRead) / 1e6;
+
+export function modelUsages(results: GuideResult[]): { usage: Usage; rates: Rates }[] {
+  return results.flatMap((r) =>
+    r.status === "changed"
+      ? [{ usage: r.usage.extract, rates: RATES.extract }, ...(r.usage.verify ? [{ usage: r.usage.verify, rates: RATES.verify }] : [])]
+      : r.status === "shrunk"
+        ? [{ usage: r.usage, rates: RATES.extract }]
+        : [],
   );
 }
 
 export function costOf(results: GuideResult[]): number {
-  return results.reduce(
-    (sum, r) =>
-      r.status === "changed"
-        ? sum + usageCost(r.usage.extract, RATES.extract) + usageCost(r.usage.verify, RATES.verify)
-        : r.status === "shrunk"
-          ? sum + usageCost(r.usage, RATES.extract)
-          : sum,
-    0,
-  );
+  return modelUsages(results).reduce((sum, { usage, rates }) => (onSubscription(usage) ? sum : sum + tokenCost(usage, rates)), 0);
 }
 
+export function apiEquivalentCost(results: GuideResult[]): number {
+  return roundUpToCent(modelUsages(results).reduce((sum, { usage, rates }) => sum + tokenCost(usage, rates), 0));
+}
+
+// Rounded up to the cent, so a single small call still counts; rounded first so float error can't add a cent.
+export const roundUpToCent = (dollars: number) => Math.ceil(Math.round(dollars * 1e6) / 1e4) / 100;
+
 export function subscriptionCalls(results: GuideResult[]): number {
-  const usages = results.flatMap((r) => (r.status === "changed" ? [r.usage.extract, r.usage.verify] : r.status === "shrunk" ? [r.usage] : []));
-  return usages.filter((u) => u && onSubscription(u)).length;
+  return modelUsages(results).filter(({ usage }) => onSubscription(usage)).length;
 }
 
 /** API dollars only: calls made through Claude Code are counted, not priced. */
@@ -467,8 +472,7 @@ export function resultJson(results: GuideResult[], exitCode: number, { apiFallba
     shrunk: results.flatMap((r) => (r.status === "shrunk" || r.status === "shrunk-skipped" ? [{ id: r.id, pageHash: r.pageHash }] : [])),
     review: reviewReasons(results),
     // Above zero only when calls went to the API: --via api, or the subscription's usage limit was reached.
-    // Rounded up to the cent, so a single small call still counts; rounded first so float error can't add a cent.
-    apiCost: Math.ceil(Math.round(costOf(results) * 1e6) / 1e4) / 100,
+    apiCost: roundUpToCent(costOf(results)),
     apiFallbackCalls,
   };
 }

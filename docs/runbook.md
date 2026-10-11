@@ -55,7 +55,7 @@ Nothing is ever pushed straight to `main`.
 
 **Cost:** model calls run on Sean's Claude subscription, so a normal run costs no API money; the PR summary counts the calls ("$0.00 API, plus 12 calls on the Claude subscription"). A day with no relevant change makes no model calls. Past the subscription's usage limit, the rest of the run uses the API at about $0.16 per re-extracted guide ($0.80 for the longest, growsf and spur), and the run opens a "Refresh used the API" issue.
 
-**Setup it relies on:** the repository secrets `CLAUDE_CODE_OAUTH_TOKEN` (model calls on Sean's subscription; see "Model calls") and `BAYBALLOT_ANTHROPIC_API_KEY` (used only past the subscription's usage limit), and Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests". The workflow file must be on `main` for the schedule to fire.
+**Setup it relies on:** the repository secrets `CLAUDE_CODE_OAUTH_TOKEN` (model calls on Sean's subscription; see "Model calls") and `BAYBALLOT_ANTHROPIC_API_KEY` (used only past the subscription's usage limit), optionally `BAYBALLOT_NTFY_TOPIC` (phone pushes; see "Run reports and alerts"), and Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests". The workflow file must be on `main` for the schedule to fire.
 
 ### When a guide fails to fetch on the runner
 
@@ -127,6 +127,25 @@ A launchd job runs the local refresh every day at 07:00 local time. It refreshes
   - Picks match the API path. Quotes vary more between runs, and on some guides it keeps about a quarter fewer per pick (spur: 35 to 46 against 55); see the investigation.
   - The cost line counts these calls instead of pricing them: "Estimated model cost $0.40 API, plus 6 calls on the Claude subscription".
   - Background: `docs/investigations/2026-10-10-claude-code-provider.md`.
+
+### Run reports and alerts
+
+After every refresh, the GitHub job and the local job send a phone push through [ntfy](https://ntfy.sh) and add one line to the run history. Neither can fail a run.
+
+- **Set up:**
+  1. Make a topic name that can't be guessed: `openssl rand -hex 16`, for example `bayballot-3f9c...`.
+  2. Store it for the GitHub job: `gh secret set BAYBALLOT_NTFY_TOPIC`.
+  3. For the local job, export `BAYBALLOT_NTFY_TOPIC` in the shell, then run `npm run local-refresh:install`, which records it in the launchd job. A reinstall from a shell without it keeps the job's topic (and `BAYBALLOT_NTFY_SERVER`) and says so. The installer passes the topic to `plutil`, so it is briefly visible in the process list during install.
+  4. Install the ntfy app on the phone and subscribe to the topic on ntfy.sh.
+- **Anyone who knows the topic name can read the pushes and post to it.** ntfy.sh topics are public; the name is the only password. Keep it out of the repository and logs, and pick a new one if it leaks. `BAYBALLOT_NTFY_SERVER` points at another ntfy server.
+- **The push:** one line, such as `126 checked · 4 changed · 2 held · 5 failed · 7 calls · 412k tokens (~$1.90 at API rates) · $0.00 API`, with any alerts below it. It links to the refresh PR, or else the run. Pushes from the Mac start with "Local".
+  - **Priority 2 (low, no sound): clean.** Fetch failures (a 403 and the like) count here only: several guides fail every day by design.
+  - **Priority 3: needs review.** Held picks, a shrunk guide, an unclear-match change, a removed pick, a refresh branch that conflicts with main, or (local) a refresh branch that changes files outside `data/`.
+  - **Priority 5 (urgent): alert.** The run used the API; guides failed in Claude Code (when every one says "not logged in", the subscription token likely expired, see "Model calls"); the job failed after the refresh (a push, PR or issue step: "Refresh failed after the run"); or the refresh crashed, failed in setup or was stopped before writing `result.json`. When `bb` itself can't run (a failed `npm ci`), a plain crash push is sent with `curl`.
+  - "~$1.90 at API rates" prices every call, subscription calls included. It is not money spent; "$0.00 API" is.
+- **History:** each run appends a JSON line to `runs.ndjson` on the `runs` branch, which holds nothing else and never merges into `main`. Read it with `git fetch origin runs && git show origin/runs:runs.ndjson`. A line has the Pacific date, finish time, scope (`cloud` or `local`), exit code, duration, counts, calls, tokens, API cost and its API-rate equivalent, failed guides with errors cut to 200 characters, alerts, and the run URL and PR when there are any. It holds no page text or quotes. `scripts/append-run.sh` writes it from a temporary clone and retries if the other job pushed first. The branch also holds a `vercel.json` that turns off Vercel deploys for it, history commits say `[skip ci]`, and `ci.yml` ignores pushes to it. Runs that stop on a refresh branch conflicting with main (cloud), local runs that fail before the check that the branch changes only `data/`, and runs where `bb` itself can't run (a failed `npm ci`) write no history line.
+- **Without a topic:** no push is sent and the run says so in one line. History is still recorded. Dry runs send nothing and record nothing.
+- `result.json` carries the same numbers (`counts`, `calls`, `tokens`, `apiEquivalentCost`, `modelFailures`, `digest`, `alerts`, `durationSec`) next to its older fields. `npm run bb -- notify` sends the push by hand.
 
 ## Manual guides
 

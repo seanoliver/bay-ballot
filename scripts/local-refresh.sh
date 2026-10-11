@@ -68,13 +68,57 @@ if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 work="$(mktemp -d)"
 watchdog=""
+pr=""
+# Set only once the worktree holds main's code: before that, bb would run the refresh branch's code.
+reporting=false
+stopped_by=""
+# Set before the steps that can fail on a branch needing review, so the push says review, not crash.
+review_title=""
+failed_reason=""
+
+# The URL goes to curl on stdin, so the topic never shows in the process list.
+phone() {
+  [ -n "${BAYBALLOT_NTFY_TOPIC:-}" ] || return 0
+  print -r -- "url = \"${BAYBALLOT_NTFY_SERVER:-https://ntfy.sh}/$BAYBALLOT_NTFY_TOPIC\"" |
+    curl -fsS -m 10 -o /dev/null -K - -H "Title: $1" -H "Priority: $2" -H "Tags: $3" --data-binary "$4" ||
+    log "warning: could not send the phone notification"
+}
+
+report_run() {
+  local -a extra
+  local remote name email
+  [ -f "$work/result.json" ] && [ -z "$stopped_by" ] || extra+=(--crashed)
+  [ -n "$pr" ] && extra+=(--pr "$pr" --click "https://github.com/$REPO/pull/$pr")
+  [ -n "$failed_reason" ] && extra+=(--failed "$failed_reason")
+  local notified=false
+  if [ -d "$WORKTREE/node_modules" ]; then
+    ( cd "$WORKTREE" && npm run -s bb -- notify --scope local --result "$work/result.json" --record "$work/run-record.json" --exit-code "$1" "${extra[@]}" ) &&
+      notified=true
+  fi
+  if ! $notified; then
+    log "warning: bb notify could not run; sending a plain crash push"
+    phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed${failed_reason:+: $failed_reason} (exit code $1), and bb notify could not run."
+  fi
+  remote="$(git -C "$SOURCE_REPO" remote get-url origin 2>/dev/null)"
+  name="$(git -C "$SOURCE_REPO" config user.name 2>/dev/null || print -r -- "Bay Ballot local refresh")"
+  email="$(git -C "$SOURCE_REPO" config user.email 2>/dev/null || print -r -- "local-refresh@bay-ballot.invalid")"
+  bash "$WORKTREE/scripts/append-run.sh" "$work/run-record.json" "$remote" "$name" "$email"
+}
+
 cleanup() {
   [ -n "$watchdog" ] && kill "$watchdog" 2>/dev/null
+  $reporting && report_run "$1"
   rm -rf "$work"
   [ "$(cat "$LOCK/pid" 2>/dev/null)" = "$$" ] && rm -rf "$LOCK"
 }
-trap cleanup EXIT
-stopped() { log "stopped by $1"; notify "Bay Ballot: local refresh stopped (watchdog or signal)"; exit "$2"; }
+trap 'cleanup $?' EXIT
+stopped() {
+  log "stopped by $1"
+  notify "Bay Ballot: local refresh stopped (watchdog or signal)"
+  stopped_by="$1"
+  $reporting || $dry_run || phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh was stopped by $1."
+  exit "$2"
+}
 trap 'stopped SIGTERM 143' TERM
 trap 'stopped SIGINT 130' INT
 
@@ -87,7 +131,16 @@ main_pid=$$
 ) </dev/null >>"$LOG" 2>&1 &
 watchdog=$!
 
-fail() { log "ERROR: $*"; notify "Bay Ballot: local refresh failed: $*"; exit 1; }
+fail() {
+  log "ERROR: $*"
+  notify "Bay Ballot: local refresh failed: $*"
+  failed_reason="$*"
+  if ! $reporting && ! $dry_run; then
+    if [ -n "$review_title" ]; then phone "$review_title" 3 eyes "$*"
+    else phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed: $*"; fi
+  fi
+  exit 1
+}
 gh_() { gh "$@" --repo "$REPO"; }
 
 log "local refresh starting (dry run: $dry_run, ref: $ref, models via: $MODEL_VIA)"
@@ -131,7 +184,6 @@ check_worktree() {
 check_worktree
 cd "$WORKTREE" || fail "no $WORKTREE"
 
-pr=""
 if ! $dry_run; then
   pr="$(gh_ pr list --head "$BRANCH" --base main --state open --json number,isCrossRepository \
     --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
@@ -144,8 +196,10 @@ if [ -n "$pr" ]; then
     git merge --abort 2>/dev/null
     if [ -n "$unmerged" ]; then
       reason="Refresh branch conflicts with main in: ${(f)unmerged}. Resolve by hand."
+      review_title="Local refresh needs review: refresh branch conflicts with main"
     else
       reason="Merging main into the refresh branch failed."
+      review_title="Local refresh needs review: could not merge main into the refresh branch"
     fi
     gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
     gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
@@ -162,6 +216,7 @@ outside="$(git diff --name-only --no-renames origin/main...HEAD)" || fail "could
 outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 if [ -n "$outside" ]; then
   reason="the refresh branch changes files outside data/ (${(f)outside}); not running its code"
+  review_title="Local refresh needs review: branch changes files outside data/"
   if [ -n "$pr" ]; then
     gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
     gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
@@ -169,6 +224,8 @@ if [ -n "$outside" ]; then
   fi
   fail "$reason"
 fi
+
+$dry_run || reporting=true
 
 stale_script=""
 if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then

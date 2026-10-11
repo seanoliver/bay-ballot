@@ -24,7 +24,15 @@ exit 0
 `,
   npm: `#!/bin/zsh -f
 print -r -- "npm $*" >> "$CALLS"
-if [ "$1" = "ci" ]; then mkdir -p node_modules; exit 0; fi
+if [ "$1" = "ci" ]; then [ -n "\${STUB_CI_FAIL:-}" ] && exit 1; mkdir -p node_modules; exit 0; fi
+if [ "$5" = "notify" ]; then
+  [ -n "\${STUB_NOTIFY_FAIL:-}" ] && exit 1
+  while [ $# -gt 0 ]; do
+    case "$1" in --record) print -r -- '{"scope":"local","stub":true}' > "$2"; shift ;; esac
+    shift
+  done
+  exit 0
+fi
 [ -n "\${STUB_SLEEP:-}" ] && sleep "$STUB_SLEEP"
 summary="" result=""
 while [ $# -gt 0 ]; do
@@ -32,7 +40,9 @@ while [ $# -gt 0 ]; do
   shift
 done
 print -r -- "# Data refresh (stub)" > "$summary"
-if [ "\${STUB_CHANGE:-0}" = "1" ]; then
+if [ -n "\${STUB_NO_RESULT:-}" ]; then
+  :
+elif [ "\${STUB_CHANGE:-0}" = "1" ]; then
   print -r -- "changed: $RANDOM" >> data/2026-11/endorsements/x.yml
   print -r -- '{"exitCode":0,"extracted":["x"],"deferred":[],"failed":[],"shrunk":[],"review":['"\${STUB_REVIEW:-}"']}' > "$result"
 else
@@ -47,6 +57,10 @@ exit 0
   pdftotext: "#!/bin/zsh -f\nexit 0\n",
   osascript: `#!/bin/zsh -f
 print -r -- "osascript $*" >> "$CALLS"
+exit 0
+`,
+  curl: `#!/bin/zsh -f
+print -r -- "curl $* stdin: $(cat)" >> "$CALLS"
 exit 0
 `,
 };
@@ -67,7 +81,7 @@ function setup() {
 
   // Never spread process.env here: stray BB_*, GH_TOKEN or GIT_* vars from the real shell would reach the script.
   const env: Record<string, string> = {
-    PATH: [p("bin"), which("node"), which("git"), "/usr/bin", "/bin", "/usr/sbin", "/sbin"].join(":"),
+    PATH: [p("bin"), which("node"), which("git"), which("bash"), "/usr/bin", "/bin", "/usr/sbin", "/sbin"].join(":"),
     HOME: p("home"),
     TMPDIR: os.tmpdir(),
     LANG: "en_US.UTF-8",
@@ -90,6 +104,7 @@ function setup() {
   fs.mkdirSync(p("seed", "scripts"), { recursive: true });
   fs.mkdirSync(p("seed", "data", "2026-11", "endorsements"), { recursive: true });
   fs.copyFileSync(SCRIPT, p("seed", "scripts", "local-refresh.sh"));
+  fs.copyFileSync(path.join(__dirname, "..", "scripts", "append-run.sh"), p("seed", "scripts", "append-run.sh"));
   fs.writeFileSync(p("seed", "package-lock.json"), "{}\n");
   fs.writeFileSync(p("seed", ".gitignore"), "node_modules\n.env*\n");
   fs.writeFileSync(p("seed", "data", "2026-11", "endorsements", "x.yml"), "a: 1\n");
@@ -128,9 +143,12 @@ function setup() {
   return { root, p, git, run, runDetached, runTee, env };
 }
 
+const notifyCall = (calls: string[]) => calls.find((c) => c.startsWith("npm run -s bb -- notify"));
+const runsLog = (t: ReturnType<typeof setup>) => t.git(t.root, "--git-dir", t.p("origin.git"), "show", "runs:runs.ndjson").trim().split("\n");
+
 const writes = (calls: string[]) => calls.filter((c) => /^(PUSH|gh pr (create|edit|comment|merge)|gh issue (create|edit|comment|close)|gh label)/.test(c));
 
-describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
+describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () => {
   it("commits, pushes only its branch, opens a PR, notifies, and never touches auto-merge", () => {
     const t = setup();
     const r = t.run({ STUB_CHANGE: "1" });
@@ -397,7 +415,124 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", () => {
     const r = await t.runDetached({ BB_WATCHDOG_SECS: "3", STUB_SLEEP: "60" });
     expect(r.code === 143 || r.signal === "SIGTERM").toBe(true);
     expect(r.calls.find((c) => c.startsWith("osascript"))).toContain("local refresh stopped (watchdog or signal)");
+    expect(notifyCall(r.calls)).toContain("--crashed");
   }, 30_000);
+
+  it("sends the run's push with bb notify and records the run on the runs branch", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(0);
+    const call = notifyCall(r.calls) ?? "";
+    expect(call).toContain("--scope local");
+    expect(call).toContain("--exit-code 0");
+    expect(call).toContain("--pr 77 --click https://github.com/sandbox/repo/pull/77");
+    expect(call).not.toContain("--crashed");
+    expect(r.calls.some((c) => c.startsWith("curl"))).toBe(false);
+    expect(runsLog(t)).toEqual(['{"scope":"local","stub":true}']);
+    expect(r.calls.filter((c) => c.startsWith("PUSH"))).toEqual(["PUSH refs/heads/data/refresh-local"]);
+    expect(t.git(t.root, "--git-dir", t.p("origin.git"), "log", "-1", "--format=%an", "runs").trim()).toBe("Test");
+  });
+
+  it("reports a run with nothing to commit, and appends to the history", () => {
+    const t = setup();
+    t.run();
+    const r = t.run({ STUB_CODE: "1" });
+    expect(notifyCall(r.calls)).toContain("--exit-code 1");
+    expect(notifyCall(r.calls)).not.toContain("--pr");
+    expect(runsLog(t)).toHaveLength(2);
+  });
+
+  it("calls a run with no result.json crashed", () => {
+    const t = setup();
+    const r = t.run({ STUB_CODE: "1", STUB_NO_RESULT: "1" });
+    expect(notifyCall(r.calls)).toContain("--crashed");
+  });
+
+  it("sends no push and records no history on a dry run", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" }, ["--dry-run"]);
+    expect(notifyCall(r.calls)).toBeUndefined();
+    expect(r.calls.some((c) => c.startsWith("curl"))).toBe(false);
+    expect(t.git(t.root, "--git-dir", t.p("origin.git"), "branch", "--list", "runs").trim()).toBe("");
+  });
+
+  it("sends a crash push with curl when it fails before bb can run, only if a topic is set", () => {
+    const t = setup();
+    t.git(t.p("source"), "worktree", "add", "-q", "-b", "someone-elses-branch", t.p("refresh"), "origin/main");
+    expect(t.run().calls.some((c) => c.startsWith("curl"))).toBe(false);
+    const r = t.run({ BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    const [args, stdin] = (r.calls.find((c) => c.startsWith("curl")) ?? "").split(" stdin: ");
+    expect(args).toContain("Priority: 5");
+    expect(args).not.toContain("bb-topic");
+    expect(stdin).toBe('url = "https://ntfy.sh/bb-topic"');
+    expect(notifyCall(r.calls)).toBeUndefined();
+  });
+
+  it("tells bb notify when the job failed after the refresh", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", GH_FAIL: "pr create", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    expect(notifyCall(r.calls)).toContain("--failed gh pr create failed");
+    expect(notifyCall(r.calls)).not.toContain("--crashed");
+    expect(r.calls.some((c) => c.startsWith("curl"))).toBe(false);
+  });
+
+  it("falls back to a curl crash push when npm ci fails and bb can't run", () => {
+    const t = setup();
+    const r = t.run({ STUB_CI_FAIL: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    expect(notifyCall(r.calls)).toBeUndefined();
+    const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
+    expect(curl).toContain("Priority: 5");
+    expect(curl).toContain("npm ci failed");
+  });
+
+  it("falls back to a curl crash push when bb notify exits non-zero", () => {
+    const t = setup();
+    const r = t.run({ STUB_NOTIFY_FAIL: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(0);
+    expect(notifyCall(r.calls)).toBeDefined();
+    expect(r.calls.find((c) => c.startsWith("curl"))).toContain("Priority: 5");
+  });
+
+  function conflictWithMain(t: ReturnType<typeof setup>) {
+    t.run({ STUB_CHANGE: "1" });
+    t.git(t.p("source"), "fetch", "-q", "origin");
+    t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/main");
+    fs.writeFileSync(t.p("other", "data", "2026-11", "endorsements", "x.yml"), "a: main\n");
+    t.git(t.p("other"), "commit", "-q", "-am", "main edit");
+    t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/main");
+  }
+
+  it("sends a review push when the refresh branch conflicts with main, even if labelling fails", () => {
+    for (const extra of [{}, { GH_FAIL: "--add-label" }] as Record<string, string>[]) {
+      const t = setup();
+      conflictWithMain(t);
+      const r = t.run({ GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic", ...extra });
+      expect(r.code).toBe(1);
+      const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
+      expect(curl).toContain("Title: Local refresh needs review: refresh branch conflicts with main");
+      expect(curl).toContain("Priority: 3");
+    }
+  });
+
+  it("sends a review push, not a crash, when the branch changes files outside data/", () => {
+    const t = setup();
+    t.run({ STUB_CHANGE: "1" });
+    t.git(t.p("source"), "fetch", "-q", "origin");
+    t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/data/refresh-local");
+    fs.writeFileSync(t.p("other", "README.md"), "surprise\n");
+    t.git(t.p("other"), "add", "README.md");
+    t.git(t.p("other"), "commit", "-q", "-m", "not data");
+    t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/data/refresh-local");
+    const r = t.run({ STUB_CHANGE: "1", GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
+    expect(curl).toContain("Title: Local refresh needs review: branch changes files outside data/");
+    expect(curl).toContain("Priority: 3");
+    expect(notifyCall(r.calls)).toBeUndefined();
+  });
 
   it("passes the saved shrunk state to the refresh", () => {
     const t = setup();

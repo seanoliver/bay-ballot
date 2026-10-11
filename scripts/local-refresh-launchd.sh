@@ -38,8 +38,18 @@ case "${1:-}" in
     plutil -replace StandardErrorPath -string "$LOG" "$tmp_plist"
     plutil -replace EnvironmentVariables.PATH -string "$job_path" "$tmp_plist"
     # Opt-ins set in the installing shell are recorded in the job, since launchd doesn't see that shell.
-    for var in BAYBALLOT_MODEL_VIA BAYBALLOT_CLAUDE_CONFIG_DIR CLAUDE_BIN; do
+    for var in BAYBALLOT_MODEL_VIA BAYBALLOT_CLAUDE_CONFIG_DIR CLAUDE_BIN BAYBALLOT_NTFY_TOPIC BAYBALLOT_NTFY_SERVER; do
       if [ -n "${(P)var:-}" ]; then plutil -replace "EnvironmentVariables.$var" -string "${(P)var}" "$tmp_plist"; fi
+    done
+    for var in BAYBALLOT_NTFY_TOPIC BAYBALLOT_NTFY_SERVER; do
+      [ -z "${(P)var:-}" ] || continue
+      kept="$(plutil -extract "EnvironmentVariables.$var" raw -o - "$PLIST" 2>/dev/null || true)"
+      if [ -n "$kept" ]; then
+        plutil -replace "EnvironmentVariables.$var" -string "$kept" "$tmp_plist"
+        echo "Kept $var from the installed job."
+      elif [ "$var" = BAYBALLOT_NTFY_TOPIC ]; then
+        echo "Phone notifications are off: set BAYBALLOT_NTFY_TOPIC and re-run install"
+      fi
     done
     plutil -lint "$tmp_plist" >/dev/null
     mv -f "$tmp_plist" "$PLIST"
