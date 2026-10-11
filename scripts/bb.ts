@@ -14,7 +14,8 @@ import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
-import { costText, exitCodeFor, resultJson, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { costText, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { reportJson } from "../src/pipeline/report";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
@@ -256,6 +257,7 @@ async function runExtract(): Promise<void> {
 }
 
 async function runRefreshCmd(): Promise<void> {
+  const started = Date.now();
   const gateOnly = flag("--no-extract");
   const results = await runRefresh(refreshDeps({ model: !gateOnly }), {
     root: ROOT, election: ELECTION,
@@ -272,7 +274,10 @@ async function runRefreshCmd(): Promise<void> {
   const summaryPath = option("--summary");
   if (summaryPath) fs.writeFileSync(summaryPath, md);
   const resultPath = option("--result");
-  if (resultPath) fs.writeFileSync(resultPath, JSON.stringify(resultJson(results, code, { apiFallbackCalls: apiFallbackCalls() }), null, 2));
+  if (resultPath) {
+    const durationSec = Math.round((Date.now() - started) / 1000);
+    fs.writeFileSync(resultPath, JSON.stringify(reportJson(results, code, { apiFallbackCalls: apiFallbackCalls(), durationSec }), null, 2));
+  }
   console.log(`\n${totalsLine(results)}`);
   errors.forEach((e) => console.error(`ERROR ${e}`));
   process.exitCode = code;
