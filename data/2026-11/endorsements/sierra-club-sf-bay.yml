@@ -129,18 +129,16 @@ picks:
   prop-c:
     pick: Y
     quotes:
-      - text: Building homes in San Francisco is a climate issue.
+      - text: Building homes in San Francisco is a climate issue. Housing in the region’s urban core, near Muni lines, BART stations, and walkable corridors makes car-free life possible, and means households aren't pushed into long commutes.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: If passed, it would expand the Housing Trust Fund from $52 million to $125 million a year and extend it for thirty years, dedicating more than $3 billion to building and preserving affordable housing in San Francisco.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-g:
     pick: N
     quotes:
-      - text: A dune system cannot be restored two days a week.
+      - text: A dune system cannot be restored two days a week. Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: The ballot measure is a park removal.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-h:
     pick: Y
