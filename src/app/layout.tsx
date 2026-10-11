@@ -4,7 +4,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
-import { SiteAnalytics } from "@/components/SiteAnalytics";
+import { SiteAnalytics, TestAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -50,8 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main>{children}</main>
         <SiteFooter />
-        {/* Not unconditional: off Vercel the script 404s and fails the e2e console-error checks. */}
-        {process.env.VERCEL ? <SiteAnalytics ahrefs={process.env.VERCEL_ENV === "production"} /> : null}
+        {/* Not unconditional: off Vercel the Vercel script 404s and fails the e2e console-error checks. */}
+        {process.env.VERCEL ? <SiteAnalytics ahrefs={process.env.VERCEL_ENV === "production"} /> : <TestAnalytics />}
       </body>
     </html>
   );
