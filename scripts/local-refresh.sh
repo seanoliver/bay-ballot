@@ -68,13 +68,47 @@ if [ "${BAYBALLOT_LAUNCHD:-}" != "1" ]; then exec > >(tee -a "$LOG") 2>&1; fi
 
 work="$(mktemp -d)"
 watchdog=""
+pr=""
+# True once the worktree holds main's code (plus data), so bb may run for the report.
+reporting=false
+stopped_by=""
+conflict=false
+
+# Only before bb can run. Afterwards, report_run sends the push with bb notify.
+phone() {
+  [ -n "${BAYBALLOT_NTFY_TOPIC:-}" ] || return 0
+  curl -fsS -m 10 -o /dev/null -H "Title: $1" -H "Priority: $2" -H "Tags: $3" --data-binary "$4" \
+    "${BAYBALLOT_NTFY_SERVER:-https://ntfy.sh}/$BAYBALLOT_NTFY_TOPIC" || log "warning: could not send the phone notification"
+}
+
+# The phone push and the runs branch line; neither can change the run's exit code.
+report_run() {
+  local -a extra
+  local remote name email
+  [ -f "$work/result.json" ] && [ -z "$stopped_by" ] || extra+=(--crashed)
+  [ -n "$pr" ] && extra+=(--pr "$pr" --click "https://github.com/$REPO/pull/$pr")
+  ( cd "$WORKTREE" && npm run -s bb -- notify --scope local --result "$work/result.json" --record "$work/run-record.json" --exit-code "$1" "${extra[@]}" ) ||
+    log "warning: bb notify failed"
+  remote="$(git -C "$SOURCE_REPO" remote get-url origin 2>/dev/null)"
+  name="$(git -C "$SOURCE_REPO" config user.name 2>/dev/null || print -r -- "Bay Ballot local refresh")"
+  email="$(git -C "$SOURCE_REPO" config user.email 2>/dev/null || print -r -- "local-refresh@bay-ballot.invalid")"
+  bash "$WORKTREE/scripts/append-run.sh" "$work/run-record.json" "$remote" "$name" "$email"
+}
+
 cleanup() {
   [ -n "$watchdog" ] && kill "$watchdog" 2>/dev/null
+  $reporting && report_run "$1"
   rm -rf "$work"
   [ "$(cat "$LOCK/pid" 2>/dev/null)" = "$$" ] && rm -rf "$LOCK"
 }
-trap cleanup EXIT
-stopped() { log "stopped by $1"; notify "Bay Ballot: local refresh stopped (watchdog or signal)"; exit "$2"; }
+trap 'cleanup $?' EXIT
+stopped() {
+  log "stopped by $1"
+  notify "Bay Ballot: local refresh stopped (watchdog or signal)"
+  stopped_by="$1"
+  $reporting || $dry_run || phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh was stopped by $1."
+  exit "$2"
+}
 trap 'stopped SIGTERM 143' TERM
 trap 'stopped SIGINT 130' INT
 
@@ -87,7 +121,15 @@ main_pid=$$
 ) </dev/null >>"$LOG" 2>&1 &
 watchdog=$!
 
-fail() { log "ERROR: $*"; notify "Bay Ballot: local refresh failed: $*"; exit 1; }
+fail() {
+  log "ERROR: $*"
+  notify "Bay Ballot: local refresh failed: $*"
+  if ! $reporting && ! $dry_run; then
+    if $conflict; then phone "Local Bay Ballot refresh: needs review" 3 eyes "$*"
+    else phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed: $*"; fi
+  fi
+  exit 1
+}
 gh_() { gh "$@" --repo "$REPO"; }
 
 log "local refresh starting (dry run: $dry_run, ref: $ref, models via: $MODEL_VIA)"
@@ -131,7 +173,6 @@ check_worktree() {
 check_worktree
 cd "$WORKTREE" || fail "no $WORKTREE"
 
-pr=""
 if ! $dry_run; then
   pr="$(gh_ pr list --head "$BRANCH" --base main --state open --json number,isCrossRepository \
     --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')" || fail "gh pr list failed"
@@ -150,6 +191,7 @@ if [ -n "$pr" ]; then
     gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
     gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
     gh_ pr comment "$pr" --body "$reason" >/dev/null
+    conflict=true
     fail "$reason"
   fi
   log "continuing open PR #$pr"
@@ -169,6 +211,8 @@ if [ -n "$outside" ]; then
   fi
   fail "$reason"
 fi
+
+$dry_run || reporting=true
 
 stale_script=""
 if ! cmp -s "$SELF" "$WORKTREE/scripts/local-refresh.sh"; then
