@@ -15,8 +15,6 @@ declare global {
   }
 }
 
-// Ahrefs reports location.href on every event, query and all. With its automatic page views off,
-// each page view goes out by hand with the scrubbed URL in data-page-location, which it reads per event.
 function AhrefsAnalytics() {
   const pathname = usePathname();
   const [ready, setReady] = useState(false);
