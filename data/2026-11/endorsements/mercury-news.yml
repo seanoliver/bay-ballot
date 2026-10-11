@@ -69,10 +69,45 @@ held:
     pick: N
     reason: unclear-match
     evidence: "Only a sidebar headline on Marin IJ pages (\"Endorsement: No on Proposition 40's reckless wealth tax\"). The editorial says \"Written by the Southern California News Group editorial board\", not this guide's boards (review 2026-10-09)."
+  - contestId: san-jose-council-9
+    pick:
+      - Genny Altwer
+    reason: old-election
+    evidence: Elect Genny Altwer to City Council. May 28, 2026 (primary)
+  - contestId: us-rep-14
+    pick:
+      - Aisha Wahab
+    reason: old-election
+    evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
+  - contestId: tamalpais-uhsd-trustee
+    pick:
+      - Leslie J. Harlander
+      - Brian A. Sutherland
+      - Valerie Wynn
+    reason: not-found
+    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Harlander, Sutherland, Wynn best for Tam Union board seats"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
+  - contestId: fairfax-council
+    pick:
+      - Larry Bragman
+      - Matt Da Cunha
+    reason: not-found
+    evidence: 'Only a "Related Articles" sidebar headline on other Marin IJ editorials ("Endorsement: Bragman, Da Cunha best for Fairfax Town Council"); the editorial itself is not stored, so its byline and text are unchecked (review 2026-10-10). Add its URL to extraSources to confirm.'
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
     contestId: tiburon-council
+  - text: There is only one candidate who grasps the complexity of this crisis and has the legislative experience to address it.
+    reason: 'does not stand alone: names no candidate and "this crisis" refers back (review 2026-10-10)'
+    contestId: insurance-commissioner
+  - text: Further, unlike Kim, Allen has already been working on these issues in the Legislature.
+    reason: 'does not stand alone: opens with "Further" and "these issues" refers back (review 2026-10-10)'
+    contestId: insurance-commissioner
+  - text: Huffman is up for the challenge, including the addition of those Republican-leaning counties.
+    reason: 'does not stand alone: "those Republican-leaning counties" refers back to the previous passage (review 2026-10-10)'
+    contestId: us-rep-2
+  - text: But the breadth of Elward’s governmental experience and knowledge of Marin, more than half the district’s population, and its local issues is limited compared to Lucan.
+    reason: 'does not stand alone: opens with "But" (review 2026-10-10)'
+    contestId: assembly-12
 picks:
   lt-governor:
     pick:
@@ -86,8 +121,6 @@ picks:
     pick:
       - Ben Allen
     quotes:
-      - text: Further, unlike Kim, Allen has already been working on these issues in the Legislature.
-        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
       - text: Californians cannot afford Kim’s experiment.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
@@ -98,20 +131,24 @@ picks:
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
       - text: Hawks’ black box of a résumé does not inspire confidence she can manage California’s $162 billion investment portfolio.
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
-  superintendent:
+      - text: In an interview with our editorial board, Kounalakis demonstrated a clear command of this office’s responsibilities — from bond issuances and housing tax credit programs to state employee pension governance and infrastructure finance.
+        source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
+  state-senate-2:
     pick:
-      - Richard Barrera
-  rtm:
-    pick: N
+      - Damon Connolly
+    quotes:
+      - text: In Sacramento, he worked to end the misguided and costly bike lane trial on the Richmond-San Rafael Bridge and advanced tougher safety rules for e-bikes and youths who ride them.
+        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
   us-rep-2:
     pick:
       - Jared Huffman
     quotes:
+      - text: His leadership and record of representation are well-known.
+        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+      - text: How Littau’s moderate politics would function in Congress, where partisan lines have rarely been deeper, is a huge unknown.
+        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
       - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
-  state-senate-2:
-    pick:
-      - Damon Connolly
   assembly-12:
     pick:
       - Eric Lucan
@@ -124,6 +161,8 @@ picks:
     pick:
       - Abbey Picus
     quotes:
+      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
       - text: Her experience as an educator, having three children in Novato public schools and having served four years as a trustee make Abbey Picus the clear choice for the Novato Union School District board.
         source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
   san-rafael-council-3:
@@ -149,6 +188,8 @@ picks:
     quotes:
       - text: Andre, Margulies and Friedel are solid experienced choices for the council.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+      - text: Andre, a former investment banker, has brought her business acumen to the council.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
       - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
   san-anselmo-council:
@@ -157,6 +198,8 @@ picks:
       - Will Dittmar
     quotes:
       - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+      - text: Dittmar would strengthen the council’s balance.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
       - text: In this race, Dittmar stands out as someone who provides the perspective of organizational leadership, an awareness of issues facing local businesses and a knowledge of the financial struggles facing many households.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
@@ -211,16 +254,14 @@ picks:
   san-rafael-measure-w:
     pick: N
     quotes:
-      - text: Affordability is a big concern.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: The big increase will bring in more than the city needs right now.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-  tamalpais-uhsd-trustee:
+      - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+      - text: Affordability is a big concern.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+  rtm:
+    pick: N
+  superintendent:
     pick:
-      - Leslie J. Harlander
-      - Brian A. Sutherland
-      - Valerie Wynn
-  fairfax-council:
-    pick:
-      - Larry Bragman
-      - Matt Da Cunha
+      - Richard Barrera
