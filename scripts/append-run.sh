@@ -18,7 +18,6 @@ unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_COMMON_DIR
 tmp="$(mktemp -d)" || warn "mktemp failed"
 trap 'rm -rf "$tmp"' EXIT
 repo="$tmp/repo"
-# No hooks: a global hooksPath must not block or change the history commit.
 g() { git -C "$repo" -c user.name="$name" -c user.email="$email" -c commit.gpgsign=false -c core.hooksPath=/dev/null "$@"; }
 
 for attempt in $(seq "$ATTEMPTS"); do

@@ -130,7 +130,6 @@ export function readReport(file: string): ReportJson | null {
 
 export const CRASHED = "Refresh crashed before writing a result";
 
-/** The job failed after the refresh wrote its result (a push, PR or issue step), so the result alone looks fine. */
 export const withFailure = (report: ReportJson, reason: string): ReportJson => ({
   ...report,
   alerts: [{ level: "high", text: `Refresh failed after the run: ${reason}` }, ...report.alerts],

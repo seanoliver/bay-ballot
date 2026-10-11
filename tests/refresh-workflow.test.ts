@@ -21,7 +21,6 @@ afterEach(() => {
   dirs = [];
 });
 
-/** Runs a step's script the way Actions does (bash -e -o pipefail), with npm and curl stubbed. */
 function runStep(name: string, env: Record<string, string>, { nodeModules = true, npmCode = 0 } = {}) {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "bb-workflow-")));
   dirs.push(root);

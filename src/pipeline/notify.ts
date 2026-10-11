@@ -29,7 +29,6 @@ export type NotifyOptions = {
   click?: string;
   crashed?: boolean;
   conflict?: boolean;
-  /** Why the job failed after the refresh, if it did. */
   failed?: string;
   env?: Env;
   fetch?: Fetch;
