@@ -25,10 +25,8 @@ function setup() {
   for (const cmd of ["npm", "npx", "gh", "pdftotext", "launchctl"]) fs.writeFileSync(p("bin", cmd), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
   const plist = p("home", "Library", "LaunchAgents", "com.bayballot.local-refresh.plist");
   const install = (extra: Record<string, string> = {}) => {
-    const r = spawnSync("zsh", ["-f", SCRIPT, "install"], {
-      env: { PATH: [p("bin"), which("node"), which("git"), "/usr/bin", "/bin"].join(":"), HOME: p("home"), TMPDIR: os.tmpdir(), ...extra },
-      encoding: "utf8",
-    });
+    const env: Record<string, string> = { PATH: [p("bin"), which("node"), which("git"), "/usr/bin", "/bin"].join(":"), HOME: p("home"), TMPDIR: os.tmpdir(), ...extra };
+    const r = spawnSync("zsh", ["-f", SCRIPT, "install"], { env: env as NodeJS.ProcessEnv, encoding: "utf8" });
     return { code: r.status, out: `${r.stdout}${r.stderr}` };
   };
   const topic = () => {

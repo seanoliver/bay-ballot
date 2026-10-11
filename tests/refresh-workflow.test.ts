@@ -31,15 +31,14 @@ function runStep(name: string, env: Record<string, string>, { nodeModules = true
   if (nodeModules) fs.mkdirSync(p("work", "node_modules"));
   fs.writeFileSync(p("bin", "npm"), `#!/bin/sh\necho "npm $*" >> "${p("calls")}"\nexit ${npmCode}\n`, { mode: 0o755 });
   fs.writeFileSync(p("bin", "curl"), `#!/bin/sh\necho "curl $* stdin: $(cat)" >> "${p("calls")}"\n`, { mode: 0o755 });
+  const fullEnv: Record<string, string> = {
+    PATH: `${p("bin")}:/usr/bin:/bin`,
+    GITHUB_SERVER_URL: "https://github.com", GITHUB_REPOSITORY: "o/r", GITHUB_RUN_ID: "9", RUNNER_TEMP: root,
+    BAYBALLOT_NTFY_TOPIC: "bb-topic", CODE: "", PR: "", CHANGES_STEP: "", PR_STEP: "", ISSUE_STEP: "",
+    ...env,
+  };
   const r = spawnSync("bash", ["--noprofile", "--norc", "-e", "-o", "pipefail", "-c", step(name).run], {
-    cwd: p("work"),
-    env: {
-      PATH: `${p("bin")}:/usr/bin:/bin`,
-      GITHUB_SERVER_URL: "https://github.com", GITHUB_REPOSITORY: "o/r", GITHUB_RUN_ID: "9", RUNNER_TEMP: root,
-      BAYBALLOT_NTFY_TOPIC: "bb-topic", CODE: "", PR: "", CHANGES_STEP: "", PR_STEP: "", ISSUE_STEP: "",
-      ...env,
-    },
-    encoding: "utf8",
+    cwd: p("work"), env: fullEnv as NodeJS.ProcessEnv, encoding: "utf8",
   });
   const calls = fs.existsSync(p("calls")) ? fs.readFileSync(p("calls"), "utf8").trim().split("\n") : [];
   return { code: r.status, out: `${r.stdout}${r.stderr}`, calls };
