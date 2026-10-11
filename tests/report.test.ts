@@ -5,7 +5,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { describe, expect, it } from "vitest";
 import { claudeCodeClient, type RunResult } from "@/pipeline/claudecode";
 import type { GuideResult } from "@/pipeline/refresh";
-import { formatTokens, readReport, reportJson, runRecord, type ReportJson } from "@/pipeline/report";
+import { formatTokens, readReport, reportJson, runRecord, withFailure, type ReportJson } from "@/pipeline/report";
 
 type Usage = Anthropic.Messages.Usage;
 
@@ -170,6 +170,18 @@ describe("digest", () => {
 const sample = (over: Partial<ReportJson> = {}): ReportJson => ({
   ...reportJson([{ id: "a", status: "failed", error: `HTTP 403 ${"x".repeat(300)}` }], 1, { durationSec: 61 }),
   ...over,
+});
+
+describe("withFailure", () => {
+  it("puts a failure after the refresh first among the alerts, and in the record", () => {
+    const clean = reportJson([{ id: "a", status: "unchanged" }], 0);
+    const failed = withFailure(clean, "push failed");
+    expect(failed.alerts).toEqual([{ level: "high", text: "Refresh failed after the run: push failed" }]);
+    expect(failed.digest).toBe(clean.digest);
+    const rec = runRecord(failed, { scope: "local", finishedAt: new Date("2026-10-10T13:20:00Z"), exitCode: 1 });
+    expect(rec.alerts).toEqual(failed.alerts);
+    expect(rec.exitCode).toBe(1);
+  });
 });
 
 describe("runRecord", () => {

@@ -56,6 +56,13 @@ describe("pushFor", () => {
     expect(pushFor(null, { scope: "cloud" })).toMatchObject({ title: "ALERT: Refresh crashed before writing a result", priority: 5 });
   });
 
+  it("is urgent when the job failed after a clean refresh", async () => {
+    const t = run(CLEAN, { failed: "could not update PR #77" });
+    await t.done;
+    expect(t.headers()).toMatchObject({ Title: "ALERT: Refresh failed after the run: could not update PR #77", Priority: "5", Tags: "rotating_light" });
+    expect(t.fetch.mock.calls[0][1].body).toBe(`${CLEAN.digest}\n\nhigh: Refresh failed after the run: could not update PR #77`);
+  });
+
   it("asks for review when the refresh branch conflicts with main", () => {
     const p = pushFor(null, { scope: "cloud", conflict: true });
     expect(p).toMatchObject({ title: "Bay Ballot refresh: needs review", priority: 3, tags: "eyes" });

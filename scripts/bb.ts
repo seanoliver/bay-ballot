@@ -16,7 +16,7 @@ import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
-import { readReport, reportJson, runRecord } from "../src/pipeline/report";
+import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
@@ -34,7 +34,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- discover
        npm run bb -- check
        npm run bb -- review [--no-open]
-       npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict]
+       npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict] [--failed <reason>]
                             [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
 extract and refresh fetch each guide's pages and compare them with the stored page text
@@ -75,7 +75,7 @@ const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
 const VALUE_OPTIONS = [
   "--summary", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via",
-  "--scope", "--click", "--record", "--run-url", "--pr", "--exit-code",
+  "--scope", "--click", "--record", "--run-url", "--pr", "--exit-code", "--failed",
 ];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
@@ -393,7 +393,7 @@ async function runFetchCheck(): Promise<void> {
 
 async function runNotify(): Promise<void> {
   const scope = option("--scope");
-  const bad = badFlag(args, ["--scope", "--result", "--click", "--crashed", "--conflict", "--record", "--run-url", "--pr", "--exit-code"]);
+  const bad = badFlag(args, ["--scope", "--result", "--click", "--crashed", "--conflict", "--failed", "--record", "--run-url", "--pr", "--exit-code"]);
   const exitCode = option("--exit-code");
   if (bad || (scope !== "cloud" && scope !== "local") || (exitCode !== undefined && !/^\d+$/.test(exitCode))) {
     console.error(`${bad ?? "notify needs --scope cloud or --scope local, and a numeric --exit-code"}\n\n${USAGE}`);
@@ -402,9 +402,11 @@ async function runNotify(): Promise<void> {
   }
   const resultPath = option("--result");
   const recordPath = option("--record");
+  const failed = option("--failed") || undefined;
   if (recordPath) {
     try {
-      const report = flag("--crashed") || !resultPath ? null : readReport(resultPath);
+      const read = flag("--crashed") || !resultPath ? null : readReport(resultPath);
+      const report = read && failed ? withFailure(read, failed) : read;
       const record = runRecord(report, {
         scope, finishedAt: new Date(), exitCode: exitCode === undefined ? undefined : Number(exitCode), runUrl: option("--run-url"), pr: option("--pr"),
       });
@@ -413,7 +415,7 @@ async function runNotify(): Promise<void> {
       console.warn(`warning: could not write the run record: ${errMsg(e)}`);
     }
   }
-  const sent = await notify({ resultPath, scope, click: option("--click"), crashed: flag("--crashed"), conflict: flag("--conflict") });
+  const sent = await notify({ resultPath, scope, click: option("--click"), crashed: flag("--crashed"), conflict: flag("--conflict"), failed });
   if (sent === "sent") console.log("Phone notification sent.");
 }
 

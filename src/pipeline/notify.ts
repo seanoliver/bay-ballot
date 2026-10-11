@@ -1,4 +1,4 @@
-import { CRASHED, readReport, type ReportJson } from "./report";
+import { CRASHED, readReport, withFailure, type ReportJson } from "./report";
 
 type Env = Record<string, string | undefined>;
 type Fetch = (url: string, init: RequestInit) => Promise<Response>;
@@ -29,6 +29,8 @@ export type NotifyOptions = {
   click?: string;
   crashed?: boolean;
   conflict?: boolean;
+  /** Why the job failed after the refresh, if it did. */
+  failed?: string;
   env?: Env;
   fetch?: Fetch;
   log?: (line: string) => void;
@@ -44,7 +46,8 @@ export async function notify(opts: NotifyOptions): Promise<"sent" | "off" | "fai
     return "off";
   }
   const server = (env.BAYBALLOT_NTFY_SERVER?.trim() || "https://ntfy.sh").replace(/\/+$/, "");
-  const report = opts.crashed || opts.conflict || !opts.resultPath ? null : readReport(opts.resultPath);
+  const read = opts.crashed || opts.conflict || !opts.resultPath ? null : readReport(opts.resultPath);
+  const report = read && opts.failed ? withFailure(read, opts.failed) : read;
   const push = pushFor(report, { scope: opts.scope, conflict: opts.conflict });
   try {
     const res = await (opts.fetch ?? fetch)(`${server}/${topic}`, {
