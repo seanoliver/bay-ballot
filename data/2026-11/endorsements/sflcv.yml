@@ -51,6 +51,13 @@ archived:
     snapshot: https://web.archive.org/web/20261005231603/https://www.sflcv.org/blog/2026/9/29/november-2026-no-recommendation-on-prop-i
 fetchedAt: 2026-10-05
 hasReasoning: true
+rejectedQuotes:
+  - text: Moving many of those requirements to the Municipal Code would allow the Board of Supervisors to more readily adjust requirements in light of experience and current needs and priorities.
+    reason: 'does not stand alone: "those requirements" refers back, and the sentence before it opens with "In addition" (review 2026-10-11)'
+    contestId: prop-a
+  - text: Eliminating the park would thus deprive thousands of San Franciscans of recreation space while making little improvement to traffic patterns.
+    reason: 'does not stand alone: "thus" leans on the previous sentence, which opens with "However" (review 2026-10-11)'
+    contestId: prop-g
 picks:
   supervisor-2:
     pick:
@@ -96,7 +103,7 @@ picks:
     quotes:
       - text: The accumulation of requirements in the City Charter regarding numerous boards and commissions has reduced the efficiency of City government and made it less responsive to current needs.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-a-charter-changes-affecting-departments-and-commissions
-      - text: Moving many of those requirements to the Municipal Code would allow the Board of Supervisors to more readily adjust requirements in light of experience and current needs and priorities.
+      - text: Many requirements in the City Charter no longer make sense or impose undue burdens on City departments.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-a-charter-changes-affecting-departments-and-commissions
   prop-b:
     pick: Y
@@ -107,7 +114,7 @@ picks:
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment
       - text: Prop C would provide significant and predictable additional funding for affordable housing while taking into account other important City priorities and the possibility of future budgetary crises.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment
-      - text: Prop C is thus fiscally responsible in how it addresses the City’s affordable housing crisis.
+      - text: The increase in funding is tied to increases in revenue from the City’s property tax or from increases in discretionary general fund expenditures. Prop C is thus fiscally responsible in how it addresses the City’s affordable housing crisis.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-yes-on-proposition-c-the-housing-trust-fund-charter-amendment
   prop-d:
     pick: Y
@@ -128,7 +135,7 @@ picks:
     quotes:
       - text: Dismantling Sunset Dunes Park in favor of automobile traffic during weekdays would be a costly backtrack on what has been a successful project providing needed recreation areas for San Franciscans year-round.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-no-on-prop-g-to-protect-sunset-dunes-park-recreation-space-and-san-franciscos-budget
-      - text: Eliminating the park would thus deprive thousands of San Franciscans of recreation space while making little improvement to traffic patterns.
+      - text: Over half of the park’s visits occur during weekdays, with visitors more likely to arrive by walking, biking, or transit than by driving.
         source: https://www.sflcv.org/blog/2026/9/29/november-2026-vote-no-on-prop-g-to-protect-sunset-dunes-park-recreation-space-and-san-franciscos-budget
   prop-h:
     pick: Y

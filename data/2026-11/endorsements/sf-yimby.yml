@@ -7,6 +7,10 @@ archived:
     snapshot: https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/
 fetchedAt: 2026-10-05
 hasReasoning: true
+rejectedQuotes:
+  - text: Enacting this reform requires voters to pass Proposition F, which cleans up the City Charter so Mayor Lurie and future mayors can streamline and reorganize city departments.
+    reason: 'does not stand alone: "this reform" refers back to the previous sentences (review 2026-10-11)'
+    contestId: prop-f
 picks:
   attorney-general:
     pick:
@@ -93,9 +97,7 @@ picks:
   prop-d:
     pick: Y
     quotes:
-      - text: San Francisco's rock-bottom signature threshold is exactly how a small, well-funded opposition group can lock in an anti-housing rule that the elected Board can never fix without another citywide vote.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
-      - text: Raising the bar to put something on the ballot, and making it require an actual Board majority to route around normal legislating, cuts down on that vector for freezing bad housing and zoning policy into the Charter.
+      - text: San Francisco's rock-bottom signature threshold is exactly how a small, well-funded opposition group can lock in an anti-housing rule that the elected Board can never fix without another citywide vote. Raising the bar to put something on the ballot, and making it require an actual Board majority to route around normal legislating, cuts down on that vector for freezing bad housing and zoning policy into the Charter.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-e:
     pick: Y
@@ -107,7 +109,7 @@ picks:
   prop-f:
     pick: Y
     quotes:
-      - text: Enacting this reform requires voters to pass Proposition F, which cleans up the City Charter so Mayor Lurie and future mayors can streamline and reorganize city departments.
+      - text: The city's mazelike permitting process for housing persists as a perennial contributor to our housing shortage.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-g:
     pick: N
@@ -119,9 +121,7 @@ picks:
     quotes:
       - text: Prop H is a 15-year parcel tax to close Muni's post-pandemic operating deficit, which the SFMTA puts at $300M+ a year once pandemic era one-time relief funding runs out.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
-      - text: Transit and housing supply are the same fight.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
-      - text: Every unit of housing in this city only works if people can actually get around.
+      - text: Transit and housing supply are the same fight. Every unit of housing in this city only works if people can actually get around.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   prop-i:
     pick: N
