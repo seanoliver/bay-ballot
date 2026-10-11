@@ -8,7 +8,7 @@ import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type Hel
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
-import { extract, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
+import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchMode, sourcesFor } from "./sources";
@@ -148,10 +148,18 @@ async function refreshGuide(
 
   const sources = pages.map((p) => p.source);
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
-  const entries = toEntries(output, ballot.contests, pagesFor(sources), { ownNames: [guide.name] });
-  const picks = Object.fromEntries(Object.entries(entries.picks).filter(([c]) => inScope(c)));
+  const pageTexts = pagesFor(sources);
+  const extracted = toEntries(output, ballot.contests, pageTexts, { ownNames: [guide.name] });
+  const kept = keepPrevQuotes(
+    prev.picks,
+    Object.fromEntries(Object.entries(extracted.picks).filter(([c]) => inScope(c))),
+    ballot.contests,
+    pageTexts,
+    { ownNames: [guide.name], rejected: prev.rejectedQuotes },
+  );
+  const picks = kept.picks;
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
-  const notes = entries.notes.filter((n) => !outOfScope.has(n.split(":")[0]));
+  const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes];
   const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
   const shrunk = shrinkWarning(id, prevInScope, picks, { force: opts.force });
   if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };

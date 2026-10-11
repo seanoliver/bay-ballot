@@ -1,9 +1,9 @@
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { extract, ExtractOutput, pagesFor, systemPrompt, toEntries, type ExtractClient } from "@/pipeline/extract";
+import { extract, ExtractOutput, keepPrevQuotes, pagesFor, systemPrompt, toEntries, type ExtractClient } from "@/pipeline/extract";
 import { loadElection } from "@/lib/data";
-import type { Contest, Guide } from "@/lib/schema";
+import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Page } from "@/pipeline/quotes";
 
 const { ballot } = loadElection(path.join(__dirname, "..", "data"), "2026-11");
@@ -441,5 +441,90 @@ describe("extract", () => {
       ],
     });
     expect((await extract(client, ballot, guide, sources)).output).toEqual(output);
+  });
+});
+
+describe("keepPrevQuotes", () => {
+  const src = "https://g.org/";
+  const q1 = "Reopening the road would increase congestion on the west side and hurt local businesses.";
+  const q2 = "The road closure created a park that thousands of families use every weekend.";
+  const q3 = "Prop G would undo a decision voters already made at the ballot box.";
+  const transit = "Transit funding keeps the whole region moving every day.";
+  const pg: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q1} ${q2} ${q3}\nYes on RTM\n${transit}` }];
+  const quote = (text: string, source = src) => ({ text, source });
+  const entry = (pick: Entry["pick"], ...texts: string[]): Entry => ({ pick, ranked: false, quotes: texts.map((t) => quote(t)) });
+  const keep = (prev: Record<string, Entry>, picks: Record<string, Entry>, rejected: { text: string; contestId?: string }[] = []) =>
+    keepPrevQuotes(prev, picks, ballot.contests, pg, { rejected });
+
+  it("keeps a previous quote the model omitted when it is still on the page under the same contest", () => {
+    const r = keep({ "prop-g": entry("N", q1, q2) }, { "prop-g": entry("N", q2) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q1), quote(q2)]);
+    expect(r.notes).toEqual([`prop-g: kept previous quote the model omitted: "${q1.slice(0, 80)}…"`]);
+  });
+
+  it("puts restored quotes back in their original positions", () => {
+    expect(keep({ "prop-g": entry("N", q1, q2, q3) }, { "prop-g": entry("N", q3) }).picks["prop-g"].quotes).toEqual([quote(q1), quote(q2), quote(q3)]);
+    expect(keep({ "prop-g": entry("N", q1, q2, q3) }, { "prop-g": entry("N", q2) }).picks["prop-g"].quotes).toEqual([quote(q1), quote(q2), quote(q3)]);
+  });
+
+  it("drops the model's new quotes first when restoring would pass the limit of 3", () => {
+    const r = keep({ "prop-g": entry("N", q1, q2, q3) }, { "prop-g": entry("N", "A brand new reason the model found today on the page.", q2) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q1), quote(q2), quote(q3)]);
+    expect(r.notes[0]).toMatch(/^prop-g: dropped new quote to keep the previous ones \(limit 3\)/);
+  });
+
+  it("does not keep a quote that is no longer on the page", () => {
+    const gone = "The old page said the closure saved the city money on road repairs.";
+    const r = keep({ "prop-g": entry("N", gone, q2) }, { "prop-g": entry("N", q2) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+    expect(r.notes).toEqual([]);
+  });
+
+  it("does not keep a quote whose source page is no longer one of the guide's pages", () => {
+    const prev = { "prop-g": { pick: "N" as const, ranked: false, quotes: [quote(q1, "https://g.org/old"), quote(q2)] } };
+    expect(keep(prev, { "prop-g": entry("N", q2) }).picks["prop-g"].quotes).toEqual([quote(q2)]);
+  });
+
+  it("does not keep a quote listed in rejectedQuotes", () => {
+    const r = keep({ "prop-g": entry("N", q1, q2) }, { "prop-g": entry("N", q2) }, [{ text: q1, contestId: "prop-g" }]);
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+  });
+
+  it("does not keep quotes when the pick changed", () => {
+    expect(keep({ "prop-g": entry("Y", q1) }, { "prop-g": entry("N") }).picks["prop-g"].quotes).toEqual([]);
+    const sup = { pick: ["Gary McCoy"], ranked: false, quotes: [quote(q1)] };
+    expect(keep({ "supervisor-8": sup }, { "supervisor-8": { ...sup, pick: ["Rafael Mandelman"], quotes: [] } }).picks["supervisor-8"].quotes).toEqual([]);
+  });
+
+  it("does not keep a quote that now sits under another contest's heading", () => {
+    expect(keep({ rtm: entry("Y", q1, transit) }, { rtm: entry("Y", transit) }).picks.rtm.quotes).toEqual([quote(transit)]);
+  });
+
+  it("does not bring back picks the model no longer returns", () => {
+    const r = keep({ "prop-g": entry("N", q1), rtm: entry("Y", transit) }, { "prop-g": entry("N") });
+    expect(Object.keys(r.picks)).toEqual(["prop-g"]);
+  });
+
+  const dashed = "Closing the road was a mistake - a costly one - for every west side family.";
+  const d8 = "Gary McCoy has spent a decade fixing parks and streets across the district.";
+  const pg2: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q1} ${q2} ${dashed}\nDistrict 8\n${d8}` }];
+  const keep2 = (prev: Record<string, Entry>, picks: Record<string, Entry>) => keepPrevQuotes(prev, picks, ballot.contests, pg2);
+
+  it("does not restore a quote the model returned with a different dash style", () => {
+    const em = dashed.replace(/ - /g, " — ");
+    expect(keep2({ "prop-g": entry("N", em) }, { "prop-g": entry("N", dashed) }).picks["prop-g"].quotes).toEqual([quote(dashed)]);
+  });
+
+  it("does not restore a quote that overlaps one the model returned", () => {
+    const joined = `${q1} ${q2}`;
+    expect(keep2({ "prop-g": entry("N", q1) }, { "prop-g": entry("N", joined) }).picks["prop-g"].quotes).toEqual([quote(joined)]);
+  });
+
+  it("matches an unranked multi-name pick in any order, and a ranked one only in the same order", () => {
+    const names = ["Gary McCoy", "Darshini Patel"];
+    const sup = (pick: string[], ranked: boolean, ...texts: string[]): Entry => ({ pick, ranked, quotes: texts.map((t) => quote(t)) });
+    const swapped = [...names].reverse();
+    expect(keep2({ "supervisor-8": sup(names, false, d8) }, { "supervisor-8": sup(swapped, false) }).picks["supervisor-8"].quotes).toEqual([quote(d8)]);
+    expect(keep2({ "supervisor-8": sup(names, true, d8) }, { "supervisor-8": sup(swapped, true) }).picks["supervisor-8"].quotes).toEqual([]);
   });
 });

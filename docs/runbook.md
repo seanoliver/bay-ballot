@@ -14,15 +14,16 @@ What a run does:
    - or is a short label, or says "against", within 3 lines below a contest or candidate line.
 
    A long line that only moved is ignored unless it names a contest or candidate. Anything else is "unchanged" and costs nothing.
-3. Re-extracted guides whose picks or quotes changed go through `verify` (a separate model audits them against the pages). Unconfirmed picks are moved to `held:` and not published.
-4. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
-5. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data.
+3. A re-extract keeps a pick's previous quotes when the pick is unchanged (in any order if unranked) and the quote still passes the extractor's quote checks on its own source page (found word for word, stands alone, sits under that contest's heading) and is not in `rejectedQuotes`. Kept quotes go back in their old positions, the model's new quotes give way first at the 3-quote limit, and the summary notes each one ("kept previous quote the model omitted").
+4. Re-extracted guides whose picks or quotes changed go through `verify` (a separate model audits them against the pages). Unconfirmed picks are moved to `held:` and not published.
+5. At most 20 guides are re-extracted per run; the rest are "deferred" and picked up the next day.
+6. Each guide whose data changed gets one file, `data/changelog/<date>-refresh-<guide>.yml`, committed with the data.
    - The entry compares the guide against `main`. The workflow extracts `data/` from the `main` commit that the run merged into the refresh branch, and passes that directory as `--baseline`.
    - On an open refresh PR, a guide's entry is rewritten whenever that guide's data changes, and a change undone before merge leaves no entry.
    - A file already on `main` is never rewritten. A second run on the same day after a merge writes `<date>-refresh-<guide>--2.yml`, then `--3`. A local `bb refresh` without `--baseline` writes no entries.
    - An entry reads "GrowSF published endorsements for 12 contests" for a first publication. Otherwise it lists the guide's changes, separated by semicolons: two by name, the rest as a count. Held picks aren't announced.
    - To fix an entry's wording, edit the file on `main` after the refresh PR merges. A clean run merges itself, and an edit on an open refresh PR is overwritten the next time that guide changes.
-6. `validate` runs, and the summary is written for the pull request.
+7. `validate` runs, and the summary is written for the pull request.
 
 Then the workflow:
 
@@ -160,11 +161,11 @@ When you widen a guide's `areas`, add the area to `data/guides/<guide>.yml` (and
 - Pages are fetched and archived as for a normal extract, and it always extracts, even when the pages look unchanged. If a page also changed in a way that touches the guide's other areas, its page text is not stored and the summary warns, so the next refresh sees the change and re-extracts the whole guide. A new page (such as a new extra source) whose text names a contest in the guide's other areas is treated the same way, so it triggers one full re-extract on the next refresh. Otherwise the page text is stored.
 - It refuses an area id that doesn't exist, one the guide doesn't list in `areas`, a guide with no other area (use a normal extract), and an unknown flag or `--only-areas=<area>`. A flag given twice is refused too. With `--all`, it runs only the guides that list every given area and at least one other, and exits with an error if there are none.
 
-Use a full `extract --force-extract` only to re-read a guide whose page changed. It re-extracts every contest, so the model may reword quotes, re-rank or have picks held in the guide's other areas: review `git diff data/2026-11/endorsements/<guide>.yml`, restore anything it changed by mistake, and add bad new quotes to `rejectedQuotes`.
+Use a full `extract --force-extract` only to re-read a guide whose page changed. It re-extracts every contest, so the model may add or reword quotes, re-rank or have picks held in the guide's other areas. Quotes already on an unchanged pick are kept if they still pass the quote checks (step 3 of a refresh). Review `git diff data/2026-11/endorsements/<guide>.yml`, restore anything it changed by mistake, and add bad new quotes to `rejectedQuotes`.
 
 To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text` and `reason`) in its endorsement file. Extraction never writes a listed quote back, and `npm run validate` fails if a pick quotes one. The San Mateo audits of 2026-10-06 seeded this list for courage-california, lwv-ssmc, lwv-ncsmc, green-foothills and bay-rising-action.
 
-Any hand edit to a guide that is **not** manual (picks, `ranked`, quotes, `hasReasoning`) is overwritten by the next `extract`. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.
+Any hand edit to a guide that is **not** manual (picks, `ranked`, `hasReasoning`) is overwritten by the next `extract`. A hand-added quote survives a re-extract, `--force-extract` included, while its pick is unchanged and the quote still passes the extractor's quote checks on its source page. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.
 
 ## Ballot and area files
 
@@ -192,7 +193,7 @@ To add a county (Contra Costa, Alameda, Marin, Sonoma, Napa, Solano):
 ## Pending follow-ups
 
 - Re-run potrero-hill-dems on or after 2026-10-07 (endorsement votes ongoing).
-- mercury-news `ross-council` (Julie A McMillan, Robert Herbst) was added by hand on 2026-10-07 from the IJ's 9/27 Ross editorial, which the extractor missed. After the next re-extract of mercury-news, check that the pick and its quote survived; if not, add them back by hand.
+- mercury-news `ross-council` (Julie A McMillan, Robert Herbst) was added by hand on 2026-10-07 from the IJ's 9/27 Ross editorial, which the extractor missed. After the next re-extract of mercury-news, check that the pick survived (its quote is kept with it); if not, add the pick back by hand.
 - Added by hand on 2026-10-07 after the Santa Clara widening audit, because the scoped extract missed them:
   - sccdp `lgsuhsd-measure-n` = Y, from "YES on Measures N / Los Gatos-Saratoga UHSD School Bonds" in its November local measures list.
   - south-bay-labor `fremont-uhsd-trustee-area-3` = Rosa Kim, from "Fremont Union High School District — Trustee Area 3 / Rosa Kim — Sole Endorsement".
@@ -207,10 +208,10 @@ To add a county (Contra Costa, Alameda, Marin, Sonoma, Napa, Solano):
   - Its Sonoma page lists Paul Carey under Rohnert Park "Council District 1". Rohnert Park has only Districts 2 and 5 on the ballot and Carey runs in District 2, so the pick is recorded on `rohnert-park-council-2`.
   - It calls Two Rock Union School District "Two Rock Unified". The contest is `two-rock-union-sd-trustee`.
   - Its `court-of-appeal-6` pick was removed by hand. The Santa Clara page lists seven 6th District justices as DO NOT RETAIN but never names Frederick S. Chung, so a contest-wide No would credit it with a position it did not take (the same reason it has no `court-of-appeal-1` pick). Remove it again if a re-extract returns it.
-  - The scoped Sonoma extract dropped the quotes on `sonoma-county-measure-h`, `windsor-measure-i`, `rohnert-park-measure-k`, `santa-rosa-measure-l` and `schell-vista-fire-measure-n`; they were restored by hand from the Sonoma page. Add them back if a re-extract drops them again.
+  - The scoped Sonoma extract dropped the quotes on `sonoma-county-measure-h`, `windsor-measure-i`, `rohnert-park-measure-k`, `santa-rosa-measure-l` and `schell-vista-fire-measure-n`; they were restored by hand from the Sonoma page. A re-extract now keeps them while the picks are unchanged and the sentences are still on the page.
   - The quotes on `cabrillo-usd-measure-z` and `berkeley-measure-z` were re-pointed by hand to https://www.reformcalifornia.org/voter-guides/san-mateo and https://www.reformcalifornia.org/voter-guides/alameda. The same sentence is on the Solano page under Benicia's Measure Z, so an extract cites Solano; re-point them again after a re-extract.
   - `yountville-measure-y` has no quote: its sentence ("Expands the spending ceiling…") also appears under Marin Measures AA and EE on the Marin page, so the wrong-contest guard drops it.
-  - Marin Measures O, Q, T, Z, AA, EE and FF and Santa Clara Measures A, C, G, H and I were added on 2026-10-09 (#111) because it takes positions on them. The scoped extract (`--only-areas marin,santa-clara-county`, $1.16) returned the picks with no quotes and also dropped the quotes on the twelve Marin measures it already had. All of them were restored or added by hand from the Marin and Santa Clara pages after checking each against the extractor's own quote guards. `sunnyvale-measure-h` has no quote: its sentence ("Lets the council raise by ordinance — never returning to voters — …") trips the attributed-speech guard. Add the quotes back if a re-extract drops them again.
+  - Marin Measures O, Q, T, Z, AA, EE and FF and Santa Clara Measures A, C, G, H and I were added on 2026-10-09 (#111) because it takes positions on them. The scoped extract (`--only-areas marin,santa-clara-county`, $1.16) returned the picks with no quotes and also dropped the quotes on the twelve Marin measures it already had. All of them were restored or added by hand from the Marin and Santa Clara pages after checking each against the extractor's own quote guards. `sunnyvale-measure-h` has no quote: its sentence ("Lets the council raise by ordinance — never returning to voters — …") trips the attributed-speech guard. A re-extract now keeps these quotes while the picks are unchanged and the sentences are still on the pages.
   - Its Alameda page lists County Board of Education Trustee Area 2 (Rohan Marfatia) and Area 4 (Mark Harvey) and "Flood & Water Board District 7" (Sean Roberts). None is on the Nov 3 ballot: the registrar's candidate list (election 260) has no county races at all, and all three were in the June 2 primary (election 259): Marfatia for Supervisor District 2, Harvey for Board of Education Trustee Area 4, and Roberts for Zone 7 Water Agency (Flood Control & Water Conservation District Director, Zone 7). The section is left over from the primary guide. The picks are not recorded; an extract drops them as unknown contests.
 - nbclc `srjc-measure-ab` = Y was added by hand (2026-10-09) from https://www.nbclc.org/2026endorsements ("Measure AB - SRJC District Bond" / "YES", under "Sonoma Measures"). The extract missed it. After the next re-extract of this guide, check that the pick survived and add it back by hand if not.
 - 350-bay-area-action `napa-county-measure-b` = Y was added by hand (2026-10-09) from https://350bayareaaction.org/napa_county_wildfire_preparedness_act ("is a clear Yes for us. Please Vote Yes."). The page never prints the letter B, so two scoped extracts returned nothing. After the next re-extract of this guide, check that the pick survived and add it back by hand if not.

@@ -110,6 +110,34 @@ describe("runRefresh", () => {
     expect(after.picks["prop-c"].quotes ?? []).toEqual([]);
     expect(after.rejectedQuotes).toHaveLength(1);
   });
+  const BANK = "the public bank would cost the city hundreds of millions of dollars.";
+  const withPropBQuote = (root: string) => {
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(file, fs.readFileSync(file, "utf8") + `    quotes:\n      - text: ${BANK}\n        source: ${url("alpha")}\n`);
+    return file;
+  };
+
+  it("keeps a still-valid quote the re-extract omitted, without a verifier call when nothing else changed", async () => {
+    const root = setup(["alpha"]);
+    const file = withPropBQuote(root);
+    const before = fs.readFileSync(file, "utf8");
+    const { client, stream } = fakeClient(sameOut);
+    const page = PAGE("alpha", "October 6, 2026").replace("Yes on Prop C", "Yes on Prop D");
+    const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+    expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5"]);
+    expect(results[0]).toMatchObject({ status: "changed", dataChanged: false, diff: [] });
+    expect(fs.readFileSync(file, "utf8")).toBe(before);
+  });
+
+  it("still lets the verifier drop a kept quote in the same run", async () => {
+    const root = setup(["alpha"]);
+    const file = withPropBQuote(root);
+    const { client } = fakeClient(extractOut);
+    const results = await runRefresh(deps(client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), { root, election: ELECTION, forceExtract: true });
+    expect(results[0]).toMatchObject({ status: "changed", droppedByVerifier: 1 });
+    expect(parse(fs.readFileSync(file, "utf8")).picks["prop-b"].quotes).toBeUndefined();
+  });
+
   it("offers the model only the contests in the guide's areas", async () => {
     const root = setup(["alpha"], { stored: false });
     const { client, stream } = fakeClient();

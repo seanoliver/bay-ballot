@@ -8,7 +8,7 @@ export function quoteKey(text: string): string {
     .toLowerCase();
 }
 
-const MIN_CONTAINED = 40;
+export const MIN_CONTAINED = 40;
 
 export function isRejected(text: string, contestId: string, rejected: { text: string; contestId?: string }[]): boolean {
   const q = quoteKey(text);
