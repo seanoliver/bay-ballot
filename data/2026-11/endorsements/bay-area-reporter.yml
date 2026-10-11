@@ -22,6 +22,21 @@ rejectedQuotes:
   - text: However, on balance, the city’s contracting system is in need of fixing.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
     contestId: prop-e
+  - text: More than that, however, Kuslits has some good ideas and would be an asset to the Contra Costa County city as a whole, and its LGBTQ community.
+    reason: 'does not stand alone: "More than that, however" points back to the previous passage (review 2026-10-10)'
+    contestId: concord-council-3
+  - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
+    reason: 'does not stand alone: "In this case" refers back to the previous passage (review 2026-10-10)'
+    contestId: prop-37
+  - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
+    reason: 'does not stand alone: "this funding" refers back to the previous passage (review 2026-10-10)'
+    contestId: rtm
+  - text: The city has set up enough programs that offer similar services.
+    reason: 'does not stand alone: "similar services" refers back to the public bank in the previous sentence (review 2026-10-10)'
+    contestId: prop-b
+  - text: Speaking of the Housing Trust Fund, voters can renew this important program through 2058 and increase the annual funding for affordable housing to $125 million.
+    reason: 'does not stand alone: opens with "Speaking of", which points back to the previous measure (review 2026-10-10)'
+    contestId: prop-c
 picks:
   lt-governor:
     pick:
@@ -70,9 +85,6 @@ picks:
   supervisor-10:
     pick:
       - Theo Ellington
-    quotes:
-      - text: Overall, we think Ellington would be a good supervisor.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-4:
     pick:
       - Alan Wong
@@ -109,9 +121,6 @@ picks:
   concord-council-3:
     pick:
       - Robyn Kuslits
-    quotes:
-      - text: More than that, however, Kuslits has some good ideas and would be an asset to the Contra Costa County city as a whole, and its LGBTQ community.
-        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   prop-1:
     pick: Y
   prop-2:
@@ -130,9 +139,6 @@ picks:
     pick: Y
   prop-37:
     pick: Y
-    quotes:
-      - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
-        source: https://www.ebar.com/story/170969/
   prop-38:
     pick: N
     quotes:
@@ -165,9 +171,6 @@ picks:
         source: https://www.ebar.com/story/170969/
   rtm:
     pick: Y
-    quotes:
-      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-a:
     pick: Y
     quotes:
@@ -177,8 +180,6 @@ picks:
     pick: N
     quotes:
       - text: In short, we don’t see a need for a public bank with its encompassing bureaucratic infrastructure in San Francisco right now.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: The city has set up enough programs that offer similar services.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-c:
     pick: Y

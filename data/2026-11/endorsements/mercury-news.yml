@@ -96,6 +96,18 @@ rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
     contestId: tiburon-council
+  - text: There is only one candidate who grasps the complexity of this crisis and has the legislative experience to address it.
+    reason: 'does not stand alone: names no candidate and "this crisis" refers back (review 2026-10-10)'
+    contestId: insurance-commissioner
+  - text: Further, unlike Kim, Allen has already been working on these issues in the Legislature.
+    reason: 'does not stand alone: opens with "Further" and "these issues" refers back (review 2026-10-10)'
+    contestId: insurance-commissioner
+  - text: Huffman is up for the challenge, including the addition of those Republican-leaning counties.
+    reason: 'does not stand alone: "those Republican-leaning counties" refers back to the previous passage (review 2026-10-10)'
+    contestId: us-rep-2
+  - text: But the breadth of Elward’s governmental experience and knowledge of Marin, more than half the district’s population, and its local issues is limited compared to Lucan.
+    reason: 'does not stand alone: opens with "But" (review 2026-10-10)'
+    contestId: assembly-12
 picks:
   lt-governor:
     pick:
@@ -111,8 +123,6 @@ picks:
     quotes:
       - text: Californians cannot afford Kim’s experiment.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
-      - text: There is only one candidate who grasps the complexity of this crisis and has the legislative experience to address it.
-        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
     pick:
       - Eleni Kounalakis
@@ -127,8 +137,6 @@ picks:
     pick:
       - Damon Connolly
     quotes:
-      - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
-        source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
       - text: In Sacramento, he worked to end the misguided and costly bike lane trial on the Richmond-San Rafael Bridge and advanced tougher safety rules for e-bikes and youths who ride them.
         source: https://www.marinij.com/2026/08/31/editorial-ij-recommends-connolly-in-race-for-state-senate-seat/
   us-rep-2:
@@ -137,9 +145,9 @@ picks:
     quotes:
       - text: His leadership and record of representation are well-known.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
-      - text: Huffman is up for the challenge, including the addition of those Republican-leaning counties.
-        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
       - text: How Littau’s moderate politics would function in Congress, where partisan lines have rarely been deeper, is a huge unknown.
+        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+      - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
   assembly-12:
     pick:
@@ -148,8 +156,6 @@ picks:
       - text: Given his deep experience in leadership positions in Marin, including the bi-county Sonoma-Marin Area Rail Transit board, Lucan brings the most political leadership to the race.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
       - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
-        source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
-      - text: But the breadth of Elward’s governmental experience and knowledge of Marin, more than half the district’s population, and its local issues is limited compared to Lucan.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
   novato-usd-trustee-area-4:
     pick:
@@ -206,6 +212,9 @@ picks:
     pick:
       - Joan Cox
       - Jill James Hoffman
+    quotes:
+      - text: Cox was a strong voice in support of the 2025 city-sponsored measure that re-zoned part of the city-owned Martin Luther King Jr. school property for affordable housing.
+        source: https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
   ross-council:
     pick:
       - Robert Herbst
@@ -248,6 +257,8 @@ picks:
       - text: The big increase will bring in more than the city needs right now.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
+        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
+      - text: Affordability is a big concern.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
     pick: N

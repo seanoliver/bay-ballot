@@ -32,6 +32,12 @@ rejectedQuotes:
   - text: The system, admittedly, is strange, but it works.
     reason: 'does not stand alone: "the system" refers back to the previous sentence (review 2026-10-10)'
     contestId: prop-43
+  - text: What it would do is give a minority of voters a veto over funding local services such as parks, fire protection and child care that most of their neighbors want.
+    reason: 'does not stand alone: "What it would do" points back to the previous passage (review 2026-10-10)'
+    contestId: prop-43
+  - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
+    reason: 'does not stand alone: "this new funding source" refers back to the previous passage (review 2026-10-10)'
+    contestId: napa-county-measure-b
 picks:
   us-rep-4:
     pick:
@@ -40,6 +46,8 @@ picks:
       - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C..
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: Thompson also has a stronger stance on gun control than Jones.
+        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
+      - text: Thompson, who chairs the Gun Violence Prevention Task Force, helped pass and craft the Bipartisan Safer Communities Act.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
   prop-3:
     pick: Y
@@ -63,9 +71,9 @@ picks:
   prop-43:
     pick: N
     quotes:
-      - text: What it would do is give a minority of voters a veto over funding local services such as parks, fire protection and child care that most of their neighbors want.
-        source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
       - text: Residents who organize, qualify a measure and persuade a majority of their voting neighbors to support it have an easier path to fund the things they care about.
+        source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
+      - text: Local tax measures in Sonoma County demonstrate the harm that could follow when little more than one-third of voters can block what most of their neighbors want.
         source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
   prop-44:
     pick: N
@@ -100,6 +108,8 @@ picks:
       - Mathew Lopez
     quotes:
       - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
+        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
+      - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
     pick:
@@ -173,9 +183,6 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
   napa-county-measure-b:
     pick: Y
-    quotes:
-      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
-        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:
     pick: N
     quotes:
