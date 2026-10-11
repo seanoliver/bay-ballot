@@ -3,8 +3,9 @@
 import { Analytics } from "@vercel/analytics/next";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { beforeSend, scrubUrl } from "@/lib/analytics";
+import { CHANGE_EVENT } from "./useBallotFilters";
 
 const AHREFS_KEY = "FJDzMIBsD5gLRi6NhIusfA";
 const AHREFS_ID = "ahrefs-analytics";
@@ -12,7 +13,21 @@ const AHREFS_ID = "ahrefs-analytics";
 declare global {
   interface Window {
     AhrefsAnalytics?: { sendEvent: (name: string) => void };
+    __bbTestAhrefs?: boolean;
   }
+}
+
+// Ahrefs sends each clicked link's resolved href unscrubbed, and "#id" links resolve against this URL.
+// Null state, not history.state: Next's history wrapper then copies its own state and moves its router to the new URL.
+function scrubAddressBar() {
+  const url = scrubUrl(window.location.href);
+  if (url !== window.location.href) window.history.replaceState(null, "", url);
+}
+
+// A timeout, so the first run comes after Next's app router wraps history in its own effect, which runs after ours.
+function scrubSoon(): () => void {
+  const timer = setTimeout(scrubAddressBar, 0);
+  return () => clearTimeout(timer);
 }
 
 function AhrefsAnalytics() {
@@ -21,13 +36,29 @@ function AhrefsAnalytics() {
   const last = useRef<string | null>(null);
 
   useEffect(() => {
+    let cancel = () => {};
+    const onChange = () => {
+      cancel();
+      cancel = scrubSoon();
+    };
+    window.addEventListener(CHANGE_EVENT, onChange);
+    window.addEventListener("popstate", onChange);
+    return () => {
+      cancel();
+      window.removeEventListener(CHANGE_EVENT, onChange);
+      window.removeEventListener("popstate", onChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const cancel = scrubSoon();
     const url = scrubUrl(window.location.href);
-    // Ahrefs sends each clicked link's resolved href unscrubbed, and "#id" links resolve against this URL.
-    if (url !== window.location.href) window.history.replaceState(window.history.state, "", url);
-    if (!ready || url === last.current) return;
-    last.current = url;
-    document.getElementById(AHREFS_ID)?.setAttribute("data-page-location", url);
-    window.AhrefsAnalytics?.sendEvent("pageview");
+    if (ready && url !== last.current) {
+      last.current = url;
+      document.getElementById(AHREFS_ID)?.setAttribute("data-page-location", url);
+      window.AhrefsAnalytics?.sendEvent("pageview");
+    }
+    return cancel;
   }, [pathname, ready]);
 
   return (
@@ -49,4 +80,11 @@ export function SiteAnalytics({ ahrefs }: { ahrefs: boolean }) {
       {ahrefs ? <AhrefsAnalytics /> : null}
     </>
   );
+}
+
+const noSubscribe = () => () => {};
+
+export function TestAnalytics() {
+  const on = useSyncExternalStore(noSubscribe, () => window.__bbTestAhrefs === true, () => false);
+  return on ? <AhrefsAnalytics /> : null;
 }
