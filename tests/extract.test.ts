@@ -21,6 +21,20 @@ describe("systemPrompt", () => {
     for (const c of ballot.contests) expect(prompt).toContain(`"${c.id}"`);
   });
 
+  it("states the same quote rule as the verifier and the runbook", () => {
+    for (const part of [
+      "Copy two consecutive sentences as one quote only when the second needs the first for its condition or subject",
+      "a fact cited as a reason",
+      "But, However, And, Moreover, Further, Furthermore, Instead, Additionally, Finally, Still, Yet, So, Plus, Meanwhile, Likewise, Similarly, Thus, Therefore, In addition, As a result, On the other hand, Nevertheless, Nonetheless, Lastly, Second(ly), Third(ly), Besides, Speaking of, That leaves us, Resulting",
+      "Summary openers (Overall, In short, Ultimately)",
+      "\"this funding\" for the measure's own money",
+      "When it names several, They is fine but a He/She quote must also name one of them.",
+      "In a two-way race, criticism of or contrast with the named opponent counts.",
+    ]) {
+      expect(prompt).toContain(part);
+    }
+  });
+
   it("is deterministic so the cached prefix is reused", () => {
     expect(systemPrompt(ballot)).toBe(prompt);
   });
@@ -47,7 +61,7 @@ describe("systemPrompt", () => {
 
   it("asks for quotes that give reasons, not announcements", () => {
     expect(prompt).toContain(
-      "- Each quote must state a reason for the pick: a policy argument, the candidate's record or qualifications, or a consequence of the vote. Never quote endorsement announcements, slogans, calls to vote, or thanks.",
+      "- Each quote must give a reason for the pick: a policy argument, the candidate's record or qualifications, a consequence of the vote, or a fact cited as a reason.",
     );
   });
 
@@ -57,7 +71,7 @@ describe("systemPrompt", () => {
 
   it("asks for quotes that stand alone", () => {
     expect(prompt).toContain(
-      "- Each quote must make sense on its own: don't start with or depend on This/That/It/These/Those/He/She/They/His/Her/Their/Such referring to an earlier sentence; prefer the sentence that names the subject.",
+      "- Each quote must make sense shown alone under its contest and pick:",
     );
   });
 
@@ -204,7 +218,16 @@ describe("toEntries", () => {
     const out = { hasReasoning: true, picks: [pick({ contestId: "prop-b", vote: "N", quotes: ["This will only make the deficit worse for years."] })] };
     const r = toEntries(out, contests, pg);
     expect(r.picks["prop-b"].quotes).toEqual([]);
-    expect(r.notes).toContain('prop-b: dropped quote (not-standalone): "This will only make the deficit worse for years."');
+    expect(r.notes).toContain(`prop-b: dropped quote (not-standalone: opens with "This" pointing back): "This will only make the deficit worse for years."`);
+  });
+
+  it("keeps a two-sentence quote whose first sentence gives the second its condition, judged as a unit", () => {
+    const pair = "If Prop B fails, the city will have no way to close the gap. Services will be cut by a third across every department.";
+    const back = "This will only make the deficit worse for years. Services will be cut by a third across every department.";
+    const pg: Page[] = [{ url: "https://g.org/", kind: "html", text: `Prop B\nWe support Prop B. ${pair}\nProp B again\nWe support Prop B. ${back}` }];
+    const out = { hasReasoning: true, picks: [pick({ contestId: "prop-b", vote: "Y", quotes: [pair, back] })] };
+    const r = toEntries(out, contests, pg);
+    expect(r.picks["prop-b"].quotes).toEqual([{ text: pair, source: "https://g.org/" }]);
   });
 
   it("notes and skips unknown contests", () => {
@@ -477,7 +500,25 @@ describe("keepPrevQuotes", () => {
     const gone = "The old page said the closure saved the city money on road repairs.";
     const r = keep({ "prop-g": entry("N", gone, q2) }, { "prop-g": entry("N", q2) });
     expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+    expect(r.notes).toEqual([`prop-g: previous quote not kept (not-found): "${gone}"`]);
+  });
+
+  it("does not repeat a note for a previous quote toEntries already dropped in this run", () => {
+    const but = "But the closure cost nothing and the park is already full every weekend.";
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q2} ${but}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", but, q2) }, { "prop-g": entry("N", q2) }, ballot.contests, p, {
+      noted: [{ contestId: "prop-g", text: but }],
+    });
     expect(r.notes).toEqual([]);
+  });
+
+  it("notes why a previously published quote that now fails the quote rule is not kept", () => {
+    const but = "But the closure cost nothing and the park is already full every weekend.";
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G
+${q2} ${but}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", but, q2) }, { "prop-g": entry("N", q2) }, ballot.contests, p);
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+    expect(r.notes).toEqual([`prop-g: previous quote not kept (not-standalone: opens with "But"): "${but}"`]);
   });
 
   it("does not keep a quote whose source page is no longer one of the guide's pages", () => {

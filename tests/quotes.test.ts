@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isSubstantive, standsAlone, verifyQuotes, type Page } from "@/pipeline/quotes";
+import { isSubstantive, sentencesOf, standaloneProblem, standsAlone, verifyQuotes, type Page } from "@/pipeline/quotes";
 import type { Contest } from "@/lib/schema";
 import { htmlToText } from "@/pipeline/fetch";
 
@@ -316,6 +316,27 @@ describe("isSubstantive", () => {
   });
 });
 
+describe("two-sentence quotes", () => {
+  const first = "If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes.";
+  const second = "Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations.";
+  const p = html(`Measure RTM\nWe recommend you vote Yes. ${first} ${second} Vote yes!`);
+
+  it("keeps two consecutive sentences copied verbatim as one quote", () => {
+    expect(verifyQuotes([`${first} ${second}`], [p]).kept).toEqual([{ text: `${first} ${second}`, source: "https://a.org/guide" }]);
+  });
+  it("drops two sentences that are not consecutive on the page", () => {
+    expect(reasonOf(`We recommend you vote Yes. ${second}`, [p])).toBe("not-found");
+  });
+  it("drops a pair that starts mid-sentence", () => {
+    expect(reasonOf(`everyday people will face longer, more expensive commutes. ${second}`, [p])).toBe("partial-sentence");
+  });
+  it("still drops reported speech", () => {
+    const q = "They say the bond is costly and wasteful for taxpayers.";
+    expect(standsAlone(q, { id: "bart-8", kind: "candidate", candidates: ["Sara Barz"] } as Contest, { names: ["Sara Barz"] })).toBe(true);
+    expect(reasonOf(q, [html(`BART\n${q}`)])).toBe("attributed-speech");
+  });
+});
+
 describe("standsAlone", () => {
   const juris = { level: "city" as const, name: "San Francisco" };
   const propD = { id: "prop-d", section: "S", title: "Proposition D", kind: "measure", candidates: [], seats: 1, rankedChoice: false, jurisdiction: juris } as Contest;
@@ -326,7 +347,7 @@ describe("standsAlone", () => {
   it.each([
     ["This is a common-sense reform measure.", propD],
     ["He would be a good addition to the school board.", boe],
-    ["It also gives you someone to hold responsible.", propD],
+    ["It also gives you someone to hold responsible.", boe],
     ["This will only make it worse.", propD],
     ["This would increase congestion, make it more expensive for people to get to work, and hurt our economy.", rtm],
     ["Their plan leaves the district without a voice on the board.", boe],
@@ -352,12 +373,115 @@ describe("standsAlone", () => {
     expect(standsAlone("This cityscape is changing fast for everyone.", propD)).toBe(false);
   });
 
-  it("lets he/she/his/her stand for the only endorsed candidate", () => {
+  it("lets he/she/they stand for the only endorsed candidate", () => {
     const q = "She supports building more housing near BART stations for riders.";
     expect(standsAlone(q, bart, { names: ["Sara Barz"] })).toBe(true);
+    expect(standsAlone("They have spent a decade fixing the agency's budget.", bart, { names: ["Sara Barz"] })).toBe(true);
     expect(standsAlone("He would be a good addition to the school board.", boe, { names: ["Ryan Hazelton", "Reina Tello"] })).toBe(false);
-    expect(standsAlone("They say the bond is costly and wasteful.", bart, { names: ["Sara Barz"] })).toBe(false);
-    expect(standsAlone("It is a costly stunt we cannot afford.", propD, { names: [] })).toBe(false);
+  });
+
+  it("needs a multi-name pick's he/she quote to name one of the endorsed candidates, not another candidate", () => {
+    const names = ["Ryan Hazelton", "Reina Tello"];
+    expect(standsAlone("He backs Hazelton's plan to reopen the shuttered schools.", boe, { names })).toBe(true);
+    expect(standaloneProblem("She has worked alongside Cheung on the budget for years.", boe, { names })).toBe(
+      "pronoun names none of the endorsed candidates",
+    );
+    expect(standsAlone("They bring fresh energy and deep roots in the neighborhood schools.", boe, { names })).toBe(true);
+    expect(standsAlone("Their plan would reopen two shuttered campuses next fall.", boe, { names })).toBe(true);
+  });
+
+  it('lets "it" mean the measure under its own pick, but not a candidate race', () => {
+    expect(standsAlone("It is a costly stunt we cannot afford.", propD, { names: [] })).toBe(true);
+    expect(standsAlone("If passed, it would expand the program to every district.", propD)).toBe(true);
+    expect(standsAlone("It is the experience the board has been missing.", boe)).toBe(false);
+  });
+
+  it.each([
+    ["But the need for more housing is too desperate to wait.", "But"],
+    ["However, the charter amendment does not reflect good governance.", "However"],
+    ["And by just raising revenue, it ignores the real cause of the deficit.", "And"],
+    ["Moreover, the plan does nothing for public transit riders.", "Moreover"],
+    ["Further, the plan does nothing for public transit riders.", "Further"],
+    ["Furthermore we appreciate her support for transit priority on buses.", "Furthermore"],
+    ["Instead, the measure streamlines destructive sprawl developments.", "Instead"],
+    ["Speaking of housing, the measure would block new homes near transit.", "Speaking of"],
+    ["Resulting cuts to Muni would worsen the city's congestion and gridlock.", "Resulting"],
+    ...[
+      "Additionally", "Finally", "Still", "Yet", "So", "Plus", "Meanwhile", "Likewise", "Similarly", "Thus", "Therefore",
+      "In addition", "As a result", "On the other hand", "Nevertheless", "Nonetheless", "Lastly", "Second", "Secondly",
+      "Third", "Thirdly", "Besides",
+    ].map(
+      (w) => [`${w}, the plan does nothing for public transit riders.`, w],
+    ),
+  ])("drops a quote opening with a connector: %s", (q, word) => {
+    expect(standaloneProblem(q, propD)).toBe(`opens with "${word}"`);
+  });
+
+  it("drops \"That leaves us\" and a parenthetical however set against the prior sentence", () => {
+    expect(standsAlone("That leaves us with only one choice for the council seat.", boe)).toBe(false);
+    expect(standaloneProblem("The measure, however, would leave the city with no reserve.", propD)).toBe(
+      'sets "however" against an earlier sentence',
+    );
+    expect(standsAlone("That is not enough to fix the deficit, however.", propD)).toBe(false);
+  });
+
+  it("keeps a however that joins two clauses or means 'no matter how'", () => {
+    expect(standsAlone("The measure raises fees; however, it caps them for small businesses.", propD)).toBe(true);
+    expect(standsAlone("However long the audit takes, Prop D keeps the reserve intact.", propD)).toBe(true);
+    expect(standsAlone("Prop D protects the reserve however much the budget shrinks.", propD)).toBe(true);
+  });
+
+  it.each([
+    "Overall, Prop D is the most responsible path for the city budget.",
+    "In short, the measure fixes a broken process at no cost to taxpayers.",
+    "Ultimately, the measure protects renters from sudden displacement.",
+    "Instead of raising taxes, the measure trims the administrative budget.",
+    "Also on the ballot, Prop D would add needed oversight to city contracts.",
+    "So far, the city has spent nothing on the promised repairs under Prop D.",
+    "So-called reform measures like Prop D rarely deliver what they promise.",
+    "Thus far, the city has spent nothing on the promised repairs under Prop D.",
+    "In addition to cutting fees, Prop D caps what the city can charge renters.",
+    "This November, voters can finally fix the ballot process with Prop D.",
+    "This fall, Prop D gives voters a chance to fix the ballot process.",
+  ])("keeps summary openers, 'Instead of' and 'Also': %s", (q) => expect(standsAlone(q, propD)).toBe(true));
+
+  it("allows this office/race for a candidate contest and this funding only for a measure", () => {
+    expect(standsAlone("This office needs someone who reads the budget line by line.", boe)).toBe(true);
+    expect(standsAlone("This race will decide who runs the schools for four years.", boe)).toBe(true);
+    expect(standsAlone("Without this funding, Muni will cut a third of its routes.", rtm)).toBe(true);
+    expect(standsAlone("This funding would keep BART trains running every ten minutes.", rtm)).toBe(true);
+    expect(standsAlone("This funding is what the district has been missing.", boe)).toBe(false);
+    expect(standsAlone("This diversion would reduce General Fund revenue for core services.", propD)).toBe(false);
+  });
+
+  it("judges a two-sentence quote as a unit: the first sentence must stand alone", () => {
+    const pair =
+      "If we don’t approve this critical funding measure, everyday people will face longer commutes. Transit services across the Bay Area will be slashed by up to 70%.";
+    expect(standsAlone(pair, rtm)).toBe(true);
+    expect(standsAlone("This will only make it worse. The deficit grows every year it stays.", propD)).toBe(false);
+    expect(standsAlone("Prop D fixes the ballot. But it costs too much to run every year.", propD)).toBe(true);
+  });
+
+  it("drops a quote of more than two sentences", () => {
+    expect(standaloneProblem("Prop D fixes the ballot. It costs little. It passed before.", propD)).toBe("more than 2 sentences");
+  });
+});
+
+describe("sentencesOf", () => {
+  it("splits on sentence ends but not on abbreviations or initials", () => {
+    expect(sentencesOf("Housing Dept. and Planning Dept. are both understaffed.")).toHaveLength(1);
+    expect(sentencesOf("Richard J. Barrera has a plan for the U.S. Dept. of Education. It is good.")).toHaveLength(2);
+    expect(sentencesOf("Vote by Nov. 3 to keep Prop. 50 alive! Then tell a friend.")).toHaveLength(2);
+    expect(sentencesOf("Asm. Wicks supported the bill from the start.")).toHaveLength(1);
+    expect(sentencesOf("Polls close at 8 p.m. on Election Day across the county.")).toHaveLength(1);
+    expect(sentencesOf("polls close at 8 p.m. on Tuesday")).toHaveLength(1);
+    expect(sentencesOf("Polls close at 8 p.m. Tuesday in every county.")).toHaveLength(1);
+    expect(sentencesOf("We say vote no on Props. 41 and 42 this fall.")).toHaveLength(1);
+    expect(sentencesOf("The case, Smith v. Jones, set the rule. Etc. Ste. 200 is the office.")).toHaveLength(2);
+  });
+  it("ends a sentence after a measure letter", () => {
+    expect(sentencesOf("We support Measure A. It will fix roads.")).toHaveLength(2);
+    expect(sentencesOf("We oppose Prop B. It costs too much.")).toHaveLength(2);
   });
 });
 

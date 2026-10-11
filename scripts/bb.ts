@@ -14,11 +14,12 @@ import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
-import { costText, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
 import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
+import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 
@@ -34,6 +35,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- discover
        npm run bb -- check
        npm run bb -- review [--no-open]
+       npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
        npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict] [--failed <reason>]
                             [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
@@ -75,7 +77,7 @@ const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
 const VALUE_OPTIONS = [
   "--summary", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via",
-  "--scope", "--click", "--record", "--run-url", "--pr", "--exit-code", "--failed",
+  "--scope", "--guide", "--click", "--record", "--run-url", "--pr", "--exit-code", "--failed",
 ];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
@@ -376,6 +378,30 @@ function runReview(): void {
   if (!flag("--no-open")) execFileSync("open", [out]);
 }
 
+function runQuoteLint(): void {
+  const bad = badFlag(args, ["--guide"]);
+  const only = option("--guide");
+  const data = loadElection(ROOT, ELECTION);
+  if (bad || (flag("--guide") && (!only || only.startsWith("--"))) || positional().length) {
+    console.error(`${bad ?? "quote-lint takes only --guide <id>"}\n\n${USAGE}`);
+    process.exitCode = 1;
+    return;
+  }
+  if (only && !data.endorsements[only]) {
+    console.error(`no endorsement file for '${only}'`);
+    process.exitCode = 1;
+    return;
+  }
+  const read = (guide: string, url: string) => {
+    try {
+      return fs.readFileSync(pagePath(ROOT, ELECTION, guide, url), "utf8");
+    } catch {
+      return null;
+    }
+  };
+  console.log(formatLint(lintQuotes(data, read, { guide: only })));
+}
+
 async function runFetchCheck(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
   const ids = flag("--all") ? Object.keys(data.endorsements).sort() : positional();
@@ -429,6 +455,7 @@ async function main(): Promise<void> {
   else if (cmd === "discover") runDiscover();
   else if (cmd === "check") runCheck();
   else if (cmd === "review") runReview();
+  else if (cmd === "quote-lint") runQuoteLint();
   else if (cmd === "notify") await runNotify();
   else {
     console.log(USAGE);

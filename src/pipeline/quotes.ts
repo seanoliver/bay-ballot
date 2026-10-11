@@ -175,23 +175,50 @@ export function isSubstantive(text: string): boolean {
   return REASON.test(t);
 }
 
-const ANAPHORIC_OPENING = /^\W*(?:this|that|it|these|those|he|she|they|his|her|their|such)\b/i;
 const SELF_CONTAINED_NOUNS =
-  "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter";
-const SELF_REFERENCE = new RegExp(
-  `^\\W*(?:this|that|these|those)\\s+(?:${SELF_CONTAINED_NOUNS})(?:s|['’]s)?(?![\\p{L}\\p{N}])`,
-  "iu",
+  "city|state|county|country|year|election|ballot|measure|proposition|prop|initiative|charter|office|race|november|fall|spring|summer|cycle|session|time";
+const selfReference = (nouns: string) =>
+  new RegExp(`^\\W*(?:this|that|these|those)\\s+(?:${nouns})(?:s|['’]s)?(?![\\p{L}\\p{N}])`, "iu");
+const SELF_REFERENCE = selfReference(SELF_CONTAINED_NOUNS);
+const MEASURE_SELF_REFERENCE = selfReference(`${SELF_CONTAINED_NOUNS}|funding`);
+const DEMONSTRATIVE = /^\W*(?:this|that|these|those|such)\b/i;
+const IT = /^\W*it\b/i;
+const PRONOUN = /^\W*(?:he|she|his|her|him|they|their|them)\b/i;
+const PLURAL_PRONOUN = /^\W*(?:they|their|them)\b/i;
+const CONNECTOR = new RegExp(
+  "^\\W*(?:(but|and|moreover|furthermore|additionally|finally|still|yet|plus|meanwhile|likewise|similarly|therefore|resulting|nevertheless|nonetheless|lastly|secondly|thirdly|besides|as\\s+a\\s+result|on\\s+the\\s+other\\s+hand|speaking\\s+of)\\b" +
+    "|(however|further|second|third)\\s*,|(in\\s+addition)\\b(?!\\s+to\\b)|(instead)\\b(?!\\s+of\\b)|(thus)\\b(?!\\s+far\\b)|(so)\\b(?!-|\\s+(?:far|many|much|long)\\b))",
+  "i",
 );
+const MID_HOWEVER = /,\s*however\s*[,.!?]/i;
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
+const MAX_SENTENCES = 2;
 
-function surnames(c: Contest): string[] {
-  return c.candidates
+export function sentencesOf(text: string): string[] {
+  const masked = text
+    .replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_"))
+    .replace(/\b[ap]\.m\./gi, (a) => a.replace(/\./g, "_"))
+    .replace(/\b(?:Props?|Ste|v|Etc|Sen|Rep|Asm|Gov|Lt|Gen|Sec|Sup|Supv|Supt|Atty|Asst|Calif|Dept|Dist|Assn|Hon|Prof|Mt|Ft|Inc|Co|Corp|Ave|Blvd|etc|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\./g, (a) => a.replace(/\./g, "_"))
+    .replace(/(?<!\b(?:Measure|Prop|Proposition)\s+)(?<![\p{L}\p{N}])\p{Lu}\.(?=\s)/gu, (a) => a.replace(/\./g, "_"));
+  const out: string[] = [];
+  let from = 0;
+  for (const m of masked.matchAll(/[.!?。！？]+["”’)\]]*(?=\s+["“‘'(]?[\p{Lu}\p{N}]|$)/gu)) {
+    const end = m.index + m[0].length;
+    out.push(text.slice(from, end).trim());
+    from = end;
+  }
+  if (text.slice(from).trim()) out.push(text.slice(from).trim());
+  return out.filter(Boolean);
+}
+
+function surnamesOf(names: string[]): string[] {
+  return names
     .map((n) => n.replace(/\s*(?:\([^)]*\)|["“”][^"“”]*["“”])\s*/, " ").replace(/,/g, " "))
     .map((n) => n.split(/\s+/).filter((t) => t && !NAME_SUFFIX.test(t)).at(-1) ?? "")
     .filter((t) => t.length > 1);
 }
 
-function namesSubject(text: string, c: Contest): boolean {
+function namesSubject(text: string, c: Contest, names: string[] = c.candidates): boolean {
   const bounded = (body: string, flags = "u") => new RegExp(`(?<![\\p{L}\\p{N}])(?:${body})(?![\\p{L}\\p{N}])`, flags);
   if (c.kind === "measure") {
     const id = c.id === "rtm" ? "RTM" : c.id.match(/^prop-(\w+)$/)?.[1];
@@ -199,17 +226,34 @@ function namesSubject(text: string, c: Contest): boolean {
     if (c.id === "rtm") return bounded("RTM|Regional\\s+(?:Transit\\s+)?Measure", "iu").test(text);
     return bounded(`(?:Prop(?:osition)?\\.?|Measure)\\s*${id}`, "iu").test(text);
   }
-  return surnames(c).some((s) => bounded(s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(text));
+  return surnamesOf(names).some((s) => bounded(s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(text));
 }
 
-const PERSONAL_PRONOUN = /^\W*(?:he|she|his|her)\b/i;
-
-export function standsAlone(text: string, contest: Contest, { names }: { names?: string[] } = {}): boolean {
-  const t = text.trim();
-  if (!ANAPHORIC_OPENING.test(t) || SELF_REFERENCE.test(t)) return true;
-  if (names?.length === 1 && PERSONAL_PRONOUN.test(t)) return true;
-  return namesSubject(t, contest);
+/** A two-sentence quote is judged as a unit: only the first sentence has to stand on its own. */
+export function standaloneProblem(text: string, contest: Contest, { names }: { names?: string[] } = {}): string | null {
+  const t = text.trim().replace(EDGE_QUOTES, "").trim();
+  const sentences = sentencesOf(t);
+  if (sentences.length > MAX_SENTENCES) return `more than ${MAX_SENTENCES} sentences`;
+  const first = sentences[0] ?? t;
+  const connector = t.match(CONNECTOR);
+  if (connector) return `opens with "${connector.slice(1).find(Boolean)!.replace(/\s+/g, " ")}"`;
+  if (MID_HOWEVER.test(first)) return 'sets "however" against an earlier sentence';
+  const measure = contest.kind === "measure";
+  if (DEMONSTRATIVE.test(t)) {
+    if ((measure ? MEASURE_SELF_REFERENCE : SELF_REFERENCE).test(t)) return null;
+    return `opens with "${t.match(DEMONSTRATIVE)![0].replace(/^\W*/, "")}" pointing back`;
+  }
+  if (IT.test(t)) return measure || namesSubject(t, contest) ? null : 'opens with "it" pointing back';
+  if (PRONOUN.test(t)) {
+    if (names?.length === 1 || (names && names.length > 1 && PLURAL_PRONOUN.test(t))) return null;
+    if (namesSubject(t, contest, names?.length ? names : undefined)) return null;
+    return names && names.length > 1 ? "pronoun names none of the endorsed candidates" : "pronoun with no subject";
+  }
+  return null;
 }
+
+export const standsAlone = (text: string, contest: Contest, opts: { names?: string[] } = {}) =>
+  standaloneProblem(text, contest, opts) === null;
 
 export function verifyQuotes(
   quotes: string[],
