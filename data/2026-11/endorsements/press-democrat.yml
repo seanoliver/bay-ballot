@@ -37,16 +37,17 @@ picks:
     pick:
       - Mike Thompson
     quotes:
-      - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C..
-        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: Thompson also has a stronger stance on gun control than Jones.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
+      - text: Thompson, who chairs the Gun Violence Prevention Task Force, helped pass and craft the Bipartisan Safer Communities Act.
+        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
+  superintendent:
+    pick:
+      - Richard Barrera
   prop-3:
     pick: Y
     quotes:
       - text: Students would lose even more if the higher rates were to expire.
-        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
-      - text: More Sonoma County school districts are in financial crisis than in any other county.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
   prop-4:
     pick: N
@@ -60,12 +61,14 @@ picks:
     quotes:
       - text: Five percent of a billionaire’s wealth is a lot of money, but no billionaire will become poor paying it.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
   prop-43:
     pick: N
     quotes:
-      - text: What it would do is give a minority of voters a veto over funding local services such as parks, fire protection and child care that most of their neighbors want.
-        source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
-      - text: Residents who organize, qualify a measure and persuade a majority of their voting neighbors to support it have an easier path to fund the things they care about.
+      - text: Local tax measures in Sonoma County demonstrate the harm that could follow when little more than one-third of voters can block what most of their neighbors want.
         source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
   prop-44:
     pick: N
@@ -74,14 +77,10 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
       - text: Now is not the time to bring politics into community health clinics.
         source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
-      - text: "Here’s the rub with Prop. 44: the measure would set strict spending requirements for nonprofit health clinics that could put precious revenue at risk."
-        source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
   sonoma-county-measure-h:
     pick: Y
     quotes:
       - text: Unlike other ballot measures, this is not a new tax; it’s an extension of a countywide sales tax we already pay.
-        source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
-      - text: The Sonoma County’s regional parks sales tax delivers a lot for a little.
         source: https://www.pressdemocrat.com/2026/09/19/endorsement-yes-on-h-keep-sonoma-county-regional-parks-funded/
   cloverdale-council:
     pick:
@@ -93,13 +92,11 @@ picks:
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
       - text: Parker has extensive experience with the city’s budgeting process and, with a seat at the table, could bring his ideas for managing the city’s deficit to the forefront.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
-      - text: During his short tenure on the council, Marquez has been a fierce advocate for safeguarding a regional water supply, plus transparency and policy change for the council.
-        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
   healdsburg-council-2:
     pick:
       - Mathew Lopez
     quotes:
-      - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
+      - text: For too long, the council has been dominated by upper-class homeowners who sometimes have a difficult time thinking outside of their property-ownership box.
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
     pick:
@@ -122,11 +119,6 @@ picks:
   rohnert-park-council-2:
     pick:
       - Linda (Khoury) Tams
-    quotes:
-      - text: The council and the city’s residents would benefit from a representative with a strong civic understanding and who could serve as a liaison to the Rohnert Park business community.
-        source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
-      - text: While DeSimone could be an asset to the council, Khoury Tams’ experiences both on the Rohnert Park Chamber of Commerce, Rohnert Park City Advisory Committee and Rancho Cotate Booster Club shows she has an understanding of how the city works — and how it doesn’t.
-        source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-council-5:
     pick:
       - Susan Hollingsworth Adams
@@ -138,8 +130,6 @@ picks:
     quotes:
       - text: Rohnert Park leaders have made the necessary cuts.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
-      - text: If it moves forward, Measure K would bring an expected $5.5 million annually into city coffers.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
   santa-rosa-council-4:
     pick:
       - Melanie Jones-Carter
@@ -148,16 +138,11 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/24/endorsement-for-santa-rosa-city-council-district-4-jones-carter-is-best-bet/
   santa-rosa-measure-l:
     pick: Y
-    quotes:
-      - text: For a city that has been saved by its public safety officers during one of the most horrific catastrophies in Santa Rosa’s recent history — a reduction in public safety staffing and service is not something residents should be willing to risk.
-        source: https://www.pressdemocrat.com/2026/10/01/endorsement-santa-rosa-has-no-other-choice-than-to-approve-measure-l/
   sonoma-council-1:
     pick:
       - Julian Mackie
     quotes:
       - text: Mackie’s expertise and experience with budgeting — he is executive director of the nonprofit Sonoma Valley Commons — will be integral for the City Council as it moves forward, facing growing structural costs and stagnating revenue.
-        source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
-      - text: Because of Julian Mackie’s big-picture, beyond-the-usual ideas about the city of Sonoma and its future, The Press Democrat is endorsing him for Sonoma City Council District 1.
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
   windsor-measure-i:
     pick: Y
@@ -166,22 +151,7 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-yes-on-i-windsor-sales-tax-would-provide-lifeline-for-town/
   srjc-measure-ab:
     pick: Y
-    quotes:
-      - text: "The price tag is a sticker shock, but it’s important to remember the value that SRJC brings to Sonoma County and beyond: The college generates an economic impact of roughly $1.8 billion annually, representing more than 5% of Sonoma County’s gross regional product."
-        source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
-      - text: Students who attend the junior college gain about $7.20 in lifetime earnings for every dollar they spend on their education.
-        source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
   napa-county-measure-b:
     pick: Y
-    quotes:
-      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
-        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:
     pick: N
-    quotes:
-      - text: Right now, because residents cannot look at city operations and say they’re lean and mean, the Press Democrat recommends a No vote on Measure P.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
-      - text: The city’s leadership needs to do the work first, tightening the proverbial belt until there are no more belt holes left.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
-      - text: Leaders also need to be more straightforward about their plans for the money.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
