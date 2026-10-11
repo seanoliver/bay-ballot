@@ -14,6 +14,10 @@ archived:
     snapshot: https://web.archive.org/web/20261007194616/https://contracosta.news/2026/10/05/editorial-pittsburg-must-look-at-the-big-picture-not-a-pixel/
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: Wilson at least brings institutional knowledge and established governmental relationships to that fight — Antioch will need it!
+    reason: 'does not stand alone: "that fight" refers back to the previous sentence (review 2026-10-10)'
+    contestId: antioch-council-4
 picks:
   antioch-council-1:
     pick:
@@ -29,7 +33,7 @@ picks:
     pick:
       - Monica E Wilson
     quotes:
-      - text: Wilson at least brings institutional knowledge and established governmental relationships to that fight — Antioch will need it!
+      - text: Without Lamar Hernandez-Thorpe dominating every oxygen molecule in the council chamber, Wilson appears more comfortable speaking up, pushing back and taking a leadership role.
         source: https://contracosta.news/2026/10/05/editorial-the-antioch-endorsements-i-never-thought-id-make/
   brentwood-council-2:
     pick:
