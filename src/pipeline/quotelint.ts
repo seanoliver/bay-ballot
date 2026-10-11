@@ -10,7 +10,6 @@ export type LintRow = { guide: string; contestId: string; pick: string; quote: s
 
 const isPdfUrl = (url: string) => /\.pdf(?:$|[?#])/i.test(url);
 
-/** Runs the extractor's mechanical quote checks against the stored page text; no fetches, no model calls. */
 export function lintQuotes(
   data: ElectionData,
   readPage: (guideId: string, url: string) => string | null,

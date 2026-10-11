@@ -189,7 +189,6 @@ const MID_HOWEVER = /[,;—–]\s*however\b|\bhowever\s*[,;.]/i;
 const NAME_SUFFIX = /^(?:jr|sr|ii|iii|iv)\.?$/i;
 const MAX_SENTENCES = 2;
 
-/** Splits on sentence ends, skipping common abbreviations and initials ("U.S.", "Prop.", "J."). */
 export function sentencesOf(text: string): string[] {
   const masked = text
     .replace(ABBREVIATIONS, (a) => a.replace(/\./g, "_"))
@@ -224,11 +223,7 @@ function namesSubject(text: string, c: Contest, names: string[] = c.candidates):
   return surnamesOf(names).some((s) => bounded(s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(text));
 }
 
-/**
- * Why a quote can't be shown on its own under its contest, or null. Only the mechanical parts of the
- * quote rule (docs/runbook.md); whether it gives a reason or is about the pick is left to the verifier.
- * A two-sentence quote is judged as a unit: only the first sentence has to stand on its own.
- */
+/** A two-sentence quote is judged as a unit: only the first sentence has to stand on its own. */
 export function standaloneProblem(text: string, contest: Contest, { names }: { names?: string[] } = {}): string | null {
   const t = text.trim().replace(EDGE_QUOTES, "").trim();
   const sentences = sentencesOf(t);

@@ -144,7 +144,6 @@ function pageMarkers(page: Page, contests: Contest[]): Marker[] {
   return m;
 }
 
-// A sidebar label, then up to SIDEBAR_LINES short headline lines, until the first paragraph-length line.
 const SIDEBAR_LABEL = /^\s*(?:related(?:\s+(?:articles|stories|posts|coverage|content|links))?|more\s+in\s+[^.]{1,40}|most\s+popular|you\s+may\s+also\s+like|recommended(?:\s+for\s+you)?|read\s+next)\s*:?\s*$/i;
 const SIDEBAR_LINES = 12;
 

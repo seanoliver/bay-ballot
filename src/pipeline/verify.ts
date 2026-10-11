@@ -73,7 +73,7 @@ export function verifierPrompt(ballot: Ballot): string {
     "A Y on a measure means the organization supports it; N means it opposes it. A candidate pick lists the endorsed names; ranked means the page gives a rank order.",
     "",
     "Quotes: give exactly one verdict per quote, identified by contestId and its number.",
-    // Same rule as the extraction prompt and the runbook's quote rule, worded independently.
+    // Must match the extraction prompt's quote rule; a test forbids sharing any line with it.
     "- confirmed: the quote is on the pages, sits in this contest's section, is the organization's own words, gives a reason for the pick, and makes sense on its own.",
     "- not-found: the quote is not on the pages word for word, or it joins sentences that are not next to each other there.",
     "- wrong-contest: the quote is about a different contest than the pick it is attached to.",
