@@ -8,6 +8,12 @@ rejectedQuotes:
   - text: However, the bank is not yet authorized to operate because California law requires state approval and FDIC insurance.
     reason: "does not stand alone: opens with a connector (review 2026-10-07)"
     contestId: berkeley-measure-z
+  - text: Councilmember Mark Humbert offers the experience City Hall needs.
+    reason: "near-verdict: names no record or reason (review 2026-10-11)"
+    contestId: berkeley-council-8
+  - text: Measure V adds a modest half-cent sales tax to prevent these cuts and protect public safety, youth, and vital community services.
+    reason: 'does not stand alone: "these cuts" refers to the previous paragraph (review 2026-10-11)'
+    contestId: berkeley-measure-v
 picks:
   us-rep-12:
     pick:
@@ -61,7 +67,7 @@ picks:
     pick:
       - Mark Humbert
     quotes:
-      - text: Councilmember Mark Humbert offers the experience City Hall needs.
+      - text: He has supported firefighters and wildfire preparedness, pushed for safer streets, helped restore bus service on Ashby Avenue and secured millions of dollars from UC for traffic improvements.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-rent-board:
     pick:

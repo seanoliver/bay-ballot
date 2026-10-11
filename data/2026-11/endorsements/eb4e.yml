@@ -6,6 +6,10 @@ extraSources:
   - https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
 fetchedAt: 2026-10-07
 hasReasoning: true
+rejectedQuotes:
+  - text: The Regional Transit Measure (RTM) provides that time for transition for BART and other agencies while requiring efficiency reviews for all transit agencies to lower their costs and improve their operations.
+    reason: 'does not stand alone: "that time" refers back two sentences, too far for a two-sentence quote (review 2026-10-11)'
+    contestId: rtm
 picks:
   rtm:
     pick: Y

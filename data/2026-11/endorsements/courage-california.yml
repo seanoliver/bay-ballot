@@ -32,11 +32,9 @@ rejectedQuotes:
     reason: "not substantive: tenure and vote share (audit 2026-10-06)"
   - text: Barrera has been a member of the San Diego Unified School District Board of Education since 2008, and serves as its president.
     reason: "not substantive: résumé only (audit 2026-10-06)"
-  - text: Federal funding has become increasingly unreliable during the current administration.
-    reason: background, not a reason on its own (review 2026-10-11)
-    contestId: prop-2
   - text: California is already facing budget deficits, in part because of the deep cuts that Republicans enacted for health care and other critical services in H.R. 1 to subsidize massive tax breaks for the wealthy and corporations.
-    reason: "does not stand alone: background, not the reason (audit 2026-10-06)"
+    reason: "background: blames the deficit on H.R. 1 rather than giving a reason for Prop 3; the next sentence, which is published, gives the reason (review 2026-10-11)"
+    contestId: prop-3
 picks:
   us-rep-2:
     pick:
@@ -219,6 +217,8 @@ picks:
   prop-2:
     pick: Y
     quotes:
+      - text: Federal funding has become increasingly unreliable during the current administration.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: VOTING YES will ensure that California maintains a larger state-based stockpile of rainy day funds that can be easily accessed during difficult times.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-3:

@@ -29,6 +29,9 @@ rejectedQuotes:
   - text: Absent the passage of this tax, the city will face a deficit that is likely including mass city worker layoffs and the continued funding of city services serving the homeless and providing permanently affordable housing to residents.
     reason: garbled sentence (review 2026-10-08)
     contestId: berkeley-measure-v
+  - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
+    reason: background, not a reason (review 2026-10-11)
+    contestId: oakland-usd-2
 picks:
   richmond-mayor:
     pick:
@@ -93,7 +96,7 @@ picks:
     pick:
       - Jennifer Brouhard
     quotes:
-      - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
+      - text: After winning, Brouhard joined Valarie Bachelor and the new Board majority in 2023 to rescind the planned closures of five elementary schools and one middle-school program.
         source: https://vote.eastbaydsa.org/simple-guide.html
   oakland-usd-6:
     pick:
