@@ -13,7 +13,6 @@ const AHREFS_ID = "ahrefs-analytics";
 declare global {
   interface Window {
     AhrefsAnalytics?: { sendEvent: (name: string) => void };
-    /** Set by the analytics e2e test to load Ahrefs off Vercel. */
     __bbTestAhrefs?: boolean;
   }
 }
@@ -36,7 +35,6 @@ function AhrefsAnalytics() {
   const [ready, setReady] = useState(false);
   const last = useRef<string | null>(null);
 
-  // Same-path history writes: filter changes, and Back or Forward.
   useEffect(() => {
     let cancel = () => {};
     const onChange = () => {
@@ -86,7 +84,6 @@ export function SiteAnalytics({ ahrefs }: { ahrefs: boolean }) {
 
 const noSubscribe = () => () => {};
 
-/** Off Vercel: Ahrefs alone, and only when an e2e test asks for it, so its privacy wiring can be tested. */
 export function TestAnalytics() {
   const on = useSyncExternalStore(noSubscribe, () => window.__bbTestAhrefs === true, () => false);
   return on ? <AhrefsAnalytics /> : null;

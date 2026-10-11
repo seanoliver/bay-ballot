@@ -2,7 +2,6 @@ import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { BALLOT, isPhone, waitForKeys, watchErrors } from "./helpers";
 
-// Ahrefs drops events from localhost and 127.x, so the page loads under a made-up host that Chromium maps to the server.
 const HOST = "bb.test";
 const PORT = Number(process.env.PORT ?? 3200);
 const PRIVATE = ["zip", "addr", "94110", "Main"];
@@ -27,7 +26,6 @@ test.describe("Ahrefs", () => {
       window.__web_analytics = true;
       window.__bbTestAhrefs = true;
     });
-    // The real script, checked in, so the test does not depend on Ahrefs being up.
     await page.route("https://analytics.ahrefs.com/analytics.js", (route) =>
       route.fulfill({
         path: path.join(process.cwd(), "e2e", "fixtures", "ahrefs-analytics.js"),
@@ -45,7 +43,6 @@ test.describe("Ahrefs", () => {
     await expect.poll(() => sent().filter((e) => e.n === "pageview").length).toBeGreaterThan(0);
     await expect(page).not.toHaveURL(/zip|addr/);
     expect(new URL(page.url()).searchParams.get("off")).toBe("x");
-    // Scrubbed through Next's history wrapper, which keeps its router state on the entry.
     expect(await page.evaluate(() => window.history.state?.__NA)).toBe(true);
 
     await waitForKeys(page);
