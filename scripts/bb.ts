@@ -15,7 +15,8 @@ import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
-import { reportJson } from "../src/pipeline/report";
+import { notify } from "../src/pipeline/notify";
+import { readReport, reportJson, runRecord } from "../src/pipeline/report";
 import { applyVerdicts, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
@@ -33,6 +34,8 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- discover
        npm run bb -- check
        npm run bb -- review [--no-open]
+       npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict]
+                            [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
 extract and refresh fetch each guide's pages and compare them with the stored page text
 (data/<election>/pages). Guides whose pages changed only in dates, banners or other text
@@ -54,6 +57,10 @@ the picks that changed there. Every other pick, quote and hold in the file stays
 Each area must exist and be in the guide's areas, and the guide must have another area; with
 --all, only guides that list them and another area run.
 
+notify sends the run's phone push through ntfy (topic in BAYBALLOT_NTFY_TOPIC; none set means
+no push) and, with --record, writes the run's line for the runs branch. It always exits 0
+once its options are valid; see "Run reports and alerts" in docs/runbook.md.
+
 verify has a separate model audit each guide's picks and quotes against its pages.
 Unconfirmed picks move to 'held' (not published) and unconfirmed quotes are dropped;
 the command exits non-zero when anything is held.
@@ -66,7 +73,10 @@ in .env.local, unless --no-fallback; any other Claude Code failure fails the cal
 
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
-const VALUE_OPTIONS = ["--summary", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via"];
+const VALUE_OPTIONS = [
+  "--summary", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via",
+  "--scope", "--click", "--record", "--run-url", "--pr", "--exit-code",
+];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 const positional = () => args.filter((a, i) => !a.startsWith("--") && !VALUE_OPTIONS.includes(args[i - 1]));
 const REFRESH_BUDGET = 20;
@@ -381,6 +391,32 @@ async function runFetchCheck(): Promise<void> {
   if (failed) process.exitCode = 1;
 }
 
+async function runNotify(): Promise<void> {
+  const scope = option("--scope");
+  const bad = badFlag(args, ["--scope", "--result", "--click", "--crashed", "--conflict", "--record", "--run-url", "--pr", "--exit-code"]);
+  const exitCode = option("--exit-code");
+  if (bad || (scope !== "cloud" && scope !== "local") || (exitCode !== undefined && !/^\d+$/.test(exitCode))) {
+    console.error(`${bad ?? "notify needs --scope cloud or --scope local, and a numeric --exit-code"}\n\n${USAGE}`);
+    process.exitCode = 1;
+    return;
+  }
+  const resultPath = option("--result");
+  const recordPath = option("--record");
+  if (recordPath) {
+    try {
+      const report = flag("--crashed") || !resultPath ? null : readReport(resultPath);
+      const record = runRecord(report, {
+        scope, finishedAt: new Date(), exitCode: exitCode === undefined ? undefined : Number(exitCode), runUrl: option("--run-url"), pr: option("--pr"),
+      });
+      fs.writeFileSync(recordPath, `${JSON.stringify(record)}\n`);
+    } catch (e) {
+      console.warn(`warning: could not write the run record: ${errMsg(e)}`);
+    }
+  }
+  const sent = await notify({ resultPath, scope, click: option("--click"), crashed: flag("--crashed"), conflict: flag("--conflict") });
+  if (sent === "sent") console.log("Phone notification sent.");
+}
+
 async function main(): Promise<void> {
   if (flag("--help") || flag("-h")) return console.log(USAGE);
   if (cmd === "extract") await runExtract();
@@ -391,6 +427,7 @@ async function main(): Promise<void> {
   else if (cmd === "discover") runDiscover();
   else if (cmd === "check") runCheck();
   else if (cmd === "review") runReview();
+  else if (cmd === "notify") await runNotify();
   else {
     console.log(USAGE);
     if (cmd !== undefined) process.exitCode = 1;
