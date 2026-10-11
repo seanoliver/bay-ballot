@@ -50,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main>{children}</main>
         <SiteFooter />
         {/* Not unconditional: off Vercel the script 404s and fails the e2e console-error checks. */}
-        {process.env.VERCEL ? <SiteAnalytics /> : null}
+        {process.env.VERCEL ? <SiteAnalytics ahrefs={process.env.VERCEL_ENV === "production"} /> : null}
       </body>
     </html>
   );
