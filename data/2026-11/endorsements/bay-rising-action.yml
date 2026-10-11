@@ -19,6 +19,12 @@ rejectedQuotes:
   - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
     reason: 'does not name Prop D: "Three propositions" means D, E and F together, which only the heading says (review 2026-10-11)'
     contestId: prop-d
+  - text: Prop E slashes the authority and community oversight provided by the city’s commissions and replaces it with more Deputy Mayors in a bloated executive branch of government.
+    reason: "wrong measure: describes Prop F (executive branch); the guide's own table and the ballot put Prop E as City Administrator and contracting (review 2026-10-11)"
+    contestId: prop-e
+  - text: Prop F gives the Mayor more powers vis-à-vis the Board of Supervisors by raising the threshold for Board approval and amendments of contracts, increasing the Mayor’s authority over contracts, and extending the City Administrator’s term from 5 to 10 years.
+    reason: "wrong measure: describes Prop E (City Administrator and contracting); the guide's own table and the ballot put Prop F as the executive branch (review 2026-10-11)"
+    contestId: prop-f
 picks:
   prop-1:
     pick: Y
@@ -103,14 +109,8 @@ picks:
         source: https://bayrisingaction.org/voterguide/
   prop-e:
     pick: N
-    quotes:
-      - text: Prop E slashes the authority and community oversight provided by the city’s commissions and replaces it with more Deputy Mayors in a bloated executive branch of government.
-        source: https://bayrisingaction.org/voterguide/
   prop-f:
     pick: N
-    quotes:
-      - text: Prop F gives the Mayor more powers vis-à-vis the Board of Supervisors by raising the threshold for Board approval and amendments of contracts, increasing the Mayor’s authority over contracts, and extending the City Administrator’s term from 5 to 10 years.
-        source: https://bayrisingaction.org/voterguide/
   prop-h:
     pick: Y
     quotes:
