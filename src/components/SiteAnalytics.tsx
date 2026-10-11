@@ -21,9 +21,10 @@ function AhrefsAnalytics() {
   const last = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!ready) return;
     const url = scrubUrl(window.location.href);
-    if (url === last.current) return;
+    // Ahrefs sends each clicked link's resolved href unscrubbed, and "#id" links resolve against this URL.
+    if (url !== window.location.href) window.history.replaceState(window.history.state, "", url);
+    if (!ready || url === last.current) return;
     last.current = url;
     document.getElementById(AHREFS_ID)?.setAttribute("data-page-location", url);
     window.AhrefsAnalytics?.sendEvent("pageview");
