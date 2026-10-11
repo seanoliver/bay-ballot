@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-    # The run history branch holds only runs.ndjson; there is nothing to build.
     branches-ignore: [runs]
   pull_request:
   # The refresh workflow dispatches CI on its branch: its GITHUB_TOKEN pushes don't trigger push/pull_request runs.
