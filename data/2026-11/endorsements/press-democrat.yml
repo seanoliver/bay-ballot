@@ -26,6 +26,12 @@ rejectedQuotes:
   - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
     reason: 'does not stand alone: "he" is unclear, since the editorial covers Pratt, Wood and López in turn (review 2026-10-10)'
     contestId: healdsburg-council-2
+  - text: The Press Democrat believes that’s a fair price to continue to pay to extend the value the SRJC provides to the community.
+    reason: 'does not stand alone: "that" refers to the price in the previous sentence (review 2026-10-10)'
+    contestId: srjc-measure-ab
+  - text: The system, admittedly, is strange, but it works.
+    reason: 'does not stand alone: "the system" refers back to the previous sentence (review 2026-10-10)'
+    contestId: prop-43
 picks:
   us-rep-4:
     pick:
@@ -57,8 +63,6 @@ picks:
   prop-43:
     pick: N
     quotes:
-      - text: The system, admittedly, is strange, but it works.
-        source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
       - text: What it would do is give a minority of voters a veto over funding local services such as parks, fire protection and child care that most of their neighbors want.
         source: https://www.pressdemocrat.com/2026/10/03/endorsement-prop-43-wants-to-fix-a-system-that-isnt-broken/
       - text: Residents who organize, qualify a measure and persuade a majority of their voting neighbors to support it have an easier path to fund the things they care about.
@@ -163,8 +167,6 @@ picks:
   srjc-measure-ab:
     pick: Y
     quotes:
-      - text: The Press Democrat believes that’s a fair price to continue to pay to extend the value the SRJC provides to the community.
-        source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
       - text: "The price tag is a sticker shock, but it’s important to remember the value that SRJC brings to Sonoma County and beyond: The college generates an economic impact of roughly $1.8 billion annually, representing more than 5% of Sonoma County’s gross regional product."
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
       - text: Students who attend the junior college gain about $7.20 in lifetime earnings for every dollar they spend on their education.
