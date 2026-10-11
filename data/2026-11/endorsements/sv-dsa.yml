@@ -3,7 +3,7 @@ election: 2026-11
 status: published
 source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
 allowForeignSources: true
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-11
 hasReasoning: true
 held:
   - contestId: smcccd-measure-v
@@ -51,11 +51,15 @@ picks:
     quotes:
       - text: Kim’s platform aims to replace forms of for-profit insurance with state-run programs that would provide affordable, available insurance for all, including a public option of auto insurance and a plan for Medicare for Kids.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: While the other Democrat in the race is beholden to the special interests of corporations and real estate PACs, Kim is primarily funded by small contributions from individuals.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
     quotes:
       - text: We have backed Lieber in her multiple campaigns over the last few years because we know she is a champion of California residents.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Her continued presence on the Board of Equalization means a continued vote for fair and progressive taxation policy.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   superintendent:
     pick:
@@ -90,8 +94,6 @@ picks:
       - Tina Marie To
     quotes:
       - text: Incumbent Craig Gleason is a dedicated public servant with an extensive history of building up and out the open spaces in the Santa Cruz Mountains.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-      - text: Tina Marie To is a marine ecologist and enthusiastic volunteer. She helped facilitate the transition of her childhood community into the Sierra Azul Open Space above Los Gatos.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   santa-clara-county-board-of-education-7:
     pick:
@@ -132,6 +134,9 @@ picks:
   los-altos-council-2:
     pick:
       - Anky van Deursen
+    quotes:
+      - text: Lynette Lee Eng is a disgraced former councilmember who was pressured to resign after accusing a black resident of threatening her family over BLM discussions in 2021.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   los-gatos-council:
     pick:
       - Rob Moore
@@ -174,6 +179,9 @@ picks:
   union-city-council-3:
     pick:
       - Cheris Crocker-Root
+    quotes:
+      - text: Jeff Wang is a rarity in the Bay Area- an elected Republican.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   union-city-council-4:
     pick:
       - Sarabjit Kaur Cheema
@@ -314,10 +322,13 @@ picks:
   prop-2:
     pick: Y
     quotes:
-      - text: It is a straightforward increase of the percentage of the budget the state is allowed to keep in the Rainy Day Fund. In years where there is an economic surplus, California could put double the amount of money into savings.
+      - text: In years where there is an economic surplus, California could put double the amount of money into savings.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-3:
     pick: Y
+    quotes:
+      - text: The Children’s Education and Health Care Protection Act would make permanent the temporary income tax imposed on the top 2% of income earners by Proposition 55 in 2016. This tax raised $14 billion last year for public education and health care.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-4:
     pick: Y
   prop-37:
@@ -325,9 +336,13 @@ picks:
     quotes:
       - text: New home buyers are locked into a program with imperfect information.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Any potential upfront benefit only obscures the costs and intentions of this measure.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-38:
     pick: N
     quotes:
+      - text: CalMatters found that the measure was written to benefit only one institute, the California Institute for Immunology and Immunotherapy.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: We should not be subsidizing the projects of the uber-rich, regardless if they are corporate aligned or non-profit aligned.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-39:
@@ -346,10 +361,14 @@ picks:
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote Yes on Prop 40.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: The 2026 Billionaire Tax Act would levy a one-time 5% wealth tax on individuals worth more than $1 billion in order to offset the loss of almost $100 billion in federal funding for Medi-Cal.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-41:
     pick: N
     quotes:
       - text: People will die if we do not pass Prop 40, therefore it is a no-brainer to vote no on Prop 41.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+      - text: Billionaires like Sergei Brin, John Doerr, Peter Thiel, Chris Larsen, Eric Schmidt, and Stuart Resnick have spent well over $150 million on competing ballot measures aimed at preventing the implementation of Prop 40.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-42:
     pick: N
@@ -368,14 +387,26 @@ picks:
     quotes:
       - text: The CEQA does need some adjusting and 21st century modernizing, but to rely on a corporate authored measure like Prop 45 is stupendously detrimental.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  rtm:
+    pick: Y
+    quotes:
+      - text: If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes. Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations, longer waits, and abandoned routes.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+  san-mateo-county-measure-j:
+    pick: Y
+  san-mateo-county-measure-u:
+    pick: Y
   gilroy-measure-b:
     pick: N
+    quotes:
+      - text: Gilroy has one of the highest per capita homelessness rates in the Bay Area, nearly double that of San Jose.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   los-altos-measure-d:
     pick: N
   redwood-city-measure-e:
     pick: Y
     quotes:
-      - text: This measure would implement rent control on certain residential rentals in Redwood City and provide more protections for renters. Housing for all means ensuring that people can afford to stay in their homes and not end up on the street.
+      - text: Housing for all means ensuring that people can afford to stay in their homes and not end up on the street.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   mountain-view-measure-f:
     pick: Y
@@ -383,8 +414,6 @@ picks:
       - text: Mountain View is close to Levi’s Stadium and the tech titans, meaning that the majority of the tax burden will fall on wealthy travelers and not on the people of Mountain View, an ideal progressive tax.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   palo-alto-measure-j:
-    pick: Y
-  san-mateo-county-measure-j:
     pick: Y
   milpitas-measure-k:
     pick: Y
@@ -397,24 +426,17 @@ picks:
     pick: N
   el-camino-healthcare-measure-s:
     pick: Y
-  san-mateo-county-measure-u:
-    pick: Y
   east-palo-alto-measure-cc:
     pick: Y
   newark-measure-dd:
     pick: Y
     quotes:
-      - text: Measure DD would implement a business tax increase of up to 0.3% on gross receipts to raise an estimated $6 million annually to fund police/fire services, street infrastructure, and weather emergency preparedness. The tax restructuring would also lower taxes for smaller businesses.
+      - text: The tax restructuring would also lower taxes for smaller businesses.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   union-city-measure-ii:
     pick: Y
     quotes:
       - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
-  rtm:
-    pick: Y
-    quotes:
-      - text: If we don’t approve this critical funding measure, everyday people will face longer, more expensive commutes. Transit services across the Bay Area will be slashed by up to 70%, leading to closed stations, longer waits, and abandoned routes.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   burlingame-sd-measure-r:
     pick: Y
