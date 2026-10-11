@@ -2,6 +2,7 @@ guide: solano-dems
 election: 2026-11
 status: published
 source: https://www.solanodemocrats.com/endorsements
+fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 fetchedAt: 2026-10-09
 hasReasoning: false
 picks:

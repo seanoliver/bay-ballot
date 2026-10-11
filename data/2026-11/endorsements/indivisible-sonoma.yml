@@ -5,6 +5,7 @@ source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voti
 extraSources:
   - https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
   - https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 allowForeignSources: true # Google Drive PDF and the chapter's Substack
 fetchedAt: 2026-10-09
 hasReasoning: true
