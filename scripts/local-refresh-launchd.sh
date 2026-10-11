@@ -41,6 +41,16 @@ case "${1:-}" in
     for var in BAYBALLOT_MODEL_VIA BAYBALLOT_CLAUDE_CONFIG_DIR CLAUDE_BIN BAYBALLOT_NTFY_TOPIC BAYBALLOT_NTFY_SERVER; do
       if [ -n "${(P)var:-}" ]; then plutil -replace "EnvironmentVariables.$var" -string "${(P)var}" "$tmp_plist"; fi
     done
+    # A reinstall from a shell without the topic must not turn phone notifications off.
+    if [ -z "${BAYBALLOT_NTFY_TOPIC:-}" ]; then
+      kept="$(plutil -extract EnvironmentVariables.BAYBALLOT_NTFY_TOPIC raw -o - "$PLIST" 2>/dev/null || true)"
+      if [ -n "$kept" ]; then
+        plutil -replace EnvironmentVariables.BAYBALLOT_NTFY_TOPIC -string "$kept" "$tmp_plist"
+        echo "Kept BAYBALLOT_NTFY_TOPIC from the installed job."
+      else
+        echo "Phone notifications are off: set BAYBALLOT_NTFY_TOPIC and re-run install"
+      fi
+    fi
     plutil -lint "$tmp_plist" >/dev/null
     mv -f "$tmp_plist" "$PLIST"
 
