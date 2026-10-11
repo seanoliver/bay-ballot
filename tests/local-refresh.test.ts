@@ -496,19 +496,42 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () =
     expect(r.calls.find((c) => c.startsWith("curl"))).toContain("Priority: 5");
   });
 
-  it("sends a review push when the refresh branch conflicts with main", () => {
-    const t = setup();
+  function conflictWithMain(t: ReturnType<typeof setup>) {
     t.run({ STUB_CHANGE: "1" });
     t.git(t.p("source"), "fetch", "-q", "origin");
     t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/main");
     fs.writeFileSync(t.p("other", "data", "2026-11", "endorsements", "x.yml"), "a: main\n");
     t.git(t.p("other"), "commit", "-q", "-am", "main edit");
     t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/main");
-    const r = t.run({ GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+  }
+
+  it("sends a review push when the refresh branch conflicts with main, even if labelling fails", () => {
+    for (const extra of [{}, { GH_FAIL: "--add-label" }]) {
+      const t = setup();
+      conflictWithMain(t);
+      const r = t.run({ GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic", ...extra });
+      expect(r.code).toBe(1);
+      const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
+      expect(curl).toContain("Title: Local refresh needs review: refresh branch conflicts with main");
+      expect(curl).toContain("Priority: 3");
+    }
+  });
+
+  it("sends a review push, not a crash, when the branch changes files outside data/", () => {
+    const t = setup();
+    t.run({ STUB_CHANGE: "1" });
+    t.git(t.p("source"), "fetch", "-q", "origin");
+    t.git(t.p("source"), "worktree", "add", "-q", "--detach", t.p("other"), "origin/data/refresh-local");
+    fs.writeFileSync(t.p("other", "README.md"), "surprise\n");
+    t.git(t.p("other"), "add", "README.md");
+    t.git(t.p("other"), "commit", "-q", "-m", "not data");
+    t.git(t.p("other"), "push", "-q", "origin", "HEAD:refs/heads/data/refresh-local");
+    const r = t.run({ STUB_CHANGE: "1", GH_OPEN_PR: "77", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
     expect(r.code).toBe(1);
     const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
+    expect(curl).toContain("Title: Local refresh needs review: branch changes files outside data/");
     expect(curl).toContain("Priority: 3");
-    expect(curl).toContain("conflicts with main");
+    expect(notifyCall(r.calls)).toBeUndefined();
   });
 
   it("passes the saved shrunk state to the refresh", () => {

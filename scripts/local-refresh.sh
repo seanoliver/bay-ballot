@@ -72,7 +72,8 @@ pr=""
 # Set only once the worktree holds main's code: before that, bb would run the refresh branch's code.
 reporting=false
 stopped_by=""
-conflict=false
+# Set before the steps that can fail on a branch needing review, so the push says review, not crash.
+review_title=""
 failed_reason=""
 
 # The URL goes to curl on stdin, so the topic never shows in the process list.
@@ -135,7 +136,7 @@ fail() {
   notify "Bay Ballot: local refresh failed: $*"
   failed_reason="$*"
   if ! $reporting && ! $dry_run; then
-    if $conflict; then phone "Local Bay Ballot refresh: needs review" 3 eyes "$*"
+    if [ -n "$review_title" ]; then phone "$review_title" 3 eyes "$*"
     else phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed: $*"; fi
   fi
   exit 1
@@ -195,13 +196,14 @@ if [ -n "$pr" ]; then
     git merge --abort 2>/dev/null
     if [ -n "$unmerged" ]; then
       reason="Refresh branch conflicts with main in: ${(f)unmerged}. Resolve by hand."
+      review_title="Local refresh needs review: refresh branch conflicts with main"
     else
       reason="Merging main into the refresh branch failed."
+      review_title="Local refresh needs review: could not merge main into the refresh branch"
     fi
     gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
     gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
     gh_ pr comment "$pr" --body "$reason" >/dev/null
-    conflict=true
     fail "$reason"
   fi
   log "continuing open PR #$pr"
@@ -214,6 +216,7 @@ outside="$(git diff --name-only --no-renames origin/main...HEAD)" || fail "could
 outside="$(print -r -- "$outside" | grep -v '^data/' | grep -v '^$' || true)"
 if [ -n "$outside" ]; then
   reason="the refresh branch changes files outside data/ (${(f)outside}); not running its code"
+  review_title="Local refresh needs review: branch changes files outside data/"
   if [ -n "$pr" ]; then
     gh_ label create needs-review --color d93f0b --description "Data refresh needs a human look" --force >/dev/null
     gh_ pr edit "$pr" --add-label needs-review >/dev/null || fail "could not label PR #$pr needs-review"
