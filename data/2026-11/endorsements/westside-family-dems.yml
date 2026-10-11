@@ -7,6 +7,13 @@ archived:
     snapshot: https://web.archive.org/web/20261010181405/https://westsidefamilysf.com/current-endorsements
 fetchedAt: 2026-10-10
 hasReasoning: true
+rejectedQuotes:
+  - text: While we have serious reservations about raising taxes on property, the city is facing a budget deficit and removing this exception is a reasonable way to help address it.
+    reason: 'does not stand alone: "this exception" refers back to the previous sentences (review 2026-10-11)'
+    contestId: prop-j
+  - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+    reason: "gives no reason: a bare verdict (review 2026-10-11)"
+    contestId: supervisor-4
 picks:
   us-rep-11:
     pick:
@@ -64,7 +71,7 @@ picks:
     pick:
       - Alan Wong
     quotes:
-      - text: Among the D4 candidates, Alan Wong stands out as the one we can rely on to bring a common-sense approach to the Board of Supervisors.
+      - text: Appointed last year by Mayor Lurie, Wong has voted in support of the Family Zoning plan, supports increased police staffing to boost public safety and reduce overtime costs, has worked to cut red tape for small businesses, and has already taken innovative steps like creating a process for San Franciscans to propose repeal or revision of unhelpful laws.
         source: https://westsidefamilysf.com/current-endorsements
   prop-a:
     pick: Y
@@ -119,7 +126,7 @@ picks:
   prop-j:
     pick: Y
     quotes:
-      - text: While we have serious reservations about raising taxes on property, the city is facing a budget deficit and removing this exception is a reasonable way to help address it.
+      - text: The measure includes carve-outs for single-family homes and small buildings to ensure that individual homeowners aren’t penalized; instead, the burden is expected to fall on banks and other corporations.
         source: https://westsidefamilysf.com/current-endorsements
   rtm:
     pick: Y

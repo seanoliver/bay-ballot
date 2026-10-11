@@ -33,6 +33,9 @@ rejectedQuotes:
   - text: While incumbent Sherwin Chen has earned credit for guiding the district through deficit issues, his finance background bears a bit of a red flag for long term education policy.
     reason: about a candidate the guide did not pick (review 2026-10-10)
     contestId: menlo-park-city-sd-trustee
+  - text: The funds are necessary, given the current housing and affordability crises throughout the state.
+    reason: 'does not stand alone: "The funds" refers back to the previous sentence (review 2026-10-11)'
+    contestId: prop-1
 picks:
   secretary-of-state:
     pick:
@@ -308,9 +311,6 @@ picks:
       - Rommy Kushner
   prop-1:
     pick: Y
-    quotes:
-      - text: The funds are necessary, given the current housing and affordability crises throughout the state.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-2:
     pick: Y
     quotes:

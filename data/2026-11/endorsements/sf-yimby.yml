@@ -11,6 +11,9 @@ rejectedQuotes:
   - text: Enacting this reform requires voters to pass Proposition F, which cleans up the City Charter so Mayor Lurie and future mayors can streamline and reorganize city departments.
     reason: 'does not stand alone: "this reform" refers back to the previous sentences (review 2026-10-11)'
     contestId: prop-f
+  - text: Equally important, Supervisor Sherrill has been consistently accessible and engaged with community organizations, including ours.
+    reason: 'does not stand alone: opens with "Equally important", which continues the previous sentence (review 2026-10-11)'
+    contestId: supervisor-2
 picks:
   attorney-general:
     pick:
@@ -36,8 +39,6 @@ picks:
       - Stephen Sherrill
     quotes:
       - text: We have been encouraged by his pro-housing record, including his vote and vocal support for the Family Zoning Plan, and his willingness to help advance key projects that add homes such as 3333 and 3700 California Street.
-        source: https://sfyimby.org/endorsements/sf-2026-general-election/
-      - text: Equally important, Supervisor Sherrill has been consistently accessible and engaged with community organizations, including ours.
         source: https://sfyimby.org/endorsements/sf-2026-general-election/
   supervisor-4:
     pick:
