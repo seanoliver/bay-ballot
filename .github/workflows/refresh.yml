@@ -227,6 +227,44 @@ jobs:
             gh issue close "$issue" --comment "Refresh run $(date -u +%F) was clean; closing."
           fi
 
+      # Also writes the run's record for the next step. Sends nothing when the BAYBALLOT_NTFY_TOPIC secret is unset.
+      - name: Send the phone notification
+        if: always() && steps.refresh.outcome != 'skipped'
+        continue-on-error: true
+        env:
+          BAYBALLOT_NTFY_TOPIC: ${{ secrets.BAYBALLOT_NTFY_TOPIC }}
+          CODE: ${{ steps.refresh.outputs.code }}
+          PR: ${{ steps.pr.outputs.pr }}
+        run: |
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          click="$run_url"
+          [ -n "$PR" ] && click="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/$PR"
+          extra=()
+          [ -f result.json ] || extra+=(--crashed)
+          [ -n "$PR" ] && extra+=(--pr "$PR")
+          [ -n "$CODE" ] && extra+=(--exit-code "$CODE")
+          npm run -s bb -- notify --scope cloud --result result.json --click "$click" \
+            --record "$RUNNER_TEMP/run-record.json" --run-url "$run_url" "${extra[@]}"
+
+      # Only to the runs branch, never main or the refresh branch.
+      - name: Record the run on the runs branch
+        if: always() && steps.refresh.outcome != 'skipped'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash scripts/append-run.sh "$RUNNER_TEMP/run-record.json" \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "github-actions[bot]" "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Send a phone notification when the refresh branch conflicts with main
+        if: steps.base.outputs.stop == 'true'
+        continue-on-error: true
+        env:
+          BAYBALLOT_NTFY_TOPIC: ${{ secrets.BAYBALLOT_NTFY_TOPIC }}
+          PR: ${{ steps.base.outputs.pr }}
+        run: npm run -s bb -- notify --scope cloud --conflict --click "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/$PR"
+
       - name: Fail the run on a refresh error
         if: steps.refresh.outputs.code == '1'
         run: exit 1
