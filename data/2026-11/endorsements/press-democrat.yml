@@ -42,6 +42,12 @@ rejectedQuotes:
   - text: Moreover, people should be able to decide whether or not they want their money to go toward supporting a candidate.
     reason: 'does not stand alone: opens with "Moreover" (review 2026-10-10)'
     contestId: prop-4
+  - text: Students would lose even more if the higher rates were to expire.
+    reason: 'does not stand alone: "the higher rates" and "even more" refer back to the previous passage (review 2026-10-10)'
+    contestId: prop-3
+  - text: Leaders also need to be more straightforward about their plans for the money.
+    reason: 'does not stand alone: "the money" refers back to the previous passage (review 2026-10-10)'
+    contestId: american-canyon-measure-p
 picks:
   us-rep-4:
     pick:
@@ -56,8 +62,6 @@ picks:
   prop-3:
     pick: Y
     quotes:
-      - text: Students would lose even more if the higher rates were to expire.
-        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: More Sonoma County school districts are in financial crisis than in any other county.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
   prop-4:
@@ -198,6 +202,4 @@ picks:
       - text: Right now, because residents cannot look at city operations and say they’re lean and mean, the Press Democrat recommends a No vote on Measure P.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
       - text: The city’s leadership needs to do the work first, tightening the proverbial belt until there are no more belt holes left.
-        source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/
-      - text: Leaders also need to be more straightforward about their plans for the money.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-no-on-measure-p-american-canyon-needs-to-look-elsewhere-for-revenue-growth/

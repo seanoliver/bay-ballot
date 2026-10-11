@@ -24,6 +24,12 @@ rejectedQuotes:
   - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
     reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
     contestId: union-city-council-4
+  - text: Considering the large unhoused/underhoused population that rely on these rooms, such a tax would hit these already struggling residents the hardest.
+    reason: 'does not stand alone: "these rooms" and "such a tax" refer back to the previous sentences (review 2026-10-10)'
+    contestId: gilroy-measure-b
+  - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
+    reason: 'does not stand alone: a bare "this" refers back instead of naming the measure (review 2026-10-10)'
+    contestId: prop-37
 picks:
   secretary-of-state:
     pick:
@@ -320,8 +326,6 @@ picks:
   prop-37:
     pick: N
     quotes:
-      - text: One thing is certain, this will create more debt, which benefits the home builders and real estate firms which are intentionally financializing homes into assets.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
       - text: New home buyers are locked into a program with imperfect information.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   prop-38:
@@ -371,9 +375,6 @@ picks:
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   gilroy-measure-b:
     pick: N
-    quotes:
-      - text: Considering the large unhoused/underhoused population that rely on these rooms, such a tax would hit these already struggling residents the hardest.
-        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   los-altos-measure-d:
     pick: N
   redwood-city-measure-e:
