@@ -111,6 +111,9 @@ rejectedQuotes:
   - text: The experience and knowledge gained from having served as a decision-maker in those positions clearly makes him the best-qualified candidate.
     reason: 'does not stand alone: "those positions" refers back (review 2026-10-10)'
     contestId: state-senate-2
+  - text: Affordability is a big concern.
+    reason: not a reason on its own (review 2026-10-10)
+    contestId: san-rafael-measure-w
 picks:
   lt-governor:
     pick:
@@ -260,8 +263,6 @@ picks:
       - text: The big increase will bring in more than the city needs right now.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: Officials should consider a smaller increase with less chance of impacting the real estate market.
-        source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-      - text: Affordability is a big concern.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   rtm:
     pick: N

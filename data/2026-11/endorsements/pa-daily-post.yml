@@ -33,6 +33,9 @@ rejectedQuotes:
   - text: The district desperately needs structural and cultural reform, and both Wang and Craig bring the independent vision, fiscal realism and commitment to academic excellence required to steer the district back on track.
     reason: 'does not stand alone: "The district" refers back to the previous sentence (review 2026-10-10)'
     contestId: pausd-trustee
+  - text: We are most enthusiastic about Bryna Chang, the current Planning and Transportation Commission chair.
+    reason: not a reason on its own (review 2026-10-10)
+    contestId: palo-alto-council
 picks:
   menlo-park-measure-p:
     pick: Y
@@ -52,8 +55,6 @@ picks:
       - text: Chang brings a refreshing, urgent focus to neighborhood safety, sparked by her firsthand experience watching dangerous near-misses during traffic duty at Hoover Elementary.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-elect-chang-lauing-veenker-to-council/
       - text: Despite our reservations about the incumbents’ past performance, the combination of Chang’s fiery advocacy for neighborhood safety, Lauing’s steady hand and Veenker’s experience offers the most capable leadership for our city’s future.
-        source: https://padailypost.com/2026/10/03/daily-post-editorial-elect-chang-lauing-veenker-to-council/
-      - text: We are most enthusiastic about Bryna Chang, the current Planning and Transportation Commission chair.
         source: https://padailypost.com/2026/10/03/daily-post-editorial-elect-chang-lauing-veenker-to-council/
   pausd-trustee:
     pick:
