@@ -73,11 +73,14 @@ pr=""
 reporting=false
 stopped_by=""
 conflict=false
+failed_reason=""
 
+# The URL goes to curl on stdin, so the topic never shows in the process list.
 phone() {
   [ -n "${BAYBALLOT_NTFY_TOPIC:-}" ] || return 0
-  curl -fsS -m 10 -o /dev/null -H "Title: $1" -H "Priority: $2" -H "Tags: $3" --data-binary "$4" \
-    "${BAYBALLOT_NTFY_SERVER:-https://ntfy.sh}/$BAYBALLOT_NTFY_TOPIC" || log "warning: could not send the phone notification"
+  print -r -- "url = \"${BAYBALLOT_NTFY_SERVER:-https://ntfy.sh}/$BAYBALLOT_NTFY_TOPIC\"" |
+    curl -fsS -m 10 -o /dev/null -K - -H "Title: $1" -H "Priority: $2" -H "Tags: $3" --data-binary "$4" ||
+    log "warning: could not send the phone notification"
 }
 
 report_run() {
@@ -85,8 +88,16 @@ report_run() {
   local remote name email
   [ -f "$work/result.json" ] && [ -z "$stopped_by" ] || extra+=(--crashed)
   [ -n "$pr" ] && extra+=(--pr "$pr" --click "https://github.com/$REPO/pull/$pr")
-  ( cd "$WORKTREE" && npm run -s bb -- notify --scope local --result "$work/result.json" --record "$work/run-record.json" --exit-code "$1" "${extra[@]}" ) ||
-    log "warning: bb notify failed"
+  [ -n "$failed_reason" ] && extra+=(--failed "$failed_reason")
+  local notified=false
+  if [ -d "$WORKTREE/node_modules" ]; then
+    ( cd "$WORKTREE" && npm run -s bb -- notify --scope local --result "$work/result.json" --record "$work/run-record.json" --exit-code "$1" "${extra[@]}" ) &&
+      notified=true
+  fi
+  if ! $notified; then
+    log "warning: bb notify could not run; sending a plain crash push"
+    phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed${failed_reason:+: $failed_reason} (exit code $1), and bb notify could not run."
+  fi
   remote="$(git -C "$SOURCE_REPO" remote get-url origin 2>/dev/null)"
   name="$(git -C "$SOURCE_REPO" config user.name 2>/dev/null || print -r -- "Bay Ballot local refresh")"
   email="$(git -C "$SOURCE_REPO" config user.email 2>/dev/null || print -r -- "local-refresh@bay-ballot.invalid")"
@@ -122,6 +133,7 @@ watchdog=$!
 fail() {
   log "ERROR: $*"
   notify "Bay Ballot: local refresh failed: $*"
+  failed_reason="$*"
   if ! $reporting && ! $dry_run; then
     if $conflict; then phone "Local Bay Ballot refresh: needs review" 3 eyes "$*"
     else phone "Local ALERT: Refresh crashed before writing a result" 5 rotating_light "The local refresh failed: $*"; fi

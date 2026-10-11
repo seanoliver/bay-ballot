@@ -24,8 +24,9 @@ exit 0
 `,
   npm: `#!/bin/zsh -f
 print -r -- "npm $*" >> "$CALLS"
-if [ "$1" = "ci" ]; then mkdir -p node_modules; exit 0; fi
+if [ "$1" = "ci" ]; then [ -n "\${STUB_CI_FAIL:-}" ] && exit 1; mkdir -p node_modules; exit 0; fi
 if [ "$5" = "notify" ]; then
+  [ -n "\${STUB_NOTIFY_FAIL:-}" ] && exit 1
   while [ $# -gt 0 ]; do
     case "$1" in --record) print -r -- '{"scope":"local","stub":true}' > "$2"; shift ;; esac
     shift
@@ -59,7 +60,7 @@ print -r -- "osascript $*" >> "$CALLS"
 exit 0
 `,
   curl: `#!/bin/zsh -f
-print -r -- "curl $*" >> "$CALLS"
+print -r -- "curl $* stdin: $(cat)" >> "$CALLS"
 exit 0
 `,
 };
@@ -461,10 +462,38 @@ describe.skipIf(!hasZsh || !isMac)("local-refresh.sh", { timeout: 20_000 }, () =
     expect(t.run().calls.some((c) => c.startsWith("curl"))).toBe(false);
     const r = t.run({ BAYBALLOT_NTFY_TOPIC: "bb-topic" });
     expect(r.code).toBe(1);
+    const [args, stdin] = (r.calls.find((c) => c.startsWith("curl")) ?? "").split(" stdin: ");
+    expect(args).toContain("Priority: 5");
+    expect(args).not.toContain("bb-topic");
+    expect(stdin).toBe('url = "https://ntfy.sh/bb-topic"');
+    expect(notifyCall(r.calls)).toBeUndefined();
+  });
+
+  it("tells bb notify when the job failed after the refresh", () => {
+    const t = setup();
+    const r = t.run({ STUB_CHANGE: "1", GH_FAIL: "pr create", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    expect(notifyCall(r.calls)).toContain("--failed gh pr create failed");
+    expect(notifyCall(r.calls)).not.toContain("--crashed");
+    expect(r.calls.some((c) => c.startsWith("curl"))).toBe(false);
+  });
+
+  it("falls back to a curl crash push when npm ci fails and bb can't run", () => {
+    const t = setup();
+    const r = t.run({ STUB_CI_FAIL: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(1);
+    expect(notifyCall(r.calls)).toBeUndefined();
     const curl = r.calls.find((c) => c.startsWith("curl")) ?? "";
     expect(curl).toContain("Priority: 5");
-    expect(curl).toContain("https://ntfy.sh/bb-topic");
-    expect(notifyCall(r.calls)).toBeUndefined();
+    expect(curl).toContain("npm ci failed");
+  });
+
+  it("falls back to a curl crash push when bb notify exits non-zero", () => {
+    const t = setup();
+    const r = t.run({ STUB_NOTIFY_FAIL: "1", BAYBALLOT_NTFY_TOPIC: "bb-topic" });
+    expect(r.code).toBe(0);
+    expect(notifyCall(r.calls)).toBeDefined();
+    expect(r.calls.find((c) => c.startsWith("curl"))).toContain("Priority: 5");
   });
 
   it("sends a review push when the refresh branch conflicts with main", () => {
