@@ -28,9 +28,6 @@ rejectedQuotes:
   - text: In this case, the revenue bonds would use the repayments from homebuyers to repay the bonds, so it would not result in direct state or local costs.
     reason: 'does not stand alone: "In this case" refers back to the previous passage (review 2026-10-10)'
     contestId: prop-37
-  - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
-    reason: 'does not stand alone: "this funding" refers back to the previous passage (review 2026-10-10)'
-    contestId: rtm
   - text: The city has set up enough programs that offer similar services.
     reason: 'does not stand alone: "similar services" refers back to the public bank in the previous sentence (review 2026-10-10)'
     contestId: prop-b
@@ -49,6 +46,12 @@ rejectedQuotes:
   - text: The reality, however, is that San Francisco needs more affordable housing, and Prop I is one way to help fund that.
     reason: 'does not stand alone: "however" sets it against the previous sentence (review 2026-10-10)'
     contestId: prop-i
+  - text: We support science, but Prop 38 is not the way to do it.
+    reason: "bare verdict: gives no reason (review 2026-10-11)"
+    contestId: prop-38
+  - text: On the whole, Prop E is a good start.
+    reason: "bare verdict: gives no reason (review 2026-10-11)"
+    contestId: prop-e
 picks:
   lt-governor:
     pick:
@@ -68,7 +71,7 @@ picks:
     pick:
       - Richard Barrera
     quotes:
-      - text: Having a progressive voice at the helm is important, no matter the results of restructuring.
+      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
@@ -148,9 +151,6 @@ picks:
     pick: Y
   prop-38:
     pick: N
-    quotes:
-      - text: We support science, but Prop 38 is not the way to do it.
-        source: https://www.ebar.com/story/170969/
   prop-39:
     pick: N
     quotes:
@@ -175,6 +175,9 @@ picks:
         source: https://www.ebar.com/story/170969/
   rtm:
     pick: Y
+    quotes:
+      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-a:
     pick: Y
     quotes:
@@ -191,9 +194,6 @@ picks:
     pick: Y
   prop-e:
     pick: Y
-    quotes:
-      - text: On the whole, Prop E is a good start.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-f:
     pick: N
     quotes:

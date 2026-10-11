@@ -16,6 +16,9 @@ rejectedQuotes:
     reason: "does not stand alone: opens with a connector (audit 2026-10-06)"
   - text: Implementing this type of voter suppression would waste hundreds of millions of dollars.
     reason: "does not stand alone: refers back to the previous sentence (audit 2026-10-06)"
+  - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
+    reason: 'does not name Prop D: "Three propositions" means D, E and F together, which only the heading says (review 2026-10-11)'
+    contestId: prop-d
 picks:
   prop-1:
     pick: Y
@@ -96,8 +99,6 @@ picks:
   prop-d:
     pick: N
     quotes:
-      - text: Three propositions in San Francisco would dismantle our democratic processes and concentrate power in the hands of the Mayor and the conservative majority on the Board of Supervisors.
-        source: https://bayrisingaction.org/voterguide/
       - text: Prop D would make it harder for voters to have their voices heard by increasing the number of signatures a measure needs to reach the ballot.
         source: https://bayrisingaction.org/voterguide/
   prop-e:
@@ -113,9 +114,7 @@ picks:
   prop-h:
     pick: Y
     quotes:
-      - text: After years of pandemic disruption and lost revenue, Muni is confronting a $307 million annual deficit—a shortfall so large it rivals the combined budgets of the city’s parks and library systems.
-        source: https://bayrisingaction.org/voterguide/
-      - text: Resulting cuts to Muni would worsen SF’s congestion and gridlock, which is already ranked the 3rd-worst in any major US city.
+      - text: After years of pandemic disruption and lost revenue, Muni is confronting a $307 million annual deficit—a shortfall so large it rivals the combined budgets of the city’s parks and library systems. Resulting cuts to Muni would worsen SF’s congestion and gridlock, which is already ranked the 3rd-worst in any major US city.
         source: https://bayrisingaction.org/voterguide/
   prop-i:
     pick: Y
@@ -142,7 +141,7 @@ picks:
   oakland-measure-ee:
     pick: Y
     quotes:
-      - text: The city council can override a Mayoral veto with a supermajority, providing checks and balances between the legislative and executive branches of government.
+      - text: Under Measure EE, the Mayor serves as the Chief Executive Officer in Oakland, giving them veto power over legislation and line items in the budget. The city council can override a Mayoral veto with a supermajority, providing checks and balances between the legislative and executive branches of government.
         source: https://bayrisingaction.org/voterguide/
       - text: Measure EE was drafted after an extensive community process, co-facilitated by the League of Women Voters.
         source: https://bayrisingaction.org/voterguide/

@@ -6,22 +6,26 @@ extraSources:
   - https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
 fetchedAt: 2026-10-07
 hasReasoning: true
+rejectedQuotes:
+  - text: The Regional Transit Measure (RTM) provides that time for transition for BART and other agencies while requiring efficiency reviews for all transit agencies to lower their costs and improve their operations.
+    reason: 'does not stand alone: "that time" refers back two sentences, too far for a two-sentence quote (review 2026-10-11)'
+    contestId: rtm
 picks:
   rtm:
     pick: Y
     quotes:
       - text: We need a strong, healthy transit system for people to live comfortably in the Bay Area without needing to own a car.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
-      - text: The Regional Transit Measure (RTM) provides that time for transition for BART and other agencies while requiring efficiency reviews for all transit agencies to lower their costs and improve their operations.
+      - text: While BART is actively recovering its ridership thanks in part due to Swiss-style scheduling (20-minute all-day, all-week service), improved fare gates, bathrooms and other services, it still needs support to make the transition to a new normal.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
   prop-45:
     pick: N
     quotes:
-      - text: Instead, Prop. 45 streamlines destructive single-family sprawl developments and their infrastructure.
+      - text: Prop. 45 does not distinguish between projects of different sizes, so a new highway is evaluated under the same rules as a 5-unit residential development.
         source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
       - text: Rubber stamping sprawl is not in alignment with East Bay for Everyone’s values and goals as an organization.
         source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
-      - text: Moreover, Prop. 45 does not provide any specific relief to public transit, intercity rail, cycling, walking or other clean, low carbon infrastructure.
+      - text: By requiring any agency that is not the lead agency to issue final approvals within 90 days of an application being completed, Prop. 45 overwhelmingly benefits sprawl.
         source: https://eastbayforeveryone.org/2026/03/05/streamlining-sprawl-is-not-pro-housing/
   berkeley-council-1:
     pick:
@@ -78,7 +82,7 @@ picks:
     quotes:
       - text: Since being elected in 2022 he has supported Oakland wide re-zonings as part of the Housing Element process, including fourplexes and upzoning Rockridge.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
-      - text: Furthermore we appreciate CM Jenkins willingness to support service-led planning and transit priority for bus service in Oakland.
+      - text: CM Jenkins told EB4E that he believes the best way to reduce homelessness is prevention, which includes rental assistance and a functioning rental market. Furthermore we appreciate CM Jenkins willingness to support service-led planning and transit priority for bus service in Oakland.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
   alameda-mayor:
     pick:

@@ -21,23 +21,17 @@ rejectedQuotes:
     reason: "descriptive: says what the measure does (review 2026-10-08)"
     contestId: berkeley-measure-aa
   - text: Overall, this is a very minimally progressive proposal.
-    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
+    reason: "bare verdict: gives no reason (review 2026-10-11)"
     contestId: oakland-measure-ff
-  - text: "On balance, this is a measure that redirects governance in minor, insufficient ways toward socialist priorities: by expanding influence of non-citizens in governance, mandating technical and environmental expertise, allowing Councilmembers to hire staff, and clarifying outdated, administrative laws that complicate the administration of government."
-    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
-    contestId: alameda-measure-m
-  - text: On balance, this is a limited but progressive measure that increases the tax contributions of big businesses to Emeryville.
-    reason: "does not stand alone: 'this' refers to an earlier passage (review 2026-10-08)"
-    contestId: emeryville-measure-bb
   - text: Measure Z would impose a progressive (per square foot of building footprint) parcel tax to fund a public bank, which offers government agencies lower interest rates and fees for community-wide projects.
     reason: "descriptive: says what the measure does (review 2026-10-08)"
     contestId: berkeley-measure-z
-  - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
-    reason: "does not stand alone: 'she' refers to an earlier sentence (review 2026-10-08)"
-    contestId: oakland-usd-2
   - text: Absent the passage of this tax, the city will face a deficit that is likely including mass city worker layoffs and the continued funding of city services serving the homeless and providing permanently affordable housing to residents.
     reason: garbled sentence (review 2026-10-08)
     contestId: berkeley-measure-v
+  - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
+    reason: background, not a reason (review 2026-10-11)
+    contestId: oakland-usd-2
 picks:
   richmond-mayor:
     pick:
@@ -67,7 +61,7 @@ picks:
   wccusd-measure-v:
     pick: Y
     quotes:
-      - text: Still, absent this tax, public schools in West Contra Costa County will be faced with challenging budget cuts to essential public programs for our youth, such as counseling and after-school programs, as well as potential threats to unionized public school employees.
+      - text: In practice, charter schools are often run by private non-profit corporations, subject to different standards than public schools, and challenge unionization efforts across teachers. Still, absent this tax, public schools in West Contra Costa County will be faced with challenging budget cuts to essential public programs for our youth, such as counseling and after-school programs, as well as potential threats to unionized public school employees.
         source: https://vote.eastbaydsa.org/simple-guide.html
       - text: On balance, this measure is one that primarily maintains public schools and, to a less substantial degree, funds charter schools.
         source: https://vote.eastbaydsa.org/simple-guide.html
@@ -101,6 +95,9 @@ picks:
   oakland-usd-2:
     pick:
       - Jennifer Brouhard
+    quotes:
+      - text: After winning, Brouhard joined Valarie Bachelor and the new Board majority in 2023 to rescind the planned closures of five elementary schools and one middle-school program.
+        source: https://vote.eastbaydsa.org/simple-guide.html
   oakland-usd-6:
     pick:
       - Valarie Bachelor
@@ -135,6 +132,9 @@ picks:
         source: https://vote.eastbaydsa.org/simple-guide.html
   alameda-measure-m:
     pick: Y
+    quotes:
+      - text: "On balance, this is a measure that redirects governance in minor, insufficient ways toward socialist priorities: by expanding influence of non-citizens in governance, mandating technical and environmental expertise, allowing Councilmembers to hire staff, and clarifying outdated, administrative laws that complicate the administration of government."
+        source: https://vote.eastbaydsa.org/simple-guide.html
   albany-measure-p:
     pick: Y
   albany-measure-q:
@@ -177,6 +177,9 @@ picks:
     pick: Y
   emeryville-measure-bb:
     pick: Y
+    quotes:
+      - text: On balance, this is a limited but progressive measure that increases the tax contributions of big businesses to Emeryville.
+        source: https://vote.eastbaydsa.org/simple-guide.html
   hayward-measure-cc:
     pick: Y
     quotes:

@@ -70,7 +70,7 @@ picks:
   prop-c:
     pick: Y
     quotes:
-      - text: Building more affordable housing is a priority for Abundant and this was part of a deal to lower the inclusionary rate for new housing – a key barrier to building new homes.
+      - text: This measure gradually expands the Housing Trust Fund – a general fund set-aside that provides support for affordable housing and housing preservation. Building more affordable housing is a priority for Abundant and this was part of a deal to lower the inclusionary rate for new housing – a key barrier to building new homes.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
   prop-d:
     pick: Y
@@ -90,9 +90,7 @@ picks:
   prop-g:
     pick: N
     quotes:
-      - text: Sunset Dunes park is already one of the most visited parks on the west coast of the United States.
-        source: https://www.abundantsanfrancisco.org/vote/ballot-measures
-      - text: Closing this park would take away an incredible open space for San Francisco residents, seniors, and families.
+      - text: Sunset Dunes park is already one of the most visited parks on the west coast of the United States. Closing this park would take away an incredible open space for San Francisco residents, seniors, and families.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
       - text: We should be advocating for more parks – not trying to close them down.
         source: https://www.abundantsanfrancisco.org/vote/ballot-measures
