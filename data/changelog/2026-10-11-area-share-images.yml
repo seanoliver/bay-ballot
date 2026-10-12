@@ -1,5 +1,5 @@
 date: 2026-10-11
 type: new
 title: "Links to an area page now preview that area's own races"
-details: "Sharing a link to an area page, such as /2026-11/marin, shows a card headed \"Marin County endorsements\" with the number of guides and contests, and the local race or measure with the most guide positions. It used to show whichever contest had the most positions, which was usually a statewide proposition."
+details: "Sharing a link to an area page, such as /2026-11/marin, shows a card headed \"Marin County endorsements\" with the number of guides and contests, and the race or measure with the most guide positions from that area. County pages feature a county race or measure (supervisor, County Board of Education, county measures) when one has positions, and other pages a local one. It used to show whichever contest had the most positions, which was usually a statewide proposition."
 pr: 153

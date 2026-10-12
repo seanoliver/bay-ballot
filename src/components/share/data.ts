@@ -3,6 +3,7 @@ import { eligible } from "@/lib/fallback";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import { formatDate } from "@/lib/display";
 import { areaCounts, mostPositions, shareCard, shareLabel } from "@/lib/share";
+import type { Contest } from "@/lib/schema";
 import { ballotViewProps, election, latestElection } from "@/lib/site-data";
 
 export function contestShare(electionId: string, contestId: string) {
@@ -16,14 +17,19 @@ export function contestShare(electionId: string, contestId: string) {
   };
 }
 
+const COUNTY_OFFICES = ["Supervisor", "County Board of Education"];
+const isCountywide = ({ jurisdiction: j }: Contest) => j.level === "county" || (j.level === "district" && COUNTY_OFFICES.includes(j.name));
+
 export function areaShare(electionId: string, areaId: string) {
   const d = election(electionId);
   const area = d?.areas.find((a) => a.id === areaId);
   if (!d || !area) return null;
   const { ballot, guides, files } = ballotViewProps(d, { area });
   const rowsFor = (cid: string) => activeEntries(cid, guides, files, EMPTY);
-  const local = ballot.contests.filter((c) => !eligible(c) && rowsFor(c.id).length > 0);
-  const contest = mostPositions(local.length > 0 ? local : ballot.contests, rowsFor);
+  const taken = ballot.contests.filter((c) => rowsFor(c.id).length > 0);
+  const local = taken.filter((c) => !eligible(c));
+  const countywide = area.kind === "county" ? local.filter(isCountywide) : [];
+  const contest = mostPositions([countywide, local, ballot.contests].find((cs) => cs.length > 0) ?? [], rowsFor);
   if (!contest) return null;
   return {
     card: shareCard(contest, rowsFor(contest.id)),
