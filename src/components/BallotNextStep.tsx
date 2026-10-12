@@ -20,7 +20,7 @@ export function BallotNextStep({ step, carry }: { step: NextStep; carry: string 
       <ul className="mt-3 grid grid-cols-2 gap-2 min-[375px]:grid-cols-3 sm:flex sm:flex-wrap">
         {step.links.map((l) => (
           <li key={l.href}>
-            <Link href={`${l.href}${carry}`} className="flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-1 text-center text-sm outline-none ring-1 ring-foreground/10 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:rounded-full sm:px-3">
+            <Link href={`${l.href}${carry}`} className="flex min-h-11 items-center justify-center rounded-lg px-1 text-center text-sm leading-tight outline-none ring-1 ring-foreground/10 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:rounded-full sm:px-3">
               {l.label}
             </Link>
           </li>

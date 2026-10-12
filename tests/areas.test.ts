@@ -201,7 +201,7 @@ describe("nextStep", () => {
     expect(nextStep("2026-11", propB, contests, [SF, SM, PA])).toEqual({ kind: "area", link: { href: "/2026-11/sf", label: "See all 4 contests on the San Francisco ballot" } });
   });
   it("lists every county page for a statewide contest", () => {
-    expect(nextStep("2026-11", prop1, contests, [SF, SM, SCC])).toEqual({
+    expect(nextStep("2026-11", prop1, contests, [SF, SM, PA, SCC])).toEqual({
       kind: "counties",
       note: "This contest is on every Bay Area ballot.",
       links: [{ href: "/2026-11/sf", label: "San Francisco" }, { href: "/2026-11/san-mateo", label: "San Mateo" }, { href: "/2026-11/santa-clara-county", label: "Santa Clara" }],
