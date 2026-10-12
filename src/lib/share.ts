@@ -1,6 +1,6 @@
+import { isCountywide, isLocal } from "./areas";
 import { barSegments, candidateSlots, surname, type BarSegment, type BarTone, type Slots } from "./bar";
 import { cardDescription, contestHeadline } from "./display";
-import { isCountywide, isLocal } from "./areas";
 import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { tally, unanimous } from "./score";

@@ -5,6 +5,8 @@ export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "
 
 export type PlaceName = { name: string; short: string };
 
+export const BAY_AREA: PlaceName = { name: "Bay Area", short: "Bay Area" };
+
 export function isLocal(j: Jurisdiction): boolean {
   return j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
 }
@@ -13,7 +15,6 @@ const COUNTY_OFFICES: readonly string[] = ["Supervisor", "County Board of Educat
 export function isCountywide(j: Jurisdiction): boolean {
   return j.level === "county" || (j.level === "district" && COUNTY_OFFICES.includes(j.name));
 }
-export const BAY_AREA: PlaceName = { name: "Bay Area", short: "Bay Area" };
 
 type AreaLike = Pick<Area, "jurisdictions">;
 

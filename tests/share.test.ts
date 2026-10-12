@@ -142,6 +142,7 @@ describe("featuredContest", () => {
     expect(featuredContest([school, cityA, supervisor, county], rowsFor, { county: true })?.id).toBe("sup-2");
     expect(featuredContest([school, cityA, supervisor], rowsFor)?.id).toBe("usd");
     expect(featuredContest([school, cityA], rowsFor, { county: true })?.id).toBe("usd");
+    expect(featuredContest([school, cityA, county], rowsFor, { county: true })?.id).toBe("county-j");
   });
 });
 
