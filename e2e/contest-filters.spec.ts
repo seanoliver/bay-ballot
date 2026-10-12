@@ -148,7 +148,7 @@ test.describe("contest page filters", () => {
     await openContest(page);
     await expect(page.getByText("1 guide hidden")).toBeVisible();
     await page.getByRole("button", { name: SHOW_ALL }).click();
-    await page.getByRole("link", { name: "San Francisco ballot" }).click();
+    await page.getByRole("link", { name: "San Francisco ballot", exact: true }).click();
     await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
     const back = await filterPanel(page, info);
     await back.getByRole("searchbox", { name: "Search guides" }).fill("republican");
@@ -159,7 +159,7 @@ test.describe("contest page filters", () => {
     await openBallot(page, "?off=sf-gop&why=1&c=prop-b");
     await expect(contestRow(page, "Proposition B")).toHaveAttribute("href", "/2026-11/prop-b?off=sf-gop&why=1");
     await page.goto(`${PROP_B}?off=sf-gop&why=1`);
-    await expect(page.getByRole("link", { name: "San Francisco ballot" })).toHaveAttribute("href", "/2026-11/sf?off=sf-gop&why=1");
+    await expect(page.getByRole("link", { name: "San Francisco ballot", exact: true })).toHaveAttribute("href", "/2026-11/sf?off=sf-gop&why=1");
   });
 
   test("a stored filter renders without hydration errors", async ({ page }) => {
@@ -173,7 +173,7 @@ test.describe("contest page filters", () => {
 
 test("a filter set on a statewide contest page doesn't send the home page to an area", async ({ page }, info) => {
   await page.goto(`${BALLOT}/governor`);
-  await expect(page.getByRole("link", { name: "Bay Area ballot" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Bay Area ballot", exact: true })).toBeVisible();
   const panel = await filterPanel(page, info);
   await panel.getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
   await expect(page).toHaveURL(/[?&]why=1/);
