@@ -178,3 +178,25 @@ export function placeGroups(contests: Contest[], areas: Area[]): PlaceGroup[] {
     sections: sections(cs),
   }));
 }
+
+export type BallotLink = { href: string; label: string };
+export type NextStep = { kind: "area"; link: BallotLink } | { kind: "counties"; note: string; links: BallotLink[] };
+
+/** Where a contest page sends a reader for the rest of their ballot: the contest's own area page, or the county pages that carry it. */
+export function nextStep(election: string, contest: Contest, contests: Contest[], areas: Area[]): NextStep | null {
+  const toArea = (a: Area, name: string): NextStep | null => {
+    const n = contests.filter((c) => inArea(c, a)).length;
+    return n > 1 ? { kind: "area", link: { href: `/${election}/${a.id}`, label: `See all ${n} ${name} races` } } : null;
+  };
+  const { area, place } = contestPlace(contest, areas);
+  if (area) return toArea(area, place.name);
+  const counties = countyPages(areas);
+  const carrying = counties.filter((a) => inArea(contest, a));
+  if (carrying.length === 0) return null;
+  if (carrying.length === 1) return toArea(carrying[0], placeName(carrying[0]).name);
+  return {
+    kind: "counties",
+    note: carrying.length === counties.length ? "This race is on every Bay Area ballot." : `This race is on the ballot in ${carrying.length} counties.`,
+    links: carrying.map((a) => ({ href: `/${election}/${a.id}`, label: countyOf(a) ?? a.name })),
+  };
+}

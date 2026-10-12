@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, countyPages, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, countyPages, inArea, nextStep, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
 import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
@@ -190,5 +190,29 @@ describe("contestPlace", () => {
     expect(contestPlace(prop1, all)).toEqual({ area: null, place: BAY_AREA });
     expect(contestPlace(rtm, all).place).toEqual(BAY_AREA);
     expect(contestPlace(rep15, all).place).toEqual(BAY_AREA);
+  });
+});
+
+describe("nextStep", () => {
+  const SCC: Area = { id: "santa-clara-county", name: "Santa Clara County", kind: "county", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }, { level: "city", name: "Palo Alto" }] };
+  const contests = [prop1, propB, sup8, rep15, smL];
+  it("links a local contest to its area page with the area's contest count", () => {
+    expect(nextStep("2026-11", propB, contests, [SF, SM, PA])).toEqual({ kind: "area", link: { href: "/2026-11/sf", label: "See all 4 San Francisco races" } });
+  });
+  it("lists every county page for a statewide contest", () => {
+    expect(nextStep("2026-11", prop1, contests, [SF, SM, SCC])).toEqual({
+      kind: "counties",
+      note: "This race is on every Bay Area ballot.",
+      links: [{ href: "/2026-11/sf", label: "San Francisco" }, { href: "/2026-11/san-mateo", label: "San Mateo" }, { href: "/2026-11/santa-clara-county", label: "Santa Clara" }],
+    });
+  });
+  it("lists only the counties that carry a contest spanning some of them", () => {
+    const step = nextStep("2026-11", rep15, contests, [SF, SM, SCC]);
+    expect(step).toMatchObject({ kind: "counties", note: "This race is on the ballot in 2 counties." });
+    expect(step?.kind === "counties" && step.links.map((l) => l.label)).toEqual(["San Francisco", "San Mateo"]);
+  });
+  it("is nothing when the area page would hold only this contest, or no county page carries it", () => {
+    expect(nextStep("2026-11", propB, [propB], [SF, SM])).toBeNull();
+    expect(nextStep("2026-11", c("x", { level: "city", name: "Atlantis" }), contests, [SF, SM])).toBeNull();
   });
 });
