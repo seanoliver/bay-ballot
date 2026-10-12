@@ -1,3 +1,4 @@
+import { isCountywide, isLocal } from "./areas";
 import { barSegments, candidateSlots, surname, type BarSegment, type BarTone, type Slots } from "./bar";
 import { cardDescription, contestHeadline } from "./display";
 import type { Row } from "./filters";
@@ -90,6 +91,20 @@ export function mostPositions<C extends { id: string }>(contests: C[], rowsFor: 
   return best;
 }
 
+export function featuredContest<C extends Pick<Contest, "id" | "jurisdiction">>(
+  contests: C[],
+  rowsFor: (id: string) => Row[],
+  { county = false }: { county?: boolean } = {},
+): C | undefined {
+  const local = contests.filter((c) => isLocal(c.jurisdiction) && rowsFor(c.id).length > 0);
+  const countywide = county ? local.filter((c) => isCountywide(c.jurisdiction)) : [];
+  return mostPositions([countywide, local, contests].find((cs) => cs.length > 0) ?? [], rowsFor);
+}
+
+export function shareDate(iso: string): string {
+  return new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" });
+}
+
 export function breakLines(text: string, maxChars: number, maxLines: number): string[] {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[][] = [];
@@ -114,6 +129,5 @@ export function breakLines(text: string, maxChars: number, maxLines: number): st
 }
 
 export function shareLabel(iso: string, place: string): string {
-  const day = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
-  return `${day.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" })} · ${place}`;
+  return `${shareDate(iso)} · ${place}`;
 }

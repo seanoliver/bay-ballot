@@ -24,7 +24,7 @@ export function ContestShare({ card, compact = false }: { card: ShareCard; compa
             </div>
             <div style={{ display: "flex", fontSize: compact ? 24 : 30, color: MUTED }}>{run(card.sub)}</div>
           </div>
-          {card.multi ? <Seats card={card} /> : <Result card={card} compact={compact} />}
+          {card.multi ? <Seats card={card} compact={compact} /> : <Result card={card} compact={compact} />}
         </div>
       )}
     </div>
@@ -48,11 +48,15 @@ function Result({ card, compact }: { card: ShareCard; compact: boolean }) {
   );
 }
 
-function Seats({ card }: { card: ShareCard }) {
+const COMPACT_SEATS = 3;
+
+function Seats({ card, compact }: { card: ShareCard; compact: boolean }) {
+  const shown = compact ? card.seats.slice(0, COMPACT_SEATS) : card.seats;
+  const more = card.seats.length - shown.length;
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: 14, marginTop: 20 }}>
-      {card.seats.map((s) => (
-        <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 30 }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: compact ? 8 : 14, marginTop: compact ? 12 : 20 }}>
+      {shown.map((s) => (
+        <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 20, fontSize: compact ? 26 : 30 }}>
           <div style={{ display: "flex", width: 380, flexShrink: 0, overflow: "hidden", whiteSpace: "nowrap" }}>{run(s.label)}</div>
           <div style={{ display: "flex", flexGrow: 1, flexBasis: 0, height: 22, borderRadius: 11, background: FILL.empty }}>
             <div style={{ width: `${s.pct}%`, height: 22, borderRadius: 11, background: FILL[s.tone] }} />
@@ -60,6 +64,7 @@ function Seats({ card }: { card: ShareCard }) {
           <div style={{ display: "flex", width: 160, flexShrink: 0, justifyContent: "flex-end", color: MUTED }}>{run(`${s.count} of ${card.total}`)}</div>
         </div>
       ))}
+      {more > 0 ? <div style={{ display: "flex", fontSize: 24, color: MUTED }}>{run(`+${more} more`)}</div> : null}
     </div>
   );
 }

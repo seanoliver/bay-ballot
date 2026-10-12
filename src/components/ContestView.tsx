@@ -2,12 +2,13 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import type { PlaceName } from "@/lib/areas";
+import type { NextStep, PlaceName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
+import { BallotNextStep } from "./BallotNextStep";
 import { ContestDetail } from "./ContestDetail";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
@@ -28,9 +29,10 @@ type Props = {
   place: PlaceName;
   back: { href: string; label: string };
   area: string | null;
+  next: NextStep | null;
 };
 
-export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area }: Props) {
+export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides });
   const setFilters = (f: Filters) => {
@@ -94,6 +96,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             shortNames={false}
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
           />
+          {next ? <BallotNextStep step={next} carry={carry} /> : null}
         </section>
       </div>
     </div>
