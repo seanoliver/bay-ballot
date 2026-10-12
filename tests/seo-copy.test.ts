@@ -277,9 +277,12 @@ describe("area-aware copy", () => {
     expect(areaTitle(SM, NOV)).toBe("San Mateo County endorsements (Nov 2026)");
     expect(areaTitle(BAY_AREA, NOV)).toBe("Bay Area endorsements (Nov 2026)");
   });
-  it("describes an area by its most-endorsed contest", () => {
+  it("describes an area by its most-endorsed local contest, or any contest when no local one has positions", () => {
     const rowsFor = (id: string) => (id === "prop-1" ? prop1Rows() : many(1, "Y"));
-    expect(areaDescription(SM, [mpP, prop1], rowsFor)).toBe("12 of 15 San Mateo County voter guides recommend Yes on Prop 1. See every contest side by side.");
+    expect(areaDescription(SM, [mpP, prop1], rowsFor)).toMatch(/Menlo Park Measure P/);
+    expect(areaDescription(SM, [mpP, prop1], (id) => (id === "prop-1" ? prop1Rows() : []))).toBe(
+      "12 of 15 San Mateo County voter guides recommend Yes on Prop 1. See every contest side by side.",
+    );
     expect(areaDescription(SM, [], () => [])).toBe("What San Mateo County voter guides recommend. See every contest side by side.");
   });
   const localHeavy = (id: string) => (id === "prop-b" ? many(20, "Y") : id === "rtm" ? many(18, "Y") : id === "prop-1" ? prop1Rows() : []);

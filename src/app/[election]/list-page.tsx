@@ -14,7 +14,7 @@ export function listMetadata(d: ElectionData, electionId: string, area: Area | n
   return {
     title: { absolute: areaTitle(place, ballot.date) },
     alternates: { canonical: area ? `/${electionId}/${area.id}` : `/${electionId}` },
-    description: areaDescription(place, ballot.contests, (id) => activeEntries(id, guides, files, EMPTY), { statewideOnly: area === null }),
+    description: areaDescription(place, ballot.contests, (id) => activeEntries(id, guides, files, EMPTY), { statewideOnly: area === null, county: area?.kind === "county" }),
   };
 }
 

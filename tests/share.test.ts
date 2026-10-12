@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { breakLines, mostPositions, shareCard, shareLabel, shortTitle } from "@/lib/share";
+import { breakLines, featuredContest, mostPositions, shareCard, shareLabel, shortTitle } from "@/lib/share";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -116,6 +116,33 @@ describe("breakLines", () => {
     expect(out).toHaveLength(2);
     expect(out[1].endsWith("…")).toBe(true);
     expect(out.every((l) => l.length <= 12)).toBe(true);
+  });
+});
+
+describe("featuredContest", () => {
+  const at = (id: string, jurisdiction: Contest["jurisdiction"]) => contest({ id, jurisdiction });
+  const state = at("prop-1", { level: "state", name: "California" });
+  const assembly = at("ad-17", { level: "district", name: "Assembly", district: "17" });
+  const cityA = at("city-a", { level: "city", name: "Menlo Park" });
+  const cityB = at("city-b", { level: "city", name: "Menlo Park" });
+  const empty = at("city-0", { level: "city", name: "Menlo Park" });
+  const county = at("county-j", { level: "county", name: "San Mateo" });
+  const supervisor = at("sup-2", { level: "district", name: "Supervisor", district: "2", within: [{ level: "county", name: "Sonoma" }] });
+  const school = at("usd", { level: "district", name: "Unified School District", within: [{ level: "county", name: "Sonoma" }] });
+  const counts: Record<string, number> = { "prop-1": 10, "ad-17": 9, "city-a": 3, "city-b": 3, "city-0": 0, "county-j": 2, "sup-2": 2, usd: 5 };
+  const rowsFor = (id: string) => many(counts[id] ?? 0, "Y");
+
+  it("prefers the local contest with the most positions, first on a tie", () => {
+    expect(featuredContest([state, assembly, empty, cityA, cityB], rowsFor)?.id).toBe("city-a");
+  });
+  it("falls back to every contest when no local one has positions", () => {
+    expect(featuredContest([state, assembly, empty], rowsFor)?.id).toBe("prop-1");
+  });
+  it("prefers a county measure or county office on county pages, not a district inside the county", () => {
+    expect(featuredContest([school, cityA, supervisor, county], rowsFor, { county: true })?.id).toBe("sup-2");
+    expect(featuredContest([school, cityA, supervisor], rowsFor)?.id).toBe("usd");
+    expect(featuredContest([school, cityA], rowsFor, { county: true })?.id).toBe("usd");
+    expect(featuredContest([school, cityA, county], rowsFor, { county: true })?.id).toBe("county-j");
   });
 });
 
