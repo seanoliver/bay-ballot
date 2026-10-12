@@ -186,7 +186,7 @@ export type NextStep = { kind: "area"; link: BallotLink } | { kind: "counties"; 
 export function nextStep(election: string, contest: Contest, contests: Contest[], areas: Area[]): NextStep | null {
   const toArea = (a: Area, name: string): NextStep | null => {
     const n = contests.filter((c) => inArea(c, a)).length;
-    return n > 1 ? { kind: "area", link: { href: `/${election}/${a.id}`, label: `See all ${n} ${name} races` } } : null;
+    return n > 1 ? { kind: "area", link: { href: `/${election}/${a.id}`, label: `See all ${n} contests on the ${name} ballot` } } : null;
   };
   const { area, place } = contestPlace(contest, areas);
   if (area) return toArea(area, place.name);
@@ -196,7 +196,7 @@ export function nextStep(election: string, contest: Contest, contests: Contest[]
   if (carrying.length === 1) return toArea(carrying[0], placeName(carrying[0]).name);
   return {
     kind: "counties",
-    note: carrying.length === counties.length ? "This race is on every Bay Area ballot." : `This race is on the ballot in ${carrying.length} counties.`,
+    note: carrying.length === counties.length ? "This contest is on every Bay Area ballot." : `This contest is on the ballot in ${carrying.length} counties.`,
     links: carrying.map((a) => ({ href: `/${election}/${a.id}`, label: countyOf(a) ?? a.name })),
   };
 }
