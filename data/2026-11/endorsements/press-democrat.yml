@@ -24,7 +24,7 @@ extraSources:
 archived:
   - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
     snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
-fetchedAt: 2026-10-11
+fetchedAt: 2026-10-12
 hasReasoning: true
 rejectedQuotes:
   - text: The Press Democrat believes that’s a fair price to continue to pay to extend the value the SRJC provides to the community.
@@ -65,11 +65,11 @@ picks:
     pick:
       - Mike Thompson
     quotes:
-      - text: Thompson also has a stronger stance on gun control than Jones.
-        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: Thompson, who chairs the Gun Violence Prevention Task Force, helped pass and craft the Bipartisan Safer Communities Act.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C..
+        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
+      - text: Thompson also has a stronger stance on gun control than Jones.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
   superintendent:
     pick:
@@ -87,6 +87,8 @@ picks:
   prop-40:
     pick: Y
     quotes:
+      - text: Last year, Republicans in Congress and President Donald Trump cut roughly $1 trillion from Medicaid over a decade.
+        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: Five percent of a billionaire’s wealth is a lot of money, but no billionaire will become poor paying it.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: Prop. 40 is not a permanent fix. It is a cash infusion to deal with an emergency caused by the Trump administration.
@@ -119,11 +121,25 @@ picks:
     pick:
       - Mathew Lopez
     quotes:
-      - text: López, a bilingual speaker, is running on a campaign of sustainable housing, smart city planning, economic development and improved transit. While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
+      - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
+        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
+      - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
         source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
   healdsburg-council-4:
     pick:
       - Chris Herrod
+  cloverdale-council:
+    pick:
+      - Andrés Marquez
+      - Chris Parker
+      - Will Carter
+    quotes:
+      - text: During his short tenure on the council, Marquez has been a fierce advocate for safeguarding a regional water supply, plus transparency and policy change for the council.
+        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+      - text: Parker has extensive experience with the city’s budgeting process and, with a seat at the table, could bring his ideas for managing the city’s deficit to the forefront.
+        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+      - text: Carter, while new to politics, has extensive leadership experience serving the city.
+        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
   petaluma-mayor:
     pick:
       - Kevin McDonnell
@@ -149,7 +165,7 @@ picks:
     pick:
       - Susan Hollingsworth Adams
     quotes:
-      - text: Although residents are frustrated with the city’s current financial status and might desire blaming and punishing council members, doing so would be disingenuous, especially in Hollingsworth Adams’ case. The two-time council member has been a fiscal stalwart, thinking critically about every dollar the council has to spend.
+      - text: The two-time council member has been a fiscal stalwart, thinking critically about every dollar the council has to spend.
         source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-measure-k:
     pick: Y
@@ -191,22 +207,12 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
       - text: If Measure AB is approved, the cost, spread out over the entire county to local homeowners, would continue to be $30 per $100,000 of assessed value of local property.
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
-  cloverdale-council:
-    pick:
-      - Andrés Marquez
-      - Chris Parker
-      - Will Carter
-    quotes:
-      - text: Parker has extensive experience with the city’s budgeting process and, with a seat at the table, could bring his ideas for managing the city’s deficit to the forefront.
-        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
-      - text: During his short tenure on the council, Marquez has been a fierce advocate for safeguarding a regional water supply, plus transparency and policy change for the council.
-        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
-      - text: Carter, while new to politics, has extensive leadership experience serving the city.
-        source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
   napa-county-measure-b:
     pick: Y
     quotes:
       - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
+        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
+      - text: Measure B is a proposed new half-cent sales tax that would bring $23 million annually into the county for wildfire prevention and open space preservation maintenance.
         source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:
     pick: N

@@ -7,7 +7,7 @@ Build enough housing to end the affordability crisis
 Clean, safe streets and fully staffed police
 Treatment and care for the drug crisis
 A faster, more transparent City Hall
-12,061
+13,340
 ballots cast (est.)
 0
 readers since
@@ -39,7 +39,7 @@ Alan Wong
 Supervisor, District 4
 Matt Dorsey
 Supervisor, District 6
-No Endorsement
+Darshini Patel
 Supervisor, District 8
 Theo Ellington
 Supervisor, District 10
@@ -386,41 +386,54 @@ San Francisco Supervisor | Read it
 Alex Behrend亞歷克斯‧貝倫德
 Laborer / Community Organizer | No Response
 Supervisor, District 8
+Vote Darshini Patel
 ShareTop
-GrowSF is not making an endorsement in District 8.
-Issue | Manny Yekutiel | Gary McCoy | Darshini Patel | Michael T. Nguyen
-Fully staff the police department | Yes | Yes | Unclear | No position
-Expand conservatorship to get people with addiction into treatment | Yes | Not now | Last resort | Last resort
-Zero tolerance for fentanyl dealing and use on our streets, plus more treatment | Yes | No | No | No
-Supports opening drug use sites | No | Yes | Yes | No position
-Supports Mayor Lurie's Family Zoning Plan | Yes | Yes | Yes | No
-Has a plan to build 10,000 homes in District 8 | Yes | No | No | No
-Help entrepreneurs fill empty storefronts with City grants | Yes | No | Yes | Yes
-McCoy did not answer our questionnaire, so his positions above come from his campaign platform and press coverage.
-Patel declined our questionnaire and Nguyen did not respond to it, so their positions come from Patel's platform, Nguyen's priorities, and Mission Local's coverage of the candidates on Family Zoning, housing, conservatorship, and harm reduction. Patel says the police department should be staffed properly instead of run on overtime, but within its current budget.
-Some details about each candidate's platform
-Manny Yekutiel
-Yekutiel owns Manny's, a cafe and event space at 16th and Valencia, and has led the Valencia Corridor Merchants Association. He co-founded the Civic Joy Fund with Daniel Lurie before Lurie became Mayor; the fund pays for 17 trash pickups a week, night markets, and public art across the city. He has served on the Small Business Commission and spent nearly three years on the SFMTA Board of Directors.
-He has the most ambitious housing agenda in this race: 10,000 new homes in District 8 within eight years, mostly through a "housing priority district" on Market Street from Castro to Octavia. The district built 1,212 new homes from 2015 through 2024. He also supports full SFPD staffing, prosecuting fentanyl dealers, expanding sober housing and treatment, and making a willing landlord the only approval most new small businesses need. His full answers are in his questionnaire.
-Gary McCoy
-McCoy is a former aide to Scott Wiener and London Breed during their time as Supervisors, and to Speaker Nancy Pelosi, and was vice president of policy and public affairs at HealthRIGHT 360, a nonprofit that has run safe consumption sites in San Francisco. He has led the Alice B. Toklas and Harvey Milk LGBTQ Democratic Clubs.
-His platform supports Mayor Lurie's Family Zoning Plan and faster approvals for new homes, with prevailing wages on construction. He wants more mental health crisis response teams and speed cameras on District 8 corridors, and he opposes police use of Flock license-plate cameras. McCoy and Patel are asking their supporters to rank each other second.
-Darshini Patel
-Patel worked in the Obama White House's Office of Social Innovation and Civic Participation, on presidential campaigns, and on operations at DoorDash. She owns a home in District 8.
-Her platform would audit SFPD overtime and cap the overtime any one officer can work, expand the Street Crisis Response Team, and measure 311 by whether problems come back rather than by how fast cases close. She would enforce the empty storefront tax against District 8 owners who have not filed, and change restaurant permitting from "no, unless" to "yes, if." She also opposes Flock cameras.
-Michael T. Nguyen
-Nguyen is a patent attorney and drag performer who serves on the San Francisco Democratic County Central Committee and sits on the executive board of the Harvey Milk LGBTQ Democratic Club.
-His signature proposal is "social housing," which he describes as permanently affordable, mixed-income, city-owned housing. He opposes reducing inclusionary housing requirements and has opposed upzoning, citing displacement. He would extend the City's Vacant to Vibrant storefront program to two years and pair it with commercial rent stabilization, extend free Muni to riders up to age 25, and opposes Flock cameras. He says he will not be "a rubber stamp for the Mayor."
+We recommend voting for Darshini Patel as your #1 choice for Supervisor, District 8.
+Manny Yekutiel has dropped out. He ended his campaign on . His name is still on your ballot, but he is not running.
+Patel is with us on housing. She supports Mayor Lurie's Family Zoning Plan: "Nearly 50 years after we downzoned, ending the freeze was necessary," she told Mission Local. She supported lowering the inclusionary housing rate, which Nguyen opposed, and she wants permitting deadlines that escalate automatically when the City misses them.
+We also love how she makes decisions. She reads the research and lets the data shape her positions. GrowSF will keep publishing research and polling to help shape City policy, and we're excited to have a supervisor in District 8 who will read it.
+Patel worked on social innovation and civic participation in the Obama White House. At DoorDash she helped launch more than 300 markets and built the team that advocated for its restaurants. Her campaign's sibling site, TLDR SF, publishes a city budget explorer and twelve years of Board of Supervisors votes, about 139,000 of them.
+When data contradicts what I expected to find, I change my position, not the data.
+[[Darshini Patel](https://votedarshini.com/principles/)]
+Darshini PatelCommunity Advocate
+Why vote for Darshini Patel?
+1. Get the rezoned homes built
+The state requires San Francisco to plan for 82,069 new homes by 2031. The Controller's Office of Economic Analysis projects that the Family Zoning Plan will add 8,500 to 14,600 homes over twenty years. Patel's housing platform starts from that gap: "Rezoning was necessary, but it's not sufficient alone." Along with enforcing permit deadlines, she would extend the fee reductions that expire this November and build local financing tools that don't depend on federal money.
+2. Measure results, then publish them
+She wants 311 judged by whether problems come back, not by how fast tickets close, with the results published by district. She says Muni has not published route-level performance data since 2018, and she wants it published again. As she told India Currents, "A metric that rewards activity instead of results will eventually produce more activity instead of better results."
+3. Treatment that works
+Mission Local scored her a yes on expanding conservatorship, "only as a last resort when it leads to actual treatment." McCoy answered ambiguously and Nguyen said no. She supports CARE Court and wants the treatment capacity built that makes it work. District 8 has zero emergency shelter beds, and she commits to a community process in her first six months to choose a District 8 shelter site.
+4. Police work that clears cases
+She supports the City's real-time camera network, which she says has assisted 500 arrests. On drugs, her rule is "Arrest dealers. Divert users to treatment. Measure results." She argues that running SFPD on overtime costs more than staffing it properly.
+We don't see eye to eye on everything. She would vote against renewing the City's license-plate camera contract, and she has spoken in favor of safe injection sites. She also doesn't want arrest to be the main response to drug use, which falls short of the zero tolerance for fentanyl on our streets that we support.
+We never look for 100% agreement with the candidates we endorse. Reasonable people can disagree, and we're proud to endorse candidates who engage honestly with the evidence and bring new ideas to the table.
+Where the candidates stand
+Issue | Darshini Patel | Gary McCoy | Michael T. Nguyen
+Supports Mayor Lurie's Family Zoning Plan | Yes | Yes | No
+Lower the inclusionary housing rate | Yes | Hesitated, then yes | No
+Expand conservatorship | Yes, as a last resort | Not without more beds | No
+Arrest fentanyl dealers | Yes | Yes | Unclear
+Zero tolerance for drug use on our streets | No | No | No
+Supports drug-use sites | Has spoken for them | Yes, a leading advocate | Unclear
+Fully staff SFPD | Yes | Yes | Yes
+Patel declined our questionnaire, McCoy did not answer it, and Nguyen did not respond. Their positions come from their platforms and Mission Local's coverage of the candidates on Family Zoning, housing, conservatorship, drug arrests, and harm reduction. Nguyen's position on police staffing is from the Bay Area Reporter's endorsement editorial.
+Why not the other candidates?
+Gary McCoy is unfit for this job.
+From through , four clients and one staff member fatally overdosed inside HealthRIGHT 360's San Francisco treatment programs. McCoy was HealthRIGHT's vice president of policy and public affairs the whole time. A state investigation into two of the deaths found the nonprofit had skipped the hourly safety checks its policies required. McCoy still backs drug-use sites, and in 2022 he called for "decriminalizing drugs" and "a safe supply."
+In 2002, about a month after he moved to San Francisco, McCoy was arrested at 16th and Mission for possessing and attempting to distribute heroin. That case was dismissed after a drug diversion program and the record sealed. Before that, Virginia court records show he was convicted of felony grand theft and six misdemeanors, and he was jailed for violating probation.
+In 2022, he sued journalist Erica Sandberg for $1.9 million over a post she shared on Twitter.
+Michael T. Nguyen opposed the Family Zoning Plan, opposed lowering the inclusionary rate, and opposes expanding conservatorship.
+Patel rejects the progressive-versus-moderate split and says she is "not running for Supervisor as a step toward another office." District 8 needs a supervisor who will follow the numbers on housing. That is why she has our endorsement.
 District 8 uses ranked-choice voting, so you can rank up to 10 candidates in order of preference.
 Who's running?
 Candidate | Profession | Questionnaire
+Darshini Patel達希妮‧帕特爾
+Community Advocate | Refused
 Gary McCoy麥佳禮
 Healthcare Policy Advocate | Refused
 Michael T. Nguyen阮忠誠
 Attorney / Drag Producer | No Response
-Darshini Patel達希妮‧帕特爾
-Community Advocate | Refused
-Emanuel "Manny" Yekutiel伊曼紐爾‧「曼尼」‧耶庫蒂爾
+Emanuel "Manny" Yekutiel伊曼紐爾‧「曼尼」‧耶庫蒂爾Dropped out
 Small Business Owner | Read it
 Supervisor, District 10
 Vote Theo Ellington
@@ -1551,7 +1564,7 @@ Supported the 2022 school board recall | 72% | Yes | No
 Endorsed by California Democratic Party| Yes | No
 Voter support figures come from GrowSF polling (2024 to 2026) and San Francisco election results.
 Scott Wiener has spent the last decade as one of California's most persistent and effective pro-housing legislators. As a former San Francisco supervisor and now the state senator representing District 11 (San Francisco), he has built a record on the issues that most directly shape San Francisco's quality of life and cost of living: housing production, transit, and government's ability to actually deliver.
-In this field, Wiener stands out because he has already passed big, controversial laws in hostile political conditions, and that matters in Washington, where rhetoric is cheap and follow-through is not. Like every candidate, there are things we don't align with Wiener on (his positions on AI regulation and public safety diverge from ours in places), but he's still the best choice for getting results.
+In this field, Wiener stands out because he has already passed big, controversial laws in hostile political conditions, and that matters in Washington, where rhetoric is cheap and follow-through is not. Like every candidate, there are things we don't align with Wiener on, but he's still the best choice for getting results.
 Results over rhetoric. My job isn't to maintain ideological purity; it's to improve people's lives.
 [Scott Wiener headshot]
 Scott WienerState Senator, District 11
