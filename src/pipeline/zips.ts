@@ -1,3 +1,5 @@
+import { STATE_DISTRICTS } from "../lib/areas";
+import type { Contest } from "../lib/schema";
 import type { ZipTable } from "../lib/zip";
 
 /** Census 2020 relationship files: which ZIP Code Tabulation Areas overlap which counties and places, by land area. */
@@ -64,4 +66,23 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
 export function zipTableJson(t: ZipTable): string {
   const zips = Object.entries(t.zips).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
   return `{\n  "cityCounty": ${JSON.stringify(t.cityCounty)},\n  "districtCounties": ${JSON.stringify(t.districtCounties)},\n  "communities": ${JSON.stringify(t.communities)},\n  "zips": {\n${zips.join(",\n")}\n  }\n}\n`;
+}
+
+// One name, many districts: these name a kind of seat, not one district.
+export const SEAT_KINDS: readonly string[] = [...STATE_DISTRICTS, "Supervisor", "County Board of Education", "City Council", "Town Council"];
+
+/** Each district's counties from its district-wide (at-large) contests, which describe the whole district. */
+export function poolDistrictCounties(contests: Contest[], cityCounty: Record<string, string>): Record<string, string[]> {
+  const byDistrict = new Map<string, Set<string>>();
+  for (const c of contests) {
+    const j = c.jurisdiction;
+    if (j.level !== "district" || j.district !== "at-large" || SEAT_KINDS.includes(j.name)) continue;
+    const set = byDistrict.get(j.name) ?? new Set<string>();
+    for (const p of j.within ?? []) {
+      const county = p.level === "county" ? p.name : cityCounty[p.name];
+      if (county) set.add(county);
+    }
+    byDistrict.set(j.name, set);
+  }
+  return Object.fromEntries([...byDistrict].filter(([, s]) => s.size > 0).sort(([a], [b]) => a.localeCompare(b)).map(([n, s]) => [n, [...s].sort()]));
 }

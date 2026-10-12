@@ -188,7 +188,7 @@ function ZipLine({ summary, showAll, onShowAll, onRetry }: { summary: ZipSummary
       </span>
     );
   }
-  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a Bay Area ZIP, or one this site can’t map (PO box or new ZIPs). Every contest is shown.</span>;
+  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a Bay Area ZIP, or one this site can’t map (a PO box or new ZIP). Every contest is shown.</span>;
   if (summary.kind === "elsewhere") {
     return (
       <span className="text-muted-foreground">

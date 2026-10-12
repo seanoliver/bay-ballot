@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildZipTable, zipTableJson } from "@/pipeline/zips";
+import { buildZipTable, poolDistrictCounties, SEAT_KINDS, zipTableJson } from "@/pipeline/zips";
 import { zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
 import type { PlaceGroup } from "@/lib/areas";
 import { c, prop1, propB, rep15, rtm, smL, sup8 } from "./fixtures/areas";
@@ -138,9 +138,12 @@ describe("the ballot data the ZIP rules rely on", async () => {
     expect(councils.length).toBeGreaterThan(0);
     expect(councils.filter((x) => !x.title.includes(x.jurisdiction.within![0].name)).map((x) => x.id)).toEqual([]);
   });
-  it("pools counties only for named districts, never for a kind of seat like Supervisor", () => {
-    expect(Object.keys(table.districtCounties).filter((n) => ["Supervisor", "Congress", "Assembly", "State Senate", "City Council", "County Board of Education"].includes(n))).toEqual([]);
-    expect(table.districtCounties["Sonoma County Junior College District"]).toEqual(["Marin", "Sonoma"]);
+  it("pools a district's counties from its district-wide contests only, never for a kind of seat, and matches the committed table", () => {
+    const pooled = poolDistrictCounties(contests, table.cityCounty);
+    expect(Object.keys(pooled).filter((n) => SEAT_KINDS.includes(n))).toEqual([]);
+    expect(pooled["Sonoma County Junior College District"]).toEqual(["Marin", "Sonoma"]);
+    expect(pooled.BART).toBeUndefined();
+    expect(table.districtCounties).toEqual(pooled);
   });
   it("has no city contest or council for an unincorporated community, whose Census lines aren't legal limits", () => {
     const named = contests.flatMap((x) => (x.jurisdiction.level === "city" ? [x.jurisdiction.name] : ["City Council", "Town Council"].includes(x.jurisdiction.name) ? (x.jurisdiction.within ?? []).map((p) => p.name) : []));

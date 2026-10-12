@@ -82,7 +82,7 @@ function cachedZipView(groups: PlaceGroup[], zip: string, z: ZipPlaces, table: Z
 function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
   if (s.kind === "loading") return "";
   if (s.kind === "failed") return "Couldn’t load the ZIP list. Every contest is shown.";
-  if (s.kind === "unknown") return `ZIP ${zip} can’t be mapped. Every contest is shown.`;
+  if (s.kind === "unknown") return `ZIP ${zip} isn’t a Bay Area ZIP, or one this site can’t map. Every contest is shown.`;
   if (s.kind === "elsewhere") return `ZIP ${zip}: ${s.where}`;
   return showAll ? `Showing all ${counted(s.on + s.maybe + s.hidden, "contest")}` : `Showing ${counted(s.on + s.maybe, "contest")} for ZIP ${zip}, ${s.hidden} hidden`;
 }
@@ -486,6 +486,8 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             onZip={(v) => {
               setZipActedOn(area);
               setShowAllFor(null);
+              stepWrite.cancel();
+              setStepped(null);
               setZipRaw(v ?? "");
             }}
             onShowAll={setShowAll}

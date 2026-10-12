@@ -15,7 +15,7 @@ test.describe("ZIP filter", () => {
     await page.goto(SCC);
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await enterZip(page, "94040");
-    await expect(box(page)).toContainText(/ZIP 94040 · \d+ contests can be on your ballot · \d+ others hidden/);
+    await expect(box(page)).toContainText(/ZIP 94040 · \d+ contests can be on your ballot · \d+ others? hidden/);
     await expect(box(page).locator("p").first()).toBeFocused();
     await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
     await expect(contestRow(page, "Mountain View City Council")).toBeVisible();
@@ -55,7 +55,7 @@ test.describe("ZIP filter", () => {
   test("narrows the Bay Area page to the ZIP's county", async ({ page }) => {
     await page.goto(BALLOT);
     await enterZip(page, "94401");
-    await expect(box(page)).toContainText(/\d+ contests can be on your ballot · \d+ others hidden/);
+    await expect(box(page)).toContainText(/\d+ contests can be on your ballot · \d+ others? hidden/);
     await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
   });
 
