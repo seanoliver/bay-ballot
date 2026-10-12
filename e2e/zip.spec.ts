@@ -8,9 +8,7 @@ async function enterZip(page: Page, zip: string) {
   const open = page.getByRole("button", { name: "Your ZIP" });
   if (await open.isVisible()) await open.click();
   else await page.getByRole("button", { name: /^ZIP \d{5}\. Change$/ }).click();
-  const input = page.getByLabel("Your ZIP code");
-  await input.fill("");
-  await input.pressSequentially(zip);
+  await page.getByLabel("Your ZIP code").pressSequentially(zip);
 }
 
 const status = (page: Page) => page.locator("[data-zip-status]");
@@ -46,6 +44,33 @@ test.describe("ZIP filter", () => {
     await expect(status(page).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
     await page.getByLabel("Your ZIP code").press("Escape");
     await expect(page.getByRole("button", { name: "Your ZIP" })).toBeFocused();
+  });
+
+  test("Change selects the old ZIP so typing replaces it; Escape keeps it; leaving an empty field doesn't pull focus back", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "94040");
+    await page.getByRole("button", { name: "ZIP 94040. Change" }).click();
+    await page.getByLabel("Your ZIP code").pressSequentially("94301");
+    await expect(page.getByRole("button", { name: "ZIP 94301. Change" })).toBeFocused();
+    await page.getByRole("button", { name: "ZIP 94301. Change" }).click();
+    await page.getByLabel("Your ZIP code").press("Escape");
+    await expect(page.getByRole("button", { name: "ZIP 94301. Change" })).toBeFocused();
+    await expect(status(page)).toContainText("in 94301");
+
+    await page.getByRole("button", { name: "Clear ZIP" }).click();
+    await page.getByRole("button", { name: "Your ZIP" }).click();
+    await page.getByLabel("Your ZIP code").press("Tab");
+    await expect(page.getByRole("button", { name: "Your ZIP" })).not.toBeFocused();
+  });
+
+  test("a pasted address applies its ZIP", async ({ page, context, browserName }, info) => {
+    test.skip(browserName !== "chromium" || info.project.name.includes("phone"), "clipboard permissions are Chromium-only");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto(SCC);
+    await page.getByRole("button", { name: "Your ZIP" }).click();
+    await page.evaluate(() => navigator.clipboard.writeText("123 Castro St, Mountain View, CA 94041-1234"));
+    await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
+    await expect(page.getByRole("button", { name: "ZIP 94041. Change" })).toBeVisible();
   });
 
   test("a shared link to a contest the ZIP hides still opens it", async ({ page }) => {

@@ -125,6 +125,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
   const [zipEditing, setZipEditing] = useState(false);
   const [zipError, setZipError] = useState(false);
   const zipErrorId = useId();
+  const zipHintId = useId();
   const zipPlaces = zip && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
   // A ZIP outside this page's county (or city) isn't filtered here: the page points to the ZIP's own ballot instead.
   const outsideCounty = zipPlaces && county && !zipPlaces.counties.includes(county);
@@ -489,9 +490,10 @@ export function BallotView({ election, area, county, city, links, intro, groups:
               error={zipError}
               setError={setZipError}
               errorId={zipErrorId}
+              hintId={zipHintId}
               onZip={(v) => {
                 setZipActedOn(area);
-                setShowAllFor(null);
+                if (v !== zip) setShowAllFor(null);
                 stepWrite.cancel();
                 setStepped(null);
                 setZipRaw(v ?? "");
@@ -505,6 +507,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             editing={zipEditing}
             error={zipError}
             errorId={zipErrorId}
+            hintId={zipHintId}
             onShowAll={setShowAll}
             onRetry={() => {
               setZipActedOn(area);

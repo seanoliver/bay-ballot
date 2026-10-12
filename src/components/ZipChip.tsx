@@ -25,7 +25,7 @@ const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset
  * The ZIP chip at the end of the area chips. It applies at the fifth digit or on Enter, so it needs no button. The ZIP
  * stays on this device; the input has no `name`, so a submit before hydration can't put it in the URL.
  */
-export function ZipChip({ zip, onZip, editing, setEditing, error, setError, errorId }: {
+export function ZipChip({ zip, onZip, editing, setEditing, error, setError, errorId, hintId }: {
   zip: string | null;
   onZip: (zip: string | null) => void;
   editing: boolean;
@@ -33,6 +33,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   error: boolean;
   setError: (v: boolean) => void;
   errorId: string;
+  hintId: string;
 }) {
   const [draft, setDraft] = useState("");
   // Where focus goes once the chip has changed shape, since the focused control is replaced.
@@ -40,8 +41,12 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   const inputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (focusNext.current === "input") inputRef.current?.focus();
-    if (focusNext.current === "chip") chipRef.current?.focus();
+    if (focusNext.current === "input") {
+      inputRef.current?.focus({ preventScroll: true });
+      // Selected, so the first digit typed replaces the old ZIP instead of adding to it.
+      inputRef.current?.select();
+    }
+    if (focusNext.current === "chip") chipRef.current?.focus({ preventScroll: true });
     focusNext.current = null;
   });
 
@@ -52,11 +57,18 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     focusNext.current = "chip";
     onZip(v);
   };
-  const close = () => {
+  // Escape returns focus to the chip; leaving the field closes it where focus went.
+  const close = ({ refocus }: { refocus: boolean }) => {
     setEditing(false);
     setError(false);
     setDraft("");
-    focusNext.current = "chip";
+    if (refocus) focusNext.current = "chip";
+  };
+  const take = (raw: string) => {
+    const v = raw.replace(/\D/g, "").slice(0, 5);
+    setDraft(v);
+    setError(false);
+    if (isZip(v)) apply(v);
   };
 
   if (editing) {
@@ -68,31 +80,31 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
           value={draft}
           aria-label="Your ZIP code"
           aria-invalid={error || undefined}
-          aria-describedby={errorId}
+          aria-describedby={`${errorId} ${hintId}`}
           inputMode="numeric"
           autoComplete="postal-code"
           placeholder="ZIP code"
           enterKeyHint="go"
           className="w-[5.5rem] bg-transparent text-base outline-none placeholder:text-muted-foreground sm:text-sm"
-          onChange={(e) => {
-            const v = e.target.value.replace(/\D/g, "").slice(0, 5);
-            setDraft(v);
-            setError(false);
-            if (isZip(v)) apply(v);
+          onChange={(e) => take(e.target.value)}
+          onPaste={(e) => {
+            // A pasted address or ZIP+4 carries its ZIP as a 5-digit word; stripping every non-digit would mangle it.
+            const found = /\b(\d{5})(?:-\d{4})?\b/.exec(e.clipboardData.getData("text"));
+            if (!found) return;
+            e.preventDefault();
+            take(found[1]);
           }}
           onKeyDown={(e: KeyboardEvent) => {
             if (e.key === "Escape") {
               e.stopPropagation();
-              close();
+              close({ refocus: true });
             } else if (e.key === "Enter") {
               e.preventDefault();
               if (isZip(draft)) apply(draft);
               else setError(true);
             }
           }}
-          onBlur={() => {
-            if (!draft) close();
-          }}
+          onBlur={() => close({ refocus: false })}
         />
       </span>
     );
@@ -114,12 +126,12 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     );
   }
   return (
-    <span className={cn(CHIP, "bg-card pr-1 font-medium ring-1 ring-foreground has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50")}>
+    <span className="js-only inline-flex min-h-10 items-center rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
       <button
         ref={chipRef}
         type="button"
         aria-label={`ZIP ${zip}. Change`}
-        className="inline-flex min-h-10 items-center gap-2 outline-none"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         onClick={() => {
           setDraft(zip);
           setEditing(true);
@@ -132,7 +144,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
       <button
         type="button"
         aria-label="Clear ZIP"
-        className="grid size-8 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+        className="grid size-10 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
         onClick={() => {
           focusNext.current = "chip";
           onZip(null);
@@ -145,7 +157,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
 }
 
 /** The one muted line under the chips that says what the ZIP did. */
-export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, editing, error, errorId }: {
+export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, editing, error, errorId, hintId }: {
   zip: string | null;
   summary: ZipSummary | null;
   showAll: boolean;
@@ -154,17 +166,17 @@ export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, editing, 
   editing: boolean;
   error: boolean;
   errorId: string;
+  hintId: string;
 }) {
   return (
     <div data-zip-status className="js-only mt-2 text-sm text-muted-foreground">
       <p id={errorId} role="alert" className="font-medium text-foreground empty:sr-only">
         {error ? "Enter a 5-digit ZIP code." : ""}
       </p>
-      {editing ? (
-        <p>Filters as soon as you type 5 digits. Saved only on this device.</p>
-      ) : zip && summary ? (
-        <ZipLines zip={zip} summary={summary} showAll={showAll} onShowAll={onShowAll} onRetry={onRetry} />
-      ) : null}
+      <p id={hintId} className={editing ? undefined : "sr-only"}>
+        Filters as soon as you type 5 digits. Saved only on this device.
+      </p>
+      {zip && summary ? <ZipLines zip={zip} summary={summary} showAll={showAll} onShowAll={onShowAll} onRetry={onRetry} /> : null}
     </div>
   );
 }
