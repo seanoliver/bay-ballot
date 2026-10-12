@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { breakLines, mostPositions, shareCard, shareLabel, shortTitle } from "@/lib/share";
+import { areaCounts, breakLines, mostPositions, shareCard, shareLabel, shortTitle } from "@/lib/share";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry } from "@/lib/schema";
 
@@ -116,6 +116,13 @@ describe("breakLines", () => {
     expect(out).toHaveLength(2);
     expect(out[1].endsWith("…")).toBe(true);
     expect(out.every((l) => l.length <= 12)).toBe(true);
+  });
+});
+
+describe("areaCounts", () => {
+  it("counts guides and contests with singulars", () => {
+    expect(areaCounts(23, 61)).toBe("23 guides · 61 contests");
+    expect(areaCounts(1, 1)).toBe("1 guide · 1 contest");
   });
 });
 

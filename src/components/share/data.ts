@@ -1,7 +1,8 @@
 import { contestPlace } from "@/lib/areas";
+import { eligible } from "@/lib/fallback";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import { formatDate } from "@/lib/display";
-import { mostPositions, shareCard, shareLabel } from "@/lib/share";
+import { areaCounts, mostPositions, shareCard, shareLabel } from "@/lib/share";
 import { ballotViewProps, election, latestElection } from "@/lib/site-data";
 
 export function contestShare(electionId: string, contestId: string) {
@@ -21,8 +22,14 @@ export function areaShare(electionId: string, areaId: string) {
   if (!d || !area) return null;
   const { ballot, guides, files } = ballotViewProps(d, { area });
   const rowsFor = (cid: string) => activeEntries(cid, guides, files, EMPTY);
-  const contest = mostPositions(ballot.contests, rowsFor);
-  return contest ? { card: shareCard(contest, rowsFor(contest.id)), right: shareLabel(d.ballot.date, area.name) } : null;
+  const local = ballot.contests.filter((c) => !eligible(c) && rowsFor(c.id).length > 0);
+  const contest = mostPositions(local.length > 0 ? local : ballot.contests, rowsFor);
+  if (!contest) return null;
+  return {
+    card: shareCard(contest, rowsFor(contest.id)),
+    right: shareLabel(d.ballot.date, area.name),
+    area: { headline: `${area.name} endorsements`, counts: areaCounts(guides.length, ballot.contests.length) },
+  };
 }
 
 export function exampleShare() {
