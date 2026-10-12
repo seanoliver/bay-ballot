@@ -22,7 +22,8 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
-import { buildZipTable, CENSUS_URLS } from "../src/pipeline/zips";
+import { buildZipTable, CENSUS_URLS, zipTableJson } from "../src/pipeline/zips";
+import { placeCounty } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
@@ -469,14 +470,20 @@ async function runZips() {
     return r.text();
   };
   const [countyText, placeText] = await Promise.all([get(CENSUS_URLS.county), get(CENSUS_URLS.place)]);
-  const table = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
-  const found = new Set(Object.values(table).flatMap((z) => Object.keys(z.places)));
+  const zips = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
+  const found = new Set(Object.values(zips).flatMap((z) => Object.keys(z.places)));
   const missing = [...places].filter((p) => !found.has(p));
   if (missing.length) throw new Error(`no ZIP overlaps ${missing.join(", ")}: check the spelling against Census place names`);
+  const cityCounty: Record<string, string> = {};
+  for (const p of [...places].sort()) {
+    const county = placeCounty({ level: "city", name: p }, data.areas);
+    if (!county) throw new Error(`no area lists the city ${p}, so its county is unknown: add it to its county's area file`);
+    cityCounty[p] = county;
+  }
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, `${JSON.stringify(table)}\n`);
-  console.log(`Wrote ${Object.keys(table).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
+  fs.writeFileSync(out, zipTableJson({ cityCounty, zips }));
+  console.log(`Wrote ${Object.keys(zips).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
 }
 
 async function main(): Promise<void> {

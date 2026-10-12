@@ -8,44 +8,67 @@ async function enterZip(page: Page, zip: string) {
   await page.getByRole("button", { name: "Show my contests" }).click();
 }
 
-const status = (page: Page) => page.getByRole("status").filter({ hasText: /^ZIP / });
+const box = (page: Page) => page.getByRole("region", { name: "Your ZIP code" });
 
 test.describe("ZIP filter", () => {
   test("hides other cities' contests, marks address-dependent ones, and remembers the ZIP on this device only", async ({ page }) => {
+    const sent: string[] = [];
+    page.on("request", (r) => {
+      if (/_vercel\/insights|analytics\.ahrefs\.com/.test(r.url())) sent.push(`${r.url()} ${r.postData() ?? ""}`);
+    });
     await page.goto(SCC);
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await enterZip(page, "94040");
-    await expect(status(page)).toContainText(/ZIP 94040 · \d+ contests can be on your ballot · \d+ others hidden/);
+    await expect(box(page)).toContainText(/ZIP 94040 · \d+ contests can be on your ballot · \d+ others hidden/);
+    await expect(box(page).locator("p").first()).toBeFocused();
     await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
     await expect(contestRow(page, "Mountain View City Council")).toBeVisible();
-    await expect(page.getByText("May be on your ballot").first()).toBeVisible();
+    await expect(page.getByText("May be on your ballot").filter({ visible: true }).first()).toBeVisible();
     expect(page.url()).not.toContain("94040");
 
     await page.reload();
-    await expect(status(page)).toContainText("ZIP 94040");
+    await expect(box(page)).toContainText("ZIP 94040");
     await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
 
-    await status(page).getByRole("button", { name: "Show all" }).click();
+    await box(page).getByRole("button", { name: "Show all" }).click();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
-    await status(page).getByRole("button", { name: "Clear" }).click();
-    await expect(page.getByLabel("Your ZIP code")).toBeVisible();
+    await expect(page.getByText("Not on ballots in ZIP 94040").filter({ visible: true }).first()).toBeVisible();
+    await box(page).getByRole("button", { name: "Clear" }).click();
+    await expect(page.getByLabel("Your ZIP code")).toBeFocused();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
+    for (const s of sent) expect(s).not.toContain("94040");
+  });
+
+  test("a shared link to a contest the ZIP hides still opens it", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "94040");
+    await expect(box(page)).toContainText("others hidden");
+    await page.goto(`${SCC}?c=palo-alto-council`);
+    await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
+    await expect(box(page)).toContainText("others shown");
+  });
+
+  test("narrows the Bay Area page to the ZIP's county", async ({ page }) => {
+    await page.goto(BALLOT);
+    await enterZip(page, "94401");
+    await expect(box(page)).toContainText(/\d+ contests can be on your ballot · \d+ others hidden/);
+    await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
   });
 
   test("on another county's page, points to the ZIP's county instead of filtering", async ({ page }) => {
     await page.goto(`${BALLOT}/marin`);
     await enterZip(page, "94040");
-    await expect(status(page)).toContainText("In Santa Clara County.");
-    await status(page).getByRole("link", { name: "See the Santa Clara County ballot" }).click();
+    await expect(box(page)).toContainText("In Santa Clara County.");
+    await box(page).getByRole("link", { name: "See the Santa Clara County ballot" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Santa Clara County ballot" })).toBeVisible();
-    await expect(status(page)).toContainText("can be on your ballot");
+    await expect(box(page)).toContainText("can be on your ballot");
   });
 
-  test("says when a ZIP is outside the Bay Area, and rejects anything but five digits", async ({ page }) => {
+  test("says when a ZIP can't be mapped, and rejects anything but five digits", async ({ page }) => {
     await page.goto(SCC);
     await enterZip(page, "940");
-    await expect(page.getByText("Enter a 5-digit ZIP code.")).toBeVisible();
+    await expect(page.getByRole("form", { name: "Filter by ZIP code" }).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
     await enterZip(page, "10001");
-    await expect(status(page)).toContainText("Not in the nine Bay Area counties this site covers.");
+    await expect(box(page)).toContainText("Not a ZIP this site can map");
   });
 });

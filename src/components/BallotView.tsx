@@ -13,7 +13,7 @@ import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
-import { isZip, ZIP_KEY, zipGroups, type ZipTable } from "@/lib/zip";
+import { isZip, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, type ZipView } from "@/lib/zip";
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
@@ -54,6 +54,8 @@ const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).
 type Props = {
   election: string;
   area: string | null;
+  county: string | null;
+  city: string | null;
   links: AreaLink[];
   intro: { title: string; line: string };
   groups: PlaceGroup[];
@@ -68,11 +70,23 @@ type Props = {
   onIntent?: () => void;
 };
 
+// Per view and ZIP, so switching back to an area keeps the same groups and so the same rows and bars below.
+const zipCache = new WeakMap<PlaceGroup[], Map<string, ZipView>>();
+function cachedZipView(groups: PlaceGroup[], zip: string, z: ZipPlaces, table: ZipTable): ZipView {
+  let byZip = zipCache.get(groups);
+  if (!byZip) zipCache.set(groups, (byZip = new Map()));
+  let v = byZip.get(zip);
+  if (!v) byZip.set(zip, (v = zipGroups(groups, z, table)));
+  return v;
+}
+// SF is a consolidated city and county, named without "County" everywhere else on the site.
+const countyBallotName = (county: string) => (county === "San Francisco" ? county : `${county} County`);
+
 // Per view, so switching back to an area reuses its rows and bars.
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, county, city, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -91,26 +105,60 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const [zipRaw, setZipRaw] = useStoredKey(ZIP_KEY);
   const zip = zipRaw && isZip(zipRaw) ? zipRaw : null;
   const [table, setTable] = useState<ZipTable | null>(null);
+  const [tableFailed, setTableFailed] = useState(false);
   useEffect(() => {
-    if (zip && !table) void import("@/data/zips.json").then((m) => setTable(m.default as ZipTable));
-  }, [zip, table]);
+    if (!zip || table || tableFailed) return;
+    import("@/data/zips.json").then(
+      (m) => setTable(m.default as ZipTable),
+      () => setTableFailed(true),
+    );
+  }, [zip, table, tableFailed]);
   const [showAllFor, setShowAllFor] = useState<string | null>(null);
-  const showAll = zip !== null && showAllFor === zip;
-  const zipPlaces = zip && table ? (table[zip] ?? null) : null;
-  // The county this page is for; null on the Bay Area page, which every Bay Area ZIP can narrow.
-  const pageCounty = area ? (links.find((l) => l.current || l.within)?.label ?? null) : null;
-  const elsewhere = zipPlaces && pageCounty && !zipPlaces.counties.includes(pageCounty) ? zipPlaces.counties[0] : null;
-  const zipView = useMemo(() => (zipPlaces && !elsewhere ? zipGroups(allGroups, zipPlaces) : null), [allGroups, zipPlaces, elsewhere]);
-  const groups = zipView && !showAll ? zipView.groups : allGroups;
+  const zipPlaces = zip && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
+  // A ZIP outside this page's county (or city) isn't filtered here: the page points to the ZIP's own ballot instead.
+  const outsideCounty = zipPlaces && county && !zipPlaces.counties.includes(county);
+  const outsideCity = zipPlaces && city && !Object.hasOwn(zipPlaces.places, city);
+  const zipView = useMemo(
+    () => (zip && zipPlaces && table && !outsideCounty && !outsideCity ? cachedZipView(allGroups, zip, zipPlaces, table) : null),
+    [allGroups, zip, zipPlaces, table, outsideCounty, outsideCity],
+  );
+  // A link to a contest the ZIP hides still opens it, with the hidden contests shown.
+  const requestedHidden = requested !== null && zipView?.fit.get(requested) === "off";
+  const showAll = zip !== null && (showAllFor === zip || requestedHidden);
+  const groups = useMemo(() => (zipView && !showAll ? zipView.groups : allGroups), [zipView, showAll, allGroups]);
+  const ballotLink = (name: string) => ({ label: countyBallotName(name), href: links.find((l) => l.label === name)?.href ?? null });
   const zipSummary: ZipSummary | null = !zip
     ? null
-    : !table
-      ? { kind: "loading" }
-      : !zipPlaces
-        ? { kind: "unknown" }
-        : elsewhere
-          ? { kind: "elsewhere", county: elsewhere, href: links.find((l) => l.label === elsewhere)?.href ?? null }
-          : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe.size, hidden: zipView!.hidden };
+    : tableFailed
+      ? { kind: "failed" }
+      : !table
+        ? { kind: "loading" }
+        : !zipPlaces
+          ? { kind: "unknown" }
+          : outsideCounty
+            ? { kind: "elsewhere", where: `In ${zipPlaces.counties.map(countyBallotName).join(" and ")}.`, links: zipPlaces.counties.map(ballotLink) }
+            : outsideCity
+              ? { kind: "elsewhere", where: `Not in ${city}.`, links: zipPlaces.counties.map(ballotLink) }
+              : {
+                  kind: "filtered",
+                  on: zipView!.on,
+                  maybe: zipView!.maybe,
+                  hidden: zipView!.hidden,
+                  beyond: zipPlaces.outside?.length
+                    ? { text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, link: null }
+                    : city && zipPlaces.places[city] !== "full" && county
+                      ? { text: `Part of this ZIP is outside ${city}.`, link: ballotLink(county) }
+                      : null,
+                };
+  const zipNote = (id: string) => {
+    const f = zipView?.fit.get(id);
+    return f === "maybe" ? "May be on your ballot" : f === "off" ? `Not on ballots in ZIP ${zip}` : null;
+  };
+  const announced = zipSummary?.kind === "filtered" ? `Showing ${zipSummary.on + zipSummary.maybe} contests for ZIP ${zip}${zipSummary.hidden && !showAll ? `, ${zipSummary.hidden} hidden` : ""}` : "";
+  const setShowAll = (v: boolean) => {
+    setShowAllFor(v ? zip : null);
+    if (!v && requestedHidden) select(null);
+  };
 
   const all = useMemo(() => groups.flatMap((g) => g.sections.flatMap((s) => s.contests)), [groups]);
   const nav = useMemo(() => navModel(groups), [groups]);
@@ -393,6 +441,9 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
       <p aria-live="polite" className="sr-only">
         {announce}
       </p>
+      <p aria-live="polite" className="sr-only">
+        {announced}
+      </p>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
@@ -416,7 +467,14 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
             </button>
           </div>
           <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent} />
-          <ZipBox zip={zip} summary={zipSummary} showAll={showAll} onZip={(v) => setZipRaw(v ?? "")} onShowAll={(v) => setShowAllFor(v ? zip : null)} />
+          <ZipBox
+            zip={zip}
+            summary={zipSummary}
+            showAll={showAll}
+            onZip={(v) => setZipRaw(v ?? "")}
+            onShowAll={setShowAll}
+            onRetry={() => setTableFailed(false)}
+          />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -469,7 +527,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                           scope={sf?.contests.includes(c.id) ? scope : undefined}
                           bay={bay.get(c.id)}
                           onRevealBay={onRevealBayStable}
-                          maybe={zipView?.maybe.has(c.id) ?? false}
+                          zipNote={zipNote(c.id)}
                         />
                       </li>
                     ))}
@@ -556,7 +614,7 @@ const ContestRow = memo(function ContestRow({
   scope,
   bay,
   onRevealBay,
-  maybe,
+  zipNote,
 }: {
   href: string;
   contest: Contest;
@@ -568,22 +626,33 @@ const ContestRow = memo(function ContestRow({
   scope?: Scope;
   bay?: BayResult;
   onRevealBay?: (c: Contest) => void;
-  maybe: boolean;
+  zipNote: string | null;
 }) {
   const description = cardDescription(contest);
   const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
   const wide = scope === "bay" && bay ? bay : null;
   const reveal = () => onRevealBay?.(contest);
-  const maybeNote = maybe ? <p className="basis-full text-sm text-muted-foreground">May be on your ballot</p> : null;
+  const note = (layout: "m" | "d") =>
+    zipNote ? (
+      <p id={`zipnote-${layout}-${contest.id}`} className="basis-full text-sm text-muted-foreground">
+        {zipNote}
+      </p>
+    ) : null;
   return (
     <>
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped) && "flex-wrap gap-y-2", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped || zipNote) && "flex-wrap gap-y-2", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
-          <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
+          <a
+            id={`row-m-${contest.id}`}
+            href={href}
+            onClick={(e) => onClick(e, contest)}
+            aria-describedby={zipNote ? `zipnote-m-${contest.id}` : undefined}
+            className={ROW_LINK}
+          >
             {keepNumber(contest.title)}
           </a>
         </h4>
-        {maybeNote}
+        {note("m")}
         {wide ? (
           <BayBlock id={`bay-m-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
@@ -607,12 +676,13 @@ const ContestRow = memo(function ContestRow({
             href={href}
             onClick={(e) => onClick(e, contest)}
             aria-current={selected ? "true" : undefined}
+            aria-describedby={zipNote ? `zipnote-d-${contest.id}` : undefined}
             className={ROW_LINK}
           >
             {contest.title}
           </a>
         </h4>
-        {maybeNote}
+        {note("d")}
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         {wide ? (
           <BayBlock id={`bay-d-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
