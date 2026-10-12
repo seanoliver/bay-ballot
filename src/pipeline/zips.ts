@@ -22,12 +22,9 @@ const placeName = (s: string) => s.replace(/ (city|town|CDP)$/, "");
 const countyName = (s: string) => s.replace(/ County$/, "");
 const incorporated = (classfp: string) => classfp.startsWith("C");
 
-/**
- * The ZIPs that touch the given counties: their counties (Bay Area ones in `counties`, any others in `outside`) and the
- * ballot's places they overlap, `full` when the ZIP lies wholly inside one. Both files are built from census blocks, so
- * any shared land is real, and every overlap counts. `counties` maps a Census county GEOID ("06081") to the ballot's
- * name ("San Mateo"). When a name is both a city and an unincorporated community, the city wins.
- */
+// Both files are built from census blocks, so any shared land is real and every overlap counts.
+// `counties` maps a Census county GEOID ("06081") to the ballot's name; others go in `outside`.
+// When a name is both a city and an unincorporated community (Mountain View), the city wins.
 export function buildZipTable({ countyText, placeText, counties, places }: {
   countyText: string;
   placeText: string;
