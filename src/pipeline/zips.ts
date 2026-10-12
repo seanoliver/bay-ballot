@@ -30,7 +30,7 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
   placeText: string;
   counties: Record<string, string>;
   places: Set<string>;
-}): Omit<ZipTable, "cityCounty"> {
+}): Pick<ZipTable, "communities" | "zips"> {
   const countyRows = parseRows(countyText).filter((r) => r.GEOID_ZCTA5_20 && Number(r.AREALAND_PART) > 0);
   const table: ZipTable["zips"] = {};
   for (const r of countyRows) {
@@ -63,5 +63,5 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
 /** One ZIP per line, so a rebuild's diff shows which ZIPs changed. */
 export function zipTableJson(t: ZipTable): string {
   const zips = Object.entries(t.zips).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
-  return `{\n  "cityCounty": ${JSON.stringify(t.cityCounty)},\n  "communities": ${JSON.stringify(t.communities)},\n  "zips": {\n${zips.join(",\n")}\n  }\n}\n`;
+  return `{\n  "cityCounty": ${JSON.stringify(t.cityCounty)},\n  "districtCounties": ${JSON.stringify(t.districtCounties)},\n  "communities": ${JSON.stringify(t.communities)},\n  "zips": {\n${zips.join(",\n")}\n  }\n}\n`;
 }

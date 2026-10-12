@@ -23,7 +23,7 @@ import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 import { buildZipTable, CENSUS_URLS, zipTableJson } from "../src/pipeline/zips";
-import { placeCounty } from "../src/lib/areas";
+import { placeCounty, STATE_DISTRICTS } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
@@ -480,9 +480,20 @@ async function runZips() {
     if (!county) throw new Error(`no area lists the city ${p}, so its county is unknown: add it to its county's area file`);
     cityCounty[p] = county;
   }
+  // One name, many districts: these name a kind of seat, not one district, so their counties don't pool.
+  const kinds = new Set([...STATE_DISTRICTS, "Supervisor", "County Board of Education", "City Council", "Town Council"]);
+  const byDistrict = new Map<string, Set<string>>();
+  for (const c of data.ballot.contests) {
+    const j = c.jurisdiction;
+    if (j.level !== "district" || kinds.has(j.name)) continue;
+    const set = byDistrict.get(j.name) ?? new Set<string>();
+    for (const p of j.within ?? []) set.add(p.level === "county" ? p.name : cityCounty[p.name]);
+    byDistrict.set(j.name, set);
+  }
+  const districtCounties = Object.fromEntries([...byDistrict].filter(([, s]) => s.size > 0).sort(([a], [b]) => a.localeCompare(b)).map(([n, s]) => [n, [...s].sort()]));
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, zipTableJson({ cityCounty, communities, zips }));
+  fs.writeFileSync(out, zipTableJson({ cityCounty, districtCounties, communities, zips }));
   console.log(`Wrote ${Object.keys(zips).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
 }
 

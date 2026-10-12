@@ -77,9 +77,9 @@ export function ZipBox({ zip, summary, showAll, onZip, onShowAll, onRetry }: Pro
               setError(false);
             }}
             onKeyDown={(e: KeyboardEvent) => {
-              if (e.key !== "Escape" || !zip) return;
+              if (e.key !== "Escape") return;
               e.stopPropagation();
-              cancel();
+              if (zip) cancel();
             }}
             inputMode="numeric"
             autoComplete="postal-code"
@@ -151,7 +151,8 @@ export function ZipBox({ zip, summary, showAll, onZip, onShowAll, onRetry }: Pro
         : null}
       {summary?.kind === "filtered" && summary.maybe > 0 ? (
         <p className="mt-1 text-muted-foreground">
-          {counted(summary.maybe, "contest")} marked “may be on your ballot” depend on your exact address. ZIP areas are approximate, so near a city or county line, check Show all. Confirm with California’s{" "}
+          {counted(summary.maybe, "contest")} marked “may be on your ballot” {summary.maybe === 1 ? "depends" : "depend"} on your exact address.
+          {summary.hidden > 0 ? " ZIP areas are approximate, so near a city or county line, check Show all." : ""} Confirm with California’s{" "}
           <a href={VOTER_STATUS_URL} className="underline underline-offset-2 hover:text-foreground" rel="noopener" target="_blank">
             My Voter Status
           </a>
@@ -187,7 +188,7 @@ function ZipLine({ summary, showAll, onShowAll, onRetry }: { summary: ZipSummary
       </span>
     );
   }
-  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a Bay Area ZIP, or a PO box ZIP, which this site can’t map. Every contest is shown.</span>;
+  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a Bay Area ZIP, or one this site can’t map (PO box or new ZIPs). Every contest is shown.</span>;
   if (summary.kind === "elsewhere") {
     return (
       <span className="text-muted-foreground">
@@ -201,7 +202,7 @@ function ZipLine({ summary, showAll, onShowAll, onRetry }: { summary: ZipSummary
       {summary.hidden > 0 ? (
         <>
           {" · "}
-          {summary.hidden} {showAll ? "others shown" : "others hidden"} ·{" "}
+          {summary.hidden} {summary.hidden === 1 ? "other" : "others"} {showAll ? "shown" : "hidden"} ·{" "}
           <button type="button" className={TEXT_BUTTON} onClick={() => onShowAll(!showAll)}>
             {showAll ? "Hide them" : "Show all"}
           </button>

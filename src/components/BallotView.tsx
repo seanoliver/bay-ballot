@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { cardDescription } from "@/lib/display";
+import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, positionGuides, revealGuides, toQuery, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -84,7 +84,7 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
   if (s.kind === "failed") return "Couldn’t load the ZIP list. Every contest is shown.";
   if (s.kind === "unknown") return `ZIP ${zip} can’t be mapped. Every contest is shown.`;
   if (s.kind === "elsewhere") return `ZIP ${zip}: ${s.where}`;
-  return showAll ? `Showing all ${s.on + s.maybe + s.hidden} contests` : `Showing ${s.on + s.maybe} contests for ZIP ${zip}, ${s.hidden} hidden`;
+  return showAll ? `Showing all ${counted(s.on + s.maybe + s.hidden, "contest")}` : `Showing ${counted(s.on + s.maybe, "contest")} for ZIP ${zip}, ${s.hidden} hidden`;
 }
 
 // SF is a consolidated city and county, named without "County" everywhere else on the site.
@@ -140,7 +140,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
   if (zipPlaces && !outsideCounty && !outsideCity) {
     const others = zipPlaces.counties.filter((c) => c !== county);
     if (county && others.length) notes.push({ text: `Part of this ZIP is in ${others.map(countyBallotName).join(" and ")}.`, links: others.map(ballotLink) });
-    if (city && zipPlaces.places[city] !== "full" && county) notes.push({ text: `Part of this ZIP is outside ${city}.`, links: [ballotLink(county)] });
+    if (city && city !== county && zipPlaces.places[city] !== "full" && county) notes.push({ text: `Part of this ZIP is outside ${city}.`, links: [ballotLink(county)] });
     if (zipPlaces.outside?.length) notes.push({ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] });
   }
   const zipSummary: ZipSummary | null = !zip
@@ -165,6 +165,8 @@ export function BallotView({ election, area, county, city, links, intro, groups:
   const announced = zipActedOn === area && zipSummary ? zipSpoken(zip!, zipSummary, showAll) : "";
   const setShowAll = (v: boolean) => {
     setZipActedOn(area);
+    stepWrite.cancel();
+    setStepped(null);
     setShowAllFor(v ? zip : null);
     if (!v && requestedHidden) select(null);
   };
@@ -326,6 +328,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
     setExiting(null);
     setAnimate(false);
     setAnnounce(`Showing ${intro.title}`);
+    setZipActedOn(undefined);
   }
   useEffect(() => {
     stepWrite.cancel();
@@ -482,6 +485,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             showAll={showAll}
             onZip={(v) => {
               setZipActedOn(area);
+              setShowAllFor(null);
               setZipRaw(v ?? "");
             }}
             onShowAll={setShowAll}

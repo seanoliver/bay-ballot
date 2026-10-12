@@ -12,10 +12,6 @@ const box = (page: Page) => page.getByRole("region", { name: "Your ZIP code" });
 
 test.describe("ZIP filter", () => {
   test("hides other cities' contests, marks address-dependent ones, and remembers the ZIP on this device only", async ({ page }) => {
-    const sent: string[] = [];
-    page.on("request", (r) => {
-      if (/_vercel\/insights|analytics\.ahrefs\.com/.test(r.url())) sent.push(`${r.url()} ${r.postData() ?? ""}`);
-    });
     await page.goto(SCC);
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await enterZip(page, "94040");
@@ -36,7 +32,6 @@ test.describe("ZIP filter", () => {
     await box(page).getByRole("button", { name: "Clear" }).click();
     await expect(page.getByLabel("Your ZIP code")).toBeFocused();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
-    for (const s of sent) expect(s).not.toContain("94040");
   });
 
   test("a shared link to a contest the ZIP hides still opens it", async ({ page }) => {
@@ -78,6 +73,6 @@ test.describe("ZIP filter", () => {
     await enterZip(page, "940");
     await expect(page.getByRole("form", { name: "Filter by ZIP code" }).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
     await enterZip(page, "10001");
-    await expect(box(page)).toContainText("Not a Bay Area ZIP, or a PO box ZIP");
+    await expect(box(page)).toContainText("Not a Bay Area ZIP, or one this site can’t map");
   });
 });

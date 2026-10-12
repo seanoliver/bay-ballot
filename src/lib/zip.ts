@@ -8,9 +8,10 @@ import type { Contest, Jurisdiction } from "./schema";
 export type ZipPlaces = { counties: string[]; outside?: string[]; places: Record<string, "full" | "partial"> };
 /**
  * `cityCounty` gives the county of every place the ballot names, so a district listed by cities has known counties.
- * `communities` are the ones that are unincorporated (Census-drawn, with no legal limits).
+ * `districtCounties` gives every county any contest of a district names, since one trustee area's list can be short.
+ * `communities` are the places that are unincorporated (Census-drawn, with no legal limits).
  */
-export type ZipTable = { cityCounty: Record<string, string>; communities: string[]; zips: Record<string, ZipPlaces> };
+export type ZipTable = { cityCounty: Record<string, string>; districtCounties: Record<string, string[]>; communities: string[]; zips: Record<string, ZipPlaces> };
 
 /** on: every address in the ZIP votes on it. maybe: some may. off: none can. */
 export type ZipFit = "on" | "maybe" | "off";
@@ -27,7 +28,11 @@ const COUNCILS: readonly string[] = ["City Council", "Town Council"];
  * How a contest fits a ZIP. A district's `within` names the places it is filed under, not its full extent (it leaves
  * out unincorporated land), so a district is ruled out only by county: `off` never rests on a missing city.
  */
-export function zipFit(j: Jurisdiction, z: ZipPlaces, { home = null, cityCounty }: { home?: string | null; cityCounty: Record<string, string> }): ZipFit {
+export function zipFit(
+  j: Jurisdiction,
+  z: ZipPlaces,
+  { home = null, cityCounty, districtCounties = {} }: { home?: string | null; cityCounty: Record<string, string>; districtCounties?: Record<string, string[]> },
+): ZipFit {
   if (j.level === "state") return "on";
   if (j.level === "county") return whollyIn(z, j.name) ? "on" : z.counties.includes(j.name) ? "maybe" : "off";
   if (j.level === "city") return z.places[j.name] === "full" ? "on" : has(z, j.name) ? "maybe" : "off";
@@ -37,6 +42,7 @@ export function zipFit(j: Jurisdiction, z: ZipPlaces, { home = null, cityCounty 
   if (j.level === "region" && within.length > 0 && within.every((p) => p.level === "county") && z.counties.every((c) => within.some((p) => p.name === c)) && !z.outside?.length) return "on";
   const counties = within.map((p) => (p.level === "county" ? p.name : cityCounty[p.name]));
   if (home) counties.push(home);
+  if (Object.hasOwn(districtCounties, j.name)) counties.push(...districtCounties[j.name]);
   if (counties.length === 0 || counties.some((c) => c === undefined)) return "maybe";
   return counties.some((c) => z.counties.includes(c)) ? "maybe" : "off";
 }
@@ -44,11 +50,11 @@ export function zipFit(j: Jurisdiction, z: ZipPlaces, { home = null, cityCounty 
 export type ZipView = { groups: PlaceGroup[]; fit: Map<string, ZipFit>; on: number; maybe: number; hidden: number };
 
 /** The groups with only the contests the ZIP can vote on, dropping emptied sections and groups. */
-export function zipGroups(groups: PlaceGroup[], z: ZipPlaces, table: Pick<ZipTable, "cityCounty">): ZipView {
+export function zipGroups(groups: PlaceGroup[], z: ZipPlaces, table: Pick<ZipTable, "cityCounty"> & Partial<Pick<ZipTable, "districtCounties">>): ZipView {
   const fit = new Map<string, ZipFit>();
   const count = { on: 0, maybe: 0, off: 0 };
   const keep = (c: Contest, home: string | null) => {
-    const f = zipFit(c.jurisdiction, z, { home, cityCounty: table.cityCounty });
+    const f = zipFit(c.jurisdiction, z, { home, cityCounty: table.cityCounty, districtCounties: table.districtCounties });
     fit.set(c.id, f);
     count[f]++;
     return f !== "off";

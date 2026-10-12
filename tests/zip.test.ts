@@ -46,6 +46,12 @@ describe("zipFit", () => {
     expect(fit(rcCouncil2, EDGE, "San Mateo")).toBe("off");
     expect(fit(rcCouncil2, { counties: ["San Mateo"], places: { "Redwood City": "partial" } }, "San Mateo")).toBe("maybe");
   });
+  it("pools a district's counties across its contests, so a trustee area with a short list isn't hidden", () => {
+    const srjc5 = c("srjc-trustee-area-5", { level: "district", name: "Sonoma County Junior College District", district: "5", within: [{ level: "county", name: "Sonoma" }] });
+    const marin: ZipPlaces = { counties: ["Marin"], places: {} };
+    expect(zipFit(srjc5.jurisdiction, marin, { cityCounty })).toBe("off");
+    expect(zipFit(srjc5.jurisdiction, marin, { cityCounty, districtCounties: { "Sonoma County Junior College District": ["Marin", "Sonoma"] } })).toBe("maybe");
+  });
   it("keeps a district whose city has no known county as maybe", () => {
     const odd = c("x", { level: "district", name: "Water", district: "1", within: [{ level: "city", name: "Atlantis" }] });
     expect(fit(odd, SF)).toBe("maybe");
@@ -116,8 +122,8 @@ describe("buildZipTable", () => {
     expect(zips["94040"].places).toEqual({ "Mountain View": "full" });
   });
   it("writes one ZIP per line", () => {
-    const text = zipTableJson({ cityCounty: { "Menlo Park": "San Mateo" }, communities, zips });
-    expect(JSON.parse(text)).toEqual({ cityCounty: { "Menlo Park": "San Mateo" }, communities: [], zips });
+    const text = zipTableJson({ cityCounty: { "Menlo Park": "San Mateo" }, districtCounties: {}, communities, zips });
+    expect(JSON.parse(text)).toEqual({ cityCounty: { "Menlo Park": "San Mateo" }, districtCounties: {}, communities: [], zips });
     expect(text.split("\n").filter((l) => l.startsWith('    "9'))).toHaveLength(3);
   });
 });
@@ -131,6 +137,10 @@ describe("the ballot data the ZIP rules rely on", async () => {
     const councils = contests.filter((x) => x.jurisdiction.level === "district" && ["City Council", "Town Council"].includes(x.jurisdiction.name) && x.jurisdiction.within?.length === 1);
     expect(councils.length).toBeGreaterThan(0);
     expect(councils.filter((x) => !x.title.includes(x.jurisdiction.within![0].name)).map((x) => x.id)).toEqual([]);
+  });
+  it("pools counties only for named districts, never for a kind of seat like Supervisor", () => {
+    expect(Object.keys(table.districtCounties).filter((n) => ["Supervisor", "Congress", "Assembly", "State Senate", "City Council", "County Board of Education"].includes(n))).toEqual([]);
+    expect(table.districtCounties["Sonoma County Junior College District"]).toEqual(["Marin", "Sonoma"]);
   });
   it("has no city contest or council for an unincorporated community, whose Census lines aren't legal limits", () => {
     const named = contests.flatMap((x) => (x.jurisdiction.level === "city" ? [x.jurisdiction.name] : ["City Council", "Town Council"].includes(x.jurisdiction.name) ? (x.jurisdiction.within ?? []).map((p) => p.name) : []));
