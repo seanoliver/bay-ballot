@@ -22,6 +22,7 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
+import { buildZipTable, CENSUS_URLS } from "../src/pipeline/zips";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
@@ -36,6 +37,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- check
        npm run bb -- review [--no-open]
        npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
+       npm run bb -- zips   (downloads Census ZIP overlap tables; writes src/data/zips.json)
        npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict] [--failed <reason>]
                             [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
@@ -445,6 +447,38 @@ async function runNotify(): Promise<void> {
   if (sent === "sent") console.log("Phone notification sent.");
 }
 
+// The ballot's county names by Census GEOID; a new county needs its GEOID here.
+const BAY_COUNTIES: Record<string, string> = {
+  "06001": "Alameda", "06013": "Contra Costa", "06041": "Marin", "06055": "Napa", "06075": "San Francisco",
+  "06081": "San Mateo", "06085": "Santa Clara", "06095": "Solano", "06097": "Sonoma",
+};
+
+async function runZips() {
+  const data = loadElection(ROOT, ELECTION);
+  const places = new Set<string>();
+  for (const c of data.ballot.contests) {
+    if (c.jurisdiction.level === "city") places.add(c.jurisdiction.name);
+    for (const p of c.jurisdiction.within ?? []) if (p.level === "city") places.add(p.name);
+  }
+  const counties = new Set(data.ballot.contests.flatMap((c) => [c.jurisdiction, ...(c.jurisdiction.within ?? [])]).filter((p) => p.level === "county").map((p) => p.name));
+  const unknown = [...counties].filter((c) => !Object.values(BAY_COUNTIES).includes(c));
+  if (unknown.length) throw new Error(`no Census GEOID for ${unknown.join(", ")}: add it to BAY_COUNTIES in scripts/bb.ts`);
+  const get = async (url: string) => {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return r.text();
+  };
+  const [countyText, placeText] = await Promise.all([get(CENSUS_URLS.county), get(CENSUS_URLS.place)]);
+  const table = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
+  const found = new Set(Object.values(table).flatMap((z) => Object.keys(z.places)));
+  const missing = [...places].filter((p) => !found.has(p));
+  if (missing.length) throw new Error(`no ZIP overlaps ${missing.join(", ")}: check the spelling against Census place names`);
+  const out = path.join(process.cwd(), "src", "data", "zips.json");
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, `${JSON.stringify(table)}\n`);
+  console.log(`Wrote ${Object.keys(table).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
+}
+
 async function main(): Promise<void> {
   if (flag("--help") || flag("-h")) return console.log(USAGE);
   if (cmd === "extract") await runExtract();
@@ -457,6 +491,7 @@ async function main(): Promise<void> {
   else if (cmd === "review") runReview();
   else if (cmd === "quote-lint") runQuoteLint();
   else if (cmd === "notify") await runNotify();
+  else if (cmd === "zips") await runZips();
   else {
     console.log(USAGE);
     if (cmd !== undefined) process.exitCode = 1;

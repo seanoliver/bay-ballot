@@ -13,6 +13,7 @@ import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
+import { isZip, ZIP_KEY, zipGroups, type ZipTable } from "@/lib/zip";
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
@@ -30,6 +31,7 @@ import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
+import { ZipBox, type ZipSummary } from "./ZipBox";
 
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
@@ -70,7 +72,7 @@ type Props = {
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -85,6 +87,30 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   // The contest still drawn while its pane fades out; it's inert, then unmounted after --motion-out.
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const [zipRaw, setZipRaw] = useStoredKey(ZIP_KEY);
+  const zip = zipRaw && isZip(zipRaw) ? zipRaw : null;
+  const [table, setTable] = useState<ZipTable | null>(null);
+  useEffect(() => {
+    if (zip && !table) void import("@/data/zips.json").then((m) => setTable(m.default as ZipTable));
+  }, [zip, table]);
+  const [showAllFor, setShowAllFor] = useState<string | null>(null);
+  const showAll = zip !== null && showAllFor === zip;
+  const zipPlaces = zip && table ? (table[zip] ?? null) : null;
+  // The county this page is for; null on the Bay Area page, which every Bay Area ZIP can narrow.
+  const pageCounty = area ? (links.find((l) => l.current || l.within)?.label ?? null) : null;
+  const elsewhere = zipPlaces && pageCounty && !zipPlaces.counties.includes(pageCounty) ? zipPlaces.counties[0] : null;
+  const zipView = useMemo(() => (zipPlaces && !elsewhere ? zipGroups(allGroups, zipPlaces) : null), [allGroups, zipPlaces, elsewhere]);
+  const groups = zipView && !showAll ? zipView.groups : allGroups;
+  const zipSummary: ZipSummary | null = !zip
+    ? null
+    : !table
+      ? { kind: "loading" }
+      : !zipPlaces
+        ? { kind: "unknown" }
+        : elsewhere
+          ? { kind: "elsewhere", county: elsewhere, href: links.find((l) => l.label === elsewhere)?.href ?? null }
+          : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe.size, hidden: zipView!.hidden };
 
   const all = useMemo(() => groups.flatMap((g) => g.sections.flatMap((s) => s.contests)), [groups]);
   const nav = useMemo(() => navModel(groups), [groups]);
@@ -390,6 +416,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
             </button>
           </div>
           <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent} />
+          <ZipBox zip={zip} summary={zipSummary} showAll={showAll} onZip={(v) => setZipRaw(v ?? "")} onShowAll={(v) => setShowAllFor(v ? zip : null)} />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -442,6 +469,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
                           scope={sf?.contests.includes(c.id) ? scope : undefined}
                           bay={bay.get(c.id)}
                           onRevealBay={onRevealBayStable}
+                          maybe={zipView?.maybe.has(c.id) ?? false}
                         />
                       </li>
                     ))}
@@ -528,6 +556,7 @@ const ContestRow = memo(function ContestRow({
   scope,
   bay,
   onRevealBay,
+  maybe,
 }: {
   href: string;
   contest: Contest;
@@ -539,11 +568,13 @@ const ContestRow = memo(function ContestRow({
   scope?: Scope;
   bay?: BayResult;
   onRevealBay?: (c: Contest) => void;
+  maybe: boolean;
 }) {
   const description = cardDescription(contest);
   const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
   const wide = scope === "bay" && bay ? bay : null;
   const reveal = () => onRevealBay?.(contest);
+  const maybeNote = maybe ? <p className="basis-full text-sm text-muted-foreground">May be on your ballot</p> : null;
   return (
     <>
       <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped) && "flex-wrap gap-y-2", ROW_FOCUS)}>
@@ -552,6 +583,7 @@ const ContestRow = memo(function ContestRow({
             {keepNumber(contest.title)}
           </a>
         </h4>
+        {maybeNote}
         {wide ? (
           <BayBlock id={`bay-m-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
@@ -580,6 +612,7 @@ const ContestRow = memo(function ContestRow({
             {contest.title}
           </a>
         </h4>
+        {maybeNote}
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         {wide ? (
           <BayBlock id={`bay-d-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
