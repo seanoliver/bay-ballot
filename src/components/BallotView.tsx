@@ -79,6 +79,14 @@ function cachedZipView(groups: PlaceGroup[], zip: string, z: ZipPlaces, table: Z
   if (!v) byZip.set(zip, (v = zipGroups(groups, z, table)));
   return v;
 }
+function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
+  if (s.kind === "loading") return "";
+  if (s.kind === "failed") return "Couldn’t load the ZIP list. Every contest is shown.";
+  if (s.kind === "unknown") return `ZIP ${zip} can’t be mapped. Every contest is shown.`;
+  if (s.kind === "elsewhere") return `ZIP ${zip}: ${s.where}`;
+  return showAll ? `Showing all ${s.on + s.maybe + s.hidden} contests` : `Showing ${s.on + s.maybe} contests for ZIP ${zip}, ${s.hidden} hidden`;
+}
+
 // SF is a consolidated city and county, named without "County" everywhere else on the site.
 const countyBallotName = (county: string) => (county === "San Francisco" ? county : `${county} County`);
 
@@ -122,11 +130,19 @@ export function BallotView({ election, area, county, city, links, intro, groups:
     () => (zip && zipPlaces && table && !outsideCounty && !outsideCity ? cachedZipView(allGroups, zip, zipPlaces, table) : null),
     [allGroups, zip, zipPlaces, table, outsideCounty, outsideCity],
   );
-  // A link to a contest the ZIP hides still opens it, with the hidden contests shown.
+  // A link to a contest the ZIP hides still opens it, and turns Show all on so the list stays put when it closes.
   const requestedHidden = requested !== null && zipView?.fit.get(requested) === "off";
+  if (zip && requestedHidden && showAllFor !== zip) setShowAllFor(zip);
   const showAll = zip !== null && (showAllFor === zip || requestedHidden);
   const groups = useMemo(() => (zipView && !showAll ? zipView.groups : allGroups), [zipView, showAll, allGroups]);
   const ballotLink = (name: string) => ({ label: countyBallotName(name), href: links.find((l) => l.label === name)?.href ?? null });
+  const notes: { text: string; links: { label: string; href: string | null }[] }[] = [];
+  if (zipPlaces && !outsideCounty && !outsideCity) {
+    const others = zipPlaces.counties.filter((c) => c !== county);
+    if (county && others.length) notes.push({ text: `Part of this ZIP is in ${others.map(countyBallotName).join(" and ")}.`, links: others.map(ballotLink) });
+    if (city && zipPlaces.places[city] !== "full" && county) notes.push({ text: `Part of this ZIP is outside ${city}.`, links: [ballotLink(county)] });
+    if (zipPlaces.outside?.length) notes.push({ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] });
+  }
   const zipSummary: ZipSummary | null = !zip
     ? null
     : tableFailed
@@ -139,23 +155,16 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             ? { kind: "elsewhere", where: `In ${zipPlaces.counties.map(countyBallotName).join(" and ")}.`, links: zipPlaces.counties.map(ballotLink) }
             : outsideCity
               ? { kind: "elsewhere", where: `Not in ${city}.`, links: zipPlaces.counties.map(ballotLink) }
-              : {
-                  kind: "filtered",
-                  on: zipView!.on,
-                  maybe: zipView!.maybe,
-                  hidden: zipView!.hidden,
-                  beyond: zipPlaces.outside?.length
-                    ? { text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, link: null }
-                    : city && zipPlaces.places[city] !== "full" && county
-                      ? { text: `Part of this ZIP is outside ${city}.`, link: ballotLink(county) }
-                      : null,
-                };
+              : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe, hidden: zipView!.hidden, notes };
   const zipNote = (id: string) => {
     const f = zipView?.fit.get(id);
-    return f === "maybe" ? "May be on your ballot" : f === "off" ? `Not on ballots in ZIP ${zip}` : null;
+    return f === "maybe" ? "May be on your ballot" : f === "off" ? `Probably not on ballots in ZIP ${zip}` : null;
   };
-  const announced = zipSummary?.kind === "filtered" ? `Showing ${zipSummary.on + zipSummary.maybe} contests for ZIP ${zip}${zipSummary.hidden && !showAll ? `, ${zipSummary.hidden} hidden` : ""}` : "";
+  // Announced only after the visitor acts on the box, and only on the page where they did.
+  const [zipActedOn, setZipActedOn] = useState<string | null | undefined>(undefined);
+  const announced = zipActedOn === area && zipSummary ? zipSpoken(zip!, zipSummary, showAll) : "";
   const setShowAll = (v: boolean) => {
+    setZipActedOn(area);
     setShowAllFor(v ? zip : null);
     if (!v && requestedHidden) select(null);
   };
@@ -471,9 +480,15 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             zip={zip}
             summary={zipSummary}
             showAll={showAll}
-            onZip={(v) => setZipRaw(v ?? "")}
+            onZip={(v) => {
+              setZipActedOn(area);
+              setZipRaw(v ?? "");
+            }}
             onShowAll={setShowAll}
-            onRetry={() => setTableFailed(false)}
+            onRetry={() => {
+              setZipActedOn(area);
+              setTableFailed(false);
+            }}
           />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>

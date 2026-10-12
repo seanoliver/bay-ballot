@@ -54,6 +54,7 @@ describe("zipFit", () => {
     expect(fit(rtm, SF)).toBe("on");
     expect(fit(rtm, EDGE)).toBe("on");
     expect(fit(rtm, { counties: ["Marin"], places: {} })).toBe("off");
+    expect(fit(rtm, { counties: ["San Francisco"], outside: ["Yolo"], places: {} })).toBe("maybe");
   });
 });
 
@@ -99,7 +100,7 @@ describe("buildZipTable", () => {
     "94040|1000|0649670|Mountain View city|C1|1000",
     "94040|1000|0612345|Los Altos city|C1|500",
   ].join("\n");
-  const zips = buildZipTable({
+  const { communities, zips } = buildZipTable({
     countyText,
     placeText,
     counties: { "06081": "San Mateo", "06085": "Santa Clara", "06095": "Solano" },
@@ -115,9 +116,25 @@ describe("buildZipTable", () => {
     expect(zips["94040"].places).toEqual({ "Mountain View": "full" });
   });
   it("writes one ZIP per line", () => {
-    const text = zipTableJson({ cityCounty: { "Menlo Park": "San Mateo" }, zips });
-    expect(JSON.parse(text)).toEqual({ cityCounty: { "Menlo Park": "San Mateo" }, zips });
+    const text = zipTableJson({ cityCounty: { "Menlo Park": "San Mateo" }, communities, zips });
+    expect(JSON.parse(text)).toEqual({ cityCounty: { "Menlo Park": "San Mateo" }, communities: [], zips });
     expect(text.split("\n").filter((l) => l.startsWith('    "9'))).toHaveLength(3);
+  });
+});
+
+describe("the ballot data the ZIP rules rely on", async () => {
+  const { loadElection } = await import("@/lib/data");
+  const { default: raw } = await import("@/data/zips.json");
+  const table = raw as unknown as ZipTable;
+  const contests = loadElection("data", "2026-11").ballot.contests;
+  it("names each council district's own city in its title, since the rule hides it by that city", () => {
+    const councils = contests.filter((x) => x.jurisdiction.level === "district" && ["City Council", "Town Council"].includes(x.jurisdiction.name) && x.jurisdiction.within?.length === 1);
+    expect(councils.length).toBeGreaterThan(0);
+    expect(councils.filter((x) => !x.title.includes(x.jurisdiction.within![0].name)).map((x) => x.id)).toEqual([]);
+  });
+  it("has no city contest or council for an unincorporated community, whose Census lines aren't legal limits", () => {
+    const named = contests.flatMap((x) => (x.jurisdiction.level === "city" ? [x.jurisdiction.name] : ["City Council", "Town Council"].includes(x.jurisdiction.name) ? (x.jurisdiction.within ?? []).map((p) => p.name) : []));
+    expect(named.filter((n) => table.communities.includes(n))).toEqual([]);
   });
 });
 

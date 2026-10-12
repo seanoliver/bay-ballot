@@ -32,7 +32,7 @@ test.describe("ZIP filter", () => {
 
     await box(page).getByRole("button", { name: "Show all" }).click();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
-    await expect(page.getByText("Not on ballots in ZIP 94040").filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText("Probably not on ballots in ZIP 94040").filter({ visible: true }).first()).toBeVisible();
     await box(page).getByRole("button", { name: "Clear" }).click();
     await expect(page.getByLabel("Your ZIP code")).toBeFocused();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
@@ -46,6 +46,15 @@ test.describe("ZIP filter", () => {
     await page.goto(`${SCC}?c=palo-alto-council`);
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await expect(box(page)).toContainText("others shown");
+    await page.goto(SCC);
+    await expect(box(page)).toContainText("others hidden");
+  });
+
+  test("on a county page, points to the other county a ZIP reaches", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "94303");
+    await expect(box(page)).toContainText("Part of this ZIP is in San Mateo County.");
+    await expect(box(page).getByRole("link", { name: "See the San Mateo County ballot" })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
   });
 
   test("narrows the Bay Area page to the ZIP's county", async ({ page }) => {
@@ -69,6 +78,6 @@ test.describe("ZIP filter", () => {
     await enterZip(page, "940");
     await expect(page.getByRole("form", { name: "Filter by ZIP code" }).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
     await enterZip(page, "10001");
-    await expect(box(page)).toContainText("Not a ZIP this site can map");
+    await expect(box(page)).toContainText("Not a Bay Area ZIP, or a PO box ZIP");
   });
 });

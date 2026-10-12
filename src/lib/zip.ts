@@ -6,8 +6,11 @@ import type { Contest, Jurisdiction } from "./schema";
  * each city or community on the ballot it overlaps, `full` when the ZIP lies wholly inside it.
  */
 export type ZipPlaces = { counties: string[]; outside?: string[]; places: Record<string, "full" | "partial"> };
-/** `cityCounty` gives the county of every city the ballot names, so a district listed by cities has known counties. */
-export type ZipTable = { cityCounty: Record<string, string>; zips: Record<string, ZipPlaces> };
+/**
+ * `cityCounty` gives the county of every place the ballot names, so a district listed by cities has known counties.
+ * `communities` are the ones that are unincorporated (Census-drawn, with no legal limits).
+ */
+export type ZipTable = { cityCounty: Record<string, string>; communities: string[]; zips: Record<string, ZipPlaces> };
 
 /** on: every address in the ZIP votes on it. maybe: some may. off: none can. */
 export type ZipFit = "on" | "maybe" | "off";
@@ -17,7 +20,7 @@ export const isZip = (s: string) => /^\d{5}$/.test(s);
 
 const has = (z: ZipPlaces, place: string) => Object.hasOwn(z.places, place);
 const whollyIn = (z: ZipPlaces, county: string) => z.counties.length === 1 && z.counties[0] === county && !z.outside?.length;
-// Council districts lie inside their city's limits, which the Census data gives exactly.
+// Council districts lie inside their city's limits (as of the 2020 Census; later annexations aren't in the data).
 const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
 /**
@@ -27,7 +30,7 @@ const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 export function zipFit(j: Jurisdiction, z: ZipPlaces, { home = null, cityCounty }: { home?: string | null; cityCounty: Record<string, string> }): ZipFit {
   if (j.level === "state") return "on";
   if (j.level === "county") return whollyIn(z, j.name) ? "on" : z.counties.includes(j.name) ? "maybe" : "off";
-  if (j.level === "city") return z.places[j.name] === "full" && !z.outside?.length ? "on" : has(z, j.name) ? "maybe" : "off";
+  if (j.level === "city") return z.places[j.name] === "full" ? "on" : has(z, j.name) ? "maybe" : "off";
   const within = j.within ?? [];
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
   // A region measure is voted on countywide in each county it lists.

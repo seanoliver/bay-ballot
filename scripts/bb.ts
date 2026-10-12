@@ -470,7 +470,7 @@ async function runZips() {
     return r.text();
   };
   const [countyText, placeText] = await Promise.all([get(CENSUS_URLS.county), get(CENSUS_URLS.place)]);
-  const zips = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
+  const { communities, zips } = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
   const found = new Set(Object.values(zips).flatMap((z) => Object.keys(z.places)));
   const missing = [...places].filter((p) => !found.has(p));
   if (missing.length) throw new Error(`no ZIP overlaps ${missing.join(", ")}: check the spelling against Census place names`);
@@ -482,7 +482,7 @@ async function runZips() {
   }
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, zipTableJson({ cityCounty, zips }));
+  fs.writeFileSync(out, zipTableJson({ cityCounty, communities, zips }));
   console.log(`Wrote ${Object.keys(zips).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
 }
 

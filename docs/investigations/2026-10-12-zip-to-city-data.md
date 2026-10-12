@@ -9,7 +9,7 @@ The ZIP filter has to decide, for a 5-digit ZIP, which contests can be on a vote
 ## Key findings
 
 - **Source:** the Census 2020 relationship files `tab20_zcta520_county20_natl.txt` and `tab20_zcta520_place20_natl.txt` under https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/. Pipe-separated, UTF-8 with a byte-order mark, about 7 and 10 MB. Each row is one ZCTA (ZIP Code Tabulation Area) and one county or place, with `AREALAND_ZCTA5_20` (the ZCTA's land) and `AREALAND_PART` (the overlap's land), in square meters.
-- **Coverage:** 310 ZCTAs touch the nine Bay Area counties. Every one of the 96 city names the ballot uses matches a Census place once " city", " town" or " CDP" is removed.
+- **Coverage:** 310 ZCTAs touch the nine Bay Area counties. Every one of the 96 place names the ballot uses matches a Census place once " city", " town" or " CDP" is removed.
 - **Unincorporated places:** Castro Valley, San Lorenzo, Fairview and Sunol are census-designated places (CDP, `CLASSFP` starting with `U`), not cities. They are kept.
 - **Name clash:** "Mountain View" is both the city (Santa Clara County) and a CDP in Contra Costa County. When a name is both, the build keeps only the incorporated city.
 - **A district's `within` is not its extent.** It names the places the contest is filed under and leaves out unincorporated land and sometimes other cities (Mountain View-Los Altos Union High School District lists only Mountain View). Congress, Assembly and State Senate districts in Alameda and Santa Clara are listed by cities only. So a district can't be ruled out because a ZIP misses its cities: 94305 (Stanford) touches no city on the ballot but votes in Palo Alto Unified.
@@ -23,7 +23,9 @@ The ZIP filter has to decide, for a 5-digit ZIP, which contests can be on a vote
 
 ## Gotchas
 
-- ZCTAs are Census approximations of USPS ZIP codes. PO-box-only ZIPs have no ZCTA; the filter says it can't map them and shows every contest.
+- ZCTAs are Census approximations of USPS ZIP codes: each census block goes to the ZIP most of its addresses use. An address near a city or county line whose ZIP lost its block to a neighbor can see one of its contests hidden. The UI says "probably not" for hidden rows and points to Show all. HUD's USPS ZIP crosswalk is built from real addresses and would close this gap, but needs a HUD API token. PO-box-only ZIPs have no ZCTA; the filter says it can't map them and shows every contest.
+- City limits are as of January 1, 2020. Land annexed since then is missing, so a ZIP that only reaches a city through a later annexation has that city's contests hidden.
+- A ZIP spanning two Bay counties (94303: San Mateo and Santa Clara) is filtered on either county's page, with a link to the other county's ballot.
 - A new city on the ballot needs `npm run bb -- zips`. `tests/zip.test.ts` fails when the committed table misses a city the ballot names.
 - A new county needs its Census GEOID in `BAY_COUNTIES` in `scripts/bb.ts`; the command fails until it is added.
 

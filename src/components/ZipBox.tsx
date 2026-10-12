@@ -14,7 +14,7 @@ export type ZipSummary =
   | { kind: "failed" }
   | { kind: "unknown" }
   | { kind: "elsewhere"; where: string; links: BallotLink[] }
-  | { kind: "filtered"; on: number; maybe: number; hidden: number; beyond: { text: string; link: BallotLink | null } | null };
+  | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
 type Props = {
   zip: string | null;
@@ -96,7 +96,7 @@ export function ZipBox({ zip, summary, showAll, onZip, onShowAll, onRetry }: Pro
             Cancel
           </button>
         ) : null}
-        <p id={`${ids}-error`} role="alert" className="basis-full text-sm font-medium empty:hidden">
+        <p id={`${ids}-error`} role="alert" className="min-h-5 basis-full text-sm font-medium">
           {error ? "Enter a 5-digit ZIP code." : ""}
         </p>
         <p id={`${ids}-note`} className="basis-full text-sm text-muted-foreground">
@@ -142,14 +142,16 @@ export function ZipBox({ zip, summary, showAll, onZip, onShowAll, onRetry }: Pro
         {" · "}
         {actions}
       </p>
-      {summary?.kind === "filtered" && summary.beyond ? (
-        <p className="mt-1 text-muted-foreground">
-          {summary.beyond.text} {summary.beyond.link ? <BallotLinkText link={summary.beyond.link} /> : null}
-        </p>
-      ) : null}
+      {summary?.kind === "filtered"
+        ? summary.notes.map((n) => (
+            <p key={n.text} className="mt-1 text-muted-foreground">
+              {n.text} <BallotLinks links={n.links} />
+            </p>
+          ))
+        : null}
       {summary?.kind === "filtered" && summary.maybe > 0 ? (
         <p className="mt-1 text-muted-foreground">
-          {counted(summary.maybe, "contest")} marked “may be on your ballot” depend on your exact address. Confirm with California’s{" "}
+          {counted(summary.maybe, "contest")} marked “may be on your ballot” depend on your exact address. ZIP areas are approximate, so near a city or county line, check Show all. Confirm with California’s{" "}
           <a href={VOTER_STATUS_URL} className="underline underline-offset-2 hover:text-foreground" rel="noopener" target="_blank">
             My Voter Status
           </a>
@@ -160,12 +162,17 @@ export function ZipBox({ zip, summary, showAll, onZip, onShowAll, onRetry }: Pro
   );
 }
 
-function BallotLinkText({ link }: { link: BallotLink }) {
-  return link.href ? (
-    <Link href={link.href} className="underline underline-offset-2 hover:text-foreground">
-      See the {link.label} ballot
-    </Link>
-  ) : null;
+function BallotLinks({ links }: { links: BallotLink[] }) {
+  return links
+    .filter((l) => l.href)
+    .map((l, i) => (
+      <span key={l.label}>
+        {i > 0 ? " · " : null}
+        <Link href={l.href!} className="underline underline-offset-2 hover:text-foreground">
+          See the {l.label} ballot
+        </Link>
+      </span>
+    ));
 }
 
 function ZipLine({ summary, showAll, onShowAll, onRetry }: { summary: ZipSummary | null; showAll: boolean; onShowAll: (v: boolean) => void; onRetry: () => void }) {
@@ -180,17 +187,11 @@ function ZipLine({ summary, showAll, onShowAll, onRetry }: { summary: ZipSummary
       </span>
     );
   }
-  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a ZIP this site can map (PO box ZIPs aren’t), so every contest is shown.</span>;
+  if (summary.kind === "unknown") return <span className="text-muted-foreground">Not a Bay Area ZIP, or a PO box ZIP, which this site can’t map. Every contest is shown.</span>;
   if (summary.kind === "elsewhere") {
     return (
       <span className="text-muted-foreground">
-        {summary.where}{" "}
-        {summary.links.map((l, i) => (
-          <span key={l.label}>
-            {i > 0 ? " · " : null}
-            <BallotLinkText link={l} />
-          </span>
-        ))}
+        {summary.where} <BallotLinks links={summary.links} />
       </span>
     );
   }

@@ -30,7 +30,7 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
   placeText: string;
   counties: Record<string, string>;
   places: Set<string>;
-}): ZipTable["zips"] {
+}): Omit<ZipTable, "cityCounty"> {
   const countyRows = parseRows(countyText).filter((r) => r.GEOID_ZCTA5_20 && Number(r.AREALAND_PART) > 0);
   const table: ZipTable["zips"] = {};
   for (const r of countyRows) {
@@ -45,9 +45,11 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
     (r) => table[r.GEOID_ZCTA5_20] && r.GEOID_PLACE_20.startsWith("06") && Number(r.AREALAND_PART) > 0 && places.has(placeName(r.NAMELSAD_PLACE_20)),
   );
   const cityNames = new Set(rows.filter((r) => incorporated(r.CLASSFP_PLACE_20)).map((r) => placeName(r.NAMELSAD_PLACE_20)));
+  const communities = new Set<string>();
   for (const r of rows) {
     const name = placeName(r.NAMELSAD_PLACE_20);
     if (cityNames.has(name) && !incorporated(r.CLASSFP_PLACE_20)) continue;
+    if (!incorporated(r.CLASSFP_PLACE_20)) communities.add(name);
     table[r.GEOID_ZCTA5_20].places[name] = r.AREALAND_PART === r.AREALAND_ZCTA5_20 ? "full" : "partial";
   }
   for (const z of Object.values(table)) {
@@ -55,11 +57,11 @@ export function buildZipTable({ countyText, placeText, counties, places }: {
     z.outside?.sort();
     z.places = Object.fromEntries(Object.entries(z.places).sort(([a], [b]) => a.localeCompare(b)));
   }
-  return Object.fromEntries(Object.entries(table).sort(([a], [b]) => a.localeCompare(b)));
+  return { communities: [...communities].sort(), zips: Object.fromEntries(Object.entries(table).sort(([a], [b]) => a.localeCompare(b))) };
 }
 
 /** One ZIP per line, so a rebuild's diff shows which ZIPs changed. */
 export function zipTableJson(t: ZipTable): string {
   const zips = Object.entries(t.zips).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
-  return `{\n  "cityCounty": ${JSON.stringify(t.cityCounty)},\n  "zips": {\n${zips.join(",\n")}\n  }\n}\n`;
+  return `{\n  "cityCounty": ${JSON.stringify(t.cityCounty)},\n  "communities": ${JSON.stringify(t.communities)},\n  "zips": {\n${zips.join(",\n")}\n  }\n}\n`;
 }
