@@ -147,7 +147,7 @@ export function monthYear(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
 }
 
-const counted = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+export const counted = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export function electionIntro(
   ballot: Pick<Ballot, "date" | "contests">,

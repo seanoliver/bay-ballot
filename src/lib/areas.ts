@@ -4,6 +4,15 @@ import type { Area, Contest, Jurisdiction, Place } from "./schema";
 export const STATE_DISTRICTS: readonly string[] = ["Congress", "State Senate", "Assembly", "Board of Equalization", "Court of Appeal"];
 
 export type PlaceName = { name: string; short: string };
+
+export function isLocal(j: Jurisdiction): boolean {
+  return j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
+}
+
+const COUNTY_OFFICES: readonly string[] = ["Supervisor", "County Board of Education"];
+export function isCountywide(j: Jurisdiction): boolean {
+  return j.level === "county" || (j.level === "district" && COUNTY_OFFICES.includes(j.name));
+}
 export const BAY_AREA: PlaceName = { name: "Bay Area", short: "Bay Area" };
 
 type AreaLike = Pick<Area, "jurisdictions">;
@@ -34,7 +43,7 @@ export function contestPlace<A extends Area>(c: Pick<Contest, "jurisdiction">, a
   const counties = new Set(found.map((a) => a.jurisdictions.find((j) => j.level === "county")?.name));
   const [county] = counties;
   const j = c.jurisdiction;
-  const local = j.level !== "state" && j.level !== "region" && !(j.level === "district" && STATE_DISTRICTS.includes(j.name));
+  const local = isLocal(j);
   const ps = places(j);
   if (ps !== "everywhere" && ps.length > 0 && j.level !== "region") {
     if (local) {

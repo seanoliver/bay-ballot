@@ -22,7 +22,7 @@ export default async function Image({ params }: { params: Promise<{ election: st
         {one ? (
           <ContestShare card={one.card} />
         ) : area ? (
-          <AreaShare {...area.area} card={area.card} />
+          <AreaShare {...area.head} card={area.card} />
         ) : (
           <div style={{ display: "flex", fontSize: 48 }}>Bay Ballot</div>
         )}
