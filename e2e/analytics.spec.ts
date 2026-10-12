@@ -33,9 +33,9 @@ test.describe("Ahrefs", () => {
       return route.fulfill({ status: 202, body: "" });
     });
     await page.goto(`${BALLOT}/santa-clara-county`);
-    await page.getByLabel("Your ZIP code").fill("94040");
-    await page.getByRole("button", { name: "Show my contests" }).click();
-    await expect(page.getByRole("region", { name: "Your ZIP code" })).toContainText("can be on your ballot");
+    await page.getByRole("button", { name: "Your ZIP" }).click();
+    await page.getByLabel("Your ZIP code").pressSequentially("94040");
+    await expect(page.locator("[data-zip-status]")).toContainText("can be on your ballot");
     await page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "San Francisco" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
     await expect.poll(() => events.length).toBeGreaterThan(1);

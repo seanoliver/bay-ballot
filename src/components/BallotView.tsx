@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -31,7 +31,7 @@ import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
-import { ZipBox, type ZipSummary } from "./ZipBox";
+import { ZipChip, ZipStatus, type ZipSummary } from "./ZipChip";
 
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
@@ -122,6 +122,9 @@ export function BallotView({ election, area, county, city, links, intro, groups:
     );
   }, [zip, table, tableFailed]);
   const [showAllFor, setShowAllFor] = useState<string | null>(null);
+  const [zipEditing, setZipEditing] = useState(false);
+  const [zipError, setZipError] = useState(false);
+  const zipErrorId = useId();
   const zipPlaces = zip && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
   // A ZIP outside this page's county (or city) isn't filtered here: the page points to the ZIP's own ballot instead.
   const outsideCounty = zipPlaces && county && !zipPlaces.counties.includes(county);
@@ -478,18 +481,30 @@ export function BallotView({ election, area, county, city, links, intro, groups:
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent} />
-          <ZipBox
+          <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent}>
+            <ZipChip
+              zip={zip}
+              editing={zipEditing}
+              setEditing={setZipEditing}
+              error={zipError}
+              setError={setZipError}
+              errorId={zipErrorId}
+              onZip={(v) => {
+                setZipActedOn(area);
+                setShowAllFor(null);
+                stepWrite.cancel();
+                setStepped(null);
+                setZipRaw(v ?? "");
+              }}
+            />
+          </AreaPicker>
+          <ZipStatus
             zip={zip}
             summary={zipSummary}
             showAll={showAll}
-            onZip={(v) => {
-              setZipActedOn(area);
-              setShowAllFor(null);
-              stepWrite.cancel();
-              setStepped(null);
-              setZipRaw(v ?? "");
-            }}
+            editing={zipEditing}
+            error={zipError}
+            errorId={zipErrorId}
             onShowAll={setShowAll}
             onRetry={() => {
               setZipActedOn(area);
