@@ -6,12 +6,15 @@ import type { Contest, Jurisdiction } from "./schema";
  * each city or community on the ballot it overlaps, `full` when the ZIP lies wholly inside it.
  */
 export type ZipPlaces = { counties: string[]; outside?: string[]; places: Record<string, "full" | "partial"> };
-/**
- * `cityCounty` gives the county of every place the ballot names, so a district listed by cities has known counties.
- * `districtCounties` gives every county any contest of a district names, since one trustee area's list can be short.
- * `communities` are the places that are unincorporated (Census-drawn, with no legal limits).
- */
-export type ZipTable = { cityCounty: Record<string, string>; districtCounties: Record<string, string[]>; communities: string[]; zips: Record<string, ZipPlaces> };
+export type ZipTable = {
+  /** The county of every place the ballot names, so a district listed by cities has known counties. */
+  cityCounty: Record<string, string>;
+  /** Each district's counties from its at-large contests, since one trustee area's list can be short. */
+  districtCounties: Record<string, string[]>;
+  /** The places that are unincorporated: Census-drawn, with no legal limits. */
+  communities: string[];
+  zips: Record<string, ZipPlaces>;
+};
 
 /** on: every address in the ZIP votes on it. maybe: some may. off: none can. */
 export type ZipFit = "on" | "maybe" | "off";
