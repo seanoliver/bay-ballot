@@ -5,14 +5,14 @@ source: https://www.sierraclub.org/sfbay/2026-endorsements
 extraSources:
   - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-13
 hasReasoning: true
 rejectedQuotes:
   - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
     reason: 'does not stand alone: opens with "And" (review 2026-10-10)'
     contestId: prop-c
   - text: Few first-time candidates for any office arrive this prepared.
-    reason: 'does not stand alone: names no one and leans on the next sentence (review 2026-10-10)'
+    reason: "does not stand alone: names no one and leans on the next sentence (review 2026-10-10)"
     contestId: bart-8
 picks:
   us-rep-2:
@@ -25,11 +25,11 @@ picks:
     pick:
       - Scott Wiener
     quotes:
+      - text: Sen. Wiener has championed numerous Sierra Club priorities over his 9 years in the California Senate.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: Senator Scott Wiener, with his prolific legislative history and bold, detailed agenda, is the climate champion we need.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: Critically, Wiener has jumped into the fray three times in three years to save the Bay Area’s public transit systems from financial collapse, including authoring the law that authorized the Connect Bay Area regional funding measure.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Sen. Wiener has championed numerous Sierra Club priorities over his 9 years in the California Senate.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   us-rep-12:
     pick:
@@ -102,6 +102,8 @@ picks:
     quotes:
       - text: Barz is a transit professional who has worked inside the San Francisco County Transportation Authority, the City of Oakland, and the Metropolitan Transportation Commission, and now works as a transit product manager.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: She co-founded Seamless Bay Area, the organization pushing the region's two dozen transit agencies to act like one network, and was an original author of SPUR's 2015 "Seamless Transit" report that started that conversation.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   cccd-ward-3:
     pick:
       - Becca Barrett
@@ -129,21 +131,33 @@ picks:
   prop-c:
     pick: Y
     quotes:
-      - text: Building homes in San Francisco is a climate issue. Housing in the region’s urban core, near Muni lines, BART stations, and walkable corridors makes car-free life possible, and means households aren't pushed into long commutes.
+      - text: Building homes in San Francisco is a climate issue.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: If passed, it would expand the Housing Trust Fund from $52 million to $125 million a year and extend it for thirty years, dedicating more than $3 billion to building and preserving affordable housing in San Francisco.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: This measure is an essential step in reducing greenhouse gas pollution.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-g:
     pick: N
     quotes:
-      - text: A dune system cannot be restored two days a week. Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
+      - text: A dune system cannot be restored two days a week.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: The ballot measure is a park removal.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Sunset Dunes can only enable environmental improvements if the pavement no longer functions as a highway.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-h:
     pick: Y
+    quotes:
+      - text: Muni is San Francisco's largest climate program.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: The overall economic effect of passing the tax is positive.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   prop-i:
     pick: Y
+    quotes:
+      - text: Proposition I also lowers one part of the cost of new construction.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   sausalito-measure-x:
     pick: Y
   albany-council:
@@ -250,11 +264,11 @@ picks:
     pick:
       - Gary McCoy
     quotes:
-      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: McCoy has a long history of support for sustainable streets and transportation projects.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: McCoy backs the Safer, Better 17th Street proposal including the parking removal it requires, and wants the D8 segments of the Biking and Rolling Plans’ North Star network completed by 2030.
+        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   supervisor-10:
     pick:

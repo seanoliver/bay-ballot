@@ -24,7 +24,7 @@ extraSources:
 archived:
   - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
     snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
-fetchedAt: 2026-10-12
+fetchedAt: 2026-10-13
 hasReasoning: true
 rejectedQuotes:
   - text: The Press Democrat believes that’s a fair price to continue to pay to extend the value the SRJC provides to the community.
@@ -65,11 +65,11 @@ picks:
     pick:
       - Mike Thompson
     quotes:
+      - text: Thompson also has a stronger stance on gun control than Jones.
+        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: Thompson, who chairs the Gun Violence Prevention Task Force, helped pass and craft the Bipartisan Safer Communities Act.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
       - text: As California and the United States head into two more years of a Trump presidency, voters deserve a representative with expertise and experience in Washington, D.C..
-        source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
-      - text: Thompson also has a stronger stance on gun control than Jones.
         source: https://www.pressdemocrat.com/2026/10/06/endorsement-californias-4th-congressional-district-deserves-experience-mike-thompson-will-deliver/
   superintendent:
     pick:
@@ -87,11 +87,11 @@ picks:
   prop-40:
     pick: Y
     quotes:
-      - text: Last year, Republicans in Congress and President Donald Trump cut roughly $1 trillion from Medicaid over a decade.
-        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: Five percent of a billionaire’s wealth is a lot of money, but no billionaire will become poor paying it.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
       - text: Prop. 40 is not a permanent fix. It is a cash infusion to deal with an emergency caused by the Trump administration.
+        source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
+      - text: Last year, Republicans in Congress and President Donald Trump cut roughly $1 trillion from Medicaid over a decade.
         source: https://www.pressdemocrat.com/2026/10/02/endorsement-vote-yes-on-propositions-40-and-3-so-the-wealthy-pay-a-fair-share-to-help-all-californians/
   prop-41:
     pick: N
@@ -111,23 +111,12 @@ picks:
   prop-44:
     pick: N
     quotes:
-      - text: Unless Prop. 44 is defeated, many clinics offering a safety net could close at a time when Californians need affordable healthcare the most.
-        source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
       - text: "Here’s the rub with Prop. 44: the measure would set strict spending requirements for nonprofit health clinics that could put precious revenue at risk."
+        source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
+      - text: Unless Prop. 44 is defeated, many clinics offering a safety net could close at a time when Californians need affordable healthcare the most.
         source: https://www.pressdemocrat.com/2026/09/26/endorsement-no-on-prop-44-politics-dont-belong-in-californias-community-health-clinics/
   sonoma-county-measure-h:
     pick: Y
-  healdsburg-council-2:
-    pick:
-      - Mathew Lopez
-    quotes:
-      - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
-        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
-      - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
-        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
-  healdsburg-council-4:
-    pick:
-      - Chris Herrod
   cloverdale-council:
     pick:
       - Andrés Marquez
@@ -140,6 +129,17 @@ picks:
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
       - text: Carter, while new to politics, has extensive leadership experience serving the city.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+  healdsburg-council-2:
+    pick:
+      - Mathew Lopez
+    quotes:
+      - text: While he might be a green politician — he has some civic experience serving as vice chair on the city’s SMART Station Area Committees — his fresh ideas and youthful attitude are exactly what the Healdsburg City Council needs.
+        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
+      - text: "López has been open about the struggles of being middle class: making just too much to qualify for financial assistance, but not enough to dream about homeownership."
+        source: https://www.pressdemocrat.com/2026/09/22/endorsement-herrod-lopez-are-best-choices-for-healdsburgs-future/
+  healdsburg-council-4:
+    pick:
+      - Chris Herrod
   petaluma-mayor:
     pick:
       - Kevin McDonnell
@@ -182,21 +182,29 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/24/endorsement-for-santa-rosa-city-council-district-4-jones-carter-is-best-bet/
       - text: Fortunately, her corporate background and experiences serving on the board of local nonprofits, including Food for Thought, the Museum of Sonoma County, Benton Street Improvement Association and Benton Street Community Garden, have taught her to be savvy with finances.
         source: https://www.pressdemocrat.com/2026/09/24/endorsement-for-santa-rosa-city-council-district-4-jones-carter-is-best-bet/
+      - text: Her relationships within the Democratic Party, where she has served as the second vice chair of the Sonoma County Democratic Central Committee and delegate of the Sonoma County Democrats, will also enable her to leverage relationships and work across councils and communities.
+        source: https://www.pressdemocrat.com/2026/09/24/endorsement-for-santa-rosa-city-council-district-4-jones-carter-is-best-bet/
   santa-rosa-measure-l:
     pick: Y
     quotes:
+      - text: If approved, the sales tax would bring in roughly $46 million into city coffers.
+        source: https://www.pressdemocrat.com/2026/10/01/endorsement-santa-rosa-has-no-other-choice-than-to-approve-measure-l/
       - text: For a city that has been saved by its public safety officers during one of the most horrific catastrophies in Santa Rosa’s recent history — a reduction in public safety staffing and service is not something residents should be willing to risk.
         source: https://www.pressdemocrat.com/2026/10/01/endorsement-santa-rosa-has-no-other-choice-than-to-approve-measure-l/
   sonoma-council-1:
     pick:
       - Julian Mackie
     quotes:
+      - text: Because of Julian Mackie’s big-picture, beyond-the-usual ideas about the city of Sonoma and its future, The Press Democrat is endorsing him for Sonoma City Council District 1.
+        source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
       - text: Mackie’s expertise and experience with budgeting — he is executive director of the nonprofit Sonoma Valley Commons — will be integral for the City Council as it moves forward, facing growing structural costs and stagnating revenue.
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
   windsor-measure-i:
     pick: Y
     quotes:
       - text: "Simply put: preserving the town many residents love requires more funding."
+        source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-yes-on-i-windsor-sales-tax-would-provide-lifeline-for-town/
+      - text: Measure I on the Nov. 3 ballot is a one-cent sales tax that would generate about $5 million a year.
         source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-yes-on-i-windsor-sales-tax-would-provide-lifeline-for-town/
   srjc-measure-ab:
     pick: Y
@@ -207,12 +215,14 @@ picks:
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
       - text: If Measure AB is approved, the cost, spread out over the entire county to local homeowners, would continue to be $30 per $100,000 of assessed value of local property.
         source: https://www.pressdemocrat.com/2026/09/21/endorsement-yes-on-ab-support-srjcs-historic-830-million-bond-with-caution/
+  windsor-usd-measure-j:
+    pick: Y
   napa-county-measure-b:
     pick: Y
     quotes:
-      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
-        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
       - text: Measure B is a proposed new half-cent sales tax that would bring $23 million annually into the county for wildfire prevention and open space preservation maintenance.
+        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
+      - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
         source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:
     pick: N
