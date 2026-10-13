@@ -238,6 +238,7 @@ contests:
     title: Half Moon Bay City Council, District 4
     kind: candidate
     candidates: [Ron Kies, Debbie Ruddock]
+    aliases: { Debbie Ruddock: [Deborah Ruddock] }
     jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Half Moon Bay }] }
   - id: half-moon-bay-council-5
     section: Local candidates

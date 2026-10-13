@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-13
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -62,7 +62,7 @@ picks:
     pick:
       - Scott Wiener
     quotes:
-      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump. Connie Chan, meanwhile, has a policy agenda and legislative track record that’s as spotty as it is sparse.
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   supreme-court-groban:
     pick: Y
@@ -112,9 +112,12 @@ picks:
     quotes:
       - text: Prop 37 promises to make it easier for middle-class Californians to enter homeownership.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-      - text: Its scope is limited enough that we don’t think it will fundamentally change the state’s housing landscape. But given how dire our housing crisis is, any positive impact is better than none at all.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-38:
+    pick: N
+    quotes:
+      - text: It would give billions to an institute co-founded by billionaire Michael Milken, also known as the “junk bond king,” who was pardoned by Trump in 2020.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-39:
     pick: N
   prop-41:
     pick: N
@@ -124,8 +127,6 @@ picks:
   prop-42:
     pick: N
     quotes:
-      - text: In reality, it’s just another poison-pill measure aimed at killing Prop 40, the billionaire wealth tax.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
       - text: You don’t have to support the billionaire wealth tax to realize the potential collateral damage Prop 42 could cause.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-44:
