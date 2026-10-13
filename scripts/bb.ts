@@ -22,7 +22,8 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
-import { buildZipTable, CENSUS_URLS, poolDistrictCounties, zipTableJson } from "../src/pipeline/zips";
+import { buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, poolDistrictCounties, zctaShapesUrl, zipTableJson, type Shape } from "../src/pipeline/zips";
+import { districtMapKey } from "../src/lib/zip";
 import { placeCounty } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
@@ -38,7 +39,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- check
        npm run bb -- review [--no-open]
        npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
-       npm run bb -- zips   (downloads Census ZIP overlap tables; writes src/data/zips.json)
+       npm run bb -- zips   (downloads Census ZIP overlap tables and district maps; writes src/data/zips.json)
        npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict] [--failed <reason>]
                             [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
@@ -481,6 +482,21 @@ async function runZips() {
     cityCounty[p] = county;
   }
   const districtCounties = poolDistrictCounties(data.ballot.contests, cityCounty);
+  type Features = { features: { properties: Record<string, string>; geometry: Shape }[] };
+  for (const m of DISTRICT_MAPS) {
+    const key = districtMapKey(m.place, m.seat);
+    const inPlace = Object.keys(zips).filter((z) => Object.hasOwn(zips[z].places, m.place));
+    const [map, zctas] = (await Promise.all([get(m.url), get(zctaShapesUrl(inPlace))]).then((ts) => ts.map((t) => JSON.parse(t)))) as Features[];
+    const districts = Object.fromEntries(map.features.map((f) => [f.properties[m.field], f.geometry]));
+    const shapes = Object.fromEntries(zctas.features.map((f) => [f.properties.ZCTA5, f.geometry]));
+    const lost = inPlace.filter((z) => !shapes[z]);
+    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
+    const shares = districtShares(shapes, districts);
+    for (const z of inPlace) {
+      if (shares[z]) (zips[z].districts ??= {})[key] = districtsTouched(shares[z]);
+      else console.warn(`warning: ZIP ${z} reaches ${m.place} but no ${key} district; its ${m.seat} contests stay maybe`);
+    }
+  }
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, zipTableJson({ cityCounty, districtCounties, communities, zips }));

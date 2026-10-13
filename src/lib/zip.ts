@@ -3,9 +3,10 @@ import type { Contest, Jurisdiction } from "./schema";
 
 /**
  * For one ZIP: the Bay Area counties it lies in, any other counties it reaches (which this site doesn't cover), and
- * each city or community on the ballot it overlaps, `full` when the ZIP lies wholly inside it.
+ * each city or community on the ballot it overlaps, `full` when the ZIP lies wholly inside it. `districts` lists, for
+ * each district map the table has (keyed by `districtMapKey`), the districts the ZIP reaches.
  */
-export type ZipPlaces = { counties: string[]; outside?: string[]; places: Record<string, "full" | "partial"> };
+export type ZipPlaces = { counties: string[]; outside?: string[]; places: Record<string, "full" | "partial">; districts?: Record<string, string[]> };
 export type ZipTable = {
   /** The county of every place the ballot names, so a district listed by cities has known counties. */
   cityCounty: Record<string, string>;
@@ -29,6 +30,9 @@ const whollyIn = (z: ZipPlaces, county: string) => z.counties.length === 1 && z.
 // Council districts lie inside their city's limits (as of the 2020 Census; later annexations aren't in the data).
 const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
+/** "San Francisco/Supervisor": the one place a district contest is filed under, and its kind of seat. */
+export const districtMapKey = (place: string, seat: string) => `${place}/${seat}`;
+
 /**
  * How a contest fits a ZIP. A district's `within` names the places it is filed under, not its full extent (it leaves
  * out unincorporated land), so a district is ruled out only by county: `off` never rests on a missing city.
@@ -42,6 +46,12 @@ export function zipFit(
   if (j.level === "county") return whollyIn(z, j.name) ? "on" : z.counties.includes(j.name) ? "maybe" : "off";
   if (j.level === "city") return z.places[j.name] === "full" ? "on" : has(z, j.name) ? "maybe" : "off";
   const within = j.within ?? [];
+  // A district with a map is ruled out when the ZIP misses it. It stays maybe even when the ZIP reaches only it, since
+  // ZIP areas and district lines are both approximate near the border.
+  if (j.level === "district" && j.district && within.length === 1) {
+    const mapped = z.districts?.[districtMapKey(within[0].name, j.name)];
+    if (mapped) return mapped.includes(j.district) ? "maybe" : "off";
+  }
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
   // A region measure is voted on countywide in each county it lists.
   if (j.level === "region" && within.length > 0 && within.every((p) => p.level === "county") && z.counties.every((c) => within.some((p) => p.name === c)) && !z.outside?.length) return "on";
