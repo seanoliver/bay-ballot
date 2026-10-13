@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
-import { activeEntries, EMPTY, positionGuides, revealGuides, toQuery, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
@@ -31,6 +31,7 @@ import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
+import { PinnedPicks } from "./PinnedPicks";
 import { VerdictBar } from "./VerdictBar";
 import { focusZipChipAfterLoad, ZipChip, ZipStatus, type ZipSummary } from "./ZipChip";
 
@@ -59,7 +60,7 @@ type Props = {
   intro: { title: string; line: string };
   groups: PlaceGroup[];
   guides: GuideInfo[];
-  allGuides: FilterGuide[];
+  allGuides: GuideInfo[];
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
@@ -347,7 +348,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const current = selectedId === null ? undefined : all.find((c) => c.id === selectedId);
   const shown = current ?? exiting ?? undefined;
   const rowsById = useMemo(() => {
-    const key = toQuery(filters);
+    // Pins don't change what's counted.
+    const key = toQuery({ ...filters, pins: [] });
     const hit = rowsCache.get(groups);
     if (hit?.filters === key) return hit.rows;
     const rows = new Map(all.map((c) => [c.id, activeEntries(c.id, guides, files, filters)]));
@@ -364,6 +366,12 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     return slots;
   }, [groups, all, guides, files]);
   const slotsFor = (c: Contest) => slotsById.get(c.id) ?? candidateSlots(c, activeEntries(c.id, guides, files, EMPTY).map((r) => r.entry));
+  const pinKey = filters.pins.join(",");
+  const pinnedById = useMemo(
+    () => new Map(pinKey ? all.map((c) => [c.id, pinnedPicks(c.id, pinKey.split(","), guides, files)]) : []),
+    [all, guides, files, pinKey],
+  );
+  const pinnedFor = (id: string) => pinnedById.get(id) ?? NO_PINS;
   const [scopeRaw, setScopeRaw] = useStoredKey(SCOPE_KEY);
   const chosen = useMemo(() => parseScopes(scopeRaw), [scopeRaw]);
   const sectionFallback = useMemo(() => new Map((fallback?.sections ?? []).map((s) => [s.id, s])), [fallback]);
@@ -664,6 +672,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                           bay={bay.get(c.id)}
                           onRevealBay={onRevealBayStable}
                           zipNote={zipNote(c.id)}
+                          pinned={pinnedFor(c.id)}
                         />
                       </li>
                     ))}
@@ -739,6 +748,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
 
 type BayResult = { rows: Row[]; slots: Slots; total: number };
 
+const NO_PINS: PinnedPick[] = [];
+
 const ContestRow = memo(function ContestRow({
   href,
   contest,
@@ -751,6 +762,7 @@ const ContestRow = memo(function ContestRow({
   bay,
   onRevealBay,
   zipNote,
+  pinned,
 }: {
   href: string;
   contest: Contest;
@@ -763,6 +775,7 @@ const ContestRow = memo(function ContestRow({
   bay?: BayResult;
   onRevealBay?: (c: Contest) => void;
   zipNote: string | null;
+  pinned: PinnedPick[];
 }) {
   const description = cardDescription(contest);
   const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
@@ -776,7 +789,7 @@ const ContestRow = memo(function ContestRow({
     ) : null;
   return (
     <>
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped || zipNote) && "flex-wrap gap-y-2", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped || zipNote || pinned.length) && "flex-wrap gap-y-2", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
           <a
             id={`row-m-${contest.id}`}
@@ -798,6 +811,7 @@ const ContestRow = memo(function ContestRow({
         ) : (
           <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
         )}
+        <PinnedPicks picks={pinned} slots={slots} className="basis-full" />
       </div>
       <div
         className={cn(
@@ -829,6 +843,7 @@ const ContestRow = memo(function ContestRow({
         ) : (
           <VerdictBar contest={contest} rows={rows} slots={slots} />
         )}
+        <PinnedPicks picks={pinned} slots={slots} className="mt-2" />
       </div>
     </>
   );

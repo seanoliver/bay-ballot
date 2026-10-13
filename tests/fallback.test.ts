@@ -79,9 +79,9 @@ describe("fallbackRows", () => {
     expect(ids(EMPTY)).toEqual(["sf1", "sf2"]);
   });
   it("respects hidden guides, hidden types and the reasons-only filter", () => {
-    expect(ids({ off: ["sf1"], whyOnly: false })).toEqual(["sf2"]);
+    expect(ids({ off: ["sf1"], whyOnly: false, pins: [] })).toEqual(["sf2"]);
     expect(ids(setTypeGroup(EMPTY, "union", bayGuides, false))).toEqual(["sf1"]);
-    expect(ids({ off: [], whyOnly: true })).toEqual(["sf1"]);
+    expect(ids({ off: [], whyOnly: true, pins: [] })).toEqual(["sf1"]);
   });
 });
 
