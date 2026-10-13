@@ -58,9 +58,7 @@ describe("zipFit", () => {
     expect(fit(sup8, castro, "San Francisco")).toBe("maybe");
     expect(fit(sup4, castro, "San Francisco")).toBe("off");
     expect(fit(sup4, { ...castro, districts: { "county:San Francisco/Supervisor": ["4"] } }, "San Francisco")).toBe("maybe");
-    // Another map's districts say nothing about Supervisor.
     expect(fit(sup4, { ...SF, districts: { "city:Oakland/City Council": ["4"] } }, "San Francisco")).toBe("maybe");
-    // The same name at another level is another map.
     expect(fit(sup4, { ...SF, districts: { "city:San Francisco/Supervisor": ["8"] } }, "San Francisco")).toBe("maybe");
   });
   it("falls back to the county rule for a mapped district filed under two places, or a ZIP whose list is empty", () => {
@@ -207,10 +205,9 @@ describe("shapesById", () => {
     expect(() => shapesById(text([feature(" ")]), "sup_dist", "map")).toThrow(/no sup_dist/);
     expect(() => shapesById(text([feature("1", null)]), "sup_dist", "map")).toThrow(/no polygon/);
   });
-  it("merges features that share an id", () => {
-    const out = shapesById(text([feature("1"), feature(2, box(2, 2, 3, 3)), feature("1", box(4, 4, 5, 5))]), "sup_dist", "map");
-    expect(Object.keys(out)).toEqual(["1", "2"]);
-    expect(out["1"]).toEqual({ type: "MultiPolygon", coordinates: [box(0, 0, 1, 1).coordinates, box(4, 4, 5, 5).coordinates] });
+  it("fails on an id that appears twice, and reads a numeric id as text", () => {
+    expect(() => shapesById(text([feature("1"), feature("1", box(4, 4, 5, 5))]), "sup_dist", "map")).toThrow(/appears twice/);
+    expect(Object.keys(shapesById(text([feature("1"), feature(2, box(2, 2, 3, 3))]), "sup_dist", "map"))).toEqual(["1", "2"]);
   });
 });
 
@@ -255,10 +252,9 @@ describe("the committed ZIP table", () => {
     expect(sf.filter(([, z]) => !z.districts?.["county:San Francisco/Supervisor"]?.length).map(([k]) => k)).toEqual([]);
     const mapped = new Set(sf.flatMap(([, z]) => z.districts!["county:San Francisco/Supervisor"]));
     expect([...mapped].sort((a, b) => Number(a) - Number(b))).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]);
-    const onBallot = loadElection("data", "2026-11").ballot.contests.filter((x) => x.jurisdiction.name === "Supervisor" && x.jurisdiction.within?.[0]?.name === "San Francisco");
+    const onBallot = loadElection("data", "2026-11").ballot.contests.filter((x) => x.jurisdiction.name === "Supervisor" && x.jurisdiction.within?.[0]?.level === "county" && x.jurisdiction.within[0].name === "San Francisco");
     expect(onBallot.length).toBeGreaterThan(0);
     expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id)).toEqual([]);
-    // The Marina is all District 2; the Mission spans three.
     expect(table.zips["94123"].districts).toEqual({ "county:San Francisco/Supervisor": ["2"] });
     expect(table.zips["94110"].districts).toEqual({ "county:San Francisco/Supervisor": ["8", "9", "10"] });
   });
