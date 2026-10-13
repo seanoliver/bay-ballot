@@ -88,7 +88,7 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByText("4 of 4 pinned. Unpin one to pin another.")).toBeVisible();
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
-    await expect(fifth).toHaveAccessibleDescription(/You can pin up to 4 guides\. 4 of 4 pinned\. Unpin one to pin another\.$/);
+    await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
     await fifth.click({ force: true });
     await expect(fifth).toHaveAttribute("aria-pressed", "false");
     await expect(page).toHaveURL(pinParam("sf-chronicle", "growsf", "sf-dems", "league-pissed-off-voters"));
@@ -166,7 +166,7 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("button", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("button", { name: /\(gave reasons\)$/ }).first();
-    const tip = chip.getByText("Gave reasons on this contest.", { exact: false });
+    const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
     await chip.hover();
     await expect(tip).toBeVisible();
@@ -284,8 +284,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await waitForKeys(page);
     const pane = page.getByRole("region", { name: "Proposition D" });
     const chip = pinChip(pane, "SF Chronicle");
-    await expect(chip).toHaveAccessibleDescription(/^San Francisco Chronicle\./);
-    const tip = chip.getByRole("tooltip");
+    await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
+    const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
     await pane.getByRole("button", { name: /^Count only these/ }).first().focus();
     // Tab from Count only reaches the first chip, then on to SF Chronicle.
@@ -298,6 +298,44 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(page).toHaveURL(/[?&]c=prop-d/);
   });
 
+  test("a click on a tooltip hides it and pins nothing", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    const chip = pinChip(page.getByRole("region", { name: "Proposition D" }), "SF Chronicle");
+    const tip = chip.locator("[data-tip]");
+    await chip.hover();
+    await expect(tip).toBeVisible();
+    await tip.locator("b").click();
+    await expect(tip).toBeHidden();
+    await expect(chip).toHaveAttribute("aria-pressed", "false");
+    await expect(page).not.toHaveURL(/[?&]pin=/);
+  });
+
+  test("in the sheet with a mouse, Escape hides a chip's tooltip and leaves the sheet open", async ({ page }, info) => {
+    test.skip(isPhone(info), "a fine pointer at sheet width");
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.goto(SF);
+    await waitForKeys(page);
+    await contestRow(page, "Proposition D").click();
+    const sheet = page.getByRole("dialog", { name: "Proposition D" });
+    await expect(sheet).toBeVisible();
+    const chip = pinChip(sheet, "SF Chronicle");
+    const tip = chip.locator("[data-tip]");
+    await sheet.getByRole("button", { name: /^Count only these/ }).first().focus();
+    for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
+    await expect(chip).toBeFocused();
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    // A closing sheet stays visible while it animates out; give it time to finish.
+    await page.waitForTimeout(1000);
+    await expect(sheet).toBeVisible();
+    await expect(page).toHaveURL(/[?&]c=prop-d/);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+  });
+
   test("every chip's tooltip stays inside its row of chips", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     await page.goto(`${SF}?c=prop-d`);
@@ -307,8 +345,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const chips = group.getByRole("button", { name: /^Pin / });
     let checked = 0;
     for (const chip of await chips.all()) {
-      // Hidden until hovered, which getByRole would skip.
-      const tip = chip.locator("[role=tooltip]");
+      const tip = chip.locator("[data-tip]");
       if (!(await tip.count())) continue;
       await chip.hover();
       await expect(tip).toBeVisible();

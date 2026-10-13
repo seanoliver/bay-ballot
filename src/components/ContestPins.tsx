@@ -120,14 +120,15 @@ const QUOTE_MARK = (
 
 // The whole pill pins its guide and fills in once pinned. Guide pages are linked from the list under the chips.
 function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide; short: boolean; pinning: PinControls; style?: CSSProperties; className?: string }) {
-  const tipId = useId();
+  const nameId = useId();
   const f = pinning.filters;
   const pinned = isPinned(f, guide.id);
   const full = !pinned && f.pins.length >= MAX_PINS;
   const name = short ? guide.short : guide.name;
   // The tooltip gives the full name, why the chip has a quote mark, and why it can't be pinned.
   const tip = guide.quoted || full || guide.name !== name;
-  const describedBy = [tip && tipId, full && pinning.limitId].filter(Boolean).join(" ");
+  // Read aloud: the full name where the chip shows a short one, and the limit. The label already says it gave reasons.
+  const describedBy = [guide.name !== name && nameId, full && pinning.limitId].filter(Boolean).join(" ");
   return (
     <li style={style} className={className}>
       <button
@@ -137,7 +138,14 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
         aria-pressed={pinned}
         aria-disabled={full || undefined}
         aria-describedby={describedBy || undefined}
-        onClick={() => pinning.onPin(guide.id)}
+        onClick={(e) => {
+          // A click on the tooltip, which sits over other chips, hides it instead of pinning.
+          if (e.target instanceof Element && e.target.closest("[data-tip]")) {
+            e.currentTarget.dataset.tipHidden = "true";
+            return;
+          }
+          pinning.onPin(guide.id);
+        }}
         onPointerEnter={tip ? placeTip : undefined}
         onFocus={tip ? placeTip : undefined}
         onPointerLeave={tip ? resetTip : undefined}
@@ -154,11 +162,15 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
         <Pin aria-hidden="true" className={cn("size-3.5 shrink-0", pinned ? "fill-current" : "text-muted-foreground", full && "opacity-60")} />
         {name}
         {guide.quoted ? QUOTE_MARK : null}
+        {guide.name !== name ? (
+          <span id={nameId} className="sr-only">
+            {guide.name}
+          </span>
+        ) : null}
         {tip ? (
           // Inside the button with a padded gap, so the pointer can move onto it without it closing.
           <span
-            id={tipId}
-            role="tooltip"
+            aria-hidden="true"
             data-tip
             className="absolute top-full left-0 z-20 hidden w-max max-w-56 cursor-default pt-2 text-left text-[13px] leading-snug font-normal group-focus-visible:block group-data-[tip-hidden=true]:hidden! group-data-[tip-up=true]:top-auto group-data-[tip-up=true]:bottom-full group-data-[tip-up=true]:pt-0 group-data-[tip-up=true]:pb-2 pointer-fine:group-hover:block"
           >
@@ -174,10 +186,9 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
 }
 
 const TIP_MAX = 224;
-const TIP_HEIGHT = 80;
 
 // Keeps the tooltip inside its row: under the chip from its left edge, else from its right edge, else from the row's start.
-// Near the bottom of a collapsible panel, which clips what overflows it, it opens above the chip instead.
+// In a collapsible panel, which clips what overflows it, it opens above the chip when it fits there and not below.
 function placeTip(e: SyntheticEvent<HTMLButtonElement>) {
   const b = e.currentTarget;
   const tip = b.querySelector<HTMLElement>("[data-tip]");
@@ -191,8 +202,13 @@ function placeTip(e: SyntheticEvent<HTMLButtonElement>) {
   tip.style.left = from;
   tip.style.right = to;
   tip.style.maxWidth = `${max}px`;
-  const clip = b.closest(".reveal");
-  b.dataset.tipUp = String(!!clip && chip.bottom + TIP_HEIGHT > clip.getBoundingClientRect().bottom);
+  const clip = b.closest(".reveal")?.getBoundingClientRect();
+  if (!clip) return void delete b.dataset.tipUp;
+  // Measured while laid out but unseen, since it is hidden until the hover or focus lands.
+  tip.style.cssText += ";display:block;visibility:hidden";
+  const height = tip.offsetHeight;
+  tip.style.display = tip.style.visibility = "";
+  b.dataset.tipUp = String(chip.bottom + height > clip.bottom && chip.top - height >= clip.top);
 }
 
 function resetTip(e: SyntheticEvent<HTMLButtonElement>) {
@@ -206,6 +222,8 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   const open = b.matches(":focus-visible") || (b.matches(":hover") && window.matchMedia("(pointer: fine)").matches);
   if (!open) return;
   b.dataset.tipHidden = "true";
+  // Also keeps it from other listeners on the document, such as the sheet's dismiss.
+  e.nativeEvent.stopImmediatePropagation();
   e.stopPropagation();
   e.preventDefault();
 }
