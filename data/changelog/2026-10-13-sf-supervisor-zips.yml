@@ -1,0 +1,4 @@
+date: 2026-10-13
+type: new
+title: "Your SF ZIP now hides the supervisor races it doesn't reach"
+details: "Entering a San Francisco ZIP used to keep every Board of Supervisors race and mark each one \"may be on your ballot\". Now the ZIP keeps only the supervisor districts it overlaps, using the city's 2022 district map. A ZIP that spans more than one district keeps each of them. Each race it keeps is still marked \"may be on your ballot\", and Show all brings back the rest."

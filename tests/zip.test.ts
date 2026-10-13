@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildZipTable, poolDistrictCounties, SEAT_KINDS, zipTableJson } from "@/pipeline/zips";
+import { buildZipTable, districtShares, districtsTouched, droppedSlivers, poolDistrictCounties, SEAT_KINDS, shapesById, zipTableJson, type Shape } from "@/pipeline/zips";
 import { zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
 import type { PlaceGroup } from "@/lib/areas";
 import { c, prop1, propB, rep15, rtm, smL, sup8 } from "./fixtures/areas";
@@ -51,6 +51,20 @@ describe("zipFit", () => {
     const marin: ZipPlaces = { counties: ["Marin"], places: {} };
     expect(zipFit(srjc5.jurisdiction, marin, { cityCounty })).toBe("off");
     expect(zipFit(srjc5.jurisdiction, marin, { cityCounty, districtCounties: { "Sonoma County Junior College District": ["Marin", "Sonoma"] } })).toBe("maybe");
+  });
+  it("rules out a mapped district the ZIP misses, and keeps each one it reaches as maybe", () => {
+    const castro: ZipPlaces = { ...SF, districts: { "county:San Francisco/Supervisor": ["7", "8"] } };
+    const sup4 = c("supervisor-4", { level: "district", name: "Supervisor", district: "4", within: [{ level: "county", name: "San Francisco" }] });
+    expect(fit(sup8, castro, "San Francisco")).toBe("maybe");
+    expect(fit(sup4, castro, "San Francisco")).toBe("off");
+    expect(fit(sup4, { ...castro, districts: { "county:San Francisco/Supervisor": ["4"] } }, "San Francisco")).toBe("maybe");
+    expect(fit(sup4, { ...SF, districts: { "city:Oakland/City Council": ["4"] } }, "San Francisco")).toBe("maybe");
+    expect(fit(sup4, { ...SF, districts: { "city:San Francisco/Supervisor": ["8"] } }, "San Francisco")).toBe("maybe");
+  });
+  it("falls back to the county rule for a mapped district filed under two places, or a ZIP whose list is empty", () => {
+    const twoPlaces = c("supervisor-4", { level: "district", name: "Supervisor", district: "4", within: [{ level: "county", name: "San Francisco" }, { level: "county", name: "San Mateo" }] });
+    expect(fit(twoPlaces, { ...SF, districts: { "county:San Francisco/Supervisor": ["8"] } })).toBe("maybe");
+    expect(fit(sup8, { ...SF, districts: { "county:San Francisco/Supervisor": [] } }, "San Francisco")).toBe("maybe");
   });
   it("keeps a district whose city has no known county as maybe", () => {
     const odd = c("x", { level: "district", name: "Water", district: "1", within: [{ level: "city", name: "Atlantis" }] });
@@ -128,6 +142,75 @@ describe("buildZipTable", () => {
   });
 });
 
+const box = (x0: number, y0: number, x1: number, y1: number): Shape => ({ type: "Polygon", coordinates: [[[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]]] });
+
+describe("districtShares", () => {
+  // A ZIP 0.01 degrees square, split 70/30 between districts A and B.
+  const zip = box(0, 0, 0.01, 0.01);
+  const A = box(-0.01, -0.01, 0.007, 0.02);
+  const B = box(0.007, -0.01, 0.02, 0.02);
+  it("splits a ZIP's land among the districts it overlaps, by area, and leaves out districts it doesn't", () => {
+    const s = districtShares({ "94999": zip }, { A, B, far: box(0.05, 0.05, 0.06, 0.06) })["94999"];
+    expect(Object.keys(s).sort()).toEqual(["A", "B"]);
+    expect(s.A).toBeCloseTo(0.7, 3);
+    expect(s.B).toBeCloseTo(0.3, 3);
+  });
+  it("measures only the land inside the map, and skips a ZIP the map misses", () => {
+    expect(districtShares({ "94999": zip, "94998": box(0.1, 0.1, 0.11, 0.11) }, { A: box(0, 0, 0.005, 0.01) })).toEqual({ "94999": { A: 1 } });
+  });
+  it("counts both parts of a two-part multipolygon", () => {
+    const twoParts: Shape = { type: "MultiPolygon", coordinates: [box(0, 0, 0.002, 0.01).coordinates as never, box(0.008, 0, 0.01, 0.01).coordinates as never] };
+    const s = districtShares({ "94999": zip }, { two: twoParts, middle: box(0.002, 0, 0.008, 0.01) })["94999"];
+    expect(s.two).toBeCloseTo(0.4, 3);
+    expect(s.middle).toBeCloseTo(0.6, 3);
+  });
+  it("handles a hole", () => {
+    const ring = (x0: number, y0: number, x1: number, y1: number) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]] as [number, number][];
+    const donut: Shape = { type: "Polygon", coordinates: [ring(0, 0, 0.01, 0.01), ring(0.0025, 0.0025, 0.0075, 0.0075)] };
+    const s = districtShares({ "94999": zip }, { ring: donut, hole: box(0.0025, 0.0025, 0.0075, 0.0075) })["94999"];
+    expect(s.ring).toBeCloseTo(0.75, 3);
+    expect(s.hole).toBeCloseTo(0.25, 3);
+  });
+  it("counts a vertex that lies exactly on a row once", () => {
+    // A diamond whose side corners sit on the middle of three rows; the left district is the left half.
+    const diamond: Shape = { type: "Polygon", coordinates: [[[0.015, 0], [0.03, 0.015], [0.015, 0.03], [0, 0.015], [0.015, 0]]] };
+    const s = districtShares({ "94999": diamond }, { left: box(-1, -1, 0.015, 1), right: box(0.015, -1, 1, 1) }, { minRows: 3 })["94999"];
+    expect(s).toEqual({ left: 0.5, right: 0.5 });
+  });
+  it("drops a border sliver under the threshold, and sorts district numbers", () => {
+    // District 2 reaches 0.2% of the ZIP along its top edge.
+    const s = districtShares({ "94999": zip }, { "10": box(-0.01, -0.01, 0.007, 0.00998), "9": box(0.007, -0.01, 0.02, 0.00998), "2": box(-0.01, 0.00998, 0.02, 0.02) })["94999"];
+    expect(s["2"]).toBeCloseTo(0.002, 4);
+    expect(districtsTouched(s)).toEqual(["9", "10"]);
+    expect(districtsTouched({ "11": 0.5, "2": 0.006, "1": 0.494 })).toEqual(["1", "2", "11"]);
+  });
+});
+
+describe("droppedSlivers", () => {
+  it("lists dropped overlaps above 0.1%, and flags those of 0.25% or more that no one has looked at", () => {
+    const shares = { "94117": { "5": 0.6, "7": 0.0033, "2": 0.0094, "3": 0.0005 }, "94122": { "4": 0.99, "5": 0.0016 }, "94110": { "9": 0.99, "11": 0.004 } };
+    expect(droppedSlivers(shares, { "94117": ["7"] })).toEqual([
+      { zip: "94110", district: "11", share: 0.004, unseen: true },
+      { zip: "94117", district: "7", share: 0.0033, unseen: false },
+      { zip: "94122", district: "5", share: 0.0016, unseen: false },
+    ]);
+  });
+});
+
+describe("shapesById", () => {
+  const feature = (id: unknown, geometry: unknown = box(0, 0, 1, 1)) => ({ properties: { sup_dist: id }, geometry });
+  const text = (features: unknown[]) => JSON.stringify({ features });
+  it("fails on an error response, a missing id or a missing shape", () => {
+    expect(() => shapesById(JSON.stringify({ error: { code: 400 } }), "sup_dist", "map")).toThrow(/error/);
+    expect(() => shapesById(text([feature(" ")]), "sup_dist", "map")).toThrow(/no sup_dist/);
+    expect(() => shapesById(text([feature("1", null)]), "sup_dist", "map")).toThrow(/no polygon/);
+  });
+  it("fails on an id that appears twice, and reads a numeric id as text", () => {
+    expect(() => shapesById(text([feature("1"), feature("1", box(4, 4, 5, 5))]), "sup_dist", "map")).toThrow(/appears twice/);
+    expect(Object.keys(shapesById(text([feature("1"), feature(2, box(2, 2, 3, 3))]), "sup_dist", "map"))).toEqual(["1", "2"]);
+  });
+});
+
 describe("the ballot data the ZIP rules rely on", async () => {
   const { loadElection } = await import("@/lib/data");
   const { default: raw } = await import("@/data/zips.json");
@@ -160,5 +243,19 @@ describe("the committed ZIP table", () => {
     const named = new Set(d.ballot.contests.flatMap((x) => [x.jurisdiction, ...(x.jurisdiction.within ?? [])]).filter((p) => p.level === "city").map((p) => p.name));
     const covered = new Set(Object.values(table.zips).flatMap((z) => Object.keys(z.places)));
     expect([...named].filter((n) => !covered.has(n) || !table.cityCounty[n])).toEqual([]);
+  });
+  it("maps every SF ZIP to its supervisor districts, and every district on the ballot to some ZIP (rerun npm run bb -- zips)", async () => {
+    const { loadElection } = await import("@/lib/data");
+    const { default: raw } = await import("@/data/zips.json");
+    const table = raw as unknown as ZipTable;
+    const sf = Object.entries(table.zips).filter(([, z]) => Object.hasOwn(z.places, "San Francisco"));
+    expect(sf.filter(([, z]) => !z.districts?.["county:San Francisco/Supervisor"]?.length).map(([k]) => k)).toEqual([]);
+    const mapped = new Set(sf.flatMap(([, z]) => z.districts!["county:San Francisco/Supervisor"]));
+    expect([...mapped].sort((a, b) => Number(a) - Number(b))).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]);
+    const onBallot = loadElection("data", "2026-11").ballot.contests.filter((x) => x.jurisdiction.name === "Supervisor" && x.jurisdiction.within?.[0]?.level === "county" && x.jurisdiction.within[0].name === "San Francisco");
+    expect(onBallot.length).toBeGreaterThan(0);
+    expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id)).toEqual([]);
+    expect(table.zips["94123"].districts).toEqual({ "county:San Francisco/Supervisor": ["2"] });
+    expect(table.zips["94110"].districts).toEqual({ "county:San Francisco/Supervisor": ["8", "9", "10"] });
   });
 });

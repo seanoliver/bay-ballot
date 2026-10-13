@@ -287,7 +287,7 @@ function ZipLines({ zip, summary, showAll, onShowAll, onRetry }: { zip: string; 
       {summary.maybe > 0 ? (
         <p>
           “May be on your ballot” depends on your exact address
-          {summary.hidden > 0 ? ", and ZIP areas are approximate near city and county lines" : ""}. Check{" "}
+          {summary.hidden > 0 ? ", and ZIP areas are approximate near city, county, and district lines" : ""}. Check{" "}
           <a href={VOTER_STATUS_URL} className="underline underline-offset-2 hover:text-foreground" rel="noopener" target="_blank">
             My Voter Status
           </a>

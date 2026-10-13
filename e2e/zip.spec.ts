@@ -208,5 +208,19 @@ test.describe("ZIP filter", () => {
     await expect(contestRow(page, "Proposition B")).toHaveCount(0);
   });
 
+  test("an SF ZIP keeps only the supervisor districts it reaches", async ({ page }) => {
+    await page.goto(BALLOT);
+    await enterZip(page, "94114");
+    await expect(status(page)).toContainText("in 94114");
+    await expect(contestRow(page, "Board of Supervisors, District 8")).toBeVisible();
+    await expect(contestRow(page, "Board of Supervisors, District 4")).toHaveCount(0);
+    await expect(contestRow(page, "Board of Supervisors, District 10")).toHaveCount(0);
+    await enterZip(page, "94110");
+    await expect(status(page)).toContainText("in 94110");
+    await expect(contestRow(page, "Board of Supervisors, District 8")).toBeVisible();
+    await expect(contestRow(page, "Board of Supervisors, District 10")).toBeVisible();
+    await expect(contestRow(page, "Board of Supervisors, District 2")).toHaveCount(0);
+  });
+
 
 });
