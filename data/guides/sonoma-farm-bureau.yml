@@ -1,7 +1,7 @@
 id: sonoma-farm-bureau
 name: Sonoma County Farm Bureau
 shortName: "Sonoma Farm Bureau"
-description: The county's agricultural industry group, which publishes a voter guide on candidates and selected state propositions.
+description: A county farm organization founded in 1917 by Sonoma County farmers to protect agriculture. Its endorsement committee vets candidates and measures, and its board needs a two-thirds vote to approve.
 type: advocacy
 homepage: https://sonomafb.org/
 areas: [sonoma]

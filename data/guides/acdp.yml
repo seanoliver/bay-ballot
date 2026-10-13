@@ -1,7 +1,7 @@
 id: acdp
 name: Alameda County Democratic Party
 shortName: "Alameda County Dems"
-description: The official Democratic Party committee for Alameda County.
+description: The official Democratic Party committee for Alameda County, led by a central committee elected from the county's Assembly districts. Candidates need at least 60% of the committee's votes to win its endorsement.
 type: party
 homepage: https://acdems.org/
 areas: [alameda-county, oakland, berkeley]

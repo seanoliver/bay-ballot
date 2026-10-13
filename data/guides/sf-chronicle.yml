@@ -1,7 +1,7 @@
 id: sf-chronicle
 name: San Francisco Chronicle
 shortName: "SF Chronicle"
-description: The editorial board of the San Francisco Chronicle, a daily newspaper, which publishes endorsements in California and Bay Area races and ballot measures.
+description: The editorial board of the San Francisco Chronicle, a daily newspaper founded in 1865. Its opinion writers and editors make endorsements after interviewing candidates; newsroom reporters do not take part.
 type: newspaper
 homepage: https://www.sfchronicle.com/
 previousElectionLink: https://www.sfchronicle.com/projects/2026/california-primary-sf-election-endorsements/

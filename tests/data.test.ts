@@ -20,7 +20,7 @@ function base(): ElectionData {
         { id: "board", section: "S", title: "Board", kind: "candidate", candidates: ["A One", "B Two", "C Three", "D Four"], seats: 3, rankedChoice: false, jurisdiction: juris },
       ],
     },
-    guides: [{ id: "g", name: "G", description: "", type: "civic", homepage: "https://g.org/", areas: ["sf"] }],
+    guides: [{ id: "g", name: "G", description: "A civic group.", type: "civic", homepage: "https://g.org/", areas: ["sf"] }],
     endorsements: {},
     areas: [SF],
   };
@@ -76,6 +76,25 @@ describe("data", () => {
     const q = { text: "Prop B is a bad idea.", source: "https://g.org/a" };
     const d = withFile(base(), { "prop-b": { ...e("N"), quotes: [q] } }, { rejectedQuotes: [{ text: "Prop B is a  bad idea.", reason: "not substantive" }] });
     expect(validateElection(d).errors).toEqual(["g/prop-b: quote is in rejectedQuotes: \"Prop B is a bad idea.\""]);
+  });
+  it("fails when a guide description is empty or over the length budget", () => {
+    const d = base();
+    d.guides.push({ ...d.guides[0], id: "blank", description: " " }, { ...d.guides[0], id: "long", description: "x".repeat(251) }, { ...d.guides[0], id: "max", description: "x".repeat(250) });
+    expect(validateElection(d).errors).toEqual([
+      "guide 'blank': description must be 1 to 250 characters (has 0)",
+      "guide 'long': description must be 1 to 250 characters (has 251)",
+    ]);
+  });
+  it("fails when a guide description has a dash or a line break", () => {
+    const d = base();
+    const g = d.guides[0];
+    d.guides = ["A group \u2014 in SF.", "A group \u2013 in SF.", "A group - in SF.", "A group\nin SF.", "A Bay-Area group."].map((description, i) => ({ ...g, id: `g${i}`, description }));
+    expect(validateElection(d).errors).toEqual([
+      "guide 'g0': description has a dash; use a comma, colon, or period",
+      "guide 'g1': description has a dash; use a comma, colon, or period",
+      "guide 'g2': description has a dash; use a comma, colon, or period",
+      "guide 'g3': description has a line break",
+    ]);
   });
   it("fails when an area id collides with a contest id", () => {
     const d = base();

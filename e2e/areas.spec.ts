@@ -71,7 +71,7 @@ test("old contest links still work and link back to their area", async ({ page }
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   }
   await page.goto(`${BALLOT}/prop-b`);
-  await expect(page.getByRole("link", { name: "San Francisco ballot" })).toHaveAttribute("href", `${BALLOT}/sf`);
+  await expect(page.getByRole("link", { name: "San Francisco ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/sf`);
 });
 
 test("a returning visitor with saved filters lands on the SF page once", async ({ page }) => {
@@ -183,7 +183,7 @@ test("a San Mateo measure page names its place and links back to the San Mateo l
   await page.goto(`${BALLOT}/menlo-park-measure-p`);
   await expect(page.getByRole("heading", { level: 1, name: "Menlo Park Measure P" })).toBeVisible();
   await expect(page).toHaveTitle(/^Menlo Park Measure P endorsements \(Nov 2026\)/);
-  await expect(page.getByRole("link", { name: "San Mateo County ballot" })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
+  await expect(page.getByRole("link", { name: "San Mateo County ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/san-mateo`);
 });
 
 test("a county hidden by the old Counties filter, saved or in a link, shows and is forgotten", async ({ page }) => {
@@ -213,7 +213,7 @@ test("a contest shared by Palo Alto and Mountain View names Santa Clara County a
   await page.goto(`${BALLOT}/valley-water-7`);
   await expect(page).toHaveTitle(/^Santa Clara Valley Water District 7 endorsements /);
   await expect(page.getByText(/Santa Clara County voter guides? endorses? Pete Dailey/)).toBeVisible();
-  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
 });
 
 test("the Contra Costa page shows state and Contra Costa contests", async ({ page }) => {
@@ -247,18 +247,18 @@ test("the Santa Clara County page includes Palo Alto, Mountain View and San Jose
 test("a Palo Alto contest page names Palo Alto and links back to the Palo Alto list", async ({ page }) => {
   await page.goto(`${BALLOT}/palo-alto-council`);
   await expect(page).toHaveTitle(/^Palo Alto Palo Alto City Council endorsements \(Nov 2026\)/);
-  await expect(page.getByRole("link", { name: "Palo Alto ballot" })).toHaveAttribute("href", `${BALLOT}/palo-alto`);
+  await expect(page.getByRole("link", { name: "Palo Alto ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/palo-alto`);
   await expect(page.getByText(/^Most-endorsed for Palo Alto City Council by \d+ Palo Alto voter guides:/)).toBeVisible();
 });
 
 test("a San Jose contest page names San Jose and links back to the San Jose list", async ({ page }) => {
   await page.goto(`${BALLOT}/san-jose-council-5`);
   await expect(page).toHaveTitle(/^San Jose City Council District 5 endorsements \(Nov 2026\)/);
-  await expect(page.getByRole("link", { name: "San Jose ballot" })).toHaveAttribute("href", `${BALLOT}/san-jose`);
+  await expect(page.getByRole("link", { name: "San Jose ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/san-jose`);
 });
 
 test("a district in several Santa Clara cities links back to the Santa Clara County list", async ({ page }) => {
   await page.goto(`${BALLOT}/pausd-trustee`);
-  await expect(page.getByRole("link", { name: "Santa Clara County ballot" })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
+  await expect(page.getByRole("link", { name: "Santa Clara County ballot", exact: true })).toHaveAttribute("href", `${BALLOT}/santa-clara-county`);
   await expect(page.getByText(/by \d+ Santa Clara County voter guides?:/)).toBeVisible();
 });

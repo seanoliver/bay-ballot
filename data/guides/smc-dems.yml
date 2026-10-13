@@ -1,7 +1,7 @@
 id: smc-dems
 name: San Mateo County Democratic Party
 shortName: "SMC Democrats"
-description: The official Democratic Party committee for San Mateo County.
+description: The San Mateo County Democratic Central Committee, the official Democratic Party committee for the county, with members elected by supervisorial district. Its endorsement committee interviews candidates before a party vote.
 type: party
 homepage: https://www.smcdems.org/
 areas: [san-mateo]

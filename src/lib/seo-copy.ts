@@ -3,7 +3,7 @@ import type { Row } from "./filters";
 import type { Contest } from "./schema";
 import { topPicks } from "./display";
 import { tally } from "./score";
-import { mostPositions } from "./share";
+import { featuredContest, mostPositions } from "./share";
 
 const READ_MORE = "See every guide's endorsement and reasons.";
 const SUFFIX = /^(jr|sr|ii|iii|iv)\.?$/i;
@@ -191,9 +191,9 @@ export function areaDescription(
   place: PlaceName,
   contests: Contest[],
   rowsFor: (id: string) => Row[],
-  { statewideOnly = false }: { statewideOnly?: boolean } = {},
+  { statewideOnly = false, county = false }: { statewideOnly?: boolean; county?: boolean } = {},
 ): string {
-  const c = mostPositions(statewideOnly ? contests.filter((x) => x.jurisdiction.level === "state") : contests, rowsFor);
+  const c = statewideOnly ? mostPositions(contests.filter((x) => x.jurisdiction.level === "state"), rowsFor) : featuredContest(contests, rowsFor, { county });
   const rows = c ? rowsFor(c.id) : [];
   if (!c || rows.length === 0) return `What ${place.name} voter guides recommend. ${SEE_ALL}`;
   for (const short of [false, true]) {
