@@ -24,6 +24,9 @@ picks:
         source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
   prop-45:
     pick: N
+    quotes:
+      - text: This measure - written and funded by the sprawl lobby - may seem like an antidote to slow timelines and onerous requirements of CEQA for housing and infrastructure. But its benefits overwhelmingly accrue to freeway widening and low density single family homes far from jobs rather than transit and infill housing.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
   rtm:
     pick: Y
     quotes:
