@@ -14,6 +14,20 @@ const MULTI = data.ballot.contests.find((c) => {
 // A contest an area's list shows with Bay Area guides, because none of the area's own took a position.
 const FALLBACK = data.areas.flatMap((a) => (ballotViewProps(data, { area: a }).fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => ({ area: a.id, id }))))[0];
 
+// On an area list with a Bay Area fallback, one of the area's own measures whose side mixes guides with and without reasons.
+const OWN_MIXED = data.areas.flatMap((a) => {
+  const view = ballotViewProps(data, { area: a });
+  const borrowed = new Set((view.fallback?.sections ?? []).flatMap((s) => s.contests));
+  if (!borrowed.size) return [];
+  return view.ballot.contests.flatMap((c) => {
+    if (c.kind !== "measure" || borrowed.has(c.id)) return [];
+    return (["Y", "N"] as const).flatMap((pick) => {
+      const side = view.guides.map((g) => view.files[g.id]).filter((f) => f?.picks[c.id]?.pick === pick);
+      return side.some((f) => f.hasReasoning) && side.some((f) => !f.hasReasoning) ? [{ area: a.id, id: c.id, title: c.title, side: pick === "Y" ? "Yes" : "No" }] : [];
+    });
+  });
+})[0];
+
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
@@ -216,6 +230,22 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const pane = page.locator("section[aria-labelledby='detail-title']");
     await expect(pane.getByRole("group", { name: /^Guides for / }).first()).toBeVisible();
     await expect(pane.getByRole("button", { name: "Pin Berkeley Dems", exact: true })).toHaveCount(0);
+  });
+
+  test("on an area list with a Bay Area fallback, Count only still stops after why hides some of its guides", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    test.skip(!OWN_MIXED, "no fitting measure in today's data");
+    await page.goto(`${BALLOT}/${OWN_MIXED!.area}?c=${OWN_MIXED!.id}`);
+    const pane = page.locator("section[aria-labelledby='detail-title']");
+    const side = pane.locator("section").filter({ has: page.getByRole("heading", { level: 3, name: new RegExp(`^${OWN_MIXED!.side}\\s*\\d`) }) });
+    const button = side.getByRole("button", { name: /^Count only these \d+ on the ballot$/ });
+    await button.click();
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
+    await expect(page).toHaveURL(/[?&]why=1/);
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    await button.click();
+    await expect(page).not.toHaveURL(/[?&]only=/);
   });
 
   test("the phone sheet pins guides and counts one side", async ({ page }, info) => {

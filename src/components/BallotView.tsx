@@ -416,8 +416,9 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     () => (shown && area !== null && noPickScope && !fallbackOf.has(shown.id) ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
     [shown, area, noPickScope, fallbackOf, guides, files],
   );
-  // A Bay Area fallback's sides list Bay Area guides, whose files the fallback holds.
-  const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, files: fallback?.files ?? files, noPick });
+  // A side lists the area's guides, or a Bay Area fallback's, whose files hold only the contests it covers; the area's own win.
+  const sideFiles = useMemo(() => ({ ...fallback?.files, ...files }), [fallback, files]);
+  const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, files: sideFiles, noPick });
   const carry = useCarriedQuery();
 
   useEffect(() => {
