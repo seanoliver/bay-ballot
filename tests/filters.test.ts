@@ -142,6 +142,7 @@ describe("initialFilters", () => {
 });
 
 describe("savedFilters", () => {
+  const info4 = ["a", "b", "c", "d"].map((id) => ({ id, name: id, type: "club" as const }));
   const stored = { ...EMPTY, pins: ["b", "a"] };
   const shared = { ...EMPTY, off: ["c"], pins: ["d"] };
   it("keeps the reader's stored pins through a change that isn't to pins", () => {
@@ -165,8 +166,10 @@ describe("savedFilters", () => {
     const full = { ...EMPTY, pins: ["a", "b", "c", "d"] };
     expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored: full }).pins).toEqual(["a", "b", "c", "d"]);
   });
-  it("leaves stored pins for guides it doesn't know alone", () => {
-    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored: { ...EMPTY, pins: ["gone", "a"] } }).pins).toEqual(["gone", "a", "e"]);
+  it("doesn't let a stored pin for an unknown guide hold a slot, once stored filters are sanitized", () => {
+    const stored = sanitizeFilters(fromQuery("pin=gone,a,b,c"), info4);
+    const prev = { ...EMPTY, pins: ["a", "b", "c"] };
+    expect(savedFilters({ prev, next: togglePin(prev, "d"), stored }).pins).toEqual(["a", "b", "c", "d"]);
   });
   it("classifies every filter as shared or reader-owned", () => {
     expect([...SHARED_KEYS, ...READER_KEYS].sort()).toEqual(Object.keys(EMPTY).sort());

@@ -165,7 +165,7 @@ export function initialFilters({
 /**
  * What to save after a change from `prev` to `next`. Shared filters are saved as they are. Pins on screen may be a
  * link's or a stale tab's, so only this change's pin and unpin apply to the stored list; stored pins come first, so
- * past MAX_PINS a new pin shows but isn't saved.
+ * past MAX_PINS a new pin shows but isn't saved. `stored` must be sanitized, so a retired guide can't hold a slot.
  */
 export function savedFilters({ prev, next, stored }: { prev: Filters; next: Filters; stored: Filters }): Filters {
   const removed = prev.pins.filter((id) => !next.pins.includes(id));

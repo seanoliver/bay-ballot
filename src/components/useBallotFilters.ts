@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { carryQuery, FILTERS_KEY, filterQuery, fromQuery, initialFilters, savedFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
+import { carryQuery, FILTERS_KEY, filterQuery, fromQuery, initialFilters, sanitizeFilters, savedFilters, toQuery, type FilterGuide, type Filters } from "@/lib/filters";
 import { historyBudget } from "@/lib/history-budget";
 
 export const CHANGE_EVENT = "bb-filters-change";
@@ -101,7 +101,7 @@ export function useBallotFilters({ guides, keep = [] }: { guides: FilterGuide[];
   const setFilters = useCallback(
     (f: Filters) => {
       // The URL shows everything on screen; storage gets only this change's pin or unpin applied to the saved pins.
-      writeKey(FILTERS_KEY, toQuery(savedFilters({ prev: filters, next: f, stored: fromQuery(readKey(FILTERS_KEY) ?? "", guides) })));
+      writeKey(FILTERS_KEY, toQuery(savedFilters({ prev: filters, next: f, stored: sanitizeFilters(fromQuery(readKey(FILTERS_KEY) ?? "", guides), guides) })));
       const p = new URLSearchParams(toQuery(f));
       const current = new URLSearchParams(currentSearch());
       for (const k of keepKey ? keepKey.split(",") : []) {
