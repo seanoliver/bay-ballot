@@ -133,7 +133,8 @@ function PinnedGuides({
       <div ref={listRef}>
         {pinned.length === 0 ? (
           <p data-pin-hint tabIndex={-1} className="rounded-md text-sm text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-            Tap <Pin aria-hidden="true" className="inline size-3.5 align-[-2px]" /> next to a guide below to see its picks on every contest. You can pin up to {MAX_PINS}.
+            Tap <Pin aria-hidden="true" className="inline size-3.5 align-[-2px]" />
+            <span className="sr-only">the pin button</span> next to a guide below to see its picks on every contest. You can pin up to {MAX_PINS}.
           </p>
         ) : (
           <>
