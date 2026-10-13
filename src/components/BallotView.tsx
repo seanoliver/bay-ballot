@@ -141,15 +141,16 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const notes = zipPlaces?.outside?.length
     ? [{ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] }]
     : [];
+  // A loaded table wins over an earlier failure, so the status can't say "every contest is shown" over a filtered list.
   const zipSummary: ZipSummary | null = !zip
     ? null
-    : tableFailed
-      ? { kind: "failed" }
-      : !table
-        ? zipActive
+    : !table
+      ? tableFailed
+        ? { kind: "failed" }
+        : zipActive
           ? { kind: "loading" }
           : null
-        : !zipKnown
+      : !zipKnown
           ? { kind: "unknown" }
           : zipView
             ? { kind: "filtered", on: zipView.on, maybe: zipView.maybe, hidden: zipView.hidden, notes }
@@ -167,8 +168,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   // To the ZIP's ballot, as a new history entry: in place when the page can switch areas, else by navigation.
   const toZipBallot = (z: string) => {
     // Read from the address bar, not this render: the call can come after the ZIP table loads.
-    const onBay = window.location.pathname === bayHref;
-    const mine = new URLSearchParams(currentSearch()).get(MINE_PARAM);
+    const onBayNow = window.location.pathname === bayHref;
+    const mineNow = new URLSearchParams(currentSearch()).get(MINE_PARAM);
     stepWrite.cancel();
     setStepped(null);
     setShowAllFor(null);
@@ -177,16 +178,16 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
       p.delete("c");
       p.set(MINE_PARAM, "1");
     };
-    if (onBay && mine === "1") {
+    if (onBayNow && mineNow === "1") {
       // Already on the ZIP's ballot (a changed ZIP): no new history entry.
       replaceQuery(withQuery("", mark).replace(/^\?/, ""));
       setAnnounce(`Showing the ballot for ZIP ${z}`);
-    } else if (onBay && pushPath(withQuery(bayHref, mark))) {
+    } else if (onBayNow && pushPath(withQuery(bayHref, mark))) {
       setAnnounce(`Showing the ballot for ZIP ${z}`);
-    } else if (!onBay && onSwitch?.(bayHref)) {
+    } else if (!onBayNow && onSwitch?.(bayHref)) {
       replaceQuery(withQuery("", mark).replace(/^\?/, ""));
     } else {
-      if (!onBay) focusZipChipAfterLoad();
+      if (!onBayNow) focusZipChipAfterLoad();
       router.push(withQuery(bayHref, (p) => {
         for (const k of [...p.keys()]) if (!CARRIED.includes(k)) p.delete(k);
         p.set(MINE_PARAM, "1");
