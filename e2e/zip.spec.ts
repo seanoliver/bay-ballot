@@ -85,6 +85,18 @@ test.describe("ZIP filter", () => {
     await expect(status(page).getByRole("alert")).toHaveText("");
   });
 
+  test("an error cleared by a click-away doesn't swallow the next one", async ({ page }) => {
+    await page.goto(SCC);
+    await page.getByRole("button", { name: "Your ZIP" }).click();
+    await page.getByLabel("Your ZIP code").pressSequentially("9");
+    await page.getByLabel("Your ZIP code").press("Enter");
+    await page.getByRole("heading", { level: 1 }).click();
+    await expect(status(page).getByRole("alert")).toHaveText("");
+    await page.getByRole("button", { name: "Your ZIP" }).click();
+    await page.getByLabel("Your ZIP code").press("Enter");
+    await expect(status(page).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
+  });
+
   test("a pasted address applies its ZIP", async ({ page, context, browserName }, info) => {
     test.skip(browserName !== "chromium" || info.project.name.includes("phone"), "clipboard permissions are Chromium-only");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
@@ -93,7 +105,16 @@ test.describe("ZIP filter", () => {
     await page.evaluate(() => navigator.clipboard.writeText("10050 N Wolfe Rd, Cupertino, CA 95014-2033"));
     await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
     await expect(page.getByRole("button", { name: "ZIP 95014. Change" })).toBeVisible();
-    for (const bad of ["650-555-1234", "10050 N Wolfe Rd, Cupertino, CA"]) {
+    for (const good of ["123 Castro St, Mountain View, CA 94041 1234, USA", "940411234"]) {
+      await page.getByRole("button", { name: /^ZIP \d{5}\. Change$/ }).click();
+      await page.evaluate((t) => navigator.clipboard.writeText(t), good);
+      await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
+      await expect(page.getByRole("button", { name: "ZIP 94041. Change" }), good).toBeVisible();
+      await page.getByRole("button", { name: "ZIP 94041. Change" }).click();
+      await page.evaluate(() => navigator.clipboard.writeText("95014"));
+      await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
+    }
+    for (const bad of ["650-555-1234", "10050 N Wolfe Rd, Cupertino, CA", "PO Box 12345, Palo Alto"]) {
       await page.getByRole("button", { name: "ZIP 95014. Change" }).click();
       await page.evaluate((t) => navigator.clipboard.writeText(t), bad);
       await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");

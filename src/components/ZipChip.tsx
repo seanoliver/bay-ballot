@@ -19,7 +19,7 @@ export type ZipSummary =
   | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
 // One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
-const CHIP = "js-only inline-flex min-h-10 w-[8.75rem] items-center gap-2 rounded-full pr-3 pl-2.5";
+const CHIP = "js-only inline-flex min-h-10 min-w-[8.75rem] items-center gap-2 whitespace-nowrap rounded-full pr-3 pl-2.5";
 const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset-2 hover:text-foreground";
 
 /**
@@ -41,6 +41,17 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   const focusNext = useRef<"input" | "chip" | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLButtonElement>(null);
+  // The listeners that clear an error after a click-away; dropped together, and whenever the error is set again.
+  const pendingClear = useRef<AbortController | null>(null);
+  const cancelPendingClear = () => {
+    pendingClear.current?.abort();
+    pendingClear.current = null;
+  };
+  useEffect(() => cancelPendingClear, []);
+  const fail = () => {
+    cancelPendingClear();
+    setError(true);
+  };
   useEffect(() => {
     if (focusNext.current === "input") {
       inputRef.current?.focus({ preventScroll: true });
@@ -52,6 +63,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   });
 
   const apply = (v: string) => {
+    cancelPendingClear();
     setEditing(false);
     setError(false);
     setDraft("");
@@ -67,9 +79,15 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
       setError(false);
     } else if (error) {
       // Closed by a mousedown: clear the error once the click has landed, so the line can't move beneath it.
-      const clear = () => setError(false);
-      document.addEventListener("click", clear, { once: true });
-      document.addEventListener("keydown", clear, { once: true });
+      // (A click whose handler stops propagation leaves it until the next click or key.)
+      cancelPendingClear();
+      const ac = (pendingClear.current = new AbortController());
+      const clear = () => {
+        ac.abort();
+        setError(false);
+      };
+      document.addEventListener("click", clear, { signal: ac.signal });
+      document.addEventListener("keydown", clear, { signal: ac.signal });
     }
   };
   const take = (raw: string) => {
@@ -106,11 +124,11 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
             const text = e.clipboardData.getData("text");
             // Text with letters is an address: only a ZIP at its end counts. Digits alone must be a ZIP or ZIP+4.
             const found = /[a-z]/i.test(text)
-              ? /\b(\d{5})(?:-\d{4})?[\s,.]*(?:USA|United States)?[\s.]*$/i.exec(text)
-              : /^\s*(\d{5})(?:-?\d{4})?\s*$/.exec(text);
+              ? /(?:^|\D)(\d{5})(?:[-\s]?\d{4})?[\s,.]*(?:U\.?S\.?A?\.?|United States(?: of America)?)?[\s.]*$/i.exec(text)
+              : /^\s*(\d{5})(?:[-\s]?\d{4})?\s*$/.exec(text);
             e.preventDefault();
             if (found) take(found[1]);
-            else setError(true);
+            else fail();
           }}
           onKeyDown={(e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -119,7 +137,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
             } else if (e.key === "Enter") {
               e.preventDefault();
               if (isZip(draft)) apply(draft);
-              else setError(true);
+              else fail();
             }
           }}
           onBlur={() => {
@@ -135,10 +153,11 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
       <button
         ref={chipRef}
         type="button"
-        className={cn(CHIP, "border border-dashed border-foreground/40 text-foreground/80 hover:bg-muted")}
+        className={cn(CHIP, "justify-center border border-dashed border-foreground/40 text-foreground/80 hover:bg-muted")}
         onClick={() => {
           setEditing(true);
           setError(false);
+          cancelPendingClear();
           focusNext.current = "input";
         }}
       >
@@ -148,7 +167,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     );
   }
   return (
-    <span className="js-only inline-flex min-h-10 w-[8.75rem] items-center justify-between rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
+    <span className="js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
       <button
         ref={chipRef}
         type="button"
@@ -158,6 +177,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
           setDraft(zip);
           setEditing(true);
           setError(false);
+          cancelPendingClear();
           focusNext.current = "input";
         }}
       >
