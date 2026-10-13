@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countedNoPick, countOnly, isCountingOnly, noPickGuides, pinMessage } from "@/lib/contest-pins";
+import { areaNoPick, countedNoPick, countOnly, isCountingOnly, noPickGuides, pinMessage } from "@/lib/contest-pins";
 import { EMPTY, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Area, Entry } from "@/lib/schema";
 
@@ -34,6 +34,13 @@ describe("noPickGuides", () => {
   it("covers every area for a statewide contest", () => {
     const prop1 = { id: "prop-1", jurisdiction: { level: "state" as const, name: "California" } };
     expect(noPickGuides(prop1, guides, areas, files).map((x) => x.id)).toEqual(["spur", "growsf", "oak", "both"]);
+  });
+});
+
+describe("areaNoPick", () => {
+  it("lists the area's published guides that skipped the contest", () => {
+    const files = { spur: file(["prop-d"]), growsf: file(["prop-a"], false) };
+    expect(areaNoPick("prop-d", [{ id: "spur" }, { id: "growsf" }, { id: "pending" }], files)).toEqual([{ id: "growsf", hasReasoning: false }]);
   });
 });
 

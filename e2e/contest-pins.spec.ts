@@ -101,3 +101,63 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first()).toBeVisible();
   });
 });
+
+test.describe("pinning from the ballot list's contest detail", () => {
+  const SF = `${BALLOT}/sf`;
+  const rowPins = (page: Page) =>
+    page.locator("li").filter({ has: contestRow(page, "Proposition D") }).getByRole("list", { name: "Your guides' picks" }).filter({ visible: true });
+
+  test("the desktop pane pins guides into the list rows and counts one side", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    const errors = watchErrors(page);
+    await page.goto(`${SF}?c=prop-d`);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    await expect(pane).toBeVisible();
+    await pane.getByRole("button", { name: "Pin SPUR", exact: true }).click();
+    await expect(rowPins(page).getByRole("listitem")).toHaveText([/^SPUR:\s*Yes$/]);
+    await expect(pane.getByRole("status")).toHaveText("Pinned SPUR · 1 of 4 pinned");
+    const sidebar = page.getByRole("complementary", { name: "Filters" });
+    await expect(sidebar.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveText(["SPUR"]);
+
+    const countLabel = sidebar.getByText(/guides counted$/);
+    const before = (await countLabel.textContent())!;
+    const row = page.locator("li").filter({ has: contestRow(page, "Proposition B") }).first();
+    const rowBefore = await row.textContent();
+    const button = pane.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
+    const n = (await button.textContent())!.match(/\d+/)![0];
+    await button.click();
+    await expect(countLabel).toHaveText(new RegExp(`^${n} of `));
+    await expect(row).not.toHaveText(rowBefore!);
+    await sidebar.getByRole("button", { name: "Reset filters" }).click();
+    await expect(countLabel).toHaveText(before);
+    await expect(row).toHaveText(rowBefore!);
+    expect(errors).toEqual([]);
+  });
+
+  test("the phone sheet pins guides and counts one side", async ({ page }, info) => {
+    test.skip(!isPhone(info), "phone only");
+    await page.goto(SF);
+    await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+    const filters = page.getByRole("button", { name: /^Filters/ });
+    const before = (await filters.textContent())!;
+    await contestRow(page, "Proposition D").tap();
+    const sheet = page.getByRole("dialog", { name: "Proposition D" });
+    await expect(sheet).toBeVisible();
+    await sheet.getByRole("button", { name: "Pin SPUR", exact: true }).click();
+    await expect(sheet.getByRole("status")).toHaveText("Pinned SPUR · 1 of 4 pinned");
+    await expect(sheet.getByRole("status")).toBeVisible();
+    const button = sheet.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
+    const n = (await button.textContent())!.match(/\d+/)![0];
+    await button.click();
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    await page.goBack();
+    await expect(sheet).toBeHidden();
+    await expect(rowPins(page).getByRole("listitem")).toHaveText([/^SPUR:\s*Yes$/]);
+    await expect(filters).toContainText(`${n} of `);
+    await filters.click();
+    await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Reset filters" }).click();
+    await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Close" }).click();
+    await expect(filters).toHaveText(before);
+    await expect(page).toHaveURL(/[?&]pin=spur/);
+  });
+});

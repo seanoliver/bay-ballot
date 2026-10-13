@@ -11,7 +11,7 @@ import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
 import { BallotNextStep } from "./BallotNextStep";
 import { ContestDetail } from "./ContestDetail";
-import { PinStatus, useContestPins } from "./ContestPins";
+import { useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
@@ -50,7 +50,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   const hidden = shown.length - rows.length;
   const carry = useCarriedQuery();
   const filterProps = { filters, onChange: setFilters, guides: shown, files, typeGuides: guides };
-  const { pinning, status } = useContestPins({ filters, onChange: setFilters, guides, noPick });
+  const pinning = useContestPins({ filters, onChange: setFilters, guides, noPick });
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {
@@ -98,14 +98,12 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             titleId={TITLE_ID}
             slots={slots}
             pageLink={false}
-            shortNames={false}
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
             pinning={pinning}
           />
           {next ? <BallotNextStep step={next} carry={carry} /> : null}
         </section>
       </div>
-      <PinStatus message={status} />
     </div>
   );
 }

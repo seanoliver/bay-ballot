@@ -8,9 +8,10 @@ import { displayName } from "@/lib/display";
 import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 
-/** What a contest page's sides need to pin guides and count only one side. */
+/** What a contest's sides need to pin guides and count only one side. */
 export type Pinning = {
   filters: Filters;
+  status: string;
   noPick: GuideInfo[];
   limitId: string;
   onPin: (id: string) => void;
@@ -31,7 +32,7 @@ export function useContestPins({
   onChange: (f: Filters) => void;
   guides: GuideInfo[];
   noPick: NoPickGuide[];
-}): { pinning: Pinning; status: string } {
+}): Pinning {
   const limitId = useId();
   const [status, setStatus] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -48,8 +49,9 @@ export function useContestPins({
   const all = useMemo(() => guides.map((g) => g.id), [guides]);
   const ids = (side: Side) => side.guides.map((g) => g.id);
 
-  const pinning: Pinning = {
+  return {
     filters: f,
+    status,
     noPick: countedNoPick(f, noPick, guides),
     limitId,
     onPin: (id) => {
@@ -71,10 +73,10 @@ export function useContestPins({
       say(`Counting only the ${guidesLabel(side.count)} for ${side.label}`);
     },
   };
-  return { pinning, status };
 }
 
-/** A pin toggle or a Count only change, said aloud everywhere and shown as a toast on phones, where the Filters panel is out of sight. */
+/** A pin toggle or a Count only change, said aloud everywhere and shown as a toast on phones, where the Filters panel is out of sight.
+ * Rendered inside each contest detail so it stays reachable inside the phone sheet, which hides the rest of the page. */
 export function PinStatus({ message }: { message: string }) {
   return (
     <p

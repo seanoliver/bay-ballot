@@ -34,23 +34,20 @@ test("the reasons filter goes into the URL and survives a reload", async ({ page
 test.describe("desktop detail pane", () => {
   test.skip(({ isMobile }) => isMobile, "desktop only");
 
-  test("selecting a contest opens the pane with its result, chips and links", async ({ page }) => {
+  test("selecting a contest opens the pane with its result, pin chips and guide links", async ({ page }) => {
     await openBallot(page);
     await contestRow(page, "Proposition B").click();
     await expect(page).toHaveURL(/[?&]c=prop-b/);
     const pane = page.getByRole("region", { name: "Proposition B" });
     await expect(pane).toBeVisible();
     await expect(pane.getByText(/^(Yes|No) \d+%$|^Split$/).first()).toBeVisible();
-    const chips = pane.getByRole("group", { name: /^Guides for / }).first().getByRole("link");
+    const chips = pane.getByRole("list", { name: /^Guides for / }).first().getByRole("button", { name: /^Pin / });
     expect(await chips.count()).toBeGreaterThan(0);
-    const more = pane.getByRole("button", { name: /^\+\d+ more$/ }).first();
-    const before = await chips.count();
-    await more.click();
-    await expect(pane.getByRole("button", { name: "Show less" })).toHaveAttribute("aria-expanded", "true");
-    expect(await chips.count()).toBeGreaterThan(before);
-    const href = await chips.first().getAttribute("href");
+    // Guide pages are linked from each quote's byline.
+    const link = pane.locator("a[href^='/guides/']").first();
+    const href = await link.getAttribute("href");
     expect(href).toMatch(/^\/guides\/[a-z0-9-]+$/);
-    await chips.first().click();
+    await link.click();
     await expect(page).toHaveURL(new RegExp(`${href}$`));
   });
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
-import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideGuide, type SideQuote } from "@/lib/detail";
+import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideQuote } from "@/lib/detail";
 import { cardDescription, contestHeadline } from "@/lib/display";
 import { skippedLabel, type Scope } from "@/lib/fallback";
 import type { Row } from "@/lib/filters";
@@ -13,7 +13,7 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
-import { CountOnlyButton, NoPickBlock, PinChips, PinHint, type Pinning } from "./ContestPins";
+import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
@@ -22,7 +22,6 @@ import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
 
 // Inline links keep their line height but get a 40px-tall tap area.
 const TAP = "inline-block py-2.5 -my-2.5";
-const CHIPS_SHOWN = 4;
 
 const LEAD_TEXT: Record<ResultHeadline["tone"], string> = {
   yes: "text-yes",
@@ -55,7 +54,6 @@ export function ContestDetail({
   answer,
   slots: areaSlots,
   pageLink = true,
-  shortNames = true,
   action,
   fallback,
   pinning,
@@ -69,11 +67,10 @@ export function ContestDetail({
   answer?: string;
   slots?: Slots;
   pageLink?: boolean;
-  shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
-  /** On a contest page: each guide chip pins its guide, and each side can be the only one counted. */
-  pinning?: Pinning;
+  /** Each guide chip pins its guide, and each side can be the only one counted. */
+  pinning: Pinning;
 }) {
   const bay = fallback?.scope === "bay";
   const rows = bay ? fallback.rows : areaRows;
@@ -101,18 +98,18 @@ export function ContestDetail({
   );
   const guides = (
     <div>
-      {pinning ? <PinHint pinning={pinning} /> : null}
+      <PinHint pinning={pinning} />
       {sides.length ? (
-        <div className={cn(pinning && "mt-6")}>
+        <div className="mt-6">
           {sides.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} pinning={pinning} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} pinning={pinning} />
           ))}
-          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} pinning={pinning} /> : null}
+          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} pinning={pinning} /> : null}
         </div>
       ) : (
-        <p className={cn("text-sm text-muted-foreground", pinning && "mt-6")}>No guide you&apos;re counting took a position.</p>
+        <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
       )}
-      {pinning ? <NoPickBlock pinning={pinning} /> : null}
+      <NoPickBlock pinning={pinning} />
     </div>
   );
   const title = (
@@ -157,6 +154,7 @@ export function ContestDetail({
       {fallback ? null : guides}
 
       <Footer pending={pending} page={pageLink ? `/${election}/${contest.id}` : null} />
+      <PinStatus message={pinning.status} />
     </div>
   );
 }
@@ -185,7 +183,7 @@ function Legend({ segments }: { segments: BarSegment[] }) {
 
 const guidesLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: Row[]; contest: Contest; short: boolean; pinning?: Pinning }) {
+function SideBlock({ side, rows, contest, pinning }: { side: Side; rows: Row[]; contest: Contest; pinning: Pinning }) {
   const { top, rest } = pickReasons(side, rows, contest);
   const heading = (
     <h3 className="flex flex-1 items-center gap-2 text-base font-semibold">
@@ -196,19 +194,11 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
   );
   return (
     <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0 [&+&]:mt-6">
-      {pinning ? (
-        <div className="flex flex-wrap items-center gap-3">
-          {heading}
-          <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
-        </div>
-      ) : (
-        heading
-      )}
-      {pinning ? (
-        <PinChips guides={side.guides.map((g) => ({ id: g.id, name: g.short }))} pinning={pinning} label={`Guides for ${side.label}`} />
-      ) : (
-        <Chips guides={side.guides} short={short} label={`Guides for ${side.label}`} />
-      )}
+      <div className="flex flex-wrap items-center gap-3">
+        {heading}
+        <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
+      </div>
+      <PinChips guides={side.guides.map((g) => ({ id: g.id, name: g.short }))} pinning={pinning} label={`Guides for ${side.label}`} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
@@ -224,7 +214,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
   );
 }
 
-function OtherCandidates({ others, rows, contest, short, pinning }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean; pinning?: Pinning }) {
+function OtherCandidates({ others, rows, contest, pinning }: { others: Side[]; rows: Row[]; contest: Contest; pinning: Pinning }) {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
@@ -234,68 +224,10 @@ function OtherCandidates({ others, rows, contest, short, pinning }: { others: Si
       <CollapsibleContent className="reveal">
         <div className="pt-6">
           {others.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} pinning={pinning} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} pinning={pinning} />
           ))}
         </div>
       </CollapsibleContent>
-    </Collapsible>
-  );
-}
-
-const QUOTE_MARK = (
-  <svg viewBox="0 0 12 12" aria-hidden="true" className="size-3 shrink-0 fill-current">
-    <path d="M1 7.2C1 4.6 2.4 2.8 4.6 2l.5.9C3.8 3.6 3.2 4.5 3.1 5.6h1.7V10H1V7.2Zm6 0C7 4.6 8.4 2.8 10.6 2l.5.9c-1.3.7-1.9 1.6-2 2.7h1.7V10H7V7.2Z" />
-  </svg>
-);
-
-function Chip({ guide, short, style, className }: { guide: SideGuide; short: boolean; style?: CSSProperties; className?: string }) {
-  return (
-    <li style={style} className={className}>
-      <Link
-        href={`/guides/${guide.id}`}
-        title={guide.name}
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-      >
-        {short ? guide.short : guide.name}
-        {guide.quoted ? (
-          <>
-            {QUOTE_MARK}
-            <span className="sr-only">(gave reasons)</span>
-          </>
-        ) : null}
-      </Link>
-    </li>
-  );
-}
-
-// The first few chips, then "+N more" opens the rest below them; the extra chips rise in one by one.
-function Chips({ guides, short, label }: { guides: SideGuide[]; short: boolean; label: string }) {
-  const [all, setAll] = useState(false);
-  const first = guides.slice(0, CHIPS_SHOWN);
-  const rest = guides.slice(CHIPS_SHOWN);
-  return (
-    <Collapsible open={all} onOpenChange={setAll} render={<div role="group" aria-label={label} />}>
-      <ul className="flex flex-wrap gap-2">
-        {first.map((g) => (
-          <Chip key={g.id} guide={g} short={short} />
-        ))}
-        {rest.length > 0 ? (
-          <li>
-            <CollapsibleTrigger className="inline-flex min-h-10 items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8">
-              {all ? "Show less" : `+${rest.length} more`}
-            </CollapsibleTrigger>
-          </li>
-        ) : null}
-      </ul>
-      {rest.length > 0 ? (
-        <CollapsibleContent className="reveal">
-          <ul className="flex flex-wrap gap-2 pt-2">
-            {rest.map((g, i) => (
-              <Chip key={g.id} guide={g} short={short} className="reveal-item" style={{ "--i": i } as CSSProperties} />
-            ))}
-          </ul>
-        </CollapsibleContent>
-      ) : null}
     </Collapsible>
   );
 }

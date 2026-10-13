@@ -18,6 +18,11 @@ export function noPickGuides(
     .map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
 }
 
+/** An area list's guides that made no pick on a contest; they all cover the area. */
+export function areaNoPick(contestId: string, guides: { id: string }[], files: Record<string, PickFile>): NoPickGuide[] {
+  return guides.filter((g) => files[g.id] && !files[g.id].picks[contestId]).map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
+}
+
 /** The no-pick guides the filters still count, by name. */
 export function countedNoPick(f: Filters, noPick: NoPickGuide[], guides: GuideInfo[]): GuideInfo[] {
   return noPick
