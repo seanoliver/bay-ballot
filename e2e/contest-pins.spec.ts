@@ -2,7 +2,7 @@ import path from "node:path";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
 import { ballotViewProps } from "../src/lib/site-data";
-import { BALLOT, contestRow, isPhone, watchErrors } from "./helpers";
+import { BALLOT, contestRow, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
 // A multi-seat race with more candidates picked than seats, so it has Other candidates.
@@ -34,6 +34,8 @@ const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")
 async function openContest(page: Page, query = "") {
   await page.goto(`${PROP_D}${query}`);
   await expect(page.getByRole("heading", { level: 1, name: "Proposition D" })).toBeVisible();
+  // A press before hydration is dropped.
+  await waitForKeys(page);
 }
 
 async function filterPanel(page: Page, info: TestInfo) {
@@ -86,7 +88,7 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByText("4 of 4 pinned. Unpin one to pin another.")).toBeVisible();
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
-    await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
+    await expect(fifth).toHaveAccessibleDescription(/You can pin up to 4 guides\. 4 of 4 pinned\. Unpin one to pin another\.$/);
     await fifth.click({ force: true });
     await expect(fifth).toHaveAttribute("aria-pressed", "false");
     await expect(page).toHaveURL(pinParam("sf-chronicle", "growsf", "sf-dems", "league-pissed-off-voters"));
@@ -97,11 +99,8 @@ test.describe("pinning from a contest page", () => {
 
   test("tapping a pin at the limit says why nothing changed", async ({ page }) => {
     await openContest(page, "?pin=sf-chronicle,growsf,sf-dems,league-pissed-off-voters");
-    // Pressing at the limit changes nothing, so pressing again is safe if the first press beat hydration or the message cleared.
-    await expect(async () => {
-      await pinChip(page, "SPUR").click({ force: true });
-      await expect(page.getByRole("status")).toHaveText("You can pin up to 4 guides. Unpin one first.", { timeout: 3000 });
-    }).toPass();
+    await pinChip(page, "SPUR").click({ force: true });
+    await expect(page.getByRole("status")).toHaveText("You can pin up to 4 guides. Unpin one first.");
   });
 
   test("the whole chip is the pin button, with nothing else to tap inside it", async ({ page }, info) => {
@@ -134,8 +133,10 @@ test.describe("pinning from a contest page", () => {
     const more = side.getByRole("button", { name: /^and \d+ more$/ });
     if (await more.count()) {
       const n = Number((await more.textContent())!.match(/\d+/)![0]);
-      await more.click();
+      await more.focus();
+      await page.keyboard.press("Enter");
       await expect(links).toHaveCount(names.length + n);
+      await expect(links.nth(names.length)).toBeFocused();
     }
     const growsf = list.getByRole("link", { name: "GrowSF", exact: true });
     await expect(growsf).toHaveAttribute("href", "/guides/growsf");
@@ -275,6 +276,48 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(countLabel).toHaveText(before);
     await expect(row).toHaveText(rowBefore!);
     expect(errors).toEqual([]);
+  });
+
+  test("a chip's tooltip opens on keyboard focus, gives the full name, and Escape hides it without closing the pane", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    const chip = pinChip(pane, "SF Chronicle");
+    await expect(chip).toHaveAccessibleDescription(/^San Francisco Chronicle\./);
+    const tip = chip.getByRole("tooltip");
+    await expect(tip).toBeHidden();
+    await pane.getByRole("button", { name: /^Count only these/ }).first().focus();
+    // Tab from Count only reaches the first chip, then on to SF Chronicle.
+    for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
+    await expect(chip).toBeFocused();
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(pane).toBeVisible();
+    await expect(page).toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("every chip's tooltip stays inside its row of chips", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    const group = page.getByRole("region", { name: "Proposition D" }).getByRole("group", { name: "Guides for Yes" });
+    const row = (await group.getByRole("list").boundingBox())!;
+    const chips = group.getByRole("button", { name: /^Pin / });
+    let checked = 0;
+    for (const chip of await chips.all()) {
+      // Hidden until hovered, which getByRole would skip.
+      const tip = chip.locator("[role=tooltip]");
+      if (!(await tip.count())) continue;
+      await chip.hover();
+      await expect(tip).toBeVisible();
+      const box = (await tip.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(row.x - 1);
+      expect(box.x + box.width).toBeLessThanOrEqual(row.x + row.width + 1);
+      checked++;
+    }
+    expect(checked).toBeGreaterThan(3);
   });
 
   test("No pick is left off the Bay Area list and a Bay Area fallback", async ({ page }, info) => {

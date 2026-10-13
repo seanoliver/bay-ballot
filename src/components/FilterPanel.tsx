@@ -149,7 +149,7 @@ function PinnedGuides({
                   <li key={g.id} className="flex min-h-11 items-center gap-3 pr-1 pl-3 text-sm">
                     <Pin aria-hidden="true" className="size-4 shrink-0 fill-current" />
                     <span className="min-w-0 flex-1">
-                      <Link href={`/guides/${g.id}`} className="underline decoration-foreground/30 underline-offset-[3px] hover:decoration-foreground">
+                      <Link href={`/guides/${g.id}`} className="inline-block py-2.5 -my-2.5 underline decoration-foreground/30 underline-offset-[3px] hover:decoration-foreground">
                         {name}
                       </Link>
                       {!onBallot || onBallot.some((h) => h.id === g.id) ? null : <span className="text-muted-foreground"> · not on this ballot</span>}
