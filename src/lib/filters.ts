@@ -20,7 +20,7 @@ export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archive
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
 const parseList = (v: string | null) => uniqSorted((v ?? "").split(",").map((s) => s.trim()).filter(Boolean));
 const without = (xs: string[], x: string) => xs.filter((y) => y !== x);
-const parsePins = (v: string | null) => [...new Set((v ?? "").split(",").map((s) => s.trim()).filter(Boolean))].slice(0, MAX_PINS);
+const parsePins = (v: string | null) => [...new Set((v ?? "").split(",").map((s) => s.trim()).filter(Boolean))];
 
 export function toQuery(f: Filters): string {
   const p = new URLSearchParams();
@@ -101,6 +101,8 @@ export function togglePin(f: Filters, id: string): Filters {
 export type PinnedPick = { guide: GuideInfo; entry: Entry };
 
 /** The pinned guides that took a position on a contest, in pin order. Counting filters don't apply: a pin is a guide the reader chose to see. */
+const NO_PINS: PinnedPick[] = [];
+
 export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo[], files: Record<string, PickFile>): PinnedPick[] {
   const out: PinnedPick[] = [];
   for (const id of pins) {
@@ -108,7 +110,7 @@ export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo
     const entry = files[id]?.picks[contestId];
     if (guide && entry) out.push({ guide, entry });
   }
-  return out;
+  return out.length ? out : NO_PINS;
 }
 
 export function toggleGuide(f: Filters, id: string): Filters {
@@ -130,7 +132,7 @@ export function countedLabel({ counted, published }: { counted: number; publishe
 
 export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
-  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, pins: f.pins.filter((id) => ids.has(id)) };
+  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, pins: f.pins.filter((id) => ids.has(id)).slice(0, MAX_PINS) };
 }
 
 export function initialFilters({

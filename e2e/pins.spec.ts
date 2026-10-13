@@ -26,7 +26,7 @@ async function closePanel(page: Page, info: TestInfo) {
 
 // The visible pinned-guides list in a contest's row.
 function pinnedIn(page: Page, title: string) {
-  return page.locator("li").filter({ has: contestRow(page, title) }).getByRole("list", { name: "Your pinned guides" }).filter({ visible: true });
+  return page.locator("li").filter({ has: contestRow(page, title) }).getByRole("list", { name: "Your guides' picks" }).filter({ visible: true });
 }
 
 async function pin(page: Page, info: TestInfo, search: string, name: string) {
@@ -46,8 +46,8 @@ test.describe("pinned guides", () => {
     await expect(page).toHaveURL(pinParam("spur", "sf-chronicle"));
     const chips = pinnedIn(page, "Proposition B").getByRole("listitem");
     await expect(chips).toHaveCount(2);
-    await expect(chips.nth(0)).toHaveText(new RegExp(`^SPUR\\s*${pickOf("spur", "prop-b")}$`));
-    await expect(chips.nth(1)).toHaveText(new RegExp(`^SF Chronicle\\s*${pickOf("sf-chronicle", "prop-b")}$`));
+    await expect(chips.nth(0)).toHaveText(new RegExp(`^SPUR:\\s*${pickOf("spur", "prop-b")}$`));
+    await expect(chips.nth(1)).toHaveText(new RegExp(`^SF Chronicle:\\s*${pickOf("sf-chronicle", "prop-b")}$`));
     await expect(contestRow(page, "Proposition B")).toHaveAttribute("href", pinParam("spur", "sf-chronicle"));
 
     await page.reload();
@@ -72,5 +72,34 @@ test.describe("pinned guides", () => {
     await panel.getByRole("button", { name: "Reset filters" }).click();
     await expect(page).not.toHaveURL(/why=1/);
     await expect(page).toHaveURL(pinParam("spur", "sf-chronicle", "growsf", "sf-dems"));
+  });
+
+  test("a ranked pick is numbered only as far as the guide ranked, and chips stay inside the row", async ({ page }) => {
+    await page.goto(`${SF}?pin=uesf,league-pissed-off-voters`);
+    const row = page.locator("li").filter({ has: contestRow(page, "Board of Supervisors, District 10") });
+    const chips = pinnedIn(page, "Board of Supervisors, District 10").getByRole("listitem");
+    await expect(chips.first()).toHaveText(/1\. Brookter\s*Eppler\s*Bryant/);
+    const box = (await row.boundingBox())!;
+    for (const chip of await chips.all()) {
+      const b = (await chip.boundingBox())!;
+      expect(b.x).toBeGreaterThanOrEqual(box.x);
+      expect(b.x + b.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
+    }
+  });
+
+  test("unpinning moves focus to the next pin, then to the hint", async ({ page }, info) => {
+    await page.goto(`${SF}?pin=spur,sf-chronicle`);
+    const panel = await filterPanel(page, info);
+    await panel.getByRole("button", { name: "Unpin SPUR" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(panel.getByRole("button", { name: "Unpin SF Chronicle" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(panel.getByText(/^Pin up to 4 guides/)).toBeFocused();
+  });
+
+  test("a guide pinned in another area is listed as not on this ballot", async ({ page }, info) => {
+    await page.goto(`${BALLOT}/oakland?pin=sf-dems`);
+    const panel = await filterPanel(page, info);
+    await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveText(/not on this ballot/);
   });
 });

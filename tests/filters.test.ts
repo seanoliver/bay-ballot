@@ -299,7 +299,7 @@ describe("pins", () => {
   it("keep their pinned order in the query, drop repeats, and stop at MAX_PINS", () => {
     expect(toQuery({ ...EMPTY, pins: ["c", "a"] })).toBe("pin=c%2Ca");
     expect(fromQuery("pin=c,a,c").pins).toEqual(["c", "a"]);
-    expect(fromQuery("pin=a,b,c,d,e").pins).toHaveLength(MAX_PINS);
+    expect(sanitizeFilters(fromQuery("pin=gone,a,b,c,d,e"), [...guides, { id: "d" }, { id: "e" }]).pins).toEqual(["a", "b", "c", "d"].slice(0, MAX_PINS));
     expect(hasFilterParams("pin=a")).toBe(true);
   });
   it("toggles, appending a new pin last and refusing one past MAX_PINS", () => {

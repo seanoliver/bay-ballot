@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ChevronDown, Pin, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -82,16 +82,17 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
 }
 
 function FilterControls({ filters: f, onChange, guides, files, typeGuides }: Props) {
+  const pinCountId = useId();
   return (
     <>
-      <PinnedGuides filters={f} onChange={onChange} guides={typeGuides ?? guides} />
+      <PinnedGuides filters={f} onChange={onChange} all={typeGuides ?? guides} here={guides} countId={pinCountId} />
       <Section title="Show">
         <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
           <Checkbox checked={f.whyOnly} onCheckedChange={(on) => onChange({ ...f, whyOnly: on === true })} />
           Only guides that explain their endorsements
         </label>
       </Section>
-      <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} typeGuides={typeGuides} />
+      <GuideChecklist filters={f} onChange={onChange} guides={guides} files={files} typeGuides={typeGuides} pinCountId={pinCountId} />
       {/* Pins aren't a filter: resetting what's counted keeps them. */}
       <Button variant="link" className="mt-3 h-10 px-0 text-sm underline" onClick={() => onChange({ ...EMPTY, pins: f.pins })}>
         Reset filters
@@ -100,37 +101,81 @@ function FilterControls({ filters: f, onChange, guides, files, typeGuides }: Pro
   );
 }
 
-function PinnedGuides({ filters: f, onChange, guides }: { filters: Filters; onChange: (f: Filters) => void; guides: GuideInfo[] }) {
-  const pinned = f.pins.map((id) => guides.find((g) => g.id === id)).filter((g) => g !== undefined);
+function PinnedGuides({
+  filters: f,
+  onChange,
+  all,
+  here,
+  countId,
+}: {
+  filters: Filters;
+  onChange: (f: Filters) => void;
+  all: GuideInfo[];
+  here: GuideInfo[];
+  countId: string;
+}) {
+  const pinned = f.pins.map((id) => all.find((g) => g.id === id)).filter((g) => g !== undefined);
+  const listRef = useRef<HTMLDivElement>(null);
+  // Unpinning removes the focused button, so focus moves to the next one, or to the hint once none are left.
+  const refocus = useRef<number | null>(null);
+  const [said, setSaid] = useState("");
+  useEffect(() => {
+    const i = refocus.current;
+    if (i === null) return;
+    refocus.current = null;
+    const buttons = listRef.current?.querySelectorAll<HTMLElement>("[data-unpin]") ?? [];
+    (buttons[Math.min(i, buttons.length - 1)] ?? listRef.current?.querySelector<HTMLElement>("[data-pin-hint]"))?.focus();
+  }, [f.pins]);
   return (
     <Section title="Your guides">
-      {pinned.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Pin up to {MAX_PINS} guides below to see their picks on every contest.</p>
-      ) : (
-        <ul className="divide-y divide-border rounded-xl border border-border">
-          {pinned.map((g) => (
-            <li key={g.id} className="flex min-h-11 items-center gap-3 pr-1 pl-3 text-sm">
-              <Pin aria-hidden="true" className="size-4 shrink-0 fill-current" />
-              <span className="min-w-0 flex-1 truncate" title={g.name}>
-                {displayName(g, { short: true })}
-              </span>
-              <button
-                type="button"
-                aria-label={`Unpin ${displayName(g, { short: true })}`}
-                onClick={() => onChange(togglePin(f, g.id))}
-                className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                <X aria-hidden="true" className="size-4" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div ref={listRef}>
+        {pinned.length === 0 ? (
+          <p data-pin-hint tabIndex={-1} className="text-sm text-muted-foreground outline-none">
+            Pin up to {MAX_PINS} guides below to see their picks on each contest.
+          </p>
+        ) : (
+          <>
+            <p id={countId} className="mb-2 text-sm text-muted-foreground">
+              {pinned.length} of {MAX_PINS} pinned
+            </p>
+            <ul className="divide-y divide-border rounded-xl border border-border">
+              {pinned.map((g, i) => {
+                const name = displayName(g, { short: true });
+                return (
+                  <li key={g.id} className="flex min-h-11 items-center gap-3 pr-1 pl-3 text-sm">
+                    <Pin aria-hidden="true" className="size-4 shrink-0 fill-current" />
+                    <span className="min-w-0 flex-1">
+                      {name}
+                      {here.some((h) => h.id === g.id) ? null : <span className="text-muted-foreground"> · not on this ballot</span>}
+                    </span>
+                    <button
+                      type="button"
+                      data-unpin
+                      aria-label={`Unpin ${name}`}
+                      onClick={() => {
+                        refocus.current = i;
+                        setSaid(`Unpinned ${name}`);
+                        onChange(togglePin(f, g.id));
+                      }}
+                      className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                    >
+                      <X aria-hidden="true" className="size-4" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
+        <p aria-live="polite" className="sr-only">
+          {said}
+        </p>
+      </div>
     </Section>
   );
 }
 
-function PinButton({ filters: f, onChange, guide }: { filters: Filters; onChange: (f: Filters) => void; guide: GuideInfo }) {
+function PinButton({ filters: f, onChange, guide, countId }: { filters: Filters; onChange: (f: Filters) => void; guide: GuideInfo; countId?: string }) {
   const pinned = isPinned(f, guide.id);
   const full = !pinned && f.pins.length >= MAX_PINS;
   const name = displayName(guide, { short: true });
@@ -140,7 +185,7 @@ function PinButton({ filters: f, onChange, guide }: { filters: Filters; onChange
       aria-label={`Pin ${name}`}
       aria-pressed={pinned}
       aria-disabled={full || undefined}
-      title={full ? `Unpin a guide first: up to ${MAX_PINS} can be pinned` : undefined}
+      aria-describedby={full ? countId : undefined}
       onClick={() => (full ? undefined : onChange(togglePin(f, guide.id)))}
       className={cn(
         "grid size-10 shrink-0 place-items-center rounded-full outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
@@ -162,7 +207,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function GuideChecklist({ filters: f, onChange, guides, files, typeGuides }: Props) {
+function GuideChecklist({ filters: f, onChange, guides, files, typeGuides, pinCountId }: Props & { pinCountId: string }) {
   const [query, setQuery] = useState("");
   const groups = guideGroups(guides, files, query);
   const searching = query.trim() !== "";
@@ -194,7 +239,7 @@ function GuideChecklist({ filters: f, onChange, guides, files, typeGuides }: Pro
       ) : (
         <div className="mt-2 divide-y divide-border rounded-xl border border-border">
           {groups.map((g) => (
-            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={guides} typeGuides={typeGuides ?? guides} files={files} />
+            <TypeGroup key={g.type} group={g} searching={searching} filters={f} onChange={onChange} guides={guides} typeGuides={typeGuides ?? guides} files={files} pinCountId={pinCountId} />
           ))}
         </div>
       )}
@@ -210,7 +255,8 @@ function TypeGroup({
   guides,
   typeGuides,
   files,
-}: { group: GuideGroup; searching: boolean } & Props & { typeGuides: FilterGuide[] }) {
+  pinCountId,
+}: { group: GuideGroup; searching: boolean; pinCountId: string } & Props & { typeGuides: FilterGuide[] }) {
   const [expanded, setExpanded] = useState(false);
   const state = typeState(group.type, f, guides);
   const open = searching || expanded;
@@ -245,7 +291,7 @@ function TypeGroup({
                   {files[g.id].hasReasoning ? null : <span className="text-xs text-muted-foreground"> · list only</span>}
                 </span>
               </label>
-              <PinButton filters={f} onChange={onChange} guide={g} />
+              <PinButton filters={f} onChange={onChange} guide={g} countId={pinCountId} />
             </li>
           ))}
         </ul>
