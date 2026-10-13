@@ -123,6 +123,13 @@ Chinese American Democratic Club (`cadc`)
 - https://www.sfcadc.org/: Mission: encourage Chinese American candidates, appointments, Chinese American empowerment and civil rights
 - https://www.sfcadc.org/endorsements: 'In a general meeting, qualified members can cast their votes to support a slate'
 
+Californians for Electric Rail (`cal-electric-rail`)
+
+> A volunteer group of transit advocates, environmentalists, union members and railfans across California that works to electrify the state's railways with overhead wire, through state lobbying and work with local transit agencies.
+
+- https://calelectricrail.org/about/: 'a volunteer organization with members around the state, dedicated to connecting transit advocates and railfans with environmentalists, unions'; removing barriers to 'electrification via overhead catenary of California's railways through state legislative advocacy and engagement in decision-making within local transit agencies and regulatory boards'
+- https://calelectricrail.org/: 'Transit advocates, environmentalists, union members, and other Californians fighting for fast, clean, safe catenary electric rail in California'
+
 Contra Costa Taxpayers Association (`cocotax`)
 
 > A nonprofit taxpayers' association in Contra Costa County, founded in 1937, that describes itself as independent and nonpartisan. It works on fiscal oversight of local government and takes positions on tax measures.
