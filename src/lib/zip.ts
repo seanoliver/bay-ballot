@@ -30,8 +30,10 @@ const whollyIn = (z: ZipPlaces, county: string) => z.counties.length === 1 && z.
 // Council districts lie inside their city's limits (as of the 2020 Census; later annexations aren't in the data).
 const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
-/** "San Francisco/Supervisor": the one place a district contest is filed under, and its kind of seat. */
-export const districtMapKey = (place: string, seat: string) => `${place}/${seat}`;
+/** The one place a district contest is filed under. The level is part of the map's key: Alameda is a city and a county. */
+export type DistrictPlace = { level: "county" | "city"; name: string };
+/** "county:San Francisco/Supervisor": the place a district contest is filed under, and its kind of seat. */
+export const districtMapKey = (place: DistrictPlace, seat: string) => `${place.level}:${place.name}/${seat}`;
 
 /**
  * How a contest fits a ZIP. A district's `within` names the places it is filed under, not its full extent (it leaves
@@ -48,9 +50,10 @@ export function zipFit(
   const within = j.within ?? [];
   // A district with a map is ruled out when the ZIP misses it. It stays maybe even when the ZIP reaches only it, since
   // ZIP areas and district lines are both approximate near the border.
-  if (j.level === "district" && j.district && within.length === 1) {
-    const mapped = z.districts?.[districtMapKey(within[0].name, j.name)];
-    if (mapped) return mapped.includes(j.district) ? "maybe" : "off";
+  const place = within[0];
+  if (j.level === "district" && j.district && within.length === 1 && (place.level === "county" || place.level === "city")) {
+    const mapped = z.districts?.[districtMapKey({ level: place.level, name: place.name }, j.name)];
+    if (mapped?.length) return mapped.includes(j.district) ? "maybe" : "off";
   }
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
   // A region measure is voted on countywide in each county it lists.
