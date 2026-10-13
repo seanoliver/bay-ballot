@@ -5,6 +5,8 @@ source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsem
 extraSources:
   - https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
   - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+  - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
+  - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
 fetchWith: browser
 fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 archived:
@@ -105,3 +107,6 @@ picks:
     pick: Y
   san-carlos-sd-measure-k:
     pick: Y
+    quotes:
+      - text: Approving Measure K would allow for more teachers to be funded.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
