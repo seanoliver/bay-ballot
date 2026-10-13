@@ -183,7 +183,7 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
   return (
     <span
       className={cn(
-        // The ring goes around the whole pill; on the ZIP button alone it covers only its left part.
+        // The ZIP button's focus ring goes on the whole pill; on the button alone it covers only the left part. Clear keeps its own.
         "js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full pr-1 has-[[data-zip-main]:focus-visible]:ring-3 has-[[data-zip-main]:focus-visible]:ring-ring/50",
         selected ? "bg-foreground font-medium text-background" : "ring-1 ring-foreground/15 hover:bg-muted",
       )}
