@@ -3,7 +3,7 @@ import {
   filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
-  typeState, pendingGuides, EMPTY, MAX_PINS, pinnedPicks, togglePin,
+  typeState, pendingGuides, EMPTY, MAX_PINS, pinnedPicks, togglePin, savedFilters, READER_KEYS, SHARED_KEYS,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
 import type { EndorsementFile, Guide } from "@/lib/schema";
@@ -105,7 +105,30 @@ describe("sanitizeFilters", () => {
 
 describe("initialFilters", () => {
   it("prefers filter params in the URL over stored filters", () => {
-    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: [] });
+    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true });
+  });
+  it("keeps stored pins when the URL has other filter params but no pin", () => {
+    expect(initialFilters({ query: "off=b", stored: "why=1&pin=b%2Ca", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["b", "a"] });
+    expect(initialFilters({ query: "why=1", stored: "pin=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: ["a"] });
+  });
+  it("shows a link's own pins over the stored ones", () => {
+    expect(initialFilters({ query: "off=b&pin=b", stored: "pin=a", guides: info }).pins).toEqual(["b"]);
+  });
+  it("falls back to stored pins when the link's pins are empty or all unknown", () => {
+    expect(initialFilters({ query: "pin=", stored: "pin=a", guides: info }).pins).toEqual(["a"]);
+    expect(initialFilters({ query: "off=b&pin=zzz,gone", stored: "pin=a", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["a"] });
+  });
+  it("sanitizes stored pins it falls back to", () => {
+    expect(initialFilters({ query: "off=b", stored: "pin=zzz,a", guides: info }).pins).toEqual(["a"]);
+    const many = [...info, ...["c", "d", "e"].map((id) => ({ id, name: id, type: "club" as const }))];
+    expect(initialFilters({ query: "why=1", stored: "pin=e,d,c,b,a", guides: many }).pins).toEqual(["e", "d", "c", "b"]);
+  });
+  it("keeps stored pins under a legacy offtypes-only link, and has none with nothing stored", () => {
+    expect(initialFilters({ query: "offtypes=club", stored: "pin=a", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["a"] });
+    expect(initialFilters({ query: "off=b", stored: null, guides: info })).toEqual({ ...EMPTY, off: ["b"] });
+  });
+  it("has no pins once they were unpinned and stored without them", () => {
+    expect(initialFilters({ query: "off=b", stored: "off=b", guides: info }).pins).toEqual([]);
   });
   it("uses stored filters when the URL has no filter params", () => {
     expect(initialFilters({ query: "utm_source=x", stored: "off=a&sup=8", guides: info })).toEqual({ ...EMPTY, off: ["a"] });
@@ -115,6 +138,41 @@ describe("initialFilters", () => {
   });
   it("sanitizes and expands legacy offtypes", () => {
     expect(initialFilters({ query: "offtypes=club&off=zzz", stored: null, guides: info }).off).toEqual(["b"]);
+  });
+});
+
+describe("savedFilters", () => {
+  const info4 = ["a", "b", "c", "d"].map((id) => ({ id, name: id, type: "club" as const }));
+  const stored = { ...EMPTY, pins: ["b", "a"] };
+  const shared = { ...EMPTY, off: ["c"], pins: ["d"] };
+  it("keeps the reader's stored pins through a change that isn't to pins", () => {
+    expect(savedFilters({ prev: shared, next: { ...shared, whyOnly: true }, stored })).toEqual({ off: ["c"], whyOnly: true, pins: ["b", "a"] });
+    expect(savedFilters({ prev: shared, next: { ...EMPTY, pins: shared.pins }, stored })).toEqual(stored);
+  });
+  it("applies an unpin to the stored pins, keeping the reader's own when a shared pin is unpinned", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "d"), stored }).pins).toEqual(["b", "a"]);
+    const mine = { ...EMPTY, pins: ["b", "a"] };
+    expect(savedFilters({ prev: mine, next: togglePin(mine, "b"), stored }).pins).toEqual(["a"]);
+  });
+  it("adds only the newly pinned guide while a shared list is showing", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored }).pins).toEqual(["b", "a", "e"]);
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "b"), stored }).pins).toEqual(["b", "a"]);
+  });
+  it("doesn't drop a pin another tab added when a stale tab unpins", () => {
+    const stale = { ...EMPTY, pins: ["b"] };
+    expect(savedFilters({ prev: stale, next: togglePin(stale, "b"), stored: { ...EMPTY, pins: ["b", "a"] } }).pins).toEqual(["a"]);
+  });
+  it("keeps stored pins first, so a pin past MAX_PINS shows but isn't saved", () => {
+    const full = { ...EMPTY, pins: ["a", "b", "c", "d"] };
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored: full }).pins).toEqual(["a", "b", "c", "d"]);
+  });
+  it("doesn't let a stored pin for an unknown guide hold a slot, once stored filters are sanitized", () => {
+    const stored = sanitizeFilters(fromQuery("pin=gone,a,b,c"), info4);
+    const prev = { ...EMPTY, pins: ["a", "b", "c"] };
+    expect(savedFilters({ prev, next: togglePin(prev, "d"), stored }).pins).toEqual(["a", "b", "c", "d"]);
+  });
+  it("classifies every filter as shared or reader-owned", () => {
+    expect([...SHARED_KEYS, ...READER_KEYS].sort()).toEqual(Object.keys(EMPTY).sort());
   });
 });
 

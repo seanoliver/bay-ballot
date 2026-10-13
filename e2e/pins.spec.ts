@@ -61,6 +61,48 @@ test.describe("pinned guides", () => {
     expect(errors).toEqual([]);
   });
 
+  // Each link's change is to the other filter, so the link's own param should survive it.
+  for (const { shared, change, kept } of [
+    { shared: "off=sf-gop", change: /^Only guides that explain/, kept: /[?&]off=sf-gop/ },
+    { shared: "why=1", change: /^Parties/, kept: /[?&]why=1/ },
+  ])
+    test(`a link with only ${shared.split("=")[0]}= keeps the saved pins through the next filter change`, async ({ page }, info) => {
+      await page.goto(SF);
+      await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+      await pin(page, info, "SPUR", "SPUR");
+      await expect(page).toHaveURL(pinParam("spur"));
+
+      await page.goto(`${SF}?${shared}`);
+      await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+      await expect(page).not.toHaveURL(/[?&]pin=/);
+      const panel = await filterPanel(page, info);
+      await panel.getByRole("checkbox", { name: change }).click();
+      await closePanel(page, info);
+      await expect(page).toHaveURL(pinParam("spur"));
+      await expect(page).toHaveURL(kept);
+      await page.goto(SF);
+      await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+    });
+
+  test("a link with someone else's pins shows them, but a filter change doesn't save them over the reader's", async ({ page }, info) => {
+    await page.goto(SF);
+    await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+    await pin(page, info, "Chronicle", "SF Chronicle");
+    await expect(page).toHaveURL(pinParam("sf-chronicle"));
+
+    await page.goto(`${SF}?off=sf-gop&pin=spur`);
+    await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+    const panel = await filterPanel(page, info);
+    await panel.getByRole("checkbox", { name: /^Only guides that explain/ }).click();
+    await closePanel(page, info);
+    await expect(page).toHaveURL(/[?&]why=1/);
+    await expect(page).toHaveURL(pinParam("spur"));
+    await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+
+    await page.goto(SF);
+    await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SF Chronicle/]);
+  });
+
   test("a fifth guide can't be pinned, and Reset filters keeps the pins", async ({ page }, info) => {
     await page.goto(`${SF}?pin=spur,sf-chronicle,growsf,sf-dems&why=1`);
     const panel = await filterPanel(page, info);

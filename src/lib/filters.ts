@@ -9,6 +9,14 @@ export type Filters = {
 
 export const MAX_PINS = 4;
 
+/**
+ * Who owns each filter. Shared filters are the view a link describes: the URL's win, and every change saves them.
+ * Reader-owned filters are the reader's own list: a link's pins show while it's open, but only the reader's own
+ * pin and unpin save them, so opening someone else's link never replaces what the reader saved.
+ */
+export const SHARED_KEYS = ["off", "whyOnly"] as const satisfies readonly (keyof Filters)[];
+export const READER_KEYS = ["pins"] as const satisfies readonly (keyof Filters)[];
+
 export const FILTERS_KEY = "bb-filters";
 
 export const EMPTY: Filters = { off: [], whyOnly: false, pins: [] };
@@ -32,7 +40,7 @@ export function toQuery(f: Filters): string {
 }
 
 // Nothing writes `offtypes` any more, but old shared URLs still carry it.
-export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []): Filters {
+export function fromQuery(q: string | URLSearchParams, guides: Pick<Guide, "id" | "type">[] = []): Filters {
   const p = new URLSearchParams(q);
   const offTypes = parseList(p.get("offtypes"));
   const fromTypes = guides.filter((g) => offTypes.includes(g.type)).map((g) => g.id);
@@ -43,7 +51,7 @@ export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []):
   };
 }
 
-export function hasFilterParams(q: string): boolean {
+export function hasFilterParams(q: string | URLSearchParams): boolean {
   const p = new URLSearchParams(q);
   return ["off", "offtypes", "why", "pin"].some((k) => p.has(k));
 }
@@ -145,8 +153,24 @@ export function initialFilters({
   stored: string | null;
   guides: Pick<Guide, "id" | "type">[];
 }): Filters {
-  const raw = hasFilterParams(query) ? query : (stored ?? "");
-  return sanitizeFilters(fromQuery(raw, guides), guides);
+  const saved = sanitizeFilters(fromQuery(stored ?? "", guides), guides);
+  const p = new URLSearchParams(query);
+  if (!hasFilterParams(p)) return saved;
+  const out = sanitizeFilters(fromQuery(p, guides), guides);
+  // A link with no pins it can show (none, or only unknown guides) shows the reader's saved ones.
+  for (const k of READER_KEYS) if (!out[k].length) out[k] = saved[k];
+  return out;
+}
+
+/**
+ * What to save after a change from `prev` to `next`. Shared filters are saved as they are. Pins on screen may be a
+ * link's or a stale tab's, so only this change's pin and unpin apply to the stored list; stored pins come first, so
+ * past MAX_PINS a new pin shows but isn't saved. `stored` must be sanitized, so a retired guide can't hold a slot.
+ */
+export function savedFilters({ prev, next, stored }: { prev: Filters; next: Filters; stored: Filters }): Filters {
+  const removed = prev.pins.filter((id) => !next.pins.includes(id));
+  const added = next.pins.filter((id) => !prev.pins.includes(id) && !stored.pins.includes(id));
+  return { ...next, pins: [...stored.pins.filter((id) => !removed.includes(id)), ...added].slice(0, MAX_PINS) };
 }
 
 // Not derived from the zod enum: client code must not import zod.
