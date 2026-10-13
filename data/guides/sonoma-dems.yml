@@ -1,7 +1,7 @@
 id: sonoma-dems
 name: Sonoma County Democratic Party
 shortName: "Sonoma Democrats"
-description: The official Democratic Party committee for Sonoma County.
+description: The official Democratic Party committee for Sonoma County. An interview group questions candidates and recommends by majority vote, and the central committee needs a two-thirds vote to endorse.
 type: party
 homepage: https://sonomademocrats.org/
 areas: [sonoma]

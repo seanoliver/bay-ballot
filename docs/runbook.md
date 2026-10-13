@@ -176,6 +176,15 @@ To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text`
 
 Any hand edit to a guide that is **not** manual (picks, `ranked`, `hasReasoning`) is overwritten by the next `extract`. A hand-added quote survives a re-extract, `--force-extract` included, while its pick is unchanged and the quote still passes the extractor's quote checks on its source page. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.
 
+## Guide descriptions
+
+Every guide's `description` in `data/guides/<guide>.yml` is shown on its guide page. Write one for each new guide before it goes live:
+
+- 1 or 2 sentences, 150 to 250 characters. `npm run validate` fails over 250 or when empty. Every guide gets the same budget so none looks more credible by length.
+- In order, as far as sources support it: who they are (kind of organization, where, founding year, members or audience), what they focus on, and how they decide endorsements (member vote, committee, editorial board).
+- Describe their politics only in their own words or with their literal identity ("Democratic club", "Republican Party committee"). Attribute superlatives: "describes itself as the oldest...".
+- Source every claim from the organization's own pages first, then reliable coverage, and add the guide and its URLs to `docs/guide-description-sources.md`. Leave out anything you can't source.
+
 ## Ballot and area files
 
 Each county's data lives in files of its own, so branches adding different counties don't touch the same file.
