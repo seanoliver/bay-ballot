@@ -1,9 +1,6 @@
 Recommendations
 Posted by Guang Peng Tan
-Federal Candidates / 聯邦候選人
-U.S. Representative, District 11 — Connie Chan
-美國國會眾議員第11選區 — 陳詩敏
-California Candidates / 加州候選人
+Candidates / 候選人
 Governor — Xavier Becerra
 州長 — Xavier Becerra
 Lieutenant Governor — Fiona Ma
@@ -16,7 +13,8 @@ Secretary of State — No Position
 州務卿 — 不表態
 Insurance Commissioner — No Position
 保險專員 — 不表態
-San Francisco Candidates / 三藩市候選人
+U.S. Representative, District 11 — Connie Chan
+美國國會眾議員第11選區 — 陳詩敏
 Assessor-Recorder — Joaquín Torres
 估值官兼紀錄官 — 郭華健
 Public Defender — Mano Raju
@@ -37,9 +35,10 @@ City College Trustee — Jeremy Lee, Elijah Ball
 市立大學校董 — 李銘富，依利亞
 BART Board — No Position
 灣區捷運董事會 — 不表態
-State Propositions / 聯邦提案
-1 — Veterans and Affordable Housing Bond Act — NO POSITION
-1 — 退伍軍人及可負擔房屋債券法案 — 不表態
+Leave empty for other races / 其他競選選項留空
+Propositions / 提案
+1 — $11.2B Veterans and Affordable Housing Bond Act — NO POSITION
+1 — 112億元的退伍軍人及可負擔房屋債券法案 — 不表態
 2 — Save for California's Future — YES
 2 — 為加州未來儲備資金 — 支持
 3 — Permanent Higher Income-Tax Rates on High Earners — YES
@@ -54,11 +53,11 @@ State Propositions / 聯邦提案
 38 — 免疫學及免疫療法研究債券 — 反對
 39 — Voter Identification and Citizenship Verification — NO
 39 — 選民身分證明及公民資格核實 — 反對
-40 — Billionaire Wealth Tax — NO
-40 — 億萬富豪財富稅 — 反對
+40 — Billionaire Wealth Tax: Precedence in Taxing Personal Belongings — NO
+40 — 億萬富豪財富稅，開創對個人財物的徵稅先例 — 反對
 41 — Special-Tax Audits and State Spending Limit — YES
 41 — 特別稅審計及州政府開支上限 — 支持
-42 — Ban on New Wealth/Personal-Property Taxes — YES
+42 — Ban New Taxes on Wealth/Personal Belongings — YES
 42 — 禁止新增財富及個人財產稅 — 支持
 43 — Two-Thirds Vote for Local Special Taxes — NO
 43 — 地方特別稅須獲三分之二選民通過 — 反對
@@ -66,17 +65,15 @@ State Propositions / 聯邦提案
 44 — 社區健康診所支出規定 — 反對
 45 — CEQA Environmental Review Reform — NO
 45 — 加州環境品質法環境審查改革 — 反對
-Regional Measures / 區域提案
-RTM – Regional Transit Measure — YES
-RTM – 灣區公共交通提案 — 支持
-San Francisco Propositions / 三藩市提案
-A — Department, Board, Commission and Advisory Body Updates — YES
-A — 市府部門、委員會及諮詢機構改革 — 支持
+RTM – Regional Transit Measure with 0.5%-1% Added Sales Taxes — YES
+RTM – 灣區公共交通提案，增加0.5%-1%的銷售稅 — 支持
+A — Streamline Departments, Boards, Commissions and Advisories — YES
+A — 精簡市府部門、委員會及諮詢機構改革 — 支持
 B — Municipal Finance Corporation and Public Bank — NO
 B — 市立金融公司及公共銀行 — 反對
-C — Contributions to the Housing Trust Fund — NO POSITION
-C — 增加房屋信託基金撥款 — 不表態
-D — Changes to the Ballot Measure Process — NO
+C — Contribute bigger shares from General Funds to the Housing Trust Fund — NO POSITION
+C — 從公共營運資金增加撥款到房屋信託基金 — 不表態
+D — Raise the Signature Threshold for Qualifying Ballot Measures — NO
 D — 修改地方提案公投程序 — 反對
 E — Extending the City Administrator's Duties and Changes to City Contracting — YES
 E — 擴大市政行政官職責及修改市府合約程序 — 支持

@@ -1,5 +1,3 @@
-Opens in a new window Opens an external website Opens an external website in a new window
-Accept Deny Non-Essential
 You have permission to edit this article.
 Edit Close
 Site search Search
@@ -84,11 +82,11 @@ Twitter
 YouTube
 Instagram
 RSS
-48° Clear
+49° Partly Cloudy
 San Mateo, CA (94402)
-Plentiful sunshine. High 69F. ENE winds shifting to WNW at 10 to 15 mph..
+Some clouds this morning will give way to generally sunny skies for the afternoon. High 73F. Winds N at 10 to 20 mph..
 Tonight
-Clear to partly cloudy. Low 49F. Winds WNW at 5 to 10 mph.
+A clear sky. Low near 50F. W winds at 10 to 15 mph, decreasing to less than 5 mph.
 Updated: @
 Full Forecast
 Site search Search
@@ -164,15 +162,15 @@ Government Finances
 Corporate Tax
 Economy
 Recommended for you
-[Top Democrats and allies join the wealthiest to fight a California billionaire tax]
-State
-Top Democrats and allies join the wealthiest to fight a California billionaire tax
-[Editorial: Schneider, Yam for Millbrae City Council]
-Editorials
-Editorial: Schneider, Yam for Millbrae City Council
+[Measure Y: Proposed special tax for Barrett Community Center on November ballot]
+Local News
+Measure Y: Proposed special tax for Barrett Community Center on November ballot
 [Half Moon Bay voters to decide Measure Q on 555 Kelly housing]
 Local News
 Half Moon Bay voters to decide Measure Q on 555 Kelly housing
+[Editorial: Yes on Measure K]
+Editorials
+Editorial: Yes on Measure K
 ×
 Post a comment as Guest
 Emoticons
@@ -197,14 +195,14 @@ Log In
 Purchase a Subscription
 Want to join the discussion?
 Latest News
-San Mateo Police Department restricts data sharing
-San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme
-San Mateo to implement Axon cameras: The city will add ALPR cameras in new contract with Axon Enterprises
-Rediscovering the Peninsula: Airships and Moffett Field
-San Mateo County court seeks K-8 student artwork for exhibit
-Judge Nicole Healy to receive San Mateo County award
-San Mateo Public Library seeks teens for advisory group
-San Bruno shooting arrest follows gun report near Lomita Park
+San Bruno sports fields project on hold?
+The Old Post Office gives historic Burlingame building new life
+California’s Prop 43 would make special taxes harder to pass
+Half Moon Bay’s World Championship Pumpkin Weigh-Off: Travis Gienger’s gourd wins again
+Four in running for two San Bruno City Council seats
+Six Cycles bike shop opens in South City
+Measure Y: Proposed special tax for Barrett Community Center on November ballot
+San Francisco man arrested in San Bruno on suspicion of weapons crimes
 Trending Stories
 Articles
 Images
@@ -212,36 +210,36 @@ Videos
 Commented
 Articles
 2 charged in alleged $1.4 million San Mateo County Event Center kickback scheme
-How much review does Hillsdale need?
-South African-born jurist Navi Pillay wins Nobel Peace Prize for her work in international justice
 San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme
+How much review does Hillsdale need?
 2 hospitalized after San Mateo apartment fire kills dog
-Mike Legarza, great Cañada College coach, dies at 66
+South African-born jurist Navi Pillay wins Nobel Peace Prize for her work in international justice
 Transportation projects getting priority in Redwood City
-San Mateo County death notices — to
-Upscale Mexican restaurant Reposado opens in downtown San Mateo
+San Mateo to implement Axon cameras: The city will add ALPR cameras in new contract with Axon Enterprises
 One Love Cafe moving from San Bruno to South City
+San Mateo Police Department restricts data sharing
+Daly City’s special brand of politics
 Images
 [The blimp, L-B, lands in Daly City]
 [Class Notes: Woodside Musical Theatre stages 'Something Rotten!']
 [Sarah and Ian Hoffman]
-[Will Detlefsen]
 [Carlmont football Brody Zirelli]
+[Will Detlefsen]
 [AFGHANISTAN-PAKISTAN/]
-[South City author Zamudio and father]
-[South City writer]
-[Mike Legarza]
 [Carlmont flag Kate Norton MUG]
+[Aimee Stevland]
+[Rendering: Overhead view Hillsdale shopping center redevelopment]
+[Jeff Lack]
 Videos
 [Fort Hood shooter’s execution by firing squad will be livestreamed, Pentagon says]
 [Trump administration is suspending Microsoft from the H-1B green card program]
 [Hurricane Isaias finds a brief window in El Niño to power up in extra warm water]
 [USS Abraham Lincoln returns home to San Diego Bay after 265 uninterrupted days at sea]
-['There is no Plan B,' professor of anesthesiology says on Christa Pike's failed execution]
 [Cornell students demand changes to handling of sexual assault cases]
-[‘I was fighting for my life’: Indian pilot recalls Flydubai cockpit attack]
+['There is no Plan B,' professor of anesthesiology says on Christa Pike's failed execution]
 [LIVE: Gov. DeSantis holds a press conference as Hurricane Isaias approaches Florida]
-[Trump welcomes Xi Jinping to the White House with a military review]
+[Deadly floods in Nepal were a 'warning to the world' on climate disaster, PM says]
+[‘I was fighting for my life’: Indian pilot recalls Flydubai cockpit attack]
 [FlyDubai passenger tells Netanyahu he put the suspect in a 'chokehold']
 Commented
 Lisa Diaz Nash and Taso Zografos vie for San Mateo's District 1 seat (13)
@@ -314,6 +312,7 @@ The right lesson on parking meters (2)
 Fresh eyes needed in San Bruno (2)
 San Mateo deserves results, not more promises (2)
 Tensions escalate over former San Mateo Par3 golf course restaurant (2)
+San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme (2)
 Redwood City pedestrian safety operation nets 63 citations (2)
 Transportation projects getting priority in Redwood City (2)
 Editorial: Yes on Measure Q (2)
@@ -337,7 +336,6 @@ Redwood City prepares for strong El Niño, winter storms (1)
 Yes on Measure H (1)
 The power of place (1)
 Satellites show Earth lost more than 12 trillion tons of ice from Greenland, Antarctica in 47 years (1)
-Belmont’s new citywide naming policy spurs debate (1)
 Calendar
 October
 2026
