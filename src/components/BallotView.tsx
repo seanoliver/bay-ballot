@@ -180,7 +180,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     } else if (!onBay && onSwitch?.(bayHref)) {
       replaceQuery(withQuery("", mark).replace(/^\?/, ""));
     } else {
-      focusZipChipAfterLoad();
+      if (!onBay) focusZipChipAfterLoad();
       router.push(withQuery(bayHref, (p) => {
         for (const k of [...p.keys()]) if (!CARRIED.includes(k)) p.delete(k);
         p.set(MINE_PARAM, "1");
@@ -189,18 +189,26 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   };
   // Bumped by anything that should cancel a move still waiting on the ZIP table.
   const zipRequest = useRef(0);
+  // The ZIP a move is waiting on, so Try again finishes that move and nothing else.
+  const pendingMove = useRef<string | null>(null);
+  const cancelMove = () => {
+    zipRequest.current++;
+    pendingMove.current = null;
+  };
   const moveWhenLoaded = (v: string) => {
     const req = ++zipRequest.current;
+    pendingMove.current = v;
     const from = window.location.pathname;
     void loadTable().then((t) => {
       if (req !== zipRequest.current || window.location.pathname !== from || !t) return;
+      pendingMove.current = null;
       if (Object.hasOwn(t.zips, v)) toZipBallot(v);
       // An unknown ZIP on the ZIP's ballot: back to the plain list, so the chips and heading agree.
-      else if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
+      else if (new URLSearchParams(currentSearch()).has(MINE_PARAM)) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
     });
   };
   const switchArea = (href: string) => {
-    zipRequest.current++;
+    cancelMove();
     if (zipActive && href === bayHref) {
       const moved = pushPath(withQuery(bayHref, (p) => {
         p.delete(MINE_PARAM);
@@ -552,7 +560,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
             <ZipChip
               zip={zip}
               selected={zipActive}
-              onSelect={() => zip && toZipBallot(zip)}
+              onSelect={() => zip && moveWhenLoaded(zip)}
               editing={zipEditing}
               setEditing={setZipEditing}
               error={zipError}
@@ -567,7 +575,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 setStepped(null);
                 setZipRaw(v ?? "");
                 if (!v) {
-                  zipRequest.current++;
+                  cancelMove();
                   if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
                   return;
                 }
@@ -587,7 +595,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
             onRetry={() => {
               setZipActedOn(area);
               setTableFailed(false);
-              if (zip) moveWhenLoaded(zip);
+              if (zip && pendingMove.current === zip) moveWhenLoaded(zip);
+              else void loadTable();
             }}
           />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
