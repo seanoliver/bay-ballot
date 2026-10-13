@@ -61,6 +61,23 @@ test.describe("pinned guides", () => {
     expect(errors).toEqual([]);
   });
 
+  for (const shared of ["off=sf-gop", "why=1"])
+    test(`a link with only ${shared.split("=")[0]}= keeps the saved pins through the next filter change`, async ({ page }, info) => {
+      await page.goto(SF);
+      await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
+      await pin(page, info, "SPUR", "SPUR");
+      await expect(page).toHaveURL(pinParam("spur"));
+
+      await page.goto(`${SF}?${shared}`);
+      await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+      const panel = await filterPanel(page, info);
+      await panel.getByRole("checkbox", { name: /Only guides that explain/ }).click();
+      await closePanel(page, info);
+      await expect(page).toHaveURL(pinParam("spur"));
+      await page.goto(SF);
+      await expect(pinnedIn(page, "Proposition B").getByRole("listitem")).toHaveText([/^SPUR/]);
+    });
+
   test("a fifth guide can't be pinned, and Reset filters keeps the pins", async ({ page }, info) => {
     await page.goto(`${SF}?pin=spur,sf-chronicle,growsf,sf-dems&why=1`);
     const panel = await filterPanel(page, info);

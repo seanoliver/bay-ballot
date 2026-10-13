@@ -107,6 +107,17 @@ describe("initialFilters", () => {
   it("prefers filter params in the URL over stored filters", () => {
     expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: [] });
   });
+  it("keeps stored pins when the URL has other filter params but no pin", () => {
+    expect(initialFilters({ query: "off=b", stored: "why=1&pin=b%2Ca", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["b", "a"] });
+    expect(initialFilters({ query: "why=1", stored: "pin=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: ["a"] });
+  });
+  it("lets pin= in the URL win over stored pins, even when empty", () => {
+    expect(initialFilters({ query: "off=b&pin=b", stored: "pin=a", guides: info }).pins).toEqual(["b"]);
+    expect(initialFilters({ query: "pin=", stored: "pin=a", guides: info }).pins).toEqual([]);
+  });
+  it("has no pins once they were unpinned and stored without them", () => {
+    expect(initialFilters({ query: "off=b", stored: "off=b", guides: info }).pins).toEqual([]);
+  });
   it("uses stored filters when the URL has no filter params", () => {
     expect(initialFilters({ query: "utm_source=x", stored: "off=a&sup=8", guides: info })).toEqual({ ...EMPTY, off: ["a"] });
   });

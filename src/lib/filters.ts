@@ -145,8 +145,11 @@ export function initialFilters({
   stored: string | null;
   guides: Pick<Guide, "id" | "type">[];
 }): Filters {
-  const raw = hasFilterParams(query) ? query : (stored ?? "");
-  return sanitizeFilters(fromQuery(raw, guides), guides);
+  if (!hasFilterParams(query)) return sanitizeFilters(fromQuery(stored ?? "", guides), guides);
+  const f = fromQuery(query, guides);
+  // Pins are the reader's own list, not part of a view someone shared: a link without pin= keeps the saved ones.
+  const pins = new URLSearchParams(query).has("pin") ? f.pins : fromQuery(stored ?? "").pins;
+  return sanitizeFilters({ ...f, pins }, guides);
 }
 
 // Not derived from the zod enum: client code must not import zod.
