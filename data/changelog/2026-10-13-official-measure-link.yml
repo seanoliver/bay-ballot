@@ -1,5 +1,5 @@
 date: 2026-10-13
 type: new
 title: "Each measure now leads with a link to its official page"
-details: "Under each measure's title is a link to the government's own page for it, with a note naming who publishes that page. State props link to their page in the state voter guide. When a city or county lists all its measures on one page, the link says to find the measure there. The small \"Official text\" link at the bottom is gone."
+details: "Under each measure's title is a link to the government's own page for it, with a note naming who publishes that page. State props link to their page in the state voter guide. When a city or county lists all its measures on one page, the link says to find the measure there. A link to a PDF says so. The small \"Official text\" link at the bottom is gone."
 pr: 173
