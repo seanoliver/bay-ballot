@@ -314,17 +314,22 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
   );
 }
 
+// The link's own padding is its tap area, so nothing overlaps the note under it. The last word and the arrow never part.
 function Official({ source }: { source: OfficialSource }) {
+  const cut = source.label.lastIndexOf(" ");
   return (
-    <div className="mt-3 flex items-start gap-2.5">
-      <Landmark aria-hidden="true" strokeWidth={1.75} className="mt-0.5 size-[18px] shrink-0 text-foreground/80" />
+    <div className="mt-2 flex items-start gap-2.5">
+      <Landmark aria-hidden="true" strokeWidth={1.75} className="mt-2.5 size-5 shrink-0 text-foreground/80" />
       <div className="min-w-0">
-        <ExternalLink href={source.href} className={`${TAP} text-[15px] font-semibold underline underline-offset-3`}>
-          {source.label}
-          <ArrowUpRight aria-hidden="true" className="ml-1 inline size-3.5 align-[-2px]" />
+        <ExternalLink href={source.href} className="inline-block py-2 text-base font-semibold underline underline-offset-4">
+          {source.label.slice(0, cut + 1)}
+          <span className="whitespace-nowrap">
+            {source.label.slice(cut + 1)}
+            <ArrowUpRight aria-hidden="true" className="ml-1 inline size-4 align-[-2px]" />
+          </span>
           <span className="sr-only"> (opens in a new tab)</span>
         </ExternalLink>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">{source.note}</p>
+        <p className="text-sm text-muted-foreground">{source.note}</p>
       </div>
     </div>
   );

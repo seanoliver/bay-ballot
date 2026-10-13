@@ -22,3 +22,10 @@ test("an SF measure's panel or sheet points to the city's shared measures page",
   await expect(detail.getByText("From the City and County of San Francisco, sf.gov. Bay Ballot does not write or edit it.")).toBeVisible();
   await expect(detail.getByRole("link", { name: "Official text" })).toHaveCount(0);
 });
+
+test("a measure linked to a PDF says so", async ({ page }) => {
+  await page.goto(`${BALLOT}/fairfield-measure-p`);
+  const link = page.getByRole("link", { name: "Read the impartial analysis of Measure P (PDF) (opens in a new tab)" });
+  await expect(link).toHaveAttribute("href", /\.pdf$/);
+  await expect(page.getByText("From the County of Solano, content.solanocounty.gov. Bay Ballot does not write or edit it.")).toBeVisible();
+});
