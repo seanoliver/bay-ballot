@@ -17,6 +17,8 @@ export type ZipTable = { cityCounty: Record<string, string>; districtCounties: R
 export type ZipFit = "on" | "maybe" | "off";
 
 export const ZIP_KEY = "bb-zip";
+/** `?mine=1` on the Bay Area list shows the saved ZIP's ballot. It never carries the ZIP itself. */
+export const MINE_PARAM = "mine";
 export const isZip = (s: string) => /^\d{5}$/.test(s);
 
 const has = (z: ZipPlaces, place: string) => Object.hasOwn(z.places, place);

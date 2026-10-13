@@ -14,7 +14,7 @@ import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
-import { isZip, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, type ZipView } from "@/lib/zip";
+import { isZip, MINE_PARAM, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, type ZipView } from "@/lib/zip";
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
@@ -25,14 +25,14 @@ import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
+import { currentSearch, pushPath, replaceQuery, useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
-import { ZipChip, ZipStatus, type ZipSummary } from "./ZipChip";
+import { focusZipChipAfterLoad, ZipChip, ZipStatus, type ZipSummary } from "./ZipChip";
 
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
@@ -124,9 +124,13 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const zipHintId = useId();
   // The ZIP is one of the area choices: it narrows the Bay Area list, so it's in effect only there, until another
   // area chip is picked. Picking one keeps the ZIP saved, one tap from coming back.
-  const [zipSetAside, setZipSetAside] = useState(false);
-  const zipActive = zip !== null && area === null && !zipSetAside;
-  const zipPlaces = zipActive && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
+  // The ZIP is one of the area choices: its ballot is the Bay Area list narrowed to it, marked by ?mine=1 so Back,
+  // Forward and reload show what they showed. The flag names no ZIP; picking another area drops it, keeping the ZIP.
+  const [mine] = useQueryParam(MINE_PARAM);
+  const onBay = links[0]?.current ?? area === null;
+  const zipKnown = zip !== null && table !== null && Object.hasOwn(table.zips, zip);
+  const zipActive = zip !== null && onBay && mine === "1";
+  const zipPlaces = zipActive && zipKnown ? table!.zips[zip!] : null;
   const zipView = useMemo(() => (zip && zipPlaces && table ? cachedZipView(allGroups, zip, zipPlaces, table) : null), [allGroups, zip, zipPlaces, table]);
   // A link to a contest the ZIP hides still opens it, and turns Show all on so the list stays put when it closes.
   const requestedHidden = requested !== null && zipView?.fit.get(requested) === "off";
@@ -136,27 +140,71 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const notes = zipPlaces?.outside?.length
     ? [{ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] }]
     : [];
-  const zipSummary: ZipSummary | null = !zipActive
+  const zipSummary: ZipSummary | null = !zip
     ? null
     : tableFailed
       ? { kind: "failed" }
       : !table
-        ? { kind: "loading" }
-        : !zipPlaces
+        ? zipActive
+          ? { kind: "loading" }
+          : null
+        : !zipKnown
           ? { kind: "unknown" }
-          : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe, hidden: zipView!.hidden, notes };
+          : zipView
+            ? { kind: "filtered", on: zipView.on, maybe: zipView.maybe, hidden: zipView.hidden, notes }
+            : null;
+  // The tab title stays the area's: it can reach synced history, and the ZIP stays on this device.
+  const heading = zipView ? `ZIP ${zip} ballot` : intro.title;
   const bayHref = links[0]?.href ?? `/${election}`;
   const router = useRouter();
-  // To the Bay Area list, in place when the page can switch areas, else by navigation.
-  const toZipBallot = () => {
-    setZipSetAside(false);
-    if (area === null) return;
+  const withQuery = (path: string, edit: (p: URLSearchParams) => void) => {
+    const p = new URLSearchParams(currentSearch());
+    edit(p);
+    const q = p.toString();
+    return q ? `${path}?${q}` : path;
+  };
+  // To the ZIP's ballot, as a new history entry: in place when the page can switch areas, else by navigation.
+  const toZipBallot = (z: string) => {
+    stepWrite.cancel();
+    setStepped(null);
+    setShowAllFor(null);
     setZipActedOn(null);
-    if (!onSwitch?.(bayHref)) router.push(`${bayHref}${carry}`);
+    const mark = (p: URLSearchParams) => {
+      p.delete("c");
+      p.set(MINE_PARAM, "1");
+    };
+    if (onBay) {
+      pushPath(withQuery(bayHref, mark));
+      setAnnounce(`Showing the ballot for ZIP ${z}`);
+    } else if (onSwitch?.(bayHref)) {
+      replaceQuery(withQuery("", mark).replace(/^\?/, ""));
+    } else {
+      focusZipChipAfterLoad();
+      router.push(`${bayHref}?${new URLSearchParams([...new URLSearchParams(carry.replace(/^\?/, "")), [MINE_PARAM, "1"]])}`);
+    }
   };
   const switchArea = (href: string) => {
-    setZipSetAside(true);
+    if (zipActive && href === bayHref) {
+      pushPath(withQuery(bayHref, (p) => {
+        p.delete(MINE_PARAM);
+        p.delete("c");
+      }));
+      setZipActedOn(undefined);
+      setAnnounce(`Showing ${intro.title}`);
+      return true;
+    }
     return onSwitch?.(href) ?? false;
+  };
+  const loadTable = async (): Promise<ZipTable | null> => {
+    if (table) return table;
+    try {
+      const t = (await import("@/data/zips.json")).default as ZipTable;
+      setTable(t);
+      return t;
+    } catch {
+      setTableFailed(true);
+      return null;
+    }
   };
   const shownLinks = useMemo(() => (zipActive ? links.map((l) => ({ ...l, current: false })) : links), [zipActive, links]);
   const zipNote = (id: string) => {
@@ -330,7 +378,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     setStepped(null);
     setExiting(null);
     setAnimate(false);
-    setAnnounce(`Showing ${intro.title}`);
+    setAnnounce(`Showing ${heading}`);
     if (zipActedOn !== area) setZipActedOn(undefined);
     setZipError(false);
   }
@@ -474,7 +522,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
-          <h1 className="text-xl font-semibold">{zipActive ? `ZIP ${zip} ballot` : intro.title}</h1>
+          <h1 className="text-xl font-semibold">{heading}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
@@ -482,11 +530,11 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={shownLinks} onSwitch={onSwitch ? switchArea : undefined} onIntent={onIntent}>
+          <AreaPicker links={shownLinks} onSwitch={switchArea} onIntent={onIntent}>
             <ZipChip
               zip={zip}
               selected={zipActive}
-              onSelect={toZipBallot}
+              onSelect={() => zip && toZipBallot(zip)}
               editing={zipEditing}
               setEditing={setZipEditing}
               error={zipError}
@@ -500,7 +548,14 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 stepWrite.cancel();
                 setStepped(null);
                 setZipRaw(v ?? "");
-                if (v) toZipBallot();
+                if (!v) {
+                  if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
+                  return;
+                }
+                // An unknown ZIP stays put and says so; a known one moves to its ballot.
+                void loadTable().then((t) => {
+                  if (t && Object.hasOwn(t.zips, v)) toZipBallot(v);
+                });
               }}
             />
           </AreaPicker>

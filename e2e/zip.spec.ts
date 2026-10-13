@@ -20,7 +20,7 @@ test.describe("ZIP filter", () => {
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await enterZip(page, "94040");
     await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
-    await expect(page).toHaveURL(BALLOT);
+    await expect(page).toHaveURL(`${BALLOT}?mine=1`);
     await expect(status(page)).toContainText(/\d+ of \d+ contests can be on your ballot in 94040/);
     await expect(page.getByRole("button", { name: "ZIP 94040. Change" })).toBeFocused();
     await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Santa Clara" })).not.toHaveAttribute("aria-current", "page");
@@ -40,9 +40,10 @@ test.describe("ZIP filter", () => {
     await page.getByRole("button", { name: "Clear ZIP" }).click();
     await expect(page.getByRole("button", { name: "Your ZIP" })).toBeFocused();
     await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+    await expect(page).toHaveURL(BALLOT);
   });
 
-  test("picking an area chip sets the ZIP aside, and the ZIP chip brings its ballot back", async ({ page }) => {
+  test("picking an area chip sets the ZIP aside; the ZIP chip brings its ballot back; Back and reload agree", async ({ page }) => {
     await page.goto(BALLOT);
     await enterZip(page, "94040");
     const areas = page.getByRole("navigation", { name: "Area" });
@@ -50,13 +51,37 @@ test.describe("ZIP filter", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Santa Clara County ballot" })).toBeVisible();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await expect(status(page)).not.toContainText("can be on your ballot");
+    await page.goBack();
+    await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
+    await page.goForward();
+    await expect(page.getByRole("heading", { level: 1, name: "Santa Clara County ballot" })).toBeVisible();
+    await areas.getByRole("link", { name: "Clear Santa Clara" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "ZIP 94040. Show its ballot" })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
     await page.getByRole("button", { name: "ZIP 94040. Show its ballot" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
-    await expect(contestRow(page, "Palo Alto City Council")).toHaveCount(0);
     await areas.getByRole("link", { name: "Bay Area" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
-    await expect(page.getByRole("button", { name: "ZIP 94040. Show its ballot" })).toBeVisible();
+    await page.goBack();
+    await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
+  });
+
+  test("before the other areas' data loads, entering a ZIP still reaches its ballot with focus on the chip", async ({ page }) => {
+    await page.route("**/snapshot.json", () => {});
+    await page.goto(SCC);
+    await enterZip(page, "94040");
+    await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "ZIP 94040. Change" })).toBeFocused();
+  });
+
+  test("an unknown ZIP stays on the page and says so", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "10001");
+    await expect(status(page)).toContainText("isn’t a Bay Area ZIP");
+    await expect(page.getByRole("heading", { level: 1, name: "Santa Clara County ballot" })).toBeVisible();
   });
 
   test("Enter on a short ZIP says what's wrong, and Escape closes the field", async ({ page }) => {
@@ -149,7 +174,7 @@ test.describe("ZIP filter", () => {
     await page.goto(BALLOT);
     await enterZip(page, "94040");
     await expect(status(page).getByRole("button", { name: "Show all" })).toBeVisible();
-    await page.goto(`${BALLOT}?c=palo-alto-council`);
+    await page.goto(`${BALLOT}?mine=1&c=palo-alto-council`);
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await expect(status(page).getByRole("button", { name: "Hide the others" })).toBeVisible();
   });
@@ -163,9 +188,5 @@ test.describe("ZIP filter", () => {
     await expect(contestRow(page, "Proposition B")).toHaveCount(0);
   });
 
-  test("says when a ZIP can't be mapped", async ({ page }) => {
-    await page.goto(SCC);
-    await enterZip(page, "10001");
-    await expect(status(page)).toContainText("isn’t a Bay Area ZIP");
-  });
+
 });

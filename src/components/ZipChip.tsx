@@ -18,6 +18,12 @@ export type ZipSummary =
   | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
 // One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
+// Set before a navigation to the ZIP's ballot, so the chip on the next page takes focus as the one typed in did.
+let focusOnMount = false;
+export function focusZipChipAfterLoad() {
+  focusOnMount = true;
+}
+
 const CHIP = "js-only inline-flex min-h-10 min-w-[8.75rem] items-center gap-2 whitespace-nowrap rounded-full pr-3 pl-2.5";
 const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset-2 hover:text-foreground";
 
@@ -50,6 +56,11 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
     pendingClear.current = null;
   };
   useEffect(() => cancelPendingClear, []);
+  useEffect(() => {
+    if (!focusOnMount) return;
+    focusOnMount = false;
+    chipRef.current?.focus({ preventScroll: true });
+  }, []);
   const fail = () => {
     cancelPendingClear();
     setError(true);
@@ -179,6 +190,7 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
         ref={chipRef}
         type="button"
         aria-label={selected ? `ZIP ${zip}. Change` : `ZIP ${zip}. Show its ballot`}
+        aria-current={selected ? "page" : undefined}
         className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         onClick={() => {
           if (!selected) {

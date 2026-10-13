@@ -20,7 +20,7 @@ The ZIP filter has to decide, for a 5-digit ZIP, which contests can be on a vote
 
 - `npm run bb -- zips` downloads both files and runs `buildZipTable` (`src/pipeline/zips.ts`), which writes `src/data/zips.json`, one ZIP per line: for each ZIP, its Bay Area counties, any other counties it reaches (`outside`), and the ballot's places it overlaps (`full` only when the ZIP's land is all inside). Both files are built from census blocks, so every overlap with land is real and counts. It also writes `cityCounty`, each ballot city's county from the area files.
 - `zipFit` (`src/lib/zip.ts`) rates each contest `on`, `maybe` or `off` from its `jurisdiction` and its list group's county; `zipGroups` filters the list. `BallotView` loads the table only after a ZIP is entered.
-- The ZIP is stored in `localStorage` (`bb-zip`) and never written to the URL. `zip` is on the analytics scrub list (`src/lib/analytics.ts`), so `beforeSend` drops it from Vercel events and `SiteAnalytics` removes it from the address bar for Ahrefs.
+- The ZIP is stored in `localStorage` (`bb-zip`) and never written to the URL. The ZIP's ballot is the Bay Area list with `?mine=1`, a flag that names no ZIP, so Back, Forward and reload show what they showed; picking any area chip drops the flag and keeps the ZIP. `zip` is on the analytics scrub list (`src/lib/analytics.ts`), so `beforeSend` drops it from Vercel events and `SiteAnalytics` removes it from the address bar for Ahrefs.
 
 ## Gotchas
 
