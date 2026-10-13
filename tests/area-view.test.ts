@@ -1,7 +1,7 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { areaFromPath, areaHead, areaView, hasContest, snapshotOf, viewFor } from "@/lib/area-view";
-import { areaCounty, areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/areas";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
 import { fallbackFor, scopeName } from "@/lib/fallback";
@@ -48,10 +48,8 @@ describe("areaView", () => {
 
   it.each([null, ...d.areas.map((a) => a.id)])("matches the server's old props for %s, from the snapshot and from its JSON", (id) => {
     const area = id === null ? null : d.areas.find((a) => a.id === id)!;
-    const { area: shown, title, county, city, ...view } = areaView(snap, id);
+    const { area: shown, title, ...view } = areaView(snap, id);
     expect(shown).toBe(id);
-    expect(county).toBe(area ? areaCounty(area) : null);
-    expect(city).toBe(area?.kind === "city" ? area.jurisdictions.find((j) => j.level === "city")!.name : null);
     expect(title).toMatch(/ endorsements \(Nov 2026\)$/);
     expect(view).toEqual(before(d, area));
     expect(areaView(sent, id)).toEqual(areaView(snap, id));

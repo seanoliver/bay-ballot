@@ -15,7 +15,6 @@ export type ZipSummary =
   | { kind: "loading" }
   | { kind: "failed" }
   | { kind: "unknown" }
-  | { kind: "elsewhere"; where: string; links: BallotLink[] }
   | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
 // One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
@@ -26,8 +25,11 @@ const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset
  * The ZIP chip at the end of the area chips. It applies at the fifth digit or on Enter, so it needs no button. The ZIP
  * stays on this device; the input has no `name`, so a submit before hydration can't put it in the URL.
  */
-export function ZipChip({ zip, onZip, editing, setEditing, error, setError, errorId, hintId }: {
+export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, error, setError, errorId, hintId }: {
   zip: string | null;
+  /** True when the ZIP's ballot is the list shown; false when another area chip is picked. */
+  selected: boolean;
+  onSelect: () => void;
   onZip: (zip: string | null) => void;
   editing: boolean;
   setEditing: (v: boolean) => void;
@@ -167,13 +169,23 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     );
   }
   return (
-    <span className="js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
+    <span
+      className={cn(
+        "js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full pr-1",
+        selected ? "bg-foreground font-medium text-background" : "ring-1 ring-foreground/15 hover:bg-muted",
+      )}
+    >
       <button
         ref={chipRef}
         type="button"
-        aria-label={`ZIP ${zip}. Change`}
+        aria-label={selected ? `ZIP ${zip}. Change` : `ZIP ${zip}. Show its ballot`}
         className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         onClick={() => {
+          if (!selected) {
+            focusNext.current = "chip";
+            onSelect();
+            return;
+          }
           setDraft(zip);
           setEditing(true);
           setError(false);
@@ -187,7 +199,10 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
       <button
         type="button"
         aria-label="Clear ZIP"
-        className="grid size-10 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        className={cn(
+          "grid size-10 place-items-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+          selected ? "text-background/80 hover:bg-background/20 hover:text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+        )}
         onClick={() => {
           focusNext.current = "chip";
           onZip(null);
@@ -236,13 +251,6 @@ function ZipLines({ zip, summary, showAll, onShowAll, onRetry }: { zip: string; 
     );
   }
   if (summary.kind === "unknown") return <p>{zip} isn’t a Bay Area ZIP, or one this site can’t map (a PO box or new ZIP). Every contest is shown.</p>;
-  if (summary.kind === "elsewhere") {
-    return (
-      <p>
-        {zip}: {summary.where} <BallotLinks links={summary.links} />
-      </p>
-    );
-  }
   const total = summary.on + summary.maybe + summary.hidden;
   return (
     <>

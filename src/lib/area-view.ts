@@ -1,4 +1,4 @@
-import { areaCounty, areaGuides, areaLinks, inArea, placeGroups, placeName, type AreaLink, type PlaceGroup } from "./areas";
+import { areaGuides, areaLinks, inArea, placeGroups, placeName, type AreaLink, type PlaceGroup } from "./areas";
 import type { ElectionData } from "./data";
 import { electionIntro, pendingNote } from "./display";
 import { fallbackFor, scopeName, type Fallback } from "./fallback";
@@ -19,9 +19,6 @@ export type ElectionSnapshot = {
 
 export type AreaView = {
   area: string | null;
-  /** The page's county, and its city on a city page; both null on the Bay Area page. */
-  county: string | null;
-  city: string | null;
   title: string;
   links: AreaLink[];
   intro: { title: string; line: string };
@@ -89,8 +86,6 @@ export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
   const place = placeName(area);
   return {
     area: areaId,
-    county: area ? areaCounty(area) : null,
-    city: area?.kind === "city" ? (area.jurisdictions.find((j) => j.level === "city")?.name ?? null) : null,
     ...areaHead(s, areaId),
     intro: electionIntro({ date: s.date, contests }, files, { place: place.name }),
     groups,

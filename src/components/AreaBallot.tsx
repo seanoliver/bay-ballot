@@ -123,8 +123,6 @@ export function AreaBallot({ election, ...props }: Props) {
     <BallotView
       election={election}
       area={view.area}
-      county={view.county}
-      city={view.city}
       links={head.links}
       intro={view.intro}
       groups={view.groups}

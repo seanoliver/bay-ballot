@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
@@ -54,8 +55,6 @@ const motionOutMs = () => parseFloat(getComputedStyle(document.documentElement).
 type Props = {
   election: string;
   area: string | null;
-  county: string | null;
-  city: string | null;
   links: AreaLink[];
   intro: { title: string; line: string };
   groups: PlaceGroup[];
@@ -83,18 +82,15 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
   if (s.kind === "loading") return "";
   if (s.kind === "failed") return "Couldn’t load the ZIP list. Every contest is shown.";
   if (s.kind === "unknown") return `ZIP ${zip} isn’t a Bay Area ZIP, or one this site can’t map. Every contest is shown.`;
-  if (s.kind === "elsewhere") return `ZIP ${zip}: ${s.where}`;
   return showAll ? `Showing all ${counted(s.on + s.maybe + s.hidden, "contest")}` : `Showing ${counted(s.on + s.maybe, "contest")} for ZIP ${zip}, ${s.hidden} hidden`;
 }
 
-// SF is a consolidated city and county, named without "County" everywhere else on the site.
-const countyBallotName = (county: string) => (county === "San Francisco" ? county : `${county} County`);
 
 // Per view, so switching back to an area reuses its rows and bars.
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, county, city, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -126,28 +122,21 @@ export function BallotView({ election, area, county, city, links, intro, groups:
   const [zipError, setZipError] = useState(false);
   const zipErrorId = useId();
   const zipHintId = useId();
-  const zipPlaces = zip && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
-  // A ZIP outside this page's county (or city) isn't filtered here: the page points to the ZIP's own ballot instead.
-  const outsideCounty = zipPlaces && county && !zipPlaces.counties.includes(county);
-  const outsideCity = zipPlaces && city && !Object.hasOwn(zipPlaces.places, city);
-  const zipView = useMemo(
-    () => (zip && zipPlaces && table && !outsideCounty && !outsideCity ? cachedZipView(allGroups, zip, zipPlaces, table) : null),
-    [allGroups, zip, zipPlaces, table, outsideCounty, outsideCity],
-  );
+  // The ZIP is one of the area choices: it narrows the Bay Area list, so it's in effect only there, until another
+  // area chip is picked. Picking one keeps the ZIP saved, one tap from coming back.
+  const [zipSetAside, setZipSetAside] = useState(false);
+  const zipActive = zip !== null && area === null && !zipSetAside;
+  const zipPlaces = zipActive && table && Object.hasOwn(table.zips, zip) ? table.zips[zip] : null;
+  const zipView = useMemo(() => (zip && zipPlaces && table ? cachedZipView(allGroups, zip, zipPlaces, table) : null), [allGroups, zip, zipPlaces, table]);
   // A link to a contest the ZIP hides still opens it, and turns Show all on so the list stays put when it closes.
   const requestedHidden = requested !== null && zipView?.fit.get(requested) === "off";
   if (zip && requestedHidden && showAllFor !== zip) setShowAllFor(zip);
   const showAll = zip !== null && (showAllFor === zip || requestedHidden);
   const groups = useMemo(() => (zipView && !showAll ? zipView.groups : allGroups), [zipView, showAll, allGroups]);
-  const ballotLink = (name: string) => ({ label: countyBallotName(name), href: links.find((l) => l.label === name)?.href ?? null });
-  const notes: { text: string; links: { label: string; href: string | null }[] }[] = [];
-  if (zipPlaces && !outsideCounty && !outsideCity) {
-    const others = zipPlaces.counties.filter((c) => c !== county);
-    if (county && others.length) notes.push({ text: `Part of this ZIP is in ${others.map(countyBallotName).join(" and ")}.`, links: others.map(ballotLink) });
-    if (city && city !== county && zipPlaces.places[city] !== "full" && county) notes.push({ text: `Part of this ZIP is outside ${city}.`, links: [ballotLink(county)] });
-    if (zipPlaces.outside?.length) notes.push({ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] });
-  }
-  const zipSummary: ZipSummary | null = !zip
+  const notes = zipPlaces?.outside?.length
+    ? [{ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] }]
+    : [];
+  const zipSummary: ZipSummary | null = !zipActive
     ? null
     : tableFailed
       ? { kind: "failed" }
@@ -155,18 +144,28 @@ export function BallotView({ election, area, county, city, links, intro, groups:
         ? { kind: "loading" }
         : !zipPlaces
           ? { kind: "unknown" }
-          : outsideCounty
-            ? { kind: "elsewhere", where: `In ${zipPlaces.counties.map(countyBallotName).join(" and ")}.`, links: zipPlaces.counties.map(ballotLink) }
-            : outsideCity
-              ? { kind: "elsewhere", where: `Not in ${city}.`, links: zipPlaces.counties.map(ballotLink) }
-              : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe, hidden: zipView!.hidden, notes };
+          : { kind: "filtered", on: zipView!.on, maybe: zipView!.maybe, hidden: zipView!.hidden, notes };
+  const bayHref = links[0]?.href ?? `/${election}`;
+  const router = useRouter();
+  // To the Bay Area list, in place when the page can switch areas, else by navigation.
+  const toZipBallot = () => {
+    setZipSetAside(false);
+    if (area === null) return;
+    setZipActedOn(null);
+    if (!onSwitch?.(bayHref)) router.push(`${bayHref}${carry}`);
+  };
+  const switchArea = (href: string) => {
+    setZipSetAside(true);
+    return onSwitch?.(href) ?? false;
+  };
+  const shownLinks = useMemo(() => (zipActive ? links.map((l) => ({ ...l, current: false })) : links), [zipActive, links]);
   const zipNote = (id: string) => {
     const f = zipView?.fit.get(id);
     return f === "maybe" ? "May be on your ballot" : f === "off" ? `Probably not on ballots in ZIP ${zip}` : null;
   };
   // Announced only after the visitor acts on the box, and only on the page where they did.
   const [zipActedOn, setZipActedOn] = useState<string | null | undefined>(undefined);
-  const announced = zipActedOn !== area ? "" : zipSummary ? zipSpoken(zip!, zipSummary, showAll) : "ZIP cleared. Showing every contest.";
+  const announced = zipActedOn !== area ? "" : zipSummary ? zipSpoken(zip!, zipSummary, showAll) : zip ? "" : "ZIP cleared. Showing every contest.";
   const setShowAll = (v: boolean) => {
     setZipActedOn(area);
     stepWrite.cancel();
@@ -332,7 +331,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
     setExiting(null);
     setAnimate(false);
     setAnnounce(`Showing ${intro.title}`);
-    setZipActedOn(undefined);
+    if (zipActedOn !== area) setZipActedOn(undefined);
     setZipError(false);
   }
   useEffect(() => {
@@ -475,7 +474,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
-          <h1 className="text-xl font-semibold">{intro.title}</h1>
+          <h1 className="text-xl font-semibold">{zipActive ? `ZIP ${zip} ballot` : intro.title}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
@@ -483,9 +482,11 @@ export function BallotView({ election, area, county, city, links, intro, groups:
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent}>
+          <AreaPicker links={shownLinks} onSwitch={onSwitch ? switchArea : undefined} onIntent={onIntent}>
             <ZipChip
               zip={zip}
+              selected={zipActive}
+              onSelect={toZipBallot}
               editing={zipEditing}
               setEditing={setZipEditing}
               error={zipError}
@@ -499,6 +500,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
                 stepWrite.cancel();
                 setStepped(null);
                 setZipRaw(v ?? "");
+                if (v) toZipBallot();
               }}
             />
           </AreaPicker>

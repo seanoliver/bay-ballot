@@ -26,7 +26,7 @@ The ZIP filter has to decide, for a 5-digit ZIP, which contests can be on a vote
 
 - ZCTAs are Census approximations of USPS ZIP codes: each census block goes to the ZIP most of its addresses use. An address near a city or county line whose ZIP lost its block to a neighbor can see one of its contests hidden. The UI says "probably not" for hidden rows and points to Show all. HUD's USPS ZIP crosswalk is built from real addresses and would close this gap, but needs a HUD API token. PO-box-only ZIPs and ZIPs created after 2020 have no ZCTA; the filter says it can't map them and shows every contest.
 - City limits are as of January 1, 2020. Land annexed since then is missing, so a ZIP that only reaches a city through a later annexation has that city's contests hidden.
-- A ZIP spanning two Bay counties (94303: San Mateo and Santa Clara) is filtered on either county's page, with a link to the other county's ballot.
+- The ZIP narrows the Bay Area list, so a ZIP spanning two Bay counties (94303: San Mateo and Santa Clara) keeps both counties' contests. A county or city page always shows that place in full; picking one sets the ZIP aside without clearing it.
 - A new city, or an at-large district contest naming a new county, needs `npm run bb -- zips`. `tests/zip.test.ts` fails when the committed table misses a ballot city or its `districtCounties` are stale.
 - A new county needs its Census GEOID in `BAY_COUNTIES` in `scripts/bb.ts`; the command fails until it is added.
 
