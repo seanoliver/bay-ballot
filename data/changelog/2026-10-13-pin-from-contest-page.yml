@@ -1,0 +1,4 @@
+date: 2026-10-13
+type: new
+title: "Pin guides and count one side straight from a contest page"
+details: "On a contest page, every guide on each side is now a chip you can tap to pin it, so its picks show on every contest. Pinned guides look filled in, and you can pin up to 4. Guides that made no pick on the contest are listed under No pick. Each side also has a Count only these button that counts just that side's guides across the ballot; tap it again, or use Reset filters, to count the others again."

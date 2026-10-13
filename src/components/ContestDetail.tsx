@@ -13,6 +13,7 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
+import { CountOnlyButton, NoPickBlock, PinChips, PinHint, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
@@ -57,6 +58,7 @@ export function ContestDetail({
   shortNames = true,
   action,
   fallback,
+  pinning,
 }: {
   election: string;
   contest: Contest;
@@ -70,6 +72,8 @@ export function ContestDetail({
   shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
+  /** On a contest page: each guide chip pins its guide, and each side can be the only one counted. */
+  pinning?: Pinning;
 }) {
   const bay = fallback?.scope === "bay";
   const rows = bay ? fallback.rows : areaRows;
@@ -95,15 +99,21 @@ export function ContestDetail({
       {multi ? null : <Legend segments={barSegments(tally(contest, rows.map((r) => r.entry)), contest, slots)} />}
     </>
   );
-  const guides = sides.length ? (
+  const guides = (
     <div>
-      {sides.map((side) => (
-        <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} />
-      ))}
-      {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} /> : null}
+      {pinning ? <PinHint pinning={pinning} /> : null}
+      {sides.length ? (
+        <div className={cn(pinning && "mt-6")}>
+          {sides.map((side) => (
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} pinning={pinning} />
+          ))}
+          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} pinning={pinning} /> : null}
+        </div>
+      ) : (
+        <p className={cn("text-sm text-muted-foreground", pinning && "mt-6")}>No guide you&apos;re counting took a position.</p>
+      )}
+      {pinning ? <NoPickBlock pinning={pinning} /> : null}
     </div>
-  ) : (
-    <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
   );
   const title = (
     <Title id={titleId} tabIndex={titleId ? -1 : undefined} className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}>
@@ -175,16 +185,30 @@ function Legend({ segments }: { segments: BarSegment[] }) {
 
 const guidesLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; contest: Contest; short: boolean }) {
+function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: Row[]; contest: Contest; short: boolean; pinning?: Pinning }) {
   const { top, rest } = pickReasons(side, rows, contest);
+  const heading = (
+    <h3 className="flex flex-1 items-center gap-2 text-base font-semibold">
+      <span aria-hidden="true" className={cn("size-3 shrink-0 rounded-[3px]", BAR_FILL[side.tone])} />
+      <span className="min-w-0">{side.label}</span>
+      <span className="ml-auto shrink-0 text-sm font-normal text-muted-foreground">{guidesLabel(side.count)}</span>
+    </h3>
+  );
   return (
     <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0 [&+&]:mt-6">
-      <h3 className="flex items-center gap-2 text-base font-semibold">
-        <span aria-hidden="true" className={cn("size-3 shrink-0 rounded-[3px]", BAR_FILL[side.tone])} />
-        <span className="min-w-0">{side.label}</span>
-        <span className="ml-auto shrink-0 text-sm font-normal text-muted-foreground">{guidesLabel(side.count)}</span>
-      </h3>
-      <Chips guides={side.guides} short={short} label={`Guides for ${side.label}`} />
+      {pinning ? (
+        <div className="flex flex-wrap items-center gap-3">
+          {heading}
+          <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
+        </div>
+      ) : (
+        heading
+      )}
+      {pinning ? (
+        <PinChips guides={side.guides.map((g) => ({ id: g.id, name: g.short }))} pinning={pinning} label={`Guides for ${side.label}`} />
+      ) : (
+        <Chips guides={side.guides} short={short} label={`Guides for ${side.label}`} />
+      )}
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
@@ -200,7 +224,7 @@ function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; co
   );
 }
 
-function OtherCandidates({ others, rows, contest, short }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean }) {
+function OtherCandidates({ others, rows, contest, short, pinning }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean; pinning?: Pinning }) {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
@@ -210,7 +234,7 @@ function OtherCandidates({ others, rows, contest, short }: { others: Side[]; row
       <CollapsibleContent className="reveal">
         <div className="pt-6">
           {others.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} pinning={pinning} />
           ))}
         </div>
       </CollapsibleContent>

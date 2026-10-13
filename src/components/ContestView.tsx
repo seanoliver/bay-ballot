@@ -4,12 +4,14 @@ import { useMemo } from "react";
 import Link from "next/link";
 import type { NextStep, PlaceName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
+import type { NoPickGuide } from "@/lib/contest-pins";
 import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
 import { BallotNextStep } from "./BallotNextStep";
 import { ContestDetail } from "./ContestDetail";
+import { PinStatus, useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
@@ -30,9 +32,11 @@ type Props = {
   back: { href: string; label: string };
   area: string | null;
   next: NextStep | null;
+  /** Guides covering this contest's area that made no pick on it. */
+  noPick: NoPickGuide[];
 };
 
-export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next }: Props) {
+export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next, noPick }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides });
   const setFilters = (f: Filters) => {
@@ -46,6 +50,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   const hidden = shown.length - rows.length;
   const carry = useCarriedQuery();
   const filterProps = { filters, onChange: setFilters, guides: shown, files, typeGuides: guides };
+  const { pinning, status } = useContestPins({ filters, onChange: setFilters, guides, noPick });
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {
@@ -95,10 +100,12 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             pageLink={false}
             shortNames={false}
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
+            pinning={pinning}
           />
           {next ? <BallotNextStep step={next} carry={carry} /> : null}
         </section>
       </div>
+      <PinStatus message={status} />
     </div>
   );
 }
