@@ -11,6 +11,7 @@ const f = (over: Partial<Filters> = {}): Filters => ({ ...EMPTY, ...over });
 const areas: Area[] = [
   { id: "sf", name: "San Francisco", kind: "county", jurisdictions: [{ level: "county", name: "San Francisco" }] },
   { id: "oakland", name: "Oakland", kind: "city", jurisdictions: [{ level: "county", name: "Alameda" }, { level: "city", name: "Oakland" }] },
+  { id: "alameda", name: "Alameda County", kind: "county", jurisdictions: [{ level: "county", name: "Alameda" }] },
 ];
 const propD = { id: "prop-d", jurisdiction: { level: "county" as const, name: "San Francisco" } };
 
@@ -29,6 +30,12 @@ describe("noPickGuides", () => {
       { id: "growsf", hasReasoning: false },
       { id: "both", hasReasoning: true },
     ]);
+  });
+
+  it("covers only the contest's own place, not every area that overlaps it", () => {
+    const measure = { id: "measure-a", jurisdiction: { level: "county" as const, name: "Alameda" } };
+    const county = [{ id: "acdp", areas: ["alameda"] }, { id: "oak", areas: ["oakland"] }];
+    expect(noPickGuides(measure, county, areas, { acdp: file([]), oak: file([]) }).map((x) => x.id)).toEqual(["acdp"]);
   });
 
   it("covers every area for a statewide contest", () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -13,7 +13,7 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
-import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, type Pinning } from "./ContestPins";
+import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, type PinControls, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
@@ -54,6 +54,7 @@ export function ContestDetail({
   answer,
   slots: areaSlots,
   pageLink = true,
+  shortNames = true,
   action,
   fallback,
   pinning,
@@ -67,6 +68,7 @@ export function ContestDetail({
   answer?: string;
   slots?: Slots;
   pageLink?: boolean;
+  shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
   /** Each guide chip pins its guide, and each side can be the only one counted. */
@@ -82,6 +84,23 @@ export function ContestDetail({
   const ranked = contestHeadline(contest, rows).headline.ranked;
   const multi = contest.kind === "candidate" && contest.seats > 1;
   const Title = heading || "h2";
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Count only can move a side between the top sides and Other candidates, remounting its button; focus follows it by key.
+  const refocus = useRef<string | null>(null);
+  const pins: PinControls = {
+    ...pinning,
+    limitId: useId(),
+    onCountPress: (key) => {
+      refocus.current = key;
+    },
+  };
+  useEffect(() => {
+    const key = refocus.current;
+    refocus.current = null;
+    const root = rootRef.current;
+    if (key === null || !root || root.contains(document.activeElement)) return;
+    (root.querySelector<HTMLElement>(`[data-count-only="${CSS.escape(key)}"]`) ?? root.querySelector<HTMLElement>("[data-others]"))?.focus();
+  }, [rows]);
   const scopeSwitch = fallback ? <ScopeSwitch place={fallback.place} scope={fallback.scope} onChange={fallback.onScope} /> : null;
   const summary = (
     <>
@@ -98,18 +117,18 @@ export function ContestDetail({
   );
   const guides = (
     <div>
-      <PinHint pinning={pinning} />
+      {sides.length || pinning.noPick.length ? <PinHint pinning={pins} /> : null}
       {sides.length ? (
         <div className="mt-6">
           {sides.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} pinning={pinning} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} pinning={pins} />
           ))}
-          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} pinning={pinning} /> : null}
+          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} pinning={pins} /> : null}
         </div>
       ) : (
         <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
       )}
-      <NoPickBlock pinning={pinning} />
+      <NoPickBlock pinning={pins} short={shortNames} />
     </div>
   );
   const title = (
@@ -118,7 +137,7 @@ export function ContestDetail({
     </Title>
   );
   return (
-    <div className="space-y-8">
+    <div ref={rootRef} className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
@@ -183,7 +202,7 @@ function Legend({ segments }: { segments: BarSegment[] }) {
 
 const guidesLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-function SideBlock({ side, rows, contest, pinning }: { side: Side; rows: Row[]; contest: Contest; pinning: Pinning }) {
+function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: Row[]; contest: Contest; short: boolean; pinning: PinControls }) {
   const { top, rest } = pickReasons(side, rows, contest);
   const heading = (
     <h3 className="flex flex-1 items-center gap-2 text-base font-semibold">
@@ -198,7 +217,7 @@ function SideBlock({ side, rows, contest, pinning }: { side: Side; rows: Row[]; 
         {heading}
         <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
       </div>
-      <PinChips guides={side.guides.map((g) => ({ id: g.id, name: g.short }))} pinning={pinning} label={`Guides for ${side.label}`} />
+      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
@@ -214,17 +233,17 @@ function SideBlock({ side, rows, contest, pinning }: { side: Side; rows: Row[]; 
   );
 }
 
-function OtherCandidates({ others, rows, contest, pinning }: { others: Side[]; rows: Row[]; contest: Contest; pinning: Pinning }) {
+function OtherCandidates({ others, rows, contest, short, pinning }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean; pinning: PinControls }) {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
-      <CollapsibleTrigger className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <CollapsibleTrigger data-others className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {open ? "Hide other candidates" : `Other candidates (${others.length})`}
       </CollapsibleTrigger>
       <CollapsibleContent className="reveal">
         <div className="pt-6">
           {others.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} pinning={pinning} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} pinning={pinning} />
           ))}
         </div>
       </CollapsibleContent>

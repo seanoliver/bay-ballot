@@ -98,6 +98,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             titleId={TITLE_ID}
             slots={slots}
             pageLink={false}
+            shortNames={false}
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
             pinning={pinning}
           />
