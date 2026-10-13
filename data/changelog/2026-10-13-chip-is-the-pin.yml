@@ -1,0 +1,5 @@
+date: 2026-10-13
+type: new
+title: "Tap anywhere on a guide to pin it"
+details: "In a contest's details, each guide is now one button: tap anywhere on it to pin or unpin that guide. Links to each guide's page moved to a Guide pages list under each side, and the names in Your guides now link to their pages too. A short note above the guides explains the quote mark, which means the guide explained its pick, and on a computer, pointing at a guide with the mark says so."
+pr: 176

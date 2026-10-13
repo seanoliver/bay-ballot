@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type SyntheticEvent } from "react";
 import Link from "next/link";
-import { Funnel, Pin } from "lucide-react";
+import { ChevronDown, Funnel, Pin } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { countedNoPick, isCountingOnly, pinMessage, toggleCountOnly, type NoPickGuide } from "@/lib/contest-pins";
 import type { Side } from "@/lib/detail";
 import { displayName } from "@/lib/display";
@@ -23,6 +24,9 @@ export type Pinning = {
 export type PinControls = Pinning & { limitId: string; onCountPress: (key: string) => void };
 
 export type ChipGuide = { id: string; name: string; short: string; quoted: boolean };
+
+/** Inline links keep their line height but get a 40px-tall tap area. */
+export const TAP = "inline-block py-2.5 -my-2.5";
 
 const STATUS_MS = 4000;
 const CHIPS_SHOWN = 12;
@@ -114,83 +118,237 @@ const QUOTE_MARK = (
   </svg>
 );
 
-// A link to the guide's page and its own pin button, in one pill that fills in once pinned.
+// The whole pill pins its guide and fills in once pinned. Guide pages are linked from the list under the chips.
 function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide; short: boolean; pinning: PinControls; style?: CSSProperties; className?: string }) {
+  const nameId = useId();
   const f = pinning.filters;
   const pinned = isPinned(f, guide.id);
   const full = !pinned && f.pins.length >= MAX_PINS;
   const name = short ? guide.short : guide.name;
+  // The tooltip gives the full name, why the chip has a quote mark, and why it can't be pinned.
+  const tip = guide.quoted || full || guide.name !== name;
+  // Read aloud: the full name where the chip shows a short one, and the limit. The label already says it gave reasons.
+  const describedBy = [guide.name !== name && nameId, full && pinning.limitId].filter(Boolean).join(" ");
   return (
-    <li
-      style={style}
-      className={cn(
-        "inline-flex items-center rounded-full border text-sm",
-        pinned ? "border-foreground bg-foreground font-semibold text-background" : "border-border bg-muted/60",
-        className,
-      )}
-    >
-      <Link
-        href={`/guides/${guide.id}`}
-        title={guide.name}
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full pr-1 pl-3 underline-offset-2 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-      >
-        {name}
-        {guide.quoted ? (
-          <>
-            {QUOTE_MARK}
-            <span className="sr-only">(gave reasons)</span>
-          </>
-        ) : null}
-      </Link>
+    <li style={style} className={className}>
       <button
         type="button"
-        aria-label={`Pin ${name}`}
+        // Labelled, so the tooltip inside it describes the chip without joining its name.
+        aria-label={`Pin ${name}${guide.quoted ? " (gave reasons)" : ""}`}
         aria-pressed={pinned}
         aria-disabled={full || undefined}
-        aria-describedby={full ? pinning.limitId : undefined}
-        title={pinned ? "Unpin" : full ? `You can pin up to ${MAX_PINS} guides` : "Pin to see its picks on every contest"}
-        onClick={() => pinning.onPin(guide.id)}
+        aria-describedby={describedBy || undefined}
+        onClick={(e) => {
+          // A click on the tooltip, which sits over other chips, hides it instead of pinning.
+          if (e.target instanceof Element && e.target.closest("[data-tip]")) {
+            e.currentTarget.dataset.tipHidden = "true";
+            return;
+          }
+          pinning.onPin(guide.id);
+        }}
+        onPointerEnter={tip ? hoverTip : undefined}
+        onFocus={tip ? placeTip : undefined}
+        onPointerLeave={tip ? leaveTip : undefined}
+        onBlur={tip ? resetTip : undefined}
+        onKeyDown={tip ? dismissTip : undefined}
         className={cn(
-          "grid size-10 shrink-0 cursor-pointer place-items-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:size-8",
-          pinned ? "hover:bg-background/20" : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          full && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
+          "group relative inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-full border pr-3 pl-2.5 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-9",
+          pinned
+            ? "border-foreground bg-foreground font-semibold text-background"
+            : "border-foreground/20 bg-background shadow-xs hover:border-foreground hover:bg-muted",
+          full && "cursor-not-allowed border-dashed text-muted-foreground shadow-none hover:border-foreground/20 hover:bg-background",
         )}
       >
-        <Pin aria-hidden="true" className={cn("size-3.5", pinned && "fill-current")} />
+        <Pin aria-hidden="true" className={cn("size-3.5 shrink-0", pinned ? "fill-current" : "text-muted-foreground", full && "opacity-60")} />
+        {name}
+        {guide.quoted ? QUOTE_MARK : null}
+        {guide.name !== name ? (
+          <span id={nameId} className="sr-only">
+            {guide.name}
+          </span>
+        ) : null}
+        {tip ? (
+          // Inside the button with a padded gap, so the pointer can move onto it without it closing.
+          <span
+            aria-hidden="true"
+            data-tip
+            className="absolute top-full left-0 z-20 hidden w-max max-w-56 cursor-default pt-2 text-left text-[13px] leading-snug font-normal group-focus-visible:block group-data-[tip-hidden=true]:hidden! group-data-[tip-up=true]:top-auto group-data-[tip-up=true]:bottom-full group-data-[tip-up=true]:pt-0 group-data-[tip-up=true]:pb-2 pointer-fine:group-hover:block"
+          >
+            <span className="block rounded-lg bg-foreground px-2.5 py-2 text-background shadow-md">
+              <b className="font-semibold">{guide.name}</b>.{guide.quoted ? " Gave reasons on this contest." : null}
+              {full ? ` You can pin up to ${MAX_PINS} guides.` : null}
+            </span>
+          </span>
+        ) : null}
       </button>
     </li>
   );
 }
 
-/** The first dozen chips, then "Show all N" opens the rest in place. */
-export function PinChips({ guides, short, pinning, label }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string }) {
+const TIP_MAX = 224;
+
+// Keeps the tooltip inside its row: under the chip from its left edge, else from its right edge, else from the row's start.
+// In a collapsible panel, which clips what overflows it, it opens above the chip when it fits there and not below.
+function placeTip(e: SyntheticEvent<HTMLButtonElement>) {
+  const b = e.currentTarget;
+  const tip = b.querySelector<HTMLElement>("[data-tip]");
+  const row = b.closest("ul");
+  if (!tip || !row) return;
+  const chip = b.getBoundingClientRect();
+  const width = row.clientWidth;
+  const left = chip.left - row.getBoundingClientRect().left;
+  const max = Math.min(TIP_MAX, width);
+  const [from, to] = left + max <= width ? ["0", "auto"] : left + chip.width >= max ? ["auto", "0"] : [`${-left}px`, "auto"];
+  tip.style.left = from;
+  tip.style.right = to;
+  tip.style.maxWidth = `${max}px`;
+  const clip = b.closest(".reveal")?.getBoundingClientRect();
+  if (!clip) return void delete b.dataset.tipUp;
+  // Measured while laid out but unseen, since it is hidden until the hover or focus lands.
+  tip.style.cssText += ";display:block;visibility:hidden";
+  const height = tip.offsetHeight;
+  tip.style.display = tip.style.visibility = "";
+  b.dataset.tipUp = String(chip.bottom + height > clip.bottom && chip.top - height >= clip.top);
+}
+
+function resetTip(e: SyntheticEvent<HTMLButtonElement>) {
+  delete e.currentTarget.dataset.tipHidden;
+}
+
+// The chip under the pointer, whose tooltip Escape hides even while focus is elsewhere.
+let hovered: HTMLButtonElement | null = null;
+
+function hoverTip(e: SyntheticEvent<HTMLButtonElement>) {
+  placeTip(e);
+  hovered = e.currentTarget;
+  document.addEventListener("keydown", escapeHovered, true);
+}
+
+function leaveTip(e: SyntheticEvent<HTMLButtonElement>) {
+  resetTip(e);
+  if (hovered === e.currentTarget) unhover();
+}
+
+function unhover() {
+  hovered = null;
+  document.removeEventListener("keydown", escapeHovered, true);
+}
+
+// Captured on the document, so it runs before the pane's and the sheet's own Escape.
+function escapeHovered(e: globalThis.KeyboardEvent) {
+  if (e.key !== "Escape") return;
+  const b = hovered;
+  if (!b?.isConnected) return unhover();
+  if (!b.matches(":hover") || b.dataset.tipHidden === "true" || !window.matchMedia("(pointer: fine)").matches) return;
+  b.dataset.tipHidden = "true";
+  e.stopImmediatePropagation();
+  e.preventDefault();
+}
+
+// Escape hides an open tooltip without closing the panel or sheet around it.
+function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
+  const b = e.currentTarget;
+  if (e.key !== "Escape" || b.dataset.tipHidden === "true") return;
+  const open = b.matches(":focus-visible") || (b.matches(":hover") && window.matchMedia("(pointer: fine)").matches);
+  if (!open) return;
+  b.dataset.tipHidden = "true";
+  // Also keeps it from other listeners on the document, such as the sheet's dismiss.
+  e.nativeEvent.stopImmediatePropagation();
+  e.stopPropagation();
+  e.preventDefault();
+}
+
+/** The first dozen chips, then "Show all N" opens the rest in place. A legend explains the quote mark when a chip has one. */
+export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
   return (
-    <div role="group" aria-label={label}>
-      <ul className="flex flex-wrap gap-2">
-        {shown.map((g, i) => (
-          <PinChip
-            key={g.id}
-            guide={g}
-            short={short}
-            pinning={pinning}
-            className={i >= CHIPS_SHOWN ? "reveal-item" : undefined}
-            style={i >= CHIPS_SHOWN ? ({ "--i": i - CHIPS_SHOWN } as CSSProperties) : undefined}
-          />
-        ))}
-      </ul>
-      {guides.length > CHIPS_SHOWN ? (
-        <button
-          type="button"
-          aria-expanded={all}
-          onClick={() => setAll(!all)}
-          className="mt-2 inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-        >
-          {all ? "Show fewer" : `Show all ${guides.length}`}
-        </button>
+    <>
+      {guides.some((g) => g.quoted) ? (
+        <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <span className="text-foreground">{QUOTE_MARK}</span>
+          <span>
+            <span className="sr-only">A quote mark </span>means the guide explained its pick. Read its reasons below.
+          </span>
+        </p>
       ) : null}
-    </div>
+      <div role="group" aria-label={label}>
+        <ul className="flex flex-wrap gap-2">
+          {shown.map((g, i) => (
+            <PinChip
+              key={g.id}
+              guide={g}
+              short={short}
+              pinning={pinning}
+              className={i >= CHIPS_SHOWN ? "reveal-item" : undefined}
+              style={i >= CHIPS_SHOWN ? ({ "--i": i - CHIPS_SHOWN } as CSSProperties) : undefined}
+            />
+          ))}
+        </ul>
+        {guides.length > CHIPS_SHOWN ? (
+          <button
+            type="button"
+            aria-expanded={all}
+            onClick={() => setAll(!all)}
+            className="mt-2 inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
+          >
+            {all ? "Show fewer" : `Show all ${guides.length}`}
+          </button>
+        ) : null}
+      </div>
+      <GuidePages guides={guides} short={short} side={side} />
+    </>
+  );
+}
+
+/** Plain links to each chip's guide page, in the chips' order: a dozen, then "and N more" shows the rest. */
+function GuidePages({ guides, short, side }: { guides: ChipGuide[]; short: boolean; side: string }) {
+  const [open, setOpen] = useState(false);
+  const [all, setAll] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+  // "and N more" unmounts once pressed, so focus moves to the first link it showed.
+  const revealed = useRef(false);
+  useEffect(() => {
+    if (!revealed.current) return;
+    revealed.current = false;
+    listRef.current?.querySelectorAll("a")[CHIPS_SHOWN]?.focus();
+  }, [all]);
+  const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
+  const more = guides.length - shown.length;
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="text-sm">
+      <CollapsibleTrigger className="-my-1 inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-md font-semibold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8">
+        Guide pages<span className="sr-only"> for {side}</span>
+        <ChevronDown aria-hidden="true" className={cn("size-3.5 text-muted-foreground transition-transform", open && "rotate-180")} />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="reveal">
+        <div className="pt-1 leading-loose text-muted-foreground">
+          {/* An explicit role, since Safari drops list semantics from an unstyled inline list. */}
+          <ul ref={listRef} role="list" aria-label={`Guide pages for ${side}`} className="inline">
+            {shown.map((g, i) => (
+              <li key={g.id} className="inline">
+                <Link href={`/guides/${g.id}`} className={`${TAP} text-foreground underline decoration-foreground/30 underline-offset-[3px] hover:decoration-foreground`}>
+                  {short ? g.short : g.name}
+                </Link>
+                {i < shown.length - 1 || more ? <span aria-hidden="true">, </span> : null}
+              </li>
+            ))}
+          </ul>
+          {more ? (
+            <button
+              type="button"
+              onClick={() => {
+                revealed.current = true;
+                setAll(true);
+              }}
+              className={`${TAP} cursor-pointer rounded-md underline underline-offset-[3px] outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50`}
+            >
+              and {more} more<span className="sr-only"> guide pages for {side}</span>
+            </button>
+          ) : null}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -233,6 +391,7 @@ export function NoPickBlock({ pinning, short }: { pinning: PinControls; short: b
         short={short}
         pinning={pinning}
         label="Guides with no pick"
+        side="No pick"
       />
     </section>
   );

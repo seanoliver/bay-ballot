@@ -13,15 +13,12 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
-import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, type PinControls, type Pinning } from "./ContestPins";
+import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, TAP, type PinControls, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
 import { useCarriedQuery } from "./useBallotFilters";
 import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
-
-// Inline links keep their line height but get a 40px-tall tap area.
-const TAP = "inline-block py-2.5 -my-2.5";
 
 const LEAD_TEXT: Record<ResultHeadline["tone"], string> = {
   yes: "text-yes",
@@ -217,7 +214,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
         {heading}
         <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
       </div>
-      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} />
+      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
