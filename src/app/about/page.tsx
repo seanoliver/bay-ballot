@@ -123,7 +123,7 @@ export default function AboutPage() {
         <Section title="Privacy">
           <List>
             <li>Bay Ballot counts page views with Vercel Web Analytics and Ahrefs Web Analytics, which also counts link clicks. Neither uses cookies.</li>
-            <li>It never records addresses or ZIP codes.</li>
+            <li>It never records addresses or ZIP codes. A ZIP code you enter stays on your device.</li>
           </List>
         </Section>
 

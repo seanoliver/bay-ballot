@@ -39,6 +39,11 @@ describe("sheetStep", () => {
       expect(effect).toEqual({ type: "back" });
       expect(sheetStep(state, { type: "popstate" })).toEqual({ state: CLOSED, effect: { type: "replace", search: "?off=a&why=1" } });
     });
+    it("survive closing from the UI when they clear the query", () => {
+      const cleared = sheetStep(opened("?off=a"), { type: "change", search: "" }).state;
+      const { state } = sheetStep(cleared, { type: "dismiss" });
+      expect(sheetStep(state, { type: "popstate" })).toEqual({ state: CLOSED, effect: { type: "replace", search: "" } });
+    });
     it("survive the Back button", () => {
       expect(sheetStep(changed(), { type: "popstate" })).toEqual({ state: CLOSED, effect: { type: "replace", search: "?off=a&why=1" } });
     });

@@ -1,0 +1,36 @@
+guide: cal-electric-rail
+election: 2026-11
+status: published
+source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+archived:
+  - source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+    snapshot: https://web.archive.org/web/20261013162841/https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+fetchedAt: 2026-10-13
+hasReasoning: true
+picks:
+  prop-2:
+    pick: Y
+    quotes:
+      - text: Proposition 2 is a sensible solution that allows the Legislature to bank more money in peak years to reduce downside risks when the economy falters.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+      - text: Prop 2 would increase the size of the Rainy Day Fund to 20% of revenues, ensuring more consistent funding from year to year.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+  prop-43:
+    pick: N
+    quotes:
+      - text: This measure would handicap the ability of local governments to raise revenue for transit service and capital projects by raising the margin to two thirds for citizen tax initiatives.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+      - text: Prop 43 would seriously hamper future attempts to save transit systems like Metrolink, NCTD, or San Diego MTS from impending fiscal cliffs.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+  prop-45:
+    pick: N
+    quotes:
+      - text: This measure - written and funded by the sprawl lobby - may seem like an antidote to slow timelines and onerous requirements of CEQA for housing and infrastructure. But its benefits overwhelmingly accrue to freeway widening and low density single family homes far from jobs rather than transit and infill housing.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+  rtm:
+    pick: Y
+    quotes:
+      - text: If measure RTM doesn’t pass, severe service cuts to BART, Caltrain, Muni, and other Bay Area transit agencies could go into effect as soon as January 2027.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/
+      - text: Failure to pass RTM would mean undoing the success of Caltrain electrification, create a traffic nightmare, and harm the Bay Area economy.
+        source: https://calelectricrail.org/2026-californians-for-electric-rail-voter-guide/

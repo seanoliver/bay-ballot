@@ -22,6 +22,9 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
+import { buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, droppedSlivers, poolDistrictCounties, shapesById, zctaShapesUrl, zipTableJson } from "../src/pipeline/zips";
+import { districtMapKey } from "../src/lib/zip";
+import { placeCounty } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
 const ELECTION = process.env.BB_ELECTION ?? "2026-11";
@@ -36,6 +39,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- check
        npm run bb -- review [--no-open]
        npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
+       npm run bb -- zips   (downloads Census ZIP overlap tables and district maps; writes src/data/zips.json)
        npm run bb -- notify --scope cloud|local [--result <file.json>] [--click <url>] [--crashed] [--conflict] [--failed <reason>]
                             [--record <file.json>] [--run-url <url>] [--pr <number>] [--exit-code <n>]
 
@@ -445,6 +449,65 @@ async function runNotify(): Promise<void> {
   if (sent === "sent") console.log("Phone notification sent.");
 }
 
+// The ballot's county names by Census GEOID; a new county needs its GEOID here.
+const BAY_COUNTIES: Record<string, string> = {
+  "06001": "Alameda", "06013": "Contra Costa", "06041": "Marin", "06055": "Napa", "06075": "San Francisco",
+  "06081": "San Mateo", "06085": "Santa Clara", "06095": "Solano", "06097": "Sonoma",
+};
+
+async function runZips() {
+  const data = loadElection(ROOT, ELECTION);
+  const places = new Set<string>();
+  for (const c of data.ballot.contests) {
+    if (c.jurisdiction.level === "city") places.add(c.jurisdiction.name);
+    for (const p of c.jurisdiction.within ?? []) if (p.level === "city") places.add(p.name);
+  }
+  const counties = new Set(data.ballot.contests.flatMap((c) => [c.jurisdiction, ...(c.jurisdiction.within ?? [])]).filter((p) => p.level === "county").map((p) => p.name));
+  const unknown = [...counties].filter((c) => !Object.values(BAY_COUNTIES).includes(c));
+  if (unknown.length) throw new Error(`no Census GEOID for ${unknown.join(", ")}: add it to BAY_COUNTIES in scripts/bb.ts`);
+  const get = async (url: string) => {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return r.text();
+  };
+  const [countyText, placeText] = await Promise.all([get(CENSUS_URLS.county), get(CENSUS_URLS.place)]);
+  const { communities, zips } = buildZipTable({ countyText, placeText, counties: BAY_COUNTIES, places });
+  const found = new Set(Object.values(zips).flatMap((z) => Object.keys(z.places)));
+  const missing = [...places].filter((p) => !found.has(p));
+  if (missing.length) throw new Error(`no ZIP overlaps ${missing.join(", ")}: check the spelling against Census place names`);
+  const cityCounty: Record<string, string> = {};
+  for (const p of [...places].sort()) {
+    const county = placeCounty({ level: "city", name: p }, data.areas);
+    if (!county) throw new Error(`no area lists the city ${p}, so its county is unknown: add it to its county's area file`);
+    cityCounty[p] = county;
+  }
+  const districtCounties = poolDistrictCounties(data.ballot.contests, cityCounty);
+  for (const m of DISTRICT_MAPS) {
+    const key = districtMapKey(m.place, m.seat);
+    const inPlace = Object.keys(zips).filter((z) => (m.place.level === "county" ? zips[z].counties : Object.keys(zips[z].places)).includes(m.place.name));
+    const [mapText, zctaText] = await Promise.all([get(m.url), get(zctaShapesUrl(inPlace))]);
+    const districts = shapesById(mapText, m.field, m.url);
+    if (Object.keys(districts).length !== m.count) throw new Error(`${key}: expected ${m.count} districts, found ${Object.keys(districts).sort().join(", ")}`);
+    const shapes = shapesById(zctaText, "ZCTA5", "TIGERweb ZCTAs");
+    const lost = inPlace.filter((z) => !shapes[z]);
+    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
+    const shares = districtShares(shapes, districts);
+    const dropped = droppedSlivers(shares, m.slivers);
+    for (const d of dropped) console.log(`${key}: dropped ${d.zip} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land${d.unseen ? " (not yet looked at)" : ""}`);
+    const unseen = dropped.filter((d) => d.unseen);
+    if (unseen.length) throw new Error(`${key}: look at ${unseen.map((d) => `${d.zip}/${d.district}`).join(", ")} on a map; if each is a border sliver, add it to slivers in DISTRICT_MAPS`);
+    for (const z of inPlace) {
+      const touched = shares[z] ? districtsTouched(shares[z]) : [];
+      if (touched.length) (zips[z].districts ??= {})[key] = touched;
+      else console.warn(`warning: ZIP ${z} reaches ${m.place.name} but no ${m.seat} district; its contests stay maybe`);
+    }
+  }
+  const out = path.join(process.cwd(), "src", "data", "zips.json");
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, zipTableJson({ cityCounty, districtCounties, communities, zips }));
+  console.log(`Wrote ${Object.keys(zips).length} ZIPs to ${path.relative(process.cwd(), out)}.`);
+}
+
 async function main(): Promise<void> {
   if (flag("--help") || flag("-h")) return console.log(USAGE);
   if (cmd === "extract") await runExtract();
@@ -457,6 +520,7 @@ async function main(): Promise<void> {
   else if (cmd === "review") runReview();
   else if (cmd === "quote-lint") runQuoteLint();
   else if (cmd === "notify") await runNotify();
+  else if (cmd === "zips") await runZips();
   else {
     console.log(USAGE);
     if (cmd !== undefined) process.exitCode = 1;

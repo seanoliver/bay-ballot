@@ -1,7 +1,7 @@
 id: lwv-bay-area
 name: League of Women Voters of the Bay Area
 shortName: "LWV Bay Area"
-description: The regional council of Bay Area Leagues of Women Voters, which takes positions on regional measures and does not endorse candidates.
+description: The League of Women Voters body that links the local Leagues across the Bay Area. The local Leagues' representatives elect its board, and it says it acts after study and member agreement on key community issues.
 type: civic
 homepage: https://www.lwvbayarea.org/
 areas: [contra-costa, santa-clara-county, san-jose, alameda-county, oakland, berkeley]

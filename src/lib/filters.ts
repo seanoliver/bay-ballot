@@ -2,12 +2,26 @@ import type { EndorsementFile, Entry, Guide, GuideType } from "./schema";
 
 export type Filters = {
   off: string[];
+  /** When set, the only guides counted; `off` is kept for when it's cleared. */
+  only: string[];
   whyOnly: boolean;
+  /** Guides whose picks show on every contest row, in the order they were pinned. */
+  pins: string[];
 };
+
+export const MAX_PINS = 4;
+
+/**
+ * Who owns each filter. Shared filters are the view a link describes: the URL's win, and every change saves them.
+ * Reader-owned filters are the reader's own list: a link's pins show while it's open, but only the reader's own
+ * pin and unpin save them, so opening someone else's link never replaces what the reader saved.
+ */
+export const SHARED_KEYS = ["off", "only", "whyOnly"] as const satisfies readonly (keyof Filters)[];
+export const READER_KEYS = ["pins"] as const satisfies readonly (keyof Filters)[];
 
 export const FILTERS_KEY = "bb-filters";
 
-export const EMPTY: Filters = { off: [], whyOnly: false };
+export const EMPTY: Filters = { off: [], only: [], whyOnly: false, pins: [] };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
 export type FilterGuide = Pick<Guide, "id" | "type">;
@@ -16,29 +30,35 @@ export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archive
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
 const parseList = (v: string | null) => uniqSorted((v ?? "").split(",").map((s) => s.trim()).filter(Boolean));
 const without = (xs: string[], x: string) => xs.filter((y) => y !== x);
+const parsePins = (v: string | null) => [...new Set((v ?? "").split(",").map((s) => s.trim()).filter(Boolean))];
 
 export function toQuery(f: Filters): string {
   const p = new URLSearchParams();
   const off = uniqSorted(f.off);
   if (off.length) p.set("off", off.join(","));
+  const only = uniqSorted(f.only);
+  if (only.length) p.set("only", only.join(","));
   if (f.whyOnly) p.set("why", "1");
+  if (f.pins.length) p.set("pin", f.pins.join(","));
   return p.toString();
 }
 
 // Nothing writes `offtypes` any more, but old shared URLs still carry it.
-export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []): Filters {
+export function fromQuery(q: string | URLSearchParams, guides: Pick<Guide, "id" | "type">[] = []): Filters {
   const p = new URLSearchParams(q);
   const offTypes = parseList(p.get("offtypes"));
   const fromTypes = guides.filter((g) => offTypes.includes(g.type)).map((g) => g.id);
   return {
     off: uniqSorted([...parseList(p.get("off")), ...fromTypes]),
+    only: parseList(p.get("only")),
     whyOnly: p.get("why") === "1",
+    pins: parsePins(p.get("pin")),
   };
 }
 
-export function hasFilterParams(q: string): boolean {
+export function hasFilterParams(q: string | URLSearchParams): boolean {
   const p = new URLSearchParams(q);
-  return ["off", "offtypes", "why"].some((k) => p.has(k));
+  return ["off", "only", "offtypes", "why", "pin"].some((k) => p.has(k));
 }
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
@@ -80,11 +100,46 @@ function isCounted(f: Filters, id: string, file: PickFile): boolean {
 }
 
 export function isGuideOn(f: Filters, id: string): boolean {
-  return !f.off.includes(id);
+  return f.only.length ? f.only.includes(id) : !f.off.includes(id);
+}
+
+// Turns guides on or off in whichever list is counting: `only` while it's set, else `off`.
+function setGuides(f: Filters, ids: string[], on: boolean): Filters {
+  if (f.only.length) {
+    if (on) return { ...f, only: uniqSorted([...f.only, ...ids]) };
+    const only = f.only.filter((id) => !ids.includes(id));
+    // Emptying `only` falls back to `off`, which must then hold what was just turned off.
+    return only.length ? { ...f, only } : { ...f, only, off: uniqSorted([...f.off, ...ids]) };
+  }
+  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
+}
+
+export const isPinned = (f: Filters, id: string) => f.pins.includes(id);
+
+/** Unpins a pinned guide, or pins it last; past MAX_PINS nothing changes. */
+export function togglePin(f: Filters, id: string): Filters {
+  if (isPinned(f, id)) return { ...f, pins: without(f.pins, id) };
+  return f.pins.length < MAX_PINS ? { ...f, pins: [...f.pins, id] } : f;
+}
+
+export type PinnedPick = { guide: GuideInfo; entry: Entry };
+
+export const NO_PINS: PinnedPick[] = [];
+
+/** The pinned guides that took a position on a contest, in pin order. Counting filters don't apply: a pin is a guide the reader chose to see. */
+
+export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo[], files: Record<string, PickFile>): PinnedPick[] {
+  const out: PinnedPick[] = [];
+  for (const id of pins) {
+    const guide = guides.find((g) => g.id === id);
+    const entry = files[id]?.picks[contestId];
+    if (guide && entry) out.push({ guide, entry });
+  }
+  return out.length ? out : NO_PINS;
 }
 
 export function toggleGuide(f: Filters, id: string): Filters {
-  return { ...f, off: isGuideOn(f, id) ? uniqSorted([...f.off, id]) : without(f.off, id) };
+  return setGuides(f, [id], !isGuideOn(f, id));
 }
 
 export function filterSummary(
@@ -102,7 +157,12 @@ export function countedLabel({ counted, published }: { counted: number; publishe
 
 export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
-  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly };
+  return {
+    off: f.off.filter((id) => ids.has(id)),
+    only: f.only.filter((id) => ids.has(id)),
+    whyOnly: f.whyOnly,
+    pins: f.pins.filter((id) => ids.has(id)).slice(0, MAX_PINS),
+  };
 }
 
 export function initialFilters({
@@ -114,8 +174,24 @@ export function initialFilters({
   stored: string | null;
   guides: Pick<Guide, "id" | "type">[];
 }): Filters {
-  const raw = hasFilterParams(query) ? query : (stored ?? "");
-  return sanitizeFilters(fromQuery(raw, guides), guides);
+  const saved = sanitizeFilters(fromQuery(stored ?? "", guides), guides);
+  const p = new URLSearchParams(query);
+  if (!hasFilterParams(p)) return saved;
+  const out = sanitizeFilters(fromQuery(p, guides), guides);
+  // A link with no pins it can show (none, or only unknown guides) shows the reader's saved ones.
+  for (const k of READER_KEYS) if (!out[k].length) out[k] = saved[k];
+  return out;
+}
+
+/**
+ * What to save after a change from `prev` to `next`. Shared filters are saved as they are. Pins on screen may be a
+ * link's or a stale tab's, so only this change's pin and unpin apply to the stored list; stored pins come first, so
+ * past MAX_PINS a new pin shows but isn't saved. `stored` must be sanitized, so a retired guide can't hold a slot.
+ */
+export function savedFilters({ prev, next, stored }: { prev: Filters; next: Filters; stored: Filters }): Filters {
+  const removed = prev.pins.filter((id) => !next.pins.includes(id));
+  const added = next.pins.filter((id) => !prev.pins.includes(id) && !stored.pins.includes(id));
+  return { ...next, pins: [...stored.pins.filter((id) => !removed.includes(id)), ...added].slice(0, MAX_PINS) };
 }
 
 // Not derived from the zod enum: client code must not import zod.
@@ -136,8 +212,7 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
 }
 
 export function setTypeGroup(f: Filters, type: string, guides: FilterGuide[], on: boolean): Filters {
-  const ids = guides.filter((g) => g.type === type).map((g) => g.id);
-  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
+  return setGuides(f, guides.filter((g) => g.type === type).map((g) => g.id), on);
 }
 
 export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
@@ -178,7 +253,7 @@ export function contestFiles(contestId: string, files: Record<string, PickFile>)
 }
 
 export function revealGuides(f: Filters, ids: string[], files: Record<string, PickFile>): Filters {
-  return { off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
+  return { ...setGuides(f, ids, true), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
 }
 
 export const hiddenLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} hidden`;

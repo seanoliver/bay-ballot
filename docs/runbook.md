@@ -161,6 +161,8 @@ After every refresh, the GitHub job and the local job send a phone push through 
 
 Guides with `manual: true` are skipped by `extract`. Their picks are hand-entered or hand-corrected, so re-check their pages by hand during the refresh. As of 2026-10-06 these are lwv-ca, d2-dems (slate is an image), uesf, housing-action-coalition (hand-corrected after review), smc-dems (slate is a PNG on its homepage), smc-labor-council (picks are Word documents), svgop (slate is a JPG card), and since 2026-10-07 contra-costa-gop (two PNG slates), lamorinda-dems (city JPGs; only checkmarked names are endorsements) and contra-costa-labor-council (federal and state picks are headshot images), and since 2026-10-08 acdp and apadc (Alameda; their sites return 403 to plain and headless fetches, so picks are hand-entered from pages read in a real browser) and acgop (only two Union City picks are for November), and since 2026-10-09 sonoma-gop (two PNG slates), sonoma-farm-bureau (one PNG voter guide) and northern-solano-dems (19 image cards on a Google Site). `npm run bb -- check` lists them.
 
+lwv-ca's measure quotes (2026-10-13, #164) were extracted and verified with its `manual` flag lifted for those two runs, and its page text is stored in `data/2026-11/pages/lwv-ca/`. The pipeline never refreshes that text, because manual guides skip `pages --seed` and the refresh page check, so when lwvc.org/ballot-recommendations changes, recheck its quotes by hand against the live page.
+
 When you widen a guide's `areas`, add the area to `data/guides/<guide>.yml` (and any new `extraSources`). Don't run `pages --seed` first: it would store the new page text, and the scoped run could no longer tell what changed. Then run `npm run bb -- extract <guide...> --only-areas <area>[,<area>]`, for example `--only-areas san-mateo`. The area must already have a file in `data/areas/`.
 
 - In scope are the contests the new areas add to the guide's ballot: their county and city contests, and a shared district (a new Congress or Assembly district) that none of the guide's other areas covers. Statewide contests and shared contests the guide already had are out of scope.
@@ -175,6 +177,15 @@ Use a full `extract --force-extract` only to re-read a guide whose page changed.
 To keep a bad quote out for good, add it to the guide's `rejectedQuotes` (`text` and `reason`) in its endorsement file. Extraction never writes a listed quote back, and `npm run validate` fails if a pick quotes one. The San Mateo audits of 2026-10-06 seeded this list for courage-california, lwv-ssmc, lwv-ncsmc, green-foothills and bay-rising-action.
 
 Any hand edit to a guide that is **not** manual (picks, `ranked`, `hasReasoning`) is overwritten by the next `extract`. A hand-added quote survives a re-extract, `--force-extract` included, while its pick is unchanged and the quote still passes the extractor's quote checks on its source page. Either mark the guide `manual: true`, or fix the input instead: add a contest alias, or add the explanation pages to `extraSources`.
+
+## Guide descriptions
+
+Every guide's `description` in `data/guides/<guide>.yml` is shown on its guide page. Write one for each new guide before it goes live:
+
+- 1 or 2 sentences, 150 to 250 characters. `npm run validate` fails over 250, when empty, or on a dash or line break. Every guide gets the same budget so none looks more credible by length.
+- In order, as far as sources support it: who they are (kind of organization, where, founding year, members or audience), what they focus on, and how they decide endorsements (member vote, committee, editorial board).
+- Describe their politics only in their own words or with their literal identity ("Democratic club", "Republican Party committee"). Attribute superlatives: "describes itself as the oldest...".
+- Source every claim from the organization's own pages first, then reliable coverage, and add the guide and its URLs to `docs/guide-description-sources.md`. Leave out anything you can't source.
 
 ## Ballot and area files
 

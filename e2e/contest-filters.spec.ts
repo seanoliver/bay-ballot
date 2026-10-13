@@ -33,7 +33,7 @@ test.describe("contest page filters", () => {
   test("hiding a guide changes the counts and the answer, not the title or description, and says so", async ({ page }, info) => {
     await openContest(page);
     const answer = page.getByText(ANSWER);
-    const no = page.getByRole("heading", { level: 3, name: /^No/ });
+    const no = page.getByRole("heading", { level: 3, name: /^No\s*\d/ });
     const before = (await answer.textContent())!;
     const [, k, n] = before.match(/^(\d+) of (\d+) /)!;
     const noBefore = Number((await no.textContent())!.match(/(\d+) guides?/)![1]);

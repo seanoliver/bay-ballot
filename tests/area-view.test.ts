@@ -5,7 +5,7 @@ import { areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/are
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
 import { fallbackFor, scopeName } from "@/lib/fallback";
-import { pendingGuides, publishedFiles, publishedGuides, type FilterGuide, type GuideInfo } from "@/lib/filters";
+import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
 import type { Area } from "@/lib/schema";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
@@ -25,7 +25,7 @@ function before(d: ElectionData, area: Area | null) {
     intro: electionIntro({ ...d.ballot, contests }, files, { place: placeName(area).name }),
     groups,
     guides,
-    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, type }): FilterGuide => ({ id, type })),
+    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, name, shortName, type }) => ({ id, name, ...(shortName ? { shortName } : {}), type })),
     files,
     pending: pendingNote(pendingGuides(inScope, d.endorsements)),
     ...(area
@@ -48,7 +48,9 @@ describe("areaView", () => {
 
   it.each([null, ...d.areas.map((a) => a.id)])("matches the server's old props for %s, from the snapshot and from its JSON", (id) => {
     const area = id === null ? null : d.areas.find((a) => a.id === id)!;
-    const { area: shown, title, ...view } = areaView(snap, id);
+    const { area: shown, title, noPick, ...view } = areaView(snap, id);
+    // No pick's scope is new with the list's contest detail; checked in contest-pins.test.ts.
+    expect(noPick === undefined).toBe(id === null);
     expect(shown).toBe(id);
     expect(title).toMatch(/ endorsements \(Nov 2026\)$/);
     expect(view).toEqual(before(d, area));

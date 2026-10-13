@@ -26,7 +26,7 @@ contests:
     title: El Camino Healthcare District Measure S
     kind: measure
     description: "Term limits for District Directors"
-    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: district, name: El Camino Healthcare District, district: "at-large", within: [{ level: city, name: Palo Alto }, { level: city, name: Los Altos Hills }, { level: city, name: Los Altos }, { level: city, name: Mountain View }, { level: city, name: Sunnyvale }, { level: city, name: Cupertino }, { level: city, name: Santa Clara }] }
   - id: palo-alto-council
     section: Local candidates
@@ -41,7 +41,7 @@ contests:
     title: Palo Alto Measure J
     kind: measure
     description: "Community Safety/Services Measure (1/2 cent sales tax)"
-    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Palo Alto }
   - id: pausd-trustee
     section: School and special districts
@@ -63,14 +63,14 @@ contests:
     title: Mountain View Measure E
     kind: measure
     description: "City Charter amendments (modernize provisions)"
-    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Mountain View }
   - id: mountain-view-measure-f
     section: Local measures
     title: Mountain View Measure F
     kind: measure
     description: "Transient occupancy tax increase"
-    link: https://vote.santaclaracounty.gov/elections/november-3-2026-general-election
+    link: https://vote.santaclaracounty.gov/list-local-measures-4
     jurisdiction: { level: city, name: Mountain View }
   - id: mvla-trustee-area-3
     section: School and special districts

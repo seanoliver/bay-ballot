@@ -1,7 +1,7 @@
 id: pa-daily-post
 name: Palo Alto Daily Post
 shortName: "Daily Post"
-description: A free daily newspaper covering Palo Alto and nearby cities, whose editorial board endorses in local races and measures.
+description: A free daily newspaper in Palo Alto started in 2008 by Dave Price and Jim Pavelich, covering Palo Alto and nearby Peninsula cities. Its endorsements run as unsigned Daily Post Editorials.
 type: newspaper
 homepage: https://padailypost.com/
 areas: [san-mateo, palo-alto, mountain-view, santa-clara-county, san-jose]

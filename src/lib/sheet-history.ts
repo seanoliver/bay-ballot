@@ -21,7 +21,11 @@ export function sheetStep(state: SheetState, event: SheetEvent): { state: SheetS
     case "dismiss":
       if (!state.open) return { state: CLOSED, effect: null };
       if (!state.pushed) return { state: CLOSED, effect: null };
-      return { state: { ...CLOSED, ...(changed(state) ? { restore: changed(state) } : {}) }, effect: { type: "back" } };
+      {
+        // Compared to null: a change back to no query at all ("") still has to survive the back().
+        const restore = changed(state);
+        return { state: { ...CLOSED, ...(restore !== null ? { restore } : {}) }, effect: { type: "back" } };
+      }
     case "popstate": {
       // Back pressed with the sheet open, or the popstate from our own back() after a dismiss.
       const search = state.open ? changed(state) : (state.restore ?? null);
