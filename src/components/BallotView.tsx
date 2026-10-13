@@ -122,8 +122,6 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   const [zipError, setZipError] = useState(false);
   const zipErrorId = useId();
   const zipHintId = useId();
-  // The ZIP is one of the area choices: it narrows the Bay Area list, so it's in effect only there, until another
-  // area chip is picked. Picking one keeps the ZIP saved, one tap from coming back.
   // The ZIP is one of the area choices: its ballot is the Bay Area list narrowed to it, marked by ?mine=1 so Back,
   // Forward and reload show what they showed. The flag names no ZIP; picking another area drops it, keeping the ZIP.
   const [mine] = useQueryParam(MINE_PARAM);
