@@ -18,7 +18,8 @@ export type ZipSummary =
   | { kind: "elsewhere"; where: string; links: BallotLink[] }
   | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
-const CHIP = "js-only inline-flex min-h-10 items-center gap-2 rounded-full pr-3 pl-2.5";
+// One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
+const CHIP = "js-only inline-flex min-h-10 min-w-[8.75rem] items-center gap-2 rounded-full pr-3 pl-2.5";
 const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset-2 hover:text-foreground";
 
 /**
@@ -60,7 +61,6 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   // Escape returns focus to the chip; leaving the field closes it where focus went.
   const close = ({ refocus }: { refocus: boolean }) => {
     setEditing(false);
-    setError(false);
     setDraft("");
     if (refocus) focusNext.current = "chip";
   };
@@ -73,7 +73,13 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
 
   if (editing) {
     return (
-      <span className={cn(CHIP, "bg-card ring-2 ring-foreground")}>
+      <span
+        className={cn(CHIP, "bg-card ring-2 ring-foreground")}
+        onMouseDown={(e) => {
+          // A click on the chip's own padding or pin would otherwise blur and close the field.
+          if (e.target !== inputRef.current) e.preventDefault();
+        }}
+      >
         <MapPin aria-hidden className="size-4 shrink-0" />
         <input
           ref={inputRef}
@@ -88,11 +94,16 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
           className="w-[5.5rem] bg-transparent text-base outline-none placeholder:text-muted-foreground sm:text-sm"
           onChange={(e) => take(e.target.value)}
           onPaste={(e) => {
-            // A pasted address or ZIP+4 carries its ZIP as a 5-digit word; stripping every non-digit would mangle it.
-            const found = /\b(\d{5})(?:-\d{4})?\b/.exec(e.clipboardData.getData("text"));
-            if (!found) return;
-            e.preventDefault();
-            take(found[1]);
+            // A pasted address ends with its ZIP (a street number can also be 5 digits); stripping every non-digit would mangle it.
+            const text = e.clipboardData.getData("text");
+            const found = [...text.matchAll(/\b(\d{5})(?:-\d{4})?\b/g)].at(-1);
+            if (found) {
+              e.preventDefault();
+              take(found[1]);
+            } else if (/[^\d\s-]/.test(text)) {
+              e.preventDefault();
+              setError(true);
+            }
           }}
           onKeyDown={(e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -104,7 +115,10 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
               else setError(true);
             }
           }}
-          onBlur={() => close({ refocus: false })}
+          onBlur={() => {
+            // Switching apps blurs the field too; the browser refocuses it on return, so keep what was typed.
+            if (document.hasFocus()) close({ refocus: false });
+          }}
         />
       </span>
     );
@@ -117,6 +131,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
         className={cn(CHIP, "border border-dashed border-foreground/40 text-foreground/80 hover:bg-muted")}
         onClick={() => {
           setEditing(true);
+          setError(false);
           focusNext.current = "input";
         }}
       >
@@ -126,7 +141,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     );
   }
   return (
-    <span className="js-only inline-flex min-h-10 items-center rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
+    <span className="js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
       <button
         ref={chipRef}
         type="button"
@@ -135,6 +150,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
         onClick={() => {
           setDraft(zip);
           setEditing(true);
+          setError(false);
           focusNext.current = "input";
         }}
       >
@@ -157,13 +173,12 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
 }
 
 /** The one muted line under the chips that says what the ZIP did. */
-export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, editing, error, errorId, hintId }: {
+export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, error, errorId, hintId }: {
   zip: string | null;
   summary: ZipSummary | null;
   showAll: boolean;
   onShowAll: (v: boolean) => void;
   onRetry: () => void;
-  editing: boolean;
   error: boolean;
   errorId: string;
   hintId: string;
@@ -173,7 +188,7 @@ export function ZipStatus({ zip, summary, showAll, onShowAll, onRetry, editing, 
       <p id={errorId} role="alert" className="font-medium text-foreground empty:sr-only">
         {error ? "Enter a 5-digit ZIP code." : ""}
       </p>
-      <p id={hintId} className={editing ? undefined : "sr-only"}>
+      <p id={hintId} hidden>
         Filters as soon as you type 5 digits. Saved only on this device.
       </p>
       {zip && summary ? <ZipLines zip={zip} summary={summary} showAll={showAll} onShowAll={onShowAll} onRetry={onRetry} /> : null}

@@ -63,14 +63,23 @@ test.describe("ZIP filter", () => {
     await expect(page.getByRole("button", { name: "Your ZIP" })).not.toBeFocused();
   });
 
+  test("closing the field by clicking Show all still clicks Show all", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "94040");
+    await page.getByRole("button", { name: "ZIP 94040. Change" }).click();
+    await status(page).getByRole("button", { name: "Show all" }).click();
+    await expect(status(page).getByRole("button", { name: "Hide the others" })).toBeVisible();
+    await expect(page.getByLabel("Your ZIP code")).toHaveCount(0);
+  });
+
   test("a pasted address applies its ZIP", async ({ page, context, browserName }, info) => {
     test.skip(browserName !== "chromium" || info.project.name.includes("phone"), "clipboard permissions are Chromium-only");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto(SCC);
     await page.getByRole("button", { name: "Your ZIP" }).click();
-    await page.evaluate(() => navigator.clipboard.writeText("123 Castro St, Mountain View, CA 94041-1234"));
+    await page.evaluate(() => navigator.clipboard.writeText("10050 N Wolfe Rd, Cupertino, CA 95014-2033"));
     await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
-    await expect(page.getByRole("button", { name: "ZIP 94041. Change" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "ZIP 95014. Change" })).toBeVisible();
   });
 
   test("a shared link to a contest the ZIP hides still opens it", async ({ page }) => {

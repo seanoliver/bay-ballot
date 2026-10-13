@@ -166,7 +166,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
   };
   // Announced only after the visitor acts on the box, and only on the page where they did.
   const [zipActedOn, setZipActedOn] = useState<string | null | undefined>(undefined);
-  const announced = zipActedOn === area && zipSummary ? zipSpoken(zip!, zipSummary, showAll) : "";
+  const announced = zipActedOn !== area ? "" : zipSummary ? zipSpoken(zip!, zipSummary, showAll) : "ZIP cleared. Showing every contest.";
   const setShowAll = (v: boolean) => {
     setZipActedOn(area);
     stepWrite.cancel();
@@ -504,7 +504,6 @@ export function BallotView({ election, area, county, city, links, intro, groups:
             zip={zip}
             summary={zipSummary}
             showAll={showAll}
-            editing={zipEditing}
             error={zipError}
             errorId={zipErrorId}
             hintId={zipHintId}
