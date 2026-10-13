@@ -1,7 +1,7 @@
 id: sf-examiner
 name: San Francisco Examiner
 shortName: "SF Examiner"
-description: The editorial board of the San Francisco Examiner, a newspaper founded in 1863. The paper says its endorsements are decided solely by its ownership and opinion editor, separate from the newsroom.
+description: The San Francisco Examiner, a newspaper founded in 1863. The paper says its endorsements are decided solely by its ownership and opinion editor, separate from the newsroom.
 type: newspaper
 homepage: https://www.sfexaminer.com/
 areas: [sf]

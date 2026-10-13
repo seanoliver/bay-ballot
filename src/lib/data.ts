@@ -172,7 +172,8 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
     // A cap keeps any one guide from looking more credible by length; the full standard is in docs/runbook.md (Guide descriptions).
     const len = g.description.trim().length;
     if (len === 0 || len > GUIDE_DESCRIPTION_MAX) errors.push(`guide '${g.id}': description must be 1 to ${GUIDE_DESCRIPTION_MAX} characters (has ${len})`);
-    if (/[\u2013\u2014]/.test(g.description)) errors.push(`guide '${g.id}': description has a dash; use a comma, colon or period`);
+    if (/[\u2012-\u2015\u2212]|\s--?\s/.test(g.description)) errors.push(`guide '${g.id}': description has a dash; use a comma, colon, or period`);
+    if (/\n/.test(g.description.trim())) errors.push(`guide '${g.id}': description has a line break`);
     const mine = d.areas.filter((a) => g.areas.includes(a.id));
     const byLetter = new Map<string, string[]>();
     for (const c of d.ballot.contests) {

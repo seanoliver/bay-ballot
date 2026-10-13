@@ -85,10 +85,16 @@ describe("data", () => {
       "guide 'long': description must be 1 to 250 characters (has 251)",
     ]);
   });
-  it("fails when a guide description has an em or en dash", () => {
+  it("fails when a guide description has a dash or a line break", () => {
     const d = base();
-    d.guides[0].description = "A group \u2014 in SF.";
-    expect(validateElection(d).errors).toEqual(["guide 'g': description has a dash; use a comma, colon or period"]);
+    const g = d.guides[0];
+    d.guides = ["A group \u2014 in SF.", "A group \u2013 in SF.", "A group - in SF.", "A group\nin SF.", "A Bay-Area group."].map((description, i) => ({ ...g, id: `g${i}`, description }));
+    expect(validateElection(d).errors).toEqual([
+      "guide 'g0': description has a dash; use a comma, colon, or period",
+      "guide 'g1': description has a dash; use a comma, colon, or period",
+      "guide 'g2': description has a dash; use a comma, colon, or period",
+      "guide 'g3': description has a line break",
+    ]);
   });
   it("fails when an area id collides with a contest id", () => {
     const d = base();

@@ -180,7 +180,7 @@ Any hand edit to a guide that is **not** manual (picks, `ranked`, `hasReasoning`
 
 Every guide's `description` in `data/guides/<guide>.yml` is shown on its guide page. Write one for each new guide before it goes live:
 
-- 1 or 2 sentences, 150 to 250 characters. `npm run validate` fails over 250, when empty, or on an em or en dash. Every guide gets the same budget so none looks more credible by length.
+- 1 or 2 sentences, 150 to 250 characters. `npm run validate` fails over 250, when empty, or on a dash or line break. Every guide gets the same budget so none looks more credible by length.
 - In order, as far as sources support it: who they are (kind of organization, where, founding year, members or audience), what they focus on, and how they decide endorsements (member vote, committee, editorial board).
 - Describe their politics only in their own words or with their literal identity ("Democratic club", "Republican Party committee"). Attribute superlatives: "describes itself as the oldest...".
 - Source every claim from the organization's own pages first, then reliable coverage, and add the guide and its URLs to `docs/guide-description-sources.md`. Leave out anything you can't source.

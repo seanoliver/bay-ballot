@@ -11,7 +11,7 @@ Sources for each guide's `description` in `data/guides/`, checked 2026-10-12. Ea
 
 Abundant San Francisco (`abundant-sf`)
 
-> A San Francisco civic organization formed in 2023 by Zack Rosen that works on housing, transit, street safety, and public spaces. It publishes a voter guide on San Francisco races and measures.
+> A San Francisco civic organization, formed in 2023 and led by Zack Rosen, that works on housing, transit, street safety, and public spaces. It publishes a voter guide on San Francisco races and measures.
 
 - https://sfstandard.com/2023/03/20/tech-families-abundant-sf-millions-housing-transportation-education/: New group being formed in March 2023, led by Zack Rosen, CEO of Pantheon
 - https://www.abundantsanfrancisco.org/: Focus areas: public spaces, homes, transportation, street safety
@@ -360,7 +360,7 @@ League of Women Voters of Berkeley, Albany and Emeryville (`lwv-bae`)
 
 League of Women Voters of the Bay Area (`lwv-bay-area`)
 
-> The League of Women Voters body that links the 20 local Leagues in the nine Bay Area counties. The local Leagues' representatives elect its board, and it says it acts on regional issues after study and member agreement.
+> The League of Women Voters body that links the local Leagues across the Bay Area. The local Leagues' representatives elect its board, and it says it acts after study and member agreement on key community issues.
 
 - https://www.lwvbae.org/about-the-league-2017/lwv-bay-area/: Inter-League Organization of the 20 Bay Area Leagues in the 9 county region; representatives of member leagues elect the board
 - https://www.lwvbayarea.org/about: nonpartisan political membership organization that 'acts after study and member agreement'
@@ -436,7 +436,7 @@ Marin County Republican Party (`marin-gop`)
 
 The Mercury News, East Bay Times and Marin Independent Journal (`mercury-news`)
 
-> Three Bay Area News Group daily papers: The Mercury News of San Jose, founded in 1851, the East Bay Times, and the Marin Independent Journal. Their endorsements run as editorials by the papers' editorial boards.
+> Three Bay Area News Group daily papers: The Mercury News of San Jose (founded in 1851), the East Bay Times, and the Marin Independent Journal. Their endorsements run as editorials by the papers' editorial boards.
 
 - https://en.wikipedia.org/wiki/The_Mercury_News: Mercury News founded 1851; published by Bay Area News Group; East Bay Times and Marin Independent Journal also part of BANG
 - https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/: endorsement editorial bylined "Mercury News & East Bay Times Editorial Boards"
@@ -480,7 +480,7 @@ Napa Solano Central Labor Council (`napa-solano-labor`)
 
 North Bay Labor Council (`nbclc`)
 
-> The AFL-CIO central labor council for Sonoma, Lake, Mendocino, and Marin counties, representing about 70 affiliated unions and over 70,000 working people. It backs candidates who support labor standards.
+> The AFL-CIO central labor council for Sonoma, Lake, Mendocino, and Marin counties, representing about 70 affiliated unions and over 70,000 working people. It says it backs candidates who support labor standards.
 
 - https://www.nbclc.org/about: AFL-CIO labor council; Sonoma, Lake, Mendocino, Marin; some 70 affiliates and over 70,000 working people; elects candidates who support labor standards
 
@@ -537,7 +537,7 @@ The Press Democrat (`press-democrat`)
 > The daily newspaper of Santa Rosa, with coverage centered on Santa Rosa and Sonoma County. Its endorsements are the paper's editorial recommendations on local and county races and ballot measures.
 
 - https://en.wikipedia.org/wiki/The_Press_Democrat: Santa Rosa daily newspaper; coverage centered on Santa Rosa and Sonoma County
-- https://develop.pressdemocrat.com/2010/11/02/press-democrat-recommendations-26: PD recommendations for Santa Rosa and Sonoma County races and measures, with full endorsement editorials
+- https://www.pressdemocrat.com/2026/09/18/pd-endorsement-no-on-prop-4-taxpayer-dollars-should-not-support-campaigns/: 2026 endorsement editorial ("PD endorsement")
 
 Reform California (`reform-california`)
 
@@ -619,7 +619,7 @@ San Francisco Democratic Party (`sf-dems`)
 
 San Francisco Examiner (`sf-examiner`)
 
-> The editorial board of the San Francisco Examiner, a newspaper founded in 1863. The paper says its endorsements are decided solely by its ownership and opinion editor, separate from the newsroom.
+> The San Francisco Examiner, a newspaper founded in 1863. The paper says its endorsements are decided solely by its ownership and opinion editor, separate from the newsroom.
 
 - https://en.wikipedia.org/wiki/San_Francisco_Examiner: founded 1863
 - https://www.sfexaminer.com/forum/the-examiner-endorses-scott-wiener-for-congress/article_3a99b870-b22d-41bc-b1ca-6d81910349e1.html: endorsements determined solely by ownership and opinion editor; newsroom not involved
@@ -649,14 +649,14 @@ SF Parents Action (`sf-parents-action`)
 
 > A San Francisco parent group founded in 2020 as Decreasing the Distance, now the political affiliate of the San Francisco Parents Coalition, focused on public schools. It calls its endorsement process parent-led.
 
-- https://sfparentaction.org/about/: founded summer 2020; 501c4 political advocacy affiliate of SF Parents Coalition; public school focus
+- https://sfparentaction.org/about/: founded summer 2020; 501c4 political advocacy affiliate of SF Parents Coalition; public school focus; "SF Parent Action (formerly Decreasing the Distance)"
 - https://sfparentaction.org/endorsements/: parent-led process; families submit questions; polling of families
 
 SF Rising Action (`sf-rising-action`)
 
 > A San Francisco 501(c)(4) political fund that describes itself as fighting for working-class communities of color, uniting Black, Latinx, Chinese, and Filipino communities to elect accountable leaders.
 
-- https://www.sfrisingaction.org/about/: 501(c)4; grassroots political fund for working-class communities of color; uniting Black, Latinx, Chinese and Filipino communities
+- https://www.sfrisingaction.org/about/: 501(c)4; grassroots political fund for working-class communities of color; uniting Black, Latinx, Chinese and Filipino communities; works toward "electing leaders" who "stay accountable to us"
 
 San Francisco Tenants Union (`sf-tenants-union`)
 
