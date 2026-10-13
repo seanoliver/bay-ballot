@@ -2,7 +2,7 @@ import { areaGuides, areaLinks, inArea, placeGroups, placeName, type AreaLink, t
 import type { ElectionData } from "./data";
 import { electionIntro, pendingNote } from "./display";
 import { fallbackFor, scopeName, type Fallback } from "./fallback";
-import { isPublished, publishedFiles, type FilterGuide, type GuideInfo, type PickFile } from "./filters";
+import { isPublished, publishedFiles, type GuideInfo, type PickFile } from "./filters";
 import type { Area, Contest } from "./schema";
 import { areaTitle } from "./seo-copy";
 
@@ -24,7 +24,8 @@ export type AreaView = {
   intro: { title: string; line: string };
   groups: PlaceGroup[];
   guides: GuideInfo[];
-  allGuides: FilterGuide[];
+  // Names too, so a guide pinned on another area's page can be listed and unpinned here.
+  allGuides: GuideInfo[];
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
@@ -44,12 +45,13 @@ export function snapshotOf(d: ElectionData): ElectionSnapshot {
 }
 
 // Per snapshot, so every area's view shares one allGuides and filters stay memoized across switches.
-const derived = new WeakMap<ElectionSnapshot, { bay: GuideInfo[]; allGuides: FilterGuide[]; views: Map<string | null, AreaView> }>();
+const derived = new WeakMap<ElectionSnapshot, { bay: GuideInfo[]; allGuides: GuideInfo[]; views: Map<string | null, AreaView> }>();
 function base(s: ElectionSnapshot) {
   let b = derived.get(s);
   if (!b) {
     const published = s.guides.filter((g) => g.published);
-    b = { bay: published.map(info), allGuides: published.map(({ id, type }): FilterGuide => ({ id, type })), views: new Map() };
+    const bay = published.map(info);
+    b = { bay, allGuides: bay, views: new Map() };
     derived.set(s, b);
   }
   return b;

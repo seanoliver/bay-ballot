@@ -33,7 +33,7 @@ describe("ballotViewProps", () => {
       ballot: d.ballot,
       groups: [],
       guides: [{ id: "g", name: "G", type: "civic" }],
-      allGuides: [{ id: "g", type: "civic" }],
+      allGuides: [{ id: "g", name: "G", type: "civic" }],
       files: { g: { hasReasoning: true, picks: {} } },
       pending: "1 guide hasn't published yet.",
     });

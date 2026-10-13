@@ -3,7 +3,7 @@ import {
   filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
-  typeState, pendingGuides, EMPTY,
+  typeState, pendingGuides, EMPTY, MAX_PINS, pinnedPicks, togglePin,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
 import type { EndorsementFile, Guide } from "@/lib/schema";
@@ -20,7 +20,7 @@ const files = publishedFiles(ends);
 
 describe("query string", () => {
   it("round-trips", () => {
-    const f = { off: ["b"], whyOnly: true };
+    const f = { off: ["b"], whyOnly: true, pins: [] };
     expect(fromQuery(toQuery(f))).toEqual(f);
   });
   it("EMPTY round-trips to empty string and back", () => {
@@ -28,7 +28,7 @@ describe("query string", () => {
     expect(fromQuery("")).toEqual(EMPTY);
   });
   it("parses the documented URL format", () => {
-    expect(fromQuery("?off=pov,sf-dems&why=1")).toEqual({ off: ["pov", "sf-dems"], whyOnly: true });
+    expect(fromQuery("?off=pov,sf-dems&why=1")).toEqual({ off: ["pov", "sf-dems"], whyOnly: true, pins: [] });
   });
   it("expands legacy offtypes into the ids of guides of those types", () => {
     const gs = [{ id: "m", type: "club" }, { id: "n", type: "club" }, { id: "s", type: "civic" }] as GuideInfo[];
@@ -41,7 +41,7 @@ describe("query string", () => {
   });
   it("ignores legacy district params (sup, ad, cd, bart) and drops them from the next query", () => {
     const f = fromQuery("off=a&sup=8&ad=17&cd=11&bart=8");
-    expect(f).toEqual({ off: ["a"], whyOnly: false });
+    expect(f).toEqual({ off: ["a"], whyOnly: false, pins: [] });
     expect(toQuery(f)).toBe("off=a");
   });
   it("dedupes ids", () => {
@@ -49,8 +49,8 @@ describe("query string", () => {
     expect(toQuery({ ...EMPTY, off: ["a", "a"] })).toBe("off=a");
   });
   it("produces deterministic output with sorted lists and no offtypes", () => {
-    const a = toQuery({ off: ["z", "a"], whyOnly: true });
-    const b = toQuery({ off: ["a", "z"], whyOnly: true });
+    const a = toQuery({ off: ["z", "a"], whyOnly: true, pins: [] });
+    const b = toQuery({ off: ["a", "z"], whyOnly: true, pins: [] });
     expect(a).toBe(b);
     expect(a).toBe("off=a%2Cz&why=1");
   });
@@ -73,7 +73,7 @@ describe("publishedFiles", () => {
 describe("activeEntries", () => {
   it("excludes off and list-only guides", () => {
     expect(activeEntries("x", guides, files, EMPTY).map((r) => r.guide.id)).toEqual(["a", "b"]);
-    expect(activeEntries("x", guides, files, { ...EMPTY, whyOnly: true }).map((r) => r.guide.id)).toEqual(["a"]);
+    expect(activeEntries("x", guides, files, { ...EMPTY, whyOnly: true, pins: [] }).map((r) => r.guide.id)).toEqual(["a"]);
     expect(activeEntries("x", guides, files, { ...EMPTY, off: ["a"] }).map((r) => r.guide.id)).toEqual(["b"]);
   });
   it("skips guides with no published file or no entry for the contest", () => {
@@ -95,17 +95,17 @@ const info: GuideInfo[] = [
 
 describe("sanitizeFilters", () => {
   it("keeps known guide ids", () => {
-    const f = { off: ["a"], whyOnly: true };
+    const f = { off: ["a"], whyOnly: true, pins: [] };
     expect(sanitizeFilters(f, info)).toEqual(f);
   });
   it("drops unknown guide ids", () => {
-    expect(sanitizeFilters({ off: ["a", "nope"], whyOnly: false }, info)).toEqual({ off: ["a"], whyOnly: false });
+    expect(sanitizeFilters({ off: ["a", "nope"], whyOnly: false, pins: [] }, info)).toEqual({ off: ["a"], whyOnly: false, pins: [] });
   });
 });
 
 describe("initialFilters", () => {
   it("prefers filter params in the URL over stored filters", () => {
-    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true });
+    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: [] });
   });
   it("uses stored filters when the URL has no filter params", () => {
     expect(initialFilters({ query: "utm_source=x", stored: "off=a&sup=8", guides: info })).toEqual({ ...EMPTY, off: ["a"] });
@@ -122,7 +122,7 @@ describe("filterSummary and countedLabel", () => {
   it("counts published guides; subtracts off and list-only", () => {
     expect(filterSummary(EMPTY, guides, files)).toEqual({ counted: 2, published: 2 });
     expect(filterSummary({ ...EMPTY, off: ["a"] }, guides, files)).toEqual({ counted: 1, published: 2 });
-    expect(filterSummary({ ...EMPTY, whyOnly: true }, guides, files)).toEqual({ counted: 1, published: 2 });
+    expect(filterSummary({ ...EMPTY, whyOnly: true, pins: [] }, guides, files)).toEqual({ counted: 1, published: 2 });
   });
   it("ignores unpublished guides even when they are turned off", () => {
     expect(filterSummary({ ...EMPTY, off: ["c"] }, guides, files)).toEqual({ counted: 2, published: 2 });
@@ -262,18 +262,18 @@ describe("contestFiles archived snapshots", () => {
 describe("setTypeGroup", () => {
   const gs = [{ id: "m", type: "club" }, { id: "n", type: "club" }, { id: "s", type: "civic" }] as GuideInfo[];
   it("turns every guide of the type off or on, whatever their state", () => {
-    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, false)).toEqual({ off: ["m", "n", "s"], whyOnly: false });
-    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false }, "club", gs, true)).toEqual({ off: ["s"], whyOnly: false });
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false, pins: [] }, "club", gs, false)).toEqual({ off: ["m", "n", "s"], whyOnly: false, pins: [] });
+    expect(setTypeGroup({ off: ["n", "s"], whyOnly: false, pins: [] }, "club", gs, true)).toEqual({ off: ["s"], whyOnly: false, pins: [] });
   });
 });
 
 describe("revealGuides", () => {
   it("turns the given guides back on and leaves other hidden guides off", () => {
-    expect(revealGuides({ off: ["a", "z"], whyOnly: false }, ["a", "b"], files)).toEqual({ off: ["z"], whyOnly: false });
+    expect(revealGuides({ off: ["a", "z"], whyOnly: false, pins: [] }, ["a", "b"], files)).toEqual({ off: ["z"], whyOnly: false, pins: [] });
   });
   it("drops the reasons-only filter only when it hides one of the given guides", () => {
-    expect(revealGuides({ off: [], whyOnly: true }, ["a", "b"], files)).toEqual(EMPTY);
-    expect(revealGuides({ off: ["b"], whyOnly: true }, ["a"], files)).toEqual({ off: ["b"], whyOnly: true });
+    expect(revealGuides({ off: [], whyOnly: true, pins: [] }, ["a", "b"], files)).toEqual(EMPTY);
+    expect(revealGuides({ off: ["b"], whyOnly: true, pins: [] }, ["a"], files)).toEqual({ off: ["b"], whyOnly: true, pins: [] });
   });
 });
 
@@ -292,5 +292,29 @@ describe("carryQuery", () => {
   it("is empty when there's nothing to carry", () => {
     expect(carryQuery("?c=prop-b", ["off", "why"])).toBe("");
     expect(carryQuery("", ["off"])).toBe("");
+  });
+});
+
+describe("pins", () => {
+  it("keep their pinned order in the query, drop repeats, and stop at MAX_PINS", () => {
+    expect(toQuery({ ...EMPTY, pins: ["c", "a"] })).toBe("pin=c%2Ca");
+    expect(fromQuery("pin=c,a,c").pins).toEqual(["c", "a"]);
+    expect(sanitizeFilters(fromQuery("pin=gone,a,b,c,d,e"), [...guides, { id: "d" }, { id: "e" }]).pins).toEqual(["a", "b", "c", "d"].slice(0, MAX_PINS));
+    expect(hasFilterParams("pin=a")).toBe(true);
+  });
+  it("toggles, appending a new pin last and refusing one past MAX_PINS", () => {
+    const two = togglePin(togglePin(EMPTY, "b"), "a");
+    expect(two.pins).toEqual(["b", "a"]);
+    expect(togglePin(two, "b").pins).toEqual(["a"]);
+    const full = { ...EMPTY, pins: ["a", "b", "c", "d"] };
+    expect(togglePin(full, "e")).toBe(full);
+  });
+  it("drops pins for unknown guides and survives revealing hidden guides", () => {
+    expect(sanitizeFilters({ ...EMPTY, pins: ["a", "gone"] }, guides).pins).toEqual(["a"]);
+    expect(revealGuides({ off: ["a"], whyOnly: false, pins: ["a"] }, ["a"], files).pins).toEqual(["a"]);
+  });
+  it("lists pinned guides with a pick on the contest, in pin order, whatever is counted", () => {
+    expect(pinnedPicks("x", ["b", "c", "a"], guides, files).map((p) => [p.guide.id, p.entry.pick])).toEqual([["b", "N"], ["a", "Y"]]);
+    expect(pinnedPicks("nope", ["a"], guides, files)).toEqual([]);
   });
 });

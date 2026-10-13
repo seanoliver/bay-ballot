@@ -5,7 +5,7 @@ import { areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/are
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
 import { fallbackFor, scopeName } from "@/lib/fallback";
-import { pendingGuides, publishedFiles, publishedGuides, type FilterGuide, type GuideInfo } from "@/lib/filters";
+import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
 import type { Area } from "@/lib/schema";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
@@ -25,7 +25,7 @@ function before(d: ElectionData, area: Area | null) {
     intro: electionIntro({ ...d.ballot, contests }, files, { place: placeName(area).name }),
     groups,
     guides,
-    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, type }): FilterGuide => ({ id, type })),
+    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, name, shortName, type }) => ({ id, name, ...(shortName ? { shortName } : {}), type })),
     files,
     pending: pendingNote(pendingGuides(inScope, d.endorsements)),
     ...(area

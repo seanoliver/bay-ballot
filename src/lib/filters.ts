@@ -3,11 +3,15 @@ import type { EndorsementFile, Entry, Guide, GuideType } from "./schema";
 export type Filters = {
   off: string[];
   whyOnly: boolean;
+  /** Guides whose picks show on every contest row, in the order they were pinned. */
+  pins: string[];
 };
+
+export const MAX_PINS = 4;
 
 export const FILTERS_KEY = "bb-filters";
 
-export const EMPTY: Filters = { off: [], whyOnly: false };
+export const EMPTY: Filters = { off: [], whyOnly: false, pins: [] };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
 export type FilterGuide = Pick<Guide, "id" | "type">;
@@ -16,12 +20,14 @@ export type PickFile = Pick<EndorsementFile, "hasReasoning" | "picks" | "archive
 const uniqSorted = (xs: string[]) => [...new Set(xs)].sort();
 const parseList = (v: string | null) => uniqSorted((v ?? "").split(",").map((s) => s.trim()).filter(Boolean));
 const without = (xs: string[], x: string) => xs.filter((y) => y !== x);
+const parsePins = (v: string | null) => [...new Set((v ?? "").split(",").map((s) => s.trim()).filter(Boolean))];
 
 export function toQuery(f: Filters): string {
   const p = new URLSearchParams();
   const off = uniqSorted(f.off);
   if (off.length) p.set("off", off.join(","));
   if (f.whyOnly) p.set("why", "1");
+  if (f.pins.length) p.set("pin", f.pins.join(","));
   return p.toString();
 }
 
@@ -33,12 +39,13 @@ export function fromQuery(q: string, guides: Pick<Guide, "id" | "type">[] = []):
   return {
     off: uniqSorted([...parseList(p.get("off")), ...fromTypes]),
     whyOnly: p.get("why") === "1",
+    pins: parsePins(p.get("pin")),
   };
 }
 
 export function hasFilterParams(q: string): boolean {
   const p = new URLSearchParams(q);
-  return ["off", "offtypes", "why"].some((k) => p.has(k));
+  return ["off", "offtypes", "why", "pin"].some((k) => p.has(k));
 }
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
@@ -83,6 +90,30 @@ export function isGuideOn(f: Filters, id: string): boolean {
   return !f.off.includes(id);
 }
 
+export const isPinned = (f: Filters, id: string) => f.pins.includes(id);
+
+/** Unpins a pinned guide, or pins it last; past MAX_PINS nothing changes. */
+export function togglePin(f: Filters, id: string): Filters {
+  if (isPinned(f, id)) return { ...f, pins: without(f.pins, id) };
+  return f.pins.length < MAX_PINS ? { ...f, pins: [...f.pins, id] } : f;
+}
+
+export type PinnedPick = { guide: GuideInfo; entry: Entry };
+
+export const NO_PINS: PinnedPick[] = [];
+
+/** The pinned guides that took a position on a contest, in pin order. Counting filters don't apply: a pin is a guide the reader chose to see. */
+
+export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo[], files: Record<string, PickFile>): PinnedPick[] {
+  const out: PinnedPick[] = [];
+  for (const id of pins) {
+    const guide = guides.find((g) => g.id === id);
+    const entry = files[id]?.picks[contestId];
+    if (guide && entry) out.push({ guide, entry });
+  }
+  return out.length ? out : NO_PINS;
+}
+
 export function toggleGuide(f: Filters, id: string): Filters {
   return { ...f, off: isGuideOn(f, id) ? uniqSorted([...f.off, id]) : without(f.off, id) };
 }
@@ -102,7 +133,7 @@ export function countedLabel({ counted, published }: { counted: number; publishe
 
 export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
-  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly };
+  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, pins: f.pins.filter((id) => ids.has(id)).slice(0, MAX_PINS) };
 }
 
 export function initialFilters({
@@ -178,7 +209,7 @@ export function contestFiles(contestId: string, files: Record<string, PickFile>)
 }
 
 export function revealGuides(f: Filters, ids: string[], files: Record<string, PickFile>): Filters {
-  return { off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
+  return { ...f, off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
 }
 
 export const hiddenLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} hidden`;
