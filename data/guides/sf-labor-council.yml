@@ -1,7 +1,7 @@
 id: sf-labor-council
 name: San Francisco Labor Council
 shortName: "SF Labor Council"
-description: The local body of the AFL-CIO in San Francisco, chartered in 1893, representing more than 150 unions. It interviews candidates, and its executive committee and delegates approve COPE Committee recommendations.
+description: The local body of the AFL-CIO in San Francisco, chartered in 1893, representing more than 150 unions. It interviews candidates, and its executive committee and delegates vote on its political committee's recommendations.
 type: union
 homepage: https://www.sflaborcouncil.org/en
 areas: [sf]

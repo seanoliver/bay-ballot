@@ -11,7 +11,7 @@ Sources for each guide's `description` in `data/guides/`, checked 2026-10-12. Ea
 
 Abundant San Francisco (`abundant-sf`)
 
-> A San Francisco civic organization formed in 2023 by tech executive Zack Rosen that works on housing, transit, street safety, and public spaces. Its voter guide is paid for by Families for a Vibrant SF and sponsored by the Abundance Network.
+> A San Francisco civic organization formed in 2023 by Zack Rosen that works on housing, transit, street safety, and public spaces. It publishes a voter guide on San Francisco races and measures.
 
 - https://sfstandard.com/2023/03/20/tech-families-abundant-sf-millions-housing-transportation-education/: New group being formed in March 2023, led by Zack Rosen, CEO of Pantheon
 - https://www.abundantsanfrancisco.org/: Focus areas: public spaces, homes, transportation, street safety
@@ -159,9 +159,9 @@ Courage California (`courage-california`)
 
 > A California advocacy group formed in 2006 as the Courage Campaign, which describes itself as progressive. It publishes the Progressive Voters Guide, which uses its own endorsements and legislator scores alongside other groups' picks.
 
-- https://en.wikipedia.org/wiki/Courage_California: founded 2005 as Courage Campaign; progressive grassroots advocacy organization; renamed Courage California
+- https://en.wikipedia.org/wiki/Courage_California: Courage Campaign renamed Courage California; progressive grassroots advocacy organization
 - https://www.progressivevotersguide.com/california: guide Powered By Courage California; Courage Score; direct endorsements and reports other progressive groups' endorsements
-- https://couragecalifornia.org/about (correction source)
+- https://couragecalifornia.org/about: "Formed in 2006" (site blocks scripted fetches; read through the r.jina.ai reader)
 
 Cupertino for All (`cupertino-for-all`)
 
@@ -180,7 +180,7 @@ San Francisco District 11 Democratic Club (`d11-dems`)
 
 District 2 Democratic Club (`d2-dems`)
 
-> A Democratic club for residents of San Francisco's Supervisorial District 2, including the Marina, Cow Hollow, and Pacific Heights. Originally founded in 2010, it holds community forums and events and makes endorsements.
+> A Democratic club for residents of San Francisco's Supervisorial District 2, including the Marina, Cow Hollow, and Pacific Heights. Founded in 2010, it holds community forums and events and makes endorsements.
 
 - https://d2dems.com/about: founded 2010; District 2 neighborhoods; community forums, events, and endorsements
 
@@ -341,9 +341,9 @@ Los Altos Town Crier (`los-altos-town-crier`)
 > A weekly newspaper founded in 1947 that serves Los Altos, Los Altos Hills, and Mountain View, acquired by Weeklys Media Group in 2026. Its endorsements are the paper's editorials on local, state, and federal races and measures.
 
 - https://en.wikipedia.org/wiki/Los_Altos_Town_Crier: founded 1947, weekly, owned by LATC Media Inc., mailed to Los Altos, Los Altos Hills, and Mountain View
-- https://www.losaltosonline.com/magazine/town-crier-keeping-los-altans-informed-for-75-years/article_bd8c8624-abd5-11ec-ac00-ebc3393fc981.html: first issue Sept. 9, 1947; local ownership by longtime employees since 2019
+- https://www.losaltosonline.com/magazine/town-crier-keeping-los-altans-informed-for-75-years/article_bd8c8624-abd5-11ec-ac00-ebc3393fc981.html: first issue Sept. 9, 1947
 - https://www.losaltosonline.com/opinion/editorials: editorials endorsing in council, assessor, legislative, congressional races and measures
-- https://www.losaltosonline.com/news/weeklys-acquires-los-altos-town-crier/article_95775169-f003-4f68-9105-78405e6706f6.html (correction source)
+- https://www.losaltosonline.com/news/weeklys-acquires-los-altos-town-crier/article_95775169-f003-4f68-9105-78405e6706f6.html: the Town Crier reported on Oct. 9, 2026 that Weeklys Media Group acquired it
 
 League of Women Voters of Alameda (`lwv-alameda`)
 
@@ -360,14 +360,14 @@ League of Women Voters of Berkeley, Albany and Emeryville (`lwv-bae`)
 
 League of Women Voters of the Bay Area (`lwv-bay-area`)
 
-> The League of Women Voters body that links the 20 local Leagues in the nine Bay Area counties. Their representatives elect its board, and it says it acts on regional issues after study and member agreement.
+> The League of Women Voters body that links the 20 local Leagues in the nine Bay Area counties. The local Leagues' representatives elect its board, and it says it acts on regional issues after study and member agreement.
 
 - https://www.lwvbae.org/about-the-league-2017/lwv-bay-area/: Inter-League Organization of the 20 Bay Area Leagues in the 9 county region; representatives of member leagues elect the board
 - https://www.lwvbayarea.org/about: nonpartisan political membership organization that 'acts after study and member agreement'
 
 League of Women Voters of California (`lwv-ca`)
 
-> The state League of Women Voters, made up of more than 60 local Leagues. It does not back candidates or parties. Its board takes positions on statewide measures based on member study and consensus.
+> The state League of Women Voters, made up of more than 60 local Leagues, which does not back candidates or parties. Its board takes positions on statewide measures based on member study and consensus.
 
 - https://lwvc.org/about-us: over 60 local Leagues; 'The League shall not support or oppose any political party or any candidate'
 - https://lwvc.org/ballot-recommendations: positions developed through study and member consensus; LWVC Board of Directors reviews each measure before taking a position
@@ -436,14 +436,15 @@ Marin County Republican Party (`marin-gop`)
 
 The Mercury News, East Bay Times and Marin Independent Journal (`mercury-news`)
 
-> Three Bay Area News Group daily papers: The Mercury News of San Jose, founded in 1851, the East Bay Times, and the Marin Independent Journal. These are the papers' editorial board endorsements.
+> Three Bay Area News Group daily papers: The Mercury News of San Jose, founded in 1851, the East Bay Times, and the Marin Independent Journal. Their endorsements run as editorials by the papers' editorial boards.
 
 - https://en.wikipedia.org/wiki/The_Mercury_News: Mercury News founded 1851; published by Bay Area News Group; East Bay Times and Marin Independent Journal also part of BANG
-- https://fionama.com/?p=4807: refers to 'the Bay Area News Group editorial board, including the Mercury News and East Bay Times' (campaign site)
+- https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/: endorsement editorial bylined "Mercury News & East Bay Times Editorial Boards"
+- https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/: endorsement editorial bylined "Marin IJ Editorial Board"
 
 Metropolitan Greater Oakland Democratic Club (`mgo-dems`)
 
-> A Democratic club that calls itself Oakland's oldest and has been active for over 60 years, focused on city and county government. Candidates need at least 60 percent of the members' vote to be endorsed.
+> A Democratic club that calls itself Oakland's oldest and says it has been active for over 60 years, focused on city and county government. Candidates need at least 60% of the members' vote to be endorsed.
 
 - https://mgodems.org/about/: 'Oakland's oldest democratic club'
 - https://mgodems.org/: involved in Oakland politics for over 60 years; concentrates on city and county government
@@ -465,7 +466,7 @@ Napa County Democratic Party (`napa-dems`)
 
 Napa County Republican Party (`napa-gop`)
 
-> The Napa County Republican Party, whose Central Committee publishes the party's own endorsements in Napa County elections.
+> The official Republican Party committee for Napa County, the Napa County Republican Central Committee, which publishes endorsements in Napa County elections.
 
 - https://napagop.org/: identifies itself as the Napa County Republican Party; asks for phone-banking volunteers; links to 2026 endorsements
 - https://napagop.org/meetings/: Central Committee meets third Tuesdays of most months
@@ -499,7 +500,7 @@ Northern Solano Democratic Club (`northern-solano-dems`)
 
 Oakland Rising Action (`oakland-rising-action`)
 
-> An Oakland political organization established in 2010 that calls itself community-led and works to advance a progressive agenda. Candidates complete a written questionnaire and panel or individual interviews.
+> An Oakland political organization established in 2010 that calls itself community-led and says it works to advance a progressive agenda. Candidates complete a written questionnaire and panel or individual interviews.
 
 - https://oaklandrisingaction.org/about/: established 2010; community-led political organization; progressive agenda; questionnaire plus panel and/or individual interviews
 
@@ -527,7 +528,7 @@ Potrero Hill Democratic Club (`potrero-hill-dems`)
 
 Planned Parenthood Northern California Action Fund (`pp-norcal-action`)
 
-> The political advocacy organization of Planned Parenthood Northern California. It works for safe and legal access to Planned Parenthood services, affordable family planning, and sexual health education.
+> The political advocacy organization of Planned Parenthood Northern California. It says it works for access to Planned Parenthood services, family planning, and sexual health education.
 
 - https://www.plannedparenthoodaction.org/planned-parenthood-northern-california-action-fund: advocates for safe and legal access to Planned Parenthood services, funding and laws for family planning, sexual health education; carries PP Northern California Action Fund name
 
@@ -560,11 +561,12 @@ Santa Clara County Democratic Party (`sccdp`)
 
 Santa Clara County League of Conservation Voters (`scclcv`)
 
-> A Santa Clara County chapter of the California League of Conservation Voters, active since 1992, that endorses local candidates and measures. Its board decides after panel interviews and committee review.
+> A Santa Clara County chapter of the statewide group now called California Environmental Voters, active since 1992, that endorses local candidates and measures. Its board decides after panel interviews and committee review.
 
 - https://www.scclcv.org/about-2/: chapter of the California League of Conservation Voters; 'since 1992' tagline
 - https://www.scclcv.org/: endorses environmentally-oriented candidates and ballot propositions
 - https://www.scclcv.org/?p=231: group panel interview, Endorsement Committee deliberates, Board's decision; local candidates only
+- https://en.wikipedia.org/wiki/California_Environmental_Voters: California League of Conservation Voters renamed California Environmental Voters in 2021
 
 SEIU Local 1021 (`seiu-1021`)
 
@@ -594,7 +596,7 @@ San Francisco Bicycle Coalition (`sf-bike-coalition`)
 
 San Francisco Building & Construction Trades Council (`sf-building-trades`)
 
-> A council of 27 construction and building trades unions in San Francisco, founded in 1896. It focuses on apprenticeships, job training, and wages and working conditions for construction workers.
+> A council of 27 construction and building trades unions in San Francisco. It focuses on apprenticeships, job training, and wages and working conditions for construction workers.
 
 - https://sfbuildingtrades.org/: 27 unions; apprenticeship and training focus
 - https://sfbos.archive.sf.gov/sites/default/files/r0345-22.pdf: founded February 6, 1896; wages and working conditions
@@ -637,7 +639,7 @@ San Francisco Green Party (`sf-green-party`)
 
 San Francisco Labor Council (`sf-labor-council`)
 
-> The local body of the AFL-CIO in San Francisco, chartered in 1893, representing more than 150 unions. It interviews candidates, and its executive committee and delegates approve COPE Committee recommendations.
+> The local body of the AFL-CIO in San Francisco, chartered in 1893, representing more than 150 unions. It interviews candidates, and its executive committee and delegates vote on its political committee's recommendations.
 
 - https://www.sflaborcouncil.org/information/about-us: chartered 1893; local body of AFL-CIO; more than 150 unions, 100,000+ members
 - https://www.sflaborcouncil.org/news-details/webview/politics/single/19371: interviews, questionnaires; Executive Committee and delegate body approve COPE Committee recommendations
@@ -665,7 +667,7 @@ San Francisco Tenants Union (`sf-tenants-union`)
 
 San Francisco YIMBY (`sf-yimby`)
 
-> A volunteer housing advocacy group in San Francisco and a local chapter of YIMBY Action, a national network. It works to end the housing shortage, and its official members vote in its endorsement process.
+> A volunteer housing advocacy group in San Francisco and a local chapter of YIMBY Action, a national network. It says it works to end the housing shortage, and its official members vote in its endorsement process.
 
 - https://sfyimby.org/: volunteer housing advocates; chapter of YIMBY Action; end the housing shortage
 - https://sfyimby.org/endorsements/sf-2026-primary-election/: official members vote in endorsements process
@@ -745,11 +747,12 @@ San Mateo County Central Labor Council (`smc-labor-council`)
 
 San Mateo Daily Journal (`smdj`)
 
-> A daily newspaper founded in 2000 that describes itself as the Peninsula's independent, locally owned daily, serving San Mateo County and northern Santa Clara County. These are its editorial board's endorsements.
+> A daily newspaper founded in 2000 that describes itself as the Peninsula's independent, locally owned daily, serving San Mateo County and northern Santa Clara County. Its endorsements run as the paper's editorials.
 
 - https://www.smdailyjournal.com/site/about.html: Self-description as the Peninsula's independent, locally owned daily newspaper; distribution in San Mateo County and northern Santa Clara County
 - https://www.smdailyjournal.com/news/local/25-years-of-the-san-mateo-daily-journal/collection_abca8517-f5f2-4f8c-bd89-ac340dc20ee8.html: 25th anniversary on Aug. 18, 2025, series starting with 2000 (founding year)
 - https://en.wikipedia.org/wiki/San_Mateo_Daily_Journal: Founded 2000
+- https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html: endorsements published as the paper's editorials
 
 Solano County Democratic Party (`solano-dems`)
 
@@ -838,7 +841,7 @@ Silicon Valley Taxpayers Association (`svta`)
 
 United Educators of San Francisco (`uesf`)
 
-> A union formed in 1989 by the merger of the San Francisco Federation of Teachers and San Francisco Classroom Teachers. It represents over 6,500 SFUSD teachers, paraprofessionals, nurses, and counselors.
+> A union formed in 1989 by the merger of the San Francisco Federation of Teachers and San Francisco Classroom Teachers. It represents over 6,500 San Francisco Unified teachers, paraprofessionals, nurses, and counselors.
 
 - https://uesf.org/history/: Founded 1989 by merger of SFFT and San Francisco Classroom Teachers
 - https://uesf.org/about/: Represents more than 6,500 SFUSD employees including teachers, paraprofessionals, nurses, counselors, and psychologists
@@ -878,7 +881,7 @@ West County Democratic Club (`west-county-dems`)
 
 Westside Family Democratic Club (`westside-family-dems`)
 
-> A San Francisco Democratic club for families in the Richmond, Sunset, and West of Twin Peaks. Endorsements are decided by a vote of its voting members, with No Endorsement always an option.
+> A San Francisco Democratic club for families in the Richmond, Sunset, and West of Twin Peaks. Endorsements are decided by a vote of its voting members, with "No Endorsement" always an option.
 
 - https://westsidefamilysf.com/: Families on the West Side; Richmond, Sunset, and West of Twin Peaks (Districts 1, 4, 7)
 - https://westsidefamilysf.com/bylaws: Voting Members vote on endorsements; 'No Endorsement' appears on every ballot
