@@ -3,19 +3,71 @@ election: 2026-11
 status: published
 source: https://lwvc.org/ballot-recommendations/
 manual: true # positions are shown as Support/Oppose icons, which text extraction cannot read
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-13
 hasReasoning: true
 picks:
-  prop-1: { pick: Y }
-  prop-2: { pick: Y }
-  prop-3: { pick: Y }
-  prop-4: { pick: Y }
-  prop-5: { pick: Y }
-  prop-37: { pick: N }
-  prop-38: { pick: N }
-  prop-39: { pick: N }
-  prop-41: { pick: N }
-  prop-42: { pick: N }
-  prop-43: { pick: N }
-  prop-44: { pick: N }
-  prop-45: { pick: N }
+  prop-1:
+    pick: Y
+    quotes:
+      - text: Many families in California continue to endure high housing costs, leading to an increase in homelessness and overcrowding.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-2:
+    pick: Y
+    quotes:
+      - text: Saving more during good years can help prevent deep cuts to public services during bad years.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-3:
+    pick: Y
+    quotes:
+      - text: California should not give its highest-income residents a multi-billion-dollar tax cut while schools, health care, and other essential services face serious financial pressure. Prop 3 simply asks the top 2 percent to keep paying the same rates they already pay.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-4:
+    pick: Y
+    quotes:
+      - text: Public financing can make small donations matter more, give candidates without personal fortunes a fairer chance to compete, and let them spend more time listening to voters.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-5:
+    pick: Y
+    quotes:
+      - text: "Prop 5 restores the recall to its proper purpose: deciding whether an official should remain in office."
+        source: https://lwvc.org/ballot-recommendations/
+  prop-37:
+    pick: N
+    quotes:
+      - text: Prop 37 could help a family buy a home without making it affordable to keep.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-38:
+    pick: N
+    quotes:
+      - text: Borrowing is a poor way to pay for ongoing scientific research.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-39:
+    pick: N
+    quotes:
+      - text: California’s elections are already secure. Voters swear to citizenship under penalty of perjury, and officials verify identity at registration, check the rolls in person, and match every mail ballot signature.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-41:
+    pick: N
+    quotes:
+      - text: Prop 41 would put revenue from new state taxes under the Gann Limit’s rigid constitutional spending cap, making it harder to fund essential services and respond to changing needs.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop 42 would lock broad new restrictions on state taxing power into the California Constitution, limiting California’s ability to respond to future needs.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Prop 43 would make it harder for communities to raise revenue for public services by allowing a minority of voters to block local tax measures.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-44:
+    pick: N
+    quotes:
+      - text: Prop 44 could reduce access to health care for Californians who already have the fewest options.
+        source: https://lwvc.org/ballot-recommendations/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Statutory exemptions and expedited processes are in place, some of which the League supported, making Proposition 45 unnecessary and flawed with this prescriptive process and inflated promises.
+        source: https://lwvc.org/ballot-recommendations/
