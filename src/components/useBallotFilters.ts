@@ -151,7 +151,7 @@ export function useStoredKey(storageKey: string): [string | null, (v: string) =>
   return [value, set];
 }
 
-export const CARRIED = ["off", "offtypes", "why", "pin"];
+export const CARRIED = ["off", "only", "offtypes", "why", "pin"];
 
 export function useCarriedQuery(): string {
   return carryQuery(useQuery(), CARRIED);

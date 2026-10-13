@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
-import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideGuide, type SideQuote } from "@/lib/detail";
+import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideQuote } from "@/lib/detail";
 import { cardDescription, contestHeadline } from "@/lib/display";
 import { skippedLabel, type Scope } from "@/lib/fallback";
 import type { Row } from "@/lib/filters";
@@ -13,6 +13,7 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
+import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, type PinControls, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
@@ -21,7 +22,6 @@ import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
 
 // Inline links keep their line height but get a 40px-tall tap area.
 const TAP = "inline-block py-2.5 -my-2.5";
-const CHIPS_SHOWN = 4;
 
 const LEAD_TEXT: Record<ResultHeadline["tone"], string> = {
   yes: "text-yes",
@@ -57,6 +57,7 @@ export function ContestDetail({
   shortNames = true,
   action,
   fallback,
+  pinning,
 }: {
   election: string;
   contest: Contest;
@@ -70,6 +71,8 @@ export function ContestDetail({
   shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
+  /** Each guide chip pins its guide, and each side can be the only one counted. */
+  pinning: Pinning;
 }) {
   const bay = fallback?.scope === "bay";
   const rows = bay ? fallback.rows : areaRows;
@@ -81,6 +84,23 @@ export function ContestDetail({
   const ranked = contestHeadline(contest, rows).headline.ranked;
   const multi = contest.kind === "candidate" && contest.seats > 1;
   const Title = heading || "h2";
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Count only can move a side between the top sides and Other candidates, remounting its button; focus follows it by key.
+  const refocus = useRef<string | null>(null);
+  const pins: PinControls = {
+    ...pinning,
+    limitId: useId(),
+    onCountPress: (key) => {
+      refocus.current = key;
+    },
+  };
+  useEffect(() => {
+    const key = refocus.current;
+    refocus.current = null;
+    const root = rootRef.current;
+    if (key === null || !root || root.contains(document.activeElement)) return;
+    (root.querySelector<HTMLElement>(`[data-count-only="${CSS.escape(key)}"]`) ?? root.querySelector<HTMLElement>("[data-others]"))?.focus();
+  }, [rows]);
   const scopeSwitch = fallback ? <ScopeSwitch place={fallback.place} scope={fallback.scope} onChange={fallback.onScope} /> : null;
   const summary = (
     <>
@@ -95,15 +115,21 @@ export function ContestDetail({
       {multi ? null : <Legend segments={barSegments(tally(contest, rows.map((r) => r.entry)), contest, slots)} />}
     </>
   );
-  const guides = sides.length ? (
+  const guides = (
     <div>
-      {sides.map((side) => (
-        <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} />
-      ))}
-      {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} /> : null}
+      {sides.length || pinning.noPick.length ? <PinHint pinning={pins} /> : null}
+      {sides.length ? (
+        <div className="mt-6">
+          {sides.map((side) => (
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} pinning={pins} />
+          ))}
+          {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} pinning={pins} /> : null}
+        </div>
+      ) : (
+        <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
+      )}
+      <NoPickBlock pinning={pins} short={shortNames} />
     </div>
-  ) : (
-    <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
   );
   const title = (
     <Title id={titleId} tabIndex={titleId ? -1 : undefined} className={cn("mt-1 font-semibold outline-none", heading === "h1" ? "text-2xl" : "text-xl")}>
@@ -111,7 +137,7 @@ export function ContestDetail({
     </Title>
   );
   return (
-    <div className="space-y-8">
+    <div ref={rootRef} className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
@@ -147,6 +173,7 @@ export function ContestDetail({
       {fallback ? null : guides}
 
       <Footer pending={pending} page={pageLink ? `/${election}/${contest.id}` : null} />
+      <PinStatus message={pinning.status} />
     </div>
   );
 }
@@ -175,16 +202,22 @@ function Legend({ segments }: { segments: BarSegment[] }) {
 
 const guidesLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; contest: Contest; short: boolean }) {
+function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: Row[]; contest: Contest; short: boolean; pinning: PinControls }) {
   const { top, rest } = pickReasons(side, rows, contest);
+  const heading = (
+    <h3 className="flex flex-1 items-center gap-2 text-base font-semibold">
+      <span aria-hidden="true" className={cn("size-3 shrink-0 rounded-[3px]", BAR_FILL[side.tone])} />
+      <span className="min-w-0">{side.label}</span>
+      <span className="ml-auto shrink-0 text-sm font-normal text-muted-foreground">{guidesLabel(side.count)}</span>
+    </h3>
+  );
   return (
     <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0 [&+&]:mt-6">
-      <h3 className="flex items-center gap-2 text-base font-semibold">
-        <span aria-hidden="true" className={cn("size-3 shrink-0 rounded-[3px]", BAR_FILL[side.tone])} />
-        <span className="min-w-0">{side.label}</span>
-        <span className="ml-auto shrink-0 text-sm font-normal text-muted-foreground">{guidesLabel(side.count)}</span>
-      </h3>
-      <Chips guides={side.guides} short={short} label={`Guides for ${side.label}`} />
+      <div className="flex flex-wrap items-center gap-3">
+        {heading}
+        <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
+      </div>
+      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
@@ -200,78 +233,20 @@ function SideBlock({ side, rows, contest, short }: { side: Side; rows: Row[]; co
   );
 }
 
-function OtherCandidates({ others, rows, contest, short }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean }) {
+function OtherCandidates({ others, rows, contest, short, pinning }: { others: Side[]; rows: Row[]; contest: Contest; short: boolean; pinning: PinControls }) {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
-      <CollapsibleTrigger className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <CollapsibleTrigger data-others className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {open ? "Hide other candidates" : `Other candidates (${others.length})`}
       </CollapsibleTrigger>
       <CollapsibleContent className="reveal">
         <div className="pt-6">
           {others.map((side) => (
-            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} />
+            <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={short} pinning={pinning} />
           ))}
         </div>
       </CollapsibleContent>
-    </Collapsible>
-  );
-}
-
-const QUOTE_MARK = (
-  <svg viewBox="0 0 12 12" aria-hidden="true" className="size-3 shrink-0 fill-current">
-    <path d="M1 7.2C1 4.6 2.4 2.8 4.6 2l.5.9C3.8 3.6 3.2 4.5 3.1 5.6h1.7V10H1V7.2Zm6 0C7 4.6 8.4 2.8 10.6 2l.5.9c-1.3.7-1.9 1.6-2 2.7h1.7V10H7V7.2Z" />
-  </svg>
-);
-
-function Chip({ guide, short, style, className }: { guide: SideGuide; short: boolean; style?: CSSProperties; className?: string }) {
-  return (
-    <li style={style} className={className}>
-      <Link
-        href={`/guides/${guide.id}`}
-        title={guide.name}
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-      >
-        {short ? guide.short : guide.name}
-        {guide.quoted ? (
-          <>
-            {QUOTE_MARK}
-            <span className="sr-only">(gave reasons)</span>
-          </>
-        ) : null}
-      </Link>
-    </li>
-  );
-}
-
-// The first few chips, then "+N more" opens the rest below them; the extra chips rise in one by one.
-function Chips({ guides, short, label }: { guides: SideGuide[]; short: boolean; label: string }) {
-  const [all, setAll] = useState(false);
-  const first = guides.slice(0, CHIPS_SHOWN);
-  const rest = guides.slice(CHIPS_SHOWN);
-  return (
-    <Collapsible open={all} onOpenChange={setAll} render={<div role="group" aria-label={label} />}>
-      <ul className="flex flex-wrap gap-2">
-        {first.map((g) => (
-          <Chip key={g.id} guide={g} short={short} />
-        ))}
-        {rest.length > 0 ? (
-          <li>
-            <CollapsibleTrigger className="inline-flex min-h-10 items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8">
-              {all ? "Show less" : `+${rest.length} more`}
-            </CollapsibleTrigger>
-          </li>
-        ) : null}
-      </ul>
-      {rest.length > 0 ? (
-        <CollapsibleContent className="reveal">
-          <ul className="flex flex-wrap gap-2 pt-2">
-            {rest.map((g, i) => (
-              <Chip key={g.id} guide={g} short={short} className="reveal-item" style={{ "--i": i } as CSSProperties} />
-            ))}
-          </ul>
-        </CollapsibleContent>
-      ) : null}
     </Collapsible>
   );
 }

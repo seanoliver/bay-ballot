@@ -10,6 +10,7 @@ import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, NO_PINS, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
+import { areaNoPick, type NoPickScope } from "@/lib/contest-pins";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
@@ -18,6 +19,7 @@ import { isZip, MINE_PARAM, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, t
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
+import { useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { keepNumber } from "@/lib/display";
@@ -64,6 +66,8 @@ type Props = {
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
+  /** Unset on the Bay Area list, which has no No pick group. */
+  noPick?: NoPickScope;
   /** True while the list still shows the area being left. */
   busy?: boolean;
   onSwitch?: (href: string) => boolean;
@@ -91,7 +95,7 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, noPick: noPickScope, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -407,6 +411,14 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   });
   const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
   const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides, onBallot: guides };
+  // Not on the Bay Area list, where most guides that skipped a contest don't cover it, nor for a Bay Area fallback.
+  const noPick = useMemo(
+    () => (shown && area !== null && noPickScope && !fallbackOf.has(shown.id) ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
+    [shown, area, noPickScope, fallbackOf, guides, files],
+  );
+  // A side lists the area's guides, or a Bay Area fallback's, whose files hold only the contests it covers; the area's own win.
+  const sideFiles = useMemo(() => ({ ...fallback?.files, ...files }), [fallback, files]);
+  const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, files: sideFiles, noPick });
   const carry = useCarriedQuery();
 
   useEffect(() => {
@@ -707,6 +719,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
               titleId="detail-title"
               slots={slotsFor(shown)}
               fallback={detailFallback(shown)}
+              pinning={pinning}
               action={
                 <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
                   <X aria-hidden="true" className="size-5" />
@@ -736,7 +749,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 </SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
-                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} fallback={detailFallback(current)} />
+                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} fallback={detailFallback(current)} pinning={pinning} />
               </div>
             </>
           ) : null}

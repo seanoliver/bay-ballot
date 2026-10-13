@@ -2,6 +2,7 @@ import { areaGuides, areaLinks, inArea, placeGroups, placeName, type AreaLink, t
 import type { ElectionData } from "./data";
 import { electionIntro, pendingNote } from "./display";
 import { fallbackFor, scopeName, type Fallback } from "./fallback";
+import { noPickScope, type NoPickScope } from "./contest-pins";
 import { isPublished, publishedFiles, type GuideInfo, type PickFile } from "./filters";
 import type { Area, Contest } from "./schema";
 import { areaTitle } from "./seo-copy";
@@ -29,6 +30,7 @@ export type AreaView = {
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
+  noPick?: NoPickScope;
 };
 
 const info = ({ id, name, shortName, type }: GuideInfo): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type });
@@ -95,7 +97,12 @@ export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
     allGuides,
     files,
     pending: pendingNote(inScope.filter((g) => !g.published)),
-    ...(area ? { fallback: fallbackFor({ groups, place: scopeName(area), local: { guides, files }, bay: { guides: bay, files: s.files } }) } : {}),
+    ...(area
+      ? {
+          fallback: fallbackFor({ groups, place: scopeName(area), local: { guides, files }, bay: { guides: bay, files: s.files } }),
+          noPick: noPickScope(area, contests, s.areas, published),
+        }
+      : {}),
   };
 }
 

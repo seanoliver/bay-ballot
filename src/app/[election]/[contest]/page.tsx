@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContestView } from "@/components/ContestView";
 import { BAY_AREA, contestPlace, nextStep } from "@/lib/areas";
+import { noPickGuides } from "@/lib/contest-pins";
 import type { ElectionData } from "@/lib/data";
 import { dataAsOf } from "@/lib/display";
 import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
@@ -67,6 +68,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
       place={place}
       area={area?.id ?? null}
       next={nextStep(electionId, contest, d.ballot.contests, d.areas)}
+      noPick={noPickGuides(contest, d.guides, d.areas, files)}
       back={{ href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` }}
     />
   );
