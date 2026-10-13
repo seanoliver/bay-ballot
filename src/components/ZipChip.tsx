@@ -19,7 +19,7 @@ export type ZipSummary =
   | { kind: "filtered"; on: number; maybe: number; hidden: number; notes: { text: string; links: BallotLink[] }[] };
 
 // One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
-const CHIP = "js-only inline-flex min-h-10 min-w-[8.75rem] items-center gap-2 rounded-full pr-3 pl-2.5";
+const CHIP = "js-only inline-flex min-h-10 w-[8.75rem] items-center gap-2 rounded-full pr-3 pl-2.5";
 const TEXT_BUTTON = "inline-flex min-h-6 items-center underline underline-offset-2 hover:text-foreground";
 
 /**
@@ -62,7 +62,15 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
   const close = ({ refocus }: { refocus: boolean }) => {
     setEditing(false);
     setDraft("");
-    if (refocus) focusNext.current = "chip";
+    if (refocus) {
+      focusNext.current = "chip";
+      setError(false);
+    } else if (error) {
+      // Closed by a mousedown: clear the error once the click has landed, so the line can't move beneath it.
+      const clear = () => setError(false);
+      document.addEventListener("click", clear, { once: true });
+      document.addEventListener("keydown", clear, { once: true });
+    }
   };
   const take = (raw: string) => {
     const v = raw.replace(/\D/g, "").slice(0, 5);
@@ -91,19 +99,18 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
           autoComplete="postal-code"
           placeholder="ZIP code"
           enterKeyHint="go"
-          className="w-[5.5rem] bg-transparent text-base outline-none placeholder:text-muted-foreground sm:text-sm"
+          className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground sm:text-sm"
           onChange={(e) => take(e.target.value)}
           onPaste={(e) => {
             // A pasted address ends with its ZIP (a street number can also be 5 digits); stripping every non-digit would mangle it.
             const text = e.clipboardData.getData("text");
-            const found = [...text.matchAll(/\b(\d{5})(?:-\d{4})?\b/g)].at(-1);
-            if (found) {
-              e.preventDefault();
-              take(found[1]);
-            } else if (/[^\d\s-]/.test(text)) {
-              e.preventDefault();
-              setError(true);
-            }
+            // Text with letters is an address: only a ZIP at its end counts. Digits alone must be a ZIP or ZIP+4.
+            const found = /[a-z]/i.test(text)
+              ? /\b(\d{5})(?:-\d{4})?[\s,.]*(?:USA|United States)?[\s.]*$/i.exec(text)
+              : /^\s*(\d{5})(?:-?\d{4})?\s*$/.exec(text);
+            e.preventDefault();
+            if (found) take(found[1]);
+            else setError(true);
           }}
           onKeyDown={(e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -141,7 +148,7 @@ export function ZipChip({ zip, onZip, editing, setEditing, error, setError, erro
     );
   }
   return (
-    <span className="js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
+    <span className="js-only inline-flex min-h-10 w-[8.75rem] items-center justify-between rounded-full bg-card pr-1 font-medium ring-1 ring-foreground">
       <button
         ref={chipRef}
         type="button"

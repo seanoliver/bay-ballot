@@ -333,6 +333,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
     setAnimate(false);
     setAnnounce(`Showing ${intro.title}`);
     setZipActedOn(undefined);
+    setZipError(false);
   }
   useEffect(() => {
     stepWrite.cancel();
@@ -493,6 +494,7 @@ export function BallotView({ election, area, county, city, links, intro, groups:
               hintId={zipHintId}
               onZip={(v) => {
                 setZipActedOn(area);
+                setZipError(false);
                 if (v !== zip) setShowAllFor(null);
                 stepWrite.cancel();
                 setStepped(null);

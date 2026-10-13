@@ -44,6 +44,7 @@ test.describe("ZIP filter", () => {
     await expect(status(page).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
     await page.getByLabel("Your ZIP code").press("Escape");
     await expect(page.getByRole("button", { name: "Your ZIP" })).toBeFocused();
+    await expect(status(page).getByRole("alert")).toHaveText("");
   });
 
   test("Change selects the old ZIP so typing replaces it; Escape keeps it; leaving an empty field doesn't pull focus back", async ({ page }) => {
@@ -72,6 +73,18 @@ test.describe("ZIP filter", () => {
     await expect(page.getByLabel("Your ZIP code")).toHaveCount(0);
   });
 
+  test("an error from Enter clears once a click closes the field, and the click still lands", async ({ page }) => {
+    await page.goto(SCC);
+    await enterZip(page, "94040");
+    await page.getByRole("button", { name: "ZIP 94040. Change" }).click();
+    await page.getByLabel("Your ZIP code").pressSequentially("9");
+    await page.getByLabel("Your ZIP code").press("Enter");
+    await expect(status(page).getByRole("alert")).toHaveText("Enter a 5-digit ZIP code.");
+    await status(page).getByRole("button", { name: "Show all" }).click();
+    await expect(status(page).getByRole("button", { name: "Hide the others" })).toBeVisible();
+    await expect(status(page).getByRole("alert")).toHaveText("");
+  });
+
   test("a pasted address applies its ZIP", async ({ page, context, browserName }, info) => {
     test.skip(browserName !== "chromium" || info.project.name.includes("phone"), "clipboard permissions are Chromium-only");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
@@ -80,6 +93,13 @@ test.describe("ZIP filter", () => {
     await page.evaluate(() => navigator.clipboard.writeText("10050 N Wolfe Rd, Cupertino, CA 95014-2033"));
     await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
     await expect(page.getByRole("button", { name: "ZIP 95014. Change" })).toBeVisible();
+    for (const bad of ["650-555-1234", "10050 N Wolfe Rd, Cupertino, CA"]) {
+      await page.getByRole("button", { name: "ZIP 95014. Change" }).click();
+      await page.evaluate((t) => navigator.clipboard.writeText(t), bad);
+      await page.getByLabel("Your ZIP code").press("ControlOrMeta+v");
+      await expect(status(page).getByRole("alert"), bad).toHaveText("Enter a 5-digit ZIP code.");
+      await page.getByLabel("Your ZIP code").press("Escape");
+    }
   });
 
   test("a shared link to a contest the ZIP hides still opens it", async ({ page }) => {
