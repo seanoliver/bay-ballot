@@ -115,6 +115,18 @@ test.describe("pinning from a contest page", () => {
     await expect(chip).toHaveAttribute("aria-pressed", "false");
   });
 
+  test("Enter and Space on a focused chip pin and unpin it", async ({ page }) => {
+    await openContest(page);
+    const chip = pinChip(page.getByRole("group", { name: "Guides for Yes" }), "SPUR");
+    await chip.focus();
+    await page.keyboard.press("Enter");
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+    await expect(page).toHaveURL(pinParam("spur"));
+    await page.keyboard.press("Space");
+    await expect(chip).toHaveAttribute("aria-pressed", "false");
+    await expect(page).not.toHaveURL(/[?&]pin=/);
+  });
+
   test("Guide pages lists each side's guides as links, in the chips' order", async ({ page }) => {
     await openContest(page);
     const side = page.getByRole("group", { name: "Guides for Yes" }).locator("xpath=ancestor::section[1]");
@@ -296,6 +308,27 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(tip).toBeHidden();
     await expect(pane).toBeVisible();
     await expect(page).toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("Escape hides a hovered chip's tooltip while focus is elsewhere, and leaves the pane open", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    await pane.getByRole("button", { name: "Guide pages for Yes" }).focus();
+    const chip = pinChip(pane, "SF Chronicle");
+    const tip = chip.locator("[data-tip]");
+    await chip.hover();
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await page.waitForTimeout(500);
+    await expect(pane).toBeVisible();
+    await expect(page).toHaveURL(/[?&]c=prop-d/);
+    // Away from the chip, Escape closes the pane as before.
+    await page.mouse.move(0, 0);
+    await page.keyboard.press("Escape");
+    await expect(page).not.toHaveURL(/[?&]c=prop-d/);
   });
 
   test("a click on a tooltip hides it and pins nothing", async ({ page }, info) => {

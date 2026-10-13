@@ -146,9 +146,9 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
           }
           pinning.onPin(guide.id);
         }}
-        onPointerEnter={tip ? placeTip : undefined}
+        onPointerEnter={tip ? hoverTip : undefined}
         onFocus={tip ? placeTip : undefined}
-        onPointerLeave={tip ? resetTip : undefined}
+        onPointerLeave={tip ? leaveTip : undefined}
         onBlur={tip ? resetTip : undefined}
         onKeyDown={tip ? dismissTip : undefined}
         className={cn(
@@ -213,6 +213,36 @@ function placeTip(e: SyntheticEvent<HTMLButtonElement>) {
 
 function resetTip(e: SyntheticEvent<HTMLButtonElement>) {
   delete e.currentTarget.dataset.tipHidden;
+}
+
+// The chip under the pointer, whose tooltip Escape hides even while focus is elsewhere.
+let hovered: HTMLButtonElement | null = null;
+
+function hoverTip(e: SyntheticEvent<HTMLButtonElement>) {
+  placeTip(e);
+  hovered = e.currentTarget;
+  document.addEventListener("keydown", escapeHovered, true);
+}
+
+function leaveTip(e: SyntheticEvent<HTMLButtonElement>) {
+  resetTip(e);
+  if (hovered === e.currentTarget) unhover();
+}
+
+function unhover() {
+  hovered = null;
+  document.removeEventListener("keydown", escapeHovered, true);
+}
+
+// Captured on the document, so it runs before the pane's and the sheet's own Escape.
+function escapeHovered(e: globalThis.KeyboardEvent) {
+  if (e.key !== "Escape") return;
+  const b = hovered;
+  if (!b?.isConnected) return unhover();
+  if (!b.matches(":hover") || b.dataset.tipHidden === "true" || !window.matchMedia("(pointer: fine)").matches) return;
+  b.dataset.tipHidden = "true";
+  e.stopImmediatePropagation();
+  e.preventDefault();
 }
 
 // Escape hides an open tooltip without closing the panel or sheet around it.
