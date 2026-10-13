@@ -19,9 +19,7 @@ picks:
   prop-3:
     pick: Y
     quotes:
-      - text: Prop 3 simply asks the top 2 percent to keep paying the same rates they already pay.
-        source: https://lwvc.org/ballot-recommendations/
-      - text: California should not give its highest-income residents a multi-billion-dollar tax cut while schools, health care, and other essential services face serious financial pressure.
+      - text: California should not give its highest-income residents a multi-billion-dollar tax cut while schools, health care, and other essential services face serious financial pressure. Prop 3 simply asks the top 2 percent to keep paying the same rates they already pay.
         source: https://lwvc.org/ballot-recommendations/
   prop-4:
     pick: Y
@@ -46,7 +44,7 @@ picks:
   prop-39:
     pick: N
     quotes:
-      - text: California’s elections are already secure.
+      - text: California’s elections are already secure. Voters swear to citizenship under penalty of perjury, and officials verify identity at registration, check the rolls in person, and match every mail ballot signature.
         source: https://lwvc.org/ballot-recommendations/
   prop-41:
     pick: N
