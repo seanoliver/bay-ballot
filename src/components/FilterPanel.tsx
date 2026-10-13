@@ -133,7 +133,7 @@ function PinnedGuides({
       <div ref={listRef}>
         {pinned.length === 0 ? (
           <p data-pin-hint tabIndex={-1} className="rounded-md text-sm text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-            Pin up to {MAX_PINS} guides below to see their picks on each contest.
+            Tap <Pin aria-hidden="true" className="inline size-3.5 align-[-2px]" /> next to a guide below to see its picks on every contest. You can pin up to {MAX_PINS}.
           </p>
         ) : (
           <>
@@ -154,6 +154,7 @@ function PinnedGuides({
                       type="button"
                       data-unpin
                       aria-label={`Unpin ${name}`}
+                      title="Unpin"
                       onClick={() => {
                         refocus.current = i;
                         // Cleared first, so unpinning the same guide twice is announced twice.
@@ -161,7 +162,7 @@ function PinnedGuides({
                         requestAnimationFrame(() => setSaid(`Unpinned ${name}`));
                         onChange(togglePin(f, g.id));
                       }}
-                      className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                     >
                       <X aria-hidden="true" className="size-4" />
                     </button>
@@ -190,11 +191,12 @@ function PinButton({ filters: f, onChange, guide, countId }: { filters: Filters;
       aria-pressed={pinned}
       aria-disabled={full || undefined}
       aria-describedby={full ? countId : undefined}
+      title={pinned ? "Unpin" : full ? `You can pin up to ${MAX_PINS} guides` : "Pin to see its picks on every contest"}
       onClick={() => (full ? undefined : onChange(togglePin(f, guide.id)))}
       className={cn(
-        "grid size-10 shrink-0 place-items-center rounded-full outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+        "grid size-10 shrink-0 cursor-pointer place-items-center rounded-full outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
         pinned ? "text-foreground" : "text-muted-foreground",
-        full && "cursor-not-allowed opacity-40 hover:bg-transparent",
+        full && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
       )}
     >
       <Pin aria-hidden="true" className={cn("size-4", pinned && "fill-current")} />

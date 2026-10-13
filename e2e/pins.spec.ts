@@ -94,7 +94,7 @@ test.describe("pinned guides", () => {
     await page.keyboard.press("Enter");
     await expect(panel.getByRole("button", { name: "Unpin SF Chronicle" })).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(panel.getByText(/^Pin up to 4 guides/)).toBeFocused();
+    await expect(panel.getByText(/^Tap .* next to a guide below/)).toBeFocused();
   });
 
   test("a guide pinned in another area is listed as not on this ballot", async ({ page }, info) => {
