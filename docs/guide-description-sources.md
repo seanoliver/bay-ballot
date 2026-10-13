@@ -11,7 +11,7 @@ Sources for each guide's `description` in `data/guides/`, checked 2026-10-12. Ea
 
 Abundant San Francisco (`abundant-sf`)
 
-> A San Francisco civic organization, formed in 2023 and led by Zack Rosen, that works on housing, transit, street safety, and public spaces. It publishes a voter guide on San Francisco races and measures.
+> A San Francisco political organization formed in 2023 that works on housing, transit, street safety, and public spaces. It publishes a voter guide on San Francisco races and measures.
 
 - https://sfstandard.com/2023/03/20/tech-families-abundant-sf-millions-housing-transportation-education/: New group being formed in March 2023, led by Zack Rosen, CEO of Pantheon
 - https://www.abundantsanfrancisco.org/: Focus areas: public spaces, homes, transportation, street safety
