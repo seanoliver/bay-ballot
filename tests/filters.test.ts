@@ -3,7 +3,7 @@ import {
   filterQuery, carryQuery, contestFiles, setTypeGroup, hiddenLabel, positionGuides, revealGuides,
   activeEntries, countedLabel, filterSummary, fromQuery, guideGroups, hasFilterParams,
   initialFilters, isGuideOn, publishedFiles, sanitizeFilters, toggleGuide, toQuery,
-  typeState, pendingGuides, EMPTY, MAX_PINS, pinnedPicks, togglePin,
+  typeState, pendingGuides, EMPTY, MAX_PINS, pinnedPicks, togglePin, savedFilters, READER_KEYS, SHARED_KEYS,
   type GuideInfo, type PickFile,
 } from "@/lib/filters";
 import type { EndorsementFile, Guide } from "@/lib/schema";
@@ -105,15 +105,27 @@ describe("sanitizeFilters", () => {
 
 describe("initialFilters", () => {
   it("prefers filter params in the URL over stored filters", () => {
-    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: [] });
+    expect(initialFilters({ query: "why=1", stored: "off=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true });
   });
   it("keeps stored pins when the URL has other filter params but no pin", () => {
     expect(initialFilters({ query: "off=b", stored: "why=1&pin=b%2Ca", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["b", "a"] });
     expect(initialFilters({ query: "why=1", stored: "pin=a", guides: info })).toEqual({ ...EMPTY, whyOnly: true, pins: ["a"] });
   });
-  it("lets pin= in the URL win over stored pins, even when empty", () => {
+  it("shows a link's own pins over the stored ones", () => {
     expect(initialFilters({ query: "off=b&pin=b", stored: "pin=a", guides: info }).pins).toEqual(["b"]);
-    expect(initialFilters({ query: "pin=", stored: "pin=a", guides: info }).pins).toEqual([]);
+  });
+  it("falls back to stored pins when the link's pins are empty or all unknown", () => {
+    expect(initialFilters({ query: "pin=", stored: "pin=a", guides: info }).pins).toEqual(["a"]);
+    expect(initialFilters({ query: "off=b&pin=zzz,gone", stored: "pin=a", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["a"] });
+  });
+  it("sanitizes stored pins it falls back to", () => {
+    expect(initialFilters({ query: "off=b", stored: "pin=zzz,a", guides: info }).pins).toEqual(["a"]);
+    const many = [...info, ...["c", "d", "e"].map((id) => ({ id, name: id, type: "club" as const }))];
+    expect(initialFilters({ query: "why=1", stored: "pin=e,d,c,b,a", guides: many }).pins).toEqual(["e", "d", "c", "b"]);
+  });
+  it("keeps stored pins under a legacy offtypes-only link, and has none with nothing stored", () => {
+    expect(initialFilters({ query: "offtypes=club", stored: "pin=a", guides: info })).toEqual({ off: ["b"], whyOnly: false, pins: ["a"] });
+    expect(initialFilters({ query: "off=b", stored: null, guides: info })).toEqual({ ...EMPTY, off: ["b"] });
   });
   it("has no pins once they were unpinned and stored without them", () => {
     expect(initialFilters({ query: "off=b", stored: "off=b", guides: info }).pins).toEqual([]);
@@ -126,6 +138,22 @@ describe("initialFilters", () => {
   });
   it("sanitizes and expands legacy offtypes", () => {
     expect(initialFilters({ query: "offtypes=club&off=zzz", stored: null, guides: info }).off).toEqual(["b"]);
+  });
+});
+
+describe("savedFilters", () => {
+  const stored = { ...EMPTY, pins: ["b", "a"] };
+  const shared = { ...EMPTY, off: ["c"], pins: ["d"] };
+  it("keeps the reader's stored pins through a change that isn't to pins", () => {
+    expect(savedFilters({ prev: shared, next: { ...shared, whyOnly: true }, stored })).toEqual({ off: ["c"], whyOnly: true, pins: ["b", "a"] });
+    expect(savedFilters({ prev: shared, next: { ...EMPTY, pins: shared.pins }, stored })).toEqual(stored);
+  });
+  it("saves every pin on screen once the reader pins or unpins", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored }).pins).toEqual(["d", "e"]);
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "d"), stored }).pins).toEqual([]);
+  });
+  it("classifies every filter as shared or reader-owned", () => {
+    expect([...SHARED_KEYS, ...READER_KEYS].sort()).toEqual(Object.keys(EMPTY).sort());
   });
 });
 
