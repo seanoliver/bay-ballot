@@ -1,11 +1,12 @@
 "use client";
 
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type MouseEvent } from "react";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
-import { cardDescription } from "@/lib/display";
+import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, positionGuides, revealGuides, toQuery, type FilterGuide, type Filters, type GuideInfo, type PickFile, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -13,6 +14,7 @@ import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
 import type { Contest } from "@/lib/schema";
+import { isZip, MINE_PARAM, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, type ZipView } from "@/lib/zip";
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
@@ -23,13 +25,14 @@ import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
+import { CARRIED, currentSearch, pushPath, replaceQuery, useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
 import { useSingleKeys } from "./useSingleKeys";
 import { useHistorySheet } from "./useHistorySheet";
 import { VerdictBar } from "./VerdictBar";
+import { focusZipChipAfterLoad, ZipChip, ZipStatus, type ZipSummary } from "./ZipChip";
 
 // The pane's exit duration, from the shared motion tokens (0 under prefers-reduced-motion).
 const subscribeDesktop = (onChange: () => void) => {
@@ -66,12 +69,29 @@ type Props = {
   onIntent?: () => void;
 };
 
+// Per view and ZIP, so switching back to an area keeps the same groups and so the same rows and bars below.
+const zipCache = new WeakMap<PlaceGroup[], Map<string, ZipView>>();
+function cachedZipView(groups: PlaceGroup[], zip: string, z: ZipPlaces, table: ZipTable): ZipView {
+  let byZip = zipCache.get(groups);
+  if (!byZip) zipCache.set(groups, (byZip = new Map()));
+  let v = byZip.get(zip);
+  if (!v) byZip.set(zip, (v = zipGroups(groups, z, table)));
+  return v;
+}
+function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
+  if (s.kind === "loading") return "";
+  if (s.kind === "failed") return "Couldn’t load the ZIP list. Every contest is shown.";
+  if (s.kind === "unknown") return `ZIP ${zip} isn’t a Bay Area ZIP, or one this site can’t map. Every contest is shown.`;
+  return showAll ? `Showing all ${counted(s.on + s.maybe + s.hidden, "contest")}` : `Showing ${counted(s.on + s.maybe, "contest")} for ZIP ${zip}, ${s.hidden} hidden`;
+}
+
+
 // Per view, so switching back to an area reuses its rows and bars.
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
-  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
@@ -85,6 +105,156 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
   // The contest still drawn while its pane fades out; it's inert, then unmounted after --motion-out.
   const [exiting, setExiting] = useState<Contest | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const [zipRaw, setZipRaw] = useStoredKey(ZIP_KEY);
+  const zip = zipRaw && isZip(zipRaw) ? zipRaw : null;
+  const [table, setTable] = useState<ZipTable | null>(null);
+  const [tableFailed, setTableFailed] = useState(false);
+  useEffect(() => {
+    if (!zip || table || tableFailed) return;
+    import("@/data/zips.json").then(
+      (m) => {
+        setTableFailed(false);
+        setTable(m.default as ZipTable);
+      },
+      () => setTableFailed(true),
+    );
+  }, [zip, table, tableFailed]);
+  const [showAllFor, setShowAllFor] = useState<string | null>(null);
+  const [zipEditing, setZipEditing] = useState(false);
+  const [zipError, setZipError] = useState(false);
+  const zipErrorId = useId();
+  const zipHintId = useId();
+  // The ZIP is one of the area choices: its ballot is the Bay Area list narrowed to it, marked by ?mine=1 so Back,
+  // Forward and reload show what they showed. The flag names no ZIP; picking another area drops it, keeping the ZIP.
+  const [mine] = useQueryParam(MINE_PARAM);
+  const onBay = links[0]?.current ?? area === null;
+  const zipKnown = zip !== null && table !== null && Object.hasOwn(table.zips, zip);
+  const zipActive = zip !== null && onBay && mine === "1";
+  const zipPlaces = zipActive && zipKnown ? table!.zips[zip!] : null;
+  const zipView = useMemo(() => (zip && zipPlaces && table ? cachedZipView(allGroups, zip, zipPlaces, table) : null), [allGroups, zip, zipPlaces, table]);
+  // A link to a contest the ZIP hides still opens it, and turns Show all on so the list stays put when it closes.
+  const requestedHidden = requested !== null && zipView?.fit.get(requested) === "off";
+  if (zip && requestedHidden && showAllFor !== zip) setShowAllFor(zip);
+  const showAll = zip !== null && (showAllFor === zip || requestedHidden);
+  const groups = useMemo(() => (zipView && !showAll ? zipView.groups : allGroups), [zipView, showAll, allGroups]);
+  const notes = zipPlaces?.outside?.length
+    ? [{ text: `Part of this ZIP is in ${zipPlaces.outside.map((c) => `${c} County`).join(" and ")}, which this site doesn’t cover.`, links: [] }]
+    : [];
+  // A loaded table wins over an earlier failure, so the status can't say "every contest is shown" over a filtered list.
+  const zipSummary: ZipSummary | null = !zip
+    ? null
+    : !table
+      ? tableFailed
+        ? { kind: "failed" }
+        : zipActive
+          ? { kind: "loading" }
+          : null
+      : !zipKnown
+          ? { kind: "unknown" }
+          : zipView
+            ? { kind: "filtered", on: zipView.on, maybe: zipView.maybe, hidden: zipView.hidden, notes }
+            : null;
+  // The tab title stays the area's: it can reach synced history, and the ZIP stays on this device.
+  const heading = zipView ? `ZIP ${zip} ballot` : intro.title;
+  const bayHref = links[0]?.href ?? `/${election}`;
+  const router = useRouter();
+  const withQuery = (path: string, edit: (p: URLSearchParams) => void) => {
+    const p = new URLSearchParams(currentSearch());
+    edit(p);
+    const q = p.toString();
+    return q ? `${path}?${q}` : path;
+  };
+  // To the ZIP's ballot, as a new history entry: in place when the page can switch areas, else by navigation.
+  const toZipBallot = (z: string) => {
+    // Read from the address bar, not this render: the call can come after the ZIP table loads.
+    const onBayNow = window.location.pathname === bayHref;
+    const mineNow = new URLSearchParams(currentSearch()).get(MINE_PARAM);
+    stepWrite.cancel();
+    setStepped(null);
+    setShowAllFor(null);
+    setZipActedOn(null);
+    const mark = (p: URLSearchParams) => {
+      p.delete("c");
+      p.set(MINE_PARAM, "1");
+    };
+    if (onBayNow && mineNow === "1") {
+      // Already on the ZIP's ballot (a changed ZIP): no new history entry.
+      replaceQuery(withQuery("", mark).replace(/^\?/, ""));
+      setAnnounce(`Showing the ballot for ZIP ${z}`);
+    } else if (onBayNow && pushPath(withQuery(bayHref, mark))) {
+      setAnnounce(`Showing the ballot for ZIP ${z}`);
+    } else if (!onBayNow && onSwitch?.(bayHref)) {
+      replaceQuery(withQuery("", mark).replace(/^\?/, ""));
+    } else {
+      if (!onBayNow) focusZipChipAfterLoad();
+      router.push(withQuery(bayHref, (p) => {
+        for (const k of [...p.keys()]) if (!CARRIED.includes(k)) p.delete(k);
+        p.set(MINE_PARAM, "1");
+      }));
+    }
+  };
+  // Bumped by anything that should cancel a move still waiting on the ZIP table.
+  const zipRequest = useRef(0);
+  // The ZIP a move is waiting on, so Try again finishes that move and nothing else.
+  const pendingMove = useRef<{ zip: string; path: string } | null>(null);
+  const cancelMove = () => {
+    zipRequest.current++;
+    pendingMove.current = null;
+  };
+  const moveWhenLoaded = (v: string) => {
+    const req = ++zipRequest.current;
+    const from = window.location.pathname;
+    pendingMove.current = { zip: v, path: from };
+    void loadTable().then((t) => {
+      if (req !== zipRequest.current || window.location.pathname !== from || !t) return;
+      pendingMove.current = null;
+      if (Object.hasOwn(t.zips, v)) toZipBallot(v);
+      // An unknown ZIP on the ZIP's ballot: back to the plain list, so the chips and heading agree.
+      else if (new URLSearchParams(currentSearch()).has(MINE_PARAM)) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
+    });
+  };
+  const switchArea = (href: string) => {
+    cancelMove();
+    if (zipActive && href === bayHref) {
+      const moved = pushPath(withQuery(bayHref, (p) => {
+        p.delete(MINE_PARAM);
+        p.delete("c");
+      }));
+      if (!moved) return false;
+      setZipActedOn(undefined);
+      setAnnounce(`Showing ${intro.title}`);
+      return true;
+    }
+    return onSwitch?.(href) ?? false;
+  };
+  const loadTable = async (): Promise<ZipTable | null> => {
+    if (table) return table;
+    try {
+      const t = (await import("@/data/zips.json")).default as ZipTable;
+      setTableFailed(false);
+      setTable(t);
+      return t;
+    } catch {
+      setTableFailed(true);
+      return null;
+    }
+  };
+  const shownLinks = useMemo(() => (zipActive ? links.map((l) => ({ ...l, current: false })) : links), [zipActive, links]);
+  const zipNote = (id: string) => {
+    const f = zipView?.fit.get(id);
+    return f === "maybe" ? "May be on your ballot" : f === "off" ? `Probably not on ballots in ZIP ${zip}` : null;
+  };
+  // Announced only after the visitor acts on the box, and only on the page where they did.
+  const [zipActedOn, setZipActedOn] = useState<string | null | undefined>(undefined);
+  const announced = zipActedOn !== area ? "" : zipSummary ? zipSpoken(zip!, zipSummary, showAll) : zip ? "" : "ZIP cleared. Showing every contest.";
+  const setShowAll = (v: boolean) => {
+    setZipActedOn(area);
+    stepWrite.cancel();
+    setStepped(null);
+    setShowAllFor(v ? zip : null);
+    if (!v && requestedHidden) select(null);
+  };
 
   const all = useMemo(() => groups.flatMap((g) => g.sections.flatMap((s) => s.contests)), [groups]);
   const nav = useMemo(() => navModel(groups), [groups]);
@@ -242,7 +412,9 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
     setStepped(null);
     setExiting(null);
     setAnimate(false);
-    setAnnounce(`Showing ${intro.title}`);
+    setAnnounce(`Showing ${heading}`);
+    if (zipActedOn !== area) setZipActedOn(undefined);
+    setZipError(false);
   }
   useEffect(() => {
     stepWrite.cancel();
@@ -367,6 +539,9 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
       <p aria-live="polite" className="sr-only">
         {announce}
       </p>
+      <p aria-live="polite" className="sr-only">
+        {announced}
+      </p>
       <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} />
 
       <div
@@ -381,7 +556,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
         onKeyDown={onEscape}
       >
         <div className="pt-4 pb-1 lg:pt-6">
-          <h1 className="text-xl font-semibold">{intro.title}</h1>
+          <h1 className="text-xl font-semibold">{heading}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
@@ -389,7 +564,53 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
               Keyboard shortcuts
             </button>
           </div>
-          <AreaPicker links={links} onSwitch={onSwitch} onIntent={onIntent} />
+          <AreaPicker links={shownLinks} onSwitch={switchArea} onIntent={onIntent}>
+            <ZipChip
+              zip={zip}
+              selected={zipActive}
+              onSelect={() => zip && moveWhenLoaded(zip)}
+              editing={zipEditing}
+              setEditing={setZipEditing}
+              error={zipError}
+              setError={setZipError}
+              errorId={zipErrorId}
+              hintId={zipHintId}
+              onZip={(v) => {
+                setZipActedOn(area);
+                setZipError(false);
+                if (v !== zip) setShowAllFor(null);
+                stepWrite.cancel();
+                setStepped(null);
+                setZipRaw(v ?? "");
+                if (!v) {
+                  cancelMove();
+                  if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
+                  return;
+                }
+                // An unknown ZIP stays put and says so; a known one moves to its ballot.
+                moveWhenLoaded(v);
+              }}
+            />
+          </AreaPicker>
+          <ZipStatus
+            zip={zip}
+            summary={zipSummary}
+            showAll={showAll}
+            error={zipError}
+            errorId={zipErrorId}
+            hintId={zipHintId}
+            onShowAll={setShowAll}
+            onRetry={() => {
+              setZipActedOn(area);
+              setTableFailed(false);
+              const p = pendingMove.current;
+              if (zip && p?.zip === zip && p.path === window.location.pathname) moveWhenLoaded(zip);
+              else {
+                pendingMove.current = null;
+                void loadTable();
+              }
+            }}
+          />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />
           <noscript>
             <p className="mt-2 text-sm text-muted-foreground">Filters need JavaScript.</p>
@@ -442,6 +663,7 @@ export function BallotView({ election, area, links, intro, groups, guides, allGu
                           scope={sf?.contests.includes(c.id) ? scope : undefined}
                           bay={bay.get(c.id)}
                           onRevealBay={onRevealBayStable}
+                          zipNote={zipNote(c.id)}
                         />
                       </li>
                     ))}
@@ -528,6 +750,7 @@ const ContestRow = memo(function ContestRow({
   scope,
   bay,
   onRevealBay,
+  zipNote,
 }: {
   href: string;
   contest: Contest;
@@ -539,19 +762,33 @@ const ContestRow = memo(function ContestRow({
   scope?: Scope;
   bay?: BayResult;
   onRevealBay?: (c: Contest) => void;
+  zipNote: string | null;
 }) {
   const description = cardDescription(contest);
   const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
   const wide = scope === "bay" && bay ? bay : null;
   const reveal = () => onRevealBay?.(contest);
+  const note = (layout: "m" | "d") =>
+    zipNote ? (
+      <p id={`zipnote-${layout}-${contest.id}`} className="basis-full text-sm text-muted-foreground">
+        {zipNote}
+      </p>
+    ) : null;
   return (
     <>
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped) && "flex-wrap gap-y-2", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped || zipNote) && "flex-wrap gap-y-2", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
-          <a id={`row-m-${contest.id}`} href={href} onClick={(e) => onClick(e, contest)} className={ROW_LINK}>
+          <a
+            id={`row-m-${contest.id}`}
+            href={href}
+            onClick={(e) => onClick(e, contest)}
+            aria-describedby={zipNote ? `zipnote-m-${contest.id}` : undefined}
+            className={ROW_LINK}
+          >
             {keepNumber(contest.title)}
           </a>
         </h4>
+        {note("m")}
         {wide ? (
           <BayBlock id={`bay-m-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
             <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
@@ -575,11 +812,13 @@ const ContestRow = memo(function ContestRow({
             href={href}
             onClick={(e) => onClick(e, contest)}
             aria-current={selected ? "true" : undefined}
+            aria-describedby={zipNote ? `zipnote-d-${contest.id}` : undefined}
             className={ROW_LINK}
           >
             {contest.title}
           </a>
         </h4>
+        {note("d")}
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
         {wide ? (
           <BayBlock id={`bay-d-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">

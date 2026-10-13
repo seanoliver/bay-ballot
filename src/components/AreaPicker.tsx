@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
 import type { AreaLink } from "@/lib/areas";
@@ -47,7 +48,7 @@ function Chip({ l, shape, bayHref, onSwitch }: { l: AreaLink; shape?: Shape; bay
 }
 
 /** `onIntent` fires when a visitor may be about to pick an area, to fetch what a switch needs. */
-export function AreaPicker({ links, onSwitch, onIntent }: { links: AreaLink[]; onSwitch?: (href: string) => boolean; onIntent?: () => void }) {
+export function AreaPicker({ links, onSwitch, onIntent, children }: { links: AreaLink[]; onSwitch?: (href: string) => boolean; onIntent?: () => void; children?: ReactNode }) {
   const [bay, ...counties] = links;
   return (
     <nav aria-label="Area" className="mt-3 flex flex-wrap gap-2 text-sm" onPointerEnter={onIntent} onFocus={onIntent} onTouchStart={onIntent}>
@@ -55,6 +56,7 @@ export function AreaPicker({ links, onSwitch, onIntent }: { links: AreaLink[]; o
       {counties.map((l) => (
         <Chip key={l.href} l={l} shape={COUNTY_SHAPES[l.label]} bayHref={bay.href} onSwitch={onSwitch} />
       ))}
+      {children}
     </nav>
   );
 }

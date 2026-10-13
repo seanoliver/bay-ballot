@@ -1,6 +1,7 @@
 import type { BeforeSendEvent } from "@vercel/analytics";
 
 // An address or ZIP filter must never reach analytics: add its params here.
+// `mine` (the ZIP ballot flag) is allowed: it says a ZIP is saved, never which one.
 const PRIVATE_PARAMS = new Set(["addr", "zip", "q"]);
 
 export function scrubUrl(url: string): string {
