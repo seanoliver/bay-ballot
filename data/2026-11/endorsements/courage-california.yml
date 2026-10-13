@@ -17,7 +17,7 @@ archived:
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   - source: https://www.progressivevotersguide.com/california/2026/general/county/marin
     snapshot: https://web.archive.org/web/20261007203549/https://www.progressivevotersguide.com/california/2026/general/county/marin
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-13
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -113,12 +113,6 @@ picks:
   board-of-equalization-2:
     pick:
       - Sally J. Lieber
-  superintendent:
-    pick:
-      - Richard Barrera
-    quotes:
-      - text: He has led efforts to pass four major school bonds and a first-in-the-nation affordable housing initiative for educators.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   state-senate-2:
     pick:
       - Damon Connolly
@@ -209,6 +203,12 @@ picks:
     quotes:
       - text: Based on our Courage Score analysis, Asm. Rivas supported most progressive bills that made it to a vote, and has earned an Honorable Mention three times.
         source: https://www.progressivevotersguide.com/california/2026/general/county/santaclara
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: He has led efforts to pass four major school bonds and a first-in-the-nation affordable housing initiative for educators.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-1:
     pick: Y
     quotes:
@@ -235,6 +235,8 @@ picks:
     quotes:
       - text: Recall elections are sometimes abused as a tool for political gamesmanship, allowing for the strategic removal of someone who has won a fair election, often by the people and interests who opposed the candidate in the original election. VOTING YES will limit the ways in which this tool can be weaponized and better protect the foundation of fair elections and representation that is essential to our democratic system.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: The failed 2021 recall election of Governor Newsom cost taxpayers over $200 million – nearly $175 million from counties and $26 million from the state.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N
   prop-39:
@@ -260,9 +262,19 @@ picks:
     quotes:
       - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-  san-jose-council-5:
-    pick:
-      - Peter Ortiz
+  rtm:
+    pick: Y
   richmond-mayor:
     pick:
       - Claudia Jiménez
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  berkeley-measure-z:
+    pick: Y
+    quotes:
+      - text: Measure Z will establish a public bank that is owned by Berkeley, with the community acting as board member and auditor.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda

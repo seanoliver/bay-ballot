@@ -46,7 +46,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Mano Raju]
-    aliases: { Mano Raju: [Manohar Raju] }
+    aliases: { Mano Raju: [Manohar Raju, Manuhar Raju] }
     jurisdiction: { level: city, name: San Francisco }
   - id: supervisor-2
     section: Local candidates

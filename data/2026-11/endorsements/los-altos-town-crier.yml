@@ -4,7 +4,7 @@ status: published
 source: https://www.losaltosonline.com/opinion/town-crier-endorsements/article_cddcbc6a-6f71-4a55-b19d-0aa447cdc306.html
 extraSources:
   - https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-13
 hasReasoning: true
 rejectedQuotes:
   - text: The first is that Measure D is unnecessary.
@@ -46,7 +46,9 @@ picks:
   los-altos-measure-d:
     pick: N
     quotes:
-      - text: 'While the specific impacts of Measure D remain cloudy – lawsuits, Builder’s Remedy, Housing Element recertifications, zoning changes – one thing is certain: Mitigating those impacts will be done by elected officials and city staff at the expense of doing something else for the city.'
+      - text: "While the specific impacts of Measure D remain cloudy – lawsuits, Builder’s Remedy, Housing Element recertifications, zoning changes – one thing is certain: Mitigating those impacts will be done by elected officials and city staff at the expense of doing something else for the city."
+        source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
+      - text: If the measure had included the phrase “except housing,” we would be discussing what to do with the parking plazas instead of how to avoid lawsuits, Builder’s Remedy and rezoning.
         source: https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
   mountain-view-measure-e:
     pick: Y

@@ -2,7 +2,7 @@ guide: empower-oakland
 election: 2026-11
 status: published
 source: https://www.empoweroakland.com/voter-guide
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-12
 hasReasoning: true
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
@@ -123,6 +123,8 @@ picks:
         source: https://www.empoweroakland.com/voter-guide
       - text: She put forward the June resolution to merge Laney and Merritt into Oakland City College by fall 2027, and we believe she is in a strong position to see it through.
         source: https://www.empoweroakland.com/voter-guide
+      - text: Despite a turbulent tenure, she has not shied away from hard conversations, including saying plainly that a shrinking district cannot sustain four colleges.
+        source: https://www.empoweroakland.com/voter-guide
   oakland-measure-ee:
     pick: Y
     quotes:
@@ -132,6 +134,9 @@ picks:
         source: https://www.empoweroakland.com/voter-guide
   oakland-measure-ff:
     pick: Y
+    quotes:
+      - text: It is not a new tax, and it does not raise anyone’s property tax rate.
+        source: https://www.empoweroakland.com/voter-guide
   rtm:
     pick: Y
     quotes:

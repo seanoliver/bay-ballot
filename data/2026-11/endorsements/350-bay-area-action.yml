@@ -11,7 +11,7 @@ archived:
     snapshot: https://web.archive.org/web/20261007195505/https://350bayareaaction.org/electoral/endorsements-2026
   - source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
     snapshot: https://web.archive.org/web/20261007195539/https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-12
 hasReasoning: true
 picks:
   prop-3:
@@ -33,6 +33,8 @@ picks:
     pick: Y
     quotes:
       - text: This measure will levy a one-time 5% tax on billionaires’ accumulated wealth to keep local hospitals and ERs open, fund food aid, and support K-14 public education.
+        source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
+      - text: It serves social justice by mitigating some of the cuts in basic services funding made by the federal government.
         source: https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
   prop-41:
     pick: N

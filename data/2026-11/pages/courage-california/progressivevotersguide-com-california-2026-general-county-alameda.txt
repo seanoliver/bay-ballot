@@ -57,6 +57,8 @@ Sam Sukaton
 Board of Equalization, District 4
 Tom Umberg
 Statewide Ballot Measures
+Public Transit Revenue Measure
+Public Transit Revenue Measure: VOTE YES ON THE PUBLIC TRANSIT REVENUE MEASURE
 Proposition #1
 Proposition #1: VOTE YES ON PROP 1
 Proposition #2
@@ -85,6 +87,12 @@ Proposition #44
 Proposition #44: VOTE NO ON PROP 44
 Proposition #45
 Proposition #45: VOTE NO ON PROP 45
+Berkeley Ballot Measures
+Initiative Z
+Initiative Z: VOTE YES ON MEASURE Z
+City of Oakland
+Oakland Mayor
+Barbara Lee
 Alameda County
 Guide Powered ByCourage California
 Guide Powered ByCourage California
@@ -1067,6 +1075,42 @@ https://powersearch.sos.ca.gov/advanced.php
 https://californiatargetbook.com/book/new/BOE4
 Read More
 Statewide Ballot Measures
+Public Transit Revenue Measure
+VOTE YES
+Public Transit Revenue Measure
+VOTE YES ON THE PUBLIC TRANSIT REVENUE MEASURE
+California public transportation systems operate on aging infrastructure, and are facing looming service cuts without changes to their funding. The Public Transit Revenue Measure District Proposition RTM would establish a 14-year sales tax to fund Bay Area transit systems, including BART, Caltrain, VTA SamTrans, AC Transit, and Muni. The sales tax would be spread across five counties, with purchases in Alameda, Contra Costa, San Mateo, and Santa Clara counties seeing an increase of 0.5%, and purchases in San Francisco County seeing an increase of 1.0%. This tax is estimated to bring in nearly $1 billion annually to support the safety, cleanliness, affordability, and reliability of public transit, and provide some road repairs across the region.
+Why voting YES on the Public Transit Revenue Measure matters:
+Public transit is critical to the economy of the region, with countless individuals and businesses relying on these systems to ensure their livelihood. Lower post-pandemic ridership has reduced their budgets, and cuts to essential routes and stations are looming. VOTING YES will ensure that these vital transportation systems can continue at current service levels and staffing, and make investments in their systems.
+The Public Transit Revenue Measure language includes a build-in for “requiring financial transparency, oversight, and accountability” for the stewardship of the collected sales tax revenue. VOTING YES will approve the collection of these funds with a commitment that each transit system is demonstrating the proper use of the dollars for the benefit of riders and the broader community.
+The region already suffers from traffic challenges and high pollution, and nearly half of trips on these transit systems are job-related. Allowing the systems to lose funding and cut service is likely to increase traffic congestion across the area and create more wear and tear on roadways. VOTING YES will ensure that car traffic remains at its current level, and that Californians continue to have extensive opportunities to opt for public transit.
+Public transit is a lifeline for vulnerable populations, including lower-income and disabled Californians. VOTING YES will retain travel options and accessibility for these residents and all riders.
+Top supporters of the Public Transit Revenue Measure:
+The Public Transit Revenue Measure has received significant support from organizations within the state, including California Working Families Party, San Francisco Labor Council, National Union of Healthcare Workers, Climate Action California, and YIMBY Action.
+It has also received the endorsement of many elected leaders, including Rep. Ro Khanna, State Sen. Scott Wiener, Asm. Ash Kalra, and the mayors of Tracy, Berkeley, Oakland, East Palo Alto, San Francisco, Redwood City, Palo Alto, and Walnut Creek.
+Supporters make consistent economic arguments for the value of ensuring that public transportation systems can continue to operate at their current service levels for the benefit of all region residents.
+Top opposition to the Public Transit Revenue Measure:
+The Public Transit Revenue Measure has been opposed by the Committee for Affordable Bay Area Transit, which supports the Fixes Before Funding initiative, and has the support of the Contra Costa Taxpayers Association and the Silicon Valley Taxpayers Association.
+Those in opposition argue that this sales tax would hit working families hardest in an area that already carries a high cost of living, and that these transit systems have lacked agility in dealing with lower ridership, and the corresponding drop in fare revenue, since 2020.
+The opposition also argues that this measure will lock in fixed budget percentages for each transit system, and that the formula will be restrictive and may not allow for funds to flow to the system with the greatest need.
+Read More
+California public transportation systems operate on aging infrastructure, and are facing looming service cuts without changes to their funding. The Public Transit Revenue Measure District Proposition RTM would establish a 14-year sales tax to fund Bay Area transit systems, including BART, Caltrain, VTA SamTrans, AC Transit, and Muni. The sales tax would be spread across five counties, with purchases in Alameda, Contra Costa, San Mateo, and Santa Clara counties seeing an increase of 0.5%, and purchases in San Francisco County seeing an increase of 1.0%. This tax is estimated to bring in nearly $1 billion annually to support the safety, cleanliness, affordability, and reliability of public transit, and provide some road repairs across the region.
+Why voting YES on the Public Transit Revenue Measure matters:
+Public transit is critical to the economy of the region, with countless individuals and businesses relying on these systems to ensure their livelihood. Lower post-pandemic ridership has reduced their budgets, and cuts to essential routes and stations are looming. VOTING YES will ensure that these vital transportation systems can continue at current service levels and staffing, and make investments in their systems.
+The Public Transit Revenue Measure language includes a build-in for “requiring financial transparency, oversight, and accountability” for the stewardship of the collected sales tax revenue. VOTING YES will approve the collection of these funds with a commitment that each transit system is demonstrating the proper use of the dollars for the benefit of riders and the broader community.
+The region already suffers from traffic challenges and high pollution, and nearly half of trips on these transit systems are job-related. Allowing the systems to lose funding and cut service is likely to increase traffic congestion across the area and create more wear and tear on roadways. VOTING YES will ensure that car traffic remains at its current level, and that Californians continue to have extensive opportunities to opt for public transit.
+Public transit is a lifeline for vulnerable populations, including lower-income and disabled Californians. VOTING YES will retain travel options and accessibility for these residents and all riders.
+Top supporters of the Public Transit Revenue Measure:
+The Public Transit Revenue Measure has received significant support from organizations within the state, including California Working Families Party, San Francisco Labor Council, National Union of Healthcare Workers, Climate Action California, and YIMBY Action.
+It has also received the endorsement of many elected leaders, including Rep. Ro Khanna, State Sen. Scott Wiener, Asm. Ash Kalra, and the mayors of Tracy, Berkeley, Oakland, East Palo Alto, San Francisco, Redwood City, Palo Alto, and Walnut Creek.
+Supporters make consistent economic arguments for the value of ensuring that public transportation systems can continue to operate at their current service levels for the benefit of all region residents.
+Top opposition to the Public Transit Revenue Measure:
+The Public Transit Revenue Measure has been opposed by the Committee for Affordable Bay Area Transit, which supports the Fixes Before Funding initiative, and has the support of the Contra Costa Taxpayers Association and the Silicon Valley Taxpayers Association.
+Those in opposition argue that this sales tax would hit working families hardest in an area that already carries a high cost of living, and that these transit systems have lacked agility in dealing with lower ridership, and the corresponding drop in fare revenue, since 2020.
+The opposition also argues that this measure will lock in fixed budget percentages for each transit system, and that the formula will be restrictive and may not allow for funds to flow to the system with the greatest need.
+Read More
+VOTE YES ON THE PUBLIC TRANSIT REVENUE MEASURE
+Establish a temporary sales tax to support the funding of public transportation systems across five California counties.
 Proposition #1
 VOTE YES
 Proposition #1
@@ -1110,7 +1154,7 @@ Top supporters of Proposition 2:
 Proposition 2 has the backing of a strong Democratic legislative coalition, including State Assembly Speaker Robert Rivas and Gov. Gavin Newsom. It has also received the endorsement of the California Democratic Party.
 Top opposition to Proposition 2:
 More fiscally conservative members of the legislature have argued that California has an overspending problem, not a savings problem. This coalition argues that reigning in spending and trimming the budget would be a more sensible solution than increasing savings in the rainy day fund.
-Reform California, a right-wing group that is leading statewide efforts to block eligible Californians from voting (including Prop 39) and is backing extremist Republican candidates for office, is a top supporter of Proposition 2.
+Reform California, a right-wing group that is leading statewide efforts to block eligible Californians from voting (including Prop 39) and is backing extremist Republican candidates for office, is a top opponent of Proposition 2.
 Read More
 For two decades, California has maintained a Budget Stabilization Account (BSA) that serves as a rainy day fund that the state government can use during emergencies or financial crises. Proposition 2, also known as the Save for California’s Future Act, would increase the BSA fund’s cap from 10% to 20% of General Fund revenue. Additionally, Proposition 2 would exclude BSA contributions from the Gann Limit — approved by voters in 1979 — which limits the amount of tax revenue that the state can spend annually.
 Why voting YES on Proposition 2 matters:
@@ -1121,7 +1165,7 @@ Top supporters of Proposition 2:
 Proposition 2 has the backing of a strong Democratic legislative coalition, including State Assembly Speaker Robert Rivas and Gov. Gavin Newsom. It has also received the endorsement of the California Democratic Party.
 Top opposition to Proposition 2:
 More fiscally conservative members of the legislature have argued that California has an overspending problem, not a savings problem. This coalition argues that reigning in spending and trimming the budget would be a more sensible solution than increasing savings in the rainy day fund.
-Reform California, a right-wing group that is leading statewide efforts to block eligible Californians from voting (including Prop 39) and is backing extremist Republican candidates for office, is a top supporter of Proposition 2.
+Reform California, a right-wing group that is leading statewide efforts to block eligible Californians from voting (including Prop 39) and is backing extremist Republican candidates for office, is a top opponent of Proposition 2.
 Read More
 VOTE YES ON PROP 2
 Boost the state’s rainy day fund and protect core public services through budget emergencies.
@@ -1553,6 +1597,77 @@ Supporters view the existing environmental review process under CEQA as unnecess
 Read More
 VOTE NO ON PROP 45
 Protect public oversight of polluting projects.
+Berkeley Ballot Measures
+Depending on where you live, you may have the following city measures on your ballot.
+Initiative Z
+VOTE YES
+Initiative Z
+VOTE YES ON MEASURE Z
+Berkeley has long used private banks, like Wells Fargo, to hold locally collected taxes and fees. The private banking model relies on the practice of lending out funds to the industries that will create the largest return for shareholders, which do not always align with the priorities of the local taxpayers who pay into those accounts. Measure Z would establish a public bank funded through a temporary parcel tax that is designed to reinvest the collected funds into local initiatives like affordable housing, local business development, and environmental initiatives. The parcel tax would be established for six years and would levy a tax of $.06 for each square foot of residential improvements, and $.09 for each square foot of nonresidential improvements.
+Why voting YES on Measure Z matters:
+Private banks often engage with problematic, wealthy industries, like fossil fuels, artificial intelligence, and weapons manufacturers. VOTING YES will ensure that these local funds are protected and centered on priorities that align to the Berkeley community.
+Measure Z will establish a public bank that is owned by Berkeley, with the community acting as board member and auditor. VOTING YES will create this institution with built-in mechanisms for ensuring that all funds are distributed effectively within the community, and that any earned profits are reinvested locally.
+Like many areas of California, Berkeley has faced a significant housing crisis in recent years, and significant federal cuts under the current administration. VOTING YES will provide the city with another innovative tool for raising capital for housing improvements that benefit the local community, and ensuring local financial stability.
+Top supporters of Measure Z:
+Measure Z has the support of California State Controller Malia Cohen, State Sen. Jesse Arreguin, who previously served as mayor of Berkeley, and Alameda County Sup. Nikki Fortunato Bas. It also has the support of two current Berkeley City Council members and five commissioners on the city’s Rent Board.
+Measure Z has received the endorsement of Alameda County Democratic Party, Alameda Labor Council, Berkeley Tenants Union, DSA East Bay, Green Party of Alameda County, Indivisible East Bay, Non-Profit Housing Association of Northern California Action Fund, and UAW Region 6.
+Top opposition to Measure Z:
+Opponents have argued that public banks require detailed management and significant public trust, and that Measure Z does not include enough guardrails and parameters to allow for the establishment of a trustworthy institution. They raise concerns that Berkeley’s public bank may not earn all necessary state and federal approvals, which would leave the collected tax revenue in limbo for an indefinite period of time.
+Read More
+Berkeley has long used private banks, like Wells Fargo, to hold locally collected taxes and fees. The private banking model relies on the practice of lending out funds to the industries that will create the largest return for shareholders, which do not always align with the priorities of the local taxpayers who pay into those accounts. Measure Z would establish a public bank funded through a temporary parcel tax that is designed to reinvest the collected funds into local initiatives like affordable housing, local business development, and environmental initiatives. The parcel tax would be established for six years and would levy a tax of $.06 for each square foot of residential improvements, and $.09 for each square foot of nonresidential improvements.
+Why voting YES on Measure Z matters:
+Private banks often engage with problematic, wealthy industries, like fossil fuels, artificial intelligence, and weapons manufacturers. VOTING YES will ensure that these local funds are protected and centered on priorities that align to the Berkeley community.
+Measure Z will establish a public bank that is owned by Berkeley, with the community acting as board member and auditor. VOTING YES will create this institution with built-in mechanisms for ensuring that all funds are distributed effectively within the community, and that any earned profits are reinvested locally.
+Like many areas of California, Berkeley has faced a significant housing crisis in recent years, and significant federal cuts under the current administration. VOTING YES will provide the city with another innovative tool for raising capital for housing improvements that benefit the local community, and ensuring local financial stability.
+Top supporters of Measure Z:
+Measure Z has the support of California State Controller Malia Cohen, State Sen. Jesse Arreguin, who previously served as mayor of Berkeley, and Alameda County Sup. Nikki Fortunato Bas. It also has the support of two current Berkeley City Council members and five commissioners on the city’s Rent Board.
+Measure Z has received the endorsement of Alameda County Democratic Party, Alameda Labor Council, Berkeley Tenants Union, DSA East Bay, Green Party of Alameda County, Indivisible East Bay, Non-Profit Housing Association of Northern California Action Fund, and UAW Region 6.
+Top opposition to Measure Z:
+Opponents have argued that public banks require detailed management and significant public trust, and that Measure Z does not include enough guardrails and parameters to allow for the establishment of a trustworthy institution. They raise concerns that Berkeley’s public bank may not earn all necessary state and federal approvals, which would leave the collected tax revenue in limbo for an indefinite period of time.
+Read More
+VOTE YES ON MEASURE Z
+Establish a public bank to keep funds local and invest in community initiatives.
+City of Oakland
+Depending on where you live, you may have the below city races on your ballot.
+Oakland Mayor
+Non-Partisan
+Barbara Lee
+Re-elect Barbara Lee to put Oakland on the right track for progress.
+Progressive endorsements: Lee was previously endorsed by some groups, including the Alameda Labor Council AFL-CIO, SEIU 1021, California Nurses Association, California Working Families Party, and Our Revolution East Bay. She has also received the endorsement of local and state leaders, including Dolores Huerta, City Councilmember Kevin Jenkins, former Gov. Jerry Brown, State Sen. Jesse Arreguin, Asm. Mia Bonta, and Rep. Lateefah Simon.
+Top issues: A comprehensive, community-focused approach to public safety, investing in effective solutions that prevent homelessness before it starts, attracting new investment and creating jobs, protecting Oaklanders from illegal persecution and infringement on civil rights, and investing in and expanding programs serving Oakland youth.
+Governance and community leadership experience: Lee has served as mayor since 2025, when she was elected with 53% of the vote. After her election, she launched a ten-point plan, much of which she accomplished in her first year in office, including securing funding for affordable housing, raising philanthropic investments to combat illegal dumping, introducing balanced budgets for 2025 and 2026, and reduced fire hazards. Mayor Lee has also led efforts to reform and streamline city operations to better serve residents. Under the Trump administration, she affirmed the city’s sanctuary city status and issued executive orders to prohibit ICE agents from using city-owned property. Last year, Lee created a new Office of Homeless Solutions to oversee work on encampments and shelters.
+Mayor Lee is behind a proposal to restructure Oakland’s government to a “strong mayor” system, which would give her power to vote legislation and portions of the city from the city council, and give her more control over city administration. The proposal was developed after a community engagement process, and is opposed by four of the eight city councilmembers. Oakland residents will vote on the Oakland Mayoral Powers, City Council Oversight, and Elected Officials Charter Amendment in the general election.
+Lee had a long career in politics before becoming Oakland mayor. She served in Congress from 1998–2025, California State Senate from 1992–1996, and the California State Assembly from 1990–1992. In her 26-year tenure in Congress, Rep. Lee was an outspoken progressive leader across various issues, including ending poverty, and has been a prolific author of legislation related to ending AIDS/HIV, malaria, and tuberculosis. She was the only member of Congress to vote against the authorization for the use of military force after the attacks on , a controversial position at the time.
+Other background: Lee is from El Paso, TX, and moved to the San Fernando Valley as a teenager. She attended Mills College and has lived in the Bay Area her entire adult life.
+The Race
+General election: There are four candidates running in the general election: Barbara Lee (incumbent), Brenda Grisham, Mindy Pechenuk, and Julius Robinson. This is a nonpartisan race.
+Candidate fundraising: Lee’s campaign has raised $315,000.
+Opponent fundraising: Grisham’s campaign has raised $12,035, Pechenuk’s has raised $18,566, and Robinson’s campaign has not filed any financial disclosures.
+The District
+City: Oakland is Alameda County’s most populous city. Oakland’s mayor and city council oversee the needs of 435,000 people and manage an estimated operating budget of $1.7 billion annually.
+District demographics: As of the 2020 Census, Oakland had a demographic breakdown of 25% Latino, 16% Asian, and 21% Black.
+Recent election results: Alameda County, which includes Oakland, voted for Kamala Harris for president in 2024 by 54 points and for Gavin Newsom for governor in 2022 by 58 points.
+The Position
+Oakland is governed by a city council of eight elected representatives. A city council is responsible for establishing policy, passing local laws (ordinances), voting on budget appropriations, and developing an overall vision for the city. These bodies are often augmented by two additional seats held by a mayor and a vice mayor. Oakland uses the mayor-council government structure. The mayor is elected at large and acts as chair of the city council and the city’s chief executive officer. The Oakland mayor does not hold any special legislative power. In Oakland, the mayor is elected to a four-year term, with a limit of two terms.
+Read More
+Re-elect Barbara Lee to put Oakland on the right track for progress.
+Progressive endorsements: Lee was previously endorsed by some groups, including the Alameda Labor Council AFL-CIO, SEIU 1021, California Nurses Association, California Working Families Party, and Our Revolution East Bay. She has also received the endorsement of local and state leaders, including Dolores Huerta, City Councilmember Kevin Jenkins, former Gov. Jerry Brown, State Sen. Jesse Arreguin, Asm. Mia Bonta, and Rep. Lateefah Simon.
+Top issues: A comprehensive, community-focused approach to public safety, investing in effective solutions that prevent homelessness before it starts, attracting new investment and creating jobs, protecting Oaklanders from illegal persecution and infringement on civil rights, and investing in and expanding programs serving Oakland youth.
+Governance and community leadership experience: Lee has served as mayor since 2025, when she was elected with 53% of the vote. After her election, she launched a ten-point plan, much of which she accomplished in her first year in office, including securing funding for affordable housing, raising philanthropic investments to combat illegal dumping, introducing balanced budgets for 2025 and 2026, and reduced fire hazards. Mayor Lee has also led efforts to reform and streamline city operations to better serve residents. Under the Trump administration, she affirmed the city’s sanctuary city status and issued executive orders to prohibit ICE agents from using city-owned property. Last year, Lee created a new Office of Homeless Solutions to oversee work on encampments and shelters.
+Mayor Lee is behind a proposal to restructure Oakland’s government to a “strong mayor” system, which would give her power to vote legislation and portions of the city from the city council, and give her more control over city administration. The proposal was developed after a community engagement process, and is opposed by four of the eight city councilmembers. Oakland residents will vote on the Oakland Mayoral Powers, City Council Oversight, and Elected Officials Charter Amendment in the general election.
+Lee had a long career in politics before becoming Oakland mayor. She served in Congress from 1998–2025, California State Senate from 1992–1996, and the California State Assembly from 1990–1992. In her 26-year tenure in Congress, Rep. Lee was an outspoken progressive leader across various issues, including ending poverty, and has been a prolific author of legislation related to ending AIDS/HIV, malaria, and tuberculosis. She was the only member of Congress to vote against the authorization for the use of military force after the attacks on , a controversial position at the time.
+Other background: Lee is from El Paso, TX, and moved to the San Fernando Valley as a teenager. She attended Mills College and has lived in the Bay Area her entire adult life.
+The Race
+General election: There are four candidates running in the general election: Barbara Lee (incumbent), Brenda Grisham, Mindy Pechenuk, and Julius Robinson. This is a nonpartisan race.
+Candidate fundraising: Lee’s campaign has raised $315,000.
+Opponent fundraising: Grisham’s campaign has raised $12,035, Pechenuk’s has raised $18,566, and Robinson’s campaign has not filed any financial disclosures.
+The District
+City: Oakland is Alameda County’s most populous city. Oakland’s mayor and city council oversee the needs of 435,000 people and manage an estimated operating budget of $1.7 billion annually.
+District demographics: As of the 2020 Census, Oakland had a demographic breakdown of 25% Latino, 16% Asian, and 21% Black.
+Recent election results: Alameda County, which includes Oakland, voted for Kamala Harris for president in 2024 by 54 points and for Gavin Newsom for governor in 2022 by 58 points.
+The Position
+Oakland is governed by a city council of eight elected representatives. A city council is responsible for establishing policy, passing local laws (ordinances), voting on budget appropriations, and developing an overall vision for the city. These bodies are often augmented by two additional seats held by a mayor and a vice mayor. Oakland uses the mayor-council government structure. The mayor is elected at large and acts as chair of the city council and the city’s chief executive officer. The Oakland mayor does not hold any special legislative power. In Oakland, the mayor is elected to a four-year term, with a limit of two terms.
+Read More
 Federal Candidates
 Paid for by Courage California Super Pac and not authorized by a candidate or a candidate's committee.
 445 S. Figueroa Street, Ste. 2400 Los Angeles, CA 90071
