@@ -10,7 +10,7 @@ import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
 import { activeEntries, EMPTY, NO_PINS, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
-import { areaNoPick } from "@/lib/contest-pins";
+import { areaNoPick, type NoPickScope } from "@/lib/contest-pins";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
@@ -66,6 +66,8 @@ type Props = {
   files: Record<string, PickFile>;
   pending: string | null;
   fallback?: Fallback | null;
+  /** Unset on the Bay Area list, which has no No pick group. */
+  noPick?: NoPickScope;
   /** True while the list still shows the area being left. */
   busy?: boolean;
   onSwitch?: (href: string) => boolean;
@@ -93,7 +95,7 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, noPick: noPickScope, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -409,12 +411,13 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   });
   const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
   const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides, onBallot: guides };
-  // An area's own guides only: most Bay Area guides that skipped a contest don't cover it, and a Bay Area fallback isn't this area's.
+  // Not on the Bay Area list, where most guides that skipped a contest don't cover it, nor for a Bay Area fallback.
   const noPick = useMemo(
-    () => (shown && area !== null && !fallbackOf.has(shown.id) ? areaNoPick(shown.id, guides, files) : []),
-    [shown, area, fallbackOf, guides, files],
+    () => (shown && area !== null && noPickScope && !fallbackOf.has(shown.id) ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
+    [shown, area, noPickScope, fallbackOf, guides, files],
   );
-  const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, noPick });
+  // A Bay Area fallback's sides list Bay Area guides, whose files the fallback holds.
+  const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, files: fallback?.files ?? files, noPick });
   const carry = useCarriedQuery();
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { Funnel, Pin } from "lucide-react";
 import { countedNoPick, isCountingOnly, pinMessage, toggleCountOnly, type NoPickGuide } from "@/lib/contest-pins";
 import type { Side } from "@/lib/detail";
 import { displayName } from "@/lib/display";
-import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo } from "@/lib/filters";
+import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 
 /** What a contest's sides need to pin guides and count only one side. */
@@ -32,11 +32,14 @@ export function useContestPins({
   filters: f,
   onChange,
   guides,
+  files,
   noPick,
 }: {
   filters: Filters;
   onChange: (f: Filters) => void;
   guides: GuideInfo[];
+  /** Covering every guide a side can list, to tell whether `only` is that side's. */
+  files: Record<string, PickFile>;
   noPick: NoPickGuide[];
 }): Pinning {
   const [status, setStatus] = useState("");
@@ -72,10 +75,10 @@ export function useContestPins({
       const next = togglePin(f, id);
       if (next !== f) onChange(next);
     },
-    counting: (side) => isCountingOnly(f, ids(side)),
+    counting: (side) => isCountingOnly(f, ids(side), files),
     onCountOnly: (side) => {
-      const stop = isCountingOnly(f, ids(side));
-      onChange(toggleCountOnly(f, ids(side)));
+      const stop = isCountingOnly(f, ids(side), files);
+      onChange(toggleCountOnly(f, ids(side), files));
       say(stop ? `Stopped counting only the guides for ${side.label}` : `Counting only the ${guidesLabel(side.count)} for ${side.label}`);
     },
   };

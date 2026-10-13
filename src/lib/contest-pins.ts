@@ -22,9 +22,27 @@ export function noPickGuides(
     .map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
 }
 
-/** An area list's guides that made no pick on a contest; they all cover the area. */
-export function areaNoPick(contestId: string, guides: { id: string }[], files: Record<string, PickFile>): NoPickGuide[] {
-  return guides.filter((g) => files[g.id] && !files[g.id].picks[contestId]).map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
+/**
+ * What an area list needs to apply noPickGuides' rule in the browser: each contest's home area where it isn't the list's
+ * own (Oakland for Oakland's mayor on the Alameda County list), and the areas of the list's guides.
+ */
+export type NoPickScope = { homes: Record<string, string>; guideAreas: Record<string, string[]> };
+
+export function noPickScope(area: Pick<Area, "id">, contests: Contest[], areas: Area[], guides: { id: string; areas: string[] }[]): NoPickScope {
+  const homes: Record<string, string> = {};
+  for (const c of contests) {
+    const home = contestPlace(c, areas).area;
+    if (home && home.id !== area.id) homes[c.id] = home.id;
+  }
+  return { homes, guideAreas: Object.fromEntries(guides.map((g) => [g.id, g.areas])) };
+}
+
+/** An area list's guides that made no pick on a contest, among those covering its home area (else the list's own). */
+export function areaNoPick(contestId: string, area: string, scope: NoPickScope, guides: { id: string }[], files: Record<string, PickFile>): NoPickGuide[] {
+  const home = scope.homes[contestId] ?? area;
+  return guides
+    .filter((g) => files[g.id] && !files[g.id].picks[contestId] && scope.guideAreas[g.id]?.includes(home))
+    .map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
 }
 
 /** The no-pick guides the filters still count, by name. */
@@ -38,13 +56,19 @@ export function countedNoPick(f: Filters, noPick: NoPickGuide[], guides: GuideIn
 }
 
 /** Counts only `keep` across the whole ballot, or, if it already is, stops; `off`, why and pins stay as they were. */
-export function toggleCountOnly(f: Filters, keep: string[]): Filters {
-  return { ...f, only: isCountingOnly(f, keep) ? [] : [...new Set(keep)].sort() };
+export function toggleCountOnly(f: Filters, keep: string[], files: Record<string, PickFile>): Filters {
+  return { ...f, only: isCountingOnly(f, keep, files) ? [] : [...new Set(keep)].sort() };
 }
 
-export function isCountingOnly(f: Filters, keep: string[]): boolean {
+/**
+ * Whether `only` is this side's guides. A side lists only counted guides, so once "why" is turned on it can lose the
+ * list-only guides `only` still holds; those don't stop it matching.
+ */
+export function isCountingOnly(f: Filters, keep: string[], files: Record<string, PickFile>): boolean {
+  if (!f.only.length) return false;
   const ids = new Set(keep);
-  return f.only.length === ids.size && f.only.every((id) => ids.has(id));
+  const hidden = (id: string) => f.whyOnly && files[id]?.hasReasoning === false;
+  return keep.every((id) => f.only.includes(id)) && f.only.every((id) => ids.has(id) || hidden(id));
 }
 
 /** What a pin toggle says, from the filters before it. Nothing changes at the limit. */

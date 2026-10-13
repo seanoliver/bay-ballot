@@ -210,6 +210,14 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(page.getByRole("group", { name: "Guides with no pick" })).toHaveCount(0);
   });
 
+  test("No pick on a county list covers only the contest's own city", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${BALLOT}/alameda-county?c=oakland-mayor`);
+    const pane = page.locator("section[aria-labelledby='detail-title']");
+    await expect(pane.getByRole("group", { name: /^Guides for / }).first()).toBeVisible();
+    await expect(pane.getByRole("button", { name: "Pin Berkeley Dems", exact: true })).toHaveCount(0);
+  });
+
   test("the phone sheet pins guides and counts one side", async ({ page }, info) => {
     test.skip(!isPhone(info), "phone only");
     await page.goto(SF);

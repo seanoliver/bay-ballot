@@ -105,7 +105,12 @@ export function isGuideOn(f: Filters, id: string): boolean {
 
 // Turns guides on or off in whichever list is counting: `only` while it's set, else `off`.
 function setGuides(f: Filters, ids: string[], on: boolean): Filters {
-  if (f.only.length) return { ...f, only: on ? uniqSorted([...f.only, ...ids]) : f.only.filter((id) => !ids.includes(id)) };
+  if (f.only.length) {
+    if (on) return { ...f, only: uniqSorted([...f.only, ...ids]) };
+    const only = f.only.filter((id) => !ids.includes(id));
+    // Emptying `only` falls back to `off`, which must then hold what was just turned off.
+    return only.length ? { ...f, only } : { ...f, only, off: uniqSorted([...f.off, ...ids]) };
+  }
   return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
 }
 

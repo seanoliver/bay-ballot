@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { areaNoPick, countedNoPick, isCountingOnly, noPickGuides, pinMessage, toggleCountOnly } from "@/lib/contest-pins";
+import { areaNoPick, countedNoPick, isCountingOnly, noPickGuides, noPickScope, pinMessage, toggleCountOnly } from "@/lib/contest-pins";
 import { EMPTY, isGuideOn, togglePin, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
-import type { Area, Entry } from "@/lib/schema";
+import type { Area, Contest, Entry } from "@/lib/schema";
 
 const entry: Entry = { pick: "Y", ranked: false, quotes: [] };
 const file = (picks: string[], hasReasoning = true): PickFile => ({ hasReasoning, picks: Object.fromEntries(picks.map((c) => [c, entry])) });
@@ -44,10 +44,28 @@ describe("noPickGuides", () => {
   });
 });
 
-describe("areaNoPick", () => {
-  it("lists the area's published guides that skipped the contest", () => {
-    const files = { spur: file(["prop-d"]), growsf: file(["prop-a"], false) };
-    expect(areaNoPick("prop-d", [{ id: "spur" }, { id: "growsf" }, { id: "pending" }], files)).toEqual([{ id: "growsf", hasReasoning: false }]);
+describe("noPickScope and areaNoPick", () => {
+  const mayor = { id: "oakland-mayor", jurisdiction: { level: "city" as const, name: "Oakland" } } as Contest;
+  const measure = { id: "measure-a", jurisdiction: { level: "county" as const, name: "Alameda" } } as Contest;
+  const guides = [
+    { id: "acdp", areas: ["alameda"] },
+    { id: "oak", areas: ["alameda", "oakland"] },
+    { id: "berkeley", areas: ["alameda", "berkeley"] },
+  ];
+  const files = { acdp: file([]), oak: file([]), berkeley: file([], false) };
+  const scope = noPickScope(areas[2], [mayor, measure], areas, guides);
+
+  it("records a contest's home area only where it isn't the list's own", () => {
+    expect(scope.homes).toEqual({ "oakland-mayor": "oakland" });
+  });
+
+  it("lists the list's guides covering the contest's home area that skipped it", () => {
+    expect(areaNoPick("oakland-mayor", "alameda", scope, guides, files).map((x) => x.id)).toEqual(["oak"]);
+    expect(areaNoPick("measure-a", "alameda", scope, guides, files)).toEqual([
+      { id: "acdp", hasReasoning: true },
+      { id: "oak", hasReasoning: true },
+      { id: "berkeley", hasReasoning: false },
+    ]);
   });
 });
 
@@ -69,23 +87,31 @@ describe("countedNoPick", () => {
 });
 
 describe("toggleCountOnly", () => {
+  const files = { a: file([]), b: file([]), c: file([]), l: file([], false) };
+
   it("counts only the side's guides and leaves off, why and pins alone", () => {
     const f0 = f({ off: ["x"], whyOnly: true, pins: ["d"] });
-    const next = toggleCountOnly(f0, ["b", "a"]);
+    const next = toggleCountOnly(f0, ["b", "a"], files);
     expect(next).toEqual({ ...f0, only: ["a", "b"] });
-    expect(isCountingOnly(next, ["a", "b"])).toBe(true);
+    expect(isCountingOnly(next, ["a", "b"], files)).toBe(true);
     expect(isGuideOn(next, "c")).toBe(false);
   });
 
   it("pressing again restores exactly what was there, including a pin made in between", () => {
     const f0 = f({ off: ["x"] });
-    const counting = togglePin(toggleCountOnly(f0, ["a", "b"]), "e");
-    expect(toggleCountOnly(counting, ["a", "b"])).toEqual({ ...f0, pins: ["e"] });
+    const counting = togglePin(toggleCountOnly(f0, ["a", "b"], files), "e");
+    expect(toggleCountOnly(counting, ["a", "b"], files)).toEqual({ ...f0, pins: ["e"] });
+  });
+
+  it("still stops after why drops a list-only guide from the side", () => {
+    const counting = { ...toggleCountOnly(f(), ["a", "l"], files), whyOnly: true };
+    expect(isCountingOnly(counting, ["a"], files)).toBe(true);
+    expect(toggleCountOnly(counting, ["a"], files).only).toEqual([]);
   });
 
   it("switches to another side rather than stopping", () => {
-    expect(toggleCountOnly(toggleCountOnly(f(), ["a"]), ["b", "c"]).only).toEqual(["b", "c"]);
-    expect(isCountingOnly(f({ only: ["a", "b", "c"] }), ["a", "b"])).toBe(false);
+    expect(toggleCountOnly(toggleCountOnly(f(), ["a"], files), ["b", "c"], files).only).toEqual(["b", "c"]);
+    expect(isCountingOnly(f({ only: ["a", "b", "c"] }), ["a", "b"], files)).toBe(false);
   });
 });
 

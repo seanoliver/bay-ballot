@@ -48,7 +48,9 @@ describe("areaView", () => {
 
   it.each([null, ...d.areas.map((a) => a.id)])("matches the server's old props for %s, from the snapshot and from its JSON", (id) => {
     const area = id === null ? null : d.areas.find((a) => a.id === id)!;
-    const { area: shown, title, ...view } = areaView(snap, id);
+    const { area: shown, title, noPick, ...view } = areaView(snap, id);
+    // No pick's scope is new with the list's contest detail; checked in contest-pins.test.ts.
+    expect(noPick === undefined).toBe(id === null);
     expect(shown).toBe(id);
     expect(title).toMatch(/ endorsements \(Nov 2026\)$/);
     expect(view).toEqual(before(d, area));

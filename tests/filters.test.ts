@@ -199,6 +199,12 @@ describe("only", () => {
     expect(setTypeGroup(f, "newspaper", guides, true)).toEqual({ ...f, only: ["a", "b", "c"] });
     expect(revealGuides(f, ["c"], {})).toEqual({ ...f, only: ["a", "b", "c"] });
   });
+  it("turns off what the reader just unchecked when that empties it", () => {
+    expect(toggleGuide({ ...EMPTY, off: ["c"], only: ["a"] }, "a")).toEqual({ ...EMPTY, off: ["a", "c"] });
+    const emptied = setTypeGroup({ ...EMPTY, only: ["a"] }, "advocacy", guides, false);
+    expect(emptied).toEqual({ ...EMPTY, off: ["a"] });
+    expect(isGuideOn(emptied, "a")).toBe(false);
+  });
   it("drops unknown guides and is counted in the summary", () => {
     expect(sanitizeFilters({ ...EMPTY, only: ["a", "gone"] }, guides).only).toEqual(["a"]);
     const files = Object.fromEntries(guides.map((g) => [g.id, { hasReasoning: true, picks: {} }]));
