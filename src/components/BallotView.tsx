@@ -113,7 +113,10 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   useEffect(() => {
     if (!zip || table || tableFailed) return;
     import("@/data/zips.json").then(
-      (m) => setTable(m.default as ZipTable),
+      (m) => {
+        setTableFailed(false);
+        setTable(m.default as ZipTable);
+      },
       () => setTableFailed(true),
     );
   }, [zip, table, tableFailed]);
@@ -163,6 +166,9 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   };
   // To the ZIP's ballot, as a new history entry: in place when the page can switch areas, else by navigation.
   const toZipBallot = (z: string) => {
+    // Read from the address bar, not this render: the call can come after the ZIP table loads.
+    const onBay = window.location.pathname === bayHref;
+    const mine = new URLSearchParams(currentSearch()).get(MINE_PARAM);
     stepWrite.cancel();
     setStepped(null);
     setShowAllFor(null);
@@ -190,15 +196,15 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   // Bumped by anything that should cancel a move still waiting on the ZIP table.
   const zipRequest = useRef(0);
   // The ZIP a move is waiting on, so Try again finishes that move and nothing else.
-  const pendingMove = useRef<string | null>(null);
+  const pendingMove = useRef<{ zip: string; path: string } | null>(null);
   const cancelMove = () => {
     zipRequest.current++;
     pendingMove.current = null;
   };
   const moveWhenLoaded = (v: string) => {
     const req = ++zipRequest.current;
-    pendingMove.current = v;
     const from = window.location.pathname;
+    pendingMove.current = { zip: v, path: from };
     void loadTable().then((t) => {
       if (req !== zipRequest.current || window.location.pathname !== from || !t) return;
       pendingMove.current = null;
@@ -225,6 +231,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     if (table) return table;
     try {
       const t = (await import("@/data/zips.json")).default as ZipTable;
+      setTableFailed(false);
       setTable(t);
       return t;
     } catch {
@@ -595,8 +602,12 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
             onRetry={() => {
               setZipActedOn(area);
               setTableFailed(false);
-              if (zip && pendingMove.current === zip) moveWhenLoaded(zip);
-              else void loadTable();
+              const p = pendingMove.current;
+              if (zip && p?.zip === zip && p.path === window.location.pathname) moveWhenLoaded(zip);
+              else {
+                pendingMove.current = null;
+                void loadTable();
+              }
             }}
           />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />

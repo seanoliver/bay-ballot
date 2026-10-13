@@ -195,7 +195,6 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
         className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         onClick={() => {
           if (!selected) {
-            focusNext.current = "chip";
             onSelect();
             return;
           }
