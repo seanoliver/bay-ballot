@@ -37,13 +37,14 @@ export function countedNoPick(f: Filters, noPick: NoPickGuide[], guides: GuideIn
     .sort((a, b) => a.name.localeCompare(b.name, "en"));
 }
 
-/** Turns off every guide but `keep`, across the whole ballot. */
-export function countOnly(f: Filters, keep: string[], all: string[]): Filters {
-  return { ...f, off: [...new Set(all.filter((id) => !keep.includes(id)))].sort() };
+/** Counts only `keep` across the whole ballot, or, if it already is, stops; `off`, why and pins stay as they were. */
+export function toggleCountOnly(f: Filters, keep: string[]): Filters {
+  return { ...f, only: isCountingOnly(f, keep) ? [] : [...new Set(keep)].sort() };
 }
 
-export function isCountingOnly(f: Filters, keep: string[], all: string[]): boolean {
-  return keep.every((id) => isGuideOn(f, id)) && all.every((id) => keep.includes(id) || !isGuideOn(f, id));
+export function isCountingOnly(f: Filters, keep: string[]): boolean {
+  const ids = new Set(keep);
+  return f.only.length === ids.size && f.only.every((id) => ids.has(id));
 }
 
 /** What a pin toggle says, from the filters before it. Nothing changes at the limit. */

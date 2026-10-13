@@ -116,6 +116,7 @@ test.describe("pinning from a contest page", () => {
     await expect(button).toHaveAttribute("aria-pressed", "true");
     await expect(counted(page)).toContainText(`${n} of ${before[2]} guides counted`);
     await expect(page.getByRole("status")).toHaveText(`Counting only the ${n} guides for Yes`);
+    await expect(page).toHaveURL(/[?&]only=/);
     await expect(page.getByRole("heading", { level: 3, name: /^No\s*\d/ })).toHaveCount(0);
     await expect(page.getByRole("group", { name: "Guides with no pick" })).toHaveCount(0);
 
@@ -130,6 +131,27 @@ test.describe("pinning from a contest page", () => {
     await closePanel(page, info);
     await expect(counted(page)).toContainText(`${before[1]} of ${before[2]} guides counted`);
     await expect(button).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("pressing Count only again keeps an earlier off, a pin made in between, and works after a reload", async ({ page }) => {
+    await openContest(page, "?off=sf-gop");
+    await expect(page.getByText("1 guide hidden")).toBeVisible();
+    const before = (await counted(page).textContent())!;
+    const button = page.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
+    await button.click();
+    await expect(page).toHaveURL(/[?&]only=/);
+    await expect(page).toHaveURL(/[?&]off=sf-gop/);
+    await page.getByRole("button", { name: "Pin SPUR", exact: true }).click();
+    await expect(page).toHaveURL(pinParam("spur"));
+
+    await page.reload();
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    await button.click();
+    await expect(button).toHaveAttribute("aria-pressed", "false");
+    await expect(page).not.toHaveURL(/[?&]only=/);
+    await expect(page).toHaveURL(/[?&]off=sf-gop/);
+    await expect(page).toHaveURL(pinParam("spur"));
+    await expect(counted(page)).toHaveText(before);
   });
 
   test("a candidate race has a pin list and a Count only button per candidate", async ({ page }) => {

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { Funnel, Pin } from "lucide-react";
-import { countedNoPick, countOnly, isCountingOnly, pinMessage, type NoPickGuide } from "@/lib/contest-pins";
+import { countedNoPick, isCountingOnly, pinMessage, toggleCountOnly, type NoPickGuide } from "@/lib/contest-pins";
 import type { Side } from "@/lib/detail";
 import { displayName } from "@/lib/display";
 import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo } from "@/lib/filters";
@@ -42,8 +42,6 @@ export function useContestPins({
   const [status, setStatus] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const frame = useRef(0);
-  // The filters before the last Count only, so pressing it again puts them back.
-  const before = useRef<Filters | null>(null);
   const say = useCallback((s: string) => {
     // Cleared first, so the same message twice is announced twice.
     setStatus("");
@@ -59,7 +57,6 @@ export function useContestPins({
     },
     [],
   );
-  const all = useMemo(() => guides.map((g) => g.id), [guides]);
   const counted = useMemo(() => countedNoPick(f, noPick, guides), [f, noPick, guides]);
   const ids = (side: Side) => side.guides.map((g) => g.id);
 
@@ -75,17 +72,11 @@ export function useContestPins({
       const next = togglePin(f, id);
       if (next !== f) onChange(next);
     },
-    counting: (side) => isCountingOnly(f, ids(side), all),
+    counting: (side) => isCountingOnly(f, ids(side)),
     onCountOnly: (side) => {
-      if (isCountingOnly(f, ids(side), all)) {
-        onChange(before.current ?? { ...f, off: [] });
-        before.current = null;
-        say(`Stopped counting only the guides for ${side.label}`);
-        return;
-      }
-      before.current = f;
-      onChange(countOnly(f, ids(side), all));
-      say(`Counting only the ${guidesLabel(side.count)} for ${side.label}`);
+      const stop = isCountingOnly(f, ids(side));
+      onChange(toggleCountOnly(f, ids(side)));
+      say(stop ? `Stopped counting only the guides for ${side.label}` : `Counting only the ${guidesLabel(side.count)} for ${side.label}`);
     },
   };
 }
@@ -207,7 +198,7 @@ export function CountOnlyButton({ side, pinning, className }: { side: Side; pinn
       type="button"
       data-count-only={side.key}
       aria-pressed={on}
-      title={on ? "Count every guide you counted before" : "Count only these guides on every contest"}
+      title={on ? "Count the guides you counted before" : "Count only these guides on every contest"}
       onClick={() => {
         pinning.onCountPress(side.key);
         pinning.onCountOnly(side);

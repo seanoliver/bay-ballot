@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { areaNoPick, countedNoPick, countOnly, isCountingOnly, noPickGuides, pinMessage } from "@/lib/contest-pins";
-import { EMPTY, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
+import { areaNoPick, countedNoPick, isCountingOnly, noPickGuides, pinMessage, toggleCountOnly } from "@/lib/contest-pins";
+import { EMPTY, isGuideOn, togglePin, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Area, Entry } from "@/lib/schema";
 
 const entry: Entry = { pick: "Y", ranked: false, quotes: [] };
@@ -68,18 +68,24 @@ describe("countedNoPick", () => {
   });
 });
 
-describe("countOnly", () => {
-  const all = ["a", "b", "c", "d"];
-
-  it("turns off every other guide and keeps pins and the reasons filter", () => {
-    const next = countOnly(f({ off: ["a"], whyOnly: true, pins: ["d"] }), ["a", "b"], all);
-    expect(next).toEqual({ off: ["c", "d"], whyOnly: true, pins: ["d"] });
-    expect(isCountingOnly(next, ["a", "b"], all)).toBe(true);
+describe("toggleCountOnly", () => {
+  it("counts only the side's guides and leaves off, why and pins alone", () => {
+    const f0 = f({ off: ["x"], whyOnly: true, pins: ["d"] });
+    const next = toggleCountOnly(f0, ["b", "a"]);
+    expect(next).toEqual({ ...f0, only: ["a", "b"] });
+    expect(isCountingOnly(next, ["a", "b"])).toBe(true);
+    expect(isGuideOn(next, "c")).toBe(false);
   });
 
-  it("is not counting only a side while another guide is counted or one of its guides is off", () => {
-    expect(isCountingOnly(f(), ["a", "b"], all)).toBe(false);
-    expect(isCountingOnly(f({ off: ["b", "c", "d"] }), ["a", "b"], all)).toBe(false);
+  it("pressing again restores exactly what was there, including a pin made in between", () => {
+    const f0 = f({ off: ["x"] });
+    const counting = togglePin(toggleCountOnly(f0, ["a", "b"]), "e");
+    expect(toggleCountOnly(counting, ["a", "b"])).toEqual({ ...f0, pins: ["e"] });
+  });
+
+  it("switches to another side rather than stopping", () => {
+    expect(toggleCountOnly(toggleCountOnly(f(), ["a"]), ["b", "c"]).only).toEqual(["b", "c"]);
+    expect(isCountingOnly(f({ only: ["a", "b", "c"] }), ["a", "b"])).toBe(false);
   });
 });
 

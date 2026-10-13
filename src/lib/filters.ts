@@ -2,6 +2,8 @@ import type { EndorsementFile, Entry, Guide, GuideType } from "./schema";
 
 export type Filters = {
   off: string[];
+  /** When set, the only guides counted; `off` is kept for when it's cleared. */
+  only: string[];
   whyOnly: boolean;
   /** Guides whose picks show on every contest row, in the order they were pinned. */
   pins: string[];
@@ -14,12 +16,12 @@ export const MAX_PINS = 4;
  * Reader-owned filters are the reader's own list: a link's pins show while it's open, but only the reader's own
  * pin and unpin save them, so opening someone else's link never replaces what the reader saved.
  */
-export const SHARED_KEYS = ["off", "whyOnly"] as const satisfies readonly (keyof Filters)[];
+export const SHARED_KEYS = ["off", "only", "whyOnly"] as const satisfies readonly (keyof Filters)[];
 export const READER_KEYS = ["pins"] as const satisfies readonly (keyof Filters)[];
 
 export const FILTERS_KEY = "bb-filters";
 
-export const EMPTY: Filters = { off: [], whyOnly: false, pins: [] };
+export const EMPTY: Filters = { off: [], only: [], whyOnly: false, pins: [] };
 
 export type GuideInfo = Pick<Guide, "id" | "name" | "shortName" | "type">;
 export type FilterGuide = Pick<Guide, "id" | "type">;
@@ -34,6 +36,8 @@ export function toQuery(f: Filters): string {
   const p = new URLSearchParams();
   const off = uniqSorted(f.off);
   if (off.length) p.set("off", off.join(","));
+  const only = uniqSorted(f.only);
+  if (only.length) p.set("only", only.join(","));
   if (f.whyOnly) p.set("why", "1");
   if (f.pins.length) p.set("pin", f.pins.join(","));
   return p.toString();
@@ -46,6 +50,7 @@ export function fromQuery(q: string | URLSearchParams, guides: Pick<Guide, "id" 
   const fromTypes = guides.filter((g) => offTypes.includes(g.type)).map((g) => g.id);
   return {
     off: uniqSorted([...parseList(p.get("off")), ...fromTypes]),
+    only: parseList(p.get("only")),
     whyOnly: p.get("why") === "1",
     pins: parsePins(p.get("pin")),
   };
@@ -53,7 +58,7 @@ export function fromQuery(q: string | URLSearchParams, guides: Pick<Guide, "id" 
 
 export function hasFilterParams(q: string | URLSearchParams): boolean {
   const p = new URLSearchParams(q);
-  return ["off", "offtypes", "why", "pin"].some((k) => p.has(k));
+  return ["off", "only", "offtypes", "why", "pin"].some((k) => p.has(k));
 }
 
 export type Row = { guide: GuideInfo; entry: Entry; file: PickFile };
@@ -95,7 +100,13 @@ function isCounted(f: Filters, id: string, file: PickFile): boolean {
 }
 
 export function isGuideOn(f: Filters, id: string): boolean {
-  return !f.off.includes(id);
+  return f.only.length ? f.only.includes(id) : !f.off.includes(id);
+}
+
+// Turns guides on or off in whichever list is counting: `only` while it's set, else `off`.
+function setGuides(f: Filters, ids: string[], on: boolean): Filters {
+  if (f.only.length) return { ...f, only: on ? uniqSorted([...f.only, ...ids]) : f.only.filter((id) => !ids.includes(id)) };
+  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
 }
 
 export const isPinned = (f: Filters, id: string) => f.pins.includes(id);
@@ -123,7 +134,7 @@ export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo
 }
 
 export function toggleGuide(f: Filters, id: string): Filters {
-  return { ...f, off: isGuideOn(f, id) ? uniqSorted([...f.off, id]) : without(f.off, id) };
+  return setGuides(f, [id], !isGuideOn(f, id));
 }
 
 export function filterSummary(
@@ -141,7 +152,12 @@ export function countedLabel({ counted, published }: { counted: number; publishe
 
 export function sanitizeFilters(f: Filters, guides: Pick<Guide, "id">[]): Filters {
   const ids = new Set(guides.map((g) => g.id));
-  return { off: f.off.filter((id) => ids.has(id)), whyOnly: f.whyOnly, pins: f.pins.filter((id) => ids.has(id)).slice(0, MAX_PINS) };
+  return {
+    off: f.off.filter((id) => ids.has(id)),
+    only: f.only.filter((id) => ids.has(id)),
+    whyOnly: f.whyOnly,
+    pins: f.pins.filter((id) => ids.has(id)).slice(0, MAX_PINS),
+  };
 }
 
 export function initialFilters({
@@ -191,8 +207,7 @@ export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" |
 }
 
 export function setTypeGroup(f: Filters, type: string, guides: FilterGuide[], on: boolean): Filters {
-  const ids = guides.filter((g) => g.type === type).map((g) => g.id);
-  return { ...f, off: on ? f.off.filter((id) => !ids.includes(id)) : uniqSorted([...f.off, ...ids]) };
+  return setGuides(f, guides.filter((g) => g.type === type).map((g) => g.id), on);
 }
 
 export type GuideGroup = { type: GuideType; heading: string; label: string; count: number; guides: GuideInfo[] };
@@ -233,7 +248,7 @@ export function contestFiles(contestId: string, files: Record<string, PickFile>)
 }
 
 export function revealGuides(f: Filters, ids: string[], files: Record<string, PickFile>): Filters {
-  return { ...f, off: f.off.filter((id) => !ids.includes(id)), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
+  return { ...setGuides(f, ids, true), whyOnly: f.whyOnly && ids.every((id) => files[id]?.hasReasoning) };
 }
 
 export const hiddenLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"} hidden`;
