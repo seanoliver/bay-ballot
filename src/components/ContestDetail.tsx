@@ -217,7 +217,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
         {heading}
         <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
       </div>
-      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} />
+      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>

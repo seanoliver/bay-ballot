@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { ChevronDown, Pin, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -148,7 +149,9 @@ function PinnedGuides({
                   <li key={g.id} className="flex min-h-11 items-center gap-3 pr-1 pl-3 text-sm">
                     <Pin aria-hidden="true" className="size-4 shrink-0 fill-current" />
                     <span className="min-w-0 flex-1">
-                      {name}
+                      <Link href={`/guides/${g.id}`} className="underline decoration-foreground/30 underline-offset-[3px] hover:decoration-foreground">
+                        {name}
+                      </Link>
                       {!onBallot || onBallot.some((h) => h.id === g.id) ? null : <span className="text-muted-foreground"> · not on this ballot</span>}
                     </span>
                     <button

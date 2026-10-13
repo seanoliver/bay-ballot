@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type SyntheticEvent } from "react";
 import Link from "next/link";
-import { Funnel, Pin } from "lucide-react";
+import { ChevronDown, Funnel, Pin } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { countedNoPick, isCountingOnly, pinMessage, toggleCountOnly, type NoPickGuide } from "@/lib/contest-pins";
 import type { Side } from "@/lib/detail";
 import { displayName } from "@/lib/display";
@@ -114,83 +115,137 @@ const QUOTE_MARK = (
   </svg>
 );
 
-// A link to the guide's page and its own pin button, in one pill that fills in once pinned.
+// The whole pill pins its guide and fills in once pinned. Guide pages are linked from the list under the chips.
 function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide; short: boolean; pinning: PinControls; style?: CSSProperties; className?: string }) {
   const f = pinning.filters;
   const pinned = isPinned(f, guide.id);
   const full = !pinned && f.pins.length >= MAX_PINS;
   const name = short ? guide.short : guide.name;
   return (
-    <li
-      style={style}
-      className={cn(
-        "inline-flex items-center rounded-full border text-sm",
-        pinned ? "border-foreground bg-foreground font-semibold text-background" : "border-border bg-muted/60",
-        className,
-      )}
-    >
-      <Link
-        href={`/guides/${guide.id}`}
-        title={guide.name}
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full pr-1 pl-3 underline-offset-2 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
+    <li style={style} className={className}>
+      <button
+        type="button"
+        aria-pressed={pinned}
+        aria-disabled={full || undefined}
+        aria-describedby={full ? pinning.limitId : undefined}
+        title={guide.quoted || guide.name === name ? undefined : guide.name}
+        onClick={() => pinning.onPin(guide.id)}
+        onPointerEnter={guide.quoted ? alignTip : undefined}
+        onFocus={guide.quoted ? alignTip : undefined}
+        className={cn(
+          "group relative inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-full border pr-3 pl-2.5 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-9",
+          pinned
+            ? "border-foreground bg-foreground font-semibold text-background"
+            : "border-foreground/20 bg-background shadow-xs hover:border-foreground hover:bg-muted",
+          full && "cursor-not-allowed border-dashed text-muted-foreground shadow-none hover:border-foreground/20 hover:bg-background",
+        )}
       >
+        <Pin aria-hidden="true" className={cn("size-3.5 shrink-0", pinned ? "fill-current" : "text-muted-foreground", full && "opacity-60")} />
+        <span className="sr-only">Pin </span>
         {name}
         {guide.quoted ? (
           <>
             {QUOTE_MARK}
             <span className="sr-only">(gave reasons)</span>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-full left-0 z-20 mt-2 hidden w-max max-w-56 rounded-lg bg-foreground px-2.5 py-2 text-left text-[13px] leading-snug font-normal text-background shadow-md group-data-[tip-end=true]:right-0 group-data-[tip-end=true]:left-auto lg:group-focus-visible:block lg:pointer-fine:group-hover:block"
+            >
+              <b className="font-semibold">{guide.name}</b>. Gave reasons on this contest.
+            </span>
           </>
         ) : null}
-      </Link>
-      <button
-        type="button"
-        aria-label={`Pin ${name}`}
-        aria-pressed={pinned}
-        aria-disabled={full || undefined}
-        aria-describedby={full ? pinning.limitId : undefined}
-        title={pinned ? "Unpin" : full ? `You can pin up to ${MAX_PINS} guides` : "Pin to see its picks on every contest"}
-        onClick={() => pinning.onPin(guide.id)}
-        className={cn(
-          "grid size-10 shrink-0 cursor-pointer place-items-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:size-8",
-          pinned ? "hover:bg-background/20" : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          full && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
-        )}
-      >
-        <Pin aria-hidden="true" className={cn("size-3.5", pinned && "fill-current")} />
       </button>
     </li>
   );
 }
 
-/** The first dozen chips, then "Show all N" opens the rest in place. */
-export function PinChips({ guides, short, pinning, label }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string }) {
+// A chip in the right half of its row opens its tooltip leftward, so it stays inside the panel.
+function alignTip(e: SyntheticEvent<HTMLButtonElement>) {
+  const b = e.currentTarget;
+  const row = b.closest("ul");
+  if (row) b.dataset.tipEnd = String(b.getBoundingClientRect().left - row.getBoundingClientRect().left > row.clientWidth / 2);
+}
+
+/** The first dozen chips, then "Show all N" opens the rest in place. A legend explains the quote mark when a chip has one. */
+export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
   return (
-    <div role="group" aria-label={label}>
-      <ul className="flex flex-wrap gap-2">
-        {shown.map((g, i) => (
-          <PinChip
-            key={g.id}
-            guide={g}
-            short={short}
-            pinning={pinning}
-            className={i >= CHIPS_SHOWN ? "reveal-item" : undefined}
-            style={i >= CHIPS_SHOWN ? ({ "--i": i - CHIPS_SHOWN } as CSSProperties) : undefined}
-          />
-        ))}
-      </ul>
-      {guides.length > CHIPS_SHOWN ? (
-        <button
-          type="button"
-          aria-expanded={all}
-          onClick={() => setAll(!all)}
-          className="mt-2 inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-        >
-          {all ? "Show fewer" : `Show all ${guides.length}`}
-        </button>
+    <>
+      {guides.some((g) => g.quoted) ? (
+        <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <span className="text-foreground">{QUOTE_MARK}</span>
+          <span>
+            <span className="sr-only">A quote mark </span>means the guide explained its pick. Read its reasons below.
+          </span>
+        </p>
       ) : null}
-    </div>
+      <div role="group" aria-label={label}>
+        <ul className="flex flex-wrap gap-2">
+          {shown.map((g, i) => (
+            <PinChip
+              key={g.id}
+              guide={g}
+              short={short}
+              pinning={pinning}
+              className={i >= CHIPS_SHOWN ? "reveal-item" : undefined}
+              style={i >= CHIPS_SHOWN ? ({ "--i": i - CHIPS_SHOWN } as CSSProperties) : undefined}
+            />
+          ))}
+        </ul>
+        {guides.length > CHIPS_SHOWN ? (
+          <button
+            type="button"
+            aria-expanded={all}
+            onClick={() => setAll(!all)}
+            className="mt-2 inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
+          >
+            {all ? "Show fewer" : `Show all ${guides.length}`}
+          </button>
+        ) : null}
+      </div>
+      <GuidePages guides={guides} short={short} side={side} />
+    </>
+  );
+}
+
+/** Plain links to each chip's guide page, in the chips' order: a dozen, then "and N more" shows the rest. */
+function GuidePages({ guides, short, side }: { guides: ChipGuide[]; short: boolean; side: string }) {
+  const [open, setOpen] = useState(false);
+  const [all, setAll] = useState(false);
+  const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
+  const more = guides.length - shown.length;
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="text-sm">
+      <CollapsibleTrigger className="-my-1 inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-md font-semibold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8">
+        Guide pages<span className="sr-only"> for {side}</span>
+        <ChevronDown aria-hidden="true" className={cn("size-3.5 text-muted-foreground transition-transform", open && "rotate-180")} />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="reveal">
+        <div className="pt-1 leading-loose text-muted-foreground">
+          <ul aria-label={`Guide pages for ${side}`} className="inline">
+            {shown.map((g, i) => (
+              <li key={g.id} className="inline">
+                <Link href={`/guides/${g.id}`} className="text-foreground underline decoration-foreground/30 underline-offset-[3px] hover:decoration-foreground">
+                  {short ? g.short : g.name}
+                </Link>
+                {i < shown.length - 1 ? ", " : more ? ", " : null}
+              </li>
+            ))}
+          </ul>
+          {more ? (
+            <button
+              type="button"
+              onClick={() => setAll(true)}
+              className="cursor-pointer rounded-md underline underline-offset-[3px] outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              and {more} more
+            </button>
+          ) : null}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -233,6 +288,7 @@ export function NoPickBlock({ pinning, short }: { pinning: PinControls; short: b
         short={short}
         pinning={pinning}
         label="Guides with no pick"
+        side="No pick"
       />
     </section>
   );
