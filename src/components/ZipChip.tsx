@@ -183,7 +183,8 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
   return (
     <span
       className={cn(
-        "js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full pr-1",
+        // The ring goes around the whole pill; on the ZIP button alone it covers only its left part.
+        "js-only inline-flex min-h-10 min-w-[8.75rem] items-center justify-between whitespace-nowrap rounded-full pr-1 has-[[data-zip-main]:focus-visible]:ring-3 has-[[data-zip-main]:focus-visible]:ring-ring/50",
         selected ? "bg-foreground font-medium text-background" : "ring-1 ring-foreground/15 hover:bg-muted",
       )}
     >
@@ -192,7 +193,8 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
         type="button"
         aria-label={selected ? `ZIP ${zip}. Change` : `ZIP ${zip}. Show its ballot`}
         aria-current={selected ? "page" : undefined}
-        className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        data-zip-main
+        className="inline-flex min-h-10 items-center gap-2 rounded-full pr-1 pl-2.5 outline-none"
         onClick={() => {
           if (!selected) {
             onSelect();
