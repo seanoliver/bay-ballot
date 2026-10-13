@@ -25,7 +25,7 @@ import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
 import { SectionHeading } from "./SectionHeading";
 import { ShortcutsDialog } from "./ShortcutsDialog";
-import { currentSearch, pushPath, replaceQuery, useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
+import { CARRIED, currentSearch, pushPath, replaceQuery, useBallotFilters, useCarriedQuery, useQueryParam, useStoredKey } from "./useBallotFilters";
 import { useBallotKeys } from "./useBallotKeys";
 import { SectionNav } from "./SectionNav";
 import { markHomeVisit, useHomeRedirect } from "./useHomeRedirect";
@@ -91,7 +91,7 @@ const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
 export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, busy = false, onSwitch, onIntent }: Props) {
-  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c"] });
+  const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
   const desktop = useSyncExternalStore(subscribeDesktop, isDesktop, () => false);
@@ -171,22 +171,42 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
       p.delete("c");
       p.set(MINE_PARAM, "1");
     };
-    if (onBay) {
-      pushPath(withQuery(bayHref, mark));
+    if (onBay && mine === "1") {
+      // Already on the ZIP's ballot (a changed ZIP): no new history entry.
+      replaceQuery(withQuery("", mark).replace(/^\?/, ""));
       setAnnounce(`Showing the ballot for ZIP ${z}`);
-    } else if (onSwitch?.(bayHref)) {
+    } else if (onBay && pushPath(withQuery(bayHref, mark))) {
+      setAnnounce(`Showing the ballot for ZIP ${z}`);
+    } else if (!onBay && onSwitch?.(bayHref)) {
       replaceQuery(withQuery("", mark).replace(/^\?/, ""));
     } else {
       focusZipChipAfterLoad();
-      router.push(`${bayHref}?${new URLSearchParams([...new URLSearchParams(carry.replace(/^\?/, "")), [MINE_PARAM, "1"]])}`);
+      router.push(withQuery(bayHref, (p) => {
+        for (const k of [...p.keys()]) if (!CARRIED.includes(k)) p.delete(k);
+        p.set(MINE_PARAM, "1");
+      }));
     }
   };
+  // Bumped by anything that should cancel a move still waiting on the ZIP table.
+  const zipRequest = useRef(0);
+  const moveWhenLoaded = (v: string) => {
+    const req = ++zipRequest.current;
+    const from = window.location.pathname;
+    void loadTable().then((t) => {
+      if (req !== zipRequest.current || window.location.pathname !== from || !t) return;
+      if (Object.hasOwn(t.zips, v)) toZipBallot(v);
+      // An unknown ZIP on the ZIP's ballot: back to the plain list, so the chips and heading agree.
+      else if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
+    });
+  };
   const switchArea = (href: string) => {
+    zipRequest.current++;
     if (zipActive && href === bayHref) {
-      pushPath(withQuery(bayHref, (p) => {
+      const moved = pushPath(withQuery(bayHref, (p) => {
         p.delete(MINE_PARAM);
         p.delete("c");
       }));
+      if (!moved) return false;
       setZipActedOn(undefined);
       setAnnounce(`Showing ${intro.title}`);
       return true;
@@ -547,13 +567,12 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 setStepped(null);
                 setZipRaw(v ?? "");
                 if (!v) {
+                  zipRequest.current++;
                   if (mine !== null) replaceQuery(withQuery("", (p) => p.delete(MINE_PARAM)).replace(/^\?/, ""));
                   return;
                 }
                 // An unknown ZIP stays put and says so; a known one moves to its ballot.
-                void loadTable().then((t) => {
-                  if (t && Object.hasOwn(t.zips, v)) toZipBallot(v);
-                });
+                moveWhenLoaded(v);
               }}
             />
           </AreaPicker>
@@ -568,6 +587,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
             onRetry={() => {
               setZipActedOn(area);
               setTableFailed(false);
+              if (zip) moveWhenLoaded(zip);
             }}
           />
           <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" />

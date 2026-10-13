@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { BALLOT, contestRow } from "./helpers";
+import { BALLOT, contestRow, isPhone } from "./helpers";
 
 const SCC = `${BALLOT}/santa-clara-county`;
 
@@ -82,6 +82,26 @@ test.describe("ZIP filter", () => {
     await enterZip(page, "10001");
     await expect(status(page)).toContainText("isn’t a Bay Area ZIP");
     await expect(page.getByRole("heading", { level: 1, name: "Santa Clara County ballot" })).toBeVisible();
+  });
+
+  test("a filter change on the ZIP's ballot keeps it, and changing the ZIP adds no Back step", async ({ page }, info) => {
+    await page.goto(BALLOT);
+    await enterZip(page, "94040");
+    await expect(page).toHaveURL(`${BALLOT}?mine=1`);
+    const panel = isPhone(info)
+      ? (await page.getByRole("button", { name: /^Filters/ }).click(), page.getByRole("dialog", { name: "Filters" }))
+      : page.getByRole("complementary", { name: "Filters" });
+    await panel.getByRole("checkbox", { name: /Only guides that explain/ }).click();
+    await expect(page).toHaveURL(/[?&]why=1/);
+    await expect(page).toHaveURL(/[?&]mine=1/);
+    if (isPhone(info)) await page.keyboard.press("Escape");
+    await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
+
+    await page.getByRole("button", { name: "ZIP 94040. Change" }).click();
+    await page.getByLabel("Your ZIP code").pressSequentially("94301");
+    await expect(page.getByRole("heading", { level: 1, name: "ZIP 94301 ballot" })).toBeVisible();
+    await page.goBack();
+    await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
   });
 
   test("Enter on a short ZIP says what's wrong, and Escape closes the field", async ({ page }) => {

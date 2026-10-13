@@ -19,9 +19,10 @@ export type ZipSummary =
 
 // One width for every state, so closing the field on mousedown can't move what the mouseup lands on.
 // Set before a navigation to the ZIP's ballot, so the chip on the next page takes focus as the one typed in did.
-let focusOnMount = false;
+// Expires, so a navigation that never finishes can't hand focus to a later chip.
+let focusOnMountUntil = 0;
 export function focusZipChipAfterLoad() {
-  focusOnMount = true;
+  focusOnMountUntil = Date.now() + 10_000;
 }
 
 const CHIP = "js-only inline-flex min-h-10 min-w-[8.75rem] items-center gap-2 whitespace-nowrap rounded-full pr-3 pl-2.5";
@@ -57,8 +58,8 @@ export function ZipChip({ zip, selected, onSelect, onZip, editing, setEditing, e
   };
   useEffect(() => cancelPendingClear, []);
   useEffect(() => {
-    if (!focusOnMount) return;
-    focusOnMount = false;
+    if (Date.now() > focusOnMountUntil) return;
+    focusOnMountUntil = 0;
     chipRef.current?.focus({ preventScroll: true });
   }, []);
   const fail = () => {
