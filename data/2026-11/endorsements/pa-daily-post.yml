@@ -7,6 +7,7 @@ extraSources:
   - https://padailypost.com/2026/10/05/daily-post-editorial-wang-and-craig-for-school-board/
   - https://padailypost.com/2026/09/29/daily-post-editorial-elect-pete-dailey-to-valley-water-board/
   - https://padailypost.com/2026/10/07/daily-post-opinion-no-on-j-negotiate-a-better-deal-this-one-is-deceptive-and-lacks-transparency/
+  - https://padailypost.com/2026/10/12/daily-post-editorial-vote-no-on-rtm-cut-spending-before-asking-for-a-new-tax/
 archived:
   - source: https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
     snapshot: https://web.archive.org/web/20261007003508/https://padailypost.com/2026/10/03/daily-post-editorial-vote-yes-on-p-to-save-downtown/
@@ -83,3 +84,8 @@ picks:
         source: https://padailypost.com/2026/10/07/daily-post-opinion-no-on-j-negotiate-a-better-deal-this-one-is-deceptive-and-lacks-transparency/
   rtm:
     pick: N
+    quotes:
+      - text: The Bay Area deserves an efficient, accountable transit network, not a blank check funded by everyday citizens to protect corporate interests.
+        source: https://padailypost.com/2026/10/12/daily-post-editorial-vote-no-on-rtm-cut-spending-before-asking-for-a-new-tax/
+      - text: Taxpayers cannot be expected to underwrite unchecked operational costs when agencies refuse to implement basic efficiencies recommended by civil grand juries.
+        source: https://padailypost.com/2026/10/12/daily-post-editorial-vote-no-on-rtm-cut-spending-before-asking-for-a-new-tax/

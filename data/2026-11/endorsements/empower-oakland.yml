@@ -21,8 +21,11 @@ picks:
   oakland-usd-2:
     pick:
       - Arielle Fleisher
+    ranked: true
     quotes:
       - text: Arielle Fleisher is an OUSD parent, a PTA member, co-leader of her neighborhood council, and founder of a 300+ member moms group.
+        source: https://www.empoweroakland.com/voter-guide
+      - text: Fleisher would be a welcome addition, and much needed breath of fresh air, to a board in desperate need of overhaul.
         source: https://www.empoweroakland.com/voter-guide
       - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
         source: https://www.empoweroakland.com/voter-guide
@@ -58,6 +61,8 @@ picks:
     pick:
       - Janani Ramachandran
     quotes:
+      - text: Janani Ramachandran is running unopposed, and she earned this on her track record rather than by default.
+        source: https://www.empoweroakland.com/voter-guide
       - text: She has a consistent record of asking hard questions and following through.
         source: https://www.empoweroakland.com/voter-guide
   oakland-council-6:
@@ -85,6 +90,8 @@ picks:
       - Robert Raburn
     quotes:
       - text: Before Robert Raburn ever held office, he spent a decade chairing Alameda County’s Measure B Citizens Watchdog Committee (the body that makes sure voter-approved transportation dollars actually go where voters were told they’d go).
+        source: https://www.empoweroakland.com/voter-guide
+      - text: Now is not the moment to hand District 4’s seat (with some of the most at-risk stations in the system) to someone learning the budget from scratch. Raburn’s institutional knowledge, fiscal discipline, and real relationships in these neighborhoods are assets we cannot afford to throw away this cycle.
         source: https://www.empoweroakland.com/voter-guide
   ac-transit-ward-3:
     pick:

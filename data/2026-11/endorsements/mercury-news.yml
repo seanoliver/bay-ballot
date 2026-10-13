@@ -25,6 +25,8 @@ extraSources:
   - https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
   - https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
+  - https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+  - https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
   - https://www.eastbaytimes.com/opinion/endorsements/
 allowForeignSources: true # Marin IJ editorials (same Bay Area News Group)
 archived:
@@ -76,6 +78,17 @@ archived:
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
 fetchedAt: 2026-10-13
 hasReasoning: true
+held:
+  - contestId: san-jose-council-9
+    pick:
+      - Genny Altwer
+    reason: old-election
+    evidence: Elect Genny Altwer to City Council. May 28, 2026 (primary)
+  - contestId: us-rep-14
+    pick:
+      - Aisha Wahab
+    reason: old-election
+    evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
@@ -176,6 +189,11 @@ picks:
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
   prop-38:
     pick: N
+    quotes:
+      - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
+        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+      - text: The Legislative Analyst’s Office reports that repaying the bond will require $500 million to $600 million in spending out of the state general fund for 20 years.
+        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
   rtm:
     pick: N
   sausalito-council:
@@ -188,7 +206,7 @@ picks:
   sausalito-measure-x:
     pick: Y
     quotes:
-      - text: With 40 years of neglect already under its belt, the marine-based businesses along the waterfront may not be able to wait much longer.
+      - text: Permitting new industrial construction for expanded business proposals is one way to gather tax dollars to address the impacts of climate change.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-county-measure-p:
     pick: Y
@@ -302,3 +320,8 @@ picks:
       - Eli Beckman
       - Pat Ravasio
       - Ava Fruin
+    quotes:
+      - text: Beckman has been a strong member of the council since he was first elected in 2018.
+        source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
+      - text: Fruin, among the first-time council candidates, brings her experience in having served on the Larkspur-Corte Madera School District and being a parent raising her three children in town.
+        source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
