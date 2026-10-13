@@ -1,7 +1,7 @@
 id: mercury-news
 name: The Mercury News, East Bay Times and Marin Independent Journal
 shortName: "Mercury News, EB Times, Marin IJ"
-description: Three Bay Area News Group papers that share statewide endorsements; each paper's editorial board also endorses in its own local races.
+description: "Three Bay Area News Group daily papers: The Mercury News of San Jose (founded in 1851), the East Bay Times, and the Marin Independent Journal. Their endorsements run as editorials by the papers' editorial boards."
 type: newspaper
 homepage: https://www.mercurynews.com/
 areas: [palo-alto, mountain-view, marin, contra-costa, santa-clara-county, san-jose, alameda-county, oakland, berkeley]

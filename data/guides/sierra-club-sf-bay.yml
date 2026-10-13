@@ -1,7 +1,7 @@
 id: sierra-club-sf-bay
 name: Sierra Club San Francisco Bay Chapter
 shortName: "Sierra Club"
-description: The Sierra Club chapter covering San Francisco, Alameda, Contra Costa, and Marin counties, which endorses candidates and ballot measures.
+description: The Sierra Club chapter for San Francisco, Alameda, Contra Costa, and Marin counties, founded in 1924. Local endorsements need a two-thirds vote of volunteer committees and approval by a state Sierra Club review panel.
 type: advocacy
 homepage: https://www.sierraclub.org/san-francisco-bay
 areas: [sf, marin, contra-costa, alameda-county, oakland, berkeley]

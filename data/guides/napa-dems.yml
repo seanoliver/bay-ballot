@@ -1,7 +1,7 @@
 id: napa-dems
 name: Napa County Democratic Party
 shortName: "Napa Democrats"
-description: The official Democratic Party committee for Napa County.
+description: The official Democratic Party committee for Napa County, also called the Napa County Democratic Central Committee, whose members are elected by supervisor district. Endorsements require at least 60% of the vote.
 type: party
 homepage: http://napadems.org/
 areas: [napa-county]

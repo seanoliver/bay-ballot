@@ -1,7 +1,7 @@
 id: contracosta-news
 name: ContraCosta.news
 shortName: "ContraCosta.news"
-description: A Contra Costa County news site whose publisher writes signed editorials endorsing in East County city races.
+description: A Contra Costa County news site that grew out of EastCountyToday and covers the county and California. Its election endorsements are opinion editorials written and signed by the site's publisher.
 type: newspaper
 homepage: https://contracosta.news/
 areas: [contra-costa]

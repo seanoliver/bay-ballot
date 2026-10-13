@@ -1,7 +1,7 @@
 id: marin-dems
 name: Marin County Democratic Party
 shortName: "Marin Democrats"
-description: The official Democratic Party committee for Marin County.
+description: The official Democratic Party committee for Marin County, an elected body required by state election law. It has 23 representatives chosen from the county's five supervisorial districts, plus 3 ex-officio members.
 type: party
 homepage: https://marindemocrats.org/
 areas: [marin]

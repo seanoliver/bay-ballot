@@ -1,7 +1,7 @@
 id: los-altos-town-crier
 name: Los Altos Town Crier
 shortName: "Town Crier"
-description: A weekly newspaper covering Los Altos, Los Altos Hills and Mountain View, whose editorial board endorses in local races and measures.
+description: A weekly newspaper founded in 1947 that serves Los Altos, Los Altos Hills, and Mountain View, acquired by Weeklys Media Group in 2026. Its endorsements are the paper's editorials on local, state, and federal races and measures.
 type: newspaper
 homepage: https://www.losaltosonline.com/
 areas: [santa-clara-county, palo-alto, mountain-view]
