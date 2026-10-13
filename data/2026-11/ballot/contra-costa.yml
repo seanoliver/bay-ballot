@@ -165,84 +165,84 @@ contests:
     title: Clayton Measure M
     kind: measure
     description: "Sales Tax Measure (1%)"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9005-en/
     jurisdiction: { level: city, name: Clayton }
   - id: clayton-measure-n
     section: Local measures
     title: Clayton Measure N
     kind: measure
     description: "Citywide Landscape Maintenance Special Tax"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9006-en-2/
     jurisdiction: { level: city, name: Clayton }
   - id: concord-measure-o
     section: Local measures
     title: Concord Measure O
     kind: measure
     description: "Business License Tax Update"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9007-en/
     jurisdiction: { level: city, name: Concord }
   - id: hercules-measure-p
     section: Local measures
     title: Hercules Measure P
     kind: measure
     description: "Sales Tax Measure (1%)"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9008-en-2/
     jurisdiction: { level: city, name: Hercules }
   - id: richmond-measure-q
     section: Local measures
     title: Richmond Measure Q
     kind: measure
     description: "Fire Facilities Bond ($120 million)"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9009-en-2/
     jurisdiction: { level: city, name: Richmond }
   - id: san-pablo-measure-r
     section: Local measures
     title: San Pablo Measure R
     kind: measure
     description: "Transactions and Use Tax"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9010-en-2/
     jurisdiction: { level: city, name: San Pablo }
   - id: san-pablo-measure-s
     section: Local measures
     title: San Pablo Measure S
     kind: measure
     description: "Rent Control"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9011-en-2/
     jurisdiction: { level: city, name: San Pablo }
   - id: walnut-creek-measure-t
     section: Local measures
     title: Walnut Creek Measure T
     kind: measure
     description: "Appointive City Treasurer"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9012-en-2/
     jurisdiction: { level: city, name: Walnut Creek }
   - id: walnut-creek-measure-u
     section: Local measures
     title: Walnut Creek Measure U
     kind: measure
     description: "Senior Housing Rezoning (North California Blvd and Ygnacio Valley Rd)"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9013-en/
     jurisdiction: { level: city, name: Walnut Creek }
   - id: wccusd-measure-v
     section: School and special districts
     title: West Contra Costa Unified School District Measure V
     kind: measure
     description: "Parcel Tax Measure"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9004-en-2/
     jurisdiction: { level: district, name: West Contra Costa Unified School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
   - id: acalanes-uhsd-measure-w
     section: School and special districts
     title: Acalanes Union High School District Measure W
     kind: measure
     description: "Parcel Tax Measure"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9002-en-2/
     jurisdiction: { level: district, name: Acalanes Union High School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
   - id: liberty-uhsd-measure-x
     section: School and special districts
     title: Liberty Union High School District Measure X
     kind: measure
     description: "Bond Measure ($165 million)"
-    link: https://www.contracostavote.gov/election/november-3-2026-general-election/
+    link: https://www.contracostavote.gov/m9003-en-2/
     jurisdiction: { level: district, name: Liberty Union High School District, district: "at-large", within: [{ level: county, name: Contra Costa }] }
   - id: contra-costa-county-board-of-education-2
     section: School and special districts

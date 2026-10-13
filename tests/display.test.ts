@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayName, groupByPick, headline, officialLink, pendingNote, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
+import { displayName, groupByPick, headline, pendingNote, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -170,16 +170,6 @@ describe("pendingNote", () => {
     expect(pendingNote(g(0))).toBeNull();
     expect(pendingNote(g(1))).toBe("1 guide hasn't published yet.");
     expect(pendingNote(g(3))).toBe("3 guides haven't published yet.");
-  });
-});
-
-describe("officialLink", () => {
-  it("is the measure's link", () => {
-    expect(officialLink({ ...measure, link: "https://sf.gov/b" } as Contest)).toBe("https://sf.gov/b");
-  });
-  it("is null for candidate races and measures without a link", () => {
-    expect(officialLink({ ...race, link: "https://sf.gov/r" } as Contest)).toBeNull();
-    expect(officialLink(measure)).toBeNull();
   });
 });
 
