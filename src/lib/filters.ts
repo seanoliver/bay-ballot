@@ -100,8 +100,9 @@ export function togglePin(f: Filters, id: string): Filters {
 
 export type PinnedPick = { guide: GuideInfo; entry: Entry };
 
+export const NO_PINS: PinnedPick[] = [];
+
 /** The pinned guides that took a position on a contest, in pin order. Counting filters don't apply: a pin is a guide the reader chose to see. */
-const NO_PINS: PinnedPick[] = [];
 
 export function pinnedPicks(contestId: string, pins: string[], guides: GuideInfo[], files: Record<string, PickFile>): PinnedPick[] {
   const out: PinnedPick[] = [];

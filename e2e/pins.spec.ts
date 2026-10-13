@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { parse } from "yaml";
-import { BALLOT, contestRow, isPhone, watchErrors } from "./helpers";
+import { BALLOT, contestRow, guideOff, isPhone, watchErrors } from "./helpers";
 
 const SF = `${BALLOT}/sf`;
 // The pin list as the URL carries it, its commas typed or encoded.
@@ -101,5 +101,12 @@ test.describe("pinned guides", () => {
     await page.goto(`${BALLOT}/oakland?pin=sf-dems`);
     const panel = await filterPanel(page, info);
     await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveText(/not on this ballot/);
+  });
+
+  test("on a contest page, a pin that skipped the contest isn't called off the ballot", async ({ page }, info) => {
+    await page.goto(`${BALLOT}/prop-b?pin=${guideOff("prop-b")}`);
+    const panel = await filterPanel(page, info);
+    await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveCount(1);
+    await expect(panel.getByText(/not on this ballot/)).toHaveCount(0);
   });
 });

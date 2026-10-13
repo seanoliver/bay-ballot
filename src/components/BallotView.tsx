@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { cardDescription, counted } from "@/lib/display";
 import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
-import { activeEntries, EMPTY, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, NO_PINS, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
@@ -406,7 +406,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     revealBayRef.current = revealBay;
   });
   const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
-  const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides };
+  const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides, onBallot: guides };
   const carry = useCarriedQuery();
 
   useEffect(() => {
@@ -748,8 +748,6 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
 
 type BayResult = { rows: Row[]; slots: Slots; total: number };
 
-const NO_PINS: PinnedPick[] = [];
-
 const ContestRow = memo(function ContestRow({
   href,
   contest,
@@ -811,7 +809,7 @@ const ContestRow = memo(function ContestRow({
         ) : (
           <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
         )}
-        <PinnedPicks picks={pinned} slots={slots} className="basis-full" />
+        <PinnedPicks picks={pinned} slots={wide?.slots ?? slots} className="basis-full" />
       </div>
       <div
         className={cn(
@@ -843,7 +841,7 @@ const ContestRow = memo(function ContestRow({
         ) : (
           <VerdictBar contest={contest} rows={rows} slots={slots} />
         )}
-        <PinnedPicks picks={pinned} slots={slots} className="mt-2" />
+        <PinnedPicks picks={pinned} slots={wide?.slots ?? slots} className="mt-2" />
       </div>
     </>
   );

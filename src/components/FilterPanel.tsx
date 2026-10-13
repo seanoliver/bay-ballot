@@ -36,6 +36,8 @@ type Props = {
   files: Record<string, PickFile>;
   /** Every published guide, for the type checkboxes and for naming pins from other areas. */
   typeGuides?: GuideInfo[];
+  /** The guides on this area's ballot; a pin outside them is marked. Unset on a contest page, where a guide may just have skipped the contest. */
+  onBallot?: GuideInfo[];
 };
 
 export function FilterSidebar({ className, ...props }: Props & { className?: string }) {
@@ -81,11 +83,11 @@ export function FiltersSheet({ className, ...props }: Props & { className?: stri
   );
 }
 
-function FilterControls({ filters: f, onChange, guides, files, typeGuides }: Props) {
+function FilterControls({ filters: f, onChange, guides, files, typeGuides, onBallot }: Props) {
   const pinCountId = useId();
   return (
     <>
-      <PinnedGuides filters={f} onChange={onChange} all={typeGuides ?? guides} here={guides} countId={pinCountId} />
+      <PinnedGuides filters={f} onChange={onChange} all={typeGuides ?? guides} onBallot={onBallot} countId={pinCountId} />
       <Section title="Show">
         <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
           <Checkbox checked={f.whyOnly} onCheckedChange={(on) => onChange({ ...f, whyOnly: on === true })} />
@@ -105,13 +107,13 @@ function PinnedGuides({
   filters: f,
   onChange,
   all,
-  here,
+  onBallot,
   countId,
 }: {
   filters: Filters;
   onChange: (f: Filters) => void;
   all: GuideInfo[];
-  here: GuideInfo[];
+  onBallot?: GuideInfo[];
   countId: string;
 }) {
   const pinned = f.pins.map((id) => all.find((g) => g.id === id)).filter((g) => g !== undefined);
@@ -130,7 +132,7 @@ function PinnedGuides({
     <Section title="Your guides">
       <div ref={listRef}>
         {pinned.length === 0 ? (
-          <p data-pin-hint tabIndex={-1} className="text-sm text-muted-foreground outline-none">
+          <p data-pin-hint tabIndex={-1} className="rounded-md text-sm text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
             Pin up to {MAX_PINS} guides below to see their picks on each contest.
           </p>
         ) : (
@@ -146,7 +148,7 @@ function PinnedGuides({
                     <Pin aria-hidden="true" className="size-4 shrink-0 fill-current" />
                     <span className="min-w-0 flex-1">
                       {name}
-                      {here.some((h) => h.id === g.id) ? null : <span className="text-muted-foreground"> · not on this ballot</span>}
+                      {!onBallot || onBallot.some((h) => h.id === g.id) ? null : <span className="text-muted-foreground"> · not on this ballot</span>}
                     </span>
                     <button
                       type="button"
@@ -154,7 +156,9 @@ function PinnedGuides({
                       aria-label={`Unpin ${name}`}
                       onClick={() => {
                         refocus.current = i;
-                        setSaid(`Unpinned ${name}`);
+                        // Cleared first, so unpinning the same guide twice is announced twice.
+                        setSaid("");
+                        requestAnimationFrame(() => setSaid(`Unpinned ${name}`));
                         onChange(togglePin(f, g.id));
                       }}
                       className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
