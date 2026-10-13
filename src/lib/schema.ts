@@ -60,7 +60,8 @@ export const Contest = z.object({
   message: "every alias key must be one of the contest's candidates",
   path: ["aliases"],
 });
-export type Contest = z.infer<typeof Contest>;
+// linkShared is set by loadBallot, never read from YAML: another contest links to the same official page.
+export type Contest = z.infer<typeof Contest> & { linkShared?: true };
 
 export const Ballot = z.object({
   election: Election,

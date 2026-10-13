@@ -117,10 +117,6 @@ export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
 }
 
-export function officialLink(contest: Contest): string | null {
-  return contest.kind === "measure" && contest.link ? contest.link : null;
-}
-
 export function sourceLink(file: Pick<EndorsementFile, "archived">, url: string): string {
   return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
 }

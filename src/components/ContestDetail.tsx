@@ -2,12 +2,14 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
+import { ArrowUpRight, Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideGuide, type SideQuote } from "@/lib/detail";
-import { cardDescription, contestHeadline, officialLink } from "@/lib/display";
+import { cardDescription, contestHeadline } from "@/lib/display";
 import { skippedLabel, type Scope } from "@/lib/fallback";
 import type { Row } from "@/lib/filters";
+import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
@@ -73,7 +75,7 @@ export function ContestDetail({
   const rows = bay ? fallback.rows : areaRows;
   const slots = bay ? fallback.slots : areaSlots;
   const description = cardDescription(contest);
-  const official = officialLink(contest);
+  const official = officialSource(contest);
   const result = resultHeadline(contest, rows);
   const { sides, others } = detailSides(contest, rows, slots);
   const ranked = contestHeadline(contest, rows).headline.ranked;
@@ -130,6 +132,7 @@ export function ContestDetail({
           <div className="pt-3">{scopeSwitch}</div>
         ) : null}
         {description ? <p className="measure mt-1 text-sm text-muted-foreground">{description}</p> : null}
+        {official ? <Official source={official} /> : null}
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
         {fallback?.scope === "area" ? <p className="mt-4 text-sm text-muted-foreground">{skippedLabel(fallback.place)}</p> : null}
         {bay ? (
@@ -143,7 +146,7 @@ export function ContestDetail({
 
       {fallback ? null : guides}
 
-      <Footer pending={pending} official={official} page={pageLink ? `/${election}/${contest.id}` : null} />
+      <Footer pending={pending} page={pageLink ? `/${election}/${contest.id}` : null} />
     </div>
   );
 }
@@ -311,15 +314,26 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
   );
 }
 
-function Footer({ pending, official, page }: { pending: string | null; official: string | null; page: string | null }) {
+function Official({ source }: { source: OfficialSource }) {
+  return (
+    <div className="mt-3 flex items-start gap-2.5">
+      <Landmark aria-hidden="true" strokeWidth={1.75} className="mt-0.5 size-[18px] shrink-0 text-foreground/80" />
+      <div className="min-w-0">
+        <ExternalLink href={source.href} className={`${TAP} text-[15px] font-semibold underline underline-offset-3`}>
+          {source.label}
+          <ArrowUpRight aria-hidden="true" className="ml-1 inline size-3.5 align-[-2px]" />
+          <span className="sr-only"> (opens in a new tab)</span>
+        </ExternalLink>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">{source.note}</p>
+      </div>
+    </div>
+  );
+}
+
+function Footer({ pending, page }: { pending: string | null; page: string | null }) {
   const carry = useCarriedQuery();
   const parts = [
     pending ? <span key="p">{pending.replace(/\.$/, "")}</span> : null,
-    official ? (
-      <ExternalLink key="o" href={official} className={`${TAP} underline underline-offset-2`}>
-        Official text
-      </ExternalLink>
-    ) : null,
     page ? (
       <Link key="c" href={`${page}${carry}`} className={`${TAP} underline underline-offset-2`}>
         Open contest page

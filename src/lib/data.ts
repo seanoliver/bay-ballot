@@ -6,6 +6,7 @@ import { Area, AreaFile, Ballot, CountyBallot, EndorsementFile, Guide, type Cont
 import { areaCounties, areaCounty, areasOf, ballotCounty, countyPages, inArea, placeCounty, STATE_DISTRICTS } from "./areas";
 import { countySlug } from "./counties";
 import { matchName } from "./names";
+import { markSharedLinks } from "./official";
 import { isRejected } from "./quote-key";
 
 export type ElectionData = {
@@ -98,7 +99,7 @@ function loadBallot(root: string, election: string, areas: Area[]): Ballot {
     }
     contests.push(...rest);
   }
-  return { ...ballot, contests };
+  return { ...ballot, contests: markSharedLinks(contests) };
 }
 
 export function loadElection(root: string, election: string): ElectionData {
