@@ -148,9 +148,25 @@ describe("savedFilters", () => {
     expect(savedFilters({ prev: shared, next: { ...shared, whyOnly: true }, stored })).toEqual({ off: ["c"], whyOnly: true, pins: ["b", "a"] });
     expect(savedFilters({ prev: shared, next: { ...EMPTY, pins: shared.pins }, stored })).toEqual(stored);
   });
-  it("saves every pin on screen once the reader pins or unpins", () => {
-    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored }).pins).toEqual(["d", "e"]);
-    expect(savedFilters({ prev: shared, next: togglePin(shared, "d"), stored }).pins).toEqual([]);
+  it("applies an unpin to the stored pins, keeping the reader's own when a shared pin is unpinned", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "d"), stored }).pins).toEqual(["b", "a"]);
+    const mine = { ...EMPTY, pins: ["b", "a"] };
+    expect(savedFilters({ prev: mine, next: togglePin(mine, "b"), stored }).pins).toEqual(["a"]);
+  });
+  it("adds only the newly pinned guide while a shared list is showing", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored }).pins).toEqual(["b", "a", "e"]);
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "b"), stored }).pins).toEqual(["b", "a"]);
+  });
+  it("doesn't drop a pin another tab added when a stale tab unpins", () => {
+    const stale = { ...EMPTY, pins: ["b"] };
+    expect(savedFilters({ prev: stale, next: togglePin(stale, "b"), stored: { ...EMPTY, pins: ["b", "a"] } }).pins).toEqual(["a"]);
+  });
+  it("keeps stored pins first, so a pin past MAX_PINS shows but isn't saved", () => {
+    const full = { ...EMPTY, pins: ["a", "b", "c", "d"] };
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored: full }).pins).toEqual(["a", "b", "c", "d"]);
+  });
+  it("leaves stored pins for guides it doesn't know alone", () => {
+    expect(savedFilters({ prev: shared, next: togglePin(shared, "e"), stored: { ...EMPTY, pins: ["gone", "a"] } }).pins).toEqual(["gone", "a", "e"]);
   });
   it("classifies every filter as shared or reader-owned", () => {
     expect([...SHARED_KEYS, ...READER_KEYS].sort()).toEqual(Object.keys(EMPTY).sort());

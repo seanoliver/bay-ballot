@@ -29,12 +29,13 @@ Shared pins: pin SF Chronicle on `/2026-11/sf`, open `/2026-11/sf?off=sf-gop&pin
 Each `Filters` key is now either shared or reader-owned (`SHARED_KEYS` and `READER_KEYS` in `src/lib/filters.ts`). Shared filters (`off`, `why`) are the view a link describes. Reader-owned ones (`pins`) are the reader's own list.
 
 - Reading (`initialFilters`): shared filters come from the URL when it has filter params. Pins come from the URL only if it has at least one known guide; otherwise the stored pins show.
-- Writing (`savedFilters`, called from `setFilters` in `src/components/useBallotFilters.ts`): the URL always gets everything on screen, so a shared link keeps its `pin=` and the view doesn't jump. Storage gets the shared filters plus the stored pins, unless this change was to pins (pin or unpin). In that case it saves the full list on screen.
-- Reset filters keeps the pins on screen, so it is not a pin change and the stored pins stay as they were. Pinning or unpinning while a shared link's pins are showing saves that whole visible list, since the reader acted on pins. Unpinning everything saves an empty list.
+- Writing (`savedFilters`, called from `setFilters` in `src/components/useBallotFilters.ts`): the URL always gets everything on screen, so a shared link keeps its `pin=` and the view doesn't jump. Storage gets the shared filters as they are. For pins it applies only this change, as a delta to the pins freshly read from storage: guides unpinned in this change are removed, newly pinned ones not already stored are appended, and the list is cut to `MAX_PINS`. Stored pins come first, so if the saved list is full, a pin added on a shared view shows on screen but isn't saved. Stored ids for guides not in the current list are left alone.
+- So Reset filters and other non-pin changes leave the stored pins as they were. Unpinning a shared link's pin keeps the reader's own pins, and pinning while a shared list shows saves only that one guide. A stale tab's unpin doesn't drop a pin another tab saved, since the delta applies to what storage holds now. Unpinning everything of the reader's own saves an empty list.
+- A link with only `pin=` still counts as having filter params, so it carries empty shared filters by design: it shows every guide, with the link's pins.
 
 ## Verification
 
-- `npx vitest run tests/filters.test.ts`: `initialFilters` cases for stored pins under `off=`, `why=` and legacy `offtypes=` links, sanitizing stored pins (unknown ids, more than `MAX_PINS`), a link's own pins winning, all-unknown or empty `pin=` falling back, and nothing stored. `savedFilters` cases for a non-pin change and Reset keeping stored pins, and pin/unpin saving the visible list.
+- `npx vitest run tests/filters.test.ts`: `initialFilters` cases for stored pins under `off=`, `why=` and legacy `offtypes=` links, sanitizing stored pins (unknown ids, more than `MAX_PINS`), a link's own pins winning, all-unknown or empty `pin=` falling back, and nothing stored. `savedFilters` cases for a non-pin change and Reset keeping stored pins, unpinning a shared pin keeping the reader's own, pinning while a shared list shows adding only that guide, a stale-tab unpin keeping a pin another tab added, the `MAX_PINS` cap keeping stored pins first, and unknown stored ids left alone.
 - `e2e/pins.spec.ts`:
   - "a link with only off=/why= keeps the saved pins through the next filter change" checks the URL has no `pin` before any click, and that the link's own param and `pin=spur` are both there after the change.
   - "a link with someone else's pins shows them, but a filter change doesn't save them over the reader's".
@@ -42,4 +43,4 @@ Each `Filters` key is now either shared or reader-owned (`SHARED_KEYS` and `READ
 
 ## Guardrail
 
-`tests/filters.test.ts` "classifies every filter as shared or reader-owned" fails until a new `Filters` key is added to `SHARED_KEYS` or `READER_KEYS`. Both `initialFilters` and `savedFilters` loop over `READER_KEYS`, so classifying a key as reader-owned gives it the same fallback and save rules as pins.
+`tests/filters.test.ts` "classifies every filter as shared or reader-owned" fails until a new `Filters` key is added to `SHARED_KEYS` or `READER_KEYS`. `initialFilters` loops over `READER_KEYS` for its storage fallback, and `savedFilters` documents that pins are saved as a delta, so a new reader-owned key needs its own save rule and tests there before the classification test passes honestly.

@@ -162,11 +162,15 @@ export function initialFilters({
   return out;
 }
 
-/** What to save after a change from `prev` to `next`: shared filters always, reader-owned ones only when this change touched them. */
+/**
+ * What to save after a change from `prev` to `next`. Shared filters are saved as they are. Pins on screen may be a
+ * link's or a stale tab's, so only this change's pin and unpin apply to the stored list; stored pins come first, so
+ * past MAX_PINS a new pin shows but isn't saved.
+ */
 export function savedFilters({ prev, next, stored }: { prev: Filters; next: Filters; stored: Filters }): Filters {
-  const out = { ...next };
-  for (const k of READER_KEYS) if (prev[k].join() === next[k].join()) out[k] = stored[k];
-  return out;
+  const removed = prev.pins.filter((id) => !next.pins.includes(id));
+  const added = next.pins.filter((id) => !prev.pins.includes(id) && !stored.pins.includes(id));
+  return { ...next, pins: [...stored.pins.filter((id) => !removed.includes(id)), ...added].slice(0, MAX_PINS) };
 }
 
 // Not derived from the zod enum: client code must not import zod.

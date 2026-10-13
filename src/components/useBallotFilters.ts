@@ -100,7 +100,7 @@ export function useBallotFilters({ guides, keep = [] }: { guides: FilterGuide[];
 
   const setFilters = useCallback(
     (f: Filters) => {
-      // The URL shows everything on screen; storage keeps the reader's own pins unless this change was to pins.
+      // The URL shows everything on screen; storage gets only this change's pin or unpin applied to the saved pins.
       writeKey(FILTERS_KEY, toQuery(savedFilters({ prev: filters, next: f, stored: fromQuery(readKey(FILTERS_KEY) ?? "", guides) })));
       const p = new URLSearchParams(toQuery(f));
       const current = new URLSearchParams(currentSearch());
