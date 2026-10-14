@@ -348,6 +348,29 @@ describe("content selector", () => {
     });
   });
 
+  const withWidget = article.replace(
+    '<div id="article-body">',
+    '<div id="article-body"><div class="tncms-region"><h3>Recommended for you</h3><p>Newsom against wealth taxes</p></div>',
+  );
+  const kept = "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.";
+
+  it("applies the exclude on the browser path", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: withWidget }));
+    const r = await fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector, contentExclude: ".tncms-region" });
+    expect(r).toEqual({ kind: "text", text: kept });
+  });
+
+  it("applies the exclude on the http path", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(withWidget, { status: 200, headers: { "content-type": "text/html" } })));
+    const r = await fetchSource("https://x.test/a", { contentSelector: selector, contentExclude: ".tncms-region" });
+    expect(r).toEqual({ kind: "text", text: kept });
+  });
+
+  it("returns a PDF source untouched when a selector is set", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array(Buffer.from("%PDF-1.4 junk")), { status: 200, headers: { "content-type": "application/pdf" } })));
+    expect((await fetchSource("https://x.test/guide.pdf", { contentSelector: selector })).kind).toBe("pdf");
+  });
+
   it("names the page when the selector misses", async () => {
     const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Redesigned page</p></body>" }));
     await expect(fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).rejects.toThrow(
