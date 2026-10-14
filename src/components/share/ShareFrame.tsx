@@ -10,10 +10,10 @@ export const LINE = "#e5e5e5";
 export const FILL: Record<BarTone, string> = {
   yes: "#166534",
   no: "#e25c5c",
-  c1: "#2a78d6",
-  c2: "#e87ba4",
-  c3: "#4a3aa7",
-  c4: "#1baf7a",
+  c1: "#4a3aa7",
+  c2: "#e08a2a",
+  c3: "#0f8a8a",
+  c4: "#334155",
   other: "rgba(102,102,102,0.4)",
   empty: "#ebebeb",
 };
