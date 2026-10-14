@@ -20,47 +20,56 @@ extraSources:
   - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
   - https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-i/article_fa76ad1b-0717-4c27-91e0-45f3f81ba833.html
   - https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
+  - https://www.smdailyjournal.com/opinion/editorials/wettan-for-district-3-burlingame-city-council/article_9d79323e-6766-4c12-a1cb-6115386874a2.html
+  - https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
+  - https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
 fetchWith: browser
+fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 contentSelector: "header.asset-header h1, #article-body" # article only: the sidebars change daily and named candidates
 contentExclude: .tncms-region # ad and "Recommended for you" slots inside the article body
-fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
-    snapshot: https://web.archive.org/web/20261014182422/https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
+    snapshot: https://web.archive.org/web/20261014225712/https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
-    snapshot: https://web.archive.org/web/20261014182548/https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
+    snapshot: https://web.archive.org/web/20261014225736/https://www.smdailyjournal.com/opinion/editorials/editorial-booker-brownstone-and-ruddock-for-half-moon-bay-city-council/article_79bbc030-75ba-4470-9893-2489506d8b3e.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
-    snapshot: https://web.archive.org/web/20261014182610/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+    snapshot: https://web.archive.org/web/20261014225756/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
-    snapshot: https://web.archive.org/web/20261014182722/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
+    snapshot: https://web.archive.org/web/20261014225820/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
-    snapshot: https://web.archive.org/web/20261014182827/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
+    snapshot: https://web.archive.org/web/20261014225839/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
-    snapshot: https://web.archive.org/web/20261014182933/https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
+    snapshot: https://web.archive.org/web/20261014225940/https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-guingona-for-area-2-community-college-trustee/article_0ca98605-cf72-4269-88af-fd3cdfd06a6e.html
-    snapshot: https://web.archive.org/web/20261014182957/https://www.smdailyjournal.com/opinion/editorials/editorial-guingona-for-area-2-community-college-trustee/article_0ca98605-cf72-4269-88af-fd3cdfd06a6e.html
+    snapshot: https://web.archive.org/web/20261014230010/https://www.smdailyjournal.com/opinion/editorials/editorial-guingona-for-area-2-community-college-trustee/article_0ca98605-cf72-4269-88af-fd3cdfd06a6e.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
-    snapshot: https://web.archive.org/web/20261014183017/https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
+    snapshot: https://web.archive.org/web/20261014230030/https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
-    snapshot: https://web.archive.org/web/20261014183036/https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
+    snapshot: https://web.archive.org/web/20261014230143/https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
-    snapshot: https://web.archive.org/web/20261014183125/https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
+    snapshot: https://web.archive.org/web/20261014230306/https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
-    snapshot: https://web.archive.org/web/20261014183245/https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
+    snapshot: https://web.archive.org/web/20261014230343/https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
-    snapshot: https://web.archive.org/web/20261014183402/https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
+    snapshot: https://web.archive.org/web/20261014230425/https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/article_a53021af-b9b9-4f1f-9745-42061a89773e.html
-    snapshot: https://web.archive.org/web/20261014183508/https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/article_a53021af-b9b9-4f1f-9745-42061a89773e.html
+    snapshot: https://web.archive.org/web/20261014230603/https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/article_a53021af-b9b9-4f1f-9745-42061a89773e.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-venkat-for-district-1-foster-city-council/article_c9deeec4-18d4-4bf0-9215-9c4aa02daa20.html
-    snapshot: https://web.archive.org/web/20261014183629/https://www.smdailyjournal.com/opinion/editorials/editorial-venkat-for-district-1-foster-city-council/article_c9deeec4-18d4-4bf0-9215-9c4aa02daa20.html
+    snapshot: https://web.archive.org/web/20261014230640/https://www.smdailyjournal.com/opinion/editorials/editorial-venkat-for-district-1-foster-city-council/article_c9deeec4-18d4-4bf0-9215-9c4aa02daa20.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
-    snapshot: https://web.archive.org/web/20261014183743/https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
+    snapshot: https://web.archive.org/web/20261014230707/https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
-    snapshot: https://web.archive.org/web/20261014183852/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
+    snapshot: https://web.archive.org/web/20261014230726/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-i/article_fa76ad1b-0717-4c27-91e0-45f3f81ba833.html
-    snapshot: https://web.archive.org/web/20261014184031/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-i/article_fa76ad1b-0717-4c27-91e0-45f3f81ba833.html
+    snapshot: https://web.archive.org/web/20261014230823/https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-i/article_fa76ad1b-0717-4c27-91e0-45f3f81ba833.html
   - source: https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
-    snapshot: https://web.archive.org/web/20261014184201/https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
+    snapshot: https://web.archive.org/web/20261014230846/https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
+  - source: https://www.smdailyjournal.com/opinion/editorials/wettan-for-district-3-burlingame-city-council/article_9d79323e-6766-4c12-a1cb-6115386874a2.html
+    snapshot: https://web.archive.org/web/20261014230913/https://www.smdailyjournal.com/opinion/editorials/wettan-for-district-3-burlingame-city-council/article_9d79323e-6766-4c12-a1cb-6115386874a2.html
+  - source: https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
+    snapshot: https://web.archive.org/web/20261014231032/https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
+  - source: https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
+    snapshot: https://web.archive.org/web/20261014231053/https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
 fetchedAt: 2026-10-14
 hasReasoning: true
 rejectedQuotes:
@@ -130,9 +139,15 @@ picks:
   ssfusd-trustee-area-c:
     pick:
       - Chialin Hsieh
+    quotes:
+      - text: The achievement gap is a real concern, and Hsieh was there to create the district’s 2024-29 strategic plan and revamp the math curriculum.
+        source: https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
   ssfusd-trustee-area-e:
     pick:
       - Mina A. Richardson
+    quotes:
+      - text: Richardson has been a good representative for the largely Latino Area E.
+        source: https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
   sequoia-uhsd-trustee-area-a:
     pick:
       - Alon Shiran
@@ -199,46 +214,21 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
       - text: The current City Council has been challenged at times by its lack of institutional knowledge. Sahae can bring that knowledge, along with a fresh approach to issues that have long plagued the city.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
-  burlingame-measure-d:
-    pick: Y
-    quotes:
-      - text: Hotel tax revenue is one of the more consistent drivers of tax revenue in Burlingame, and its 12% rate is lower than most other cities on the Peninsula.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
-  redwood-city-measure-e:
-    pick: N
-    quotes:
-      - text: Because Measure E does not provide per-unit fee exemptions for below-market rate housing providers, it may actually deter such nonprofits from providing that type of housing in the city.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
-  half-moon-bay-measure-i:
-    pick: Y
-  san-bruno-measure-ee:
-    pick: Y
-    quotes:
-      - text: San Bruno voters will be able to change the city’s business tax model into a tiered system that will make it more fair for small businesses, with a carveout for those who provide affordable housing.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
-      - text: The tax is not designed to target small businesses, and more than 75% of businesses will not see a change if it’s approved.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
-  burlingame-sd-measure-r:
-    pick: Y
-  san-carlos-sd-measure-k:
-    pick: Y
-    quotes:
-      - text: Approving Measure K would allow for more teachers to be funded.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html
-  half-moon-bay-measure-q:
-    pick: Y
-    quotes:
-      - text: It provides housing described as needed in the city’s housing element.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
-  half-moon-bay-council-5:
+  burlingame-council-3:
     pick:
-      - Steven R. Booker
+      - Howard Wettan
+    quotes:
+      - text: As a member of the Parks and Recreation Commission, Wettan didn’t shy from controversial topics and found solutions that benefited Burlingame.
+        source: https://www.smdailyjournal.com/opinion/editorials/wettan-for-district-3-burlingame-city-council/article_9d79323e-6766-4c12-a1cb-6115386874a2.html
   half-moon-bay-council-1:
     pick:
       - Robert Brownstone
   half-moon-bay-council-4:
     pick:
       - Debbie Ruddock
+  half-moon-bay-council-5:
+    pick:
+      - Steven R. Booker
   millbrae-council-3:
     pick:
       - Ann Schneider
@@ -253,3 +243,36 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
       - text: Nguyen is service oriented, which is good, but Yam is action oriented, which is better.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
+  burlingame-measure-d:
+    pick: Y
+    quotes:
+      - text: Raising the hotel tax in Burlingame from 12% to 15% to generate an additional $5.7 million a year for the city’s coffers is a no-brainer.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
+      - text: Hotel tax revenue is one of the more consistent drivers of tax revenue in Burlingame, and its 12% rate is lower than most other cities on the Peninsula.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
+  redwood-city-measure-e:
+    pick: N
+    quotes:
+      - text: Because Measure E does not provide per-unit fee exemptions for below-market rate housing providers, it may actually deter such nonprofits from providing that type of housing in the city.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
+  half-moon-bay-measure-i:
+    pick: Y
+  half-moon-bay-measure-q:
+    pick: Y
+    quotes:
+      - text: It provides housing described as needed in the city’s housing element.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
+  san-bruno-measure-ee:
+    pick: Y
+    quotes:
+      - text: San Bruno voters will be able to change the city’s business tax model into a tiered system that will make it more fair for small businesses, with a carveout for those who provide affordable housing.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+      - text: The tax is not designed to target small businesses, and more than 75% of businesses will not see a change if it’s approved.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-ee/article_4ba4be26-31b5-4893-ac57-4f17eba85424.html
+  burlingame-sd-measure-r:
+    pick: Y
+  san-carlos-sd-measure-k:
+    pick: Y
+    quotes:
+      - text: Approving Measure K would allow for more teachers to be funded.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-k/article_bd4952ba-c190-4a56-ae3f-e14f5b9356e2.html

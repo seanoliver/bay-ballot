@@ -187,6 +187,12 @@ contests:
     description: "Transient Occupancy Tax Measure"
     link: https://smcacre.gov/elections/november-3-2026-statewide-general-election
     jurisdiction: { level: city, name: Burlingame }
+  - id: burlingame-council-3
+    section: Local candidates
+    title: Burlingame City Council, District 3
+    kind: candidate
+    candidates: [Jen Faber, Howard Wettan]
+    jurisdiction: { level: district, name: City Council, district: "3", within: [{ level: city, name: Burlingame }] }
   - id: daly-city-council
     section: Local candidates
     title: Daly City Council
