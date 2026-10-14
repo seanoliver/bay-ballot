@@ -37,12 +37,36 @@ export function htmlToText(html: string): string {
     .join("\n");
 }
 
-/** The matched elements, in page order, as a page of their own. Throws when nothing matches, so a site redesign fails loudly. */
-export function selectContent(html: string, selector: string): string {
+// Splits "a, b:not(.c, .d)" at the commas outside brackets, parens and quotes.
+function selectorParts(selector: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let quote = "";
+  let start = 0;
+  for (let i = 0; i < selector.length; i++) {
+    const ch = selector[i];
+    if (quote) {
+      if (ch === quote) quote = "";
+    } else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === "(" || ch === "[") depth++;
+    else if (ch === ")" || ch === "]") depth--;
+    else if (ch === "," && depth === 0) {
+      parts.push(selector.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  parts.push(selector.slice(start).trim());
+  return parts.filter(Boolean);
+}
+
+/** The matched elements, in page order, as a page of their own, minus anything `exclude` matches. Every comma-separated part of `selector` must match, so a partial redesign fails loudly. */
+export function selectContent(html: string, selector: string, exclude?: string): string {
   const $ = cheerio.load(html);
-  const picked = $(selector).toArray();
-  if (picked.length === 0) throw new Error(`content selector "${selector}" matched nothing`);
-  return `<body>${picked.map((el) => $.html(el)).join("\n")}</body>`;
+  const missing = selectorParts(selector).filter((part) => $(part).length === 0);
+  if (missing.length) throw new Error(`content selector "${selector}" matched nothing for ${missing.map((m) => `"${m}"`).join(", ")}`);
+  const picked = $(selector);
+  if (exclude) picked.find(exclude).remove();
+  return `<body>${picked.toArray().map((el) => $.html(el)).join("\n")}</body>`;
 }
 
 // A real browser UA: some guide sites return 403/406 to bot-like or short ones.
@@ -126,6 +150,7 @@ type BrowserFetch = (url: string) => Promise<{ status: number; html: string }>;
 export type FetchOptions = {
   browser?: boolean;
   contentSelector?: string;
+  contentExclude?: string;
   browserFetch?: BrowserFetch;
   onAttempt?: (a: FetchAttempt) => void;
 };
@@ -156,15 +181,15 @@ type HttpResult =
   | { kind: "page"; fetched: Fetched; status: number; bytes: number; html?: string }
   | { kind: "error"; status: number; bytes: number };
 
-function selectIn(url: string, html: string, selector: string): string {
+function selectIn(url: string, html: string, selector: string, exclude?: string): string {
   try {
-    return selectContent(html, selector);
+    return selectContent(html, selector, exclude);
   } catch (e) {
     throw new Error(`${url}: ${errMsg(e)}`);
   }
 }
 
-async function fetchHttp(url: string, contentSelector?: string): Promise<HttpResult> {
+async function fetchHttp(url: string): Promise<HttpResult> {
   let res: Response;
   let buf: Buffer;
   try {
@@ -191,8 +216,7 @@ async function fetchHttp(url: string, contentSelector?: string): Promise<HttpRes
     throw new Error(`${url}: unsupported content-type ${type || "(none)"}`);
   }
   const html = buf.toString("utf8");
-  const content = contentSelector && !detectBlock(html) ? selectIn(url, html, contentSelector) : html;
-  return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(content) } };
+  return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(html) } };
 }
 
 export async function fetchSource(url: string, opts: FetchOptions = {}): Promise<Fetched> {
@@ -216,12 +240,12 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
       throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
     }
     if (blocked) throw new Error(`${url}: blocked (${blocked})${httpFailure ? " over http and browser" : ""}`);
-    return { kind: "text", text: htmlToText(opts.contentSelector ? selectIn(url, r.html, opts.contentSelector) : r.html) };
+    return { kind: "text", text: htmlToText(opts.contentSelector ? selectIn(url, r.html, opts.contentSelector, opts.contentExclude) : r.html) };
   };
 
   if (opts.browser && !isPdfPath(url)) return viaBrowser(null);
 
-  const r = await fetchHttp(url, opts.contentSelector);
+  const r = await fetchHttp(url);
   if (r.kind === "error") {
     report({ via: "http", status: r.status, bytes: r.bytes, blocked: null });
     const failure = `${url} -> HTTP ${r.status}`;
@@ -230,6 +254,7 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
   }
   const blocked = r.html ? detectBlock(r.html) : null;
   report({ via: "http", status: r.status, bytes: r.bytes, blocked });
-  if (!blocked) return r.fetched;
-  return viaBrowser(`${url}: blocked (${blocked})`);
+  if (blocked) return viaBrowser(`${url}: blocked (${blocked})`);
+  if (r.html === undefined || !opts.contentSelector) return r.fetched;
+  return { kind: "text", text: htmlToText(selectIn(url, r.html, opts.contentSelector, opts.contentExclude)) };
 }

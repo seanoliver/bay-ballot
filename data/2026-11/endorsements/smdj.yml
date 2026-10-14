@@ -22,6 +22,7 @@ extraSources:
   - https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
 fetchWith: browser
 contentSelector: "header.asset-header h1, #article-body" # article only: the sidebars change daily and named candidates
+contentExclude: .tncms-region # ad and "Recommended for you" slots inside the article body
 fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 archived:
   - source: https://www.smdailyjournal.com/opinion/editorials/daily-journal-endorsements-for-the-san-mateo-county-november-election/article_9e726e39-e27e-4b9b-ba42-5addaf7dab5b.html

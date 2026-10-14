@@ -73,10 +73,11 @@ describe("fetchMode", () => {
 
 describe("fetchOptions", () => {
   it("carries the browser choice and the content selector", () => {
-    expect(fetchOptions(base, false)).toEqual({ browser: false, contentSelector: undefined });
-    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body" }, false)).toEqual({
+    expect(fetchOptions(base, false)).toEqual({ browser: false });
+    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false)).toEqual({
       browser: true,
       contentSelector: "#article-body",
+      contentExclude: ".ad",
     });
   });
 });

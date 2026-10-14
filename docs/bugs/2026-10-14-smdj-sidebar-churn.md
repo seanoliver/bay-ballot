@@ -22,9 +22,11 @@ Diff two stored versions of any SMDJ page before this fix, for example `git diff
 
 ## Fix
 
-- `contentSelector` (optional) on an endorsement file. `fetchSource` keeps only the matched elements (`selectContent` in `src/pipeline/fetch.ts`) over both http and the browser, and fails the fetch when nothing matches.
+- `contentSelector` (optional) on an endorsement file. `fetchSource` keeps only the matched elements (`selectContent` in `src/pipeline/fetch.ts`) over both http and the browser. The fetch fails when any comma-separated part of the selector matches nothing.
+- `contentExclude` (optional) removes matches inside the kept elements. SMDJ puts ad and "Recommended for you" slots (`.tncms-region`) inside `#article-body`, between contest lines on the roundup page.
+- Both keys are in `KEY_ORDER` (`src/pipeline/write.ts`). Without that, `toYaml` dropped `contentSelector` the first time a refresh rewrote the file, which would have quietly undone the fix.
 - `fetchOptions` in `src/pipeline/sources.ts` passes it from the file to every fetch: `extract`, `refresh`, `pages --seed` and `fetch-check`.
-- smdj sets `contentSelector: "header.asset-header h1, #article-body"`. The comment count in the header is left out on purpose: it changes as readers comment.
+- smdj sets `contentSelector: "header.asset-header h1, #article-body"` and `contentExclude: .tncms-region`. The comment count in the header is left out on purpose: it changes as readers comment.
 - Re-seeded smdj's stored pages: 18 files, 9,335 lines of sidebar removed.
 
 ## Verification
@@ -32,9 +34,12 @@ Diff two stored versions of any SMDJ page before this fix, for example `git diff
 - `npm run bb -- fetch-check smdj`: 18 of 18 sources fetched; each preview starts with the editorial headline and body.
 - The stored roundup page still lists every contest and pick.
 - `npm run bb -- quote-lint --guide smdj`: 0 of 36 quotes fail.
-- `tests/fetch.test.ts` (selector over http and browser, the no-match error), `tests/sources.test.ts`, `tests/refresh.test.ts` (selector reaches the fetcher).
+- `tests/fetch.test.ts`: selector over http and browser, a blocked http page retried in the browser with the selector, the no-match and partial-match errors, `:not()` commas, the exclude.
+- `tests/refresh.test.ts` and `tests/fetchcheck.test.ts`: refresh, `pages --seed` and `fetch-check` pass both selectors to the fetcher.
+- `tests/write.test.ts`: both keys and their inline comment survive `toYaml`.
 
 ## Guardrail
 
-- A selector that stops matching fails the fetch, which the refresh reports as a failed guide, so a redesign can't silently bring the sidebars back.
+- A selector part that stops matching fails the fetch, which the refresh reports as a failed guide, so a redesign can't silently bring the sidebars back or store only the headline.
+- The `KEY_ORDER` test in `tests/write.test.ts` fails when a schema field is missing from `KEY_ORDER`. It caught this PR's first version in CI.
 - The runbook documents `contentSelector` next to the other per-guide fetch settings.

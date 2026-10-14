@@ -308,6 +308,20 @@ describe("content selector", () => {
     expect(() => selectContent("<body><p>Vote yes</p></body>", selector)).toThrow(`content selector "${selector}" matched nothing`);
   });
 
+  it("throws when any part of the selector matches nothing, naming that part", () => {
+    const headlineOnly = `<body><header class="asset-header"><h1>Editorial: Yes on Measure EE</h1></header></body>`;
+    expect(() => selectContent(headlineOnly, selector)).toThrow(`content selector "${selector}" matched nothing for "#article-body"`);
+  });
+
+  it("does not split a selector at commas inside :not()", () => {
+    expect(htmlToText(selectContent(article, "#article-body p:not(.a, .b)"))).toBe("San Bruno voters will be able to change the business tax.");
+  });
+
+  it("removes what the exclude selector matches inside the kept elements", () => {
+    const withWidget = `<body><div id="article-body"><div>Area E:</div><div class="tncms-region"><h3>Recommended for you</h3><p>Newsom against wealth taxes</p></div><div>Mina Richardson</div></div></body>`;
+    expect(htmlToText(selectContent(withWidget, "#article-body", ".tncms-region"))).toBe("Area E:\nMina Richardson");
+  });
+
   it("applies the selector to pages fetched over http", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(article, { status: 200, headers: { "content-type": "text/html" } })));
     expect(await fetchSource("https://x.test/a", { contentSelector: selector })).toEqual({
@@ -319,6 +333,16 @@ describe("content selector", () => {
   it("applies the selector to pages fetched in the browser", async () => {
     const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
     expect(await fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  it("retries a blocked http page in the browser and applies the selector there", async () => {
+    const wall = "<html><head><title>Just a moment...</title></head><body>Enable JavaScript and cookies to continue</body></html>";
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(wall, { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).toEqual({
       kind: "text",
       text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
     });

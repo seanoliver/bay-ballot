@@ -23,6 +23,15 @@ describe("fetchCheck", () => {
     expect(fetchSource).toHaveBeenCalledWith(expect.stringContaining("sfcadc.org"), expect.objectContaining({ browser: false }));
   });
 
+  it("fetches with the guide's content selectors", async () => {
+    const fetchSource = vi.fn(async (): Promise<Fetched> => ({ kind: "text", text: "Editorial" }));
+    await fetchCheck({ fetchSource }, { root, election, ids: ["smdj"] });
+    expect(fetchSource).toHaveBeenCalledWith(
+      expect.stringContaining("smdailyjournal.com"),
+      expect.objectContaining({ contentSelector: "header.asset-header h1, #article-body", contentExclude: ".tncms-region" }),
+    );
+  });
+
   it("formats one line per attempt", () => {
     const out = formatFetchCheck([
       { guide: "cadc", url: "https://www.sfcadc.org/endorsements", ok: false, error: "x -> HTTP 403", attempts: [{ via: "http", status: 403, bytes: 9, blocked: null }] },

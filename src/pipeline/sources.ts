@@ -18,6 +18,9 @@ export function fetchMode(file: EndorsementFile, cliBrowserFlag: boolean): "http
   return file.fetchWith === "browser" || cliBrowserFlag ? "browser" : "http";
 }
 
-export function fetchOptions(file: EndorsementFile, cliBrowserFlag: boolean): { browser: boolean; contentSelector?: string } {
-  return { browser: fetchMode(file, cliBrowserFlag) === "browser", contentSelector: file.contentSelector };
+export function fetchOptions(
+  file: EndorsementFile,
+  cliBrowserFlag: boolean,
+): { browser: boolean; contentSelector?: string; contentExclude?: string } {
+  return { browser: fetchMode(file, cliBrowserFlag) === "browser", contentSelector: file.contentSelector, contentExclude: file.contentExclude };
 }
