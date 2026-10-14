@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildZipTable, districtShares, districtsTouched, droppedSlivers, poolDistrictCounties, SEAT_KINDS, shapesById, zipTableJson, type Shape } from "@/pipeline/zips";
-import { zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
+import { deflateRawSync } from "node:zlib";
+import {
+  blockPoints, buildZipTable, DISTRICT_MAPS, districtShares, districtsTouched, districtsWithHomes, droppedSlivers, pointsIn, poolDistrictCounties, SEAT_KINDS, shapesById,
+  zipTableJson, type Shape,
+} from "@/pipeline/zips";
+import { shapefileById, unzip } from "@/pipeline/shapefile";
+import { districtMapKey, STATE_PLACE, zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
 import type { PlaceGroup } from "@/lib/areas";
 import { c, prop1, propB, rep15, rtm, smL, sup8 } from "./fixtures/areas";
 
@@ -65,6 +70,15 @@ describe("zipFit", () => {
     const twoPlaces = c("supervisor-4", { level: "district", name: "Supervisor", district: "4", within: [{ level: "county", name: "San Francisco" }, { level: "county", name: "San Mateo" }] });
     expect(fit(twoPlaces, { ...SF, districts: { "county:San Francisco/Supervisor": ["8"] } })).toBe("maybe");
     expect(fit(sup8, { ...SF, districts: { "county:San Francisco/Supervisor": [] } }, "San Francisco")).toBe("maybe");
+  });
+  it("looks up state-drawn districts in the state map, though their contests list many places", () => {
+    const rep12 = c("us-rep-12", { level: "district", name: "Congress", district: "12", within: [{ level: "city", name: "Oakland" }, { level: "city", name: "Berkeley" }] });
+    const oakland: ZipPlaces = { counties: ["Alameda"], places: { Oakland: "full" }, districts: { "state:California/Congress": ["12"] } };
+    const cc = { Oakland: "Alameda", Berkeley: "Alameda" };
+    expect(zipFit(rep12.jurisdiction, oakland, { cityCounty: cc })).toBe("maybe");
+    expect(zipFit(rep12.jurisdiction, { ...oakland, districts: { "state:California/Congress": ["14"] } }, { cityCounty: cc })).toBe("off");
+    expect(zipFit(rep12.jurisdiction, { ...oakland, districts: {} }, { cityCounty: cc })).toBe("maybe");
+    expect(districtMapKey(STATE_PLACE, "Assembly")).toBe("state:California/Assembly");
   });
   it("keeps a district whose city has no known county as maybe", () => {
     const odd = c("x", { level: "district", name: "Water", district: "1", within: [{ level: "city", name: "Atlantis" }] });
@@ -184,15 +198,127 @@ describe("districtShares", () => {
     expect(districtsTouched(s)).toEqual(["9", "10"]);
     expect(districtsTouched({ "11": 0.5, "2": 0.006, "1": 0.494 })).toEqual(["1", "2", "11"]);
   });
+  it("keeps a small overlap that has homes", () => {
+    expect(districtsTouched({ "9": 0.998, "2": 0.002 }, { withHomes: ["2"] })).toEqual(["2", "9"]);
+  });
+});
+
+describe("homes in small overlaps", () => {
+  const zip = box(0, 0, 0.01, 0.01);
+  it("reads block points, and fails on an error or a cut-off response", () => {
+    const text = JSON.stringify({ features: [{ attributes: { INTPTLON: "-122.4", INTPTLAT: "+37.7" } }] });
+    expect(blockPoints(text)).toEqual([[-122.4, 37.7]]);
+    expect(() => blockPoints(JSON.stringify({ error: { code: 400 } }))).toThrow(/error/);
+    expect(() => blockPoints(JSON.stringify({ features: [], exceededTransferLimit: true }))).toThrow(/cut off/);
+  });
+  it("keeps the points inside a ZIP, and finds which candidate districts hold any", () => {
+    const pts: [number, number][] = [[0.005, 0.005], [0.0095, 0.0099], [0.02, 0.005]];
+    const homes = pointsIn(zip, pts);
+    expect(homes).toEqual([[0.005, 0.005], [0.0095, 0.0099]]);
+    const districts = { top: box(-1, 0.0098, 1, 1), right: box(0.0099, -1, 1, 1), main: box(-1, -1, 1, 0.0098) };
+    expect(districtsWithHomes(homes, districts, ["top", "right"])).toEqual(["top"]);
+    expect(districtsWithHomes([], districts, ["top"])).toEqual([]);
+  });
+});
+
+// A ZIP archive of the given files, the first stored and the rest deflated, as a download would mix them.
+function zipOf(files: Record<string, Buffer>): Buffer {
+  const locals: Buffer[] = [];
+  const central: Buffer[] = [];
+  let offset = 0;
+  Object.entries(files).forEach(([name, data], i) => {
+    const body = i === 0 ? data : deflateRawSync(data);
+    const n = Buffer.from(name);
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0);
+    local.writeUInt16LE(i === 0 ? 0 : 8, 8);
+    local.writeUInt32LE(body.length, 18);
+    local.writeUInt32LE(data.length, 22);
+    local.writeUInt16LE(n.length, 26);
+    const dir = Buffer.alloc(46);
+    dir.writeUInt32LE(0x02014b50, 0);
+    dir.writeUInt16LE(i === 0 ? 0 : 8, 10);
+    dir.writeUInt32LE(body.length, 20);
+    dir.writeUInt32LE(data.length, 24);
+    dir.writeUInt16LE(n.length, 28);
+    dir.writeUInt32LE(offset, 42);
+    locals.push(local, n, body);
+    central.push(dir, n);
+    offset += 30 + n.length + body.length;
+  });
+  const dirLen = central.reduce((a, b) => a + b.length, 0);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(Object.keys(files).length, 8);
+  end.writeUInt16LE(Object.keys(files).length, 10);
+  end.writeUInt32LE(dirLen, 12);
+  end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...locals, ...central, end]);
+}
+
+// A polygon shapefile: one ring per feature, ids in a one-column table.
+function shapefile(field: string, features: [string, [number, number][]][], prj: string): Record<string, Buffer> {
+  const records = features.map(([, ring], i) => {
+    const c = Buffer.alloc(44 + 4 + ring.length * 16);
+    c.writeInt32LE(5, 0);
+    c.writeInt32LE(1, 36);
+    c.writeInt32LE(ring.length, 40);
+    c.writeInt32LE(0, 44);
+    ring.forEach(([x, y], k) => {
+      c.writeDoubleLE(x, 48 + k * 16);
+      c.writeDoubleLE(y, 56 + k * 16);
+    });
+    const h = Buffer.alloc(8);
+    h.writeInt32BE(i + 1, 0);
+    h.writeInt32BE(c.length / 2, 4);
+    return Buffer.concat([h, c]);
+  });
+  const dbfHead = Buffer.alloc(32 + 32 + 1);
+  dbfHead.writeUInt32LE(features.length, 4);
+  dbfHead.writeUInt16LE(dbfHead.length, 8);
+  dbfHead.writeUInt16LE(1 + 4, 10);
+  dbfHead.write(field, 32, "latin1");
+  dbfHead.write("C", 43, "latin1");
+  dbfHead[48] = 4;
+  dbfHead[64] = 0x0d;
+  const rows = features.map(([id]) => Buffer.from(" " + id.padEnd(4), "latin1"));
+  return { "d/x.shp": Buffer.concat([Buffer.alloc(100), ...records]), "d/x.dbf": Buffer.concat([dbfHead, ...rows]), "d/x.prj": Buffer.from(prj), "__MACOSX/d/._x.prj": Buffer.from("junk") };
+}
+
+describe("shapefileById", () => {
+  const ring: [number, number][] = [[-122.5, 37.7], [-122.4, 37.7], [-122.4, 37.8], [-122.5, 37.7]];
+  const GEO = 'GEOGCS["GCS_North_American_1983"]';
+  it("unzips stored and deflated files", () => {
+    const files = unzip(zipOf({ "a.txt": Buffer.from("stored"), "b.txt": Buffer.from("deflated deflated") }));
+    expect(Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.toString()]))).toEqual({ "a.txt": "stored", "b.txt": "deflated deflated" });
+  });
+  it("reads polygons by id in degrees", () => {
+    const shapes = shapefileById(zipOf(shapefile("DISTRICT", [["01", ring], ["2", ring]], GEO)), "DISTRICT", "map");
+    expect(Object.keys(shapes).sort()).toEqual(["01", "2"]);
+    expect(shapes["01"]).toEqual({ type: "Polygon", coordinates: [ring] });
+  });
+  it("turns Web Mercator into degrees", () => {
+    const R = 6378137;
+    const merc = ring.map(([x, y]): [number, number] => [(x * Math.PI * R) / 180, R * Math.log(Math.tan(Math.PI / 4 + (y * Math.PI) / 360))]);
+    const shapes = shapefileById(zipOf(shapefile("DISTRICT", [["1", merc]], 'PROJCS["WGS_1984_Web_Mercator_Auxiliary_Sphere"]')), "DISTRICT", "map");
+    shapes["1"].coordinates[0].forEach((p, k) => {
+      expect((p as [number, number])[0]).toBeCloseTo(ring[k][0], 9);
+      expect((p as [number, number])[1]).toBeCloseTo(ring[k][1], 9);
+    });
+  });
+  it("fails on an unknown projection, a missing column or a repeated id", () => {
+    expect(() => shapefileById(zipOf(shapefile("DISTRICT", [["1", ring]], 'PROJCS["NAD_1983_StatePlane_California_III"]')), "DISTRICT", "map")).toThrow(/projection/);
+    expect(() => shapefileById(zipOf(shapefile("DISTRICT", [["1", ring]], GEO)), "ID", "map")).toThrow(/no ID column/);
+    expect(() => shapefileById(zipOf(shapefile("DISTRICT", [["1", ring], ["1", ring]], GEO)), "DISTRICT", "map")).toThrow(/appears twice/);
+  });
 });
 
 describe("droppedSlivers", () => {
-  it("lists dropped overlaps above 0.1%, and flags those of 0.25% or more that no one has looked at", () => {
+  it("lists dropped overlaps of 0.1% or more", () => {
     const shares = { "94117": { "5": 0.6, "7": 0.0033, "2": 0.0094, "3": 0.0005 }, "94122": { "4": 0.99, "5": 0.0016 }, "94110": { "9": 0.99, "11": 0.004 } };
-    expect(droppedSlivers(shares, { "94117": ["7"] })).toEqual([
-      { zip: "94110", district: "11", share: 0.004, unseen: true },
-      { zip: "94117", district: "7", share: 0.0033, unseen: false },
-      { zip: "94122", district: "5", share: 0.0016, unseen: false },
+    expect(droppedSlivers(shares, { "94117": ["2", "5"], "94122": ["4"], "94110": ["9", "11"] })).toEqual([
+      { zip: "94117", district: "7", share: 0.0033 },
+      { zip: "94122", district: "5", share: 0.0016 },
     ]);
   });
 });
@@ -255,7 +381,36 @@ describe("the committed ZIP table", () => {
     const onBallot = loadElection("data", "2026-11").ballot.contests.filter((x) => x.jurisdiction.name === "Supervisor" && x.jurisdiction.within?.[0]?.level === "county" && x.jurisdiction.within[0].name === "San Francisco");
     expect(onBallot.length).toBeGreaterThan(0);
     expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id)).toEqual([]);
-    expect(table.zips["94123"].districts).toEqual({ "county:San Francisco/Supervisor": ["2"] });
-    expect(table.zips["94110"].districts).toEqual({ "county:San Francisco/Supervisor": ["8", "9", "10"] });
+    expect(table.zips["94123"].districts?.["county:San Francisco/Supervisor"]).toEqual(["2"]);
+    expect(table.zips["94110"].districts?.["county:San Francisco/Supervisor"]).toEqual(["8", "9", "10"]);
+  });
+  it("maps every ZIP to its state-drawn districts, and every such district on the ballot to some ZIP (rerun npm run bb -- zips)", async () => {
+    const { loadElection } = await import("@/lib/data");
+    const { default: raw } = await import("@/data/zips.json");
+    const table = raw as unknown as ZipTable;
+    const contests = loadElection("data", "2026-11").ballot.contests;
+    for (const m of DISTRICT_MAPS) {
+      const key = districtMapKey(m.place, m.seat);
+      const zips = Object.entries(table.zips).filter(([, z]) => z.districts?.[key]?.length);
+      if (m.place.level === "state") expect(zips.length, key).toBe(Object.keys(table.zips).length);
+      const mapped = new Set(zips.flatMap(([, z]) => z.districts![key]));
+      const onBallot = contests.filter(
+        (x) => x.jurisdiction.name === m.seat && (m.place.level === "state" || (x.jurisdiction.within?.length === 1 && x.jurisdiction.within[0].name === m.place.name)),
+      );
+      expect(onBallot.length, key).toBeGreaterThan(0);
+      expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id), key).toEqual([]);
+    }
+  });
+  it("puts known ZIPs in the right state and local districts", async () => {
+    const { default: raw } = await import("@/data/zips.json");
+    const d = (zip: string) => (raw as unknown as ZipTable).zips[zip].districts;
+    // Inside one district each: Palo Alto, Vallejo (Board of Equalization 1, like all of Solano), the Mission.
+    expect(d("94301")).toMatchObject({ "state:California/Congress": ["16"], "state:California/State Senate": ["13"], "state:California/Assembly": ["23"], "state:California/Board of Equalization": ["2"] });
+    expect(d("94590")).toMatchObject({ "state:California/Congress": ["8"], "state:California/Assembly": ["11"], "state:California/Board of Equalization": ["1"] });
+    expect(d("94110")).toMatchObject({ "state:California/Congress": ["11"], "state:California/Assembly": ["17"] });
+    // Straddling: Ingleside spans Congress 11 and 15 under the Prop 50 map; downtown San José spans four council districts.
+    expect(d("94112")?.["state:California/Congress"]).toEqual(["11", "15"]);
+    expect(d("95112")?.["city:San Jose/City Council"]).toEqual(["3", "4", "6", "7"]);
+    expect(d("94928")?.["county:Sonoma/Supervisor"]).toEqual(["2", "3"]);
   });
 });

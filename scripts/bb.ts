@@ -22,8 +22,12 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
-import { buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, droppedSlivers, poolDistrictCounties, shapesById, zctaShapesUrl, zipTableJson } from "../src/pipeline/zips";
+import {
+  blockPoints, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, districtsWithHomes, droppedSlivers, homeBlocksUrl, MIN_DISTRICT_SHARE,
+  pointsIn, poolDistrictCounties, shapeBox, shapesById, zctaShapesUrl, zipTableJson, type Shape,
+} from "../src/pipeline/zips";
 import { districtMapKey } from "../src/lib/zip";
+import { shapefileById } from "../src/pipeline/shapefile";
 import { placeCounty } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
@@ -482,25 +486,47 @@ async function runZips() {
     cityCounty[p] = county;
   }
   const districtCounties = poolDistrictCounties(data.ballot.contests, cityCounty);
+  // Fetched once across maps, a batch at a time so no response is too large.
+  const zctas: Record<string, Shape> = {};
+  const zctaShapes = async (want: string[]) => {
+    const need = want.filter((z) => !zctas[z]);
+    for (let i = 0; i < need.length; i += 40) Object.assign(zctas, shapesById(await get(zctaShapesUrl(need.slice(i, i + 40))), "ZCTA5", "TIGERweb ZCTAs"));
+    const lost = want.filter((z) => !zctas[z]);
+    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
+    return Object.fromEntries(want.map((z) => [z, zctas[z]]));
+  };
+  // The points of each ZIP's Census blocks with people or homes, to keep a small overlap that has them.
+  const homes: Record<string, Promise<[number, number][]>> = {};
+  const zipHomes = (z: string) => (homes[z] ??= get(homeBlocksUrl(shapeBox(zctas[z]))).then((t) => pointsIn(zctas[z], blockPoints(t))));
   for (const m of DISTRICT_MAPS) {
     const key = districtMapKey(m.place, m.seat);
-    const inPlace = Object.keys(zips).filter((z) => (m.place.level === "county" ? zips[z].counties : Object.keys(zips[z].places)).includes(m.place.name));
-    const [mapText, zctaText] = await Promise.all([get(m.url), get(zctaShapesUrl(inPlace))]);
-    const districts = shapesById(mapText, m.field, m.url);
+    const inPlace = Object.keys(zips).filter(
+      (z) => m.place.level === "state" || (m.place.level === "county" ? zips[z].counties : Object.keys(zips[z].places)).includes(m.place.name),
+    );
+    const [mapped, shapes] = await Promise.all([
+      m.format === "zipped shapefile"
+        ? fetch(m.url).then(async (r) => {
+            if (!r.ok) throw new Error(`${m.url}: HTTP ${r.status}`);
+            return shapefileById(Buffer.from(await r.arrayBuffer()), m.field, m.url);
+          })
+        : get(m.url).then((t) => shapesById(t, m.field, m.url)),
+      zctaShapes(inPlace),
+    ]);
+    // The ballot numbers districts without leading zeros; some maps pad them ("08").
+    const districts = Object.fromEntries(Object.entries(mapped).map(([id, s]) => [id.replace(/^0+(?=\d)/, ""), s]));
     if (Object.keys(districts).length !== m.count) throw new Error(`${key}: expected ${m.count} districts, found ${Object.keys(districts).sort().join(", ")}`);
-    const shapes = shapesById(zctaText, "ZCTA5", "TIGERweb ZCTAs");
-    const lost = inPlace.filter((z) => !shapes[z]);
-    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
     const shares = districtShares(shapes, districts);
-    const dropped = droppedSlivers(shares, m.slivers);
-    for (const d of dropped) console.log(`${key}: dropped ${d.zip} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land${d.unseen ? " (not yet looked at)" : ""}`);
-    const unseen = dropped.filter((d) => d.unseen);
-    if (unseen.length) throw new Error(`${key}: look at ${unseen.map((d) => `${d.zip}/${d.district}`).join(", ")} on a map; if each is a border sliver, add it to slivers in DISTRICT_MAPS`);
+    const kept: Record<string, string[]> = {};
     for (const z of inPlace) {
-      const touched = shares[z] ? districtsTouched(shares[z]) : [];
+      const s = shares[z] ?? {};
+      const small = Object.keys(s).filter((d) => s[d] < MIN_DISTRICT_SHARE);
+      const withHomes = small.length ? districtsWithHomes(await zipHomes(z), districts, small) : [];
+      for (const d of withHomes) console.log(`${key}: kept ${z} in district ${d}, ${(s[d] * 100).toFixed(2)}% of its mapped land, for its 2020 Census homes`);
+      const touched = (kept[z] = districtsTouched(s, { withHomes }));
       if (touched.length) (zips[z].districts ??= {})[key] = touched;
       else console.warn(`warning: ZIP ${z} reaches ${m.place.name} but no ${m.seat} district; its contests stay maybe`);
     }
+    for (const d of droppedSlivers(shares, kept)) console.log(`${key}: dropped ${d.zip} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land, with no 2020 Census homes`);
   }
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });

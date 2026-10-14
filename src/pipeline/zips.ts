@@ -1,6 +1,6 @@
 import { STATE_DISTRICTS } from "../lib/areas";
 import type { Contest } from "../lib/schema";
-import type { DistrictPlace, ZipTable } from "../lib/zip";
+import { STATE_PLACE, type DistrictPlace, type ZipTable } from "../lib/zip";
 
 /** Census 2020 relationship files: which ZIP Code Tabulation Areas overlap which counties and places, by land area. */
 export const CENSUS_URLS = {
@@ -90,18 +90,35 @@ export function poolDistrictCounties(contests: Contest[], cityCounty: Record<str
 type Ring = [number, number][];
 export type Shape = { type: "Polygon"; coordinates: Ring[] } | { type: "MultiPolygon"; coordinates: Ring[][] };
 
+// Every feature of an ArcGIS layer as GeoJSON in degrees.
+const arcgisGeojson = (layer: string, field: string) => `${layer}/query?` + new URLSearchParams({ where: "1=1", outFields: field, outSR: "4326", f: "geojson" });
+// The California state GIS service of the 2021 Citizens Redistricting Commission maps, all districts statewide.
+const caDistrictsUrl = (layer: number) => arcgisGeojson(`https://services.gis.ca.gov/arcgis/rest/services/Government/CaliforniaDistricts/MapServer/${layer}`, "DISTRICT");
+
 /**
- * `place` is the one place the district contests are filed under. `slivers` lists dropped overlaps (ZIP to districts)
- * a person has looked at; `runZips` stops on any big one not listed.
+ * `place` is the one place the district contests are filed under, or `STATE_PLACE` for state-drawn maps. `format`
+ * is GeoJSON unless set.
  */
 export const DISTRICT_MAPS: readonly {
   place: DistrictPlace;
   seat: string;
   url: string;
+  format?: "zipped shapefile";
   field: string;
   count: number;
-  slivers: Record<string, string[]>;
 }[] = [
+  // AB 604, the congressional map Proposition 50 adopted in November 2025, from the Senate Elections Committee.
+  {
+    place: STATE_PLACE,
+    seat: "Congress",
+    url: "https://selc.senate.ca.gov/media/603",
+    format: "zipped shapefile",
+    field: "DISTRICT",
+    count: 52,
+  },
+  { place: STATE_PLACE, seat: "State Senate", url: caDistrictsUrl(1), field: "DISTRICT", count: 40 },
+  { place: STATE_PLACE, seat: "Assembly", url: caDistrictsUrl(0), field: "DISTRICT", count: 80 },
+  { place: STATE_PLACE, seat: "Board of Equalization", url: caDistrictsUrl(3), field: "DISTRICT", count: 4 },
   // DataSF "Supervisor Districts (2022)", trimmed of water.
   {
     place: { level: "county", name: "San Francisco" },
@@ -109,8 +126,22 @@ export const DISTRICT_MAPS: readonly {
     url: "https://data.sf.gov/resource/f2zs-jevy.geojson",
     field: "sup_dist",
     count: 11,
-    // A strip under 90 m wide; not checked for addresses.
-    slivers: { "94117": ["7"] },
+  },
+  // Sonoma County GIS "Supervisorial Districts 2020", the lines adopted by Ordinance 6364 in December 2021.
+  {
+    place: { level: "county", name: "Sonoma" },
+    seat: "Supervisor",
+    url: arcgisGeojson("https://socogis.sonomacounty.ca.gov/map/rest/services/BASEPublic/Supervisorial_Districts/FeatureServer/0", "SupNum"),
+    field: "SupNum",
+    count: 5,
+  },
+  // San José planning GIS "City Council Districts (Current)", the lines adopted in January 2022, kept up with annexations.
+  {
+    place: { level: "city", name: "San Jose" },
+    seat: "City Council",
+    url: arcgisGeojson("https://geo.sanjoseca.gov/server/rest/services/PLN/PLN_AdministrativeBoundaries/MapServer/1", "DISTRICT"),
+    field: "DISTRICT",
+    count: 10,
   },
 ];
 
@@ -135,26 +166,24 @@ export function shapesById(text: string, field: string, what: string): Record<st
   return out;
 }
 
-// Below this share of a ZIP's mapped land, an overlap is a border sliver. In SF the largest sliver is 0.33% and the
-// smallest real piece 0.94%.
+// Below this share of a ZIP's mapped land, an overlap is a border sliver unless 2020 Census homes or people lie in it.
+// In SF the largest sliver is 0.33% and the smallest real piece 0.94%.
 export const MIN_DISTRICT_SHARE = 0.005;
-export const SLIVER_SHARES = { log: 0.001, review: 0.0025 };
+// Dropped overlaps at or above this share are printed.
+export const LOG_SHARE = 0.001;
 // Enough rows that a ZIP a few blocks tall still resolves the threshold.
 const MIN_ROWS = 2000;
 const MAX_ROW_STEP = 0.00005;
 
 const rings = (s: Shape): Ring[] => (s.type === "Polygon" ? s.coordinates : s.coordinates.flat());
 
+type Edge = [number, number, number, number];
+const edges = (rs: Ring[]): Edge[] => rs.flatMap((r) => r.map((p, i): Edge => [...r[(i || r.length) - 1], ...p]));
+
 // Sorted crossings of a row of latitude; inside is between each pair. Even-odd: parts that overlap would cancel.
-function crossings(rs: Ring[], y: number): number[] {
+function crossings(es: Edge[], y: number): number[] {
   const xs: number[] = [];
-  for (const r of rs) {
-    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
-      const [x1, y1] = r[j];
-      const [x2, y2] = r[i];
-      if (y1 <= y !== y2 <= y) xs.push(x1 + ((y - y1) / (y2 - y1)) * (x2 - x1));
-    }
-  }
+  for (const [x1, y1, x2, y2] of es) if (y1 <= y !== y2 <= y) xs.push(x1 + ((y - y1) / (y2 - y1)) * (x2 - x1));
   return xs.sort((a, b) => a - b);
 }
 
@@ -170,11 +199,27 @@ function overlapLength(a: number[], b: number[]): number {
   return len;
 }
 
-function latRange(rs: Ring[]): [number, number] {
-  let lo = Infinity;
-  let hi = -Infinity;
-  for (const r of rs) for (const [, y] of r) [lo, hi] = [Math.min(lo, y), Math.max(hi, y)];
-  return [lo, hi];
+export type Box = { x: [number, number]; y: [number, number] };
+function bounds(es: Edge[]): Box {
+  const b: Box = { x: [Infinity, -Infinity], y: [Infinity, -Infinity] };
+  for (const [x1, y1, x2, y2] of es) {
+    b.x = [Math.min(b.x[0], x1, x2), Math.max(b.x[1], x1, x2)];
+    b.y = [Math.min(b.y[0], y1, y2), Math.max(b.y[1], y1, y2)];
+  }
+  return b;
+}
+const meets = (a: Box, b: Box) => a.x[0] <= b.x[1] && b.x[0] <= a.x[1] && a.y[0] <= b.y[1] && b.y[0] <= a.y[1];
+
+// Edges in bands of latitude, so a row checks only the edges near it. A statewide map has far more edges than a ZIP.
+const BANDS = 64;
+function banded(es: Edge[], lo: number, step: number): Edge[][] {
+  const bands: Edge[][] = Array.from({ length: BANDS }, () => []);
+  for (const e of es) {
+    const a = Math.max(0, Math.floor((Math.min(e[1], e[3]) - lo) / step));
+    const b = Math.min(BANDS - 1, Math.floor((Math.max(e[1], e[3]) - lo) / step));
+    for (let k = a; k <= b; k++) bands[k].push(e);
+  }
+  return bands;
 }
 
 /** Each district's share, by area, of each ZIP's land that lies in some district. */
@@ -183,21 +228,29 @@ export function districtShares(
   districts: Record<string, Shape>,
   { minRows = MIN_ROWS }: { minRows?: number } = {},
 ): Record<string, Record<string, number>> {
-  const ds = Object.entries(districts).map(([id, s]) => ({ id, rs: rings(s), range: latRange(rings(s)) }));
+  const ds = Object.entries(districts).map(([id, s]) => {
+    const es = edges(rings(s));
+    return { id, es, box: bounds(es) };
+  });
   const out: Record<string, Record<string, number>> = {};
   for (const [zip, shape] of Object.entries(zctas)) {
-    const zr = rings(shape);
-    const [lo, hi] = latRange(zr);
+    const ze = edges(rings(shape));
+    const box = bounds(ze);
+    const [lo, hi] = box.y;
     const rows = Math.max(minRows, Math.ceil((hi - lo) / MAX_ROW_STEP));
     const step = (hi - lo) / rows;
+    const bandStep = (hi - lo) / BANDS || 1;
+    // Only edges that reach the ZIP's rows matter: a row's crossings come from edges spanning its latitude.
+    const near = ds.filter((d) => meets(d.box, box)).map((d) => ({ id: d.id, bands: banded(d.es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep) }));
+    const zBands = banded(ze, lo, bandStep);
     const area: Record<string, number> = {};
     for (let k = 0; k < rows; k++) {
       const y = lo + (k + 0.5) * step;
-      const zx = crossings(zr, y);
+      const band = Math.min(BANDS - 1, Math.floor((y - lo) / bandStep));
+      const zx = crossings(zBands[band], y);
       if (zx.length === 0) continue;
-      for (const d of ds) {
-        if (y < d.range[0] || y > d.range[1]) continue;
-        const len = overlapLength(zx, crossings(d.rs, y));
+      for (const d of near) {
+        const len = overlapLength(zx, crossings(d.bands[band], y));
         if (len > 0) area[d.id] = (area[d.id] ?? 0) + len;
       }
     }
@@ -207,18 +260,63 @@ export function districtShares(
   return out;
 }
 
-export const districtsTouched = (shares: Record<string, number>, minShare = MIN_DISTRICT_SHARE) =>
+/** The districts a ZIP reaches: those with enough of its land, and any smaller overlap with homes (`withHomes`). */
+export const districtsTouched = (shares: Record<string, number>, { withHomes = [] }: { withHomes?: string[] } = {}) =>
   Object.keys(shares)
-    .filter((id) => shares[id] >= minShare)
+    .filter((id) => shares[id] >= MIN_DISTRICT_SHARE || withHomes.includes(id))
     .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
 
-export function droppedSlivers(shares: Record<string, Record<string, number>>, seen: Record<string, string[]>) {
-  const dropped: { zip: string; district: string; share: number; unseen: boolean }[] = [];
+/** Overlaps of at least `LOG_SHARE` that were dropped, for the run's log. `kept` is each ZIP's districts. */
+export function droppedSlivers(shares: Record<string, Record<string, number>>, kept: Record<string, string[]>) {
+  const dropped: { zip: string; district: string; share: number }[] = [];
   for (const [zip, s] of Object.entries(shares)) {
-    for (const [district, share] of Object.entries(s)) {
-      if (share < SLIVER_SHARES.log || share >= MIN_DISTRICT_SHARE) continue;
-      dropped.push({ zip, district, share, unseen: share >= SLIVER_SHARES.review && !seen[zip]?.includes(district) });
-    }
+    for (const [district, share] of Object.entries(s)) if (share >= LOG_SHARE && !kept[zip]?.includes(district)) dropped.push({ zip, district, share });
   }
   return dropped;
+}
+
+/** Census 2020 blocks with people or homes in a box, by their internal points. ZIP areas and districts are both made of blocks. */
+export const homeBlocksUrl = ({ x, y }: Box) =>
+  "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/2/query?" +
+  new URLSearchParams({
+    where: "POP100 > 0 OR HU100 > 0",
+    geometry: [x[0], y[0], x[1], y[1]].join(","),
+    geometryType: "esriGeometryEnvelope",
+    inSR: "4326",
+    spatialRel: "esriSpatialRelIntersects",
+    outFields: "INTPTLON,INTPTLAT",
+    returnGeometry: "false",
+    f: "json",
+  });
+
+/** Block points from a `homeBlocksUrl` response. Fails on an error or a cut-off response. */
+export function blockPoints(text: string): [number, number][] {
+  const json = JSON.parse(text) as { error?: unknown; exceededTransferLimit?: boolean; features?: { attributes: Record<string, string> }[] };
+  if (json.error !== undefined) throw new Error(`TIGERweb blocks: the server returned an error: ${JSON.stringify(json.error)}`);
+  if (json.exceededTransferLimit) throw new Error("TIGERweb blocks: the response was cut off");
+  if (!Array.isArray(json.features)) throw new Error("TIGERweb blocks: no features in the response");
+  return json.features.map((f) => [Number(f.attributes.INTPTLON), Number(f.attributes.INTPTLAT)]);
+}
+
+export const shapeBox = (s: Shape): Box => bounds(edges(rings(s)));
+
+// Even-odd, against edges already narrowed to those that reach the point's latitude range.
+const insideEdges = (es: Edge[], [x, y]: [number, number]) => crossings(es, y).filter((v) => v < x).length % 2 === 1;
+const edgesSpanning = (s: Shape, [lo, hi]: [number, number]) => edges(rings(s)).filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi);
+
+/** The points that lie inside a shape. */
+export function pointsIn(s: Shape, points: [number, number][]): [number, number][] {
+  const box = shapeBox(s);
+  const es = edgesSpanning(s, box.y);
+  return points.filter((p) => p[1] >= box.y[0] && p[1] <= box.y[1] && insideEdges(es, p));
+}
+
+/** Of `candidates`, the districts that hold any of `homes`, the points of a ZIP's blocks with people or homes. */
+export function districtsWithHomes(homes: [number, number][], districts: Record<string, Shape>, candidates: string[]): string[] {
+  if (homes.length === 0) return [];
+  const ys: [number, number] = [Math.min(...homes.map((p) => p[1])), Math.max(...homes.map((p) => p[1]))];
+  return candidates.filter((id) => {
+    const es = edgesSpanning(districts[id], ys);
+    return homes.some((p) => insideEdges(es, p));
+  });
 }

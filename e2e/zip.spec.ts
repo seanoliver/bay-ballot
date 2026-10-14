@@ -222,5 +222,19 @@ test.describe("ZIP filter", () => {
     await expect(contestRow(page, "Board of Supervisors, District 2")).toHaveCount(0);
   });
 
+  test("a ZIP keeps only the House, Assembly and council districts it reaches", async ({ page }) => {
+    await page.goto(BALLOT);
+    await enterZip(page, "94110");
+    await expect(status(page)).toContainText("in 94110");
+    await expect(contestRow(page, "United States Representative, District 11")).toBeVisible();
+    await expect(contestRow(page, "United States Representative, District 15")).toHaveCount(0);
+    await expect(contestRow(page, "State Assembly, District 17")).toBeVisible();
+    await expect(contestRow(page, "State Assembly, District 19")).toHaveCount(0);
+    await enterZip(page, "95112");
+    await expect(status(page)).toContainText("in 95112");
+    await expect(contestRow(page, "San Jose City Council, District 7")).toBeVisible();
+    await expect(contestRow(page, "San Jose City Council, District 5")).toHaveCount(0);
+  });
+
 
 });

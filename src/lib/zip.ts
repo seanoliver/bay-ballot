@@ -1,4 +1,4 @@
-import type { PlaceGroup } from "./areas";
+import { STATE_DISTRICTS, type PlaceGroup } from "./areas";
 import type { Contest, Jurisdiction } from "./schema";
 
 /**
@@ -30,7 +30,9 @@ const whollyIn = (z: ZipPlaces, county: string) => z.counties.length === 1 && z.
 const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
 // The level is in the map's key: Alameda is a city and a county.
-export type DistrictPlace = { level: "county" | "city"; name: string };
+export type DistrictPlace = { level: "state" | "county" | "city"; name: string };
+/** Where state-drawn district maps (Congress, Assembly, ...) are filed: their contests list many places. */
+export const STATE_PLACE: DistrictPlace = { level: "state", name: "California" };
 export const districtMapKey = (place: DistrictPlace, seat: string) => `${place.level}:${place.name}/${seat}`;
 
 /**
@@ -48,8 +50,13 @@ export function zipFit(
   const within = j.within ?? [];
   // Maybe even when the ZIP reaches only that district: both sets of lines are approximate.
   const place = within[0];
-  if (j.level === "district" && j.district && within.length === 1 && (place.level === "county" || place.level === "city")) {
-    const mapped = z.districts?.[districtMapKey({ level: place.level, name: place.name }, j.name)];
+  const mapPlace = STATE_DISTRICTS.includes(j.name)
+    ? STATE_PLACE
+    : within.length === 1 && (place.level === "county" || place.level === "city")
+      ? { level: place.level, name: place.name }
+      : null;
+  if (j.level === "district" && j.district && mapPlace) {
+    const mapped = z.districts?.[districtMapKey(mapPlace, j.name)];
     if (mapped?.length) return mapped.includes(j.district) ? "maybe" : "off";
   }
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
