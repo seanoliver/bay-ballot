@@ -74,6 +74,7 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 - eqca (since 2026-10-08) is blocked differently: the runner gets a normal-looking page with no endorsements, so no wall is recognized and extraction returns 0 picks. The shrink guard catches it ("0 picks (previous 50)"). Treat an unexplained shrink on the runner as a possible wall and compare with a local `fetch-check`.
 - acce-action, indivisible-sonoma, smdj, solano-dems and south-bay-labor failed with HTTP 403 on the runners in the 2026-10-10 cloud run.
 - Those guides are marked `fetchFrom: local` in their endorsement files. The GitHub job skips them and lists them as "local only" (not a failure); the local job below refreshes them. `npm run bb -- extract <guide>` still works on them from a laptop.
+- `contentSelector: "<css selector>"` in an endorsement file keeps only the matched elements of every source page, in page order, before the text is extracted and stored. Use it when a site's sidebars change daily and name candidates, which makes the page gate re-extract the guide every day. smdj uses `"header.asset-header h1, #article-body"` (the headline and the editorial). If the selector matches nothing, the fetch fails with `content selector "…" matched nothing`: the site changed its layout, so update the selector and check with `fetch-check`. After changing a selector, run `npm run bb -- pages --seed <guide>` so the stored text matches.
 
 ### Local refresh on Sean's Mac
 
