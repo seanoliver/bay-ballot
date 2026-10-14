@@ -443,6 +443,15 @@ describe("seedPages", () => {
     await seedPages(deps(client, fetchSource), { root, election: ELECTION });
     expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body", contentExclude: ".ad" });
   });
+
+  it("uses a source's own selector when contentSelectors names it", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), `contentSelector: "#article-body"\ncontentSelectors:\n  ${url("alpha")}: main article\n`);
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x") });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), { browser: false, contentSelector: "main article" });
+  });
 });
 
 describe("shrunk guides", () => {

@@ -29,7 +29,7 @@ export async function fetchCheck(
     for (const url of sourcesFor(file)) {
       const attempts: FetchAttempt[] = [];
       try {
-        const f = await deps.fetchSource(url, { ...fetchOptions(file, browser), onAttempt: (a) => attempts.push(a) });
+        const f = await deps.fetchSource(url, { ...fetchOptions(file, browser, url), onAttempt: (a) => attempts.push(a) });
         rows.push({ guide, url, ok: true, attempts, textChars: f.text.length, preview: f.text.slice(0, 160).replace(/\s+/g, " ") });
       } catch (e) {
         rows.push({ guide, url, ok: false, attempts, error: e instanceof Error ? e.message : String(e) });

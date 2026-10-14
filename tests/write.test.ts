@@ -238,4 +238,10 @@ describe("nextFile keeps every field it doesn't set", () => {
     expect(y).toContain('contentSelector: "h1, #article-body" # article only');
     expect(y).toContain("contentExclude: .tncms-region");
   });
+  it("keeps per-source selectors through toYaml", () => {
+    const source = prev.source as string;
+    const before = EndorsementFile.parse({ ...prev, contentSelector: ".article-body", contentSelectors: { [source]: "main article" } });
+    const y = toYaml(nextFile(before, picks, true, "2026-10-05"), { previous: toYaml(before) });
+    expect(parse(y).contentSelectors).toEqual({ [source]: "main article" });
+  });
 });

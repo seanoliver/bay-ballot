@@ -123,10 +123,9 @@ async function refreshGuide(
   const hostProblems = checkHosts(guide, prev);
   if (hostProblems.length) return { id, status: "skipped", reason: `source host check: ${hostProblems.join("; ")}` };
 
-  const options = fetchOptions(prev, Boolean(opts.browser));
   const pages: Fetchedpage[] = [];
   for (const url of urls) {
-    const fetched = await deps.fetchSource(url, options);
+    const fetched = await deps.fetchSource(url, fetchOptions(prev, Boolean(opts.browser), url));
     const p = pagePath(opts.root, opts.election, id, url);
     const stored = storedText(fetched, { ballot });
     const old = readStored(p);
@@ -423,11 +422,10 @@ export async function seedPages(
     if (!file || file.manual || sourcesFor(file).length === 0) continue;
     const guide = data.guides.find((g) => g.id === id);
     const ballot = guide ? guideBallot(data.ballot, guide, data.areas) : data.ballot;
-    const options = fetchOptions(file, Boolean(opts.browser));
     let stored = 0;
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, options), { ballot }));
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, fetchOptions(file, Boolean(opts.browser), url)), { ballot }));
         stored++;
       }
       out.push({ id, stored });

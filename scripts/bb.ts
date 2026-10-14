@@ -113,10 +113,9 @@ function modelClient(): ExtractClient {
 }
 
 async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[]> {
-  const options = fetchOptions(file, flag("--browser"));
   const sources: Source[] = [];
   for (const url of sourcesFor(file)) {
-    const fetched = await fetchSource(url, options);
+    const fetched = await fetchSource(url, fetchOptions(file, flag("--browser"), url));
     if (fetched.kind === "pdf" && fetched.text.trim() === "") {
       console.warn(`${guideId}: warning: no text extracted from PDF ${url}; quotes from it will drop`);
     }
