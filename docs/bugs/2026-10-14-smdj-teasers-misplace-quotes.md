@@ -30,14 +30,14 @@ Editorial: Nicolas for South San Francisco District 3
 
 ## Repro
 
-Run `npx vitest run tests/placement.test.ts -t "article teasers"` on the old code. Three of the six tests fail.
+Run `npx vitest run tests/placement.test.ts -t "article teasers"` on the old code. The tests that expect a teaser to be skipped fail.
 
 ## Fix
 
 `sidebarLines` in `src/pipeline/placement.ts` now finds a teaser by three lines in order:
 1. A "Previous" or "Next Up" label.
 2. A `[Headline]` link line.
-3. The same headline again, unbracketed.
+3. The same headline again, unbracketed. The site sometimes cuts this repeat short with "…", which also counts (`repeatsHeadline`).
 
 It skips only the repeated headline and the snippet line after it, so the article's own title still counts as a heading.
 
@@ -47,9 +47,9 @@ It skips only the repeated headline and the snippet line after it, so the articl
 
 ## Verification
 
-- `npm run bb -- quote-lint` over all guides gives output identical to before the change: 2 of 1035 failing, both unrelated.
+- `npm run bb -- quote-lint` over all guides lists the same 2 failing quotes as before the change, both unrelated (abundant-sf `rtm`, indivisible-marin `us-rep-2`).
 - `tests/placement.test.ts`, `tests/extract.test.ts` and `tests/quotes.test.ts` pass.
-- Removing each part of the rule (the twin line, the snippet line, the twin match) makes at least one of the six tests fail.
+- Each of seven mutations fails at least one of the nine "article teasers" tests: dropping either label, the label check, the repeat check, the clipped-repeat match, the twin skip, or the snippet skip.
 - `npm run bb -- extract smdj --browser --force-extract`: picks unchanged, 19 of 30 picks quoted, `quote-lint --guide smdj` reports 0 failures.
 
 ## Guardrail

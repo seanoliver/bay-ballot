@@ -149,6 +149,13 @@ const SIDEBAR_LABEL = /^\s*(?:related\s+(?:articles|stories|posts|coverage|conte
 const SIDEBAR_LINES = 12;
 const TEASER_LABEL = /^\s*(?:previous|next\s+up)\s*$/i;
 
+// The repeat may be clipped: "Editorial: Harris, Proctor for San Mateo Union High School D…".
+function repeatsHeadline(line: string, headline: string): boolean {
+  const t = line.trim();
+  const h = headline.trim();
+  return t === h || (t.endsWith("…") && t.length > 1 && h.startsWith(t.slice(0, -1).trimEnd()));
+}
+
 function sidebarLines(lines: { text: string }[]): Set<number> {
   const out = new Set<number>();
   lines.forEach((l, i) => {
@@ -163,9 +170,9 @@ function sidebarLines(lines: { text: string }[]): Set<number> {
   // A "Previous"/"Next Up" label, a "[Headline]" link line and the headline again unbracketed is an article teaser; its snippet line follows.
   lines.forEach((l, i) => {
     const link = l.text.match(/^\s*\[([^\]]+)\]\s*$/);
-    if (!link || !TEASER_LABEL.test(lines[i - 1]?.text ?? "") || lines[i + 1]?.text.trim() !== link[1].trim()) return;
+    if (!link || !TEASER_LABEL.test(lines[i - 1]?.text ?? "") || !repeatsHeadline(lines[i + 1]?.text ?? "", link[1])) return;
     out.add(i + 1);
-    if (i + 2 < lines.length) out.add(i + 2);
+    out.add(i + 2);
   });
   return out;
 }

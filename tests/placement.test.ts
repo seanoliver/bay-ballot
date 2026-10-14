@@ -379,7 +379,26 @@ describe("article teasers (San Mateo Daily Journal layout)", () => {
   it("still reads the editorial's own headline as a heading", () => {
     const text = [...teaser("Editorial: Venkat for District 1 Foster City Council", "Two current councilmembers…"), "Editorial: Yes on Measure EE", ee].join("\n");
     expect(misplacedUnder(quote(ee, url), "san-bruno-measure-ee", [page(text, url)], contests)).toBeNull();
-    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).not.toBeNull();
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
+  });
+  it("ignores a Previous teaser on its own", () => {
+    const text = ["Previous", "[Editorial: Yes on Measure EE]", "Editorial: Yes on Measure EE", "San Bruno voters will be able to change…", "Editorial: Nicolas for South San Francisco District 3", nicolas].join("\n");
+    expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(text, url)], contests)).toBeNull();
+  });
+  it("ignores a teaser whose repeated headline is clipped", () => {
+    const text = [
+      "Next Up",
+      "[Editorial: Venkat for District 1 Foster City Council, a race between two councilmembers]",
+      "Editorial: Venkat for District 1 Foster City Council, a race betw…",
+      "Two current councilmembers, Mayor Art Kiesel and Councilmemb…",
+      "Editorial: Nicolas for South San Francisco District 3",
+      nicolas,
+    ].join("\n");
+    expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(text, url)], contests)).toBeNull();
+  });
+  it("keeps a heading after a teaser label and link line when the headline is not repeated", () => {
+    const text = ["Next Up", "[Editorial: Venkat for District 1 Foster City Council]", "Measure EE", ee].join("\n");
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
   });
   it("keeps a repeated link line as a heading when no teaser label precedes it (Empower Oakland layout)", () => {
     const lee = "Mayor Lee has brought steady leadership and righted the ship, laying the foundation for Oakland’s comeback.";
@@ -389,7 +408,7 @@ describe("article teasers (San Mateo Daily Journal layout)", () => {
   });
   it("keeps a heading after a link line it does not repeat", () => {
     const text = ["[Editorial: Venkat for District 1 Foster City Council]", "Measure EE", ee].join("\n");
-    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).not.toBeNull();
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
   });
 });
 
