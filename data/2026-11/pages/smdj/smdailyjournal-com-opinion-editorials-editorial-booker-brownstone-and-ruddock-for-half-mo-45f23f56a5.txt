@@ -82,11 +82,11 @@ Twitter
 YouTube
 Instagram
 RSS
-59° Sunny
+69° Sunny
 San Mateo, CA (94402)
-Sunny. High around 75F. Winds NNW at 5 to 10 mph..
+Sunny. High around 75F. Winds NW at 10 to 15 mph..
 Tonight
-A clear sky. Low 49F. Winds NW at 5 to 10 mph.
+A clear sky. Low 51F. Winds NW at 5 to 10 mph.
 Updated: @
 Full Forecast
 Site search Search
@@ -155,15 +155,15 @@ Jobs-housing Balance
 City Policy
 Half Moon Bay, California
 Recommended for you
+[Top Democrats and allies join the wealthiest to fight a California billionaire tax]
+State
+Top Democrats and allies join the wealthiest to fight a California billionaire tax
 [ALAS opens Colibrí Child Wellness Center in Half Moon Bay]
 Local News
 ALAS opens Colibrí Child Wellness Center in Half Moon Bay
 [Early testing for math skills]
 Local News
 Early testing for math skills
-[California’s Prop 43 would make special taxes harder to pass]
-Local News
-California’s Prop 43 would make special taxes harder to pass
 ×
 Post a comment as Guest
 Emoticons
@@ -203,10 +203,10 @@ Videos
 Commented
 Articles
 2 charged in alleged $1.4 million San Mateo County Event Center kickback scheme
+Half Moon Bay’s World Championship Pumpkin Weigh-Off: Travis Gienger’s gourd wins again
 San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme
 2 hospitalized after San Mateo apartment fire kills dog
 South African-born jurist Navi Pillay wins Nobel Peace Prize for her work in international justice
-Half Moon Bay’s World Championship Pumpkin Weigh-Off: Travis Gienger’s gourd wins again
 How much review does Hillsdale need?
 San Mateo to implement Axon cameras: The city will add ALPR cameras in new contract with Axon Enterprises
 The Old Post Office gives historic Burlingame building new life
@@ -222,7 +222,7 @@ Images
 [10th Annual Mother-Daughter Tea]
 [AFGHANISTAN-PAKISTAN/]
 [San Mateo County Trial Lawyers Association]
-[Carlmont flag Kate Norton MUG]
+[The Old Post Office chef]
 Videos
 [Fort Hood shooter’s execution by firing squad will be livestreamed, Pentagon says]
 [Trump administration is suspending Microsoft from the H-1B green card program]
@@ -239,11 +239,11 @@ Lisa Diaz Nash and Taso Zografos vie for San Mateo's District 1 seat (13)
 Safety on Alameda de las Pulgas (13)
 The real threat of our times (11)
 Mobility impaired can use bike lanes (11)
+Nash has failed (8)
 Choose Rob over Seema (8)
 Collision raises concern over intersection near Aragon High School in San Mateo (8)
 Somos el barco, somos el mar (7)
 Why the Cornell civil case matters (7)
-Nash has failed (7)
 Early testing for math skills (7)
 Wiesner and Trump (6)
 Election integrity (6)
@@ -253,6 +253,7 @@ Lisa Diaz Nash For San Mateo District 1 City Council (5)
 Some notes on the coming election (5)
 The 1st election with no 3rd-party fact checking (5)
 Context needed for merit semifinalists named (5)
+Vote yes on Measure E (5)
 Protecting vote-by-mail against Trump (5)
 Dana Yates Sahae will energize our council (5)
 Penmanship was big way back in the day (5)
@@ -262,7 +263,6 @@ Would you like to see bike lanes added to El Camino Real in San Mateo even if it
 Supervisor Ray Mueller to fund officer for notorious Woodside intersection (5)
 How much review does Hillsdale need? (4)
 Oh, no! Wiener has viable election foe (4)
-Vote yes on Measure E (4)
 San Mateo considers El Camino enhancements: Proposed changes could include bike infrastructure and bus-only lanes, among others (4)
 Frame of mind: ‘Eternal Sunshine of the Spotless Mind’ and why we love what we lose (4)
 Reinvention in San Mateo (4)
@@ -331,6 +331,7 @@ Why fix infrastructure when you can have a $3M restroom (2)
 Making sense of the race for insurance commissioner (2)
 Flaws in Measure G campaign (2)
 PEN America: Nearly 12,000 school book bans in a year, a record high (1)
+Redwood City prepares for strong El Niño, winter storms (1)
 Calendar
 October
 2026

@@ -82,11 +82,11 @@ Twitter
 YouTube
 Instagram
 RSS
-51° Sunny
+70° Sunny
 San Mateo, CA (94402)
-Sunny. High 76F. Winds NNW at 5 to 10 mph..
+Sunny. High around 75F. Winds NW at 10 to 15 mph..
 Tonight
-Clear skies. Low 51F. Winds NW at 5 to 10 mph.
+A clear sky. Low 51F. Winds NW at 5 to 10 mph.
 Updated: @
 Full Forecast
 Site search Search
@@ -145,15 +145,15 @@ South San Francisco Unified School District, Area C:
 Chialin Hsieh
 South San Francisco Unified School District, Area E:
 Recommended for you
-[Judge Nicole Healy to receive San Mateo County award]
-Local News
-Judge Nicole Healy to receive San Mateo County award
-[Parsing the meaning of a ‘tax extension’]
-Columnists
-Parsing the meaning of a ‘tax extension’
 [Learning Links opens new inclusive preschool at Redwood City’s Elco Yards]
 Local News
 Learning Links opens new inclusive preschool at Redwood City’s Elco Yards
+[Top Democrats and allies join the wealthiest to fight a California billionaire tax]
+State
+Top Democrats and allies join the wealthiest to fight a California billionaire tax
+[Judge Nicole Healy to receive San Mateo County award]
+Local News
+Judge Nicole Healy to receive San Mateo County award
 Mina Richardson
 Sequoia Union High School District, Area A:
 Alon Shiran
@@ -212,12 +212,12 @@ Tax
 Government Finances
 Burlingame, California
 Recommended for you
-[Half Moon Bay voters to decide Measure Q on 555 Kelly housing]
+[Parsing the meaning of a ‘tax extension’]
+Columnists
+Parsing the meaning of a ‘tax extension’
+[Judge Nicole Healy to receive San Mateo County award]
 Local News
-Half Moon Bay voters to decide Measure Q on 555 Kelly housing
-[California’s Prop 43 would make special taxes harder to pass]
-Local News
-California’s Prop 43 would make special taxes harder to pass
+Judge Nicole Healy to receive San Mateo County award
 [Measure Y: Proposed special tax for Barrett Community Center on November ballot]
 Local News
 Measure Y: Proposed special tax for Barrett Community Center on November ballot
@@ -260,6 +260,7 @@ Videos
 Commented
 Articles
 2 charged in alleged $1.4 million San Mateo County Event Center kickback scheme
+Half Moon Bay’s World Championship Pumpkin Weigh-Off: Travis Gienger’s gourd wins again
 San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme
 2 hospitalized after San Mateo apartment fire kills dog
 South African-born jurist Navi Pillay wins Nobel Peace Prize for her work in international justice
@@ -268,7 +269,6 @@ San Mateo to implement Axon cameras: The city will add ALPR cameras in new contr
 The Old Post Office gives historic Burlingame building new life
 San Mateo Police Department restricts data sharing
 Daly City’s special brand of politics
-San Francisco man charged in Daly City crash that killed 2
 Images
 [The Old Post Office walk-in fridge]
 [The blimp, L-B, lands in Daly City]
@@ -278,8 +278,8 @@ Images
 [Will Detlefsen]
 [10th Annual Mother-Daughter Tea]
 [AFGHANISTAN-PAKISTAN/]
-[Carlmont flag Kate Norton MUG]
 [San Mateo County Trial Lawyers Association]
+[The Old Post Office chef]
 Videos
 [Fort Hood shooter’s execution by firing squad will be livestreamed, Pentagon says]
 [Trump administration is suspending Microsoft from the H-1B green card program]
@@ -290,19 +290,19 @@ Videos
 [JD Vance says he's 'not going to be watching' the livestream execution of Fort Hood shooter]
 [Deadly floods in Nepal were a 'warning to the world' on climate disaster, PM says]
 [Trump launches America.gov, an AI-powered tool to help navigate government websites]
-[Legal expert calls for transparency in the Cornell investigation]
+[Most Americans blame Trump for high prices, new AP-NORC poll finds]
 Commented
 Lisa Diaz Nash and Taso Zografos vie for San Mateo's District 1 seat (13)
 Safety on Alameda de las Pulgas (13)
 The real threat of our times (11)
 Mobility impaired can use bike lanes (11)
+Nash has failed (8)
 Choose Rob over Seema (8)
 Collision raises concern over intersection near Aragon High School in San Mateo (8)
 Somos el barco, somos el mar (7)
 Why the Cornell civil case matters (7)
 Early testing for math skills (7)
 Wiesner and Trump (6)
-Nash has failed (6)
 Election integrity (6)
 Dana vs. Dana (6)
 Horgan’s 9/11 and Pearl Harbor opinion is wrong (6)
@@ -310,6 +310,7 @@ Lisa Diaz Nash For San Mateo District 1 City Council (5)
 Some notes on the coming election (5)
 The 1st election with no 3rd-party fact checking (5)
 Context needed for merit semifinalists named (5)
+Vote yes on Measure E (5)
 Protecting vote-by-mail against Trump (5)
 Dana Yates Sahae will energize our council (5)
 Penmanship was big way back in the day (5)
@@ -329,7 +330,6 @@ Burlingame recovery center approved for Mahler Road site (3)
 2 in running for Foster City District 1 seat: Councilmember Phoebe Venkat, Mayor Art Kiesel running against each other (3)
 Editorial: Nash, Newsom, Sahae for San Mateo City Council (3)
 AI trouble (3)
-Vote yes on Measure E (3)
 Newsom signs e-bike bills: 1 new law allows for a pilot age restriction program on San Mateo County e-bike riders (3)
 San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme (3)
 Bike lanes on El Camino? Bike lanes or parking, officials debate how San Mateo’s stretch will look in coming years (3)
@@ -388,6 +388,7 @@ Why fix infrastructure when you can have a $3M restroom (2)
 Making sense of the race for insurance commissioner (2)
 Flaws in Measure G campaign (2)
 PEN America: Nearly 12,000 school book bans in a year, a record high (1)
+Redwood City prepares for strong El Niño, winter storms (1)
 Calendar
 October
 2026
