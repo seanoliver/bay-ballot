@@ -47,8 +47,10 @@ function hue(hex: string): number {
   return ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
 }
 // Blue stops at 280: violet slot 1 sits at 284 to 287, so a higher bound would flag the shipped palette.
-const isBlue = (hex: string) => hue(hex) >= 215 && hue(hex) <= 280;
-const isRed = (hex: string) => hue(hex) >= 330 || (hue(hex) >= 0 && hue(hex) <= 40);
+const isBlueHue = (h: number) => h >= 215 && h <= 280;
+const isRedHue = (h: number) => h >= 330 || (h >= 0 && h <= 40);
+const isBlue = (hex: string) => isBlueHue(hue(hex));
+const isRed = (hex: string) => isRedHue(hue(hex));
 
 function luminance(hex: string): number {
   const [r, g, b] = channels(hex).map(linear);
@@ -64,6 +66,14 @@ describe("party hue check", () => {
     for (const blue of ["#2a78d6", "#3987e5"]) expect(isBlue(blue)).toBe(true);
     for (const pink of ["#e87ba4", "#d55181"]) expect(isRed(pink)).toBe(true);
     expect(hue("#334155")).toBe(-1);
+  });
+  it("draws each range's bounds exactly", () => {
+    expect([214.9, 215, 280, 280.1].map(isBlueHue)).toEqual([false, true, true, false]);
+    expect([329.9, 330, 0, 40, 40.1].map(isRedHue)).toEqual([false, true, true, true, false]);
+    expect(isBlueHue(-1) || isRedHue(-1)).toBe(false);
+  });
+  it("counts a muted navy as blue, so the gray cutoff stays low", () => {
+    expect(isBlue("#5b6b8f")).toBe(true);
   });
   it("catches reds and blues near the edges of each range", () => {
     for (const red of ["#ff2200", "#cc2200", "#ff4500"]) expect(isRed(red), red).toBe(true);
