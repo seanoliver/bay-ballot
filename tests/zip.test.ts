@@ -277,7 +277,7 @@ describe("homes near a ZIP's edge", () => {
     expect(blocksNearEdge(zip, [small(far)])).toEqual([]);
     expect(blocksNearEdge(zip, [{ at: far, reach: EDGE_BUFFER_M + 1000 }])).toEqual([far]);
   });
-  it("grows a box by metres on every side", () => {
+  it("grows a box by meters on every side", () => {
     const b = padBox({ x: [-122, -121.99], y: [37.5, 37.51] }, 111.32);
     expect(b.y[0]).toBeCloseTo(37.499, 6);
     expect(b.y[1]).toBeCloseTo(37.511, 6);

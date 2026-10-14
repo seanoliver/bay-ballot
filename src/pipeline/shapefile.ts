@@ -47,15 +47,12 @@ function dbfColumn(dbf: Buffer, field: string): (string | null)[] {
   });
 }
 
-// Inverse Web Mercator (EPSG:3857), metres to degrees.
+// Inverse Web Mercator (EPSG:3857), meters to degrees.
 const R = 6378137;
 const fromMercator = ([x, y]: [number, number]): [number, number] => [(x / R) * (180 / Math.PI), (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI)];
 
-/**
- * Polygons from a zipped shapefile, by `field`, in degrees. Each shape keeps only its rings, since inside is decided
- * even-odd. Reads files in WGS 84 or NAD 83 degrees (the same to about a metre) or in WGS 84 Web Mercator, and fails on
- * any other projection. Skips rows marked deleted. Fails on a missing or repeated id, or a shape with no polygon.
- */
+// Polygons by `field`, in degrees, rings only (inside is even-odd). Fails on any projection but WGS 84 or NAD 83
+// degrees or WGS 84 Web Mercator.
 export function shapefileById(zip: Buffer, field: string, what: string): Record<string, Shape> {
   const files = unzip(zip);
   const file = (ext: string) => {

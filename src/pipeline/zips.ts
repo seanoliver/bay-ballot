@@ -170,13 +170,10 @@ export function shapesById(text: string, field: string, what: string): Record<st
 // Census homes or people lie in it. In SF the largest sliver is 0.33% and the smallest real piece 0.94%.
 export const MIN_DISTRICT_SHARE = 0.005;
 export const SLIVER_WIDTH_M = 60;
-// ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbour's ZIP.
+// ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbor's ZIP.
 export const EDGE_BUFFER_M = 150;
-// The cap on a block's reach past EDGE_BUFFER_M. sqrt(land area) is the side of a square block, so it covers a compact
-// block (centre to corner is 0.71 sides); it does not bound a long, thin or concave block, or one mostly water, since
-// AREALAND leaves water out. In rural Napa, south Santa Clara and west Sonoma, 3 km covers
-// 96% to 99% of blocks with homes; the rest are over 9 km² (about 55 people each, by median), and a wider pad would
-// pull in most of a rural county for every ZIP near them.
+// Caps sqrt(AREALAND) in a block's reach; it covers a compact block, not a long, concave or watery one. See the
+// investigation doc for why 3 km.
 export const BLOCK_REACH_CAP_M = 3000;
 export const MAX_BLOCK_REACH_M = EDGE_BUFFER_M + BLOCK_REACH_CAP_M;
 // Dropped overlaps at or above this share are printed.
@@ -272,13 +269,8 @@ export function districtShares(
 
 const byNumber = (a: string, b: string) => a.localeCompare(b, "en", { numeric: true });
 
-/**
- * The districts a ZIP reaches, from each district's share of its mapped land and the overlap's thickness in metres
- * (`widths`, see `overlapWidth`). An overlap is dropped only when it is both under `MIN_DISTRICT_SHARE` and thinner
- * than `SLIVER_WIDTH_M`, with no 2020 homes in it (`withHomes`). A district with a block of homes that reaches the
- * ZIP's edge (`nearEdge`, see `blocksNearEdge`) is kept even with no overlap. `notes` explains each overlap kept that one test alone would
- * have dropped; `dropped` lists dropped overlaps of `LOG_SHARE` or more.
- */
+// Drops an overlap only when it is a small share, thin, and without 2020 homes; keeps any district whose homes
+// reach the ZIP's edge. `notes` are overlaps only one size test would drop.
 export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = [] }: {
   shares: Record<string, number>;
   widths: Record<string, number>;
@@ -304,7 +296,7 @@ export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = []
   return { touched: [...touched].sort(byNumber), notes: notes.sort((a, b) => byNumber(a.district, b.district)), dropped: dropped.filter((d) => !touched.has(d.district)) };
 }
 
-// Metres per degree of latitude, and of longitude at a latitude.
+// Meters per degree of latitude, and of longitude at a latitude.
 const M_PER_DEG = 111_320;
 const mPerDegX = (lat: number) => M_PER_DEG * Math.cos((lat * Math.PI) / 180);
 
@@ -348,11 +340,7 @@ function widestRow(a: Edge[], b: Edge[], { minRows = MIN_ROWS }: { minRows?: num
   return widest;
 }
 
-/**
- * How thick, in metres, the overlap of a ZIP and a district is: the smaller of its longest east-west run along any
- * row and its longest north-south run along any column. A border sliver is thin one way however long it is; a piece
- * of a neighbourhood is not. A diagonal sliver reads up to 1.4 times thicker, which keeps it.
- */
+// Overlap thickness in meters: the smaller of its widest east-west and north-south runs. A sliver is thin one way.
 export function overlapWidth(zip: Shape, district: Shape, opts: { minRows?: number } = {}): number {
   const z = edges(rings(zip));
   const d = edges(rings(district));
@@ -361,10 +349,10 @@ export function overlapWidth(zip: Shape, district: Shape, opts: { minRows?: numb
   return Math.min(widestRow(z, d, opts) * mPerDegX(lat), widestRow(flip(z), flip(d), opts) * M_PER_DEG);
 }
 
-/** A box grown by `metres` on every side. */
-export function padBox({ x, y }: Box, metres: number): Box {
-  const dy = metres / M_PER_DEG;
-  const dx = metres / mPerDegX(Math.max(Math.abs(y[0]), Math.abs(y[1])));
+/** A box grown by `meters` on every side. */
+export function padBox({ x, y }: Box, meters: number): Box {
+  const dy = meters / M_PER_DEG;
+  const dx = meters / mPerDegX(Math.max(Math.abs(y[0]), Math.abs(y[1])));
   return { x: [x[0] - dx, x[1] + dx], y: [y[0] - dy, y[1] + dy] };
 }
 
@@ -385,7 +373,7 @@ export function blocksNearEdge(s: Shape, blocks: Block[]): [number, number][] {
       const b = Math.min(BANDS - 1, Math.floor((py + dy - lo) / bandStep));
       for (let k = a; k <= b; k++) {
         for (const [x1, y1, x2, y2] of bands[k]) {
-          // Distance to the segment, in metres on a local flat grid.
+          // Distance to the segment, in meters on a local flat grid.
           const [ax, ay, bx, by] = [(x1 - px) * kx, (y1 - py) * M_PER_DEG, (x2 - px) * kx, (y2 - py) * M_PER_DEG];
           const len2 = (bx - ax) ** 2 + (by - ay) ** 2;
           const t = len2 ? Math.max(0, Math.min(1, -(ax * (bx - ax) + ay * (by - ay)) / len2)) : 0;
@@ -411,10 +399,7 @@ export const homeBlocksUrl = ({ x, y }: Box) =>
     f: "json",
   });
 
-/**
- * A block's internal point, and how far from it the block may reach: `EDGE_BUFFER_M` plus the side of a square of
- * the block's land, capped at `BLOCK_REACH_CAP_M`. A big rural block can touch a ZIP's edge far from its point.
- */
+// A block's internal point, and how far the block may reach from it (see `blockPoints`).
 export type Block = { at: [number, number]; reach: number };
 
 /** Blocks from a `homeBlocksUrl` response. Fails on an error, a cut-off response, or a block with no point or area. */
