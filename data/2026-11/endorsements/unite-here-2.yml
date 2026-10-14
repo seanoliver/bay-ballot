@@ -5,7 +5,7 @@ source: https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
 archived:
   - source: https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
     snapshot: https://web.archive.org/web/20261007195211/https://www.unitehere2.org/2026/09/november-2026-election-endorsements/
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-14
 hasReasoning: false
 picks:
   lt-governor:
@@ -19,29 +19,19 @@ picks:
       - Jane Kim
   prop-40:
     pick: Y
+  us-rep-14:
+    pick:
+      - Aisha Wahab
   rtm:
     pick: Y
-  concord-council-5:
-    pick:
-      - Laura Nakamura
-  richmond-mayor:
-    pick:
-      - Claudia Jiménez
+  san-pablo-measure-s:
+    pick: Y
   state-senate-2:
     pick:
       - Damon Connolly
   assembly-12:
     pick:
       - Jackie Elward
-  oakland-mayor:
-    pick:
-      - Barbara Lee
-  alameda-mayor:
-    pick:
-      - Malia Vella
-  oakland-usd-6:
-    pick:
-      - Valarie Bachelor
   sonoma-county-supervisor-2:
     pick:
       - Joanna Paun
@@ -57,3 +47,15 @@ picks:
   sonoma-council-1:
     pick:
       - Julian Mackie
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  concord-council-5:
+    pick:
+      - Laura Nakamura
+  alameda-mayor:
+    pick:
+      - Malia Vella
+  richmond-mayor:
+    pick:
+      - Claudia Jiménez
