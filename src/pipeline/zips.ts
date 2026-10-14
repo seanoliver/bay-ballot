@@ -172,8 +172,9 @@ export const MIN_DISTRICT_SHARE = 0.005;
 export const SLIVER_WIDTH_M = 60;
 // ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbour's ZIP.
 export const EDGE_BUFFER_M = 150;
-// A block's reach past its internal point is at most this. sqrt(land area) is the side of a square block, more than
-// the 0.71 sides from a square's centre to its corner. In rural Napa, south Santa Clara and west Sonoma, 3 km covers
+// The cap on a block's reach past EDGE_BUFFER_M. sqrt(land area) is the side of a square block, so it covers a compact
+// block (centre to corner is 0.71 sides); it does not bound a long, thin or concave block, or one mostly water, since
+// AREALAND leaves water out. In rural Napa, south Santa Clara and west Sonoma, 3 km covers
 // 96% to 99% of blocks with homes; the rest are over 9 km² (about 55 people each, by median), and a wider pad would
 // pull in most of a rural county for every ZIP near them.
 export const BLOCK_REACH_CAP_M = 3000;
