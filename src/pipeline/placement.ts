@@ -145,8 +145,9 @@ function pageMarkers(page: Page, contests: Contest[]): Marker[] {
 }
 
 // Bare "Related" or "Recommended" is also a per-item badge on some guides, so only the full labels count.
-const SIDEBAR_LABEL = /^\s*(?:related\s+(?:articles|stories|posts|coverage|content|links)|more\s+in\s+[^.]{1,40}|most\s+popular|you\s+may\s+also\s+like|recommended\s+for\s+you|read\s+next|previous|next\s+up)\s*:?\s*$/i;
+const SIDEBAR_LABEL = /^\s*(?:related\s+(?:articles|stories|posts|coverage|content|links)|more\s+in\s+[^.]{1,40}|most\s+popular|you\s+may\s+also\s+like|recommended\s+for\s+you|read\s+next)\s*:?\s*$/i;
 const SIDEBAR_LINES = 12;
+const TEASER_LABEL = /^\s*(?:previous|next\s+up)\s*$/i;
 
 function sidebarLines(lines: { text: string }[]): Set<number> {
   const out = new Set<number>();
@@ -158,6 +159,13 @@ function sidebarLines(lines: { text: string }[]): Set<number> {
       // A short line such as a candidate name can be the article resuming after an inline ad.
       if (t.length >= 30 || t.split(/\s+/).length >= 5) out.add(j);
     }
+  });
+  // A "Previous"/"Next Up" label, a "[Headline]" link line and the headline again unbracketed is an article teaser; its snippet line follows.
+  lines.forEach((l, i) => {
+    const link = l.text.match(/^\s*\[([^\]]+)\]\s*$/);
+    if (!link || !TEASER_LABEL.test(lines[i - 1]?.text ?? "") || lines[i + 1]?.text.trim() !== link[1].trim()) return;
+    out.add(i + 1);
+    if (i + 2 < lines.length) out.add(i + 2);
   });
   return out;
 }

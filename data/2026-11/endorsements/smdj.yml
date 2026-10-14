@@ -68,6 +68,12 @@ rejectedQuotes:
   - text: All other potential solutions are in the ether and most of the concerns are red herrings, and the city should comply with regulations as set forward by the state.
     reason: 'does not stand alone: "All other potential solutions" and "the concerns" refer back to earlier text (review 2026-10-14)'
     contestId: half-moon-bay-measure-q
+  - text: The map changes make sense, the allocation changes make sense and it will create a clearer path forward for people who want to add ADUs to their property while also allowing for the city to meet growing state requirements without a larger impact.
+    reason: 'does not stand alone: "The map changes" and "the allocation changes" refer back to earlier text (review 2026-10-14)'
+    contestId: half-moon-bay-measure-i
+  - text: Johnson has 16 years in the Probation Department and was an adolescent treatment counselor and is currently working as the director of a family shelter supporting families receiving wraparound services.
+    reason: background, not a reason; the next sentence carries the reason (review 2026-10-14)
+    contestId: san-mateo-county-board-of-education-2
 picks:
   us-rep-15:
     pick:
@@ -89,16 +95,19 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
       - text: He is involved, active and engaged with anyone who seeks ways to better the community overall.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
+      - text: He also has provided specific experience from the South San Francisco City Council on important issues like childcare and universal basic income during COVID that would tie in directly to the work of the Board of Supervisors.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
   smcccd-trustee-area-2:
     pick:
       - Mike Guingona
+    quotes:
+      - text: Guingona is well versed in the district’s finances, plans, challenges and opportunities.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-guingona-for-area-2-community-college-trustee/article_0ca98605-cf72-4269-88af-fd3cdfd06a6e.html
   san-mateo-county-board-of-education-2:
     pick:
       - Dana Johnson
     quotes:
       - text: Gerard is in the game, and understands the role but Johnson exhibits more creativity — including connecting incarcerated youth with college and job training programs and making new community partnerships for assistance.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
-      - text: Johnson has 16 years in the Probation Department and was an adolescent treatment counselor and is currently working as the director of a family shelter supporting families receiving wraparound services.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
   smuhsd-trustee-area-3:
     pick:
@@ -107,6 +116,8 @@ picks:
       - text: As a teacher in the San Mateo-Foster City School District, she knows what the current classroom challenges are for those at the ground level in the education field.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
       - text: We also like her idea of having regular community listening sessions outside of board meetings to reach those who may be unable to attend.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
+      - text: She is knowledgable, informed and a natural connector and collaborator.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-harris-proctor-for-san-mateo-union-high-school-district-board/article_08a8790e-6e35-44e0-99f8-407d563b0c33.html
   smuhsd-trustee-area-5:
     pick:
@@ -128,6 +139,8 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
       - text: He is thoughtful, practical and steady.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
+      - text: Shiran’s practical approach and calm demeanor is a bonus.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-shiran-for-sequoia-union-school-board/article_ef900a9f-4455-45a1-82ea-fb3085094650.html
   san-carlos-sd-trustee:
     pick:
       - Boris Lipkin
@@ -144,12 +157,16 @@ picks:
     pick:
       - Buenaflor (Flor) Nicolas
     quotes:
+      - text: Flor Nicolas may not be the most progressive member of the South San Francisco City Council, but she listens to constituents, puts thought into her decisions and responds and votes accordingly.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/article_a53021af-b9b9-4f1f-9745-42061a89773e.html
       - text: Nicolas has a practical stance when it comes to city issues, and the city overall benefits from her know-how, perspective and experience.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/article_a53021af-b9b9-4f1f-9745-42061a89773e.html
   foster-city-council-1:
     pick:
       - Phoebe Shin Venkat
     quotes:
+      - text: Venkat speaks up and speaks out.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-venkat-for-district-1-foster-city-council/article_c9deeec4-18d4-4bf0-9215-9c4aa02daa20.html
       - text: In her time on the council, she has been highly communicative and transparent.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-venkat-for-district-1-foster-city-council/article_c9deeec4-18d4-4bf0-9215-9c4aa02daa20.html
       - text: Venkat has proven to be a quick learner and her ability to communicate and bring a needed perspective to the city gives her the edge in this contest.
@@ -168,6 +185,8 @@ picks:
     quotes:
       - text: Progress is made in the middle, and this is where Newsom shines.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
+      - text: Rather than using information to advance an agenda, Newsom uses it make sure more people are being served and can feel good about the direction of the city.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
       - text: In his work on the Delaware Street bicycle lane proposal, he showed that meeting people where they are, listening, compromising and coming up with creative solutions can stem controversy and produce wins.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
   san-mateo-council-5:
@@ -176,31 +195,13 @@ picks:
     quotes:
       - text: She has strong ideas, and knows the city and its issues.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
-  half-moon-bay-council-1:
-    pick:
-      - Robert Brownstone
-  half-moon-bay-council-4:
-    pick:
-      - Debbie Ruddock
-  half-moon-bay-council-5:
-    pick:
-      - Steven R. Booker
-  millbrae-council-3:
-    pick:
-      - Ann Schneider
-    quotes:
-      - text: She would provide some depth on the dais.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
-  millbrae-council-4:
-    pick:
-      - Albert Yam
-    quotes:
-      - text: When it comes to downtown, which is critical to Millbrae’s character and success, Yam has better defined ideas that are in tune with the city’s small businesses.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
-      - text: Nguyen is service oriented, which is good, but Yam is action oriented, which is better.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
+      - text: The current City Council has been challenged at times by its lack of institutional knowledge. Sahae can bring that knowledge, along with a fresh approach to issues that have long plagued the city.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-nash-newsom-sahae-for-san-mateo-city-council/article_13221fdc-ae9a-4af4-bae4-90342ae8d51f.html
   burlingame-measure-d:
     pick: Y
+    quotes:
+      - text: Hotel tax revenue is one of the more consistent drivers of tax revenue in Burlingame, and its 12% rate is lower than most other cities on the Peninsula.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
   redwood-city-measure-e:
     pick: N
     quotes:
@@ -208,9 +209,6 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-no-on-measure-e/article_65301122-b75d-4631-98c7-da94cd268b19.html
   half-moon-bay-measure-i:
     pick: Y
-    quotes:
-      - text: The map changes make sense, the allocation changes make sense and it will create a clearer path forward for people who want to add ADUs to their property while also allowing for the city to meet growing state requirements without a larger impact.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-i/article_fa76ad1b-0717-4c27-91e0-45f3f81ba833.html
   san-bruno-measure-ee:
     pick: Y
     quotes:
@@ -230,3 +228,26 @@ picks:
     quotes:
       - text: It provides housing described as needed in the city’s housing element.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-q/article_8a11ce9c-4954-4df7-8c3e-4a543a23b4d7.html
+  half-moon-bay-council-5:
+    pick:
+      - Steven R. Booker
+  half-moon-bay-council-1:
+    pick:
+      - Robert Brownstone
+  half-moon-bay-council-4:
+    pick:
+      - Debbie Ruddock
+  millbrae-council-3:
+    pick:
+      - Ann Schneider
+    quotes:
+      - text: She would provide some depth on the dais.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
+  millbrae-council-4:
+    pick:
+      - Albert Yam
+    quotes:
+      - text: When it comes to downtown, which is critical to Millbrae’s character and success, Yam has better defined ideas that are in tune with the city’s small businesses.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
+      - text: Nguyen is service oriented, which is good, but Yam is action oriented, which is better.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-schneider-yam-for-millbrae-city-council/article_54702e64-e769-4207-853e-172016ed3d6f.html
