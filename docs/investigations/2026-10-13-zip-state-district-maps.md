@@ -33,6 +33,7 @@ Measured by running `zipFit` for every ZIP against `placeGroups` of the 2026-11 
 
 ## How it works
 
+- **One district is on.** When a ZIP reaches exactly one district of a map (after the threshold and the homes check) and lies wholly in the map's place, `zipFit` marks that contest on, for every map including SF supervisors (approved by Sean 2026-10-13, reversing the SF note that kept it maybe). Wholly in: always for state maps, `whollyIn` for a county, `full` for a city. So 94501, mostly Alameda with a little SF land in District 6, keeps SF District 6 as maybe, and a ZIP partly outside San José keeps its one council district as maybe. Several districts stay maybe. County or city membership alone never makes a district contest on. This moved 802 rows from maybe to on: 12,194 to 11,392 maybe. Assembly 430 to 226, Congress 410 to 195, State Senate 102 to 30, Board of Equalization 316 to 12, SF supervisors 32 to 26, Sonoma supervisors 20 to 19, San José council 19 to 19 (its ZIPs that reach one district all reach past the city).
 - `DISTRICT_MAPS` entries with `place: STATE_PLACE` cover every ZIP, and `zipFit` looks them up for any contest named in `STATE_DISTRICTS`, whatever its `within` list says. Their key is `state:California/<seat>`.
 - `format: "zipped shapefile"` reads the map with `src/pipeline/shapefile.ts`: a small ZIP reader (stored and deflated entries, `node:zlib`), a polygon `.shp` reader, a `.dbf` column reader, and inverse Web Mercator when the `.prj` says so. It fails on any other projection.
 - District ids lose leading zeros so "08" matches the ballot's "8".
@@ -42,7 +43,6 @@ Measured by running `zipFit` for every ZIP against `placeGroups` of the 2026-11 
 
 ## Gotchas
 
-- A mapped district a ZIP reaches stays "maybe", even when it is the only one, as for SF supervisors. Treating a ZIP with one mapped district as "on" would move another 803 rows from maybe to on. That is a product decision, not made here.
 - Oakland and Berkeley council maps were skipped: no 2022 source with GeoJSON was confirmed. San Mateo and Solano supervisors, county boards of education, school districts and special districts are not mapped. School and special districts are the largest remaining group; Census TIGER has school district boundaries (not trustee areas) that could rule out whole districts.
 - Court of Appeal districts are whole counties by statute, so they need no map, but `zipFit` still says maybe for them.
 - The block check uses 2020 homes. A home built since in a sliver with no 2020 homes would see its district hidden; Show all is one tap away.

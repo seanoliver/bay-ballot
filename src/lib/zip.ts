@@ -48,7 +48,6 @@ export function zipFit(
   if (j.level === "county") return whollyIn(z, j.name) ? "on" : z.counties.includes(j.name) ? "maybe" : "off";
   if (j.level === "city") return z.places[j.name] === "full" ? "on" : has(z, j.name) ? "maybe" : "off";
   const within = j.within ?? [];
-  // Maybe even when the ZIP reaches only that district: both sets of lines are approximate.
   const place = within[0];
   const mapPlace = STATE_DISTRICTS.includes(j.name)
     ? STATE_PLACE
@@ -57,7 +56,10 @@ export function zipFit(
       : null;
   if (j.level === "district" && j.district && mapPlace) {
     const mapped = z.districts?.[districtMapKey(mapPlace, j.name)];
-    if (mapped?.length) return mapped.includes(j.district) ? "maybe" : "off";
+    // On when the ZIP reaches only that district and lies wholly in the map's place; a ZIP partly outside SF can't be
+    // all in one SF supervisor district.
+    const wholly = mapPlace.level === "state" || (mapPlace.level === "county" ? whollyIn(z, mapPlace.name) : z.places[mapPlace.name] === "full");
+    if (mapped?.length) return !mapped.includes(j.district) ? "off" : mapped.length === 1 && wholly ? "on" : "maybe";
   }
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
   // A region measure is voted on countywide in each county it lists.

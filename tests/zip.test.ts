@@ -57,14 +57,24 @@ describe("zipFit", () => {
     expect(zipFit(srjc5.jurisdiction, marin, { cityCounty })).toBe("off");
     expect(zipFit(srjc5.jurisdiction, marin, { cityCounty, districtCounties: { "Sonoma County Junior College District": ["Marin", "Sonoma"] } })).toBe("maybe");
   });
-  it("rules out a mapped district the ZIP misses, and keeps each one it reaches as maybe", () => {
+  it("rules out a mapped district the ZIP misses, keeps each of several it reaches as maybe, and puts its only one on", () => {
     const castro: ZipPlaces = { ...SF, districts: { "county:San Francisco/Supervisor": ["7", "8"] } };
     const sup4 = c("supervisor-4", { level: "district", name: "Supervisor", district: "4", within: [{ level: "county", name: "San Francisco" }] });
     expect(fit(sup8, castro, "San Francisco")).toBe("maybe");
     expect(fit(sup4, castro, "San Francisco")).toBe("off");
-    expect(fit(sup4, { ...castro, districts: { "county:San Francisco/Supervisor": ["4"] } }, "San Francisco")).toBe("maybe");
+    expect(fit(sup4, { ...castro, districts: { "county:San Francisco/Supervisor": ["4"] } }, "San Francisco")).toBe("on");
     expect(fit(sup4, { ...SF, districts: { "city:Oakland/City Council": ["4"] } }, "San Francisco")).toBe("maybe");
     expect(fit(sup4, { ...SF, districts: { "city:San Francisco/Supervisor": ["8"] } }, "San Francisco")).toBe("maybe");
+  });
+  it("keeps a ZIP's only mapped district as maybe when the ZIP lies partly outside the map's place", () => {
+    // 94501: mostly Alameda, a little SF land, all of it in SF District 6.
+    const alameda: ZipPlaces = { counties: ["Alameda", "San Francisco"], places: { Alameda: "partial" }, districts: { "county:San Francisco/Supervisor": ["6"] } };
+    const sup6 = c("supervisor-6", { level: "district", name: "Supervisor", district: "6", within: [{ level: "county", name: "San Francisco" }] });
+    expect(fit(sup6, alameda, "San Francisco")).toBe("maybe");
+    const council = (city: string) => c("x-council-2", { level: "district", name: "City Council", district: "2", within: [{ level: "city", name: city }] });
+    const sj = (fit: "full" | "partial"): ZipPlaces => ({ counties: ["Santa Clara"], places: { "San Jose": fit }, districts: { "city:San Jose/City Council": ["2"] } });
+    expect(zipFit(council("San Jose").jurisdiction, sj("full"), { cityCounty: { "San Jose": "Santa Clara" } })).toBe("on");
+    expect(zipFit(council("San Jose").jurisdiction, sj("partial"), { cityCounty: { "San Jose": "Santa Clara" } })).toBe("maybe");
   });
   it("falls back to the county rule for a mapped district filed under two places, or a ZIP whose list is empty", () => {
     const twoPlaces = c("supervisor-4", { level: "district", name: "Supervisor", district: "4", within: [{ level: "county", name: "San Francisco" }, { level: "county", name: "San Mateo" }] });
@@ -75,7 +85,9 @@ describe("zipFit", () => {
     const rep12 = c("us-rep-12", { level: "district", name: "Congress", district: "12", within: [{ level: "city", name: "Oakland" }, { level: "city", name: "Berkeley" }] });
     const oakland: ZipPlaces = { counties: ["Alameda"], places: { Oakland: "full" }, districts: { "state:California/Congress": ["12"] } };
     const cc = { Oakland: "Alameda", Berkeley: "Alameda" };
-    expect(zipFit(rep12.jurisdiction, oakland, { cityCounty: cc })).toBe("maybe");
+    expect(zipFit(rep12.jurisdiction, oakland, { cityCounty: cc })).toBe("on");
+    expect(zipFit(rep12.jurisdiction, { ...oakland, outside: ["San Joaquin"], districts: { "state:California/Congress": ["12"] } }, { cityCounty: cc })).toBe("on");
+    expect(zipFit(rep12.jurisdiction, { ...oakland, districts: { "state:California/Congress": ["12", "14"] } }, { cityCounty: cc })).toBe("maybe");
     expect(zipFit(rep12.jurisdiction, { ...oakland, districts: { "state:California/Congress": ["14"] } }, { cityCounty: cc })).toBe("off");
     expect(zipFit(rep12.jurisdiction, { ...oakland, districts: {} }, { cityCounty: cc })).toBe("maybe");
     expect(districtMapKey(STATE_PLACE, "Assembly")).toBe("state:California/Assembly");
@@ -400,6 +412,20 @@ describe("the committed ZIP table", () => {
       expect(onBallot.length, key).toBeGreaterThan(0);
       expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id), key).toEqual([]);
     }
+  });
+  it("puts a ZIP's only district on and each of several maybe, on the real ballot", async () => {
+    const { loadElection } = await import("@/lib/data");
+    const { default: raw } = await import("@/data/zips.json");
+    const table = raw as unknown as ZipTable;
+    const byId = new Map(loadElection("data", "2026-11").ballot.contests.map((x) => [x.id, x]));
+    const f = (id: string, zip: string) => zipFit(byId.get(id)!.jurisdiction, table.zips[zip], { cityCounty: table.cityCounty, districtCounties: table.districtCounties });
+    expect(f("us-rep-16", "94301")).toBe("on");
+    expect(f("us-rep-15", "94301")).toBe("off");
+    expect(f("us-rep-11", "94112")).toBe("maybe");
+    expect(f("us-rep-15", "94112")).toBe("maybe");
+    expect(f("supervisor-2", "94123")).toBe("on");
+    expect(f("supervisor-8", "94110")).toBe("maybe");
+    expect(f("supervisor-6", "94501")).toBe("maybe");
   });
   it("puts known ZIPs in the right state and local districts", async () => {
     const { default: raw } = await import("@/data/zips.json");
