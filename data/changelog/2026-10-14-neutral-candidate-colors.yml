@@ -1,0 +1,4 @@
+date: 2026-10-14
+type: fix
+title: Candidate colors no longer look like party colors
+details: "Candidates were colored by endorsement rank in blue and pink, so in a race between two Democrats the second one looked like a Republican. Candidates are now violet, amber, teal and slate. The color still only shows who has the most endorsements, not party."
