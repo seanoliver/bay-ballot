@@ -82,11 +82,11 @@ Twitter
 YouTube
 Instagram
 RSS
-75° Sunny
+48° Clear
 San Mateo, CA (94402)
-Plentiful sunshine. High 73F. Winds NW at 10 to 20 mph..
+Plentiful sunshine. High 74F. Winds NW at 5 to 10 mph..
 Tonight
-A clear sky. Low 48F. W winds at 10 to 15 mph, decreasing to less than 5 mph.
+Clear skies. Low 49F. Winds NW at 5 to 10 mph.
 Updated: @
 Full Forecast
 Site search Search
@@ -153,15 +153,15 @@ Enrollment Growth
 San Carlos
 Education Funding
 Recommended for you
-[Editorial: Yes on Measure Q]
-Editorials
-Editorial: Yes on Measure Q
+[Top Democrats and allies join the wealthiest to fight a California billionaire tax]
+State
+Top Democrats and allies join the wealthiest to fight a California billionaire tax
 [Daily Journal endorsements for the San Mateo County November election]
 Editorials
 Daily Journal endorsements for the San Mateo County November election
-[State voters to decide on taxes]
+[Newsom against wealth taxes]
 Local News
-State voters to decide on taxes
+Newsom against wealth taxes
 ×
 Post a comment as Guest
 Emoticons
@@ -186,14 +186,14 @@ Log In
 Purchase a Subscription
 Want to join the discussion?
 Latest News
-San Bruno sports fields project on hold?
-The Old Post Office gives historic Burlingame building new life
-California’s Prop 43 would make special taxes harder to pass
-Half Moon Bay’s World Championship Pumpkin Weigh-Off: Travis Gienger’s gourd wins again
-Four in running for two San Bruno City Council seats
-Six Cycles bike shop opens in South City
-Measure Y: Proposed special tax for Barrett Community Center on November ballot
-San Francisco man arrested in San Bruno on suspicion of weapons crimes
+Newsom against wealth taxes
+San Mateo plans to split housing into two towers
+Jobs for Youth workshop offers career preparation and access to scholarships
+County seeks student democracy ambassadors
+Sequoia Union surveys cellphone policy again
+43 cited on Skyline Boulevard/Woodside Road
+Half Moon Bay seeks speed limits on trails
+San Mateo County police reports
 Trending Stories
 Articles
 Images
@@ -202,36 +202,36 @@ Commented
 Articles
 2 charged in alleged $1.4 million San Mateo County Event Center kickback scheme
 San Mateo County Event Center embezzlement probed: Financial investigation following alleged $1.4M kickback scheme
-How much review does Hillsdale need?
 2 hospitalized after San Mateo apartment fire kills dog
 South African-born jurist Navi Pillay wins Nobel Peace Prize for her work in international justice
-Transportation projects getting priority in Redwood City
+How much review does Hillsdale need?
 San Mateo to implement Axon cameras: The city will add ALPR cameras in new contract with Axon Enterprises
-One Love Cafe moving from San Bruno to South City
+The Old Post Office gives historic Burlingame building new life
 San Mateo Police Department restricts data sharing
 Daly City’s special brand of politics
+San Francisco man charged in Daly City crash that killed 2
 Images
-[The blimp, L-B, lands in Daly City]
 [The Old Post Office walk-in fridge]
+[The blimp, L-B, lands in Daly City]
 [Sarah and Ian Hoffman]
 [Class Notes: Woodside Musical Theatre stages 'Something Rotten!']
 [Carlmont football Brody Zirelli]
 [Will Detlefsen]
+[10th Annual Mother-Daughter Tea]
 [AFGHANISTAN-PAKISTAN/]
 [Carlmont flag Kate Norton MUG]
-[Aimee Stevland]
-[Rendering: Overhead view Hillsdale shopping center redevelopment]
+[San Mateo County Trial Lawyers Association]
 Videos
 [Fort Hood shooter’s execution by firing squad will be livestreamed, Pentagon says]
 [Trump administration is suspending Microsoft from the H-1B green card program]
 [Hurricane Isaias finds a brief window in El Niño to power up in extra warm water]
 [USS Abraham Lincoln returns home to San Diego Bay after 265 uninterrupted days at sea]
-[Cornell students demand changes to handling of sexual assault cases]
 [LIVE: Gov. DeSantis holds a press conference as Hurricane Isaias approaches Florida]
-['There is no Plan B,' professor of anesthesiology says on Christa Pike's failed execution]
-[‘I was fighting for my life’: Indian pilot recalls Flydubai cockpit attack]
+[Cornell students demand changes to handling of sexual assault cases]
+[JD Vance says he's 'not going to be watching' the livestream execution of Fort Hood shooter]
 [Deadly floods in Nepal were a 'warning to the world' on climate disaster, PM says]
-[FlyDubai passenger tells Netanyahu he put the suspect in a 'chokehold']
+[Trump launches America.gov, an AI-powered tool to help navigate government websites]
+[Legal expert calls for transparency in the Cornell investigation]
 Commented
 Lisa Diaz Nash and Taso Zografos vie for San Mateo's District 1 seat (13)
 Safety on Alameda de las Pulgas (13)
@@ -253,6 +253,7 @@ Protecting vote-by-mail against Trump (5)
 Dana Yates Sahae will energize our council (5)
 Penmanship was big way back in the day (5)
 The victims left behind (5)
+Nash has failed (5)
 Organizers protest detainment facility at San Francisco International Airport (5)
 Would you like to see bike lanes added to El Camino Real in San Mateo even if it took some parking? (5)
 Supervisor Ray Mueller to fund officer for notorious Woodside intersection (5)
@@ -262,6 +263,7 @@ San Mateo considers El Camino enhancements: Proposed changes could include bike 
 Frame of mind: ‘Eternal Sunshine of the Spotless Mind’ and why we love what we lose (4)
 Reinvention in San Mateo (4)
 GOP gubernatorial candidate Steve Hilton harsh on state’s schools (4)
+Lisa Diaz Nash For San Mateo District 1 City Council (3)
 Support Measure Y (3)
 Half Moon Bay voters to decide Measure Q on 555 Kelly housing (3)
 Burlingame recovery center approved for Mahler Road site (3)
@@ -274,7 +276,6 @@ Bike lanes on El Camino? Bike lanes or parking, officials debate how San Mateo�
 Cornell and character (3)
 Apartment building acquired for educator workforce housing: Housing Endowment and Regional Trust of San Mateo County, County Office of Education purchase existing apartment building in 1st-of-its-kind workforce housing program (3)
 Newsom, Patel vie for San Mateo’s District 3 seat (3)
-Nash has failed (3)
 Loraine has over a decade of experience (3)
 Editorial: Yes on Measure Q (3)
 No on Measure Y (3)
@@ -293,7 +294,6 @@ Yes on Measure Y (3)
 Less magic, more morals (2)
 Shame on Cornell (2)
 Airbnb fights in Pacifica: How vacation rental company is fighting for its place on California’s coast (2)
-San Mateo narrowly OKs historic survey update (2)
 The kids need more AI education (2)
 Yes on Measure G (2)
 Spidey sense (2)
@@ -308,6 +308,7 @@ The right lesson on parking meters (2)
 Fresh eyes needed in San Bruno (2)
 San Mateo deserves results, not more promises (2)
 Tensions escalate over former San Mateo Par3 golf course restaurant (2)
+No on transit tax (2)
 Redwood City pedestrian safety operation nets 63 citations (2)
 Transportation projects getting priority in Redwood City (2)
 MS NOW, CNN and Politico say their journalists were denied access to White House after Trump ban (2)
@@ -327,7 +328,6 @@ Making sense of the race for insurance commissioner (2)
 Flaws in Measure G campaign (2)
 PEN America: Nearly 12,000 school book bans in a year, a record high (1)
 Redwood City prepares for strong El Niño, winter storms (1)
-Lisa Diaz Nash For San Mateo District 1 City Council (1)
 Yes on Measure H (1)
 Calendar
 October
