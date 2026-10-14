@@ -37,6 +37,14 @@ export function htmlToText(html: string): string {
     .join("\n");
 }
 
+/** The matched elements, in page order, as a page of their own. Throws when nothing matches, so a site redesign fails loudly. */
+export function selectContent(html: string, selector: string): string {
+  const $ = cheerio.load(html);
+  const picked = $(selector).toArray();
+  if (picked.length === 0) throw new Error(`content selector "${selector}" matched nothing`);
+  return `<body>${picked.map((el) => $.html(el)).join("\n")}</body>`;
+}
+
 // A real browser UA: some guide sites return 403/406 to bot-like or short ones.
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
@@ -117,6 +125,7 @@ export type FetchAttempt = { via: "http" | "browser"; status: number; bytes: num
 type BrowserFetch = (url: string) => Promise<{ status: number; html: string }>;
 export type FetchOptions = {
   browser?: boolean;
+  contentSelector?: string;
   browserFetch?: BrowserFetch;
   onAttempt?: (a: FetchAttempt) => void;
 };
@@ -147,7 +156,15 @@ type HttpResult =
   | { kind: "page"; fetched: Fetched; status: number; bytes: number; html?: string }
   | { kind: "error"; status: number; bytes: number };
 
-async function fetchHttp(url: string): Promise<HttpResult> {
+function selectIn(url: string, html: string, selector: string): string {
+  try {
+    return selectContent(html, selector);
+  } catch (e) {
+    throw new Error(`${url}: ${errMsg(e)}`);
+  }
+}
+
+async function fetchHttp(url: string, contentSelector?: string): Promise<HttpResult> {
   let res: Response;
   let buf: Buffer;
   try {
@@ -174,7 +191,8 @@ async function fetchHttp(url: string): Promise<HttpResult> {
     throw new Error(`${url}: unsupported content-type ${type || "(none)"}`);
   }
   const html = buf.toString("utf8");
-  return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(html) } };
+  const content = contentSelector && !detectBlock(html) ? selectIn(url, html, contentSelector) : html;
+  return { kind: "page", status: res.status, bytes: buf.length, html, fetched: { kind: "text", text: htmlToText(content) } };
 }
 
 export async function fetchSource(url: string, opts: FetchOptions = {}): Promise<Fetched> {
@@ -198,12 +216,12 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
       throw new Error(httpFailure ? `${httpFailure} (browser: HTTP ${r.status})` : `${url} -> HTTP ${r.status}`);
     }
     if (blocked) throw new Error(`${url}: blocked (${blocked})${httpFailure ? " over http and browser" : ""}`);
-    return { kind: "text", text: htmlToText(r.html) };
+    return { kind: "text", text: htmlToText(opts.contentSelector ? selectIn(url, r.html, opts.contentSelector) : r.html) };
   };
 
   if (opts.browser && !isPdfPath(url)) return viaBrowser(null);
 
-  const r = await fetchHttp(url);
+  const r = await fetchHttp(url, opts.contentSelector);
   if (r.kind === "error") {
     report({ via: "http", status: r.status, bytes: r.bytes, blocked: null });
     const failure = `${url} -> HTTP ${r.status}`;

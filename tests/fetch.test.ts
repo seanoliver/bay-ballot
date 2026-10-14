@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as cheerio from "cheerio";
-import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText } from "@/pipeline/fetch";
+import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, selectContent } from "@/pipeline/fetch";
 
 const cheerioText = (html: string) => cheerio.load(html)("body").text().replace(/\s+/g, " ").trim();
 
@@ -285,5 +285,49 @@ describe("browser helpers", () => {
   });
   it("does not swallow other errors", async () => {
     await expect(contentAfterNavigation(async () => { throw new Error("boom"); }, async () => {})).rejects.toThrow("boom");
+  });
+});
+
+describe("content selector", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const article = `<body><aside><h3>Most read</h3><p>Nash has failed (8)</p></aside>
+    <header class="asset-header"><h1>Editorial: Yes on Measure EE</h1><span>3</span></header>
+    <div class="weather">69° Sunny</div>
+    <div id="article-body"><p>San Bruno voters will be able to change the business tax.</p></div>
+    <section><p>Next Up</p><p>Editorial: Venkat for District 1</p></section></body>`;
+  const selector = "header.asset-header h1, #article-body";
+
+  it("keeps only the matched elements, in page order", () => {
+    expect(htmlToText(selectContent(article, selector))).toBe(
+      "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    );
+  });
+
+  it("throws when nothing matches, so a redesign fails the fetch", () => {
+    expect(() => selectContent("<body><p>Vote yes</p></body>", selector)).toThrow(`content selector "${selector}" matched nothing`);
+  });
+
+  it("applies the selector to pages fetched over http", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(article, { status: 200, headers: { "content-type": "text/html" } })));
+    expect(await fetchSource("https://x.test/a", { contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  it("applies the selector to pages fetched in the browser", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  it("names the page when the selector misses", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Redesigned page</p></body>" }));
+    await expect(fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).rejects.toThrow(
+      `https://x.test/a: content selector "${selector}" matched nothing`,
+    );
   });
 });
