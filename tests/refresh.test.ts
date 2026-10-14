@@ -370,6 +370,16 @@ describe("runRefresh", () => {
     expect(stream).toHaveBeenCalledTimes(1);
   });
 
+  it("passes the guide's content selector to the fetcher", async () => {
+    const root = setup(["alpha"]);
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.appendFileSync(file, 'contentSelector: "#article-body"\n');
+    const { client } = fakeClient(sameOut);
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body" });
+  });
+
   it("reports a fetch failure and exits 1", async () => {
     const root = setup(["alpha"]);
     const { client } = fakeClient();
@@ -423,6 +433,15 @@ describe("seedPages", () => {
     const results = await runRefresh(deps(client, fetcher(pages)), { root, election: ELECTION });
     expect(results.map((r) => r.status)).toEqual(["unchanged", "unchanged"]);
     expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("passes the guide's content selectors to the fetcher", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\ncontentExclude: .ad\n');
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x") });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body", contentExclude: ".ad" });
   });
 });
 

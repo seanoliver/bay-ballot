@@ -66,7 +66,7 @@ export function shrinkWarning(
 }
 
 export const KEY_ORDER = [
-  "guide", "election", "status", "source", "extraSources", "fetchWith", "fetchFrom", "manual",
+  "guide", "election", "status", "source", "extraSources", "fetchWith", "fetchFrom", "contentSelector", "contentExclude", "manual",
   "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "rejectedQuotes", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 

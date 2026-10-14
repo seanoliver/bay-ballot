@@ -17,3 +17,10 @@ export function checkHosts(guide: Guide, file: EndorsementFile): string[] {
 export function fetchMode(file: EndorsementFile, cliBrowserFlag: boolean): "http" | "browser" {
   return file.fetchWith === "browser" || cliBrowserFlag ? "browser" : "http";
 }
+
+export function fetchOptions(
+  file: EndorsementFile,
+  cliBrowserFlag: boolean,
+): { browser: boolean; contentSelector?: string; contentExclude?: string } {
+  return { browser: fetchMode(file, cliBrowserFlag) === "browser", contentSelector: file.contentSelector, contentExclude: file.contentExclude };
+}

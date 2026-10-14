@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { EndorsementFile, Guide } from "@/lib/schema";
-import { checkHosts, fetchMode, sourcesFor } from "@/pipeline/sources";
+import { checkHosts, fetchMode, fetchOptions, sourcesFor } from "@/pipeline/sources";
 
 const guide = {
   id: "spur", name: "SPUR", description: "d", type: "civic", homepage: "https://www.spur.org/",
@@ -68,5 +68,16 @@ describe("fetchMode", () => {
     expect(fetchMode({ ...base, fetchWith: "http" }, false)).toBe("http");
     expect(fetchMode(base, true)).toBe("browser");
     expect(fetchMode({ ...base, fetchWith: "browser" }, false)).toBe("browser");
+  });
+});
+
+describe("fetchOptions", () => {
+  it("carries the browser choice and the content selector", () => {
+    expect(fetchOptions(base, false)).toEqual({ browser: false });
+    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false)).toEqual({
+      browser: true,
+      contentSelector: "#article-body",
+      contentExclude: ".ad",
+    });
   });
 });

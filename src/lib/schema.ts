@@ -111,6 +111,8 @@ export const EndorsementFile = z.object({
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(),
   fetchFrom: z.literal("local").optional(),
+  contentSelector: NonEmpty.optional(),
+  contentExclude: NonEmpty.optional(),
   extraSources: z.array(HttpUrl).optional(),
   manual: z.boolean().optional(),
   allowForeignSources: z.boolean().optional(),

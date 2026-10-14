@@ -219,6 +219,13 @@ describe("extraction bookkeeping fields", () => {
     expect(EndorsementFile.safeParse({ ...file, archived: [{ source: "https://growsf.org/" }] }).success).toBe(false);
     expect(EndorsementFile.safeParse({ ...file, archived: [{ source: "https://growsf.org/", snapshot: "javascript:alert(1)" }] }).success).toBe(false);
   });
+  it("rejects empty content selectors, which would silently turn selection off", () => {
+    for (const key of ["contentSelector", "contentExclude"]) {
+      expect(EndorsementFile.safeParse({ ...file, [key]: "" }).success, key).toBe(false);
+      expect(EndorsementFile.safeParse({ ...file, [key]: "   " }).success, key).toBe(false);
+      expect(EndorsementFile.safeParse({ ...file, [key]: "#article-body" }).success, key).toBe(true);
+    }
+  });
 });
 
 describe("contest aliases", () => {

@@ -11,7 +11,7 @@ import type { ExtractClient, Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
-import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
+import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
@@ -113,10 +113,10 @@ function modelClient(): ExtractClient {
 }
 
 async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[]> {
-  const browser = fetchMode(file, flag("--browser")) === "browser";
+  const options = fetchOptions(file, flag("--browser"));
   const sources: Source[] = [];
   for (const url of sourcesFor(file)) {
-    const fetched = await fetchSource(url, { browser });
+    const fetched = await fetchSource(url, options);
     if (fetched.kind === "pdf" && fetched.text.trim() === "") {
       console.warn(`${guideId}: warning: no text extracted from PDF ${url}; quotes from it will drop`);
     }

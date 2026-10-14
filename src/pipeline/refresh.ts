@@ -11,7 +11,7 @@ import { diffPicks } from "./diff";
 import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
 import type { Fetched } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
-import { checkHosts, fetchMode, sourcesFor } from "./sources";
+import { checkHosts, fetchOptions, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
 import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
 import { nextFile, scopedNextFile, shrinkWarning, toYaml } from "./write";
@@ -123,10 +123,10 @@ async function refreshGuide(
   const hostProblems = checkHosts(guide, prev);
   if (hostProblems.length) return { id, status: "skipped", reason: `source host check: ${hostProblems.join("; ")}` };
 
-  const browser = fetchMode(prev, Boolean(opts.browser)) === "browser";
+  const options = fetchOptions(prev, Boolean(opts.browser));
   const pages: Fetchedpage[] = [];
   for (const url of urls) {
-    const fetched = await deps.fetchSource(url, { browser });
+    const fetched = await deps.fetchSource(url, options);
     const p = pagePath(opts.root, opts.election, id, url);
     const stored = storedText(fetched, { ballot });
     const old = readStored(p);
@@ -423,11 +423,11 @@ export async function seedPages(
     if (!file || file.manual || sourcesFor(file).length === 0) continue;
     const guide = data.guides.find((g) => g.id === id);
     const ballot = guide ? guideBallot(data.ballot, guide, data.areas) : data.ballot;
-    const browser = fetchMode(file, Boolean(opts.browser)) === "browser";
+    const options = fetchOptions(file, Boolean(opts.browser));
     let stored = 0;
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot }));
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, options), { ballot }));
         stored++;
       }
       out.push({ id, stored });

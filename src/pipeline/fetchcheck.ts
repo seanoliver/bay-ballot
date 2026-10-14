@@ -1,6 +1,6 @@
 import { loadElection } from "@/lib/data";
 import type { FetchAttempt, Fetched, FetchOptions } from "./fetch";
-import { fetchMode, sourcesFor } from "./sources";
+import { fetchOptions, sourcesFor } from "./sources";
 
 export type FetchCheckRow = {
   guide: string;
@@ -29,7 +29,7 @@ export async function fetchCheck(
     for (const url of sourcesFor(file)) {
       const attempts: FetchAttempt[] = [];
       try {
-        const f = await deps.fetchSource(url, { browser: fetchMode(file, browser) === "browser", onAttempt: (a) => attempts.push(a) });
+        const f = await deps.fetchSource(url, { ...fetchOptions(file, browser), onAttempt: (a) => attempts.push(a) });
         rows.push({ guide, url, ok: true, attempts, textChars: f.text.length, preview: f.text.slice(0, 160).replace(/\s+/g, " ") });
       } catch (e) {
         rows.push({ guide, url, ok: false, attempts, error: e instanceof Error ? e.message : String(e) });
