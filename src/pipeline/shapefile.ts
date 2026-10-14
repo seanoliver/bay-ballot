@@ -25,13 +25,14 @@ export function unzip(buf: Buffer): Record<string, Buffer> {
   return out;
 }
 
-function dbfColumn(dbf: Buffer, field: string): string[] {
+// One column of a .dbf table, row by row; null for a row marked deleted.
+function dbfColumn(dbf: Buffer, field: string): (string | null)[] {
   const rows = dbf.readUInt32LE(4);
   const headerLen = dbf.readUInt16LE(8);
   const rowLen = dbf.readUInt16LE(10);
   let offset = 1; // each row starts with a deleted flag
   let width = 0;
-  for (let p = 32; dbf[p] !== 0x0d; p += 32) {
+  for (let p = 32; p + 32 <= headerLen && dbf[p] !== 0x0d; p += 32) {
     const name = dbf.toString("latin1", p, p + 11).split("\0")[0];
     if (name === field) {
       width = dbf[p + 16];
@@ -40,7 +41,10 @@ function dbfColumn(dbf: Buffer, field: string): string[] {
     offset += dbf[p + 16];
   }
   if (!width) throw new Error(`no ${field} column`);
-  return Array.from({ length: rows }, (_, i) => dbf.toString("latin1", headerLen + i * rowLen + offset, headerLen + i * rowLen + offset + width).trim());
+  return Array.from({ length: rows }, (_, i) => {
+    const row = headerLen + i * rowLen;
+    return dbf[row] === 0x2a ? null : dbf.toString("latin1", row + offset, row + offset + width).trim();
+  });
 }
 
 // Inverse Web Mercator (EPSG:3857), metres to degrees.
@@ -49,7 +53,8 @@ const fromMercator = ([x, y]: [number, number]): [number, number] => [(x / R) * 
 
 /**
  * Polygons from a zipped shapefile, by `field`, in degrees. Each shape keeps only its rings, since inside is decided
- * even-odd. Reads files in degrees or in Web Mercator. Fails on a missing or repeated id, or a shape with no polygon.
+ * even-odd. Reads files in WGS 84 or NAD 83 degrees (the same to about a metre) or in WGS 84 Web Mercator, and fails on
+ * any other projection. Skips rows marked deleted. Fails on a missing or repeated id, or a shape with no polygon.
  */
 export function shapefileById(zip: Buffer, field: string, what: string): Record<string, Shape> {
   const files = unzip(zip);
@@ -58,18 +63,23 @@ export function shapefileById(zip: Buffer, field: string, what: string): Record<
     if (names.length !== 1) throw new Error(`${what}: expected one ${ext} file, found ${names.length}`);
     return files[names[0]];
   };
-  const prj = file(".prj").toString("latin1");
-  const project = /Mercator_Auxiliary_Sphere|Web_Mercator/i.test(prj) ? fromMercator : /^GEOGCS\[/.test(prj.trim()) ? null : undefined;
+  const prj = file(".prj").toString("latin1").trim();
+  const project = /^PROJCS\["WGS_1984_Web_Mercator(_Auxiliary_Sphere)?",GEOGCS\["GCS_WGS_1984"/.test(prj)
+    ? fromMercator
+    : /^GEOGCS\["(GCS_WGS_1984|GCS_North_American_1983)"/.test(prj)
+      ? null
+      : undefined;
   if (project === undefined) throw new Error(`${what}: unknown projection ${prj.slice(0, 80)}`);
   const ids = dbfColumn(file(".dbf"), field);
   const shp = file(".shp");
   const out: Record<string, Shape> = {};
   let p = 100;
   for (const id of ids) {
-    if (!id) throw new Error(`${what}: a feature has no ${field}`);
     const len = shp.readInt32BE(p + 4) * 2;
     const c = p + 8;
     p = c + len;
+    if (id === null) continue;
+    if (!id) throw new Error(`${what}: a feature has no ${field}`);
     const type = shp.readInt32LE(c);
     if (type !== 5 && type !== 15 && type !== 25) throw new Error(`${what}: ${field} ${id} has no polygon`);
     const parts = shp.readInt32LE(c + 36);

@@ -23,8 +23,8 @@ import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 import {
-  blockPoints, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, districtsWithHomes, droppedSlivers, homeBlocksUrl, MIN_DISTRICT_SHARE,
-  pointsIn, poolDistrictCounties, shapeBox, shapesById, zctaShapesUrl, zipTableJson, type Shape,
+  blockPoints, boxesMeet, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsWithHomes, EDGE_BUFFER_M, homeBlocksUrl, MIN_DISTRICT_SHARE, overlapWidth,
+  padBox, pointsIn, pointsNearEdge, poolDistrictCounties, reachedDistricts, shapeBox, shapesById, zctaShapesUrl, zipTableJson, type Shape,
 } from "../src/pipeline/zips";
 import { districtMapKey } from "../src/lib/zip";
 import { shapefileById } from "../src/pipeline/shapefile";
@@ -496,8 +496,21 @@ async function runZips() {
     return Object.fromEntries(want.map((z) => [z, zctas[z]]));
   };
   // The points of each ZIP's Census blocks with people or homes, to keep a small overlap that has them.
-  const homes: Record<string, Promise<[number, number][]>> = {};
-  const zipHomes = (z: string) => (homes[z] ??= get(homeBlocksUrl(shapeBox(zctas[z]))).then((t) => pointsIn(zctas[z], blockPoints(t))));
+  // Fetched for the ZIP's box grown by EDGE_BUFFER_M: `inside` for small overlaps, `nearEdge` for homes whose USPS ZIP
+  // may differ from their block's.
+  type Homes = { inside: [number, number][]; nearEdge: [number, number][] };
+  const homes: Record<string, Homes> = {};
+  const fetchHomes = async (want: string[]) => {
+    const need = want.filter((z) => !homes[z]);
+    for (let i = 0; i < need.length; i += 8) {
+      await Promise.all(
+        need.slice(i, i + 8).map(async (z) => {
+          const points = blockPoints(await get(homeBlocksUrl(padBox(shapeBox(zctas[z]), EDGE_BUFFER_M))));
+          homes[z] = { inside: pointsIn(zctas[z], points), nearEdge: pointsNearEdge(zctas[z], points, EDGE_BUFFER_M) };
+        }),
+      );
+    }
+  };
   for (const m of DISTRICT_MAPS) {
     const key = districtMapKey(m.place, m.seat);
     const inPlace = Object.keys(zips).filter(
@@ -516,17 +529,23 @@ async function runZips() {
     const districts = Object.fromEntries(Object.entries(mapped).map(([id, s]) => [id.replace(/^0+(?=\d)/, ""), s]));
     if (Object.keys(districts).length !== m.count) throw new Error(`${key}: expected ${m.count} districts, found ${Object.keys(districts).sort().join(", ")}`);
     const shares = districtShares(shapes, districts);
-    const kept: Record<string, string[]> = {};
+    await fetchHomes(inPlace);
+    const boxes = Object.fromEntries(Object.entries(districts).map(([id, d]) => [id, shapeBox(d)]));
     for (const z of inPlace) {
       const s = shares[z] ?? {};
-      const small = Object.keys(s).filter((d) => s[d] < MIN_DISTRICT_SHARE);
-      const withHomes = small.length ? districtsWithHomes(await zipHomes(z), districts, small) : [];
-      for (const d of withHomes) console.log(`${key}: kept ${z} in district ${d}, ${(s[d] * 100).toFixed(2)}% of its mapped land, for its 2020 Census homes`);
-      const touched = (kept[z] = districtsTouched(s, { withHomes }));
-      if (touched.length) (zips[z].districts ??= {})[key] = touched;
+      const h = homes[z];
+      const near = padBox(shapeBox(zctas[z]), EDGE_BUFFER_M);
+      const reach = reachedDistricts({
+        shares: s,
+        widths: Object.fromEntries(Object.keys(s).map((d) => [d, overlapWidth(zctas[z], districts[d])])),
+        withHomes: districtsWithHomes(h.inside, districts, Object.keys(s).filter((d) => s[d] < MIN_DISTRICT_SHARE)),
+        nearEdge: districtsWithHomes(h.nearEdge, districts, Object.keys(districts).filter((d) => boxesMeet(boxes[d], near))),
+      });
+      for (const n of reach.notes) console.log(`${key}: kept ${z} in district ${n.district}: ${n.why}`);
+      for (const d of reach.dropped) console.log(`${key}: dropped ${z} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land, ${Math.round(d.width)} m thick, with no 2020 Census homes`);
+      if (reach.touched.length) (zips[z].districts ??= {})[key] = reach.touched;
       else console.warn(`warning: ZIP ${z} reaches ${m.place.name} but no ${m.seat} district; its contests stay maybe`);
     }
-    for (const d of droppedSlivers(shares, kept)) console.log(`${key}: dropped ${d.zip} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land, with no 2020 Census homes`);
   }
   const out = path.join(process.cwd(), "src", "data", "zips.json");
   fs.mkdirSync(path.dirname(out), { recursive: true });

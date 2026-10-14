@@ -166,9 +166,12 @@ export function shapesById(text: string, field: string, what: string): Record<st
   return out;
 }
 
-// Below this share of a ZIP's mapped land, an overlap is a border sliver unless 2020 Census homes or people lie in it.
-// In SF the largest sliver is 0.33% and the smallest real piece 0.94%.
+// Below this share of a ZIP's mapped land, and thinner than SLIVER_WIDTH_M, an overlap is a border sliver unless 2020
+// Census homes or people lie in it. In SF the largest sliver is 0.33% and the smallest real piece 0.94%.
 export const MIN_DISTRICT_SHARE = 0.005;
+export const SLIVER_WIDTH_M = 60;
+// ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbour's ZIP.
+export const EDGE_BUFFER_M = 150;
 // Dropped overlaps at or above this share are printed.
 export const LOG_SHARE = 0.001;
 // Enough rows that a ZIP a few blocks tall still resolves the threshold.
@@ -208,7 +211,7 @@ function bounds(es: Edge[]): Box {
   }
   return b;
 }
-const meets = (a: Box, b: Box) => a.x[0] <= b.x[1] && b.x[0] <= a.x[1] && a.y[0] <= b.y[1] && b.y[0] <= a.y[1];
+export const boxesMeet = (a: Box, b: Box) => a.x[0] <= b.x[1] && b.x[0] <= a.x[1] && a.y[0] <= b.y[1] && b.y[0] <= a.y[1];
 
 // Edges in bands of latitude, so a row checks only the edges near it. A statewide map has far more edges than a ZIP.
 const BANDS = 64;
@@ -241,7 +244,7 @@ export function districtShares(
     const step = (hi - lo) / rows;
     const bandStep = (hi - lo) / BANDS || 1;
     // Only edges that reach the ZIP's rows matter: a row's crossings come from edges spanning its latitude.
-    const near = ds.filter((d) => meets(d.box, box)).map((d) => ({ id: d.id, bands: banded(d.es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep) }));
+    const near = ds.filter((d) => boxesMeet(d.box, box)).map((d) => ({ id: d.id, bands: banded(d.es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep) }));
     const zBands = banded(ze, lo, bandStep);
     const area: Record<string, number> = {};
     for (let k = 0; k < rows; k++) {
@@ -260,19 +263,121 @@ export function districtShares(
   return out;
 }
 
-/** The districts a ZIP reaches: those with enough of its land, and any smaller overlap with homes (`withHomes`). */
-export const districtsTouched = (shares: Record<string, number>, { withHomes = [] }: { withHomes?: string[] } = {}) =>
-  Object.keys(shares)
-    .filter((id) => shares[id] >= MIN_DISTRICT_SHARE || withHomes.includes(id))
-    .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
+const byNumber = (a: string, b: string) => a.localeCompare(b, "en", { numeric: true });
 
-/** Overlaps of at least `LOG_SHARE` that were dropped, for the run's log. `kept` is each ZIP's districts. */
-export function droppedSlivers(shares: Record<string, Record<string, number>>, kept: Record<string, string[]>) {
-  const dropped: { zip: string; district: string; share: number }[] = [];
-  for (const [zip, s] of Object.entries(shares)) {
-    for (const [district, share] of Object.entries(s)) if (share >= LOG_SHARE && !kept[zip]?.includes(district)) dropped.push({ zip, district, share });
+/**
+ * The districts a ZIP reaches, from each district's share of its mapped land and the overlap's thickness in metres
+ * (`widths`, see `overlapWidth`). An overlap is dropped only when it is both under `MIN_DISTRICT_SHARE` and thinner
+ * than `SLIVER_WIDTH_M`, with no 2020 homes in it (`withHomes`). A district with homes within `EDGE_BUFFER_M` of the
+ * ZIP's edge (`nearEdge`) is kept even with no overlap. `notes` explains each overlap kept that one test alone would
+ * have dropped; `dropped` lists dropped overlaps of `LOG_SHARE` or more.
+ */
+export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = [] }: {
+  shares: Record<string, number>;
+  widths: Record<string, number>;
+  withHomes?: string[];
+  nearEdge?: string[];
+}) {
+  const touched = new Set<string>();
+  const notes: { district: string; share: number; why: string }[] = [];
+  const dropped: { district: string; share: number; width: number }[] = [];
+  for (const [district, share] of Object.entries(shares)) {
+    const big = share >= MIN_DISTRICT_SHARE;
+    const wide = (widths[district] ?? Infinity) >= SLIVER_WIDTH_M;
+    if (big || wide || withHomes.includes(district)) touched.add(district);
+    else if (share >= LOG_SHARE) dropped.push({ district, share, width: widths[district] });
+    if (big && !wide) notes.push({ district, share, why: `only ${Math.round(widths[district])} m thick, but ${(share * 100).toFixed(2)}% of the ZIP` });
+    else if (!big && wide) notes.push({ district, share, why: `${Math.round(widths[district])} m thick, though ${(share * 100).toFixed(2)}% of the ZIP` });
+    else if (!big && withHomes.includes(district)) notes.push({ district, share, why: `a thin ${(share * 100).toFixed(2)}% of the ZIP with 2020 homes` });
   }
-  return dropped;
+  for (const district of nearEdge) {
+    if (!touched.has(district)) notes.push({ district, share: shares[district] ?? 0, why: `2020 homes within ${EDGE_BUFFER_M} m of the ZIP's edge` });
+    touched.add(district);
+  }
+  return { touched: [...touched].sort(byNumber), notes: notes.sort((a, b) => byNumber(a.district, b.district)), dropped };
+}
+
+// Metres per degree of latitude, and of longitude at a latitude.
+const M_PER_DEG = 111_320;
+const mPerDegX = (lat: number) => M_PER_DEG * Math.cos((lat * Math.PI) / 180);
+
+function overlapIntervals(a: number[], b: number[]): [number, number][] {
+  const out: [number, number][] = [];
+  for (let i = 0, j = 0; i + 1 < a.length && j + 1 < b.length; ) {
+    const lo = Math.max(a[i], b[j]);
+    const hi = Math.min(a[i + 1], b[j + 1]);
+    if (hi > lo) out.push([lo, hi]);
+    if (a[i + 1] < b[j + 1]) i += 2;
+    else j += 2;
+  }
+  return out;
+}
+
+// The longest single run of overlap along any row of latitude, in degrees of longitude.
+function widestRow(a: Edge[], b: Edge[], { minRows = MIN_ROWS }: { minRows?: number } = {}): number {
+  const ab = bounds(a);
+  const bb = bounds(b);
+  const lo = Math.max(ab.y[0], bb.y[0]);
+  const hi = Math.min(ab.y[1], bb.y[1]);
+  if (!(hi > lo)) return 0;
+  const rows = Math.max(minRows, Math.ceil((hi - lo) / MAX_ROW_STEP));
+  const step = (hi - lo) / rows;
+  const bandStep = (hi - lo) / BANDS;
+  const span = (es: Edge[]) => banded(es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep);
+  const [ba, bb2] = [span(a), span(b)];
+  let widest = 0;
+  for (let k = 0; k < rows; k++) {
+    const y = lo + (k + 0.5) * step;
+    const band = Math.min(BANDS - 1, Math.floor((y - lo) / bandStep));
+    for (const [x0, x1] of overlapIntervals(crossings(ba[band], y), crossings(bb2[band], y))) widest = Math.max(widest, x1 - x0);
+  }
+  return widest;
+}
+
+/**
+ * How thick, in metres, the overlap of a ZIP and a district is: the smaller of its longest east-west run along any
+ * row and its longest north-south run along any column. A border sliver is thin one way however long it is; a piece
+ * of a neighbourhood is not. A diagonal sliver reads up to 1.4 times thicker, which keeps it.
+ */
+export function overlapWidth(zip: Shape, district: Shape, opts: { minRows?: number } = {}): number {
+  const z = edges(rings(zip));
+  const d = edges(rings(district));
+  const flip = (es: Edge[]): Edge[] => es.map(([x1, y1, x2, y2]) => [y1, x1, y2, x2]);
+  const lat = (bounds(z).y[0] + bounds(z).y[1]) / 2;
+  return Math.min(widestRow(z, d, opts) * mPerDegX(lat), widestRow(flip(z), flip(d), opts) * M_PER_DEG);
+}
+
+/** A box grown by `metres` on every side. */
+export function padBox({ x, y }: Box, metres: number): Box {
+  const dy = metres / M_PER_DEG;
+  const dx = metres / mPerDegX(Math.max(Math.abs(y[0]), Math.abs(y[1])));
+  return { x: [x[0] - dx, x[1] + dx], y: [y[0] - dy, y[1] + dy] };
+}
+
+/** The points within `metres` of a shape's edge, inside or out. */
+export function pointsNearEdge(s: Shape, points: [number, number][], metres: number): [number, number][] {
+  const es = edges(rings(s));
+  const box = padBox(bounds(es), metres);
+  const lo = box.y[0];
+  const bandStep = (box.y[1] - lo) / BANDS;
+  const bands = banded(es, lo, bandStep);
+  const kx = mPerDegX((box.y[0] + box.y[1]) / 2);
+  const dy = metres / M_PER_DEG;
+  return points.filter(([px, py]) => {
+    if (px < box.x[0] || px > box.x[1] || py < box.y[0] || py > box.y[1]) return false;
+    const a = Math.max(0, Math.floor((py - dy - lo) / bandStep));
+    const b = Math.min(BANDS - 1, Math.floor((py + dy - lo) / bandStep));
+    for (let k = a; k <= b; k++) {
+      for (const [x1, y1, x2, y2] of bands[k]) {
+        // Distance to the segment, in metres on a local flat grid.
+        const [ax, ay, bx, by] = [(x1 - px) * kx, (y1 - py) * M_PER_DEG, (x2 - px) * kx, (y2 - py) * M_PER_DEG];
+        const len2 = (bx - ax) ** 2 + (by - ay) ** 2;
+        const t = len2 ? Math.max(0, Math.min(1, -(ax * (bx - ax) + ay * (by - ay)) / len2)) : 0;
+        if (Math.hypot(ax + t * (bx - ax), ay + t * (by - ay)) <= metres) return true;
+      }
+    }
+    return false;
+  });
 }
 
 /** Census 2020 blocks with people or homes in a box, by their internal points. ZIP areas and districts are both made of blocks. */
@@ -295,7 +400,13 @@ export function blockPoints(text: string): [number, number][] {
   if (json.error !== undefined) throw new Error(`TIGERweb blocks: the server returned an error: ${JSON.stringify(json.error)}`);
   if (json.exceededTransferLimit) throw new Error("TIGERweb blocks: the response was cut off");
   if (!Array.isArray(json.features)) throw new Error("TIGERweb blocks: no features in the response");
-  return json.features.map((f) => [Number(f.attributes.INTPTLON), Number(f.attributes.INTPTLAT)]);
+  return json.features.map((f) => {
+    // Number("") is 0, so a blank must not pass as a coordinate.
+    const num = (v: string | undefined) => (v === undefined || String(v).trim() === "" ? NaN : Number(v));
+    const p: [number, number] = [num(f.attributes.INTPTLON), num(f.attributes.INTPTLAT)];
+    if (!p.every(Number.isFinite)) throw new Error(`TIGERweb blocks: a block has no internal point: ${JSON.stringify(f.attributes)}`);
+    return p;
+  });
 }
 
 export const shapeBox = (s: Shape): Box => bounds(edges(rings(s)));
