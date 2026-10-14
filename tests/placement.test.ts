@@ -347,6 +347,28 @@ describe("related-article sidebars", () => {
   });
 });
 
+describe("previous and next article teasers", () => {
+  it("ignores the teasers above an editorial (San Mateo Daily Journal layout)", () => {
+    const url = "https://www.smdailyjournal.com/opinion/editorials/editorial-nicolas-for-south-san-francisco-district-3/";
+    const text = [
+      "Previous",
+      "[Editorial: Nash, Newsom, Sahae for San Mateo City Council]",
+      "Editorial: Nash, Newsom, Sahae for San Mateo City Council",
+      "The members of the San Mateo City Council work hard, do thei…",
+      "Next",
+      "Next Up",
+      "[Editorial: Venkat for District 1 Foster City Council]",
+      "Editorial: Venkat for District 1 Foster City Council",
+      "Two current councilmembers, Mayor Art Kiesel and Councilmemb…",
+      "Editorial: Nicolas for South San Francisco District 3",
+      "Editorial",
+      "Nicolas has a practical stance when it comes to city issues, and the city overall benefits from her know-how, perspective and experience.",
+    ].join("\n");
+    const q = quote("Nicolas has a practical stance when it comes to city issues, and the city overall benefits from her know-how, perspective and experience.", url);
+    expect(misplacedUnder(q, "south-san-francisco-council-3", [page(text, url)], contests)).toBeNull();
+  });
+});
+
 describe("per-item badges that look like sidebar labels", () => {
   it("keeps a heading after a bare Recommended badge (East Bay DSA layout)", () => {
     const url = "https://vote.eastbaydsa.org/simple-guide.html";
