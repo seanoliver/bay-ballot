@@ -172,6 +172,12 @@ export const MIN_DISTRICT_SHARE = 0.005;
 export const SLIVER_WIDTH_M = 60;
 // ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbour's ZIP.
 export const EDGE_BUFFER_M = 150;
+// A block's reach past its internal point is at most this. sqrt(land area) is the side of a square block, more than
+// the 0.71 sides from a square's centre to its corner. In rural Napa, south Santa Clara and west Sonoma, 3 km covers
+// 96% to 99% of blocks with homes; the rest are over 9 km² (about 55 people each, by median), and a wider pad would
+// pull in most of a rural county for every ZIP near them.
+export const BLOCK_REACH_CAP_M = 3000;
+export const MAX_BLOCK_REACH_M = EDGE_BUFFER_M + BLOCK_REACH_CAP_M;
 // Dropped overlaps at or above this share are printed.
 export const LOG_SHARE = 0.001;
 // Enough rows that a ZIP a few blocks tall still resolves the threshold.
@@ -268,8 +274,8 @@ const byNumber = (a: string, b: string) => a.localeCompare(b, "en", { numeric: t
 /**
  * The districts a ZIP reaches, from each district's share of its mapped land and the overlap's thickness in metres
  * (`widths`, see `overlapWidth`). An overlap is dropped only when it is both under `MIN_DISTRICT_SHARE` and thinner
- * than `SLIVER_WIDTH_M`, with no 2020 homes in it (`withHomes`). A district with homes within `EDGE_BUFFER_M` of the
- * ZIP's edge (`nearEdge`) is kept even with no overlap. `notes` explains each overlap kept that one test alone would
+ * than `SLIVER_WIDTH_M`, with no 2020 homes in it (`withHomes`). A district with a block of homes that reaches the
+ * ZIP's edge (`nearEdge`, see `blocksNearEdge`) is kept even with no overlap. `notes` explains each overlap kept that one test alone would
  * have dropped; `dropped` lists dropped overlaps of `LOG_SHARE` or more.
  */
 export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = [] }: {
@@ -291,10 +297,10 @@ export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = []
     else if (!big && withHomes.includes(district)) notes.push({ district, share, why: `a thin ${(share * 100).toFixed(2)}% of the ZIP with 2020 homes` });
   }
   for (const district of nearEdge) {
-    if (!touched.has(district)) notes.push({ district, share: shares[district] ?? 0, why: `2020 homes within ${EDGE_BUFFER_M} m of the ZIP's edge` });
+    if (!touched.has(district)) notes.push({ district, share: shares[district] ?? 0, why: "2020 homes in a block that reaches the ZIP's edge" });
     touched.add(district);
   }
-  return { touched: [...touched].sort(byNumber), notes: notes.sort((a, b) => byNumber(a.district, b.district)), dropped };
+  return { touched: [...touched].sort(byNumber), notes: notes.sort((a, b) => byNumber(a.district, b.district)), dropped: dropped.filter((d) => !touched.has(d.district)) };
 }
 
 // Metres per degree of latitude, and of longitude at a latitude.
@@ -315,21 +321,28 @@ function overlapIntervals(a: number[], b: number[]): [number, number][] {
 
 // The longest single run of overlap along any row of latitude, in degrees of longitude.
 function widestRow(a: Edge[], b: Edge[], { minRows = MIN_ROWS }: { minRows?: number } = {}): number {
-  const ab = bounds(a);
-  const bb = bounds(b);
-  const lo = Math.max(ab.y[0], bb.y[0]);
-  const hi = Math.min(ab.y[1], bb.y[1]);
+  const boxA = bounds(a);
+  const boxB = bounds(b);
+  const lo = Math.max(boxA.y[0], boxB.y[0]);
+  const hi = Math.min(boxA.y[1], boxB.y[1]);
   if (!(hi > lo)) return 0;
   const rows = Math.max(minRows, Math.ceil((hi - lo) / MAX_ROW_STEP));
   const step = (hi - lo) / rows;
   const bandStep = (hi - lo) / BANDS;
   const span = (es: Edge[]) => banded(es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep);
-  const [ba, bb2] = [span(a), span(b)];
+  const [bandsA, bandsB] = [span(a), span(b)];
   let widest = 0;
   for (let k = 0; k < rows; k++) {
     const y = lo + (k + 0.5) * step;
     const band = Math.min(BANDS - 1, Math.floor((y - lo) / bandStep));
-    for (const [x0, x1] of overlapIntervals(crossings(ba[band], y), crossings(bb2[band], y))) widest = Math.max(widest, x1 - x0);
+    // Runs that touch are one run: two parts of a shape that share an edge cross the row at the same point.
+    let start = NaN;
+    let end = NaN;
+    for (const [x0, x1] of overlapIntervals(crossings(bandsA[band], y), crossings(bandsB[band], y))) {
+      if (x0 > end || Number.isNaN(end)) start = x0;
+      end = x1;
+      widest = Math.max(widest, end - start);
+    }
   }
   return widest;
 }
@@ -354,30 +367,33 @@ export function padBox({ x, y }: Box, metres: number): Box {
   return { x: [x[0] - dx, x[1] + dx], y: [y[0] - dy, y[1] + dy] };
 }
 
-/** The points within `metres` of a shape's edge, inside or out. */
-export function pointsNearEdge(s: Shape, points: [number, number][], metres: number): [number, number][] {
+/** The points of the blocks whose reach (see `blockPoints`) gets to a shape's edge, from inside or out. */
+export function blocksNearEdge(s: Shape, blocks: Block[]): [number, number][] {
+  if (blocks.length === 0) return [];
   const es = edges(rings(s));
-  const box = padBox(bounds(es), metres);
+  const box = padBox(bounds(es), Math.max(...blocks.map((b) => b.reach)));
   const lo = box.y[0];
   const bandStep = (box.y[1] - lo) / BANDS;
   const bands = banded(es, lo, bandStep);
   const kx = mPerDegX((box.y[0] + box.y[1]) / 2);
-  const dy = metres / M_PER_DEG;
-  return points.filter(([px, py]) => {
-    if (px < box.x[0] || px > box.x[1] || py < box.y[0] || py > box.y[1]) return false;
-    const a = Math.max(0, Math.floor((py - dy - lo) / bandStep));
-    const b = Math.min(BANDS - 1, Math.floor((py + dy - lo) / bandStep));
-    for (let k = a; k <= b; k++) {
-      for (const [x1, y1, x2, y2] of bands[k]) {
-        // Distance to the segment, in metres on a local flat grid.
-        const [ax, ay, bx, by] = [(x1 - px) * kx, (y1 - py) * M_PER_DEG, (x2 - px) * kx, (y2 - py) * M_PER_DEG];
-        const len2 = (bx - ax) ** 2 + (by - ay) ** 2;
-        const t = len2 ? Math.max(0, Math.min(1, -(ax * (bx - ax) + ay * (by - ay)) / len2)) : 0;
-        if (Math.hypot(ax + t * (bx - ax), ay + t * (by - ay)) <= metres) return true;
+  return blocks
+    .filter(({ at: [px, py], reach }) => {
+      if (px < box.x[0] || px > box.x[1] || py < box.y[0] || py > box.y[1]) return false;
+      const dy = reach / M_PER_DEG;
+      const a = Math.max(0, Math.floor((py - dy - lo) / bandStep));
+      const b = Math.min(BANDS - 1, Math.floor((py + dy - lo) / bandStep));
+      for (let k = a; k <= b; k++) {
+        for (const [x1, y1, x2, y2] of bands[k]) {
+          // Distance to the segment, in metres on a local flat grid.
+          const [ax, ay, bx, by] = [(x1 - px) * kx, (y1 - py) * M_PER_DEG, (x2 - px) * kx, (y2 - py) * M_PER_DEG];
+          const len2 = (bx - ax) ** 2 + (by - ay) ** 2;
+          const t = len2 ? Math.max(0, Math.min(1, -(ax * (bx - ax) + ay * (by - ay)) / len2)) : 0;
+          if (Math.hypot(ax + t * (bx - ax), ay + t * (by - ay)) <= reach) return true;
+        }
       }
-    }
-    return false;
-  });
+      return false;
+    })
+    .map((b) => b.at);
 }
 
 /** Census 2020 blocks with people or homes in a box, by their internal points. ZIP areas and districts are both made of blocks. */
@@ -389,23 +405,30 @@ export const homeBlocksUrl = ({ x, y }: Box) =>
     geometryType: "esriGeometryEnvelope",
     inSR: "4326",
     spatialRel: "esriSpatialRelIntersects",
-    outFields: "INTPTLON,INTPTLAT",
+    outFields: "INTPTLON,INTPTLAT,AREALAND",
     returnGeometry: "false",
     f: "json",
   });
 
-/** Block points from a `homeBlocksUrl` response. Fails on an error or a cut-off response. */
-export function blockPoints(text: string): [number, number][] {
-  const json = JSON.parse(text) as { error?: unknown; exceededTransferLimit?: boolean; features?: { attributes: Record<string, string> }[] };
+/**
+ * A block's internal point, and how far from it the block may reach: `EDGE_BUFFER_M` plus the side of a square of
+ * the block's land, capped at `BLOCK_REACH_CAP_M`. A big rural block can touch a ZIP's edge far from its point.
+ */
+export type Block = { at: [number, number]; reach: number };
+
+/** Blocks from a `homeBlocksUrl` response. Fails on an error, a cut-off response, or a block with no point or area. */
+export function blockPoints(text: string): Block[] {
+  const json = JSON.parse(text) as { error?: unknown; exceededTransferLimit?: boolean; features?: { attributes: Record<string, string | number | null> }[] };
   if (json.error !== undefined) throw new Error(`TIGERweb blocks: the server returned an error: ${JSON.stringify(json.error)}`);
   if (json.exceededTransferLimit) throw new Error("TIGERweb blocks: the response was cut off");
   if (!Array.isArray(json.features)) throw new Error("TIGERweb blocks: no features in the response");
+  // Number("") and Number(null) are 0, so a blank must not pass as a number.
+  const num = (v: string | number | null | undefined) => (v === undefined || v === null || String(v).trim() === "" ? NaN : Number(v));
   return json.features.map((f) => {
-    // Number("") is 0, so a blank must not pass as a coordinate.
-    const num = (v: string | undefined) => (v === undefined || String(v).trim() === "" ? NaN : Number(v));
-    const p: [number, number] = [num(f.attributes.INTPTLON), num(f.attributes.INTPTLAT)];
-    if (!p.every(Number.isFinite)) throw new Error(`TIGERweb blocks: a block has no internal point: ${JSON.stringify(f.attributes)}`);
-    return p;
+    const at: [number, number] = [num(f.attributes.INTPTLON), num(f.attributes.INTPTLAT)];
+    const area = num(f.attributes.AREALAND);
+    if (!at.every(Number.isFinite) || !(area >= 0)) throw new Error(`TIGERweb blocks: a block has no internal point or land area: ${JSON.stringify(f.attributes)}`);
+    return { at, reach: EDGE_BUFFER_M + Math.min(Math.sqrt(area), BLOCK_REACH_CAP_M) };
   });
 }
 

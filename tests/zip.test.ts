@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { deflateRawSync } from "node:zlib";
 import {
-  blockPoints, buildZipTable, DISTRICT_MAPS, districtShares, districtsWithHomes, EDGE_BUFFER_M, overlapWidth, padBox, pointsIn, pointsNearEdge, poolDistrictCounties,
+  blockPoints, buildZipTable, DISTRICT_MAPS, districtShares, blocksNearEdge, BLOCK_REACH_CAP_M, districtsWithHomes, EDGE_BUFFER_M, overlapWidth, padBox, pointsIn, poolDistrictCounties,
   reachedDistricts, SEAT_KINDS, shapesById, SLIVER_WIDTH_M, zipTableJson, type Shape,
 } from "@/pipeline/zips";
 import { shapefileById, unzip } from "@/pipeline/shapefile";
@@ -216,6 +216,13 @@ describe("overlapWidth", () => {
     // 0.0005 degrees of longitude at 37.5 degrees is about 44 m.
     expect(overlapWidth(zip, box(-121.9905, 37, -121, 38))).toBeCloseTo(44.2, 0);
   });
+  it("reads a ZIP of two parts that share an edge as one run across the seam", () => {
+    const halves: Shape = { type: "MultiPolygon", coordinates: [box(-122, 37.5, -121.995, 37.51).coordinates as never, box(-121.995, 37.5, -121.99, 37.51).coordinates as never] };
+    // A district over the whole ZIP: rows run 880 m across both halves, not 440 m in each; columns run 1,110 m.
+    const all = box(-123, 37, -121, 38);
+    expect(overlapWidth(halves, all)).toBeCloseTo(overlapWidth(zip, all), 0);
+    expect(overlapWidth(halves, all)).toBeCloseTo(883, -1);
+  });
   it("measures a compact piece by its smaller side, and a district that misses the ZIP as 0", () => {
     expect(overlapWidth(zip, box(-121.995, 37.505, -121.9, 37.6))).toBeCloseTo(441, -1);
     expect(overlapWidth(zip, box(-120, 37.5, -119.99, 37.51))).toBe(0);
@@ -242,6 +249,11 @@ describe("reachedDistricts", () => {
     expect(r.touched).toEqual(["2", "9"]);
     expect(r.notes[0].why).toMatch(/2020 homes/);
   });
+  it("doesn't report a thin overlap as dropped when homes near the edge keep its district", () => {
+    const r = reachedDistricts({ shares: { "9": 0.996, "2": 0.004 }, widths: { "9": 900, "2": thin }, nearEdge: ["2"] });
+    expect(r.touched).toEqual(["2", "9"]);
+    expect(r.dropped).toEqual([]);
+  });
   it("adds a district with homes near the ZIP's edge, even with no overlap, and doesn't log tiny drops", () => {
     const r = reachedDistricts({ shares: { "9": 0.9995, "2": 0.0005 }, widths: { "9": 900, "2": thin }, nearEdge: ["4", "9"] });
     expect(r.touched).toEqual(["4", "9"]);
@@ -253,9 +265,17 @@ describe("reachedDistricts", () => {
 describe("homes near a ZIP's edge", () => {
   const zip = box(-122, 37.5, -121.99, 37.51);
   // 0.001 degrees of longitude at 37.5 degrees is about 88 m; 0.002 is about 177 m.
-  it("keeps points within the buffer of the edge, inside or out, and no others", () => {
+  const small = (at: [number, number]) => ({ at, reach: EDGE_BUFFER_M });
+  it("keeps small blocks within the buffer of the edge, inside or out, and no others", () => {
     const pts: [number, number][] = [[-121.995, 37.505], [-121.999, 37.505], [-122.001, 37.505], [-122.002, 37.505], [-121.995, 37.511], [-121.995, 37.5115]];
-    expect(pointsNearEdge(zip, pts, EDGE_BUFFER_M)).toEqual([[-121.999, 37.505], [-122.001, 37.505], [-121.995, 37.511]]);
+    expect(blocksNearEdge(zip, pts.map(small))).toEqual([[-121.999, 37.505], [-122.001, 37.505], [-121.995, 37.511]]);
+    expect(blocksNearEdge(zip, [])).toEqual([]);
+  });
+  it("reaches further for a big block, whose edge can touch the ZIP far from its internal point", () => {
+    // About 880 m west of the ZIP: missed as a small block, kept as one of about 1 km².
+    const far: [number, number] = [-122.01, 37.505];
+    expect(blocksNearEdge(zip, [small(far)])).toEqual([]);
+    expect(blocksNearEdge(zip, [{ at: far, reach: EDGE_BUFFER_M + 1000 }])).toEqual([far]);
   });
   it("grows a box by metres on every side", () => {
     const b = padBox({ x: [-122, -121.99], y: [37.5, 37.51] }, 111.32);
@@ -267,12 +287,18 @@ describe("homes near a ZIP's edge", () => {
 
 describe("homes in small overlaps", () => {
   const zip = box(0, 0, 0.01, 0.01);
-  it("reads block points, and fails on an error or a cut-off response", () => {
-    const text = JSON.stringify({ features: [{ attributes: { INTPTLON: "-122.4", INTPTLAT: "+37.7" } }] });
-    expect(blockPoints(text)).toEqual([[-122.4, 37.7]]);
+  it("reads blocks with a reach from their land area, capped, and fails on an error, a cut-off response or a missing value", () => {
+    const block = (area: number | string) => ({ attributes: { INTPTLON: "-122.4", INTPTLAT: "+37.7", AREALAND: area } });
+    const text = JSON.stringify({ features: [block(10_000), block(0), block(1e9)] });
+    expect(blockPoints(text)).toEqual([
+      { at: [-122.4, 37.7], reach: EDGE_BUFFER_M + 100 },
+      { at: [-122.4, 37.7], reach: EDGE_BUFFER_M },
+      { at: [-122.4, 37.7], reach: EDGE_BUFFER_M + BLOCK_REACH_CAP_M },
+    ]);
+    expect(() => blockPoints(JSON.stringify({ features: [block("")] }))).toThrow(/land area/);
     expect(() => blockPoints(JSON.stringify({ error: { code: 400 } }))).toThrow(/error/);
     expect(() => blockPoints(JSON.stringify({ features: [], exceededTransferLimit: true }))).toThrow(/cut off/);
-    expect(() => blockPoints(JSON.stringify({ features: [{ attributes: { INTPTLON: "", INTPTLAT: "+37.7" } }] }))).toThrow(/internal point/);
+    expect(() => blockPoints(JSON.stringify({ features: [{ attributes: { INTPTLON: "", INTPTLAT: "+37.7", AREALAND: 1 } }] }))).toThrow(/internal point/);
   });
   it("keeps the points inside a ZIP, and finds which candidate districts hold any", () => {
     const pts: [number, number][] = [[0.005, 0.005], [0.0095, 0.0099], [0.02, 0.005]];
@@ -465,7 +491,7 @@ describe("the committed ZIP table", () => {
     expect(onBallot.length).toBeGreaterThan(0);
     expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id)).toEqual([]);
     expect(table.zips["94130"].districts?.["county:San Francisco/Supervisor"]).toEqual(["6"]);
-    expect(table.zips["94110"].districts?.["county:San Francisco/Supervisor"]).toEqual(["8", "9", "10"]);
+    expect(table.zips["94110"].districts?.["county:San Francisco/Supervisor"]).toEqual(["6", "8", "9", "10", "11"]);
   });
   it("maps every ZIP to its state-drawn districts, and every such district on the ballot to some ZIP (rerun npm run bb -- zips)", async () => {
     const { loadElection } = await import("@/lib/data");
@@ -512,14 +538,16 @@ describe("the committed ZIP table", () => {
     const d = (zip: string) => (raw as unknown as ZipTable).zips[zip].districts;
     // Inside one district each: Palo Alto for State Senate, Vallejo (Board of Equalization 1, like all of Solano), the Mission's Assembly.
     expect(d("94301")).toMatchObject({ "state:California/State Senate": ["13"], "state:California/Board of Equalization": ["2"] });
+    // Palo Alto's homes across San Francisquito Creek, in Menlo Park and East Palo Alto, add Congress 15 and Assembly 21.
+    expect(d("94301")).toMatchObject({ "state:California/Congress": ["15", "16"], "state:California/Assembly": ["21", "23"] });
     expect(d("94590")).toMatchObject({ "state:California/Congress": ["8"], "state:California/Assembly": ["11"], "state:California/Board of Equalization": ["1"] });
     expect(d("94110")).toMatchObject({ "state:California/Assembly": ["17"] });
-    // A small overlap kept for its 2020 homes (28 people in 94706, 97 in 95116), where area alone would have dropped it.
+    // Small overlaps with 2020 homes (28 people in 94706's Congress 8, 97 in 95116's Congress 17) that area alone dropped.
     expect(d("94706")?.["state:California/Congress"]).toEqual(["8", "12"]);
-    expect(d("95116")?.["state:California/Congress"]).toEqual(["17", "18"]);
+    expect(d("95116")?.["state:California/Congress"]).toEqual(["16", "17", "18"]);
     // Straddling: Ingleside spans Congress 11 and 15 under the Prop 50 map; downtown San José spans four council districts.
     expect(d("94112")?.["state:California/Congress"]).toEqual(["11", "15"]);
     expect(d("95112")?.["city:San Jose/City Council"]).toEqual(["3", "4", "6", "7"]);
-    expect(d("94928")?.["county:Sonoma/Supervisor"]).toEqual(["2", "3"]);
+    expect(d("94928")?.["county:Sonoma/Supervisor"]).toEqual(["1", "2", "3", "5"]);
   });
 });
