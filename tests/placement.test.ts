@@ -414,6 +414,30 @@ describe("article teasers (San Mateo Daily Journal layout)", () => {
     const clipped = ["Next Up", `[${headline}]`, "Editorial: Yes on Measure EE …", "San Bruno voters will be able to change…", "Editorial: Nicolas for South San Francisco District 3", nicolas].join("\n");
     expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(clipped, url)], contests)).toBeNull();
   });
+  it("handles a page that ends right after a teaser link", () => {
+    const text = ["Editorial: Yes on Measure EE", ee, "Next Up", "[Editorial: Venkat for District 1 Foster City Council]"].join("\n");
+    expect(misplacedUnder(quote(ee, url), "san-bruno-measure-ee", [page(text, url)], contests)).toBeNull();
+  });
+  it("counts a clipped repeat only when it is the start of the headline", () => {
+    const text = ["Next Up", "[Editorial: Yes on Measure EE]", "Measure EE…", ee].join("\n");
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
+  });
+  it("needs the link text to fill its line", () => {
+    const text = ["Next Up", "Our earlier editorial is at [Measure EE].", "Measure EE", ee].join("\n");
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
+  });
+  it("ignores teasers under doubled labels, as on the stored pages", () => {
+    const text = [
+      "Previous",
+      "Previous",
+      "[Editorial: Yes on Measure EE]",
+      "Editorial: Yes on Measure EE",
+      "San Bruno voters will be able to change…",
+      "Editorial: Nicolas for South San Francisco District 3",
+      nicolas,
+    ].join("\n");
+    expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(text, url)], contests)).toBeNull();
+  });
   it("keeps a repeated link line as a heading when no teaser label precedes it (Empower Oakland layout)", () => {
     const lee = "Mayor Lee has brought steady leadership and righted the ship, laying the foundation for Oakland’s comeback.";
     const text = ["[Barbara Lee]", "Barbara Lee", lee].join("\n");
