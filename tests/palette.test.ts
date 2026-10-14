@@ -46,8 +46,9 @@ function hue(hex: string): number {
   if (Math.hypot(a, b) < 0.05) return -1;
   return ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
 }
-const isBlue = (hex: string) => hue(hex) >= 230 && hue(hex) <= 280;
-const isRed = (hex: string) => hue(hex) >= 330 || (hue(hex) >= 0 && hue(hex) <= 30);
+// Blue stops at 280: violet slot 1 sits at 284 to 287, so a higher bound would flag the shipped palette.
+const isBlue = (hex: string) => hue(hex) >= 215 && hue(hex) <= 280;
+const isRed = (hex: string) => hue(hex) >= 330 || (hue(hex) >= 0 && hue(hex) <= 40);
 
 function luminance(hex: string): number {
   const [r, g, b] = channels(hex).map(linear);
@@ -60,11 +61,14 @@ const contrast = (a: string, b: string) => {
 
 describe("party hue check", () => {
   it("catches the old party colors and passes slate as gray", () => {
-    expect(isBlue("#2a78d6")).toBe(true);
-    expect(isBlue("#4a40e0")).toBe(true);
-    expect(isRed("#e87ba4")).toBe(true);
-    expect(isRed("#d55181")).toBe(true);
+    for (const blue of ["#2a78d6", "#3987e5"]) expect(isBlue(blue)).toBe(true);
+    for (const pink of ["#e87ba4", "#d55181"]) expect(isRed(pink)).toBe(true);
     expect(hue("#334155")).toBe(-1);
+  });
+  it("catches reds and blues near the edges of each range", () => {
+    for (const red of ["#ff2200", "#cc2200", "#ff4500"]) expect(isRed(red), red).toBe(true);
+    for (const blue of ["#00aacc", "#0ea5e9", "#4a40e0"]) expect(isBlue(blue), blue).toBe(true);
+    for (const slot of ["#e08a2a", "#0f8a8a"]) expect(isRed(slot) || isBlue(slot), slot).toBe(false);
   });
 });
 
@@ -83,8 +87,12 @@ describe("candidate slot palette", () => {
       }
     }
   });
-  it("gives every slot its own color", () => {
-    for (const mode of [light, dark]) expect(new Set(SLOTS.map((s) => mode[s])).size).toBe(SLOTS.length);
+  it("keeps every pair of slots visibly apart", () => {
+    for (const mode of [light, dark]) {
+      for (const [i, a] of SLOTS.entries()) {
+        for (const b of SLOTS.slice(i + 1)) expect(distance(labOf(mode[a]), labOf(mode[b])), `${a} vs ${b}`).toBeGreaterThanOrEqual(0.1);
+      }
+    }
   });
   it("keeps slots visibly apart from the Yes and No fills, also for red-green colorblind readers", () => {
     for (const mode of [light, dark]) {
