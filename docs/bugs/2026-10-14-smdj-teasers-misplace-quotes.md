@@ -49,10 +49,14 @@ It skips only the repeated headline and the snippet line after it, so the articl
 
 - `npm run bb -- quote-lint` over all guides lists the same 2 failing quotes as before the change, both unrelated (abundant-sf `rtm`, indivisible-marin `us-rep-2`).
 - `tests/placement.test.ts`, `tests/extract.test.ts` and `tests/quotes.test.ts` pass.
-- Each of seven mutations fails at least one of the nine "article teasers" tests: dropping either label, the label check, the repeat check, the clipped-repeat match, the twin skip, or the snippet skip.
+- Each of these mutations fails at least one of the eleven "article teasers" tests: dropping either label, the label check, the label anchors or case-insensitivity, the repeat check, the clipped-repeat match or its ellipsis and length guards, the twin skip, or the snippet skip.
 - `npm run bb -- extract smdj --browser --force-extract`: picks unchanged, 19 of 30 picks quoted, `quote-lint --guide smdj` reports 0 failures.
 
 ## Guardrail
 
 - The "article teasers (San Mateo Daily Journal layout)" tests in `tests/placement.test.ts`. They include the Empower Oakland layout, and a check that a quote under the article's own headline is still flagged when it is filed under another race.
-- Still open: `attributed-speech` false positives on a Burlingame Measure D quote and a Millbrae quote.
+- Limit: on the candidate editorials (Nash/Newsom/Sahae, Nicolas, Venkat and others) the article title names candidates by surname only, so it matches no contest and no heading sits above the body. The check cannot catch a misfiled quote there; `verify` is the only guard. The measure editorials ("Editorial: Yes on Measure D") do get a heading.
+- Still open:
+  - `attributed-speech` false positives on a Burlingame Measure D quote and a Millbrae quote.
+  - A teaser with no `[Headline]` link line (the Hsieh/Richardson teaser on the Harris and Lipkin pages) is not skipped. It names no contest today.
+  - The line after a repeated headline is always skipped. A teaser with no snippet would hide the article title; every stored teaser has one.

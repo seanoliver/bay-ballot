@@ -400,6 +400,20 @@ describe("article teasers (San Mateo Daily Journal layout)", () => {
     const text = ["Next Up", "[Editorial: Venkat for District 1 Foster City Council]", "Measure EE", ee].join("\n");
     expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(text, url)], contests)).toMatch(/measure-ee$/);
   });
+  it("matches a teaser label in any case, and only as the whole line", () => {
+    const skipped = ["next up", "[Editorial: Yes on Measure EE]", "Editorial: Yes on Measure EE", "San Bruno voters will be able to change…", "Editorial: Nicolas for South San Francisco District 3", nicolas].join("\n");
+    expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(skipped, url)], contests)).toBeNull();
+    const kept = ["Previous coverage", "[Measure EE]", "Measure EE", ee].join("\n");
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(kept, url)], contests)).toMatch(/measure-ee$/);
+  });
+  it("counts a clipped repeat only when it ends in an ellipsis after real text", () => {
+    const headline = "Editorial: Yes on Measure EE, for San Bruno businesses";
+    const after = (repeat: string) => ["Next Up", `[${headline}]`, repeat, "Measure EE", ee].join("\n");
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(after("Editorial: Yes on Measure EE"), url)], contests)).toMatch(/measure-ee$/);
+    expect(misplacedUnder(quote(ee, url), "foster-city-council-1", [page(after("…"), url)], contests)).toMatch(/measure-ee$/);
+    const clipped = ["Next Up", `[${headline}]`, "Editorial: Yes on Measure EE …", "San Bruno voters will be able to change…", "Editorial: Nicolas for South San Francisco District 3", nicolas].join("\n");
+    expect(misplacedUnder(quote(nicolas, url), "south-san-francisco-council-3", [page(clipped, url)], contests)).toBeNull();
+  });
   it("keeps a repeated link line as a heading when no teaser label precedes it (Empower Oakland layout)", () => {
     const lee = "Mayor Lee has brought steady leadership and righted the ship, laying the foundation for Oakland’s comeback.";
     const text = ["[Barbara Lee]", "Barbara Lee", lee].join("\n");

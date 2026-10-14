@@ -167,7 +167,6 @@ function sidebarLines(lines: { text: string }[]): Set<number> {
       if (t.length >= 30 || t.split(/\s+/).length >= 5) out.add(j);
     }
   });
-  // A "Previous"/"Next Up" label, a "[Headline]" link line and the headline again unbracketed is an article teaser; its snippet line follows.
   lines.forEach((l, i) => {
     const link = l.text.match(/^\s*\[([^\]]+)\]\s*$/);
     if (!link || !TEASER_LABEL.test(lines[i - 1]?.text ?? "") || !repeatsHeadline(lines[i + 1]?.text ?? "", link[1])) return;
