@@ -13,7 +13,7 @@ export const FILL: Record<BarTone, string> = {
   c1: "#4a3aa7",
   c2: "#e08a2a",
   c3: "#0f8a8a",
-  c4: "#64748b",
+  c4: "#334155",
   other: "rgba(102,102,102,0.4)",
   empty: "#ebebeb",
 };
