@@ -1,0 +1,4 @@
+date: 2026-10-15
+type: fix
+title: A guide's two-sentence quote is no longer cut to one sentence by a refresh
+details: "When a refresh read only one sentence of a published two-sentence quote, it replaced the pair with that sentence, which then often failed the quote checks and disappeared. On October 15 this removed the SF Chronicle's only reason on Prop 5 until it was restored by hand. Refreshes now keep the full quote while it is still on the guide's page."

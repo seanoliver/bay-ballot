@@ -28,6 +28,17 @@ describe("diffPicks", () => {
     expect(diffPicks(before, after)).toEqual(["q prop-a: 0 -> 2", "~ prop-b: N -> Y", "q prop-b: 3 -> 1"]);
   });
 
+  it("names a published quote that was shortened or removed while the pick stayed", () => {
+    const full = { text: "Reason one for this pick. It leans on the first sentence.", source: "https://a.org/" };
+    const before = { "prop-a": { ...e("Y"), quotes: [full] }, "prop-b": e("N", { quotes: 2 }) };
+    const after = { "prop-a": { ...e("Y"), quotes: [{ ...full, text: "It leans on the first sentence." }] }, "prop-b": e("N", { quotes: 1 }) };
+    expect(diffPicks(before, after)).toEqual([
+      'q prop-a: removed "Reason one for this pick. It leans on the first sentence."',
+      "q prop-b: 2 -> 1",
+      'q prop-b: removed "Reason number 2 for this pick."',
+    ]);
+  });
+
   it("is empty when nothing changed", () => {
     const picks = { "prop-a": e("Y", { quotes: 1 }) };
     expect(diffPicks(picks, structuredClone(picks))).toEqual([]);

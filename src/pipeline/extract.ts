@@ -288,21 +288,38 @@ export function keepPrevQuotes(
     };
     const quotes = [...entry.quotes];
     const restored: KeptQuote[] = [];
+    const lengthened: KeptQuote[] = [];
+    const notKept = (q: KeptQuote, why: string) => {
+      if (!noted.some((n) => n.contestId === id && sameQuote(n.text, q.text))) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
+    };
     let at = 0;
     for (const q of old.quotes) {
       const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
-      if (i !== -1) at = i + 1;
-      else {
+      if (i !== -1) {
+        at = i + 1;
+        // The model returned part of a published quote, often one sentence of a pair whose second leans on the first.
+        if (quoteNorm(quotes[i].text).length < quoteNorm(q.text).length) {
+          const why = problem(q);
+          if (why) notKept(q, why);
+          else {
+            quotes[i] = q;
+            lengthened.push(q);
+          }
+        }
+      } else {
         const why = problem(q);
-        if (why) {
-          if (!noted.some((n) => n.contestId === id && sameQuote(n.text, q.text))) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
-        } else {
+        if (why) notKept(q, why);
+        else {
           quotes.splice(at++, 0, q);
           restored.push(q);
         }
       }
     }
-    if (restored.length === 0) continue;
+    for (const q of lengthened) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
+    if (restored.length === 0) {
+      if (lengthened.length) out[id] = { ...entry, quotes };
+      continue;
+    }
     while (quotes.length > MAX_QUOTES) {
       const newest = quotes.findLastIndex((q) => !old.quotes.some((o) => sameQuote(o.text, q.text)));
       const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);

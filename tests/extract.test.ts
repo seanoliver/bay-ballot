@@ -604,6 +604,20 @@ ${q2} ${but}` }];
     expect(keep2({ "prop-g": entry("N", q1) }, { "prop-g": entry("N", joined) }).picks["prop-g"].quotes).toEqual([quote(joined)]);
   });
 
+  it("keeps a published two-sentence quote when the model returns one of its sentences", () => {
+    const pair = `${q1} ${q2}`;
+    const r = keep2({ "prop-g": entry("N", pair, dashed) }, { "prop-g": entry("N", q2, dashed) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(pair), quote(dashed)]);
+    expect(r.notes).toEqual([`prop-g: kept previous full quote over the model's shorter one: "${pair.slice(0, 80)}…"`]);
+  });
+
+  it("keeps the model's shorter quote when the published full quote no longer passes", () => {
+    const gone = `The old page said the closure saved money. ${q2}`;
+    const r = keep2({ "prop-g": entry("N", gone) }, { "prop-g": entry("N", q2) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(q2)]);
+    expect(r.notes).toEqual([`prop-g: previous quote not kept (not-found): "${gone.slice(0, 80)}…"`]);
+  });
+
   it("matches an unranked multi-name pick in any order, and a ranked one only in the same order", () => {
     const names = ["Gary McCoy", "Darshini Patel"];
     const sup = (pick: string[], ranked: boolean, ...texts: string[]): Entry => ({ pick, ranked, quotes: texts.map((t) => quote(t)) });
