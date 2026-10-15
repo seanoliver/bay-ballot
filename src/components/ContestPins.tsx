@@ -29,7 +29,8 @@ export type ChipGuide = { id: string; name: string; short: string; quoted: boole
 export const TAP = "inline-block py-2.5 -my-2.5";
 
 const STATUS_MS = 4000;
-const CHIPS_SHOWN = 12;
+const CHIPS_SHOWN = 4;
+const PAGES_SHOWN = 12;
 const guidesLabel = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
 export function useContestPins({
@@ -258,10 +259,11 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   e.preventDefault();
 }
 
-/** The first dozen chips, then "Show all N" opens the rest in place. A legend explains the quote mark when a chip has one. */
+/** The first few chips, then "+N more" opens the rest below them. A legend explains the quote mark when a chip has one. */
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
-  const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
+  const first = guides.slice(0, CHIPS_SHOWN);
+  const rest = guides.slice(CHIPS_SHOWN);
   return (
     <>
       {guides.some((g) => g.quoted) ? (
@@ -274,26 +276,28 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
       ) : null}
       <div role="group" aria-label={label}>
         <ul className="flex flex-wrap gap-2">
-          {shown.map((g, i) => (
-            <PinChip
-              key={g.id}
-              guide={g}
-              short={short}
-              pinning={pinning}
-              className={i >= CHIPS_SHOWN ? "reveal-item" : undefined}
-              style={i >= CHIPS_SHOWN ? ({ "--i": i - CHIPS_SHOWN } as CSSProperties) : undefined}
-            />
+          {first.map((g) => (
+            <PinChip key={g.id} guide={g} short={short} pinning={pinning} />
           ))}
+          {rest.length ? (
+            <li>
+              <button
+                type="button"
+                aria-expanded={all}
+                onClick={() => setAll(!all)}
+                className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
+              >
+                {all ? "Show less" : `+${rest.length} more`}
+              </button>
+            </li>
+          ) : null}
         </ul>
-        {guides.length > CHIPS_SHOWN ? (
-          <button
-            type="button"
-            aria-expanded={all}
-            onClick={() => setAll(!all)}
-            className="mt-2 inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
-          >
-            {all ? "Show fewer" : `Show all ${guides.length}`}
-          </button>
+        {all && rest.length ? (
+          <ul className="reveal flex flex-wrap gap-2 pt-2">
+            {rest.map((g, i) => (
+              <PinChip key={g.id} guide={g} short={short} pinning={pinning} className="reveal-item" style={{ "--i": i } as CSSProperties} />
+            ))}
+          </ul>
         ) : null}
       </div>
       <GuidePages guides={guides} short={short} side={side} />
@@ -311,9 +315,9 @@ function GuidePages({ guides, short, side }: { guides: ChipGuide[]; short: boole
   useEffect(() => {
     if (!revealed.current) return;
     revealed.current = false;
-    listRef.current?.querySelectorAll("a")[CHIPS_SHOWN]?.focus();
+    listRef.current?.querySelectorAll("a")[PAGES_SHOWN]?.focus();
   }, [all]);
-  const shown = all ? guides : guides.slice(0, CHIPS_SHOWN);
+  const shown = all ? guides : guides.slice(0, PAGES_SHOWN);
   const more = guides.length - shown.length;
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="text-sm">
