@@ -469,7 +469,7 @@ async function runZips() {
   const unknown = [...counties].filter((c) => !Object.values(BAY_COUNTIES).includes(c));
   if (unknown.length) throw new Error(`no Census GEOID for ${unknown.join(", ")}: add it to BAY_COUNTIES in scripts/bb.ts`);
   const get = async (url: string) => {
-    const r = await fetch(url);
+    const r = await fetch(url, { signal: AbortSignal.timeout(60_000) });
     if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
     return r.text();
   };
@@ -514,7 +514,7 @@ async function runZips() {
     );
     const [mapped, shapes] = await Promise.all([
       m.format === "zipped shapefile"
-        ? fetch(m.url).then(async (r) => {
+        ? fetch(m.url, { signal: AbortSignal.timeout(60_000) }).then(async (r) => {
             if (!r.ok) throw new Error(`${m.url}: HTTP ${r.status}`);
             return shapefileById(Buffer.from(await r.arrayBuffer()), m.field, m.url);
           })

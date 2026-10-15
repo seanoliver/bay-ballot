@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deflateRawSync } from "node:zlib";
 import {
   blockPoints, buildZipTable, DISTRICT_MAPS, districtShares, blocksNearEdge, BLOCK_REACH_CAP_M, districtsWithHomes, EDGE_BUFFER_M, overlapWidth, padBox, pointsIn, poolDistrictCounties,
-  MIN_DISTRICT_SHARE, normalizeDistrictIds, reachedDistricts, SEAT_KINDS, shapeBox, shapesById, SLIVER_WIDTH_M, zipReach, zipTableJson, type Shape,
+  homeBlocksUrl, MIN_DISTRICT_SHARE, normalizeDistrictIds, reachedDistricts, SEAT_KINDS, shapeBox, shapesById, SLIVER_WIDTH_M, zipReach, zipTableJson, type Shape,
 } from "@/pipeline/zips";
 import { shapefileById, unzip } from "@/pipeline/shapefile";
 import { districtMapKey, STATE_PLACE, zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
@@ -174,6 +174,10 @@ describe("districtShares", () => {
   const zip = box(0, 0, 0.01, 0.01);
   const A = box(-0.01, -0.01, 0.007, 0.02);
   const B = box(0.007, -0.01, 0.02, 0.02);
+  it("measures a strip along a ZIP's edge as thin as 0.2% of it", () => {
+    const s = districtShares({ "94999": zip }, { A: box(-0.01, -0.01, 0.02, 0.00998), "2": box(-0.01, 0.00998, 0.02, 0.02) })["94999"];
+    expect(s["2"]).toBeCloseTo(0.002, 4);
+  });
   it("splits a ZIP's land among the districts it overlaps, by area, and leaves out districts it doesn't", () => {
     const s = districtShares({ "94999": zip }, { A, B, far: box(0.05, 0.05, 0.06, 0.06) })["94999"];
     expect(Object.keys(s).sort()).toEqual(["A", "B"]);
@@ -304,6 +308,15 @@ describe("homes near a ZIP's edge", () => {
   });
 });
 
+describe("homeBlocksUrl", () => {
+  it("asks for the internal point and land area of blocks with people or homes in the box", () => {
+    const q = new URL(homeBlocksUrl({ x: [-122, -121.99], y: [37.5, 37.51] })).searchParams;
+    expect(q.get("where")).toBe("POP100 > 0 OR HU100 > 0");
+    expect(q.get("geometry")).toBe("-122,37.5,-121.99,37.51");
+    expect(q.get("outFields")?.split(",").sort()).toEqual(["AREALAND", "INTPTLAT", "INTPTLON"]);
+  });
+});
+
 describe("normalizeDistrictIds", () => {
   it("drops leading zeros so map ids match the ballot's district numbers", () => {
     const s = box(0, 0, 1, 1);
@@ -325,6 +338,12 @@ describe("zipReach", () => {
     const r = zipReach(zip, districts, boxes, shares, { inside: [[-121.9903, 37.505]], nearEdge: [[-121.9895, 37.505]] });
     expect(r.touched).toEqual(["main", "neighbor", "sliver"]);
   });
+  it("adds a district that starts just past the ZIP's box when a home near the edge is in it", () => {
+    const close = { ...districts, close: box(-122.1, 37.5, -122.0011, 37.51) };
+    const closeBoxes = { ...boxes, close: shapeBox(close.close) };
+    const r = zipReach(zip, close, closeBoxes, shares, { inside: [], nearEdge: [[-122.0012, 37.505]] });
+    expect(r.touched).toEqual(["close", "main"]);
+  });
   it("drops the same overlap with no home in it, and ignores a home in a district far from the ZIP", () => {
     const r = zipReach(zip, districts, boxes, shares, { inside: [], nearEdge: [[-121.45, 37.5]] });
     expect(r.touched).toEqual(["main"]);
@@ -344,6 +363,7 @@ describe("homes in small overlaps", () => {
     expect(() => blockPoints(JSON.stringify({ features: [block("")] }))).toThrow(/land area/);
     expect(() => blockPoints(JSON.stringify({ error: { code: 400 } }))).toThrow(/error/);
     expect(() => blockPoints(JSON.stringify({ features: [], exceededTransferLimit: true }))).toThrow(/cut off/);
+    expect(() => blockPoints(JSON.stringify({}))).toThrow(/no features/);
     expect(() => blockPoints(JSON.stringify({ features: [{ attributes: { INTPTLON: "", INTPTLAT: "+37.7", AREALAND: 1 } }] }))).toThrow(/internal point/);
   });
   it("keeps the points inside a ZIP, and finds which candidate districts hold any", () => {
@@ -391,7 +411,7 @@ function zipOf(files: Record<string, Buffer>): Buffer {
   return Buffer.concat([...locals, ...central, end]);
 }
 
-type Feature = { id: string; rings: [number, number][][]; type?: 5 | 15; deleted?: boolean };
+type Feature = { id: string; rings: [number, number][][]; type?: number; deleted?: boolean };
 function shapefile(field: string, features: Feature[], prj: string): Record<string, Buffer> {
   const records = features.map(({ rings, type = 5 }, i) => {
     const n = rings.reduce((a, r) => a + r.length, 0);
@@ -414,15 +434,18 @@ function shapefile(field: string, features: Feature[], prj: string): Record<stri
     h.writeInt32BE(c.length / 2, 4);
     return Buffer.concat([h, c]);
   });
-  const dbfHead = Buffer.alloc(32 + 32 + 1);
+  const dbfHead = Buffer.alloc(32 + 2 * 32 + 1);
   dbfHead.writeUInt32LE(features.length, 4);
   dbfHead.writeUInt16LE(dbfHead.length, 8);
-  dbfHead.writeUInt16LE(1 + 4, 10);
-  dbfHead.write(field, 32, "latin1");
+  dbfHead.writeUInt16LE(1 + 3 + 4, 10);
+  dbfHead.write("NAME", 32, "latin1");
   dbfHead.write("C", 43, "latin1");
-  dbfHead[48] = 4;
-  dbfHead[64] = 0x0d;
-  const rows = features.map(({ id, deleted }) => Buffer.from((deleted ? "*" : " ") + id.padEnd(4), "latin1"));
+  dbfHead[48] = 3;
+  dbfHead.write(field, 64, "latin1");
+  dbfHead.write("C", 75, "latin1");
+  dbfHead[80] = 4;
+  dbfHead[96] = 0x0d;
+  const rows = features.map(({ id, deleted }) => Buffer.from((deleted ? "*" : " ") + "abc" + id.padEnd(4), "latin1"));
   return { "d/x.shp": Buffer.concat([Buffer.alloc(100), ...records]), "d/x.dbf": Buffer.concat([dbfHead, ...rows]), "d/x.prj": Buffer.from(prj), "__MACOSX/d/._x.prj": Buffer.from("junk") };
 }
 
@@ -473,6 +496,22 @@ describe("shapefileById", () => {
     expect(() => read([one("1")], 'PROJCS["WGS_1984_Web_Mercator_Auxiliary_Sphere",GEOGCS["GCS_Sphere"]]')).toThrow(/projection/);
     expect(() => read([one("1")], GEO, "ID")).toThrow(/no ID column/);
     expect(() => read([one("1"), one("1")])).toThrow(/appears twice/);
+    expect(() => read([one("")])).toThrow(/has no DISTRICT/);
+    expect(() => read([{ ...one("1"), type: 1 }])).toThrow(/has no polygon/);
+  });
+  it("fails on a file that isn't a ZIP archive, a broken directory, another compression or a missing file", () => {
+    expect(() => unzip(Buffer.from("<html>error</html>"))).toThrow(/not a ZIP archive/);
+    const z = zipOf({ "a.txt": Buffer.from("x") });
+    const cd = z.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02]));
+    const broken = Buffer.from(z);
+    broken.writeUInt32LE(0, cd);
+    expect(() => unzip(broken)).toThrow(/central directory/);
+    const bzip = Buffer.from(z);
+    bzip.writeUInt16LE(12, cd + 10);
+    expect(() => unzip(bzip)).toThrow(/compression method 12/);
+    const files = shapefile("DISTRICT", [one("1")], GEO);
+    delete files["d/x.prj"];
+    expect(() => shapefileById(zipOf(files), "DISTRICT", "map")).toThrow(/expected one \.prj file/);
   });
 });
 

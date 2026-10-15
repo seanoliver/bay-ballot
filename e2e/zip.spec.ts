@@ -228,6 +228,9 @@ test.describe("ZIP filter", () => {
     await expect(status(page)).toContainText("in 94123");
     await expect(contestRow(page, "United States Representative, District 11")).toBeVisible();
     await expect(contestRow(page, "United States Representative, District 15")).toHaveCount(0);
+    const row = (title: string) => page.locator("li").filter({ has: contestRow(page, title) }).first();
+    await expect(row("United States Representative, District 11")).not.toContainText("May be on your ballot");
+    await expect(row("State Assembly, District 17")).toContainText("May be on your ballot");
     await enterZip(page, "94110");
     await expect(status(page)).toContainText("in 94110");
     await expect(contestRow(page, "State Assembly, District 17")).toBeVisible();
