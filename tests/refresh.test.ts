@@ -441,7 +441,9 @@ describe("runRefresh", () => {
     const summary = summarize(results, { date: "2026-10-06" });
     expect(summary).toContain("1 selector miss");
     expect(summary).toContain("alpha: blocked");
+    expect(summary).toContain("| 1 | 0 | 0 | 0 | 0 | 0 | 1 |");
     expect(reviewReasons(results)[0]).toContain("alpha: blocked");
+    expect(logs).toContainEqual(expect.stringContaining("alpha: blocked"));
   });
 
   it("blocks a forced re-extract when a never-stored page misses", async () => {
@@ -462,7 +464,8 @@ describe("runRefresh", () => {
     const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
       throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
     });
-    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(summarize(results, { date: "2026-10-06" })).toContain("2 selector misses");
     expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
     expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
   });
@@ -562,6 +565,18 @@ describe("seedPages", () => {
     });
     const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
     expect(seeded).toEqual([{ id: "alpha", stored: 1, error: expect.stringContaining("matched nothing") }]);
+  });
+
+  it("keeps earlier misses in the error when seeding then fails", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      throw new Error("HTTP 503");
+    });
+    const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(seeded).toEqual([{ id: "alpha", stored: 0, error: expect.stringMatching(/matched nothing.*; HTTP 503/) }]);
   });
 
   it("skips the browser retry for the rest of a guide's seeding after one page misses", async () => {
