@@ -821,6 +821,19 @@ describe("gateOnly (dry run)", () => {
     expect(summarize(results, { date: "2026-10-07" })).toContain("Would extract (dry run): beta");
   });
 
+  it("reports a guide as blocked, not would-extract, when a page misses", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "x") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-07", log: () => {} }, { root, election: ELECTION, gateOnly: true });
+    expect(results[0].status).toBe("blocked");
+    expect(stream).not.toHaveBeenCalled();
+  });
+
   it("labels a dry-run summary as a dry run, not as a clean result", () => {
     const results: GuideResult[] = [{ id: "alpha", status: "unchanged" }, { id: "beta", status: "would-extract" }];
     const md = summarize(results, { date: "2026-10-07" });

@@ -143,6 +143,18 @@ describe("alerts", () => {
   });
 });
 
+describe("blocked guides in the report", () => {
+  it("counts blocked guides and names them in the digest", () => {
+    const results: GuideResult[] = [
+      { id: "a", status: "blocked", selectorMisses: ["https://a.org/: content selector \"x\" matched nothing for \"x\"; kept the stored page"] },
+      { id: "b", status: "unchanged" },
+    ];
+    const r = reportJson(results, 2);
+    expect(r.counts.blocked).toBe(1);
+    expect(r.digest).toContain("1 blocked");
+  });
+});
+
 describe("digest", () => {
   it("is one line with the day's numbers", async () => {
     const results: GuideResult[] = [
