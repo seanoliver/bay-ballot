@@ -371,6 +371,16 @@ describe("runRefresh", () => {
       expect(JSON.stringify(results[0])).not.toContain("kept the published pick");
     });
 
+    it("writes no hold for an out-of-area near name with no published pick", async () => {
+      const root = setup(["alpha"]);
+      const g = path.join(root, "guides", "alpha.yml");
+      fs.writeFileSync(g, fs.readFileSync(g, "utf8").replace("areas: [sf]", "areas: [sf, san-mateo]"));
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, onlyAreas: ["san-mateo"], verify: false });
+      expect(parse(fs.readFileSync(f, "utf8")).held).toBeUndefined();
+      expect(exitCodeFor(results)).toBe(0);
+    });
+
     it("keeps a kept pick's partial ranking", async () => {
       const root = setup(["alpha"]);
       const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
@@ -445,6 +455,26 @@ describe("runRefresh", () => {
       expect(reviewReasons(results)).toContain("alpha: unclear-match hold on us-rep-11: held Connie Chan, guide now picks Scott Wiener");
       expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([expect.objectContaining({ reason: "unclear-match" })]);
       expect(results[0]).toMatchObject({ held: [] });
+    });
+
+    it("leaves alone an unclear-match hold kept under the page's spelling", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Weiner]\n    reason: unclear-match\n    evidence: someone else\npicks:\n"));
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      expect(reviewReasons(results)).toEqual([]);
+      expect(exitCodeFor(results)).toBe(0);
+      expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([expect.objectContaining({ pick: ["Scott Weiner"], reason: "unclear-match" })]);
+    });
+
+    it("flags an unclear-match hold under the page's spelling once the guide names the candidate exactly", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Weiner]\n    reason: unclear-match\n    evidence: someone else\npicks:\n"));
+      const exact = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], candidates: ["Scott Wiener"] }] };
+      const results = await runRefresh(deps(fakeClient(exact).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      expect(reviewReasons(results)).toContain("alpha: unclear-match hold on us-rep-11: held Scott Weiner, guide now picks Scott Wiener");
+      expect(exitCodeFor(results)).toBe(2);
     });
 
     const evidence = "the page names `Scott Weiner`, not on the ballot; closest `Scott Wiener`. If it is the same person, add an alias";

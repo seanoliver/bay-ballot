@@ -116,7 +116,7 @@ function candidateNames(
   official: string[],
   aliases: Aliases,
   notes: string[],
-): { names: string[]; mismatch?: string } | null {
+): { names: string[]; mismatch?: string; pageNames?: string[] } | null {
   const matches = raw.map((name) => {
     const m = matchName(name, official, aliases);
     const suggested = m ? null : suggestName(name, official, aliases);
@@ -139,7 +139,8 @@ function candidateNames(
   const mismatch = near.length
     ? `the page names ${near.map((x) => shown(x.name)).join(", ")}, not on the ballot; closest ${near.map((x) => shown(x.suggested!)).join(", ")}. If it is the same person, add an alias`
     : undefined;
-  return { names, ...(mismatch ? { mismatch } : {}) };
+  const pageNames = [...new Set(matches.map((x) => (x.suggested ? x.name : x.m!.name)))];
+  return { names, ...(mismatch ? { mismatch, pageNames } : {}) };
 }
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
@@ -158,10 +159,11 @@ export function toEntries(
   contests: Contest[],
   pages: Page[],
   { ownNames = [] }: { ownNames?: string[] } = {},
-): { picks: Record<string, Entry>; held: HeldPick[]; notes: string[]; dropped: NotedQuote[] } {
+): { picks: Record<string, Entry>; held: HeldPick[]; notes: string[]; dropped: NotedQuote[]; spelled: Record<string, string[]> } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const picks: Record<string, Entry> = {};
   const held: HeldPick[] = [];
+  const spelled: Record<string, string[]> = {};
   const notes: string[] = [];
   const dropped: NotedQuote[] = [];
 
@@ -194,6 +196,7 @@ export function toEntries(
       if (!names) continue;
       pick = names.names;
       mismatch = names.mismatch;
+      if (names.pageNames) spelled[c.id] = names.pageNames;
     } else {
       if (p.vote === null) {
         notes.push(`${c.id}: measure pick has no vote`);
@@ -236,7 +239,7 @@ export function toEntries(
       });
     } else picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
-  return { picks, held, notes, dropped };
+  return { picks, held, notes, dropped, spelled };
 }
 
 // Must normalize like verifyQuotes, or a quote that differs only in dashes or spacing is kept twice.
