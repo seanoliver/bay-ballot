@@ -263,7 +263,9 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     return { kind: "text", text: htmlToText(selectIn(url, r.html, opts.contentSelector, opts.contentExclude)) };
   } catch (e) {
     // A wall detectBlock doesn't know can still serve a 200 without the article; the browser may get past it.
-    if (e instanceof SelectorMissError) return viaBrowser(e.message);
-    throw e;
+    if (!(e instanceof SelectorMissError)) throw e;
+    return viaBrowser(e.message).catch((b: unknown) => {
+      throw b instanceof SelectorMissError ? b : new SelectorMissError(`${e.message} (browser: ${errMsg(b)})`);
+    });
   }
 }

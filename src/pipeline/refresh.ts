@@ -32,6 +32,8 @@ export type RefreshOptions = {
   archive?: boolean;
   force?: boolean;
   forceExtract?: boolean;
+  /** Fail the guide when a page misses its content selector, instead of keeping the stored page (for `bb extract`). */
+  strictSelectors?: boolean;
   verify?: boolean;
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
@@ -51,6 +53,7 @@ export type GuideResult = (
   | { id: string; status: "failed"; error: string }
   | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string; usage: Usage }
   | { id: string; status: "shrunk-skipped"; pageHash: string }
+  | { id: string; status: "blocked" }
   | {
       id: string;
       status: "changed";
@@ -136,7 +139,7 @@ async function refreshGuide(
     try {
       fetched = await deps.fetchSource(url, fetchOptions(prev, Boolean(opts.browser), url));
     } catch (e) {
-      if (!(e instanceof SelectorMissError)) throw e;
+      if (!(e instanceof SelectorMissError) || opts.strictSelectors) throw e;
       if (old === null) {
         selectorMisses.push(`${e.message}; no stored page, left out`);
         continue;
@@ -156,6 +159,8 @@ async function refreshGuide(
     for (const p of pages) writeStored(p.path, p.stored);
     return { id, status: "unchanged" };
   }
+  // Extracting now would read a kept page's stored text (dates stripped) or lose a left-out page's picks; wait for the selector fix.
+  if (selectorMisses.length) return { id, status: "blocked" };
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
   if (!forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
   if (opts.gateOnly) return { id, status: "would-extract" };
@@ -269,9 +274,10 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
       } catch (e) {
         r = { id, status: "failed", error: errMsg(e) };
       }
-      if (selectorMisses.length && r.status !== "failed") r = { ...r, selectorMisses };
+      if (selectorMisses.length) r = { ...r, selectorMisses };
     }
     log(describe(r));
+    for (const m of r.selectorMisses ?? []) log(`  !! selector missed: ${m}`);
     results.push(r);
   }
   if (baseline) writeChangelog(deps, opts, baseline, results);
@@ -314,6 +320,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
       return [r.message, ...r.notes.map((n) => `  ! ${n}`)].join("\n");
+    case "blocked":
+      return `${r.id}: blocked (a page missed its content selector; not re-extracted until the selector is fixed)`;
     case "shrunk-skipped":
       return `${r.id}: shrunk earlier, pages unchanged since; not re-extracted`;
     case "changed":
@@ -385,11 +393,12 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   const held = changed.reduce((n, r) => n + r.held.length, 0);
   const unclear = changed.reduce((n, r) => n + (r.unclear?.length ?? 0), 0);
   const code = exitCodeFor(results);
+  const misses = results.flatMap((r) => (r.selectorMisses ?? []).map((m) => `${r.id}: ${m}`));
   const would = by("would-extract").length;
   const isDryRun = dryRun || would > 0;
   const verdict =
     code === 1 ? "errors"
-    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""})`
+    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
     : "clean";
   const lines = [
@@ -399,7 +408,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     "",
     `| checked | unchanged | re-extracted | data changed | deferred | skipped | failed |`,
     `|---|---|---|---|---|---|---|`,
-    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
+    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length + by("blocked").length} |`,
     "",
     `Estimated model cost: ${costText(results)}`,
   ];
@@ -416,7 +425,6 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     }
   }
   const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
-  const misses = results.flatMap((r) => (r.selectorMisses ?? []).map((m) => `${r.id}: ${m}`));
   if (problems.length || misses.length) {
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);

@@ -417,6 +417,48 @@ describe("runRefresh", () => {
     expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
   });
 
+  it("blocks re-extraction while a page misses, so stored text never stands in for the page", async () => {
+    const root = setup(["alpha"]);
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.appendFileSync(file, "extraSources:\n  - https://alpha.org/more\n");
+    const before = fs.readFileSync(file, "utf8");
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "October 6, 2026") };
+    });
+    const logs: string[] = [];
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(results[0]).toMatchObject({ status: "blocked", selectorMisses: [expect.stringContaining("kept the stored page")] });
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.readFileSync(file, "utf8")).toBe(before);
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", "https://alpha.org/more"))).toBe(false);
+    expect(logs.some((l) => l.includes("selector missed"))).toBe(true);
+    expect(exitCodeFor(results)).toBe(2);
+    expect(summarize(results, { date: "2026-10-06" })).toContain("1 selector miss");
+  });
+
+  it("blocks a forced re-extract when a never-stored page misses", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION, forceExtract: true });
+    expect(results[0].status).toBe("blocked");
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("fails the guide on a miss when selectors are strict (bb extract)", async () => {
+    const root = setup(["alpha"]);
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION, strictSelectors: true });
+    expect(results[0]).toMatchObject({ status: "failed", error: expect.stringContaining("matched nothing") });
+  });
+
   it("still fails the guide on other fetch errors", async () => {
     const root = setup(["alpha"]);
     const { client } = fakeClient();

@@ -384,6 +384,16 @@ describe("content selector", () => {
     await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).rejects.toBeInstanceOf(SelectorMissError);
   });
 
+  it("counts a failed browser retry as a selector miss", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async (): Promise<{ status: number; html: string }> => {
+      throw new Error("Timeout 60000ms exceeded");
+    });
+    const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(SelectorMissError);
+    expect(String(err)).toContain("Timeout 60000ms exceeded");
+  });
+
   it("names the page when the selector misses", async () => {
     const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Redesigned page</p></body>" }));
     await expect(fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).rejects.toThrow(

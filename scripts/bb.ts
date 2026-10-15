@@ -208,7 +208,7 @@ function refreshDeps({ model = true }: { model?: boolean } = {}): RefreshDeps {
 
 function totalsLine(results: GuideResult[]): string {
   const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
-  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost ${costText(results)}.`;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped") + n("blocked")} need attention. Estimated model cost ${costText(results)}.`;
 }
 
 async function runExtract(): Promise<void> {
@@ -265,7 +265,7 @@ async function runExtract(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION, ids,
     browser: flag("--browser"), archive: flag("--archive"), force: flag("--force"),
-    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas,
+    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas, strictSelectors: true,
   });
   console.log(`\n${totalsLine(results)}\nReview with: git diff data/`);
   process.exitCode = exitCodeFor(results);
