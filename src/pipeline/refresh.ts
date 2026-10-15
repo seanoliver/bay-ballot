@@ -192,12 +192,18 @@ async function refreshGuide(
     { ownNames: [guide.name], rejected: prev.rejectedQuotes, noted: extracted.dropped },
   );
   const picks = kept.picks;
+  // A published pick the page now misspells stays published: it is the same guide naming the same candidate for the same contest.
+  const nearHeld = extracted.held.filter((h) => {
+    const was = prev.picks[h.contestId];
+    if (!inScope(h.contestId) || !was || !isDeepStrictEqual(was.pick, h.pick)) return true;
+    picks[h.contestId] = was;
+    kept.notes.push(`${h.contestId}: kept the published pick; ${h.evidence}`);
+    return false;
+  });
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
   const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes];
   const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
-  // A held near-name pick is still the guide's pick, so it doesn't count as shrinking.
-  const heldNear = Object.fromEntries(extracted.held.filter((h) => inScope(h.contestId)).map((h) => [h.contestId, { pick: h.pick, ranked: false, quotes: [] }]));
-  const shrunk = shrinkWarning(id, prevInScope, { ...heldNear, ...picks }, { force: opts.force });
+  const shrunk = shrinkWarning(id, prevInScope, picks, { force: opts.force });
   if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };
 
   let archived: ArchivedSource[] | undefined;
@@ -213,24 +219,30 @@ async function refreshGuide(
 
   const unclear = (prev.held ?? []).flatMap((h) => {
     if (h.reason !== "unclear-match" || !inScope(h.contestId)) return [];
-    const now = picks[h.contestId] ?? extracted.held.find((x) => x.contestId === h.contestId);
+    const now = picks[h.contestId] ?? nearHeld.find((x) => x.contestId === h.contestId);
     if (!now) return [`${h.contestId}: held ${showPick(h.pick)}, guide no longer picks this contest`];
     return isDeepStrictEqual(now.pick, h.pick) ? [] : [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(now.pick)}`];
   });
   const base = scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived);
   // A hold the file already has for the same pick is kept as it was (quotes included) and not reported again, like a verifier hold.
   const prevNameHold = (h: HeldPick) =>
-    (prev.held ?? []).find((x) => x.reason === "name-mismatch" && x.contestId === h.contestId && isDeepStrictEqual(x.pick, h.pick));
+    (prev.held ?? []).find(
+      (x) =>
+        x.reason === "name-mismatch" &&
+        x.contestId === h.contestId &&
+        isDeepStrictEqual([x.pick, x.ranked, x.rankedCount, x.evidence], [h.pick, h.ranked, h.rankedCount, h.evidence]),
+    );
   const rejected = prev.rejectedQuotes ?? [];
-  const nameHolds = extracted.held
+  const nameHolds = nearHeld
     .filter((h) => inScope(h.contestId) && !(h.contestId in base.picks) && !(base.held ?? []).some((x) => x.contestId === h.contestId))
     .map((h) => {
-      const { quotes: all = [], ...rest } = h;
+      const reused = prevNameHold(h);
+      const { quotes: all = [], ...rest } = reused ?? h;
       const quotes = all.filter((q) => !isRejected(q.text, h.contestId, rejected));
-      return prevNameHold(h) ?? { ...rest, ...(quotes.length ? { quotes } : {}) };
+      return { hold: { ...rest, ...(quotes.length ? { quotes } : {}) }, reused: !!reused };
     });
-  const newNameHolds = nameHolds.filter((h) => !(prev.held ?? []).includes(h));
-  let next = EndorsementFile.parse(nameHolds.length ? { ...base, held: [...(base.held ?? []), ...nameHolds] } : base);
+  const newNameHolds = nameHolds.filter((x) => !x.reused).map((x) => x.hold);
+  let next = EndorsementFile.parse(nameHolds.length ? { ...base, held: [...(base.held ?? []), ...nameHolds.map((x) => x.hold)] } : base);
   const result: Extract<GuideResult, { status: "changed" }> = {
     id,
     status: "changed",

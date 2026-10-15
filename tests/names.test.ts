@@ -179,7 +179,10 @@ describe("suggestName", () => {
   it("returns null for a different last name", () => expect(suggestName("Deborah Rudd", ["Debbie Ruddock"])).toBeNull());
   it("returns null when two candidates are near", () =>
     expect(suggestName("Deb Ruddock", ["Debbie Ruddock", "Deborah Ruddock"])).toBeNull());
-  it("returns null for a one-word name", () => expect(suggestName("Raju", ["Manohar Raju"])).toBeNull());
+  it("returns null for a one-word name", () => {
+    expect(suggestName("Raju", ["Manohar Raju"])).toBeNull();
+    expect(suggestName("Madona", ["Madonna"])).toBeNull();
+  });
   it("catches #152: the page's 'Manuhar Raju' for the ballot's 'Mano Raju'", () =>
     expect(suggestName("Manuhar Raju", ["Mano Raju"])).toBe("Mano Raju"));
 });

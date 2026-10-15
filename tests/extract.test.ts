@@ -177,6 +177,11 @@ describe("toEntries", () => {
     expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
   });
 
+  it("keeps the ranking on a held pick", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"], ranked: true, rankedCount: 1 }));
+    expect(r.held[0]).toMatchObject({ ranked: true, rankedCount: 1 });
+  });
+
   it("keeps the first of a contest returned twice when the first is held", () => {
     const r = run(
       pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan"] }),
