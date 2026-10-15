@@ -1,8 +1,8 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
-import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
-import { matchName, type Aliases } from "@/lib/names";
+import type { Ballot, Contest, Entry, Guide, HeldPick } from "@/lib/schema";
+import { matchName, suggestName, type Aliases } from "@/lib/names";
 import { isRejected, MIN_CONTAINED } from "@/lib/quote-key";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
@@ -109,20 +109,38 @@ export function pagesFor(sources: Source[]): Page[] {
   );
 }
 
-function candidateNames(id: string, raw: string[], official: string[], aliases: Aliases, notes: string[]): string[] | null {
-  const matches = raw.map((name) => ({ name, m: matchName(name, official, aliases) }));
+/** `mismatch` is set when a name only resembles a candidate: the pick is held for a person, never published. */
+function candidateNames(
+  id: string,
+  raw: string[],
+  official: string[],
+  aliases: Aliases,
+  notes: string[],
+): { names: string[]; mismatch?: string; pageNames?: string[] } | null {
+  const matches = raw.map((name) => {
+    const m = matchName(name, official, aliases);
+    const suggested = m ? null : suggestName(name, official, aliases);
+    return { name, m: m ?? (suggested ? { name: suggested, fuzzy: true } : null), suggested };
+  });
   const unknown = matches.find(({ m }) => !m);
   if (unknown) {
     notes.push(`${id}: PICK DROPPED — unknown candidate '${unknown.name}' (would change the pick's meaning)`);
     return null;
   }
   const names: string[] = [];
-  for (const { name, m } of matches) {
+  for (const { name, m, suggested } of matches) {
     if (!m) continue;
-    if (m.fuzzy) notes.push(`${id}: '${name}' -> '${m.name}'`);
+    if (m.fuzzy && !suggested) notes.push(`${id}: '${name}' -> '${m.name}'`);
     if (!names.includes(m.name)) names.push(m.name);
   }
-  return names;
+  const near = matches.filter((x, i) => x.suggested && matches.findIndex((y) => y.name === x.name) === i);
+  // The page's spelling reaches the PR body: one line, no backticks, as code so it can't add links or mentions.
+  const shown = (s: string) => `\`${s.replace(/[\s`]+/g, " ").trim().slice(0, 80)}\``;
+  const mismatch = near.length
+    ? `the page names ${near.map((x) => shown(x.name)).join(", ")}, not on the ballot; closest ${near.map((x) => shown(x.suggested!)).join(", ")}. If it is the same person, add an alias`
+    : undefined;
+  const pageNames = [...new Set(matches.map((x) => (x.suggested ? x.name : x.m!.name)))];
+  return { names, ...(mismatch ? { mismatch, pageNames } : {}) };
 }
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
@@ -141,9 +159,11 @@ export function toEntries(
   contests: Contest[],
   pages: Page[],
   { ownNames = [] }: { ownNames?: string[] } = {},
-): { picks: Record<string, Entry>; notes: string[]; dropped: NotedQuote[] } {
+): { picks: Record<string, Entry>; held: HeldPick[]; notes: string[]; dropped: NotedQuote[]; spelled: Record<string, string[]> } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const picks: Record<string, Entry> = {};
+  const held: HeldPick[] = [];
+  const spelled: Record<string, string[]> = {};
   const notes: string[] = [];
   const dropped: NotedQuote[] = [];
 
@@ -155,7 +175,7 @@ export function toEntries(
       notes.push(`unknown contest ${p.contestId}`);
       continue;
     }
-    if (c.id in picks) {
+    if (c.id in picks || held.some((h) => h.contestId === c.id)) {
       notes.push(`${c.id}: duplicate pick, kept first`);
       continue;
     }
@@ -166,6 +186,7 @@ export function toEntries(
     }
 
     let pick: Entry["pick"];
+    let mismatch: string | undefined;
     if (isCandidate) {
       if (p.candidates.length === 0) {
         notes.push(`${c.id}: pick lists no candidates`);
@@ -173,7 +194,9 @@ export function toEntries(
       }
       const names = candidateNames(c.id, p.candidates, c.candidates, c.aliases ?? {}, notes);
       if (!names) continue;
-      pick = names;
+      pick = names.names;
+      mismatch = names.mismatch;
+      if (names.pageNames) spelled[c.id] = names.pageNames;
     } else {
       if (p.vote === null) {
         notes.push(`${c.id}: measure pick has no vote`);
@@ -204,9 +227,19 @@ export function toEntries(
 
     const n = p.rankedCount;
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
-    picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
+    if (mismatch) {
+      held.push({
+        contestId: c.id,
+        pick,
+        reason: "name-mismatch",
+        evidence: mismatch,
+        ...(ranked ? { ranked: true } : {}),
+        ...(partial ? { rankedCount: n } : {}),
+        ...(kept.length ? { quotes: kept.map((q) => ({ text: q.text, source: q.source })) } : {}),
+      });
+    } else picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
-  return { picks, notes, dropped };
+  return { picks, held, notes, dropped, spelled };
 }
 
 // Must normalize like verifyQuotes, or a quote that differs only in dashes or spacing is kept twice.
@@ -218,7 +251,8 @@ function sameQuote(a: string, b: string): boolean {
   return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
 }
 
-function samePick(a: Entry, b: Entry): boolean {
+/** Same names (in any order unless ranked) or the same vote. */
+export function samePick(a: Entry, b: Entry): boolean {
   if (Array.isArray(a.pick) && Array.isArray(b.pick) && !a.ranked && !b.ranked) {
     return a.pick.length === b.pick.length && a.pick.every((n) => (b.pick as string[]).includes(n));
   }

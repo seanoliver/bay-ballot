@@ -6,6 +6,7 @@ import type { EndorsementFile, Guide } from "@/lib/schema";
 import { systemPrompt, type ExtractClient } from "@/pipeline/extract";
 import {
   applyVerdicts,
+  hasVerifiable,
   verify,
   VERIFY_MODEL,
   verifierPrompt,
@@ -161,6 +162,15 @@ describe("applyVerdicts", () => {
       expect(r.file.held).toEqual([unclear]);
       expect(r.confirmed).toBe(1);
     });
+    it("never releases a name-mismatch hold, even when the verifier confirms the pick", () => {
+      const near = { ...heldD8, reason: "name-mismatch" as const, evidence: "near" };
+      const r = applyVerdicts({ ...withHeld, held: [near] }, {
+        ...base,
+        picks: [...base.picks, { contestId: "supervisor-8", verdict: "confirmed", evidence: "#1 McCoy #2 Nguyen" }],
+      });
+      expect(r.file.picks["supervisor-8"]).toBeUndefined();
+      expect(r.file.held).toEqual([near]);
+    });
     it("keeps a held pick held when the verifier says nothing about it", () => {
       const r = applyVerdicts(withHeld, base);
       expect(r.file.held).toEqual([heldD8]);
@@ -198,6 +208,15 @@ describe("applyVerdicts", () => {
     expect(r.missing).toEqual(missing);
     expect(r.file.picks["prop-d"]).toBeUndefined();
   });
+});
+
+describe("hasVerifiable", () => {
+  const empty = { ...file, picks: {}, held: [] };
+  const hold = (reason: "name-mismatch" | "unclear-match" | "wrong-pick") => ({ contestId: "prop-a", pick: "Y" as const, reason, evidence: "e" });
+  it("is false when the only items are holds a person releases", () =>
+    expect(hasVerifiable({ ...empty, held: [hold("name-mismatch"), { ...hold("unclear-match"), contestId: "prop-b" }] })).toBe(false));
+  it("is true for a verifier hold", () => expect(hasVerifiable({ ...empty, held: [hold("wrong-pick")] })).toBe(true));
+  it("is true for a pick", () => expect(hasVerifiable(file)).toBe(true));
 });
 
 describe("verifierPrompt", () => {
