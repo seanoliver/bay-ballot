@@ -90,15 +90,9 @@ export function poolDistrictCounties(contests: Contest[], cityCounty: Record<str
 type Ring = [number, number][];
 export type Shape = { type: "Polygon"; coordinates: Ring[] } | { type: "MultiPolygon"; coordinates: Ring[][] };
 
-// Every feature of an ArcGIS layer as GeoJSON in degrees.
 const arcgisGeojson = (layer: string, field: string) => `${layer}/query?` + new URLSearchParams({ where: "1=1", outFields: field, outSR: "4326", f: "geojson" });
-// The California state GIS service of the 2021 Citizens Redistricting Commission maps, all districts statewide.
 const caDistrictsUrl = (layer: number) => arcgisGeojson(`https://services.gis.ca.gov/arcgis/rest/services/Government/CaliforniaDistricts/MapServer/${layer}`, "DISTRICT");
 
-/**
- * `place` is the one place the district contests are filed under, or `STATE_PLACE` for state-drawn maps. `format`
- * is GeoJSON unless set.
- */
 export const DISTRICT_MAPS: readonly {
   place: DistrictPlace;
   seat: string;
@@ -127,7 +121,6 @@ export const DISTRICT_MAPS: readonly {
     field: "sup_dist",
     count: 11,
   },
-  // Sonoma County GIS "Supervisorial Districts 2020", the lines adopted by Ordinance 6364 in December 2021.
   {
     place: { level: "county", name: "Sonoma" },
     seat: "Supervisor",
@@ -135,7 +128,6 @@ export const DISTRICT_MAPS: readonly {
     field: "SupNum",
     count: 5,
   },
-  // San José planning GIS "City Council Districts (Current)", the lines adopted in January 2022, kept up with annexations.
   {
     place: { level: "city", name: "San Jose" },
     seat: "City Council",
@@ -172,11 +164,8 @@ export const MIN_DISTRICT_SHARE = 0.005;
 export const SLIVER_WIDTH_M = 60;
 // ZIP areas (ZCTAs) are Census blocks, not USPS delivery areas: a home near the edge may have the neighbor's ZIP.
 export const EDGE_BUFFER_M = 150;
-// Caps sqrt(AREALAND) in a block's reach; it covers a compact block, not a long, concave or watery one. See the
-// investigation doc for why 3 km.
 export const BLOCK_REACH_CAP_M = 3000;
 export const MAX_BLOCK_REACH_M = EDGE_BUFFER_M + BLOCK_REACH_CAP_M;
-// Dropped overlaps at or above this share are printed.
 export const LOG_SHARE = 0.001;
 // Enough rows that a ZIP a few blocks tall still resolves the threshold.
 const MIN_ROWS = 2000;
@@ -217,7 +206,6 @@ function bounds(es: Edge[]): Box {
 }
 export const boxesMeet = (a: Box, b: Box) => a.x[0] <= b.x[1] && b.x[0] <= a.x[1] && a.y[0] <= b.y[1] && b.y[0] <= a.y[1];
 
-// Edges in bands of latitude, so a row checks only the edges near it. A statewide map has far more edges than a ZIP.
 const BANDS = 64;
 function banded(es: Edge[], lo: number, step: number): Edge[][] {
   const bands: Edge[][] = Array.from({ length: BANDS }, () => []);
@@ -247,7 +235,6 @@ export function districtShares(
     const rows = Math.max(minRows, Math.ceil((hi - lo) / MAX_ROW_STEP));
     const step = (hi - lo) / rows;
     const bandStep = (hi - lo) / BANDS || 1;
-    // Only edges that reach the ZIP's rows matter: a row's crossings come from edges spanning its latitude.
     const near = ds.filter((d) => boxesMeet(d.box, box)).map((d) => ({ id: d.id, bands: banded(d.es.filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi), lo, bandStep) }));
     const zBands = banded(ze, lo, bandStep);
     const area: Record<string, number> = {};
@@ -269,8 +256,6 @@ export function districtShares(
 
 const byNumber = (a: string, b: string) => a.localeCompare(b, "en", { numeric: true });
 
-// Drops an overlap only when it is a small share, thin, and without 2020 homes; keeps any district whose homes
-// reach the ZIP's edge. `notes` are overlaps only one size test would drop.
 export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = [] }: {
   shares: Record<string, number>;
   widths: Record<string, number>;
@@ -296,7 +281,6 @@ export function reachedDistricts({ shares, widths, withHomes = [], nearEdge = []
   return { touched: [...touched].sort(byNumber), notes: notes.sort((a, b) => byNumber(a.district, b.district)), dropped: dropped.filter((d) => !touched.has(d.district)) };
 }
 
-// Meters per degree of latitude, and of longitude at a latitude.
 const M_PER_DEG = 111_320;
 const mPerDegX = (lat: number) => M_PER_DEG * Math.cos((lat * Math.PI) / 180);
 
@@ -340,7 +324,6 @@ function widestRow(a: Edge[], b: Edge[], { minRows = MIN_ROWS }: { minRows?: num
   return widest;
 }
 
-// Overlap thickness in meters: the smaller of its widest east-west and north-south runs. A sliver is thin one way.
 export function overlapWidth(zip: Shape, district: Shape, opts: { minRows?: number } = {}): number {
   const z = edges(rings(zip));
   const d = edges(rings(district));
@@ -349,14 +332,12 @@ export function overlapWidth(zip: Shape, district: Shape, opts: { minRows?: numb
   return Math.min(widestRow(z, d, opts) * mPerDegX(lat), widestRow(flip(z), flip(d), opts) * M_PER_DEG);
 }
 
-/** A box grown by `meters` on every side. */
 export function padBox({ x, y }: Box, meters: number): Box {
   const dy = meters / M_PER_DEG;
   const dx = meters / mPerDegX(Math.max(Math.abs(y[0]), Math.abs(y[1])));
   return { x: [x[0] - dx, x[1] + dx], y: [y[0] - dy, y[1] + dy] };
 }
 
-/** The points of the blocks whose reach (see `blockPoints`) gets to a shape's edge, from inside or out. */
 export function blocksNearEdge(s: Shape, blocks: Block[]): [number, number][] {
   if (blocks.length === 0) return [];
   const es = edges(rings(s));
@@ -385,7 +366,6 @@ export function blocksNearEdge(s: Shape, blocks: Block[]): [number, number][] {
     .map((b) => b.at);
 }
 
-/** Census 2020 blocks with people or homes in a box, by their internal points. ZIP areas and districts are both made of blocks. */
 export const homeBlocksUrl = ({ x, y }: Box) =>
   "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/2/query?" +
   new URLSearchParams({
@@ -399,10 +379,8 @@ export const homeBlocksUrl = ({ x, y }: Box) =>
     f: "json",
   });
 
-// A block's internal point, and how far the block may reach from it (see `blockPoints`).
 export type Block = { at: [number, number]; reach: number };
 
-/** Blocks from a `homeBlocksUrl` response. Fails on an error, a cut-off response, or a block with no point or area. */
 export function blockPoints(text: string): Block[] {
   const json = JSON.parse(text) as { error?: unknown; exceededTransferLimit?: boolean; features?: { attributes: Record<string, string | number | null> }[] };
   if (json.error !== undefined) throw new Error(`TIGERweb blocks: the server returned an error: ${JSON.stringify(json.error)}`);
@@ -420,18 +398,15 @@ export function blockPoints(text: string): Block[] {
 
 export const shapeBox = (s: Shape): Box => bounds(edges(rings(s)));
 
-// Even-odd, against edges already narrowed to those that reach the point's latitude range.
 const insideEdges = (es: Edge[], [x, y]: [number, number]) => crossings(es, y).filter((v) => v < x).length % 2 === 1;
 const edgesSpanning = (s: Shape, [lo, hi]: [number, number]) => edges(rings(s)).filter((e) => Math.max(e[1], e[3]) >= lo && Math.min(e[1], e[3]) <= hi);
 
-/** The points that lie inside a shape. */
 export function pointsIn(s: Shape, points: [number, number][]): [number, number][] {
   const box = shapeBox(s);
   const es = edgesSpanning(s, box.y);
   return points.filter((p) => p[1] >= box.y[0] && p[1] <= box.y[1] && insideEdges(es, p));
 }
 
-/** Of `candidates`, the districts that hold any of `homes`, the points of a ZIP's blocks with people or homes. */
 export function districtsWithHomes(homes: [number, number][], districts: Record<string, Shape>, candidates: string[]): string[] {
   if (homes.length === 0) return [];
   const ys: [number, number] = [Math.min(...homes.map((p) => p[1])), Math.max(...homes.map((p) => p[1]))];

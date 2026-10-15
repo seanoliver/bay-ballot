@@ -495,9 +495,6 @@ async function runZips() {
     if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
     return Object.fromEntries(want.map((z) => [z, zctas[z]]));
   };
-  // The points of each ZIP's Census blocks with people or homes, to keep a small overlap that has them.
-  // Fetched for the ZIP's box grown by MAX_BLOCK_REACH_M: `inside` for small overlaps, `nearEdge` for homes whose USPS
-  // ZIP may differ from their block's.
   type Homes = { inside: [number, number][]; nearEdge: [number, number][] };
   const homes: Record<string, Homes> = {};
   const fetchHomes = async (want: string[]) => {

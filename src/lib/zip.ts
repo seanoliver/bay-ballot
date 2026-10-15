@@ -31,7 +31,6 @@ const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
 // The level is in the map's key: Alameda is a city and a county.
 export type DistrictPlace = { level: "state" | "county" | "city"; name: string };
-/** Where state-drawn district maps (Congress, Assembly, ...) are filed: their contests list many places. */
 export const STATE_PLACE: DistrictPlace = { level: "state", name: "California" };
 export const districtMapKey = (place: DistrictPlace, seat: string) => `${place.level}:${place.name}/${seat}`;
 

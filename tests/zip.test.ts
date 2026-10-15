@@ -67,7 +67,6 @@ describe("zipFit", () => {
     expect(fit(sup4, { ...SF, districts: { "city:San Francisco/Supervisor": ["8"] } }, "San Francisco")).toBe("maybe");
   });
   it("keeps a ZIP's only mapped district as maybe when the ZIP lies partly outside the map's place", () => {
-    // 94501: mostly Alameda, a little SF land, all of it in SF District 6.
     const alameda: ZipPlaces = { counties: ["Alameda", "San Francisco"], places: { Alameda: "partial" }, districts: { "county:San Francisco/Supervisor": ["6"] } };
     const sup6 = c("supervisor-6", { level: "district", name: "Supervisor", district: "6", within: [{ level: "county", name: "San Francisco" }] });
     expect(fit(sup6, alameda, "San Francisco")).toBe("maybe");
@@ -206,19 +205,15 @@ describe("districtShares", () => {
 });
 
 describe("overlapWidth", () => {
-  // About 1.1 km square at 37.5 degrees north.
   const zip = box(-122, 37.5, -121.99, 37.51);
   it("measures a strip along the top by its height, however long it is", () => {
-    // 0.00002 degrees of latitude is about 2.2 m.
     expect(overlapWidth(zip, box(-123, 37.50998, -121, 38))).toBeCloseTo(2.2, 0);
   });
   it("measures a strip along the side by its width, at the ZIP's latitude", () => {
-    // 0.0005 degrees of longitude at 37.5 degrees is about 44 m.
     expect(overlapWidth(zip, box(-121.9905, 37, -121, 38))).toBeCloseTo(44.2, 0);
   });
   it("reads a ZIP of two parts that share an edge as one run across the seam", () => {
     const halves: Shape = { type: "MultiPolygon", coordinates: [box(-122, 37.5, -121.995, 37.51).coordinates as never, box(-121.995, 37.5, -121.99, 37.51).coordinates as never] };
-    // A district over the whole ZIP: rows run 880 m across both halves, not 440 m in each; columns run 1,110 m.
     const all = box(-123, 37, -121, 38);
     expect(overlapWidth(halves, all)).toBeCloseTo(overlapWidth(zip, all), 0);
     expect(overlapWidth(halves, all)).toBeCloseTo(883, -1);
@@ -264,7 +259,6 @@ describe("reachedDistricts", () => {
 
 describe("homes near a ZIP's edge", () => {
   const zip = box(-122, 37.5, -121.99, 37.51);
-  // 0.001 degrees of longitude at 37.5 degrees is about 88 m; 0.002 is about 177 m.
   const small = (at: [number, number]) => ({ at, reach: EDGE_BUFFER_M });
   it("keeps small blocks within the buffer of the edge, inside or out, and no others", () => {
     const pts: [number, number][] = [[-121.995, 37.505], [-121.999, 37.505], [-122.001, 37.505], [-122.002, 37.505], [-121.995, 37.511], [-121.995, 37.5115]];
@@ -272,7 +266,6 @@ describe("homes near a ZIP's edge", () => {
     expect(blocksNearEdge(zip, [])).toEqual([]);
   });
   it("reaches further for a big block, whose edge can touch the ZIP far from its internal point", () => {
-    // About 880 m west of the ZIP: missed as a small block, kept as one of about 1 km².
     const far: [number, number] = [-122.01, 37.505];
     expect(blocksNearEdge(zip, [small(far)])).toEqual([]);
     expect(blocksNearEdge(zip, [{ at: far, reach: EDGE_BUFFER_M + 1000 }])).toEqual([far]);
@@ -345,7 +338,6 @@ function zipOf(files: Record<string, Buffer>): Buffer {
   return Buffer.concat([...locals, ...central, end]);
 }
 
-// A polygon shapefile, ids in a one-column table. PolygonZ (type 15) records carry z values after the points.
 type Feature = { id: string; rings: [number, number][][]; type?: 5 | 15; deleted?: boolean };
 function shapefile(field: string, features: Feature[], prj: string): Record<string, Buffer> {
   const records = features.map(({ rings, type = 5 }, i) => {
@@ -400,7 +392,6 @@ describe("shapefileById", () => {
     const shapes = read([{ id: "1", rings: [sq(0, 0, 0.01, 0.01), sq(0.0025, 0.0025, 0.0075, 0.0075), sq(0.02, 0, 0.03, 0.01)] }]);
     expect(shapes["1"].coordinates).toHaveLength(3);
     const s = districtShares({ "94999": box(0, 0, 0.03, 0.01) }, { "1": shapes["1"], hole: box(0.0025, 0.0025, 0.0075, 0.0075), gap: box(0.01, 0, 0.02, 0.01) })["94999"];
-    // Of three equal squares: two parts less a quarter-square hole.
     expect(s["1"]).toBeCloseTo(1.75 / 3, 3);
     expect(s.hole).toBeCloseTo(0.25 / 3, 3);
   });
@@ -508,7 +499,6 @@ describe("the committed ZIP table", () => {
       );
       expect(onBallot.length, key).toBeGreaterThan(0);
       expect(onBallot.filter((x) => !mapped.has(x.jurisdiction.district!)).map((x) => x.id), key).toEqual([]);
-      // Each place a contest lists has some ZIP in that district, so the map and the ballot agree on where it is.
       const unmatched = onBallot.flatMap((x) =>
         (x.jurisdiction.within ?? [])
           .filter((p) => !zips.some(([, z]) => z.districts![key].includes(x.jurisdiction.district!) && (p.level === "county" ? z.counties.includes(p.name) : Object.hasOwn(z.places, p.name))))
@@ -527,7 +517,6 @@ describe("the committed ZIP table", () => {
     expect(f("us-rep-15", "94590")).toBe("off");
     expect(f("us-rep-11", "94112")).toBe("maybe");
     expect(f("us-rep-15", "94112")).toBe("maybe");
-    // Treasure Island: one SF district.
     expect(f("supervisor-6", "94130")).toBe("on");
     expect(f("supervisor-2", "94130")).toBe("off");
     expect(f("supervisor-8", "94110")).toBe("maybe");
@@ -536,7 +525,6 @@ describe("the committed ZIP table", () => {
   it("puts known ZIPs in the right state and local districts", async () => {
     const { default: raw } = await import("@/data/zips.json");
     const d = (zip: string) => (raw as unknown as ZipTable).zips[zip].districts;
-    // Inside one district each: Palo Alto for State Senate, Vallejo (Board of Equalization 1, like all of Solano), the Mission's Assembly.
     expect(d("94301")).toMatchObject({ "state:California/State Senate": ["13"], "state:California/Board of Equalization": ["2"] });
     // Palo Alto's homes across San Francisquito Creek, in Menlo Park and East Palo Alto, add Congress 15 and Assembly 21.
     expect(d("94301")).toMatchObject({ "state:California/Congress": ["15", "16"], "state:California/Assembly": ["21", "23"] });
@@ -545,7 +533,6 @@ describe("the committed ZIP table", () => {
     // Small overlaps with 2020 homes (28 people in 94706's Congress 8, 97 in 95116's Congress 17) that area alone dropped.
     expect(d("94706")?.["state:California/Congress"]).toEqual(["8", "12"]);
     expect(d("95116")?.["state:California/Congress"]).toEqual(["16", "17", "18"]);
-    // Straddling: Ingleside spans Congress 11 and 15 under the Prop 50 map; downtown San José spans four council districts.
     expect(d("94112")?.["state:California/Congress"]).toEqual(["11", "15"]);
     expect(d("95112")?.["city:San Jose/City Council"]).toEqual(["3", "4", "6", "7"]);
     expect(d("94928")?.["county:Sonoma/Supervisor"]).toEqual(["1", "2", "3", "5"]);

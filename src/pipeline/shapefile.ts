@@ -1,7 +1,6 @@
 import { inflateRawSync } from "node:zlib";
 import type { Shape } from "./zips";
 
-/** The files in a ZIP archive, by name. Only stored and deflated entries, which is all a shapefile download uses. */
 export function unzip(buf: Buffer): Record<string, Buffer> {
   let end = buf.length - 22;
   while (end >= 0 && buf.readUInt32LE(end) !== 0x06054b50) end--;
@@ -25,7 +24,6 @@ export function unzip(buf: Buffer): Record<string, Buffer> {
   return out;
 }
 
-// One column of a .dbf table, row by row; null for a row marked deleted.
 function dbfColumn(dbf: Buffer, field: string): (string | null)[] {
   const rows = dbf.readUInt32LE(4);
   const headerLen = dbf.readUInt16LE(8);
@@ -47,12 +45,9 @@ function dbfColumn(dbf: Buffer, field: string): (string | null)[] {
   });
 }
 
-// Inverse Web Mercator (EPSG:3857), meters to degrees.
 const R = 6378137;
 const fromMercator = ([x, y]: [number, number]): [number, number] => [(x / R) * (180 / Math.PI), (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI)];
 
-// Polygons by `field`, in degrees, rings only (inside is even-odd). Fails on any projection but WGS 84 or NAD 83
-// degrees or WGS 84 Web Mercator.
 export function shapefileById(zip: Buffer, field: string, what: string): Record<string, Shape> {
   const files = unzip(zip);
   const file = (ext: string) => {
