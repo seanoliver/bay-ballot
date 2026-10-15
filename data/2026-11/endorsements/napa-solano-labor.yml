@@ -2,12 +2,18 @@ guide: napa-solano-labor
 election: 2026-11
 status: published
 source: https://napasolanoclc.org/elections/
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-15
 hasReasoning: false
 picks:
+  us-rep-4:
+    pick:
+      - Mike Thompson
   us-rep-8:
     pick:
       - John Garamendi
+  assembly-4:
+    pick:
+      - Cecilia M. Aguiar-Curry
   assembly-11:
     pick:
       - Lori D Wilson
@@ -72,24 +78,6 @@ picks:
   vallejo-city-usd-trustee-area-3:
     pick:
       - Irene Reynolds
-  solano-county-measure-e:
-    pick: Y
-  solano-county-measure-h:
-    pick: Y
-  benicia-measure-x:
-    pick: Y
-  benicia-measure-y:
-    pick: Y
-  benicia-measure-z:
-    pick: Y
-  fairfield-measure-p:
-    pick: Y
-  us-rep-4:
-    pick:
-      - Mike Thompson
-  assembly-4:
-    pick:
-      - Cecilia M. Aguiar-Curry
   american-canyon-council:
     pick:
       - David Oro
