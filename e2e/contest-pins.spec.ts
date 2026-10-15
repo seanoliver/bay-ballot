@@ -31,11 +31,18 @@ const OWN_MIXED = data.areas.flatMap((a) => {
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
+// Each side shows four chips, then "+N more"; pressing it turns it into "Show less".
+async function expandChips(scope: Page | Locator) {
+  const more = scope.getByRole("button", { name: /^\+\d+ more$/ });
+  while (await more.count()) await more.first().click();
+}
+
 async function openContest(page: Page, query = "") {
   await page.goto(`${PROP_D}${query}`);
   await expect(page.getByRole("heading", { level: 1, name: "Proposition D" })).toBeVisible();
   // A press before hydration is dropped.
   await waitForKeys(page);
+  await expandChips(page);
 }
 
 async function filterPanel(page: Page, info: TestInfo) {
@@ -77,10 +84,28 @@ test.describe("pinning from a contest page", () => {
     await expect(chips.getByRole("listitem")).toHaveText([/^SPUR:\s*Yes$/]);
 
     await page.goBack();
+    await expandChips(page);
     await spur.click();
     await expect(spur).toHaveAttribute("aria-pressed", "false");
     await expect(page).not.toHaveURL(/[?&]pin=/);
     expect(errors).toEqual([]);
+  });
+
+  test("a side shows four chips, then +N more shows the rest below and Show less hides them", async ({ page }) => {
+    await page.goto(PROP_D);
+    await waitForKeys(page);
+    const yes = page.getByRole("group", { name: "Guides for Yes" });
+    const chips = yes.getByRole("button", { name: /^Pin / });
+    await expect(chips).toHaveCount(4);
+    const more = yes.getByRole("button", { name: /^\+\d+ more$/ });
+    await expect(more).toHaveAttribute("aria-expanded", "false");
+    const n = Number((await more.textContent())!.match(/\d+/)![0]);
+    await more.click();
+    await expect(chips).toHaveCount(4 + n);
+    const less = yes.getByRole("button", { name: "Show less" });
+    await expect(less).toHaveAttribute("aria-expanded", "true");
+    await less.click();
+    await expect(chips).toHaveCount(4);
   });
 
   test("with four pinned, other chips are disabled and say why", async ({ page }) => {
@@ -269,6 +294,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await page.goto(`${SF}?c=prop-d`);
     const pane = page.getByRole("region", { name: "Proposition D" });
     await expect(pane).toBeVisible();
+    await expandChips(pane);
     await pinChip(pane, "SPUR").click();
     await expect(rowPins(page).getByRole("listitem")).toHaveText([/^SPUR:\s*Yes$/]);
     await expect(pane.getByRole("status")).toHaveText("Pinned SPUR · 1 of 4 pinned");
@@ -437,6 +463,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await contestRow(page, "Proposition D").tap();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     await expect(sheet).toBeVisible();
+    await expandChips(sheet);
     await pinChip(sheet, "SPUR").click();
     await expect(sheet.getByRole("status")).toHaveText("Pinned SPUR · 1 of 4 pinned");
     await expect(sheet.getByRole("status")).toBeVisible();
