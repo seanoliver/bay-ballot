@@ -380,6 +380,15 @@ describe("runRefresh", () => {
     expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body" });
   });
 
+  it("passes a source's own selector from contentSelectors during refresh", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), `contentSelector: "#article-body"\ncontentSelectors:\n  ${url("alpha")}: main article\n`);
+    const { client } = fakeClient(sameOut);
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), { browser: false, contentSelector: "main article" });
+  });
+
   it("keeps the stored page when a page misses its selector, and asks for review", async () => {
     const root = setup(["alpha", "beta"]);
     const { client } = fakeClient(sameOut);
