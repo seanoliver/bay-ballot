@@ -90,7 +90,6 @@ function editDistance(a: string, b: string): number {
   return d[a.length][b.length];
 }
 
-// First names may differ by one letter or share a 3-letter start ("Debbie" for "Deborah"); last names by one letter, and only in names of 5+ letters.
 function nearNames(a: string[], b: string[]): boolean {
   if (a.length < 2 || b.length < 2) return false;
   const [af, bf, al, bl] = [a[0], b[0], a.at(-1)!, b.at(-1)!];

@@ -185,7 +185,6 @@ async function refreshGuide(
   const pageTexts = pagesFor(sources);
   const extracted = toEntries(output, ballot.contests, pageTexts, { ownNames: [guide.name] });
   const heldEntry = (h: HeldPick) => ({ pick: h.pick, ranked: h.ranked ?? false, ...(h.rankedCount ? { rankedCount: h.rankedCount } : {}), quotes: h.quotes ?? [] });
-  // A near spelling of the pick the file already publishes is treated as that pick, and the summary says so: it may name someone else.
   const keptNear: string[] = [];
   const nearPicks: Record<string, Entry> = {};
   const nearHeld = extracted.held.filter((h) => {
@@ -227,7 +226,6 @@ async function refreshGuide(
     return isDeepStrictEqual(now.pick, h.pick) ? [] : [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(now.pick)}`];
   });
   const base = scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived);
-  // A hold the file already has for the same pick is kept as it was (quotes included) and not reported again, like a verifier hold.
   const prevNameHold = (h: HeldPick) =>
     (prev.held ?? []).find(
       (x) =>
