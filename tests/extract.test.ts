@@ -175,6 +175,13 @@ describe("toEntries", () => {
       expect.objectContaining({ contestId: "supervisor-d8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "name-mismatch", evidence: expect.stringContaining("`Michael T. Nguyan`") }),
     ]);
     expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
+    expect(r.notes.some((n) => n.includes(" -> "))).toBe(false);
+  });
+
+  it("drops, and doesn't hold, a pick with one near name and one unknown name", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan", "Nobody Here"] }));
+    expect(r.held).toEqual([]);
+    expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(true);
   });
 
   it("names each page spelling once in the evidence", () => {

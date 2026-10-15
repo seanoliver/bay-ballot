@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pacificDay } from "../src/lib/changelog";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
-import { EndorsementFile, isPersonHold, type Guide } from "../src/lib/schema";
+import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
 import { claudeCodeClient, modelVia } from "../src/pipeline/claudecode";
 import type { ExtractClient, Source } from "../src/pipeline/extract";
@@ -17,7 +17,7 @@ import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
 import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
-import { applyVerdicts, verify } from "../src/pipeline/verify";
+import { applyVerdicts, hasVerifiable, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
@@ -178,7 +178,7 @@ async function runVerify(): Promise<void> {
         console.log(`${id}: skipped (manual)`);
         continue;
       }
-      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held ?? []).filter((h) => !isPersonHold(h)).length === 0) {
+      if (sourcesFor(file).length === 0 || !hasVerifiable(file)) {
         console.log(`${id}: skipped (no source or no picks)`);
         continue;
       }

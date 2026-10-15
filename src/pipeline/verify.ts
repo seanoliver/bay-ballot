@@ -152,7 +152,12 @@ export async function verify(
   return { output: parseOutput(text), usage: res.usage };
 }
 
-function heldEntry(h: HeldPick): Entry {
+/** Whether a file has anything the verifier may audit: a pick, or a hold that isn't a person's to release. */
+export function hasVerifiable(file: EndorsementFile): boolean {
+  return Object.keys(file.picks).length + (file.held ?? []).filter((h) => !isPersonHold(h)).length > 0;
+}
+
+export function heldEntry(h: HeldPick): Entry {
   return { pick: h.pick, ranked: h.ranked ?? false, ...(h.rankedCount ? { rankedCount: h.rankedCount } : {}), quotes: h.quotes ?? [] };
 }
 

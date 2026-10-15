@@ -174,6 +174,9 @@ describe("suggestName", () => {
     expect(suggestName("Scott Wiemar", ["Scott Wiener"])).toBeNull());
   it("suggests the candidate for a one-letter slip in a last name of 5+ letters", () =>
     expect(suggestName("Scott Wienar", ["Scott Wiener"])).toBe("Scott Wiener"));
+  it("suggests the candidate for a one-letter slip early in the first name", () =>
+    expect(suggestName("Jon Wiener", ["John Wiener"])).toBe("John Wiener"));
+  it("does not suggest across two slips in a short first name", () => expect(suggestName("Jan Wiener", ["John Wiener"])).toBeNull());
   it("checks aliases too", () =>
     expect(suggestName("Bobbie Smithe", ["Robert Smith"], { "Robert Smith": ["Bob Smith"] })).toBe("Robert Smith"));
   it("returns null for a different last name", () => expect(suggestName("Deborah Rudd", ["Debbie Ruddock"])).toBeNull());

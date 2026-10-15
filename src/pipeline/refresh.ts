@@ -13,7 +13,7 @@ import { extract, keepPrevQuotes, pagesFor, samePick, toEntries, type ExtractCli
 import { SelectorMissError, type Fetched, type FetchOptions } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchOptions, sourcesFor } from "./sources";
-import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
+import { applyVerdicts, auditPart, heldEntry, verify, withAudited, type VerifyOutput } from "./verify";
 import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
 import { nextFile, scopedNextFile, shrinkWarning, toYaml } from "./write";
 
@@ -64,6 +64,8 @@ export type GuideResult = (
       held: HeldPick[];
       /** Unclear-match holds whose contest the guide now picks differently. */
       unclear?: string[];
+      /** Published picks the page now spells a little differently: a person checks it is the same candidate. */
+      keptNear?: string[];
       droppedByVerifier: number;
       missing: VerifyOutput["missing"];
       warnings?: string[];
@@ -184,7 +186,6 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
   const pageTexts = pagesFor(sources);
   const extracted = toEntries(output, ballot.contests, pageTexts, { ownNames: [guide.name] });
-  const heldEntry = (h: HeldPick) => ({ pick: h.pick, ranked: h.ranked ?? false, ...(h.rankedCount ? { rankedCount: h.rankedCount } : {}), quotes: h.quotes ?? [] });
   const keptNear: string[] = [];
   const nearPicks: Record<string, Entry> = {};
   const nearHeld = extracted.held.filter((h) => {
@@ -254,10 +255,11 @@ async function refreshGuide(
     notes,
     held: newNameHolds,
     ...(unclear.length ? { unclear } : {}),
+    ...(keptNear.length ? { keptNear } : {}),
     droppedByVerifier: 0,
     missing: [],
     usage: { extract: usage },
-    warnings: [...pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])), ...keptNear],
+    warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
   };
 
   const hasHeld = (next.held ?? []).some((h) => !isPersonHold(h) && inScope(h.contestId));
@@ -371,6 +373,7 @@ function describe(r: GuideResult): string {
         ...r.diff.map((l) => `  ${l}`),
         ...r.held.map((h) => `  !! HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}`),
         ...(r.unclear ?? []).map((u) => `  !! unclear-match hold on ${u}`),
+        ...(r.keptNear ?? []).map((k) => `  !! ${k}`),
         ...(r.warnings ?? []).map((w) => `  !! ${w}`),
         ...r.notes.map((n) => `${n.includes("PICK DROPPED") ? "  !! " : "  ! "}${n}`),
       ].join("\n");
@@ -423,7 +426,7 @@ export function costText(results: GuideResult[]): string {
 
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
-  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length)))) return 2;
+  if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length || !!r.keptNear?.length)))) return 2;
   if (results.some((r) => r.status === "blocked")) return 2;
   return 0;
 }
@@ -433,13 +436,14 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
   const held = changed.reduce((n, r) => n + r.held.length, 0);
   const unclear = changed.reduce((n, r) => n + (r.unclear?.length ?? 0), 0);
+  const kept = changed.reduce((n, r) => n + (r.keptNear?.length ?? 0), 0);
   const code = exitCodeFor(results);
   const misses = results.flatMap((r) => (r.selectorMisses ?? []).map((m) => `${r.id}: ${m}`));
   const would = by("would-extract").length;
   const isDryRun = dryRun || would > 0;
   const verdict =
     code === 1 ? "errors"
-    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${by("blocked").length ? `, ${by("blocked").length} blocked` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
+    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${kept ? `, ${kept} kept under a near spelling` : ""}${by("blocked").length ? `, ${by("blocked").length} blocked` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
     : misses.length ? `clean; ${misses.length} selector miss${misses.length === 1 ? "" : "es"} listed below`
     : "clean";
@@ -461,6 +465,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
       for (const d of r.diff) lines.push(`- ${d}`);
       for (const h of r.held) lines.push(`- **HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}**`);
       for (const u of r.unclear ?? []) lines.push(`- **unclear-match hold on ${u}**`);
+      for (const k of r.keptNear ?? []) lines.push(`- **${k}**`);
       for (const w of r.warnings ?? []) lines.push(`- **${w}**`);
       if (r.droppedByVerifier) lines.push(`- verifier dropped ${r.droppedByVerifier} quote(s)`);
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
@@ -544,6 +549,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
     return [
       ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
       ...(r.unclear ?? []).map((e) => `${r.id}: unclear-match hold on ${e}`),
+      ...(r.keptNear ?? []).map((k) => `${r.id}: kept ${k.split(":")[0]} under a near spelling`),
       ...r.diff
         .filter((d) => d.startsWith("- "))
         .map((d) => d.slice(2).split(":")[0])
