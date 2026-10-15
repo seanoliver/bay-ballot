@@ -5,6 +5,18 @@ source: https://napasolanoclc.org/elections/
 fetchedAt: 2026-10-15
 hasReasoning: false
 picks:
+  solano-county-measure-e:
+    pick: Y
+  solano-county-measure-h:
+    pick: Y
+  benicia-measure-x:
+    pick: Y
+  benicia-measure-y:
+    pick: Y
+  benicia-measure-z:
+    pick: Y
+  fairfield-measure-p:
+    pick: Y
   us-rep-4:
     pick:
       - Mike Thompson
