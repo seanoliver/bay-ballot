@@ -54,7 +54,7 @@ California | Proposition 3 | Yes | Maintain School Funding through Renewing Inco
 California | Proposition 4 | Yes | Allow Public Financing for Fair Elections | Real Democracy
 California | Proposition 5 | Yes | Reform the Recall Process of Elected Officials | Real Democracy
 California | Proposition 37 | Neutral/No Position | Create Second Mortgage Program for Middle-Class Home-Buyers | Right to our Homes
-California | Proposition 38 | Yes | Fund Immunology & Medical Research through Bond | Care for Young People & Families
+California | Proposition 38 | No | Restrict Half of Immunology Medical Research Bond Funding to One Untested Institute | Care for Young People & Families
 California | Proposition 39 | No | Suppress Voting Rights | Real Democracy
 California | Proposition 40 | Yes | Establish a one-time 5% Billionaire Tax | Funding Our Future
 California | Proposition 41 | No | Block the Billionaire Tax | Funding Our Future

@@ -5,7 +5,7 @@ source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-e
 archived:
   - source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
     snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
-fetchedAt: 2026-10-12
+fetchedAt: 2026-10-15
 hasReasoning: true
 rejectedQuotes:
   - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
@@ -97,6 +97,8 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Bonta has also been active defending California against the Trump administration, filing over 50 lawsuits on issues from immigration to environmental protections.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: His office has forced compliance from cities across California that were illegally stalling housing plans, including settlements with Fullerton, Norwalk, Elk Grove, and Huntington Beach.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   insurance-commissioner:
     pick:
       - Ben Allen
@@ -126,6 +128,8 @@ picks:
       - Catherine Stefani
     quotes:
       - text: Stefani has had a productive first term.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Newsom signed seven of her bills into law in 2025.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   superintendent:
     pick:
@@ -171,6 +175,8 @@ picks:
     pick:
       - Ruth Ferguson
     quotes:
+      - text: Half a year in, she has the college's cost problem down to specifics.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Ferguson has spent her first six months on the Board learning exactly where the money goes.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   bart-8:
@@ -186,6 +192,8 @@ picks:
       - Joaquín Torres
     quotes:
       - text: Torres inherited an in-progress $55 million replacement of the office's decades-old technology, started under his predecessor Carmen Chu, and carried it to completion.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: In December 2024 he made San Francisco the first county in California to put its recorded documents online for free, more than 7 million of them going back to 1990, replacing a system that charged residents for copies of their own deeds.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   public-defender:
     pick:
@@ -213,11 +221,16 @@ picks:
   supervisor-8:
     pick:
       - Darshini Patel
+    quotes:
+      - text: Patel is with us on housing.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   supervisor-10:
     pick:
       - Theo Ellington
     quotes:
       - text: Ellington has spent more than fifteen years working on District 10's problems.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Unlike his opponent DJ Brookter, Theo Ellington supports arresting and prosecuting fentanyl dealers and the leaders of theft rings.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-1:
     pick: Y
@@ -265,12 +278,14 @@ picks:
   prop-40:
     pick: N
     quotes:
-      - text: No state has taxed net worth this way, and the measure schedules its own court fight to run into late 2027. A clinic cannot make payroll with revenue that is tied up in court.
+      - text: No state has taxed net worth this way, and the measure schedules its own court fight to run into late 2027.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-41:
     pick: Y
     quotes:
       - text: A constitutional limit that any measure can evade in a definitions section is not law, it is decoration.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "Prop 41 closes the loophole: no new state tax may exempt itself from the limit."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-42:
     pick: Y

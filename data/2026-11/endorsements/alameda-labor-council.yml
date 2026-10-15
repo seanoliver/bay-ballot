@@ -3,7 +3,7 @@ election: 2026-11
 status: published
 source: https://docs.google.com/document/d/17P9ht52TNggvTUvs5ZEtCeiWC6kNYrVF_uGE8MMCDvU/export?format=txt
 allowForeignSources: true
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-14
 hasReasoning: false
 picks:
   governor:
@@ -86,6 +86,8 @@ picks:
     pick: Y
   prop-45:
     pick: N
+  rtm:
+    pick: Y
   alameda-mayor:
     pick:
       - Malia Vella
@@ -103,6 +105,10 @@ picks:
     pick:
       - Robin D. López
       - Aaron Tiedemann
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+      - Moni Gangopadhyay
   berkeley-council-4:
     pick:
       - Igor A. Tregub
@@ -164,6 +170,12 @@ picks:
       - Sara Lamnin
   hayward-measure-cc:
     pick: Y
+  livermore-vjusd-trustee-area-2:
+    pick:
+      - Tara Boyce
+  livermore-vjusd-trustee-area-3:
+    pick:
+      - Angela M. Brady
   livermore-vjusd-trustee-area-5:
     pick:
       - Christiaan VandenHeuvel
@@ -182,6 +194,10 @@ picks:
   oakland-usd-2:
     pick:
       - Jennifer Brouhard
+  oakland-usd-4:
+    pick:
+      - Sylvia Pfeiffer Williams
+      - Kathryn Camp
   oakland-usd-6:
     pick:
       - Valarie Bachelor
@@ -215,8 +231,6 @@ picks:
     pick:
       - Francis Rojas
       - Deepti Garg
-  rtm:
-    pick: Y
   ac-transit-ward-3:
     pick:
       - Joel B. Young
@@ -268,11 +282,3 @@ picks:
   peralta-ccd-trustee-area-5:
     pick:
       - Sandra Weese
-  berkeley-council-1:
-    pick:
-      - Daria Wrubel
-      - Moni Gangopadhyay
-  oakland-usd-4:
-    pick:
-      - Sylvia Pfeiffer Williams
-      - Kathryn Camp

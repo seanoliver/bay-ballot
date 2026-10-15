@@ -5,14 +5,32 @@ source: https://sfgop.org/nov-2026-endorsements
 archived:
   - source: https://sfgop.org/nov-2026-endorsements
     snapshot: https://web.archive.org/web/20261005222129/https://sfgop.org/nov-2026-endorsements
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-14
 hasReasoning: true
 picks:
+  us-rep-15:
+    pick:
+      - Charles Hoelter
+    quotes:
+      - text: Charles Hoelter is a citizen candidate, not a career politician.
+        source: https://sfgop.org/nov-2026-endorsements
+  assembly-17:
+    pick:
+      - Manuel Noris-Barrera
+    quotes:
+      - text: When no challenger made the June ballot, Manuel Noris-Barrera ran as a write-in so east-side voters would have a real choice in November.
+        source: https://sfgop.org/nov-2026-endorsements
+  assembly-19:
+    pick:
+      - Philip Louis Wing
+    quotes:
+      - text: Philip Wing spent his career as a financial advisor helping families live within their means, which is the discipline Sacramento has forgotten.
+        source: https://sfgop.org/nov-2026-endorsements
   supervisor-2:
     pick:
       - Nicholas Berg
     quotes:
-      - text: Nick has spent his career actually running things - including managing budgets, buildings, and teams across San Francisco's neighborhoods.
+      - text: Nicholas Berg has spent his career actually running things - including managing budgets, buildings, and teams across San Francisco's neighborhoods.
         source: https://sfgop.org/nov-2026-endorsements
   supervisor-4:
     pick:
@@ -31,20 +49,17 @@ picks:
       - Laurance Lee
       - Phil Kim
       - Tim Tung
-    quotes:
-      - text: "Our public schools should focus on outcomes: reading, math, and preparing kids for real opportunity. We recommend Laurence Lee, Phillip Kim, and Tim Tung for the Board of Education."
-        source: https://sfgop.org/nov-2026-endorsements
   college-board:
     pick:
       - Elijah Ball
   board-of-equalization-2:
     pick:
       - John Pimentel
-    quotes:
-      - text: We recommend John Pimentel for the State Board of Equalization, California's elected tax oversight body. Taxpayers deserve a watchdog, not a rubber stamp.
-        source: https://sfgop.org/nov-2026-endorsements
   prop-a:
     pick: Y
+    quotes:
+      - text: Streamlines our bloated City Charter and reins in the tangle of oversight committees that diffuse responsibility.
+        source: https://sfgop.org/nov-2026-endorsements
   prop-b:
     pick: N
     quotes:
@@ -83,10 +98,18 @@ picks:
     quotes:
       - text: Fix SFMTA's management before asking homeowners for more money.
         source: https://sfgop.org/nov-2026-endorsements
+      - text: A 15-year property tax to bail out an agency that refuses to reform itself.
+        source: https://sfgop.org/nov-2026-endorsements
   prop-i:
     pick: N
+    quotes:
+      - text: Earmarks 50% of real estate transfer tax revenue to housing and development projects.
+        source: https://sfgop.org/nov-2026-endorsements
   prop-j:
     pick: N
+    quotes:
+      - text: Removes a longstanding tax exemption and squeezes property owners at their most vulnerable moment.
+        source: https://sfgop.org/nov-2026-endorsements
   rtm:
     pick: N
     quotes:
