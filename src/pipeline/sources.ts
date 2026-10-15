@@ -22,8 +22,8 @@ export function fetchMode(file: EndorsementFile, cliBrowserFlag: boolean): "http
 export function fetchOptions(
   file: EndorsementFile,
   cliBrowserFlag: boolean,
-  url?: string,
+  url: string,
 ): { browser: boolean; contentSelector?: string; contentExclude?: string } {
-  const contentSelector = (url ? file.contentSelectors?.[url] : undefined) ?? file.contentSelector;
+  const contentSelector = file.contentSelectors?.[url] ?? file.contentSelector;
   return { browser: fetchMode(file, cliBrowserFlag) === "browser", contentSelector, contentExclude: file.contentExclude };
 }

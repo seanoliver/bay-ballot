@@ -29,9 +29,10 @@ extraSources:
   - https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
   - https://www.eastbaytimes.com/opinion/endorsements/
 contentSelector: "h1.entry-title, .article-body" # article only: sidebars carry headlines for other editorials
-contentExclude: aside.related # "Related Articles" box inside some editorials
+contentExclude: aside.related, .sspw-wrapper # "Related Articles" box and the paywall offer inside some editorials
+# The endorsement indexes list headlines, not an article.
 contentSelectors:
-  https://www.mercurynews.com/opinion/endorsements/: main article.archive-view # the index: its list of endorsement headlines
+  https://www.mercurynews.com/opinion/endorsements/: main article.archive-view
   https://www.eastbaytimes.com/opinion/endorsements/: main article.archive-view
 allowForeignSources: true # Marin IJ editorials (same Bay Area News Group)
 archived:

@@ -5,7 +5,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { describe, expect, it, vi } from "vitest";
 import { parse } from "yaml";
 import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
-import type { Fetched } from "@/pipeline/fetch";
+import { SelectorMissError, type Fetched } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
@@ -380,6 +380,45 @@ describe("runRefresh", () => {
     expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body" });
   });
 
+  it("keeps the stored page when a page misses its selector, and asks for review", async () => {
+    const root = setup(["alpha", "beta"]);
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u.includes("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+      return { kind: "text", text: PAGE("beta", "October 1, 2026") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    const alpha = results.find((r) => r.id === "alpha")!;
+    expect(alpha.status).toBe("unchanged");
+    expect(alpha.selectorMisses).toEqual([expect.stringContaining("kept the stored page")]);
+    expect(results.find((r) => r.id === "beta")!.status).toBe("unchanged");
+    expect(exitCodeFor(results)).toBe(2);
+    expect(summarize(results, { date: "2026-10-06" })).toContain("alpha: https://alpha.org/");
+    expect(reviewReasons(results)).toEqual([expect.stringContaining("alpha: selector missed")]);
+  });
+
+  it("leaves out a page that misses its selector and was never stored", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0].status).not.toBe("failed");
+    expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
+  });
+
+  it("still fails the guide on other fetch errors", async () => {
+    const root = setup(["alpha"]);
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async () => {
+      throw new Error("HTTP 503");
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0]).toMatchObject({ status: "failed" });
+    expect(results[0].selectorMisses).toBeUndefined();
+  });
+
   it("reports a fetch failure and exits 1", async () => {
     const root = setup(["alpha"]);
     const { client } = fakeClient();
@@ -442,6 +481,18 @@ describe("seedPages", () => {
     const fetchSource = fetcher({ alpha: PAGE("alpha", "x") });
     await seedPages(deps(client, fetchSource), { root, election: ELECTION });
     expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body", contentExclude: ".ad" });
+  });
+
+  it("stores the guide's other pages when one misses its selector", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "x") };
+    });
+    const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(seeded).toEqual([{ id: "alpha", stored: 1, error: expect.stringContaining("matched nothing") }]);
   });
 
   it("uses a source's own selector when contentSelectors names it", async () => {

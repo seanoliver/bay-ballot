@@ -23,7 +23,7 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
   - https://www.pressdemocrat.com/2026/10/13/endorsement-yes-on-measure-j-windsors-students-deserve-safe-classrooms/
 contentSelector: "h1.entry-title, .article-body" # article only: sidebars carry headlines for other editorials and reprints
-contentExclude: aside.related # "Related Articles" box inside some editorials
+contentExclude: aside.related, .sspw-wrapper # "Related Articles" box and the paywall offer inside some editorials
 archived:
   - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
     snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/

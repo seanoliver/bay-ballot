@@ -9,7 +9,7 @@ import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
-import type { Fetched } from "./fetch";
+import { SelectorMissError, type Fetched } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchOptions, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
@@ -43,7 +43,7 @@ export type RefreshOptions = {
 
 type Usage = Anthropic.Messages.Usage;
 
-export type GuideResult =
+export type GuideResult = (
   | { id: string; status: "skipped"; reason: string }
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
@@ -64,7 +64,11 @@ export type GuideResult =
       missing: VerifyOutput["missing"];
       warnings?: string[];
       usage: { extract: Usage; verify?: Usage };
-    };
+    }
+) & {
+  /** Pages that missed the guide's content selector this run; the rest of the guide still refreshed. */
+  selectorMisses?: string[];
+};
 
 // Compare as serialized data, so an explicit `undefined` key equals a missing one.
 const plain = (f: EndorsementFile) => JSON.parse(JSON.stringify(f)) as unknown;
@@ -105,6 +109,7 @@ async function refreshGuide(
   data: ElectionData,
   guide: Guide,
   budget: { left: number },
+  selectorMisses: string[],
 ): Promise<GuideResult> {
   const log = deps.log ?? (() => {});
   const id = guide.id;
@@ -125,10 +130,22 @@ async function refreshGuide(
 
   const pages: Fetchedpage[] = [];
   for (const url of urls) {
-    const fetched = await deps.fetchSource(url, fetchOptions(prev, Boolean(opts.browser), url));
     const p = pagePath(opts.root, opts.election, id, url);
-    const stored = storedText(fetched, { ballot });
     const old = readStored(p);
+    let fetched: Fetched;
+    try {
+      fetched = await deps.fetchSource(url, fetchOptions(prev, Boolean(opts.browser), url));
+    } catch (e) {
+      if (!(e instanceof SelectorMissError)) throw e;
+      if (old === null) {
+        selectorMisses.push(`${e.message}; no stored page, left out`);
+        continue;
+      }
+      selectorMisses.push(`${e.message}; kept the stored page`);
+      pages.push({ source: { url, fetched: { kind: "text", text: old } }, stored: old, path: p, gate: "same" });
+      continue;
+    }
+    const stored = storedText(fetched, { ballot });
     const outsideWarning = outside ? changedOutside(url, old, stored, outside, guide.areas, opts.onlyAreas ?? []) : undefined;
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
@@ -246,11 +263,13 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
     let r: GuideResult;
     if (!guide || !data.endorsements[id]) r = { id, status: "failed", error: `no guide or endorsement file for '${id}'` };
     else {
+      const selectorMisses: string[] = [];
       try {
-        r = await refreshGuide(deps, opts, data, guide, budget);
+        r = await refreshGuide(deps, opts, data, guide, budget, selectorMisses);
       } catch (e) {
         r = { id, status: "failed", error: errMsg(e) };
       }
+      if (selectorMisses.length && r.status !== "failed") r = { ...r, selectorMisses };
     }
     log(describe(r));
     results.push(r);
@@ -356,6 +375,7 @@ export function costText(results: GuideResult[]): string {
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
   if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length)))) return 2;
+  if (results.some((r) => r.selectorMisses?.length)) return 2;
   return 0;
 }
 
@@ -396,9 +416,11 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     }
   }
   const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
-  if (problems.length) {
+  const misses = results.flatMap((r) => (r.selectorMisses ?? []).map((m) => `${r.id}: ${m}`));
+  if (problems.length || misses.length) {
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
+    for (const m of misses) lines.push(`- ${m}`);
   }
   const wouldExtract = by("would-extract").map((r) => r.id);
   if (wouldExtract.length) lines.push("", `Would extract (dry run): ${wouldExtract.join(", ")}`);
@@ -423,14 +445,23 @@ export async function seedPages(
     const guide = data.guides.find((g) => g.id === id);
     const ballot = guide ? guideBallot(data.ballot, guide, data.areas) : data.ballot;
     let stored = 0;
+    const misses: string[] = [];
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, fetchOptions(file, Boolean(opts.browser), url)), { ballot }));
+        let fetched: Fetched;
+        try {
+          fetched = await deps.fetchSource(url, fetchOptions(file, Boolean(opts.browser), url));
+        } catch (e) {
+          if (!(e instanceof SelectorMissError)) throw e;
+          misses.push(e.message);
+          continue;
+        }
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(fetched, { ballot }));
         stored++;
       }
-      out.push({ id, stored });
+      out.push(misses.length ? { id, stored, error: misses.join("; ") } : { id, stored });
     } catch (e) {
-      out.push({ id, stored, error: errMsg(e) });
+      out.push({ id, stored, error: [...misses, errMsg(e)].join("; ") });
     }
     deps.log?.(`${id}: stored ${stored} page(s)${out.at(-1)?.error ? ` — FAILED: ${out.at(-1)?.error}` : ""}`);
   }
@@ -453,8 +484,9 @@ export type ResultJson = {
 /** What a person must look at before this refresh merges, independent of the exit code. */
 export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
-    if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
-    if (r.status !== "changed") return [];
+    const misses = (r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`);
+    if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`, ...misses];
+    if (r.status !== "changed") return misses;
     const held = new Set(r.held.map((h) => h.contestId));
     return [
       ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
@@ -465,6 +497,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
         .filter((id) => !held.has(id))
         .map((id) => `${r.id}: removed ${id}`),
       ...r.missing.map((m) => `${r.id}: verifier found ${m.contestId} on the page but not in the picks`),
+      ...misses,
     ];
   });
 }

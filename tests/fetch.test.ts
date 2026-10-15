@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as cheerio from "cheerio";
-import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, selectContent } from "@/pipeline/fetch";
+import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, SelectorMissError, selectContent } from "@/pipeline/fetch";
 
 const cheerioText = (html: string) => cheerio.load(html)("body").text().replace(/\s+/g, " ").trim();
 
@@ -369,6 +369,19 @@ describe("content selector", () => {
   it("returns a PDF source untouched when a selector is set", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array(Buffer.from("%PDF-1.4 junk")), { status: 200, headers: { "content-type": "application/pdf" } })));
     expect((await fetchSource("https://x.test/guide.pdf", { contentSelector: selector })).kind).toBe("pdf");
+  });
+
+  it("retries an http page that misses the selector in the browser", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe to keep reading</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).toEqual({ kind: "text", text: kept });
+    expect(browserFetch).toHaveBeenCalledOnce();
+  });
+
+  it("throws a SelectorMissError when the browser misses too", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Subscribe</p></body>" }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).rejects.toBeInstanceOf(SelectorMissError);
   });
 
   it("names the page when the selector misses", async () => {

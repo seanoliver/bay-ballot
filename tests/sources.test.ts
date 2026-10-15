@@ -76,11 +76,10 @@ describe("fetchOptions", () => {
     const file = { ...base, contentSelector: ".article-body", contentSelectors: { "https://x.org/index": "main article" } };
     expect(fetchOptions(file, false, "https://x.org/index").contentSelector).toBe("main article");
     expect(fetchOptions(file, false, "https://x.org/other").contentSelector).toBe(".article-body");
-    expect(fetchOptions(file, false).contentSelector).toBe(".article-body");
   });
   it("carries the browser choice and the content selector", () => {
-    expect(fetchOptions(base, false)).toEqual({ browser: false });
-    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false)).toEqual({
+    expect(fetchOptions(base, false, "https://x.org/a")).toEqual({ browser: false });
+    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false, "https://x.org/a")).toEqual({
       browser: true,
       contentSelector: "#article-body",
       contentExclude: ".ad",
