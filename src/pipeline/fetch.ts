@@ -37,6 +37,9 @@ export function htmlToText(html: string): string {
     .join("\n");
 }
 
+/** A page fetched fine but lacks part of its guide's content selector: usually a layout change. */
+export class SelectorMissError extends Error {}
+
 // Splits "a, b:not(.c, .d)" at the commas outside brackets, parens and quotes.
 function selectorParts(selector: string): string[] {
   const parts: string[] = [];
@@ -63,7 +66,7 @@ function selectorParts(selector: string): string[] {
 export function selectContent(html: string, selector: string, exclude?: string): string {
   const $ = cheerio.load(html);
   const missing = selectorParts(selector).filter((part) => $(part).length === 0);
-  if (missing.length) throw new Error(`content selector "${selector}" matched nothing for ${missing.map((m) => `"${m}"`).join(", ")}`);
+  if (missing.length) throw new SelectorMissError(`content selector "${selector}" matched nothing for ${missing.map((m) => `"${m}"`).join(", ")}`);
   const picked = $(selector);
   if (exclude) picked.find(exclude).remove();
   return `<body>${picked.toArray().map((el) => $.html(el)).join("\n")}</body>`;
@@ -151,6 +154,8 @@ export type FetchOptions = {
   browser?: boolean;
   contentSelector?: string;
   contentExclude?: string;
+  /** False skips the browser retry after an http selector miss (a guide whose layout changed would retry every page). */
+  retryMissInBrowser?: boolean;
   browserFetch?: BrowserFetch;
   onAttempt?: (a: FetchAttempt) => void;
 };
@@ -185,7 +190,7 @@ function selectIn(url: string, html: string, selector: string, exclude?: string)
   try {
     return selectContent(html, selector, exclude);
   } catch (e) {
-    throw new Error(`${url}: ${errMsg(e)}`);
+    throw e instanceof SelectorMissError ? new SelectorMissError(`${url}: ${e.message}`) : new Error(`${url}: ${errMsg(e)}`);
   }
 }
 
@@ -256,5 +261,15 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
   report({ via: "http", status: r.status, bytes: r.bytes, blocked });
   if (blocked) return viaBrowser(`${url}: blocked (${blocked})`);
   if (r.html === undefined || !opts.contentSelector) return r.fetched;
-  return { kind: "text", text: htmlToText(selectIn(url, r.html, opts.contentSelector, opts.contentExclude)) };
+  try {
+    return { kind: "text", text: htmlToText(selectIn(url, r.html, opts.contentSelector, opts.contentExclude)) };
+  } catch (e) {
+    // A wall detectBlock doesn't know can still serve a 200 without the article; the browser may get past it.
+    if (!(e instanceof SelectorMissError) || opts.retryMissInBrowser === false) throw e;
+    return viaBrowser(e.message).catch((b: unknown) => {
+      if (b instanceof SelectorMissError) throw b;
+      // viaBrowser already names the http failure in its own message.
+      throw new SelectorMissError(errMsg(b).startsWith(e.message) ? errMsg(b) : `${e.message} (browser: ${errMsg(b)})`);
+    });
+  }
 }

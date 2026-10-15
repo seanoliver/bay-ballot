@@ -32,6 +32,19 @@ describe("fetchCheck", () => {
     );
   });
 
+  it("fetches each page with its own selector", async () => {
+    const fetchSource = vi.fn(async (): Promise<Fetched> => ({ kind: "text", text: "Editorial" }));
+    await fetchCheck({ fetchSource }, { root, election, ids: ["mercury-news"] });
+    expect(fetchSource).toHaveBeenCalledWith(
+      "https://www.mercurynews.com/opinion/endorsements/",
+      expect.objectContaining({ contentSelector: "main article.archive-view" }),
+    );
+    expect(fetchSource).toHaveBeenCalledWith(
+      expect.stringMatching(/mercurynews\.com\/2026\//),
+      expect.objectContaining({ contentSelector: "h1.entry-title, .article-body" }),
+    );
+  });
+
   it("formats one line per attempt", () => {
     const out = formatFetchCheck([
       { guide: "cadc", url: "https://www.sfcadc.org/endorsements", ok: false, error: "x -> HTTP 403", attempts: [{ via: "http", status: 403, bytes: 9, blocked: null }] },

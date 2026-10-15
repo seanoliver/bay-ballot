@@ -72,9 +72,14 @@ describe("fetchMode", () => {
 });
 
 describe("fetchOptions", () => {
+  it("lets a source's own selector override the guide's", () => {
+    const file = { ...base, contentSelector: ".article-body", contentExclude: ".ad", contentSelectors: { "https://x.org/index": "main article" } };
+    expect(fetchOptions(file, false, "https://x.org/index")).toEqual({ browser: false, contentSelector: "main article", contentExclude: ".ad" });
+    expect(fetchOptions(file, false, "https://x.org/other").contentSelector).toBe(".article-body");
+  });
   it("carries the browser choice and the content selector", () => {
-    expect(fetchOptions(base, false)).toEqual({ browser: false });
-    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false)).toEqual({
+    expect(fetchOptions(base, false, "https://x.org/a")).toEqual({ browser: false });
+    expect(fetchOptions({ ...base, fetchWith: "browser", contentSelector: "#article-body", contentExclude: ".ad" }, false, "https://x.org/a")).toEqual({
       browser: true,
       contentSelector: "#article-body",
       contentExclude: ".ad",

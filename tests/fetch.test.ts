@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as cheerio from "cheerio";
-import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, selectContent } from "@/pipeline/fetch";
+import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, SelectorMissError, selectContent } from "@/pipeline/fetch";
 
 const cheerioText = (html: string) => cheerio.load(html)("body").text().replace(/\s+/g, " ").trim();
 
@@ -369,6 +369,46 @@ describe("content selector", () => {
   it("returns a PDF source untouched when a selector is set", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array(Buffer.from("%PDF-1.4 junk")), { status: 200, headers: { "content-type": "application/pdf" } })));
     expect((await fetchSource("https://x.test/guide.pdf", { contentSelector: selector })).kind).toBe("pdf");
+  });
+
+  it("retries an http page that misses the selector in the browser", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe to keep reading</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).toEqual({ kind: "text", text: kept });
+    expect(browserFetch).toHaveBeenCalledOnce();
+  });
+
+  it("throws a SelectorMissError when the browser misses too", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Subscribe</p></body>" }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).rejects.toBeInstanceOf(SelectorMissError);
+  });
+
+  it("does not retry other selection errors in the browser", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(article, { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: "[[" }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect(err).not.toBeInstanceOf(SelectorMissError);
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
+  it("skips the browser retry when told to", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector, retryMissInBrowser: false })).rejects.toBeInstanceOf(SelectorMissError);
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
+  it("counts a failed browser retry as a selector miss", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async (): Promise<{ status: number; html: string }> => {
+      throw new Error("Timeout 60000ms exceeded");
+    });
+    const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(SelectorMissError);
+    expect(String(err)).toContain("Timeout 60000ms exceeded");
+    expect(String(err).split("matched nothing").length - 1).toBe(1);
   });
 
   it("names the page when the selector misses", async () => {

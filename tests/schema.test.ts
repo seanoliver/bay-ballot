@@ -219,6 +219,15 @@ describe("extraction bookkeeping fields", () => {
     expect(EndorsementFile.safeParse({ ...file, archived: [{ source: "https://growsf.org/" }] }).success).toBe(false);
     expect(EndorsementFile.safeParse({ ...file, archived: [{ source: "https://growsf.org/", snapshot: "javascript:alert(1)" }] }).success).toBe(false);
   });
+  it("accepts per-source selectors only for the guide's own sources", () => {
+    const sourced = { ...file, source: "https://x.org/guide", extraSources: ["https://x.org/index"] };
+    expect(EndorsementFile.safeParse({ ...sourced, contentSelectors: { "https://x.org/index": "main article" } }).success).toBe(true);
+    const r = EndorsementFile.safeParse({ ...sourced, contentSelectors: { "https://elsewhere.org/": "main" } });
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues[0].message).toContain("is not one of this guide's sources");
+    expect(EndorsementFile.safeParse({ ...sourced, contentSelectors: { "https://x.org/index": "" } }).success).toBe(false);
+    expect(EndorsementFile.safeParse({ ...sourced, contentSelectors: { "https://x.org/index": "  " } }).success).toBe(false);
+  });
   it("rejects empty content selectors, which would silently turn selection off", () => {
     for (const key of ["contentSelector", "contentExclude"]) {
       expect(EndorsementFile.safeParse({ ...file, [key]: "" }).success, key).toBe(false);
