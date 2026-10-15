@@ -16,11 +16,11 @@
   --split: #b45309;
   --yes-fill: #166534;
   --no-fill: #e25c5c;
-  /* Magenta and aqua are under 3:1 on white: never use a slot color without a text label. */
-  --bar-1: #2a78d6;
-  --bar-2: #e87ba4;
-  --bar-3: #4a3aa7;
-  --bar-4: #1baf7a;
+  /* Candidate slots by endorsement rank. Never blue or red, which read as party colors. Amber is under 3:1 on white: never use a slot color without a text label. */
+  --bar-1: #4a3aa7;
+  --bar-2: #e08a2a;
+  --bar-3: #0f8a8a;
+  --bar-4: #334155;
   --muted: oklch(0.97 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -128,10 +128,10 @@
   --split: #fbbf24;
   --yes-fill: #13753a;
   --no-fill: #e66262;
-  --bar-1: #3987e5;
-  --bar-2: #d55181;
-  --bar-3: #9085e9;
-  --bar-4: #199e70;
+  --bar-1: #9085e9;
+  --bar-2: #eba052;
+  --bar-3: #2fb5b5;
+  --bar-4: #cbd5e1;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

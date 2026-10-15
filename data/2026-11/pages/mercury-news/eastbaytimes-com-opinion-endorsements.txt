@@ -1,16 +1,3 @@
-[East Bay Times]
-Log In
-Search
-64°F
-Today's e-Edition
-Endorsements
-Editorials
-Letters
-Opinion Columnists
-Commentary
-Endorsements
-Trending:
-Endorsements
 [Election2026_featured_image]
 Endorsement Cheat Sheet: Mercury News and East Bay Times Editorial Boards’ top picks for California’s general election
 By Mercury News & East Bay Times Editorial Boards
@@ -357,7 +344,7 @@ By Mercury News & East Bay Times Editorial Boards
 at
 From housing, health care to AI, BART and inequality: Here's where David Cohen, Anne Kepner...
 [Election2026_featured_image]
-Bay Area News Group’s endorsement guide to California’s primary election
+Bay Area News Group’s endorsement guide to California’s Primary
 By Mercury News & East Bay Times Editorial Boards
 at
 Mercury News and East Bay Times editorial boards' choices for key ballot initiatives and pivotal...
@@ -391,5 +378,3 @@ Endorsement: Contra Costa voters should renew Urban Limit Line protecting open s
 By East Bay Times editorial
 at
 Measure A would extend successful limits on environmentally insensitive sprawl development for another 25 years.
-Load More
-Close

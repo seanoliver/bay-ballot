@@ -45,7 +45,7 @@ describe("reportJson counts", () => {
     ];
     const r = reportJson(results, 2);
     expect(r.counts).toEqual({
-      checked: 9, unchanged: 2, extracted: 2, dataChanged: 1, deferred: 1, skipped: 1, failed: 1, shrunk: 2, held: 2, review: 4,
+      checked: 9, unchanged: 2, extracted: 2, dataChanged: 1, deferred: 1, skipped: 1, failed: 1, blocked: 0, selectorMisses: 0, shrunk: 2, held: 2, review: 4,
     });
     expect(r).toMatchObject({ exitCode: 2, extracted: ["h", "i"], deferred: ["d"], failed: [{ id: "e", error: "HTTP 403" }], apiCost: 0, apiFallbackCalls: 0 });
     expect(r.review).toHaveLength(4);
@@ -140,6 +140,20 @@ describe("alerts", () => {
       { level: "review", text: "2 items need review" },
     ]);
     expect(reportJson([results[1]], 2).alerts).toEqual([{ level: "review", text: "1 item needs review" }]);
+  });
+});
+
+describe("blocked guides in the report", () => {
+  it("counts blocked guides and names them in the digest", () => {
+    const results: GuideResult[] = [
+      { id: "a", status: "blocked", selectorMisses: ["https://a.org/: content selector \"x\" matched nothing for \"x\"; kept the stored page"] },
+      { id: "b", status: "unchanged" },
+    ];
+    const r = reportJson(results, 2);
+    expect(r.counts.blocked).toBe(1);
+    expect(r.counts.selectorMisses).toBe(1);
+    expect(r.digest).toContain("1 blocked");
+    expect(r.digest).toContain("1 selector miss");
   });
 });
 

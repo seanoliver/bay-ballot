@@ -11,7 +11,7 @@ import type { ExtractClient, Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
-import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
+import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
@@ -113,10 +113,9 @@ function modelClient(): ExtractClient {
 }
 
 async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[]> {
-  const browser = fetchMode(file, flag("--browser")) === "browser";
   const sources: Source[] = [];
   for (const url of sourcesFor(file)) {
-    const fetched = await fetchSource(url, { browser });
+    const fetched = await fetchSource(url, fetchOptions(file, flag("--browser"), url));
     if (fetched.kind === "pdf" && fetched.text.trim() === "") {
       console.warn(`${guideId}: warning: no text extracted from PDF ${url}; quotes from it will drop`);
     }
@@ -209,7 +208,7 @@ function refreshDeps({ model = true }: { model?: boolean } = {}): RefreshDeps {
 
 function totalsLine(results: GuideResult[]): string {
   const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
-  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost ${costText(results)}.`;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped") + n("blocked")} need attention. Estimated model cost ${costText(results)}.`;
 }
 
 async function runExtract(): Promise<void> {
@@ -266,7 +265,7 @@ async function runExtract(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION, ids,
     browser: flag("--browser"), archive: flag("--archive"), force: flag("--force"),
-    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas,
+    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas, strictSelectors: true,
   });
   console.log(`\n${totalsLine(results)}\nReview with: git diff data/`);
   process.exitCode = exitCodeFor(results);

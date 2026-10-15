@@ -9,16 +9,16 @@ import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
-import type { Fetched } from "./fetch";
+import { SelectorMissError, type Fetched, type FetchOptions } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
-import { checkHosts, fetchMode, sourcesFor } from "./sources";
+import { checkHosts, fetchOptions, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
 import { guideBallot, newAreaBallot, unknownAreaError } from "./scope";
 import { nextFile, scopedNextFile, shrinkWarning, toYaml } from "./write";
 
 export type RefreshDeps = {
   client: ExtractClient;
-  fetchSource: (url: string, opts: { browser?: boolean }) => Promise<Fetched>;
+  fetchSource: (url: string, opts: FetchOptions) => Promise<Fetched>;
   archiveUrl?: (url: string) => Promise<string | null>;
   today: () => string;
   log?: (line: string) => void;
@@ -32,6 +32,8 @@ export type RefreshOptions = {
   archive?: boolean;
   force?: boolean;
   forceExtract?: boolean;
+  /** Fail the guide when a page misses its content selector, instead of keeping the stored page (for `bb extract`). */
+  strictSelectors?: boolean;
   verify?: boolean;
   maxChanged?: number;
   shrunkSkip?: Record<string, string>;
@@ -43,7 +45,7 @@ export type RefreshOptions = {
 
 type Usage = Anthropic.Messages.Usage;
 
-export type GuideResult =
+export type GuideResult = (
   | { id: string; status: "skipped"; reason: string }
   | { id: string; status: "unchanged" }
   | { id: string; status: "deferred" }
@@ -51,6 +53,7 @@ export type GuideResult =
   | { id: string; status: "failed"; error: string }
   | { id: string; status: "shrunk"; message: string; notes: string[]; pageHash: string; usage: Usage }
   | { id: string; status: "shrunk-skipped"; pageHash: string }
+  | { id: string; status: "blocked" }
   | {
       id: string;
       status: "changed";
@@ -64,7 +67,11 @@ export type GuideResult =
       missing: VerifyOutput["missing"];
       warnings?: string[];
       usage: { extract: Usage; verify?: Usage };
-    };
+    }
+) & {
+  /** Pages that missed the guide's content selector this run; the rest of the guide still refreshed. */
+  selectorMisses?: string[];
+};
 
 // Compare as serialized data, so an explicit `undefined` key equals a missing one.
 const plain = (f: EndorsementFile) => JSON.parse(JSON.stringify(f)) as unknown;
@@ -105,6 +112,7 @@ async function refreshGuide(
   data: ElectionData,
   guide: Guide,
   budget: { left: number },
+  selectorMisses: string[],
 ): Promise<GuideResult> {
   const log = deps.log ?? (() => {});
   const id = guide.id;
@@ -123,18 +131,41 @@ async function refreshGuide(
   const hostProblems = checkHosts(guide, prev);
   if (hostProblems.length) return { id, status: "skipped", reason: `source host check: ${hostProblems.join("; ")}` };
 
-  const browser = fetchMode(prev, Boolean(opts.browser)) === "browser";
   const pages: Fetchedpage[] = [];
+  let rescued = false;
   for (const url of urls) {
-    const fetched = await deps.fetchSource(url, { browser });
     const p = pagePath(opts.root, opts.election, id, url);
-    const stored = storedText(fetched, { ballot });
     const old = readStored(p);
+    let fetched: Fetched;
+    try {
+      // After one miss, skip the browser retry for the rest of the guide: a layout change misses on every page.
+      const noRetry = selectorMisses.length ? { retryMissInBrowser: false } : {};
+      // After the browser rescues one page of a selector guide, fetch the rest in the browser: a wall that hit one page hits them all.
+      const options = { ...fetchOptions(prev, Boolean(opts.browser) || rescued, url), ...noRetry };
+      let triedBrowser = false;
+      fetched = await deps.fetchSource(url, { ...options, onAttempt: (a) => void (triedBrowser ||= a.via === "browser") });
+      if (triedBrowser && !options.browser && options.contentSelector && !rescued) {
+        rescued = true;
+        log(`${id}: ${url} needed the browser; fetching its remaining pages in the browser`);
+      }
+    } catch (e) {
+      if (!(e instanceof SelectorMissError) || opts.strictSelectors) throw e;
+      if (old === null) {
+        selectorMisses.push(`${e.message}; no stored page, left out`);
+        continue;
+      }
+      selectorMisses.push(`${e.message}; kept the stored page`);
+      pages.push({ source: { url, fetched: { kind: "text", text: old } }, stored: old, path: p, gate: "same" });
+      continue;
+    }
+    const stored = storedText(fetched, { ballot });
     const outsideWarning = outside ? changedOutside(url, old, stored, outside, guide.areas, opts.onlyAreas ?? []) : undefined;
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
 
-  const relevant = forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
+  // Every page missing its selector means the guide refreshes nothing: treat it like a held change.
+  const allMissed = selectorMisses.length > 0 && selectorMisses.length === urls.length;
+  const relevant = forceExtract || allMissed || pages.some((p) => p.gate === "new" || p.gate === "relevant");
   if (!relevant) {
     // Store the drift (dates, banners) so it never accumulates into a later diff.
     for (const p of pages) writeStored(p.path, p.stored);
@@ -142,6 +173,8 @@ async function refreshGuide(
   }
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
   if (!forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
+  // Extracting now would read a kept page's stored text (dates stripped) or lose a left-out page's picks; wait for the selector fix.
+  if (selectorMisses.length) return { id, status: "blocked" };
   if (opts.gateOnly) return { id, status: "would-extract" };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
@@ -247,13 +280,16 @@ export async function runRefresh(deps: RefreshDeps, opts: RefreshOptions): Promi
     let r: GuideResult;
     if (!guide || !data.endorsements[id]) r = { id, status: "failed", error: `no guide or endorsement file for '${id}'` };
     else {
+      const selectorMisses: string[] = [];
       try {
-        r = await refreshGuide(deps, opts, data, guide, budget);
+        r = await refreshGuide(deps, opts, data, guide, budget, selectorMisses);
       } catch (e) {
         r = { id, status: "failed", error: errMsg(e) };
       }
+      if (selectorMisses.length) r = { ...r, selectorMisses };
     }
     log(describe(r));
+    for (const m of r.selectorMisses ?? []) log(`  !! selector missed: ${m}`);
     results.push(r);
   }
   if (baseline) writeChangelog(deps, opts, baseline, results);
@@ -296,6 +332,8 @@ function describe(r: GuideResult): string {
       return `${r.id}: FAILED — ${r.error}`;
     case "shrunk":
       return [r.message, ...r.notes.map((n) => `  ! ${n}`)].join("\n");
+    case "blocked":
+      return `${r.id}: blocked (a page missed its content selector; not re-extracted until the selector is fixed)`;
     case "shrunk-skipped":
       return `${r.id}: shrunk earlier, pages unchanged since; not re-extracted`;
     case "changed":
@@ -357,6 +395,7 @@ export function costText(results: GuideResult[]): string {
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
   if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length)))) return 2;
+  if (results.some((r) => r.status === "blocked")) return 2;
   return 0;
 }
 
@@ -366,12 +405,14 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   const held = changed.reduce((n, r) => n + r.held.length, 0);
   const unclear = changed.reduce((n, r) => n + (r.unclear?.length ?? 0), 0);
   const code = exitCodeFor(results);
+  const misses = results.flatMap((r) => (r.selectorMisses ?? []).map((m) => `${r.id}: ${m}`));
   const would = by("would-extract").length;
   const isDryRun = dryRun || would > 0;
   const verdict =
     code === 1 ? "errors"
-    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""})`
+    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${by("blocked").length ? `, ${by("blocked").length} blocked` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
+    : misses.length ? `clean; ${misses.length} selector miss${misses.length === 1 ? "" : "es"} listed below`
     : "clean";
   const lines = [
     `# Data refresh ${date}${isDryRun ? " (dry run)" : ""}`,
@@ -380,7 +421,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     "",
     `| checked | unchanged | re-extracted | data changed | deferred | skipped | failed |`,
     `|---|---|---|---|---|---|---|`,
-    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length} |`,
+    `| ${results.length} | ${by("unchanged").length} | ${changed.length} | ${changed.filter((r) => r.dataChanged).length} | ${by("deferred").length} | ${by("skipped").length} | ${by("failed").length + by("shrunk").length + by("shrunk-skipped").length + by("blocked").length} |`,
     "",
     `Estimated model cost: ${costText(results)}`,
   ];
@@ -396,10 +437,11 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }
   }
-  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
-  if (problems.length) {
+  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped"), ...by("blocked")];
+  if (problems.length || misses.length) {
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
+    for (const m of misses) lines.push(`- ${m}`);
   }
   const wouldExtract = by("would-extract").map((r) => r.id);
   if (wouldExtract.length) lines.push("", `Would extract (dry run): ${wouldExtract.join(", ")}`);
@@ -423,16 +465,24 @@ export async function seedPages(
     if (!file || file.manual || sourcesFor(file).length === 0) continue;
     const guide = data.guides.find((g) => g.id === id);
     const ballot = guide ? guideBallot(data.ballot, guide, data.areas) : data.ballot;
-    const browser = fetchMode(file, Boolean(opts.browser)) === "browser";
     let stored = 0;
+    const misses: string[] = [];
     try {
       for (const url of sourcesFor(file)) {
-        writeStored(pagePath(opts.root, opts.election, id, url), storedText(await deps.fetchSource(url, { browser }), { ballot }));
+        let fetched: Fetched;
+        try {
+          fetched = await deps.fetchSource(url, { ...fetchOptions(file, Boolean(opts.browser), url), ...(misses.length ? { retryMissInBrowser: false } : {}) });
+        } catch (e) {
+          if (!(e instanceof SelectorMissError)) throw e;
+          misses.push(e.message);
+          continue;
+        }
+        writeStored(pagePath(opts.root, opts.election, id, url), storedText(fetched, { ballot }));
         stored++;
       }
-      out.push({ id, stored });
+      out.push(misses.length ? { id, stored, error: misses.join("; ") } : { id, stored });
     } catch (e) {
-      out.push({ id, stored, error: errMsg(e) });
+      out.push({ id, stored, error: [...misses, errMsg(e)].join("; ") });
     }
     deps.log?.(`${id}: stored ${stored} page(s)${out.at(-1)?.error ? ` — FAILED: ${out.at(-1)?.error}` : ""}`);
   }
@@ -455,6 +505,10 @@ export type ResultJson = {
 /** What a person must look at before this refresh merges, independent of the exit code. */
 export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
+    // Only a blocked guide holds data back, so only its misses need a person before merge.
+    if (r.status === "blocked") {
+      return [`${r.id}: blocked; not re-extracted until the selector is fixed`, ...(r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`)];
+    }
     if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
     if (r.status !== "changed") return [];
     const held = new Set(r.held.map((h) => h.contestId));

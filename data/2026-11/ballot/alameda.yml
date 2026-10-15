@@ -158,6 +158,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Valarie Bachelor, LeAna Powell, Alexandra Williams]
+    aliases: { Valarie Bachelor: [Valerie Bachelor] }
     jurisdiction: { level: district, name: Oakland Unified School District, district: "6", within: [{ level: city, name: Oakland }] }
   - id: pleasanton-usd-trustee-area-5
     section: School and special districts

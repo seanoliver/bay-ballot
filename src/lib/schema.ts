@@ -111,6 +111,9 @@ export const EndorsementFile = z.object({
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(),
   fetchFrom: z.literal("local").optional(),
+  contentSelector: NonEmpty.optional(),
+  contentExclude: NonEmpty.optional(),
+  contentSelectors: z.record(HttpUrl, NonEmpty).optional(),
   extraSources: z.array(HttpUrl).optional(),
   manual: z.boolean().optional(),
   allowForeignSources: z.boolean().optional(),
@@ -118,7 +121,12 @@ export const EndorsementFile = z.object({
   held: z.array(HeldPick).optional(),
   rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
-}).strict();
+}).strict().superRefine((f, ctx) => {
+  const sources = new Set([f.source, ...(f.extraSources ?? [])]);
+  for (const url of Object.keys(f.contentSelectors ?? {})) {
+    if (!sources.has(url)) ctx.addIssue({ code: "custom", path: ["contentSelectors", url], message: `${url} is not one of this guide's sources` });
+  }
+});
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
 
 export const ChangelogEntry = z.object({
