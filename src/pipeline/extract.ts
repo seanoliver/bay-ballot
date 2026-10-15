@@ -133,7 +133,7 @@ function candidateNames(
     if (m.fuzzy && !suggested) notes.push(`${id}: '${name}' -> '${m.name}'`);
     if (!names.includes(m.name)) names.push(m.name);
   }
-  const near = matches.filter((x) => x.suggested);
+  const near = matches.filter((x, i) => x.suggested && matches.findIndex((y) => y.name === x.name) === i);
   // The page's spelling reaches the PR body: one line, no backticks, as code so it can't add links or mentions.
   const shown = (s: string) => `\`${s.replace(/[\s`]+/g, " ").trim().slice(0, 80)}\``;
   const mismatch = near.length
@@ -225,7 +225,6 @@ export function toEntries(
     const n = p.rankedCount;
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
     if (mismatch) {
-      notes.push(`${c.id}: PICK HELD — ${mismatch}`);
       held.push({
         contestId: c.id,
         pick,
@@ -249,7 +248,8 @@ function sameQuote(a: string, b: string): boolean {
   return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
 }
 
-function samePick(a: Entry, b: Entry): boolean {
+/** Same names (in any order unless ranked) or the same vote. */
+export function samePick(a: Entry, b: Entry): boolean {
   if (Array.isArray(a.pick) && Array.isArray(b.pick) && !a.ranked && !b.ranked) {
     return a.pick.length === b.pick.length && a.pick.every((n) => (b.pick as string[]).includes(n));
   }

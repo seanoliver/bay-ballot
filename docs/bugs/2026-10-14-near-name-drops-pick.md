@@ -19,7 +19,7 @@ On the old code, `toEntries` with a pick of `["Scott Weiner"]` for `us-rep-11` r
 
 - `suggestName` (`src/lib/names.ts`) returns the one candidate a rejected name is close to: first names one edit apart or sharing their first three letters, last names equal or (5+ letters) one edit apart, where two swapped letters count as one edit. It checks aliases and nickname variants, and returns nothing when two candidates are close.
 - `toEntries` holds such a pick under `held:` with the new reason `name-mismatch`, the suggested candidate as its pick, and evidence naming the page's spelling. Names close to no candidate are still dropped.
-- When the file already publishes that same pick (the #152 and #155 cases), the refresh keeps it published and adds a note, since the same guide names the same candidate for the same contest.
+- When the file already publishes that same pick (the #152 and #155 cases), the refresh treats the extraction as that pick (names in any order; new quotes and ranking go through the usual checks) and lists it in the PR summary, so a person can check the new spelling is the same person.
 - The refresh adds these holds to the file and to the run's held list, so the PR is labeled for review and the run exits 2.
 - `nextFile` drops a previous `name-mismatch` hold, since each extraction rebuilds it; once an alias makes the name match, the next extraction publishes the pick. A rebuilt hold with the same pick, ranking and evidence as the file's existing one is kept and not reported again. The verifier neither checks nor releases these holds (`isPersonHold` in `src/lib/schema.ts`).
 - The page's spelling goes into the evidence as inline code on one line, since it reaches the PR body.

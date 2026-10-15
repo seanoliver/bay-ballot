@@ -177,6 +177,11 @@ describe("toEntries", () => {
     expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
   });
 
+  it("names each page spelling once in the evidence", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan", "Michael T. Nguyan", "Gary McCoy"] }));
+    expect(r.held[0].evidence.split("Nguyan").length - 1).toBe(1);
+  });
+
   it("keeps the ranking on a held pick", () => {
     const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"], ranked: true, rankedCount: 1 }));
     expect(r.held[0]).toMatchObject({ ranked: true, rankedCount: 1 });
@@ -190,7 +195,6 @@ describe("toEntries", () => {
     expect(r.held).toHaveLength(1);
     expect(r.picks["supervisor-d8"]).toBeUndefined();
     expect(r.notes).toContain("supervisor-d8: duplicate pick, kept first");
-    expect(r.notes.some((n) => n.startsWith("supervisor-d8: PICK HELD"))).toBe(true);
   });
 
   it("shows the page's spelling on one line as code, so it can't add links or mentions", () => {

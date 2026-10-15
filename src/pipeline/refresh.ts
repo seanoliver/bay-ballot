@@ -5,11 +5,11 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { isRejected } from "@/lib/quote-key";
-import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
+import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
-import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
+import { extract, keepPrevQuotes, pagesFor, samePick, toEntries, type ExtractClient, type Source } from "./extract";
 import { SelectorMissError, type Fetched, type FetchOptions } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchOptions, sourcesFor } from "./sources";
@@ -184,22 +184,25 @@ async function refreshGuide(
   const { output, usage } = await extract(deps.client, ballot, guide, sources);
   const pageTexts = pagesFor(sources);
   const extracted = toEntries(output, ballot.contests, pageTexts, { ownNames: [guide.name] });
+  const heldEntry = (h: HeldPick) => ({ pick: h.pick, ranked: h.ranked ?? false, ...(h.rankedCount ? { rankedCount: h.rankedCount } : {}), quotes: h.quotes ?? [] });
+  // A near spelling of the pick the file already publishes is treated as that pick, and the summary says so: it may name someone else.
+  const keptNear: string[] = [];
+  const nearPicks: Record<string, Entry> = {};
+  const nearHeld = extracted.held.filter((h) => {
+    const was = prev.picks[h.contestId];
+    if (!inScope(h.contestId) || !was || !samePick(was, heldEntry(h))) return true;
+    nearPicks[h.contestId] = heldEntry(h);
+    keptNear.push(`${h.contestId}: kept the published pick ${showPick(was.pick)}; ${h.evidence}`);
+    return false;
+  });
   const kept = keepPrevQuotes(
     prev.picks,
-    Object.fromEntries(Object.entries(extracted.picks).filter(([c]) => inScope(c))),
+    { ...Object.fromEntries(Object.entries(extracted.picks).filter(([c]) => inScope(c))), ...nearPicks },
     ballot.contests,
     pageTexts,
     { ownNames: [guide.name], rejected: prev.rejectedQuotes, noted: extracted.dropped },
   );
   const picks = kept.picks;
-  // A published pick the page now misspells stays published: it is the same guide naming the same candidate for the same contest.
-  const nearHeld = extracted.held.filter((h) => {
-    const was = prev.picks[h.contestId];
-    if (!inScope(h.contestId) || !was || !isDeepStrictEqual(was.pick, h.pick)) return true;
-    picks[h.contestId] = was;
-    kept.notes.push(`${h.contestId}: kept the published pick; ${h.evidence}`);
-    return false;
-  });
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
   const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes];
   const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
@@ -230,7 +233,8 @@ async function refreshGuide(
       (x) =>
         x.reason === "name-mismatch" &&
         x.contestId === h.contestId &&
-        isDeepStrictEqual([x.pick, x.ranked, x.rankedCount, x.evidence], [h.pick, h.ranked, h.rankedCount, h.evidence]),
+        samePick(heldEntry(x), heldEntry(h)) &&
+        isDeepStrictEqual([x.ranked ?? false, x.rankedCount, x.evidence], [h.ranked ?? false, h.rankedCount, h.evidence]),
     );
   const rejected = prev.rejectedQuotes ?? [];
   const nameHolds = nearHeld
@@ -242,6 +246,7 @@ async function refreshGuide(
       return { hold: { ...rest, ...(quotes.length ? { quotes } : {}) }, reused: !!reused };
     });
   const newNameHolds = nameHolds.filter((x) => !x.reused).map((x) => x.hold);
+  for (const h of newNameHolds) notes.push(`${h.contestId}: PICK HELD — ${h.evidence}`);
   let next = EndorsementFile.parse(nameHolds.length ? { ...base, held: [...(base.held ?? []), ...nameHolds.map((x) => x.hold)] } : base);
   const result: Extract<GuideResult, { status: "changed" }> = {
     id,
@@ -254,7 +259,7 @@ async function refreshGuide(
     droppedByVerifier: 0,
     missing: [],
     usage: { extract: usage },
-    warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
+    warnings: [...pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])), ...keptNear],
   };
 
   const hasHeld = (next.held ?? []).some((h) => !isPersonHold(h) && inScope(h.contestId));
