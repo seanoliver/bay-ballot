@@ -264,10 +264,10 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const pinnedLater = guides.slice(CHIPS_SHOWN).filter((g) => isPinned(pinning.filters, g.id)).map((g) => g.id);
-  // A chip unpinned while collapsed stays put until "Show less", so it never vanishes from under the pointer or focus.
+  // The first row changes only on "Show less" or a pin while collapsed, so a chip never jumps rows under the pointer or focus.
   const [kept, setKept] = useState(pinnedLater);
-  if (pinnedLater.some((id) => !kept.includes(id))) setKept([...kept, ...pinnedLater.filter((id) => !kept.includes(id))]);
-  const inFirstRow = (g: ChipGuide, i: number) => i < CHIPS_SHOWN || (!all && kept.includes(g.id));
+  if (!all && pinnedLater.some((id) => !kept.includes(id))) setKept([...kept, ...pinnedLater.filter((id) => !kept.includes(id))]);
+  const inFirstRow = (g: ChipGuide, i: number) => i < CHIPS_SHOWN || kept.includes(g.id);
   const first = guides.filter(inFirstRow);
   const rest = guides.filter((g, i) => !inFirstRow(g, i));
   return (

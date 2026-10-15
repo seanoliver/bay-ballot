@@ -125,7 +125,7 @@ export function ContestDetail({
       ) : (
         <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
       )}
-      <NoPickBlock pinning={pins} short={shortNames} />
+      <NoPickBlock key={contest.id} pinning={pins} short={shortNames} />
     </div>
   );
   const title = (

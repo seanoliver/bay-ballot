@@ -28,6 +28,9 @@ const OWN_MIXED = data.areas.flatMap((a) => {
   });
 })[0];
 
+const yesSide = (n: number) =>
+  data.ballot.contests.find((c) => c.kind === "measure" && Object.values(data.endorsements).filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y").length === n);
+
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
@@ -112,6 +115,17 @@ test.describe("pinning from a contest page", () => {
     await expect(chips).toHaveCount(4);
   });
 
+  test("a side of five guides shows four and +1 more, and a side of four shows all four", async ({ page }) => {
+    for (const [n, button] of [[5, 1], [4, 0]] as const) {
+      const c = yesSide(n);
+      test.skip(!c, `no measure has exactly ${n} Yes guides in today's data`);
+      await page.goto(`${BALLOT}/${c!.id}`);
+      const yes = page.getByRole("group", { name: "Guides for Yes" });
+      await expect(yes.getByRole("button", { name: /^Pin / })).toHaveCount(4);
+      await expect(yes.getByRole("button", { name: "+1 more" })).toHaveCount(button);
+    }
+  });
+
   test("a side with fewer than four guides has no +N more", async ({ page }) => {
     await page.goto(`${BALLOT}/supervisor-10`);
     await waitForKeys(page);
@@ -132,6 +146,9 @@ test.describe("pinning from a contest page", () => {
     const spur = pinChip(yes, "SPUR");
     await expect(chips).toHaveCount(5);
     await expect(spur).toHaveAttribute("aria-pressed", "true");
+    await yes.getByRole("button", { name: /^\+\d+ more$/ }).click();
+    await expect(pinChip(yes.getByRole("list").first(), "SPUR")).toHaveCount(1);
+    await yes.getByRole("button", { name: "Show less" }).click();
     await spur.click();
     await expect(spur).toHaveAttribute("aria-pressed", "false");
     await expect(chips).toHaveCount(5);
@@ -347,6 +364,17 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(countLabel).toHaveText(before);
     await expect(row).toHaveText(rowBefore!);
     expect(errors).toEqual([]);
+  });
+
+  test("switching the pane to another contest starts its chips collapsed", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    await expandChips(page.getByRole("region", { name: "Proposition D" }));
+    await contestRow(page, "Proposition B").click();
+    const pane = page.getByRole("region", { name: "Proposition B" });
+    await expect(pane.getByRole("group", { name: /^Guides / }).first()).toBeVisible();
+    await expect(pane.getByRole("button", { name: "Show less" })).toHaveCount(0);
   });
 
   test("a chip's tooltip opens on keyboard focus, gives the full name, and Escape hides it without closing the pane", async ({ page }, info) => {
