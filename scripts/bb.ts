@@ -22,8 +22,12 @@ import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
-import { buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsTouched, droppedSlivers, poolDistrictCounties, shapesById, zctaShapesUrl, zipTableJson } from "../src/pipeline/zips";
+import {
+  blockPoints, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, homeBlocksUrl, MAX_BLOCK_REACH_M, normalizeDistrictIds, padBox, pointsIn,
+  blocksNearEdge, poolDistrictCounties, shapeBox, shapesById, zctaShapesUrl, zipReach, zipTableJson, type Shape,
+} from "../src/pipeline/zips";
 import { districtMapKey } from "../src/lib/zip";
+import { shapefileById } from "../src/pipeline/shapefile";
 import { placeCounty } from "../src/lib/areas";
 
 const ROOT = path.join(process.cwd(), "data");
@@ -465,7 +469,7 @@ async function runZips() {
   const unknown = [...counties].filter((c) => !Object.values(BAY_COUNTIES).includes(c));
   if (unknown.length) throw new Error(`no Census GEOID for ${unknown.join(", ")}: add it to BAY_COUNTIES in scripts/bb.ts`);
   const get = async (url: string) => {
-    const r = await fetch(url);
+    const r = await fetch(url, { signal: AbortSignal.timeout(60_000) });
     if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
     return r.text();
   };
@@ -481,23 +485,52 @@ async function runZips() {
     cityCounty[p] = county;
   }
   const districtCounties = poolDistrictCounties(data.ballot.contests, cityCounty);
+  // Fetched once across maps, a batch at a time so no response is too large.
+  const zctas: Record<string, Shape> = {};
+  const zctaShapes = async (want: string[]) => {
+    const need = want.filter((z) => !zctas[z]);
+    for (let i = 0; i < need.length; i += 40) Object.assign(zctas, shapesById(await get(zctaShapesUrl(need.slice(i, i + 40))), "ZCTA5", "TIGERweb ZCTAs"));
+    const lost = want.filter((z) => !zctas[z]);
+    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
+    return Object.fromEntries(want.map((z) => [z, zctas[z]]));
+  };
+  type Homes = { inside: [number, number][]; nearEdge: [number, number][] };
+  const homes: Record<string, Homes> = {};
+  const fetchHomes = async (want: string[]) => {
+    const need = want.filter((z) => !homes[z]);
+    for (let i = 0; i < need.length; i += 8) {
+      await Promise.all(
+        need.slice(i, i + 8).map(async (z) => {
+          const blocks = blockPoints(await get(homeBlocksUrl(padBox(shapeBox(zctas[z]), MAX_BLOCK_REACH_M))));
+          homes[z] = { inside: pointsIn(zctas[z], blocks.map((b) => b.at)), nearEdge: blocksNearEdge(zctas[z], blocks) };
+        }),
+      );
+    }
+  };
   for (const m of DISTRICT_MAPS) {
     const key = districtMapKey(m.place, m.seat);
-    const inPlace = Object.keys(zips).filter((z) => (m.place.level === "county" ? zips[z].counties : Object.keys(zips[z].places)).includes(m.place.name));
-    const [mapText, zctaText] = await Promise.all([get(m.url), get(zctaShapesUrl(inPlace))]);
-    const districts = shapesById(mapText, m.field, m.url);
+    const inPlace = Object.keys(zips).filter(
+      (z) => m.place.level === "state" || (m.place.level === "county" ? zips[z].counties : Object.keys(zips[z].places)).includes(m.place.name),
+    );
+    const [mapped, shapes] = await Promise.all([
+      m.format === "zipped shapefile"
+        ? fetch(m.url, { signal: AbortSignal.timeout(60_000) }).then(async (r) => {
+            if (!r.ok) throw new Error(`${m.url}: HTTP ${r.status}`);
+            return shapefileById(Buffer.from(await r.arrayBuffer()), m.field, m.url);
+          })
+        : get(m.url).then((t) => shapesById(t, m.field, m.url)),
+      zctaShapes(inPlace),
+    ]);
+    const districts = normalizeDistrictIds(mapped);
     if (Object.keys(districts).length !== m.count) throw new Error(`${key}: expected ${m.count} districts, found ${Object.keys(districts).sort().join(", ")}`);
-    const shapes = shapesById(zctaText, "ZCTA5", "TIGERweb ZCTAs");
-    const lost = inPlace.filter((z) => !shapes[z]);
-    if (lost.length) throw new Error(`TIGERweb has no ZCTA shape for ${lost.join(", ")}`);
     const shares = districtShares(shapes, districts);
-    const dropped = droppedSlivers(shares, m.slivers);
-    for (const d of dropped) console.log(`${key}: dropped ${d.zip} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land${d.unseen ? " (not yet looked at)" : ""}`);
-    const unseen = dropped.filter((d) => d.unseen);
-    if (unseen.length) throw new Error(`${key}: look at ${unseen.map((d) => `${d.zip}/${d.district}`).join(", ")} on a map; if each is a border sliver, add it to slivers in DISTRICT_MAPS`);
+    await fetchHomes(inPlace);
+    const boxes = Object.fromEntries(Object.entries(districts).map(([id, d]) => [id, shapeBox(d)]));
     for (const z of inPlace) {
-      const touched = shares[z] ? districtsTouched(shares[z]) : [];
-      if (touched.length) (zips[z].districts ??= {})[key] = touched;
+      const reach = zipReach(zctas[z], districts, boxes, shares[z] ?? {}, homes[z]);
+      for (const n of reach.notes) console.log(`${key}: kept ${z} in district ${n.district}: ${n.why}`);
+      for (const d of reach.dropped) console.log(`${key}: dropped ${z} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land, ${Math.round(d.width)} m thick, with no 2020 Census homes`);
+      if (reach.touched.length) (zips[z].districts ??= {})[key] = reach.touched;
       else console.warn(`warning: ZIP ${z} reaches ${m.place.name} but no ${m.seat} district; its contests stay maybe`);
     }
   }

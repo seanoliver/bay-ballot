@@ -1,4 +1,4 @@
-import type { PlaceGroup } from "./areas";
+import { STATE_DISTRICTS, type PlaceGroup } from "./areas";
 import type { Contest, Jurisdiction } from "./schema";
 
 /**
@@ -30,7 +30,8 @@ const whollyIn = (z: ZipPlaces, county: string) => z.counties.length === 1 && z.
 const COUNCILS: readonly string[] = ["City Council", "Town Council"];
 
 // The level is in the map's key: Alameda is a city and a county.
-export type DistrictPlace = { level: "county" | "city"; name: string };
+export type DistrictPlace = { level: "state" | "county" | "city"; name: string };
+export const STATE_PLACE: DistrictPlace = { level: "state", name: "California" };
 export const districtMapKey = (place: DistrictPlace, seat: string) => `${place.level}:${place.name}/${seat}`;
 
 /**
@@ -46,11 +47,18 @@ export function zipFit(
   if (j.level === "county") return whollyIn(z, j.name) ? "on" : z.counties.includes(j.name) ? "maybe" : "off";
   if (j.level === "city") return z.places[j.name] === "full" ? "on" : has(z, j.name) ? "maybe" : "off";
   const within = j.within ?? [];
-  // Maybe even when the ZIP reaches only that district: both sets of lines are approximate.
   const place = within[0];
-  if (j.level === "district" && j.district && within.length === 1 && (place.level === "county" || place.level === "city")) {
-    const mapped = z.districts?.[districtMapKey({ level: place.level, name: place.name }, j.name)];
-    if (mapped?.length) return mapped.includes(j.district) ? "maybe" : "off";
+  const mapPlace = STATE_DISTRICTS.includes(j.name)
+    ? STATE_PLACE
+    : within.length === 1 && (place.level === "county" || place.level === "city")
+      ? { level: place.level, name: place.name }
+      : null;
+  if (j.level === "district" && j.district && mapPlace) {
+    const mapped = z.districts?.[districtMapKey(mapPlace, j.name)];
+    // On when the ZIP reaches only that district and lies wholly in the map's place; a ZIP partly outside SF can't be
+    // all in one SF supervisor district.
+    const wholly = mapPlace.level === "state" || (mapPlace.level === "county" ? whollyIn(z, mapPlace.name) : z.places[mapPlace.name] === "full");
+    if (mapped?.length) return !mapped.includes(j.district) ? "off" : mapped.length === 1 && wholly ? "on" : "maybe";
   }
   if (j.level === "district" && COUNCILS.includes(j.name) && within.length === 1 && within[0].level === "city") return has(z, within[0].name) ? "maybe" : "off";
   // A region measure is voted on countywide in each county it lists.
