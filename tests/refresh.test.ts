@@ -378,6 +378,7 @@ describe("runRefresh", () => {
     const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
     await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
     expect(fetchSource).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ browser: false, contentSelector: "#article-body" }));
+    expect((fetchSource.mock.calls[0] as unknown[])[1]).not.toHaveProperty("retryMissInBrowser");
   });
 
   it("passes a source's own selector from contentSelectors during refresh", async () => {
@@ -431,6 +432,7 @@ describe("runRefresh", () => {
     expect(results[0].status).toBe("unchanged");
     expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
     expect(stream).not.toHaveBeenCalled();
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
   });
 
   it("blocks a guide when every page misses, so a layout change holds the merge", async () => {
@@ -507,6 +509,19 @@ describe("runRefresh", () => {
     await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
     expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, true, true]);
     expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
+  });
+
+  it("logs no rescue for a guide that is fetched in the browser anyway", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'fetchWith: browser\ncontentSelector: "#article-body"\n');
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (_u, opts) => {
+      opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const logs: string[] = [];
+    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(logs.some((l) => l.includes("needed the browser"))).toBe(false);
   });
 
   it("keeps a guide without a selector on http after a browser rescue", async () => {
