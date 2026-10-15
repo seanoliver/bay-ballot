@@ -7,7 +7,7 @@ extraSources:
   - https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
 fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 allowForeignSources: true # Google Drive PDF and the chapter's Substack
-fetchedAt: 2026-10-14
+fetchedAt: 2026-10-15
 hasReasoning: true
 picks:
   us-rep-1:
@@ -25,9 +25,9 @@ picks:
     pick:
       - Mike Thompson
     quotes:
-      - text: We’re pleased to see him promising to pass single payer healthcare, if given the majority.
-        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
       - text: He is an able legislator and a senior member of the critical Committee on Ways and Means.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+      - text: We’re pleased to see him promising to pass single payer healthcare, if given the majority.
         source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
       - text: Thompson’s challenger didn’t impress us as being ready for the job.
         source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
@@ -71,25 +71,6 @@ picks:
       - text: She has more than 30 years of professional experience in operations and nonprofit management, and she knows how to get things done.
         source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
       - text: "Her priorities are straightforward: housing that people can actually afford, a downtown worth visiting, and real solutions to homelessness."
-        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
-  sonoma-county-measure-h:
-    pick: Y
-    quotes:
-      - text: Measure H also removes the sunset clause, so Park maintenance will continue to be funded without future risk.
-        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
-  coast-life-support-measure-d:
-    pick: Y
-    quotes:
-      - text: Funding for Measure D will help ensure the continued availability of emergency ambulance and life support services in a large, geographically-challenging rural service area where rapid access to emergency medical care is essential.
-        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
-  srjc-measure-ab:
-    pick: Y
-    quotes:
-      - text: The quality of educational facilities and equipment is a big determiner of the quality of education.
-        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
-      - text: Measure AB takes a significant step toward improving infrastructure and making sure students at SRJC have the best chance to stay prepared for changes in the job market.
-        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
-      - text: The measure also requires a Citizens Oversight Committee, and annual financial and performance audits.
         source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
   prop-1:
     pick: Y
@@ -154,3 +135,22 @@ picks:
     quotes:
       - text: Prop 45 shifts power from public agencies to developers and nearly eliminates the courts’ ability to prevent toxic contamination of air and water.
         source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+  sonoma-county-measure-h:
+    pick: Y
+    quotes:
+      - text: Measure H also removes the sunset clause, so Park maintenance will continue to be funded without future risk.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+  coast-life-support-measure-d:
+    pick: Y
+    quotes:
+      - text: Funding for Measure D will help ensure the continued availability of emergency ambulance and life support services in a large, geographically-challenging rural service area where rapid access to emergency medical care is essential.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+  srjc-measure-ab:
+    pick: Y
+    quotes:
+      - text: The quality of educational facilities and equipment is a big determiner of the quality of education.
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
+      - text: Measure AB takes a significant step toward improving infrastructure and making sure students at SRJC have the best chance to stay prepared for changes in the job market.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
+      - text: The measure also requires a Citizens Oversight Committee, and annual financial and performance audits.
+        source: https://drive.google.com/uc?export=download&id=1C857Rqxv_4esEmXCQDDHirfbJ_UcQdeI
