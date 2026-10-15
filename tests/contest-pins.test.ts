@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { areaNoPick, countedNoPick, isCountingOnly, noPickGuides, noPickScope, pinMessage, toggleCountOnly } from "@/lib/contest-pins";
-import { EMPTY, isGuideOn, togglePin, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
+import { areaNoPick, countedNoPick, noPickGuides, noPickScope, pinMessage } from "@/lib/contest-pins";
+import { EMPTY, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Area, Contest, Entry } from "@/lib/schema";
 
 const entry: Entry = { pick: "Y", ranked: false, quotes: [] };
@@ -83,35 +83,6 @@ describe("countedNoPick", () => {
 
   it("drops list-only guides when only explained endorsements count", () => {
     expect(countedNoPick(f({ whyOnly: true }), noPick, guides).map((x) => x.id)).toEqual(["b", "c"]);
-  });
-});
-
-describe("toggleCountOnly", () => {
-  const files = { a: file([]), b: file([]), c: file([]), l: file([], false) };
-
-  it("counts only the side's guides and leaves off, why and pins alone", () => {
-    const f0 = f({ off: ["x"], whyOnly: true, pins: ["d"] });
-    const next = toggleCountOnly(f0, ["b", "a"], files);
-    expect(next).toEqual({ ...f0, only: ["a", "b"] });
-    expect(isCountingOnly(next, ["a", "b"], files)).toBe(true);
-    expect(isGuideOn(next, "c")).toBe(false);
-  });
-
-  it("pressing again restores exactly what was there, including a pin made in between", () => {
-    const f0 = f({ off: ["x"] });
-    const counting = togglePin(toggleCountOnly(f0, ["a", "b"], files), "e");
-    expect(toggleCountOnly(counting, ["a", "b"], files)).toEqual({ ...f0, pins: ["e"] });
-  });
-
-  it("still stops after why drops a list-only guide from the side", () => {
-    const counting = { ...toggleCountOnly(f(), ["a", "l"], files), whyOnly: true };
-    expect(isCountingOnly(counting, ["a"], files)).toBe(true);
-    expect(toggleCountOnly(counting, ["a"], files).only).toEqual([]);
-  });
-
-  it("switches to another side rather than stopping", () => {
-    expect(toggleCountOnly(toggleCountOnly(f(), ["a"], files), ["b", "c"], files).only).toEqual(["b", "c"]);
-    expect(isCountingOnly(f({ only: ["a", "b", "c"] }), ["a", "b"], files)).toBe(false);
   });
 });
 

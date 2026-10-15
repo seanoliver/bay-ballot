@@ -5,28 +5,8 @@ import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, contestRow, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
-// A multi-seat race with more candidates picked than seats, so it has Other candidates.
-const MULTI = data.ballot.contests.find((c) => {
-  if (c.kind !== "candidate" || c.seats < 2) return false;
-  const names = Object.values(data.endorsements).flatMap((e) => (e.status === "published" && Array.isArray(e.picks[c.id]?.pick) ? (e.picks[c.id].pick as string[]) : []));
-  return new Set(names).size > c.seats + 1;
-});
 // A contest an area's list shows with Bay Area guides, because none of the area's own took a position.
 const FALLBACK = data.areas.flatMap((a) => (ballotViewProps(data, { area: a }).fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => ({ area: a.id, id }))))[0];
-
-// On an area list with a Bay Area fallback, one of the area's own measures whose side mixes guides with and without reasons.
-const OWN_MIXED = data.areas.flatMap((a) => {
-  const view = ballotViewProps(data, { area: a });
-  const borrowed = new Set((view.fallback?.sections ?? []).flatMap((s) => s.contests));
-  if (!borrowed.size) return [];
-  return view.ballot.contests.flatMap((c) => {
-    if (c.kind !== "measure" || borrowed.has(c.id)) return [];
-    return (["Y", "N"] as const).flatMap((pick) => {
-      const side = view.guides.map((g) => view.files[g.id]).filter((f) => f?.picks[c.id]?.pick === pick);
-      return side.some((f) => f.hasReasoning) && side.some((f) => !f.hasReasoning) ? [{ area: a.id, id: c.id, title: c.title, side: pick === "Y" ? "Yes" : "No" }] : [];
-    });
-  });
-})[0];
 
 const yesSide = (n: number) =>
   data.ballot.contests.find((c) => c.kind === "measure" && Object.values(data.endorsements).filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y").length === n);
@@ -62,8 +42,6 @@ async function closePanel(page: Page, info: TestInfo) {
 
 // A chip's name is "Pin <guide>", plus "(gave reasons)" when the guide explained its pick here.
 const pinChip = (scope: Page | Locator, name: string) => scope.getByRole("button", { name: new RegExp(`^Pin ${name}( \\(gave reasons\\))?$`) });
-
-const counted = (page: Page) => page.getByText(/\d+ of \d+ guides counted/).filter({ visible: true }).first();
 
 test.describe("pinning from a contest page", () => {
   test("a guide chip pins the guide, which then shows in Your guides and on the ballot list", async ({ page }, info) => {
@@ -268,77 +246,13 @@ test.describe("pinning from a contest page", () => {
     await expect(tip).toContainText("Gave reasons on this contest.");
   });
 
-  test("focus stays on Count only when its side moves in a multi-seat race", async ({ page }) => {
-    test.skip(!MULTI, "no multi-seat race with other candidates in today's data");
-    await page.goto(`${BALLOT}/${MULTI!.id}`);
-    await page.getByRole("button", { name: /^Other candidates/ }).click();
-    const others = page.locator("[data-count-only]");
-    const button = others.last();
-    const key = (await button.getAttribute("data-count-only"))!;
-    await button.focus();
-    await page.keyboard.press("Enter");
-    await expect(page.locator(":focus")).toHaveAttribute("data-count-only", key);
-    await expect(page.locator(":focus")).toHaveAttribute("aria-pressed", "true");
-    await page.keyboard.press("Enter");
-    await expect(page.locator(":focus")).toHaveAttribute("aria-pressed", "false");
-  });
-
-  test("Count only counts just one side's guides, and pressing it again or Reset filters undoes it", async ({ page }, info) => {
-    await openContest(page);
-    const before = (await counted(page).textContent())!.match(/(\d+) of (\d+)/)!;
-    const button = page.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
-    const n = (await button.textContent())!.match(/\d+/)![0];
-    await expect(page.getByRole("button", { name: /^Count only these/ })).toHaveCount(2);
-
-    await button.click();
-    await expect(button).toHaveAttribute("aria-pressed", "true");
-    await expect(counted(page)).toContainText(`${n} of ${before[2]} guides counted`);
-    await expect(page.getByRole("status")).toHaveText(`Counting only the ${n} guides for Yes`);
-    await expect(page).toHaveURL(/[?&]only=/);
-    await expect(page.getByRole("heading", { level: 3, name: /^No\s*\d/ })).toHaveCount(0);
-    await expect(page.getByRole("group", { name: "Guides with no pick" })).toHaveCount(0);
-
-    await button.click();
-    await expect(counted(page)).toContainText(`${before[1]} of ${before[2]} guides counted`);
-    await expect(page).not.toHaveURL(/[?&]off=/);
-
-    await button.click();
-    await expect(counted(page)).toContainText(`${n} of ${before[2]}`);
-    const panel = await filterPanel(page, info);
-    await panel.getByRole("button", { name: "Reset filters" }).click();
-    await closePanel(page, info);
-    await expect(counted(page)).toContainText(`${before[1]} of ${before[2]} guides counted`);
-    await expect(button).toHaveAttribute("aria-pressed", "false");
-  });
-
-  test("pressing Count only again keeps an earlier off, a pin made in between, and works after a reload", async ({ page }) => {
-    await openContest(page, "?off=sf-gop");
-    await expect(page.getByText("1 guide hidden")).toBeVisible();
-    const before = (await counted(page).textContent())!;
-    const button = page.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
-    await button.click();
-    await expect(page).toHaveURL(/[?&]only=/);
-    await expect(page).toHaveURL(/[?&]off=sf-gop/);
-    await pinChip(page, "SPUR").click();
-    await expect(page).toHaveURL(pinParam("spur"));
-
-    await page.reload();
-    await expect(button).toHaveAttribute("aria-pressed", "true");
-    await button.click();
-    await expect(button).toHaveAttribute("aria-pressed", "false");
-    await expect(page).not.toHaveURL(/[?&]only=/);
-    await expect(page).toHaveURL(/[?&]off=sf-gop/);
-    await expect(page).toHaveURL(pinParam("spur"));
-    await expect(counted(page)).toHaveText(before);
-  });
-
-  test("a candidate race has a pin list and a Count only button per candidate", async ({ page }) => {
+  test("a candidate race has a pin list per candidate", async ({ page }) => {
     await page.goto(`${BALLOT}/supervisor-10`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const lists = page.getByRole("group", { name: /^Guides for / });
     expect(await lists.count()).toBeGreaterThan(1);
     await expect(lists.first().getByRole("button", { name: /^Pin / }).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Count only/ })).toHaveCount(0);
   });
 });
 
@@ -347,7 +261,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
   const rowPins = (page: Page) =>
     page.locator("li").filter({ has: contestRow(page, "Proposition D") }).getByRole("list", { name: "Your guides' picks" }).filter({ visible: true });
 
-  test("the desktop pane pins guides into the list rows and counts one side", async ({ page }, info) => {
+  test("the desktop pane pins guides into the list rows", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     const errors = watchErrors(page);
     await page.goto(`${SF}?c=prop-d`);
@@ -360,18 +274,6 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const sidebar = page.getByRole("complementary", { name: "Filters" });
     await expect(sidebar.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveText(["SPUR"]);
 
-    const countLabel = sidebar.getByText(/guides counted$/);
-    const before = (await countLabel.textContent())!;
-    const row = page.locator("li").filter({ has: contestRow(page, "Proposition B") }).first();
-    const rowBefore = await row.textContent();
-    const button = pane.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
-    const n = (await button.textContent())!.match(/\d+/)![0];
-    await button.click();
-    await expect(countLabel).toHaveText(new RegExp(`^${n} of `));
-    await expect(row).not.toHaveText(rowBefore!);
-    await sidebar.getByRole("button", { name: "Reset filters" }).click();
-    await expect(countLabel).toHaveText(before);
-    await expect(row).toHaveText(rowBefore!);
     expect(errors).toEqual([]);
   });
 
@@ -395,8 +297,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
     const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
-    await pane.getByRole("button", { name: /^Count only these/ }).first().focus();
-    // Tab from Count only reaches the first chip, then on to SF Chronicle.
+    await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
+    // Tab from the first chip on to SF Chronicle.
     for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(chip).toBeFocused();
     await expect(tip).toBeVisible();
@@ -449,7 +351,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await contestRow(page, "Proposition D").click();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     const focused = pinChip(sheet, "SF Chronicle");
-    await sheet.getByRole("button", { name: /^Count only these/ }).first().focus();
+    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
     for (let i = 0; i < 12 && !(await focused.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(focused).toBeFocused();
     const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /^Pin / }).filter({ hasNotText: "SF Chronicle" }).first();
@@ -472,7 +374,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(sheet).toBeVisible();
     const chip = pinChip(sheet, "SF Chronicle");
     const tip = chip.locator("[data-tip]");
-    await sheet.getByRole("button", { name: /^Count only these/ }).first().focus();
+    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
     for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(chip).toBeFocused();
     await expect(tip).toBeVisible();
@@ -536,28 +438,10 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(pinChip(pane, "Berkeley Dems")).toHaveCount(0);
   });
 
-  test("on an area list with a Bay Area fallback, Count only still stops after why hides some of its guides", async ({ page }, info) => {
-    test.skip(isPhone(info), "desktop only");
-    test.skip(!OWN_MIXED, "no fitting measure in today's data");
-    await page.goto(`${BALLOT}/${OWN_MIXED!.area}?c=${OWN_MIXED!.id}`);
-    const pane = page.locator("section[aria-labelledby='detail-title']");
-    const side = pane.locator("section").filter({ has: page.getByRole("heading", { level: 3, name: new RegExp(`^${OWN_MIXED!.side}\\s*\\d`) }) });
-    const button = side.getByRole("button", { name: /^Count only these \d+ on the ballot$/ });
-    await button.click();
-    await expect(button).toHaveAttribute("aria-pressed", "true");
-    await page.getByRole("complementary", { name: "Filters" }).getByRole("checkbox", { name: "Only guides that explain their endorsements" }).click();
-    await expect(page).toHaveURL(/[?&]why=1/);
-    await expect(button).toHaveAttribute("aria-pressed", "true");
-    await button.click();
-    await expect(page).not.toHaveURL(/[?&]only=/);
-  });
-
-  test("the phone sheet pins guides and counts one side", async ({ page }, info) => {
+  test("the phone sheet pins guides", async ({ page }, info) => {
     test.skip(!isPhone(info), "phone only");
     await page.goto(SF);
     await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
-    const filters = page.getByRole("button", { name: /^Filters/ });
-    const before = (await filters.textContent())!;
     await contestRow(page, "Proposition D").tap();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     await expect(sheet).toBeVisible();
@@ -565,18 +449,9 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await pinChip(sheet, "SPUR").click();
     await expect(sheet.getByRole("status")).toHaveText("Pinned SPUR · 1 of 4 pinned");
     await expect(sheet.getByRole("status")).toBeVisible();
-    const button = sheet.getByRole("button", { name: /^Count only these \d+ on the ballot$/ }).first();
-    const n = (await button.textContent())!.match(/\d+/)![0];
-    await button.click();
-    await expect(button).toHaveAttribute("aria-pressed", "true");
     await page.goBack();
     await expect(sheet).toBeHidden();
     await expect(rowPins(page).getByRole("listitem")).toHaveText([/^SPUR:\s*Yes$/]);
-    await expect(filters).toContainText(`${n} of `);
-    await filters.click();
-    await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Reset filters" }).click();
-    await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Close" }).click();
-    await expect(filters).toHaveText(before);
     await expect(page).toHaveURL(/[?&]pin=spur/);
   });
 });

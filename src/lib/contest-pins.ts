@@ -55,22 +55,6 @@ export function countedNoPick(f: Filters, noPick: NoPickGuide[], guides: GuideIn
     .sort((a, b) => a.name.localeCompare(b.name, "en"));
 }
 
-/** Counts only `keep` across the whole ballot, or, if it already is, stops; `off`, why and pins stay as they were. */
-export function toggleCountOnly(f: Filters, keep: string[], files: Record<string, PickFile>): Filters {
-  return { ...f, only: isCountingOnly(f, keep, files) ? [] : [...new Set(keep)].sort() };
-}
-
-/**
- * Whether `only` is this side's guides. A side lists only counted guides, so once "why" is turned on it can lose the
- * list-only guides `only` still holds; those don't stop it matching.
- */
-export function isCountingOnly(f: Filters, keep: string[], files: Record<string, PickFile>): boolean {
-  if (!f.only.length) return false;
-  const ids = new Set(keep);
-  const hidden = (id: string) => f.whyOnly && files[id]?.hasReasoning === false;
-  return keep.every((id) => f.only.includes(id)) && f.only.every((id) => ids.has(id) || hidden(id));
-}
-
 /** What a pin toggle says, from the filters before it. Nothing changes at the limit. */
 export function pinMessage(f: Filters, guide: GuideInfo): string {
   const name = displayName(guide, { short: true });

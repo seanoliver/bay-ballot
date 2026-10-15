@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -13,7 +13,7 @@ import { officialSource, type OfficialSource } from "@/lib/official";
 import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
-import { CountOnlyButton, NoPickBlock, PinChips, PinHint, PinStatus, TAP, type PinControls, type Pinning } from "./ContestPins";
+import { NoPickBlock, PinChips, PinHint, PinStatus, TAP, type PinControls, type Pinning } from "./ContestPins";
 import { ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
@@ -81,23 +81,7 @@ export function ContestDetail({
   const ranked = contestHeadline(contest, rows).headline.ranked;
   const multi = contest.kind === "candidate" && contest.seats > 1;
   const Title = heading || "h2";
-  const rootRef = useRef<HTMLDivElement>(null);
-  // Count only can move a side between the top sides and Other candidates, remounting its button; focus follows it by key.
-  const refocus = useRef<string | null>(null);
-  const pins: PinControls = {
-    ...pinning,
-    limitId: useId(),
-    onCountPress: (key) => {
-      refocus.current = key;
-    },
-  };
-  useEffect(() => {
-    const key = refocus.current;
-    refocus.current = null;
-    const root = rootRef.current;
-    if (key === null || !root || root.contains(document.activeElement)) return;
-    (root.querySelector<HTMLElement>(`[data-count-only="${CSS.escape(key)}"]`) ?? root.querySelector<HTMLElement>("[data-others]"))?.focus();
-  }, [rows]);
+  const pins: PinControls = { ...pinning, limitId: useId() };
   const scopeSwitch = fallback ? <ScopeSwitch place={fallback.place} scope={fallback.scope} onChange={fallback.onScope} /> : null;
   const summary = (
     <>
@@ -134,7 +118,7 @@ export function ContestDetail({
     </Title>
   );
   return (
-    <div ref={rootRef} className="space-y-8">
+    <div className="space-y-8">
       <div>
         {heading ? (
           <div className="flex items-start justify-between gap-3">
@@ -210,10 +194,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
   );
   return (
     <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0 [&+&]:mt-6">
-      <div className="flex flex-wrap items-center gap-3">
-        {heading}
-        <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
-      </div>
+      {heading}
       <PinChips key={contest.id} guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
       {top.length ? (
         <div className="space-y-4">
@@ -234,7 +215,7 @@ function OtherCandidates({ others, rows, contest, short, pinning }: { others: Si
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} render={<section className="mt-6 border-t border-border pt-6" />}>
-      <CollapsibleTrigger data-others className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <CollapsibleTrigger className="-my-2.5 inline-flex min-h-10 items-center rounded-md text-base font-semibold underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {open ? "Hide other candidates" : `Other candidates (${others.length})`}
       </CollapsibleTrigger>
       <CollapsibleContent className="reveal">
