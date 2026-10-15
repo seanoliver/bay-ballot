@@ -301,7 +301,6 @@ function Official({ source }: { source: OfficialSource }) {
           </span>
           <span className="sr-only"> (opens in a new tab)</span>
         </ExternalLink>
-        <p className="text-sm text-muted-foreground">{source.note}</p>
       </div>
     </div>
   );

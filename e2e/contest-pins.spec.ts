@@ -179,7 +179,6 @@ test.describe("pinning from a contest page", () => {
 
   test("with four pinned, other chips are disabled and say why", async ({ page }) => {
     await openContest(page, "?pin=sf-chronicle,growsf,sf-dems,league-pissed-off-voters");
-    await expect(page.getByText("4 of 4 pinned. Unpin one to pin another.")).toBeVisible();
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
     await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
@@ -256,19 +255,9 @@ test.describe("pinning from a contest page", () => {
     await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("link", { name: "SPUR", exact: true })).toHaveAttribute("href", "/guides/spur");
   });
 
-  test("the quote mark legend shows only on a side where a chip has the mark", async ({ page }, info) => {
+  test("a chip with the quote mark explains it on hover, and no-pick chips never have it", async ({ page }, info) => {
     await openContest(page);
-    const legend = /means the guide explained its pick\. Read its reasons below\./;
-    const groups = page.getByRole("group", { name: /^Guides (for |with no pick)/ });
-    expect(await groups.count()).toBeGreaterThan(1);
-    let marked = 0;
-    for (const group of await groups.all()) {
-      const section = group.locator("xpath=ancestor::section[1]");
-      const quoted = await group.getByRole("button", { name: /\(gave reasons\)$/ }).count();
-      await expect(section.getByText(legend)).toHaveCount(quoted ? 1 : 0);
-      if (quoted) marked++;
-    }
-    expect(marked).toBeGreaterThan(0);
+    await expect(page.getByText(/means the guide explained its pick/)).toHaveCount(0);
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("button", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("button", { name: /\(gave reasons\)$/ }).first();
@@ -276,6 +265,7 @@ test.describe("pinning from a contest page", () => {
     await expect(tip).toBeHidden();
     await chip.hover();
     await expect(tip).toBeVisible();
+    await expect(tip).toContainText("Gave reasons on this contest.");
   });
 
   test("focus stays on Count only when its side moves in a multi-seat race", async ({ page }) => {
@@ -449,6 +439,27 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(tip).toBeHidden();
     await expect(chip).toHaveAttribute("aria-pressed", "false");
     await expect(page).not.toHaveURL(/[?&]pin=/);
+  });
+
+  test("with one chip hovered and another focused, Escape hides both tooltips", async ({ page }, info) => {
+    test.skip(isPhone(info), "a fine pointer at sheet width");
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.goto(SF);
+    await waitForKeys(page);
+    await contestRow(page, "Proposition D").click();
+    const sheet = page.getByRole("dialog", { name: "Proposition D" });
+    const focused = pinChip(sheet, "SF Chronicle");
+    await sheet.getByRole("button", { name: /^Count only these/ }).first().focus();
+    for (let i = 0; i < 12 && !(await focused.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
+    await expect(focused).toBeFocused();
+    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /^Pin / }).filter({ hasNotText: "SF Chronicle" }).first();
+    await hovered.hover();
+    await expect(hovered.locator("[data-tip]")).toBeVisible();
+    await expect(focused.locator("[data-tip]")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(hovered.locator("[data-tip]")).toBeHidden();
+    await expect(focused.locator("[data-tip]")).toBeHidden();
+    await expect(sheet).toBeVisible();
   });
 
   test("in the sheet with a mouse, Escape hides a chip's tooltip and leaves the sheet open", async ({ page }, info) => {

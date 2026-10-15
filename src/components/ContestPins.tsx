@@ -102,10 +102,11 @@ export function PinStatus({ message }: { message: string }) {
   );
 }
 
+// Screen-reader only: a disabled chip's description points here. Sighted people get the chip tooltip and the status toast.
 export function PinHint({ pinning }: { pinning: PinControls }) {
   const n = pinning.filters.pins.length;
   return (
-    <p id={pinning.limitId} className="text-sm text-muted-foreground">
+    <p id={pinning.limitId} className="sr-only">
       {n >= MAX_PINS
         ? `${n} of ${MAX_PINS} pinned. Unpin one to pin another.`
         : `Pin a guide to see its picks on every contest. ${n} of ${MAX_PINS} pinned.`}
@@ -243,6 +244,9 @@ function escapeHovered(e: globalThis.KeyboardEvent) {
   if (!b?.isConnected) return unhover();
   if (!b.matches(":hover") || b.dataset.tipHidden === "true" || !window.matchMedia("(pointer: fine)").matches) return;
   b.dataset.tipHidden = "true";
+  // Stopping the event skips the focused chip's own handler, so hide its open tooltip here too.
+  const f = document.activeElement;
+  if (f instanceof HTMLButtonElement && f !== b && f.matches(":focus-visible") && f.querySelector("[data-tip]")) f.dataset.tipHidden = "true";
   e.stopImmediatePropagation();
   e.preventDefault();
 }
@@ -260,7 +264,7 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   e.preventDefault();
 }
 
-/** The first few chips plus any pinned guide, then "+N more" opens the rest below them. A legend explains the quote mark when a chip has one. */
+/** The first few chips plus any pinned guide, then "+N more" opens the rest below them. */
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const pinnedLater = guides.slice(CHIPS_SHOWN).filter((g) => isPinned(pinning.filters, g.id)).map((g) => g.id);
@@ -281,14 +285,6 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
   }, [all]);
   return (
     <>
-      {guides.some((g) => g.quoted) ? (
-        <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-          <span className="text-foreground">{QUOTE_MARK}</span>
-          <span>
-            <span className="sr-only">A quote mark </span>means the guide explained its pick. Read its reasons below.
-          </span>
-        </p>
-      ) : null}
       <div role="group" aria-label={label}>
         <ul ref={firstRow} className="flex flex-wrap gap-2">
           {first.map((g) => (
