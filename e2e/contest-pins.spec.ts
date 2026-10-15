@@ -31,7 +31,6 @@ const OWN_MIXED = data.areas.flatMap((a) => {
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
-// Each side shows four chips, then "+N more"; pressing it turns it into "Show less".
 async function expandChips(scope: Page | Locator) {
   const more = scope.getByRole("button", { name: /^\+\d+ more$/ });
   while (await more.count()) await more.first().click();
