@@ -438,7 +438,10 @@ describe("runRefresh", () => {
     expect(fs.existsSync(pagePath(root, ELECTION, "alpha", "https://alpha.org/more"))).toBe(false);
     expect(logs.some((l) => l.includes("selector missed"))).toBe(true);
     expect(exitCodeFor(results)).toBe(2);
-    expect(summarize(results, { date: "2026-10-06" })).toContain("1 selector miss");
+    const summary = summarize(results, { date: "2026-10-06" });
+    expect(summary).toContain("1 selector miss");
+    expect(summary).toContain("alpha: blocked");
+    expect(reviewReasons(results)[0]).toContain("alpha: blocked");
   });
 
   it("blocks a forced re-extract when a never-stored page misses", async () => {
@@ -450,6 +453,18 @@ describe("runRefresh", () => {
     const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION, forceExtract: true });
     expect(results[0].status).toBe("blocked");
     expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("skips the browser retry for the rest of a guide after one page misses", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
+    expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
   });
 
   it("fails the guide on a miss when selectors are strict (bb extract)", async () => {
@@ -547,6 +562,18 @@ describe("seedPages", () => {
     });
     const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
     expect(seeded).toEqual([{ id: "alpha", stored: 1, error: expect.stringContaining("matched nothing") }]);
+  });
+
+  it("skips the browser retry for the rest of a guide's seeding after one page misses", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
+    expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
   });
 
   it("fails a guide's seeding on errors other than a selector miss", async () => {

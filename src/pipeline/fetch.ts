@@ -154,6 +154,8 @@ export type FetchOptions = {
   browser?: boolean;
   contentSelector?: string;
   contentExclude?: string;
+  /** False skips the browser retry after an http selector miss (a guide whose layout changed would retry every page). */
+  retryMissInBrowser?: boolean;
   browserFetch?: BrowserFetch;
   onAttempt?: (a: FetchAttempt) => void;
 };
@@ -263,7 +265,7 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     return { kind: "text", text: htmlToText(selectIn(url, r.html, opts.contentSelector, opts.contentExclude)) };
   } catch (e) {
     // A wall detectBlock doesn't know can still serve a 200 without the article; the browser may get past it.
-    if (!(e instanceof SelectorMissError)) throw e;
+    if (!(e instanceof SelectorMissError) || opts.retryMissInBrowser === false) throw e;
     return viaBrowser(e.message).catch((b: unknown) => {
       throw b instanceof SelectorMissError ? b : new SelectorMissError(`${e.message} (browser: ${errMsg(b)})`);
     });

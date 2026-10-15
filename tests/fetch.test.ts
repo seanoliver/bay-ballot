@@ -393,6 +393,13 @@ describe("content selector", () => {
     expect(browserFetch).not.toHaveBeenCalled();
   });
 
+  it("skips the browser retry when told to", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector, retryMissInBrowser: false })).rejects.toBeInstanceOf(SelectorMissError);
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
   it("counts a failed browser retry as a selector miss", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
     const browserFetch = vi.fn(async (): Promise<{ status: number; html: string }> => {

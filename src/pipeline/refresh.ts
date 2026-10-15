@@ -137,7 +137,9 @@ async function refreshGuide(
     const old = readStored(p);
     let fetched: Fetched;
     try {
-      fetched = await deps.fetchSource(url, fetchOptions(prev, Boolean(opts.browser), url));
+      // After one miss, skip the browser retry for the rest of the guide: a layout change misses on every page.
+      const noRetry = selectorMisses.length ? { retryMissInBrowser: false } : {};
+      fetched = await deps.fetchSource(url, { ...fetchOptions(prev, Boolean(opts.browser), url), ...noRetry });
     } catch (e) {
       if (!(e instanceof SelectorMissError) || opts.strictSelectors) throw e;
       if (old === null) {
@@ -159,10 +161,10 @@ async function refreshGuide(
     for (const p of pages) writeStored(p.path, p.stored);
     return { id, status: "unchanged" };
   }
-  // Extracting now would read a kept page's stored text (dates stripped) or lose a left-out page's picks; wait for the selector fix.
-  if (selectorMisses.length) return { id, status: "blocked" };
   const pageHash = createHash("sha256").update(pages.map((p) => `${p.source.url}\n${p.stored}`).join("\n\0\n")).digest("hex");
   if (!forceExtract && opts.shrunkSkip?.[id] === pageHash) return { id, status: "shrunk-skipped", pageHash };
+  // Extracting now would read a kept page's stored text (dates stripped) or lose a left-out page's picks; wait for the selector fix.
+  if (selectorMisses.length) return { id, status: "blocked" };
   if (opts.gateOnly) return { id, status: "would-extract" };
   if (budget.left <= 0) return { id, status: "deferred" };
   budget.left--;
@@ -424,7 +426,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
       for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }
   }
-  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped")];
+  const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped"), ...by("blocked")];
   if (problems.length || misses.length) {
     lines.push("", "## Needs attention");
     for (const r of problems) lines.push(`- ${describe(r).split("\n")[0].replace(/^\s*!!\s*/, "")}`);
@@ -458,7 +460,7 @@ export async function seedPages(
       for (const url of sourcesFor(file)) {
         let fetched: Fetched;
         try {
-          fetched = await deps.fetchSource(url, fetchOptions(file, Boolean(opts.browser), url));
+          fetched = await deps.fetchSource(url, { ...fetchOptions(file, Boolean(opts.browser), url), ...(misses.length ? { retryMissInBrowser: false } : {}) });
         } catch (e) {
           if (!(e instanceof SelectorMissError)) throw e;
           misses.push(e.message);
@@ -493,6 +495,7 @@ export type ResultJson = {
 export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
     const misses = (r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`);
+    if (r.status === "blocked") return [`${r.id}: blocked; its pages changed but re-extraction waits for the selector fix`, ...misses];
     if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`, ...misses];
     if (r.status !== "changed") return misses;
     const held = new Set(r.held.map((h) => h.contestId));
