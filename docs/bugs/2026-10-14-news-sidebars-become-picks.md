@@ -33,4 +33,4 @@ On the old code, `npm run bb -- pages --seed mercury-news` and read a stored art
 
 - Schema rejects a `contentSelectors` key that is not one of the guide's sources.
 - Tests pin keep-or-leave-out on a miss, `blocked` with exit 2, the retry cut-off and rescue switch against the real fetcher, and `strictSelectors` for `bb extract`.
-- A layout change that misses every page of a guide blocks it and holds the refresh PR. On an otherwise unchanged guide, a partial miss keeps the stored text (or leaves out a never-stored page) and is only listed. A layout change to Mercury News articles alone misses 24 of 26 pages, so that guide is not blocked; this and other hardening are on #190.
+- A layout change that misses every page of a guide blocks it and holds the refresh PR. On an otherwise unchanged guide, a partial miss keeps the stored text (or leaves out a never-stored page) and is only listed. A layout change to the shared Bay Area News Group article template (Mercury News and Marin IJ) misses 24 of 26 pages, so that guide is not blocked; this and other hardening are on #190.
