@@ -81,6 +81,9 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-5:
     pick: N
+    quotes:
+      - text: Prop 5 would overhaul California’s process for recalling state-level officials. The process can certainly be improved, but the problem isn’t so dire that voters need to accept Prop 5’s glaring flaw.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-37:
     pick: Y
     quotes:
