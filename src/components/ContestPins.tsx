@@ -131,7 +131,8 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
   // Read aloud: the full name where the chip shows a short one, and the limit. The label already says it gave reasons.
   const describedBy = [guide.name !== name && nameId, full && pinning.limitId].filter(Boolean).join(" ");
   return (
-    <li style={style} className={className}>
+    // Raised while open: an animating chip is its own stacking layer, so later chips would cover its tooltip.
+    <li style={style} className={cn("relative hover:z-10 focus-within:z-10", className)}>
       <button
         type="button"
         // Labelled, so the tooltip inside it describes the chip without joining its name.
@@ -259,11 +260,16 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   e.preventDefault();
 }
 
-/** The first few chips, then "+N more" opens the rest below them. A legend explains the quote mark when a chip has one. */
+/** The first few chips plus any pinned guide, then "+N more" opens the rest below them. A legend explains the quote mark when a chip has one. */
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
-  const first = guides.slice(0, CHIPS_SHOWN);
-  const rest = guides.slice(CHIPS_SHOWN);
+  const pinnedLater = guides.slice(CHIPS_SHOWN).filter((g) => isPinned(pinning.filters, g.id)).map((g) => g.id);
+  // A chip unpinned while collapsed stays put until "Show less", so it never vanishes from under the pointer or focus.
+  const [kept, setKept] = useState(pinnedLater);
+  if (pinnedLater.some((id) => !kept.includes(id))) setKept([...kept, ...pinnedLater.filter((id) => !kept.includes(id))]);
+  const inFirstRow = (g: ChipGuide, i: number) => i < CHIPS_SHOWN || (!all && kept.includes(g.id));
+  const first = guides.filter(inFirstRow);
+  const rest = guides.filter((g, i) => !inFirstRow(g, i));
   return (
     <>
       {guides.some((g) => g.quoted) ? (
@@ -284,7 +290,10 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
               <button
                 type="button"
                 aria-expanded={all}
-                onClick={() => setAll(!all)}
+                onClick={() => {
+                  if (all) setKept(pinnedLater);
+                  setAll(!all);
+                }}
                 className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"
               >
                 {all ? "Show less" : `+${rest.length} more`}
@@ -293,7 +302,7 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
           ) : null}
         </ul>
         {all && rest.length ? (
-          <ul className="reveal flex flex-wrap gap-2 pt-2">
+          <ul className="flex flex-wrap gap-2 pt-2">
             {rest.map((g, i) => (
               <PinChip key={g.id} guide={g} short={short} pinning={pinning} className="reveal-item" style={{ "--i": i } as CSSProperties} />
             ))}

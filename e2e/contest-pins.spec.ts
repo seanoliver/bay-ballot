@@ -33,7 +33,10 @@ const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")
 
 async function expandChips(scope: Page | Locator) {
   const more = scope.getByRole("button", { name: /^\+\d+ more$/ });
-  while (await more.count()) await more.first().click();
+  for (let n = await more.count(); n > 0; n--) {
+    await more.first().click();
+    await expect(more).toHaveCount(n - 1);
+  }
 }
 
 async function openContest(page: Page, query = "") {
@@ -101,10 +104,41 @@ test.describe("pinning from a contest page", () => {
     const n = Number((await more.textContent())!.match(/\d+/)![0]);
     await more.click();
     await expect(chips).toHaveCount(4 + n);
+    await expect(yes.getByRole("list")).toHaveCount(2);
+    await expect(yes.getByRole("list").nth(1).getByRole("button", { name: /^Pin / })).toHaveCount(n);
     const less = yes.getByRole("button", { name: "Show less" });
     await expect(less).toHaveAttribute("aria-expanded", "true");
     await less.click();
     await expect(chips).toHaveCount(4);
+  });
+
+  test("a side with fewer than four guides has no +N more", async ({ page }) => {
+    await page.goto(`${BALLOT}/supervisor-10`);
+    await waitForKeys(page);
+    let small = 0;
+    for (const group of await page.getByRole("group", { name: /^Guides / }).all()) {
+      if ((await group.getByRole("button", { name: /^Pin / }).count()) >= 4) continue;
+      await expect(group.getByRole("button", { name: /^\+\d+ more$/ })).toHaveCount(0);
+      small++;
+    }
+    expect(small).toBeGreaterThan(0);
+  });
+
+  test("a pinned guide past the first four shows without expanding, and stays until Show less after an unpin", async ({ page }) => {
+    await page.goto(`${PROP_D}?pin=spur`);
+    await waitForKeys(page);
+    const yes = page.getByRole("group", { name: "Guides for Yes" });
+    const chips = yes.getByRole("button", { name: /^Pin / });
+    const spur = pinChip(yes, "SPUR");
+    await expect(chips).toHaveCount(5);
+    await expect(spur).toHaveAttribute("aria-pressed", "true");
+    await spur.click();
+    await expect(spur).toHaveAttribute("aria-pressed", "false");
+    await expect(chips).toHaveCount(5);
+    await yes.getByRole("button", { name: /^\+\d+ more$/ }).click();
+    await yes.getByRole("button", { name: "Show less" }).click();
+    await expect(chips).toHaveCount(4);
+    await expect(spur).toHaveCount(0);
   });
 
   test("with four pinned, other chips are disabled and say why", async ({ page }) => {
@@ -166,14 +200,14 @@ test.describe("pinning from a contest page", () => {
     const names = (await links.allTextContents()).map((t) => t.trim());
     expect(names.length).toBeGreaterThan(0);
     expect(names).toEqual(chips.slice(0, names.length));
-    const more = side.getByRole("button", { name: /^and \d+ more$/ });
-    if (await more.count()) {
-      const n = Number((await more.textContent())!.match(/\d+/)![0]);
-      await more.focus();
-      await page.keyboard.press("Enter");
-      await expect(links).toHaveCount(names.length + n);
-      await expect(links.nth(names.length)).toBeFocused();
-    }
+    await expect(links).toHaveCount(12);
+    const more = side.getByRole("button", { name: /^and \d+ more guide pages for / });
+    await expect(more).toHaveCount(1);
+    const n = Number((await more.textContent())!.match(/\d+/)![0]);
+    await more.focus();
+    await page.keyboard.press("Enter");
+    await expect(links).toHaveCount(names.length + n);
+    await expect(links.nth(names.length)).toBeFocused();
     const growsf = list.getByRole("link", { name: "GrowSF", exact: true });
     await expect(growsf).toHaveAttribute("href", "/guides/growsf");
     await growsf.click();
@@ -399,7 +433,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await page.goto(`${SF}?c=prop-d`);
     await waitForKeys(page);
     const group = page.getByRole("region", { name: "Proposition D" }).getByRole("group", { name: "Guides for Yes" });
-    const row = (await group.getByRole("list").boundingBox())!;
+    await expandChips(group);
+    const row = (await group.boundingBox())!;
     const chips = group.getByRole("button", { name: /^Pin / });
     let checked = 0;
     for (const chip of await chips.all()) {
@@ -410,6 +445,11 @@ test.describe("pinning from the ballot list's contest detail", () => {
       const box = (await tip.boundingBox())!;
       expect(box.x).toBeGreaterThanOrEqual(row.x - 1);
       expect(box.x + box.width).toBeLessThanOrEqual(row.x + row.width + 1);
+      const onTop = await tip.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+      });
+      expect(onTop).toBe(true);
       checked++;
     }
     expect(checked).toBeGreaterThan(3);
@@ -434,6 +474,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await page.goto(`${BALLOT}/alameda-county?c=oakland-mayor`);
     const pane = page.locator("section[aria-labelledby='detail-title']");
     await expect(pane.getByRole("group", { name: /^Guides for / }).first()).toBeVisible();
+    await expandChips(pane);
     await expect(pinChip(pane, "Berkeley Dems")).toHaveCount(0);
   });
 
