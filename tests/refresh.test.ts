@@ -377,7 +377,7 @@ describe("runRefresh", () => {
     const { client } = fakeClient(sameOut);
     const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
     await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
-    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body" });
+    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ browser: false, contentSelector: "#article-body" }));
   });
 
   it("passes a source's own selector from contentSelectors during refresh", async () => {
@@ -386,10 +386,10 @@ describe("runRefresh", () => {
     const { client } = fakeClient(sameOut);
     const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
     await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
-    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), { browser: false, contentSelector: "main article" });
+    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), expect.objectContaining({ browser: false, contentSelector: "main article" }));
   });
 
-  it("keeps the stored page when a page misses its selector, and asks for review", async () => {
+  it("keeps the stored page when a page misses its selector, and lists it without holding the merge", async () => {
     const root = setup(["alpha", "beta"]);
     const storedAlpha = fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8");
     const { client } = fakeClient(sameOut);
@@ -402,9 +402,11 @@ describe("runRefresh", () => {
     expect(alpha.status).toBe("unchanged");
     expect(alpha.selectorMisses).toEqual([expect.stringContaining("kept the stored page")]);
     expect(results.find((r) => r.id === "beta")!.status).toBe("unchanged");
-    expect(exitCodeFor(results)).toBe(2);
-    expect(summarize(results, { date: "2026-10-06" })).toContain("alpha: https://alpha.org/");
-    expect(reviewReasons(results)).toEqual([expect.stringContaining("alpha: selector missed")]);
+    expect(exitCodeFor(results)).toBe(0);
+    const summary = summarize(results, { date: "2026-10-06" });
+    expect(summary).toContain("alpha: https://alpha.org/");
+    expect(summary).toContain("clean; 1 selector miss listed below");
+    expect(reviewReasons(results)).toEqual([]);
     expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(storedAlpha);
   });
 
@@ -468,6 +470,20 @@ describe("runRefresh", () => {
     expect(summarize(results, { date: "2026-10-06" })).toContain("2 selector misses");
     expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
     expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
+  });
+
+  it("fetches a guide's remaining pages in the browser after one page needed it", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n");
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u, opts) => {
+      if (u === url("alpha")) opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const logs: string[] = [];
+    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, true, true]);
+    expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
   });
 
   it("fails the guide on a miss when selectors are strict (bb extract)", async () => {

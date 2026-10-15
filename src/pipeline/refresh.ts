@@ -9,7 +9,7 @@ import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
 import { extract, keepPrevQuotes, pagesFor, toEntries, type ExtractClient, type Source } from "./extract";
-import { SelectorMissError, type Fetched } from "./fetch";
+import { SelectorMissError, type Fetched, type FetchOptions } from "./fetch";
 import { isPdfDigest, pageGate, relevantChange, sourceSlug, storedText, type Gate } from "./pagestore";
 import { checkHosts, fetchOptions, sourcesFor } from "./sources";
 import { applyVerdicts, auditPart, verify, withAudited, type VerifyOutput } from "./verify";
@@ -18,7 +18,7 @@ import { nextFile, scopedNextFile, shrinkWarning, toYaml } from "./write";
 
 export type RefreshDeps = {
   client: ExtractClient;
-  fetchSource: (url: string, opts: { browser?: boolean }) => Promise<Fetched>;
+  fetchSource: (url: string, opts: FetchOptions) => Promise<Fetched>;
   archiveUrl?: (url: string) => Promise<string | null>;
   today: () => string;
   log?: (line: string) => void;
@@ -132,6 +132,7 @@ async function refreshGuide(
   if (hostProblems.length) return { id, status: "skipped", reason: `source host check: ${hostProblems.join("; ")}` };
 
   const pages: Fetchedpage[] = [];
+  let rescued = false;
   for (const url of urls) {
     const p = pagePath(opts.root, opts.election, id, url);
     const old = readStored(p);
@@ -139,7 +140,16 @@ async function refreshGuide(
     try {
       // After one miss, skip the browser retry for the rest of the guide: a layout change misses on every page.
       const noRetry = selectorMisses.length ? { retryMissInBrowser: false } : {};
-      fetched = await deps.fetchSource(url, { ...fetchOptions(prev, Boolean(opts.browser), url), ...noRetry });
+      // After one browser rescue, fetch the rest in the browser: a wall that hit one page hits them all.
+      const options = { ...fetchOptions(prev, Boolean(opts.browser) || rescued, url), ...noRetry };
+      fetched = await deps.fetchSource(url, {
+        ...options,
+        onAttempt: (a) => {
+          if (a.via !== "browser" || options.browser || rescued) return;
+          rescued = true;
+          log(`${id}: ${url} needed the browser; fetching its remaining pages in the browser`);
+        },
+      });
     } catch (e) {
       if (!(e instanceof SelectorMissError) || opts.strictSelectors) throw e;
       if (old === null) {
@@ -385,7 +395,7 @@ export function costText(results: GuideResult[]): string {
 export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   if (results.some((r) => r.status === "failed")) return 1;
   if (results.some((r) => r.status === "shrunk" || r.status === "shrunk-skipped" || (r.status === "changed" && (r.held.length > 0 || !!r.unclear?.length)))) return 2;
-  if (results.some((r) => r.selectorMisses?.length)) return 2;
+  if (results.some((r) => r.status === "blocked")) return 2;
   return 0;
 }
 
@@ -402,6 +412,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     code === 1 ? "errors"
     : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
+    : misses.length ? `clean; ${misses.length} selector miss${misses.length === 1 ? "" : "es"} listed below`
     : "clean";
   const lines = [
     `# Data refresh ${date}${isDryRun ? " (dry run)" : ""}`,
@@ -494,10 +505,12 @@ export type ResultJson = {
 /** What a person must look at before this refresh merges, independent of the exit code. */
 export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
-    const misses = (r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`);
-    if (r.status === "blocked") return [`${r.id}: blocked; its pages changed but re-extraction waits for the selector fix`, ...misses];
-    if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`, ...misses];
-    if (r.status !== "changed") return misses;
+    // Only a blocked guide holds data back, so only its misses need a person before merge.
+    if (r.status === "blocked") {
+      return [`${r.id}: blocked; its pages changed but re-extraction waits for the selector fix`, ...(r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`)];
+    }
+    if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
+    if (r.status !== "changed") return [];
     const held = new Set(r.held.map((h) => h.contestId));
     return [
       ...r.held.map((h) => `${r.id}: held ${h.contestId} (${h.reason})`),
@@ -508,7 +521,6 @@ export function reviewReasons(results: GuideResult[]): string[] {
         .filter((id) => !held.has(id))
         .map((id) => `${r.id}: removed ${id}`),
       ...r.missing.map((m) => `${r.id}: verifier found ${m.contestId} on the page but not in the picks`),
-      ...misses,
     ];
   });
 }

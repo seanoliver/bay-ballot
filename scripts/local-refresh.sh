@@ -337,7 +337,7 @@ fi
 log "PR #$pr updated"
 
 reasons=()
-[ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks, a changed unclear-match hold, a shrunk result, or a page that missed its content selector, 1 = error)")
+[ "$code" = "0" ] || reasons+=("refresh exit code $code (2 = held picks, a changed unclear-match hold, a shrunk result, or a guide blocked by a selector miss, 1 = error)")
 # The contests behind the code, which a later run's body would no longer show.
 review="$(node -e 'try { for (const r of require(process.argv[1]).review ?? []) console.log(r) } catch {}' "$work/result.json")"
 [ -z "$review" ] || reasons+=("${(@f)review}")
