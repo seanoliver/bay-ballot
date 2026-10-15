@@ -125,7 +125,7 @@ export function ContestDetail({
       ) : (
         <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
       )}
-      <NoPickBlock pinning={pins} short={shortNames} />
+      <NoPickBlock key={contest.id} pinning={pins} short={shortNames} />
     </div>
   );
   const title = (
@@ -214,7 +214,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
         {heading}
         <CountOnlyButton side={side} pinning={pinning} className="max-sm:w-full" />
       </div>
-      <PinChips guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
+      <PinChips key={contest.id} guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
