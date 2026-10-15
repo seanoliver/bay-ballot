@@ -389,13 +389,22 @@ describe("runRefresh", () => {
     expect(fetchSource).toHaveBeenCalledWith(url("alpha"), expect.objectContaining({ browser: false, contentSelector: "main article" }));
   });
 
+  // A second, stored and unchanged page, so one miss is not "every page missed".
+  const addStoredPage = (root: string, g: string) => {
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", `${g}.yml`), `extraSources:\n  - https://${g}.org/more\n`);
+    const p = pagePath(root, ELECTION, g, `https://${g}.org/more`);
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    fs.writeFileSync(p, normalizePageText(PAGE(g, "October 1, 2026")));
+  };
+
   it("keeps the stored page when a page misses its selector, and lists it without holding the merge", async () => {
     const root = setup(["alpha", "beta"]);
+    addStoredPage(root, "alpha");
     const storedAlpha = fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8");
     const { client } = fakeClient(sameOut);
     const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
-      if (u.includes("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
-      return { kind: "text", text: PAGE("beta", "October 1, 2026") };
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+      return { kind: "text", text: PAGE(u.includes("alpha") ? "alpha" : "beta", "October 1, 2026") };
     });
     const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
     const alpha = results.find((r) => r.id === "alpha")!;
@@ -412,13 +421,27 @@ describe("runRefresh", () => {
 
   it("leaves out a page that misses its selector and was never stored", async () => {
     const root = setup(["alpha"], { stored: false });
+    addStoredPage(root, "alpha");
+    const { client, stream } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0].status).toBe("unchanged");
+    expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("blocks a guide when every page misses, so a layout change holds the merge", async () => {
+    const root = setup(["alpha"]);
     const { client, stream } = fakeClient(sameOut);
     const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
       throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
     });
     const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
-    expect(results[0].status).toBe("unchanged");
-    expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
+    expect(results[0].status).toBe("blocked");
+    expect(exitCodeFor(results)).toBe(2);
     expect(stream).not.toHaveBeenCalled();
   });
 

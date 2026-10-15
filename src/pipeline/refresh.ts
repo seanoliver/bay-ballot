@@ -163,7 +163,9 @@ async function refreshGuide(
     pages.push({ source: { url, fetched }, stored, path: p, gate: pageGate(old, stored, ballot), outsideWarning });
   }
 
-  const relevant = forceExtract || pages.some((p) => p.gate === "new" || p.gate === "relevant");
+  // Every page missing its selector means the guide refreshes nothing: treat it like a held change.
+  const allMissed = selectorMisses.length > 0 && selectorMisses.length === urls.length;
+  const relevant = forceExtract || allMissed || pages.some((p) => p.gate === "new" || p.gate === "relevant");
   if (!relevant) {
     // Store the drift (dates, banners) so it never accumulates into a later diff.
     for (const p of pages) writeStored(p.path, p.stored);
@@ -408,7 +410,7 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   const isDryRun = dryRun || would > 0;
   const verdict =
     code === 1 ? "errors"
-    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
+    : code === 2 ? `needs review (${held} held${unclear ? `, ${unclear} unclear-match changed` : ""}${by("blocked").length ? `, ${by("blocked").length} blocked` : ""}${misses.length ? `, ${misses.length} selector miss${misses.length === 1 ? "" : "es"}` : ""})`
     : isDryRun ? `dry run; ${would === 0 ? "no guide" : `${would} guide${would === 1 ? "" : "s"}`} would be extracted`
     : misses.length ? `clean; ${misses.length} selector miss${misses.length === 1 ? "" : "es"} listed below`
     : "clean";
@@ -505,7 +507,7 @@ export function reviewReasons(results: GuideResult[]): string[] {
   return results.flatMap((r) => {
     // Only a blocked guide holds data back, so only its misses need a person before merge.
     if (r.status === "blocked") {
-      return [`${r.id}: blocked; its pages changed but re-extraction waits for the selector fix`, ...(r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`)];
+      return [`${r.id}: blocked; not re-extracted until the selector is fixed`, ...(r.selectorMisses ?? []).map((m) => `${r.id}: selector missed ${m}`)];
     }
     if (r.status === "shrunk" || r.status === "shrunk-skipped") return [`${r.id}: picks shrank; file left unchanged`];
     if (r.status !== "changed") return [];

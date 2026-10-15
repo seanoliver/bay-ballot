@@ -408,6 +408,7 @@ describe("content selector", () => {
     const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(SelectorMissError);
     expect(String(err)).toContain("Timeout 60000ms exceeded");
+    expect(String(err).split("matched nothing").length - 1).toBe(1);
   });
 
   it("names the page when the selector misses", async () => {

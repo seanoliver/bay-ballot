@@ -267,7 +267,9 @@ export async function fetchSource(url: string, opts: FetchOptions = {}): Promise
     // A wall detectBlock doesn't know can still serve a 200 without the article; the browser may get past it.
     if (!(e instanceof SelectorMissError) || opts.retryMissInBrowser === false) throw e;
     return viaBrowser(e.message).catch((b: unknown) => {
-      throw b instanceof SelectorMissError ? b : new SelectorMissError(`${e.message} (browser: ${errMsg(b)})`);
+      if (b instanceof SelectorMissError) throw b;
+      // viaBrowser already names the http failure in its own message.
+      throw new SelectorMissError(errMsg(b).startsWith(e.message) ? errMsg(b) : `${e.message} (browser: ${errMsg(b)})`);
     });
   }
 }
