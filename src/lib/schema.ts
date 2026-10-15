@@ -94,13 +94,16 @@ export const HeldPick = z.object({
   contestId: Slug,
   pick: Entry.shape.pick,
   // `unclear-match`: a person decided the guide's text may not mean this contest. No extract or verifier run releases it.
-  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified", "unclear-match"]),
+  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified", "unclear-match", "name-mismatch"]),
   evidence: z.string(),
   ranked: z.boolean().optional(),
   rankedCount: z.number().int().positive().optional(),
   quotes: z.array(Quote).max(3).optional(),
 });
 export type HeldPick = z.infer<typeof HeldPick>;
+
+/** Holds only a person releases, so the verifier neither re-checks nor releases them. */
+export const isPersonHold = (h: HeldPick) => h.reason === "unclear-match" || h.reason === "name-mismatch";
 
 export const EndorsementFile = z.object({
   guide: Slug,
@@ -111,6 +114,9 @@ export const EndorsementFile = z.object({
   hasReasoning: z.boolean(),
   fetchWith: z.enum(["http", "browser"]).optional(),
   fetchFrom: z.literal("local").optional(),
+  contentSelector: NonEmpty.optional(),
+  contentExclude: NonEmpty.optional(),
+  contentSelectors: z.record(HttpUrl, NonEmpty).optional(),
   extraSources: z.array(HttpUrl).optional(),
   manual: z.boolean().optional(),
   allowForeignSources: z.boolean().optional(),
@@ -118,7 +124,12 @@ export const EndorsementFile = z.object({
   held: z.array(HeldPick).optional(),
   rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
-}).strict();
+}).strict().superRefine((f, ctx) => {
+  const sources = new Set([f.source, ...(f.extraSources ?? [])]);
+  for (const url of Object.keys(f.contentSelectors ?? {})) {
+    if (!sources.has(url)) ctx.addIssue({ code: "custom", path: ["contentSelectors", url], message: `${url} is not one of this guide's sources` });
+  }
+});
 export type EndorsementFile = z.infer<typeof EndorsementFile>;
 
 export const ChangelogEntry = z.object({

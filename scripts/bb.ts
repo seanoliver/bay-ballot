@@ -11,13 +11,13 @@ import type { ExtractClient, Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
-import { checkHosts, fetchMode, sourcesFor } from "../src/pipeline/sources";
+import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
 import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
 import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
-import { applyVerdicts, verify } from "../src/pipeline/verify";
+import { applyVerdicts, hasVerifiable, verify } from "../src/pipeline/verify";
 import { badFlag } from "../src/pipeline/args";
 import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
@@ -117,10 +117,9 @@ function modelClient(): ExtractClient {
 }
 
 async function fetchAll(guideId: string, file: EndorsementFile): Promise<Source[]> {
-  const browser = fetchMode(file, flag("--browser")) === "browser";
   const sources: Source[] = [];
   for (const url of sourcesFor(file)) {
-    const fetched = await fetchSource(url, { browser });
+    const fetched = await fetchSource(url, fetchOptions(file, flag("--browser"), url));
     if (fetched.kind === "pdf" && fetched.text.trim() === "") {
       console.warn(`${guideId}: warning: no text extracted from PDF ${url}; quotes from it will drop`);
     }
@@ -183,7 +182,7 @@ async function runVerify(): Promise<void> {
         console.log(`${id}: skipped (manual)`);
         continue;
       }
-      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held ?? []).filter((h) => h.reason !== "unclear-match").length === 0) {
+      if (sourcesFor(file).length === 0 || !hasVerifiable(file)) {
         console.log(`${id}: skipped (no source or no picks)`);
         continue;
       }
@@ -213,7 +212,7 @@ function refreshDeps({ model = true }: { model?: boolean } = {}): RefreshDeps {
 
 function totalsLine(results: GuideResult[]): string {
   const n = (s: GuideResult["status"]) => results.filter((r) => r.status === s).length;
-  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped")} need attention. Estimated model cost ${costText(results)}.`;
+  return `${results.length} checked: ${n("unchanged")} unchanged, ${n("changed")} re-extracted, ${n("would-extract") ? `${n("would-extract")} would extract (dry run), ` : ""}${n("deferred")} deferred, ${n("skipped")} skipped, ${n("failed") + n("shrunk") + n("shrunk-skipped") + n("blocked")} need attention. Estimated model cost ${costText(results)}.`;
 }
 
 async function runExtract(): Promise<void> {
@@ -270,7 +269,7 @@ async function runExtract(): Promise<void> {
   const results = await runRefresh(refreshDeps(), {
     root: ROOT, election: ELECTION, ids,
     browser: flag("--browser"), archive: flag("--archive"), force: flag("--force"),
-    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas,
+    forceExtract: flag("--force-extract"), verify: !flag("--no-verify"), onlyAreas, strictSelectors: true,
   });
   console.log(`\n${totalsLine(results)}\nReview with: git diff data/`);
   process.exitCode = exitCodeFor(results);

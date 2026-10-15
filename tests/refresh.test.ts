@@ -2,10 +2,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { parse } from "yaml";
 import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
-import type { Fetched } from "@/pipeline/fetch";
+import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
@@ -309,6 +309,213 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(0);
   });
 
+  describe("a name close to a candidate's", () => {
+    const misspelled: ExtractOutput = {
+      hasReasoning: true,
+      picks: [extractOut.picks[0], { contestId: "us-rep-11", vote: null, candidates: ["Scott Weiner"], ranked: false, rankedCount: null, quotes: [], note: null }],
+    };
+    const changedPage = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+
+    it("keeps a published pick the page now misspells, and asks a person to check it", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  us-rep-11:\n    pick: [Scott Wiener]\n");
+      const { client } = fakeClient(misspelled);
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.picks["us-rep-11"].pick).toEqual(["Scott Wiener"]);
+      expect(file.held).toBeUndefined();
+      expect(summarize(results, { date: "2026-10-06" })).toContain(
+        "- **us-rep-11: kept the published pick Scott Wiener; the page names `Scott Weiner`, not on the ballot; closest `Scott Wiener`. If it is the same person, add an alias**",
+      );
+      expect(summarize(results, { date: "2026-10-06" })).toContain("needs review (0 held, 1 kept under a near spelling)");
+      expect(exitCodeFor(results)).toBe(2);
+      expect(reviewReasons(results)).toEqual(["alpha: kept us-rep-11 under a near spelling"]);
+    });
+
+    it("keeps a published multi-name pick when the extractor reorders and misspells it", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  board-of-education:\n    pick: [Alida Fisher, Phil Kim]\n");
+      const out = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], contestId: "board-of-education", candidates: ["Phil Kim", "Alida Fischer"] }] };
+      const results = await runRefresh(deps(fakeClient(out).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect([...file.picks["board-of-education"].pick].sort()).toEqual(["Alida Fisher", "Phil Kim"]);
+      expect(exitCodeFor(results)).toBe(2);
+    });
+
+    it("holds, and doesn't keep, a published pick for a different candidate", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  us-rep-11:\n    pick: [Connie Chan]\n");
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.picks["us-rep-11"]).toBeUndefined();
+      expect(file.held).toEqual([expect.objectContaining({ contestId: "us-rep-11", pick: ["Scott Wiener"], reason: "name-mismatch" })]);
+      expect(exitCodeFor(results)).toBe(2);
+      expect(JSON.stringify(results[0])).not.toContain("kept the published pick");
+    });
+
+    it("leaves a near name outside a scoped run's areas alone", async () => {
+      const root = setup(["alpha"]);
+      const g = path.join(root, "guides", "alpha.yml");
+      fs.writeFileSync(g, fs.readFileSync(g, "utf8").replace("areas: [sf]", "areas: [sf, san-mateo]"));
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  us-rep-11:\n    pick: [Scott Wiener]\n");
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, onlyAreas: ["san-mateo"], verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["us-rep-11"].pick).toEqual(["Scott Wiener"]);
+      expect(results[0]).toMatchObject({ held: [] });
+      expect(JSON.stringify(results[0])).not.toContain("kept the published pick");
+    });
+
+    it("writes no hold for an out-of-area near name with no published pick", async () => {
+      const root = setup(["alpha"]);
+      const g = path.join(root, "guides", "alpha.yml");
+      fs.writeFileSync(g, fs.readFileSync(g, "utf8").replace("areas: [sf]", "areas: [sf, san-mateo]"));
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, onlyAreas: ["san-mateo"], verify: false });
+      expect(parse(fs.readFileSync(f, "utf8")).held).toBeUndefined();
+      expect(exitCodeFor(results)).toBe(0);
+    });
+
+    it("keeps a kept pick's partial ranking", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  supervisor-8:\n    pick: [Gary McCoy, Michael T. Nguyen]\n    ranked: true\n    rankedCount: 1\n");
+      const near = { contestId: "supervisor-8", vote: null, candidates: ["Gary McCoy", "Michael T. Nguyan"], ranked: true, rankedCount: 1, quotes: [], note: null };
+      const out = { ...misspelled, picks: [misspelled.picks[0], near] };
+      await runRefresh(deps(fakeClient(out).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["supervisor-8"]).toMatchObject({ pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true, rankedCount: 1 });
+    });
+
+    it("drops a kept pick's quote the page no longer has", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + `  us-rep-11:\n    pick: [Scott Wiener]\n    quotes:\n      - text: "Wiener has passed more housing laws than anyone in the state legislature."\n        source: ${url("alpha")}\n`);
+      await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.picks["us-rep-11"].pick).toEqual(["Scott Wiener"]);
+      expect(file.picks["us-rep-11"].quotes ?? []).toEqual([]);
+    });
+
+    it("holds a new contest's pick with the suggested candidate instead of dropping it, and asks for review", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      const { client, stream } = fakeClient({ ...misspelled, picks: [...misspelled.picks, { ...misspelled.picks[0], vote: "Y", contestId: "prop-c" }] });
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.picks["us-rep-11"]).toBeUndefined();
+      expect(file.held).toEqual([
+        expect.objectContaining({ contestId: "us-rep-11", pick: ["Scott Wiener"], reason: "name-mismatch", evidence: expect.stringContaining("`Scott Weiner`") }),
+      ]);
+      const audit = JSON.stringify(stream.mock.calls.find((c) => c[0].model.includes("opus"))?.[0]).split("Extraction to audit")[1];
+      expect(audit).toContain("prop-b");
+      expect(audit).not.toContain("us-rep-11");
+      expect(exitCodeFor(results)).toBe(2);
+      expect(reviewReasons(results)).toContain("alpha: held us-rep-11 (name-mismatch)");
+      expect(results[0]).toMatchObject({ notes: expect.arrayContaining([expect.stringMatching(/^us-rep-11: PICK HELD/)]) });
+      expect(summarize(results, { date: "2026-10-06" })).toContain("HELD us-rep-11: Scott Wiener — name-mismatch: the page names `Scott Weiner`");
+    });
+
+    it("holds a near name on a new contest without calling the verifier, and still asks for review", async () => {
+      const root = setup(["alpha"]);
+      const { client, stream } = fakeClient(misspelled);
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5"]);
+      expect(results[0]).toMatchObject({ status: "changed", held: [expect.objectContaining({ contestId: "us-rep-11", reason: "name-mismatch" })] });
+      expect(exitCodeFor(results)).toBe(2);
+    });
+
+    it("leaves rejected quotes out of a held pick", async () => {
+      const q = "Scott Weiner has passed more housing laws than anyone in the state legislature.";
+      const page = changedPage.replace("Yes on Prop C:", `Congress, District 11: ${q}\nYes on Prop C:`);
+      const out = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], quotes: [q] }] };
+      const run = async (rejected: boolean) => {
+        const root = setup(["alpha"]);
+        const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+        if (rejected) fs.appendFileSync(f, `rejectedQuotes:\n  - text: "${q}"\n    reason: test\n`);
+        await runRefresh(deps(fakeClient(out).client, fetcher({ alpha: page })), { root, election: ELECTION, verify: false });
+        return parse(fs.readFileSync(f, "utf8")).held[0];
+      };
+      expect((await run(false)).quotes).toEqual([{ text: q, source: url("alpha") }]);
+      expect((await run(true)).quotes).toBeUndefined();
+    });
+
+    it("names the near pick when an unclear-match hold's contest now reads differently", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Connie Chan]\n    reason: unclear-match\n    evidence: decision\npicks:\n"));
+      const { client } = fakeClient(misspelled);
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      expect(reviewReasons(results)).toContain("alpha: unclear-match hold on us-rep-11: held Connie Chan, guide now picks Scott Wiener");
+      expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([expect.objectContaining({ reason: "unclear-match" })]);
+      expect(results[0]).toMatchObject({ held: [] });
+    });
+
+    it("leaves alone an unclear-match hold kept under the page's spelling", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Weiner]\n    reason: unclear-match\n    evidence: someone else\npicks:\n"));
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      expect(reviewReasons(results)).toEqual([]);
+      expect(exitCodeFor(results)).toBe(0);
+      expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([expect.objectContaining({ pick: ["Scott Weiner"], reason: "unclear-match" })]);
+    });
+
+    it("flags an unclear-match hold under the page's spelling once the guide names the candidate exactly", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Weiner]\n    reason: unclear-match\n    evidence: someone else\npicks:\n"));
+      const exact = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], candidates: ["Scott Wiener"] }] };
+      const results = await runRefresh(deps(fakeClient(exact).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      expect(reviewReasons(results)).toContain("alpha: unclear-match hold on us-rep-11: held Scott Weiner, guide now picks Scott Wiener");
+      expect(exitCodeFor(results)).toBe(2);
+    });
+
+    const evidence = "the page names `Scott Weiner`, not on the ballot; closest `Scott Wiener`. If it is the same person, add an alias";
+    const withHold = (e: string, extra = "") => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", `held:\n  - contestId: us-rep-11\n    pick: [Scott Wiener]\n    reason: name-mismatch\n    evidence: "${e}"\n${extra}picks:\n`));
+      return { root, f };
+    };
+
+    it("keeps an existing identical hold as it was, without asking for review again", async () => {
+      const { root, f } = withHold(evidence);
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([{ contestId: "us-rep-11", pick: ["Scott Wiener"], reason: "name-mismatch", evidence }]);
+      expect(results[0]).toMatchObject({ held: [] });
+      expect(exitCodeFor(results)).toBe(0);
+      expect(JSON.stringify(results[0])).not.toContain("PICK HELD");
+    });
+
+    it("replaces and reports a hold whose page spelling or ranking changed", async () => {
+      for (const [e, extra] of [["the page names `Scot Wiener`, an older spelling", ""], [evidence, "    ranked: true\n"]]) {
+        const { root, f } = withHold(e, extra);
+        const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+        expect(parse(fs.readFileSync(f, "utf8")).held).toEqual([{ contestId: "us-rep-11", pick: ["Scott Wiener"], reason: "name-mismatch", evidence }]);
+        expect(exitCodeFor(results)).toBe(2);
+      }
+    });
+
+    it("releases the hold once a re-extract matches the name, as it does after an alias is added", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Wiener]\n    reason: name-mismatch\n    evidence: x\npicks:\n"));
+      const matched = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], candidates: ["Scott Wiener"] }] };
+      const { client } = fakeClient(matched);
+      await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["us-rep-11"].pick).toEqual(["Scott Wiener"]);
+    });
+  });
+
   it("keeps an unclear-match hold through a re-extract that returns the same pick, without verifying it", async () => {
     const root = setup(["alpha"]);
     const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
@@ -370,6 +577,234 @@ describe("runRefresh", () => {
     expect(stream).toHaveBeenCalledTimes(1);
   });
 
+  it("passes the guide's content selector to the fetcher", async () => {
+    const root = setup(["alpha"]);
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.appendFileSync(file, 'contentSelector: "#article-body"\n');
+    const { client } = fakeClient(sameOut);
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ browser: false, contentSelector: "#article-body" }));
+    expect((fetchSource.mock.calls[0] as unknown[])[1]).not.toHaveProperty("retryMissInBrowser");
+  });
+
+  it("passes a source's own selector from contentSelectors during refresh", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), `contentSelector: "#article-body"\ncontentSelectors:\n  ${url("alpha")}: main article\n`);
+    const { client } = fakeClient(sameOut);
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "October 1, 2026") });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), expect.objectContaining({ browser: false, contentSelector: "main article" }));
+  });
+
+  // A second, stored and unchanged page, so one miss is not "every page missed".
+  const addStoredPage = (root: string, g: string) => {
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", `${g}.yml`), `extraSources:\n  - https://${g}.org/more\n`);
+    const p = pagePath(root, ELECTION, g, `https://${g}.org/more`);
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    fs.writeFileSync(p, normalizePageText(PAGE(g, "October 1, 2026")));
+  };
+
+  it("keeps the stored page when a page misses its selector, and lists it without holding the merge", async () => {
+    const root = setup(["alpha", "beta"]);
+    addStoredPage(root, "alpha");
+    const storedAlpha = fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8");
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+      return { kind: "text", text: PAGE(u.includes("alpha") ? "alpha" : "beta", "October 1, 2026") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    const alpha = results.find((r) => r.id === "alpha")!;
+    expect(alpha.status).toBe("unchanged");
+    expect(alpha.selectorMisses).toEqual([expect.stringContaining("kept the stored page")]);
+    expect(results.find((r) => r.id === "beta")!.status).toBe("unchanged");
+    expect(exitCodeFor(results)).toBe(0);
+    const summary = summarize(results, { date: "2026-10-06" });
+    expect(summary).toContain("alpha: https://alpha.org/");
+    expect(summary).toContain("clean; 1 selector miss listed below");
+    expect(reviewReasons(results)).toEqual([]);
+    expect(fs.readFileSync(pagePath(root, ELECTION, "alpha", url("alpha")), "utf8")).toBe(storedAlpha);
+  });
+
+  it("leaves out a page that misses its selector and was never stored", async () => {
+    const root = setup(["alpha"], { stored: false });
+    addStoredPage(root, "alpha");
+    const { client, stream } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0].status).toBe("unchanged");
+    expect(results[0].selectorMisses).toEqual([expect.stringContaining("no stored page, left out")]);
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", url("alpha")))).toBe(false);
+  });
+
+  it("blocks a guide when every page misses, so a layout change holds the merge", async () => {
+    const root = setup(["alpha"]);
+    const { client, stream } = fakeClient(sameOut);
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "#article-body" matched nothing for "#article-body"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0].status).toBe("blocked");
+    expect(exitCodeFor(results)).toBe(2);
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("blocks re-extraction while a page misses, so stored text never stands in for the page", async () => {
+    const root = setup(["alpha"]);
+    const file = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.appendFileSync(file, "extraSources:\n  - https://alpha.org/more\n");
+    const before = fs.readFileSync(file, "utf8");
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "October 6, 2026") };
+    });
+    const logs: string[] = [];
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(results[0]).toMatchObject({ status: "blocked", selectorMisses: [expect.stringContaining("kept the stored page")] });
+    expect(stream).not.toHaveBeenCalled();
+    expect(fs.readFileSync(file, "utf8")).toBe(before);
+    expect(fs.existsSync(pagePath(root, ELECTION, "alpha", "https://alpha.org/more"))).toBe(false);
+    expect(logs.some((l) => l.includes("selector missed"))).toBe(true);
+    expect(exitCodeFor(results)).toBe(2);
+    const summary = summarize(results, { date: "2026-10-06" });
+    expect(summary).toContain("1 selector miss");
+    expect(summary).toContain("alpha: blocked");
+    expect(summary).toContain("| 1 | 0 | 0 | 0 | 0 | 0 | 1 |");
+    expect(reviewReasons(results)[0]).toContain("alpha: blocked");
+    expect(logs).toContainEqual(expect.stringContaining("alpha: blocked"));
+  });
+
+  it("blocks a forced re-extract when a never-stored page misses", async () => {
+    const root = setup(["alpha"], { stored: false });
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION, forceExtract: true });
+    expect(results[0].status).toBe("blocked");
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("skips the browser retry for the rest of a guide after one page misses", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(summarize(results, { date: "2026-10-06" })).toContain("2 selector misses");
+    expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
+    expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
+  });
+
+  it("fetches a guide's remaining pages in the browser after one page needed it", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\nextraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n');
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u, opts) => {
+      if (u === url("alpha")) opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const logs: string[] = [];
+    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, true, true]);
+    expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
+  });
+
+  it("logs no rescue for a guide that is fetched in the browser anyway", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'fetchWith: browser\ncontentSelector: "#article-body"\n');
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (_u, opts) => {
+      opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    const logs: string[] = [];
+    await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
+    expect(logs.some((l) => l.includes("needed the browser"))).toBe(false);
+  });
+
+  it("keeps a guide without a selector on http after a browser rescue", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u, opts) => {
+      if (u === url("alpha")) opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, false]);
+  });
+
+  describe("with the real fetcher", () => {
+    afterEach(() => vi.unstubAllGlobals());
+    const threePages = (root: string) =>
+      fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\nextraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n');
+    const noArticle = "<body><p>Subscribe to keep reading</p></body>";
+    const article = `<body><div id="article-body"><p>${PAGE("alpha", "October 1, 2026")}</p></div></body>`;
+
+    it("launches the browser once when every page misses, and logs no rescue", async () => {
+      const root = setup(["alpha"]);
+      threePages(root);
+      vi.stubGlobal("fetch", vi.fn(async () => new Response(noArticle, { status: 200, headers: { "content-type": "text/html" } })));
+      const browserFetch = vi.fn(async () => ({ status: 200, html: noArticle }));
+      const logs: string[] = [];
+      const { client } = fakeClient();
+      const results = await runRefresh(
+        { client, fetchSource: (u, o) => realFetchSource(u, { ...o, browserFetch }), today: () => "2026-10-06", log: (l: string) => logs.push(l) },
+        { root, election: ELECTION },
+      );
+      expect(browserFetch).toHaveBeenCalledTimes(1);
+      expect(results[0].selectorMisses).toHaveLength(3);
+      expect(logs.some((l) => l.includes("needed the browser"))).toBe(false);
+    });
+
+    it("switches to the browser after a real rescue", async () => {
+      const root = setup(["alpha"]);
+      threePages(root);
+      const httpFetch = vi.fn(async () => new Response(noArticle, { status: 200, headers: { "content-type": "text/html" } }));
+      vi.stubGlobal("fetch", httpFetch);
+      const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+      const logs: string[] = [];
+      const { client } = fakeClient(sameOut);
+      await runRefresh(
+        { client, fetchSource: (u, o) => realFetchSource(u, { ...o, browserFetch }), today: () => "2026-10-06", log: (l: string) => logs.push(l) },
+        { root, election: ELECTION },
+      );
+      expect(httpFetch).toHaveBeenCalledTimes(1);
+      expect(browserFetch).toHaveBeenCalledTimes(3);
+      expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
+    });
+  });
+
+  it("fails the guide on a miss when selectors are strict (bb extract)", async () => {
+    const root = setup(["alpha"]);
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION, strictSelectors: true });
+    expect(results[0]).toMatchObject({ status: "failed", error: expect.stringContaining("matched nothing") });
+  });
+
+  it("still fails the guide on other fetch errors", async () => {
+    const root = setup(["alpha"]);
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async () => {
+      throw new Error("HTTP 503");
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
+    expect(results[0]).toMatchObject({ status: "failed" });
+    expect(results[0].selectorMisses).toBeUndefined();
+  });
+
   it("reports a fetch failure and exits 1", async () => {
     const root = setup(["alpha"]);
     const { client } = fakeClient();
@@ -423,6 +858,72 @@ describe("seedPages", () => {
     const results = await runRefresh(deps(client, fetcher(pages)), { root, election: ELECTION });
     expect(results.map((r) => r.status)).toEqual(["unchanged", "unchanged"]);
     expect(stream).not.toHaveBeenCalled();
+  });
+
+  it("passes the guide's content selectors to the fetcher", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\ncontentExclude: .ad\n');
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x") });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(expect.any(String), { browser: false, contentSelector: "#article-body", contentExclude: ".ad" });
+  });
+
+  it("stores the guide's other pages when one misses its selector", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "x") };
+    });
+    const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(seeded).toEqual([{ id: "alpha", stored: 1, error: expect.stringContaining("matched nothing") }]);
+  });
+
+  it("keeps earlier misses in the error when seeding then fails", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      throw new Error("HTTP 503");
+    });
+    const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(seeded).toEqual([{ id: "alpha", stored: 0, error: expect.stringMatching(/matched nothing.*; HTTP 503/) }]);
+  });
+
+  it("skips the browser retry for the rest of a guide's seeding after one page misses", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
+      throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+    });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource.mock.calls[0][1]).not.toHaveProperty("retryMissInBrowser");
+    expect(fetchSource.mock.calls[1][1]).toMatchObject({ retryMissInBrowser: false });
+  });
+
+  it("fails a guide's seeding on errors other than a selector miss", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient();
+    const fetchSource = vi.fn(async (): Promise<Fetched> => {
+      throw new Error("HTTP 503");
+    });
+    const seeded = await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(seeded).toEqual([{ id: "alpha", stored: 0, error: "HTTP 503" }]);
+    expect(fetchSource).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses a source's own selector when contentSelectors names it", async () => {
+    const root = setup(["alpha"], { stored: false });
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), `contentSelector: "#article-body"\ncontentSelectors:\n  ${url("alpha")}: main article\n`);
+    const { client } = fakeClient();
+    const fetchSource = fetcher({ alpha: PAGE("alpha", "x") });
+    await seedPages(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource).toHaveBeenCalledWith(url("alpha"), { browser: false, contentSelector: "main article" });
   });
 });
 
@@ -632,6 +1133,19 @@ describe("gateOnly (dry run)", () => {
     expect(fs.readFileSync(pagePath(root, ELECTION, "beta", url("beta")), "utf8")).toBe(before);
     expect(exitCodeFor(results)).toBe(0);
     expect(summarize(results, { date: "2026-10-07" })).toContain("Would extract (dry run): beta");
+  });
+
+  it("reports a guide as blocked, not would-extract, when a page misses", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client, stream } = fakeClient();
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
+      if (u === url("alpha")) throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
+      return { kind: "text", text: PAGE("alpha", "x") };
+    });
+    const results = await runRefresh({ client, fetchSource, today: () => "2026-10-07", log: () => {} }, { root, election: ELECTION, gateOnly: true });
+    expect(results[0].status).toBe("blocked");
+    expect(stream).not.toHaveBeenCalled();
   });
 
   it("labels a dry-run summary as a dry run, not as a clean result", () => {

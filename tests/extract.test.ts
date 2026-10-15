@@ -168,6 +168,49 @@ describe("toEntries", () => {
     );
   });
 
+  it("holds a pick whose name is close to one candidate's, with that candidate and the page's spelling", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"] }));
+    expect(r.picks["supervisor-d8"]).toBeUndefined();
+    expect(r.held).toEqual([
+      expect.objectContaining({ contestId: "supervisor-d8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "name-mismatch", evidence: expect.stringContaining("`Michael T. Nguyan`") }),
+    ]);
+    expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
+    expect(r.notes.some((n) => n.includes(" -> "))).toBe(false);
+  });
+
+  it("drops, and doesn't hold, a pick with one near name and one unknown name", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan", "Nobody Here"] }));
+    expect(r.held).toEqual([]);
+    expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(true);
+  });
+
+  it("names each page spelling once in the evidence", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan", "Michael T. Nguyan", "Gary McCoy"] }));
+    expect(r.held[0].evidence.split("Nguyan").length - 1).toBe(1);
+  });
+
+  it("keeps the ranking on a held pick", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"], ranked: true, rankedCount: 1 }));
+    expect(r.held[0]).toMatchObject({ ranked: true, rankedCount: 1 });
+  });
+
+  it("keeps the first of a contest returned twice when the first is held", () => {
+    const r = run(
+      pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan"] }),
+      pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyen"] }),
+    );
+    expect(r.held).toHaveLength(1);
+    expect(r.picks["supervisor-d8"]).toBeUndefined();
+    expect(r.notes).toContain("supervisor-d8: duplicate pick, kept first");
+  });
+
+  it("shows the page's spelling on one line as code, so it can't add links or mentions", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary\nMcCoyy `[x](https://e.example) @someone`"] }));
+    expect(r.held).toHaveLength(0);
+    const near = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T.\nNguyan`"] }));
+    expect(near.held[0].evidence).toMatch(/^the page names `Michael T\. Nguyan`, not on the ballot; closest `Michael T\. Nguyen`/);
+  });
+
   it("passes the guide's own names to quote verification", () => {
     const q = "SPUR believes the bank is a smart investment in housing.";
     const pg = [{ url: "https://a.org/g", text: `Critics say the bank is costly. ${q}`, kind: "html" as const }];

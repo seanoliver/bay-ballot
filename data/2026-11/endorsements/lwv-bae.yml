@@ -2,7 +2,7 @@ guide: lwv-bae
 election: 2026-11
 status: published
 source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-14
 hasReasoning: true
 rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
@@ -29,29 +29,29 @@ picks:
     quotes:
       - text: LWVBAE’s housing position states the cities should expand their housing stock and “identify and limit constraints on new housing construction,” specifically including the “power of residents to block project approval.”
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: LWVC policy strongly favors increasing housing supply and removing exclusionary zoning barriers.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-p:
     pick: Y
-    quotes:
-      - text: Golden Gate Fields currently generates about $287,000—nearly 22% of all revenue from the street/storm-drain tax. If it becomes publicly owned, that parcel-tax revenue would otherwise disappear.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y
-    quotes:
-      - text: Golden Gate Fields currently contributes about $400,000 annually to the EMS tax—nearly 20% of its total revenue.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-r:
     pick: Y
-    quotes:
-      - text: An employee-based tax can effectively penalize businesses for hiring workers, while a receipts-based tax relates the tax more directly to the scale of the business’s economic activity.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-s:
     pick: Y
   albany-measure-t:
     pick: Y
+    quotes:
+      - text: Urban canopy helps mitigate heat-island effects, provides habitat, sequesters carbon and improves pedestrian environments.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Albany’s own streetlighting study found locations where inadequate illumination creates safety concerns for pedestrians and bicyclists and recommended improving poorly lit intersections and crosswalks.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-u:
     pick: Y
     quotes:
       - text: Although the City has sensibly increased investment in critical infrastructure in recent years, it requires an estimated $2 billion of investment in capital assets to maintain and upgrade its aging infrastructure.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: This measure helps address critical needs that if not acted upon, will only become more expensive if the City doesn’t take pragmatic action in the right direction now.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-v:
     pick: Y

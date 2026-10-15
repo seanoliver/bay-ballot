@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-15
 hasReasoning: true
 rejectedQuotes:
   - text: However, we can’t support it, and believe it is a mayoral power grab.
@@ -98,6 +98,9 @@ picks:
   supervisor-10:
     pick:
       - Theo Ellington
+    quotes:
+      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   supervisor-4:
     pick:
       - Alan Wong
@@ -118,9 +121,9 @@ picks:
       - Monroe Lace
       - Erwin Tam
     quotes:
-      - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
-        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
       - text: Overall, Tam has financial skills that would be beneficial to the college district.
+        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+      - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
         source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
   college-board-partial:
     pick:
@@ -140,6 +143,9 @@ picks:
         source: https://www.ebar.com/story/170969/
   prop-3:
     pick: Y
+    quotes:
+      - text: It would bring in between $5 billion and $15 billion each year.
+        source: https://www.ebar.com/story/170969/
   prop-4:
     pick: Y
     quotes:
@@ -168,6 +174,9 @@ picks:
     pick: N
   prop-44:
     pick: N
+    quotes:
+      - text: This initiative statute would make it extremely difficult for local health clinics to maintain their operations.
+        source: https://www.ebar.com/story/170969/
   prop-45:
     pick: N
     quotes:
@@ -221,5 +230,11 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-i:
     pick: Y
+    quotes:
+      - text: Prop I probably wouldn’t even be on the ballot if city officials had followed the intent of the original Prop I.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-j:
     pick: Y
+    quotes:
+      - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures

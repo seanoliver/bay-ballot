@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as cheerio from "cheerio";
-import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText } from "@/pipeline/fetch";
+import { contentAfterNavigation, detectBlock, fetchSource, finalStatus, htmlToText, SelectorMissError, selectContent } from "@/pipeline/fetch";
 
 const cheerioText = (html: string) => cheerio.load(html)("body").text().replace(/\s+/g, " ").trim();
 
@@ -285,5 +285,136 @@ describe("browser helpers", () => {
   });
   it("does not swallow other errors", async () => {
     await expect(contentAfterNavigation(async () => { throw new Error("boom"); }, async () => {})).rejects.toThrow("boom");
+  });
+});
+
+describe("content selector", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const article = `<body><aside><h3>Most read</h3><p>Nash has failed (8)</p></aside>
+    <header class="asset-header"><h1>Editorial: Yes on Measure EE</h1><span>3</span></header>
+    <div class="weather">69° Sunny</div>
+    <div id="article-body"><p>San Bruno voters will be able to change the business tax.</p></div>
+    <section><p>Next Up</p><p>Editorial: Venkat for District 1</p></section></body>`;
+  const selector = "header.asset-header h1, #article-body";
+
+  it("keeps only the matched elements, in page order", () => {
+    expect(htmlToText(selectContent(article, selector))).toBe(
+      "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    );
+  });
+
+  it("throws when nothing matches, so a redesign fails the fetch", () => {
+    expect(() => selectContent("<body><p>Vote yes</p></body>", selector)).toThrow(`content selector "${selector}" matched nothing`);
+  });
+
+  it("throws when any part of the selector matches nothing, naming that part", () => {
+    const headlineOnly = `<body><header class="asset-header"><h1>Editorial: Yes on Measure EE</h1></header></body>`;
+    expect(() => selectContent(headlineOnly, selector)).toThrow(`content selector "${selector}" matched nothing for "#article-body"`);
+  });
+
+  it("does not split a selector at commas inside :not()", () => {
+    expect(htmlToText(selectContent(article, "#article-body p:not(.a, .b)"))).toBe("San Bruno voters will be able to change the business tax.");
+  });
+
+  it("removes what the exclude selector matches inside the kept elements", () => {
+    const withWidget = `<body><div id="article-body"><div>Area E:</div><div class="tncms-region"><h3>Recommended for you</h3><p>Newsom against wealth taxes</p></div><div>Mina Richardson</div></div></body>`;
+    expect(htmlToText(selectContent(withWidget, "#article-body", ".tncms-region"))).toBe("Area E:\nMina Richardson");
+  });
+
+  it("applies the selector to pages fetched over http", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(article, { status: 200, headers: { "content-type": "text/html" } })));
+    expect(await fetchSource("https://x.test/a", { contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  it("applies the selector to pages fetched in the browser", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  it("retries a blocked http page in the browser and applies the selector there", async () => {
+    const wall = "<html><head><title>Just a moment...</title></head><body>Enable JavaScript and cookies to continue</body></html>";
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(wall, { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).toEqual({
+      kind: "text",
+      text: "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.",
+    });
+  });
+
+  const withWidget = article.replace(
+    '<div id="article-body">',
+    '<div id="article-body"><div class="tncms-region"><h3>Recommended for you</h3><p>Newsom against wealth taxes</p></div>',
+  );
+  const kept = "Editorial: Yes on Measure EE\nSan Bruno voters will be able to change the business tax.";
+
+  it("applies the exclude on the browser path", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: withWidget }));
+    const r = await fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector, contentExclude: ".tncms-region" });
+    expect(r).toEqual({ kind: "text", text: kept });
+  });
+
+  it("applies the exclude on the http path", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(withWidget, { status: 200, headers: { "content-type": "text/html" } })));
+    const r = await fetchSource("https://x.test/a", { contentSelector: selector, contentExclude: ".tncms-region" });
+    expect(r).toEqual({ kind: "text", text: kept });
+  });
+
+  it("returns a PDF source untouched when a selector is set", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array(Buffer.from("%PDF-1.4 junk")), { status: 200, headers: { "content-type": "application/pdf" } })));
+    expect((await fetchSource("https://x.test/guide.pdf", { contentSelector: selector })).kind).toBe("pdf");
+  });
+
+  it("retries an http page that misses the selector in the browser", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe to keep reading</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    expect(await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).toEqual({ kind: "text", text: kept });
+    expect(browserFetch).toHaveBeenCalledOnce();
+  });
+
+  it("throws a SelectorMissError when the browser misses too", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Subscribe</p></body>" }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector })).rejects.toBeInstanceOf(SelectorMissError);
+  });
+
+  it("does not retry other selection errors in the browser", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(article, { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: "[[" }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect(err).not.toBeInstanceOf(SelectorMissError);
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
+  it("skips the browser retry when told to", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+    await expect(fetchSource("https://x.test/a", { browserFetch, contentSelector: selector, retryMissInBrowser: false })).rejects.toBeInstanceOf(SelectorMissError);
+    expect(browserFetch).not.toHaveBeenCalled();
+  });
+
+  it("counts a failed browser retry as a selector miss", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<body><p>Subscribe</p></body>", { status: 200, headers: { "content-type": "text/html" } })));
+    const browserFetch = vi.fn(async (): Promise<{ status: number; html: string }> => {
+      throw new Error("Timeout 60000ms exceeded");
+    });
+    const err = await fetchSource("https://x.test/a", { browserFetch, contentSelector: selector }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(SelectorMissError);
+    expect(String(err)).toContain("Timeout 60000ms exceeded");
+    expect(String(err).split("matched nothing").length - 1).toBe(1);
+  });
+
+  it("names the page when the selector misses", async () => {
+    const browserFetch = vi.fn(async () => ({ status: 200, html: "<body><p>Redesigned page</p></body>" }));
+    await expect(fetchSource("https://x.test/a", { browser: true, browserFetch, contentSelector: selector })).rejects.toThrow(
+      `https://x.test/a: content selector "${selector}" matched nothing`,
+    );
   });
 });

@@ -22,6 +22,9 @@ extraSources:
   - https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
   - https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
   - https://www.pressdemocrat.com/2026/10/13/endorsement-yes-on-measure-j-windsors-students-deserve-safe-classrooms/
+  - https://www.pressdemocrat.com/2026/10/13/endorsement-fortino-dickson-potter-for-windsor-town-council/
+contentSelector: h1.entry-title, .article-body # article only: sidebars carry headlines for other editorials and reprints
+contentExclude: aside.related, .sspw-wrapper # "Related Articles" box and the paywall offer inside some editorials
 archived:
   - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
     snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
@@ -197,6 +200,15 @@ picks:
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
       - text: Mackie’s expertise and experience with budgeting — he is executive director of the nonprofit Sonoma Valley Commons — will be integral for the City Council as it moves forward, facing growing structural costs and stagnating revenue.
         source: https://www.pressdemocrat.com/2026/10/09/endorsement-mackie-would-bring-new-energy-to-sonoma-city-council/
+  windsor-mayor:
+    pick:
+      - Tanya Potter
+  windsor-council-1:
+    pick:
+      - Gina Fortino Dickson
+    quotes:
+      - text: It is clear Fortino Dickson has substantial municipal government experience that would benefit the town as it continues to manage its fiscal crisis.
+        source: https://www.pressdemocrat.com/2026/10/13/endorsement-fortino-dickson-potter-for-windsor-town-council/
   windsor-measure-i:
     pick: Y
     quotes:

@@ -23,6 +23,28 @@ describe("fetchCheck", () => {
     expect(fetchSource).toHaveBeenCalledWith(expect.stringContaining("sfcadc.org"), expect.objectContaining({ browser: false }));
   });
 
+  it("fetches with the guide's content selectors", async () => {
+    const fetchSource = vi.fn(async (): Promise<Fetched> => ({ kind: "text", text: "Editorial" }));
+    await fetchCheck({ fetchSource }, { root, election, ids: ["smdj"] });
+    expect(fetchSource).toHaveBeenCalledWith(
+      expect.stringContaining("smdailyjournal.com"),
+      expect.objectContaining({ contentSelector: "header.asset-header h1, #article-body", contentExclude: ".tncms-region" }),
+    );
+  });
+
+  it("fetches each page with its own selector", async () => {
+    const fetchSource = vi.fn(async (): Promise<Fetched> => ({ kind: "text", text: "Editorial" }));
+    await fetchCheck({ fetchSource }, { root, election, ids: ["mercury-news"] });
+    expect(fetchSource).toHaveBeenCalledWith(
+      "https://www.mercurynews.com/opinion/endorsements/",
+      expect.objectContaining({ contentSelector: "main article.archive-view" }),
+    );
+    expect(fetchSource).toHaveBeenCalledWith(
+      expect.stringMatching(/mercurynews\.com\/2026\//),
+      expect.objectContaining({ contentSelector: "h1.entry-title, .article-body" }),
+    );
+  });
+
   it("formats one line per attempt", () => {
     const out = formatFetchCheck([
       { guide: "cadc", url: "https://www.sfcadc.org/endorsements", ok: false, error: "x -> HTTP 403", attempts: [{ via: "http", status: 403, bytes: 9, blocked: null }] },
