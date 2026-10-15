@@ -94,13 +94,17 @@ export const HeldPick = z.object({
   contestId: Slug,
   pick: Entry.shape.pick,
   // `unclear-match`: a person decided the guide's text may not mean this contest. No extract or verifier run releases it.
-  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified", "unclear-match"]),
+  // `name-mismatch`: the guide names someone close to, but not on, the ballot. Each extract replaces it; an alias releases it.
+  reason: z.enum(["wrong-pick", "wrong-rank", "not-found", "old-election", "unverified", "unclear-match", "name-mismatch"]),
   evidence: z.string(),
   ranked: z.boolean().optional(),
   rankedCount: z.number().int().positive().optional(),
   quotes: z.array(Quote).max(3).optional(),
 });
 export type HeldPick = z.infer<typeof HeldPick>;
+
+/** Holds only a person releases, so the verifier neither re-checks nor releases them. */
+export const isPersonHold = (h: HeldPick) => h.reason === "unclear-match" || h.reason === "name-mismatch";
 
 export const EndorsementFile = z.object({
   guide: Slug,

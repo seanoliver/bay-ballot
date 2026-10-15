@@ -161,6 +161,15 @@ describe("applyVerdicts", () => {
       expect(r.file.held).toEqual([unclear]);
       expect(r.confirmed).toBe(1);
     });
+    it("never releases a name-mismatch hold, even when the verifier confirms the pick", () => {
+      const near = { ...heldD8, reason: "name-mismatch" as const, evidence: "near" };
+      const r = applyVerdicts({ ...withHeld, held: [near] }, {
+        ...base,
+        picks: [...base.picks, { contestId: "supervisor-8", verdict: "confirmed", evidence: "#1 McCoy #2 Nguyen" }],
+      });
+      expect(r.file.picks["supervisor-8"]).toBeUndefined();
+      expect(r.file.held).toEqual([near]);
+    });
     it("keeps a held pick held when the verifier says nothing about it", () => {
       const r = applyVerdicts(withHeld, base);
       expect(r.file.held).toEqual([heldD8]);

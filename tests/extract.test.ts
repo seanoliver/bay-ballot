@@ -168,6 +168,15 @@ describe("toEntries", () => {
     );
   });
 
+  it("holds a pick whose name is close to one candidate's, with that candidate and the page's spelling", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"] }));
+    expect(r.picks["supervisor-d8"]).toBeUndefined();
+    expect(r.held).toEqual([
+      expect.objectContaining({ contestId: "supervisor-d8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "name-mismatch", evidence: expect.stringContaining("'Michael T. Nguyan'") }),
+    ]);
+    expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
+  });
+
   it("passes the guide's own names to quote verification", () => {
     const q = "SPUR believes the bank is a smart investment in housing.";
     const pg = [{ url: "https://a.org/g", text: `Critics say the bank is costly. ${q}`, kind: "html" as const }];

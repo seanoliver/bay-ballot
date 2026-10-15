@@ -4,7 +4,7 @@ import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
-import { EndorsementFile, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
+import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
@@ -214,16 +214,16 @@ async function refreshGuide(
     if (!now) return [`${h.contestId}: held ${showPick(h.pick)}, guide no longer picks this contest`];
     return isDeepStrictEqual(now.pick, h.pick) ? [] : [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(now.pick)}`];
   });
-  let next = EndorsementFile.parse(
-    scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived),
-  );
+  const base = scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived);
+  const nameHolds = extracted.held.filter((h) => inScope(h.contestId) && !(base.held ?? []).some((x) => x.contestId === h.contestId));
+  let next = EndorsementFile.parse(nameHolds.length ? { ...base, held: [...(base.held ?? []), ...nameHolds] } : base);
   const result: Extract<GuideResult, { status: "changed" }> = {
     id,
     status: "changed",
     dataChanged: false,
     diff: diffPicks(prev.picks, next.picks),
     notes,
-    held: [],
+    held: nameHolds,
     ...(unclear.length ? { unclear } : {}),
     droppedByVerifier: 0,
     missing: [],
@@ -231,7 +231,7 @@ async function refreshGuide(
     warnings: pages.flatMap((p) => (p.outsideWarning ? [p.outsideWarning] : [])),
   };
 
-  const hasHeld = (next.held ?? []).some((h) => h.reason !== "unclear-match" && inScope(h.contestId));
+  const hasHeld = (next.held ?? []).some((h) => !isPersonHold(h) && inScope(h.contestId));
   const changedIds = Object.keys(next.picks).filter((c) => inScope(c) && !isDeepStrictEqual(prev.picks[c], next.picks[c]));
   const picksChanged = scoped ? changedIds.length > 0 : !isDeepStrictEqual(prev.picks, next.picks) && Object.keys(next.picks).length > 0;
   if (opts.verify !== false && (picksChanged || hasHeld)) {
@@ -239,7 +239,7 @@ async function refreshGuide(
     const v = await verify(deps.client, ballot, guide, audited, sources);
     const applied = applyVerdicts(audited, v.output);
     next = EndorsementFile.parse(scoped ? withAudited(next, applied.file, changedIds, inScope) : applied.file);
-    result.held = applied.held;
+    result.held = [...nameHolds, ...applied.held];
     result.droppedByVerifier = applied.droppedQuotes.length;
     const picked = (c: string) => c in next.picks || (next.held ?? []).some((h) => h.contestId === c);
     result.missing = applied.missing.filter((m) => inScope(m.contestId) && !picked(m.contestId));

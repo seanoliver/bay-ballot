@@ -1,8 +1,8 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
-import type { Ballot, Contest, Entry, Guide } from "@/lib/schema";
-import { matchName, type Aliases } from "@/lib/names";
+import type { Ballot, Contest, Entry, Guide, HeldPick } from "@/lib/schema";
+import { matchName, suggestName, type Aliases } from "@/lib/names";
 import { isRejected, MIN_CONTAINED } from "@/lib/quote-key";
 import type { Fetched } from "./fetch";
 import { misplacedUnder } from "./placement";
@@ -109,20 +109,35 @@ export function pagesFor(sources: Source[]): Page[] {
   );
 }
 
-function candidateNames(id: string, raw: string[], official: string[], aliases: Aliases, notes: string[]): string[] | null {
-  const matches = raw.map((name) => ({ name, m: matchName(name, official, aliases) }));
+/** `mismatch` is set when a name only resembles a candidate: the pick is held for a person, never published. */
+function candidateNames(
+  id: string,
+  raw: string[],
+  official: string[],
+  aliases: Aliases,
+  notes: string[],
+): { names: string[]; mismatch?: string } | null {
+  const matches = raw.map((name) => {
+    const m = matchName(name, official, aliases);
+    const suggested = m ? null : suggestName(name, official, aliases);
+    return { name, m: m ?? (suggested ? { name: suggested, fuzzy: true } : null), suggested };
+  });
   const unknown = matches.find(({ m }) => !m);
   if (unknown) {
     notes.push(`${id}: PICK DROPPED — unknown candidate '${unknown.name}' (would change the pick's meaning)`);
     return null;
   }
   const names: string[] = [];
-  for (const { name, m } of matches) {
+  for (const { name, m, suggested } of matches) {
     if (!m) continue;
-    if (m.fuzzy) notes.push(`${id}: '${name}' -> '${m.name}'`);
+    if (m.fuzzy && !suggested) notes.push(`${id}: '${name}' -> '${m.name}'`);
     if (!names.includes(m.name)) names.push(m.name);
   }
-  return names;
+  const near = matches.filter((x) => x.suggested);
+  const mismatch = near.length
+    ? `the page names ${near.map((x) => `'${x.name}'`).join(", ")}, not on the ballot; closest ${near.map((x) => `'${x.suggested}'`).join(", ")}. If it is the same person, add an alias`
+    : undefined;
+  return { names, ...(mismatch ? { mismatch } : {}) };
 }
 
 const clip = (q: string) => (q.length > NOTE_QUOTE_CHARS ? `${q.slice(0, NOTE_QUOTE_CHARS)}…` : q);
@@ -141,9 +156,10 @@ export function toEntries(
   contests: Contest[],
   pages: Page[],
   { ownNames = [] }: { ownNames?: string[] } = {},
-): { picks: Record<string, Entry>; notes: string[]; dropped: NotedQuote[] } {
+): { picks: Record<string, Entry>; held: HeldPick[]; notes: string[]; dropped: NotedQuote[] } {
   const byId = new Map(contests.map((c) => [c.id, c]));
   const picks: Record<string, Entry> = {};
+  const held: HeldPick[] = [];
   const notes: string[] = [];
   const dropped: NotedQuote[] = [];
 
@@ -166,6 +182,7 @@ export function toEntries(
     }
 
     let pick: Entry["pick"];
+    let mismatch: string | undefined;
     if (isCandidate) {
       if (p.candidates.length === 0) {
         notes.push(`${c.id}: pick lists no candidates`);
@@ -173,7 +190,8 @@ export function toEntries(
       }
       const names = candidateNames(c.id, p.candidates, c.candidates, c.aliases ?? {}, notes);
       if (!names) continue;
-      pick = names;
+      pick = names.names;
+      mismatch = names.mismatch;
     } else {
       if (p.vote === null) {
         notes.push(`${c.id}: measure pick has no vote`);
@@ -204,9 +222,11 @@ export function toEntries(
 
     const n = p.rankedCount;
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
-    picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
+    const entry = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
+    if (mismatch) held.push({ contestId: c.id, reason: "name-mismatch", evidence: mismatch, ...entry });
+    else picks[c.id] = entry;
   }
-  return { picks, notes, dropped };
+  return { picks, held, notes, dropped };
 }
 
 // Must normalize like verifyQuotes, or a quote that differs only in dashes or spacing is kept twice.

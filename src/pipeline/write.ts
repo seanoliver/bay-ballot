@@ -18,7 +18,10 @@ export function nextFile(
   today: string,
   archived?: ArchivedSource[],
 ): EndorsementFile {
-  const held = (prev.held ?? []).filter((h) => h.reason === "unclear-match" || (picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick)));
+  // A name-mismatch hold is rebuilt by each extract, so the previous one never carries over.
+  const held = (prev.held ?? []).filter(
+    (h) => h.reason === "unclear-match" || (h.reason !== "name-mismatch" && picks[h.contestId] && isDeepStrictEqual(picks[h.contestId].pick, h.pick)),
+  );
   if (held.length) {
     picks = { ...picks };
     for (const h of held) delete picks[h.contestId];

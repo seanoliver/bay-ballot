@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchName } from "@/lib/names";
+import { matchName, suggestName } from "@/lib/names";
 
 const cands = ["Joaquín Torres", "Shirley N. Weber", "Malia M. Cohen"];
 
@@ -160,4 +160,26 @@ describe("matchName", () => {
       expect(matchName("Ann Smith–Jones", ["Ann Smith-Jones"])).toEqual(f("Ann Smith-Jones"));
     });
   });
+});
+
+describe("suggestName", () => {
+  it("suggests the candidate for a one-letter slip in the first name", () =>
+    expect(suggestName("Manuhar Raju", ["Manohar Raju", "John Hamasaki"])).toBe("Manohar Raju"));
+  it("suggests the candidate for a formal first name of a short one", () =>
+    expect(suggestName("Deborah Ruddock", ["Debbie Ruddock", "Brandon Kwan"])).toBe("Debbie Ruddock"));
+  it("does not suggest across a slip in a last name under 5 letters", () =>
+    expect(suggestName("Connie Chen", ["Connie Chan"])).toBeNull());
+  it("counts two swapped letters as one slip", () => expect(suggestName("Scott Weiner", ["Scott Wiener"])).toBe("Scott Wiener"));
+  it("does not suggest across two wrong letters in a last name", () =>
+    expect(suggestName("Scott Wiemar", ["Scott Wiener"])).toBeNull());
+  it("suggests the candidate for a one-letter slip in a last name of 5+ letters", () =>
+    expect(suggestName("Scott Wienar", ["Scott Wiener"])).toBe("Scott Wiener"));
+  it("checks aliases too", () =>
+    expect(suggestName("Bobbie Smithe", ["Robert Smith"], { "Robert Smith": ["Bob Smith"] })).toBe("Robert Smith"));
+  it("returns null for a different last name", () => expect(suggestName("Deborah Rudd", ["Debbie Ruddock"])).toBeNull());
+  it("returns null when two candidates are near", () =>
+    expect(suggestName("Deb Ruddock", ["Debbie Ruddock", "Deborah Ruddock"])).toBeNull());
+  it("returns null for a one-word name", () => expect(suggestName("Raju", ["Manohar Raju"])).toBeNull());
+  it("catches #152: the page's 'Manuhar Raju' for the ballot's 'Mano Raju'", () =>
+    expect(suggestName("Manuhar Raju", ["Mano Raju"])).toBe("Mano Raju"));
 });

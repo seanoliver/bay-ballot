@@ -309,6 +309,54 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(0);
   });
 
+  describe("a name close to a candidate's", () => {
+    const misspelled: ExtractOutput = {
+      hasReasoning: true,
+      picks: [extractOut.picks[0], { contestId: "us-rep-11", vote: null, candidates: ["Scott Weiner"], ranked: false, rankedCount: null, quotes: [], note: null }],
+    };
+    const changedPage = PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:");
+
+    it("holds the pick with the suggested candidate instead of dropping it, and asks for review", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + "  us-rep-11:\n    pick: [Scott Wiener]\n");
+      const { client, stream } = fakeClient(misspelled);
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.picks["us-rep-11"]).toBeUndefined();
+      expect(file.held).toEqual([
+        expect.objectContaining({ contestId: "us-rep-11", pick: ["Scott Wiener"], reason: "name-mismatch", evidence: expect.stringContaining("'Scott Weiner'") }),
+      ]);
+      const audit = JSON.stringify(stream.mock.calls.find((c) => c[0].model.includes("opus"))?.[0]).split("Extraction to audit")[1];
+      expect(audit).toContain("prop-b");
+      expect(audit).not.toContain("us-rep-11");
+      expect(exitCodeFor(results)).toBe(2);
+      expect(reviewReasons(results)).toContain("alpha: held us-rep-11 (name-mismatch)");
+      expect(summarize(results, { date: "2026-10-06" })).toContain("HELD us-rep-11: Scott Wiener — name-mismatch: the page names 'Scott Weiner'");
+    });
+
+    it("holds a near name on a new contest without calling the verifier, and still asks for review", async () => {
+      const root = setup(["alpha"]);
+      const { client, stream } = fakeClient(misspelled);
+      const results = await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION });
+      expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5"]);
+      expect(results[0]).toMatchObject({ status: "changed", held: [expect.objectContaining({ contestId: "us-rep-11", reason: "name-mismatch" })] });
+      expect(exitCodeFor(results)).toBe(2);
+    });
+
+    it("releases the hold once a re-extract matches the name, as it does after an alias is added", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "held:\n  - contestId: us-rep-11\n    pick: [Scott Wiener]\n    reason: name-mismatch\n    evidence: x\npicks:\n"));
+      const matched = { ...misspelled, picks: [misspelled.picks[0], { ...misspelled.picks[1], candidates: ["Scott Wiener"] }] };
+      const { client } = fakeClient(matched);
+      await runRefresh(deps(client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["us-rep-11"].pick).toEqual(["Scott Wiener"]);
+    });
+  });
+
   it("keeps an unclear-match hold through a re-extract that returns the same pick, without verifying it", async () => {
     const root = setup(["alpha"]);
     const f = path.join(root, ELECTION, "endorsements", "alpha.yml");

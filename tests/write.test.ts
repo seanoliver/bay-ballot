@@ -99,6 +99,14 @@ describe("nextFile", () => {
     expect(n.picks["prop-c"]).toBeUndefined();
   });
 
+  it("drops a name-mismatch hold even when the re-extract returns its pick, since each extract rebuilds it", () => {
+    const held = [{ contestId: "prop-c", pick: "Y" as const, reason: "name-mismatch" as const, evidence: "x" }];
+    const changed = { ...picks, "prop-c": { pick: "Y" as const, ranked: false, quotes: [] } };
+    const n = nextFile({ ...prev, held }, changed, true, "2026-10-05");
+    expect(n.held).toBeUndefined();
+    expect(n.picks["prop-c"].pick).toBe("Y");
+  });
+
   it("keeps manual", () => {
     expect(nextFile({ ...prev, manual: true }, picks, true, "2026-10-05").manual).toBe(true);
   });
