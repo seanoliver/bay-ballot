@@ -270,6 +270,15 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
   const inFirstRow = (g: ChipGuide, i: number) => i < CHIPS_SHOWN || kept.includes(g.id);
   const first = guides.filter(inFirstRow);
   const rest = guides.filter((g, i) => !inFirstRow(g, i));
+  if (all && !rest.length) setAll(false);
+  const firstRow = useRef<HTMLUListElement>(null);
+  // "Show less" unmounts when every hidden chip was pinned into the first row, so focus moves to that row's last chip.
+  const refocus = useRef(false);
+  useEffect(() => {
+    if (!refocus.current) return;
+    refocus.current = false;
+    [...(firstRow.current?.querySelectorAll<HTMLButtonElement>("button[aria-pressed]") ?? [])].at(-1)?.focus();
+  }, [all]);
   return (
     <>
       {guides.some((g) => g.quoted) ? (
@@ -281,7 +290,7 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
         </p>
       ) : null}
       <div role="group" aria-label={label}>
-        <ul className="flex flex-wrap gap-2">
+        <ul ref={firstRow} className="flex flex-wrap gap-2">
           {first.map((g) => (
             <PinChip key={g.id} guide={g} short={short} pinning={pinning} />
           ))}
@@ -291,7 +300,10 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
                 type="button"
                 aria-expanded={all}
                 onClick={() => {
-                  if (all) setKept(pinnedLater);
+                  if (all) {
+                    setKept(pinnedLater);
+                    refocus.current = rest.every((g) => pinnedLater.includes(g.id));
+                  }
                   setAll(!all);
                 }}
                 className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-dashed border-border px-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8"

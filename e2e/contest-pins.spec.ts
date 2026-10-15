@@ -116,14 +116,30 @@ test.describe("pinning from a contest page", () => {
   });
 
   test("a side of five guides shows four and +1 more, and a side of four shows all four", async ({ page }) => {
-    for (const [n, button] of [[5, 1], [4, 0]] as const) {
-      const c = yesSide(n);
-      test.skip(!c, `no measure has exactly ${n} Yes guides in today's data`);
-      await page.goto(`${BALLOT}/${c!.id}`);
+    const sides = [yesSide(5), yesSide(4)];
+    test.skip(!sides[0] || !sides[1], "no measure has exactly five or four Yes guides in today's data");
+    for (const [c, button] of [[sides[0]!, 1], [sides[1]!, 0]] as const) {
+      await page.goto(`${BALLOT}/${c.id}`);
       const yes = page.getByRole("group", { name: "Guides for Yes" });
       await expect(yes.getByRole("button", { name: /^Pin / })).toHaveCount(4);
-      await expect(yes.getByRole("button", { name: "+1 more" })).toHaveCount(button);
+      await expect(yes.getByRole("button", { name: /^\+\d+ more$/ })).toHaveCount(button);
     }
+  });
+
+  test("pinning a five-guide side's last chip and pressing Show less keeps focus on a chip, with no +0 more", async ({ page }) => {
+    const c = yesSide(5);
+    test.skip(!c, "no measure has exactly five Yes guides in today's data");
+    await page.goto(`${BALLOT}/${c!.id}`);
+    await waitForKeys(page);
+    const yes = page.getByRole("group", { name: "Guides for Yes" });
+    await yes.getByRole("button", { name: "+1 more" }).click();
+    await yes.getByRole("list").nth(1).getByRole("button", { name: /^Pin / }).click();
+    await yes.getByRole("button", { name: "Show less" }).focus();
+    await page.keyboard.press("Enter");
+    const chips = yes.getByRole("button", { name: /^Pin / });
+    await expect(chips).toHaveCount(5);
+    await expect(yes.getByRole("button", { name: /more$/ })).toHaveCount(0);
+    await expect(chips.last()).toBeFocused();
   });
 
   test("a side with fewer than four guides has no +N more", async ({ page }) => {
@@ -146,8 +162,11 @@ test.describe("pinning from a contest page", () => {
     const spur = pinChip(yes, "SPUR");
     await expect(chips).toHaveCount(5);
     await expect(spur).toHaveAttribute("aria-pressed", "true");
-    await yes.getByRole("button", { name: /^\+\d+ more$/ }).click();
+    const more = yes.getByRole("button", { name: /^\+\d+ more$/ });
+    const hidden = Number((await more.textContent())!.match(/\d+/)![0]);
+    await more.click();
     await expect(pinChip(yes.getByRole("list").first(), "SPUR")).toHaveCount(1);
+    await expect(yes.getByRole("list").nth(1).getByRole("button", { name: /^Pin / })).toHaveCount(hidden);
     await yes.getByRole("button", { name: "Show less" }).click();
     await spur.click();
     await expect(spur).toHaveAttribute("aria-pressed", "false");
