@@ -45,7 +45,7 @@ describe("reportJson counts", () => {
     ];
     const r = reportJson(results, 2);
     expect(r.counts).toEqual({
-      checked: 9, unchanged: 2, extracted: 2, dataChanged: 1, deferred: 1, skipped: 1, failed: 1, blocked: 0, shrunk: 2, held: 2, review: 4,
+      checked: 9, unchanged: 2, extracted: 2, dataChanged: 1, deferred: 1, skipped: 1, failed: 1, blocked: 0, selectorMisses: 0, shrunk: 2, held: 2, review: 4,
     });
     expect(r).toMatchObject({ exitCode: 2, extracted: ["h", "i"], deferred: ["d"], failed: [{ id: "e", error: "HTTP 403" }], apiCost: 0, apiFallbackCalls: 0 });
     expect(r.review).toHaveLength(4);
@@ -151,7 +151,9 @@ describe("blocked guides in the report", () => {
     ];
     const r = reportJson(results, 2);
     expect(r.counts.blocked).toBe(1);
+    expect(r.counts.selectorMisses).toBe(1);
     expect(r.digest).toContain("1 blocked");
+    expect(r.digest).toContain("1 selector miss");
   });
 });
 

@@ -2,10 +2,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { parse } from "yaml";
 import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
-import { SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
+import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
@@ -474,7 +474,7 @@ describe("runRefresh", () => {
 
   it("fetches a guide's remaining pages in the browser after one page needed it", async () => {
     const root = setup(["alpha"]);
-    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n");
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\nextraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n');
     const { client } = fakeClient(sameOut);
     const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u, opts) => {
       if (u === url("alpha")) opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
@@ -484,6 +484,59 @@ describe("runRefresh", () => {
     await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: (l: string) => logs.push(l) }, { root, election: ELECTION });
     expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, true, true]);
     expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
+  });
+
+  it("keeps a guide without a selector on http after a browser rescue", async () => {
+    const root = setup(["alpha"]);
+    fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
+    const { client } = fakeClient(sameOut);
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u, opts) => {
+      if (u === url("alpha")) opts?.onAttempt?.({ via: "browser", status: 200, bytes: 100, blocked: null });
+      return { kind: "text", text: PAGE("alpha", "October 1, 2026") };
+    });
+    await runRefresh(deps(client, fetchSource), { root, election: ELECTION });
+    expect(fetchSource.mock.calls.map((c) => c[1]?.browser)).toEqual([false, false]);
+  });
+
+  describe("with the real fetcher", () => {
+    afterEach(() => vi.unstubAllGlobals());
+    const threePages = (root: string) =>
+      fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), 'contentSelector: "#article-body"\nextraSources:\n  - https://alpha.org/more\n  - https://alpha.org/last\n');
+    const noArticle = "<body><p>Subscribe to keep reading</p></body>";
+    const article = `<body><div id="article-body"><p>${PAGE("alpha", "October 1, 2026")}</p></div></body>`;
+
+    it("launches the browser once when every page misses, and logs no rescue", async () => {
+      const root = setup(["alpha"]);
+      threePages(root);
+      vi.stubGlobal("fetch", vi.fn(async () => new Response(noArticle, { status: 200, headers: { "content-type": "text/html" } })));
+      const browserFetch = vi.fn(async () => ({ status: 200, html: noArticle }));
+      const logs: string[] = [];
+      const { client } = fakeClient();
+      const results = await runRefresh(
+        { client, fetchSource: (u, o) => realFetchSource(u, { ...o, browserFetch }), today: () => "2026-10-06", log: (l: string) => logs.push(l) },
+        { root, election: ELECTION },
+      );
+      expect(browserFetch).toHaveBeenCalledTimes(1);
+      expect(results[0].selectorMisses).toHaveLength(3);
+      expect(logs.some((l) => l.includes("needed the browser"))).toBe(false);
+    });
+
+    it("switches to the browser after a real rescue", async () => {
+      const root = setup(["alpha"]);
+      threePages(root);
+      const httpFetch = vi.fn(async () => new Response(noArticle, { status: 200, headers: { "content-type": "text/html" } }));
+      vi.stubGlobal("fetch", httpFetch);
+      const browserFetch = vi.fn(async () => ({ status: 200, html: article }));
+      const logs: string[] = [];
+      const { client } = fakeClient(sameOut);
+      await runRefresh(
+        { client, fetchSource: (u, o) => realFetchSource(u, { ...o, browserFetch }), today: () => "2026-10-06", log: (l: string) => logs.push(l) },
+        { root, election: ELECTION },
+      );
+      expect(httpFetch).toHaveBeenCalledTimes(1);
+      expect(browserFetch).toHaveBeenCalledTimes(3);
+      expect(logs.filter((l) => l.includes("needed the browser"))).toHaveLength(1);
+    });
   });
 
   it("fails the guide on a miss when selectors are strict (bb extract)", async () => {

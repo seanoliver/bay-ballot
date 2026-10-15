@@ -140,16 +140,14 @@ async function refreshGuide(
     try {
       // After one miss, skip the browser retry for the rest of the guide: a layout change misses on every page.
       const noRetry = selectorMisses.length ? { retryMissInBrowser: false } : {};
-      // After one browser rescue, fetch the rest in the browser: a wall that hit one page hits them all.
+      // After the browser rescues one page of a selector guide, fetch the rest in the browser: a wall that hit one page hits them all.
       const options = { ...fetchOptions(prev, Boolean(opts.browser) || rescued, url), ...noRetry };
-      fetched = await deps.fetchSource(url, {
-        ...options,
-        onAttempt: (a) => {
-          if (a.via !== "browser" || options.browser || rescued) return;
-          rescued = true;
-          log(`${id}: ${url} needed the browser; fetching its remaining pages in the browser`);
-        },
-      });
+      let triedBrowser = false;
+      fetched = await deps.fetchSource(url, { ...options, onAttempt: (a) => void (triedBrowser ||= a.via === "browser") });
+      if (triedBrowser && !options.browser && options.contentSelector && !rescued) {
+        rescued = true;
+        log(`${id}: ${url} needed the browser; fetching its remaining pages in the browser`);
+      }
     } catch (e) {
       if (!(e instanceof SelectorMissError) || opts.strictSelectors) throw e;
       if (old === null) {

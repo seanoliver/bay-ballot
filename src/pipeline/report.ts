@@ -15,6 +15,8 @@ export type RunCounts = {
   failed: number;
   /** Guides not re-extracted because a page missed its content selector. Absent in records before 2026-10-14. */
   blocked?: number;
+  /** Pages that missed their content selector, blocked or not. Absent in records before 2026-10-14. */
+  selectorMisses?: number;
   shrunk: number;
   held: number;
   review: number;
@@ -53,6 +55,7 @@ function counts(results: GuideResult[], review: number): RunCounts {
     skipped: n("skipped"),
     failed: n("failed"),
     blocked: n("blocked"),
+    selectorMisses: results.reduce((sum, r) => sum + (r.selectorMisses?.length ?? 0), 0),
     shrunk: n("shrunk", "shrunk-skipped"),
     held: changed.reduce((sum, r) => sum + r.held.length, 0),
     review,
@@ -96,6 +99,7 @@ function digest(r: Omit<ReportJson, "digest" | "alerts">): string {
     `${c.held} held`,
     `${c.failed} failed`,
     ...(c.blocked ? [`${c.blocked} blocked`] : []),
+    ...(c.selectorMisses ? [`${c.selectorMisses} selector miss${c.selectorMisses === 1 ? "" : "es"}`] : []),
     ...(c.deferred ? [`${c.deferred} deferred`] : []),
     plural(r.calls.subscription + r.calls.api, "call"),
     `${formatTokens(t)} tokens (~$${r.apiEquivalentCost.toFixed(2)} at API rates)`,
