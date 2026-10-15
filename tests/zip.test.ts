@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deflateRawSync } from "node:zlib";
 import {
   blockPoints, buildZipTable, DISTRICT_MAPS, districtShares, blocksNearEdge, BLOCK_REACH_CAP_M, districtsWithHomes, EDGE_BUFFER_M, overlapWidth, padBox, pointsIn, poolDistrictCounties,
-  reachedDistricts, SEAT_KINDS, shapesById, SLIVER_WIDTH_M, zipTableJson, type Shape,
+  MIN_DISTRICT_SHARE, normalizeDistrictIds, reachedDistricts, SEAT_KINDS, shapeBox, shapesById, SLIVER_WIDTH_M, zipReach, zipTableJson, type Shape,
 } from "@/pipeline/zips";
 import { shapefileById, unzip } from "@/pipeline/shapefile";
 import { districtMapKey, STATE_PLACE, zipFit, zipGroups, type ZipPlaces, type ZipTable } from "@/lib/zip";
@@ -204,6 +204,21 @@ describe("districtShares", () => {
   });
 });
 
+describe("shares of a many-sided ZIP", () => {
+  const circle: Shape = {
+    type: "Polygon",
+    coordinates: [Array.from({ length: 401 }, (_, i): [number, number] => [-122 + 0.005 * Math.cos((i / 400) * 2 * Math.PI), 37.5 + 0.005 * Math.sin((i / 400) * 2 * Math.PI)])],
+  };
+  it("splits a circle of short edges by the area on each side of a line", () => {
+    const s = districtShares({ "94999": circle }, { a: box(-123, 37, -122.002, 38), b: box(-122.002, 37, -121, 38) })["94999"];
+    const x = 0.4;
+    expect(s.a).toBeCloseTo((Math.acos(x) - x * Math.sqrt(1 - x * x)) / Math.PI, 2);
+  });
+  it("measures a circle's widest run across its middle", () => {
+    expect(overlapWidth(circle, box(-123, 37, -121, 38))).toBeCloseTo(0.01 * 111_320 * Math.cos((37.5 * Math.PI) / 180), -1);
+  });
+});
+
 describe("overlapWidth", () => {
   const zip = box(-122, 37.5, -121.99, 37.51);
   it("measures a strip along the top by its height, however long it is", () => {
@@ -217,6 +232,10 @@ describe("overlapWidth", () => {
     const all = box(-123, 37, -121, 38);
     expect(overlapWidth(halves, all)).toBeCloseTo(overlapWidth(zip, all), 0);
     expect(overlapWidth(halves, all)).toBeCloseTo(883, -1);
+  });
+  it("measures each run of a district that crosses a row twice", () => {
+    const d: Shape = { type: "MultiPolygon", coordinates: [box(-122.1, 37, -121.998, 38).coordinates as never, box(-121.996, 37, -121.9, 38).coordinates as never] };
+    expect(overlapWidth(zip, d)).toBeCloseTo(530, -1);
   });
   it("measures a compact piece by its smaller side, and a district that misses the ZIP as 0", () => {
     expect(overlapWidth(zip, box(-121.995, 37.505, -121.9, 37.6))).toBeCloseTo(441, -1);
@@ -238,6 +257,10 @@ describe("reachedDistricts", () => {
     expect(r.touched).toEqual(["1", "2", "3"]);
     expect(r.notes.map((n) => n.district)).toEqual(["2", "3"]);
     expect(r.dropped).toEqual([]);
+  });
+  it("keeps an overlap exactly at the share or the width threshold", () => {
+    expect(reachedDistricts({ shares: { "1": 0.99, "2": MIN_DISTRICT_SHARE }, widths: { "1": 900, "2": thin } }).touched).toEqual(["1", "2"]);
+    expect(reachedDistricts({ shares: { "1": 0.996, "2": 0.004 }, widths: { "1": 900, "2": SLIVER_WIDTH_M } }).touched).toEqual(["1", "2"]);
   });
   it("keeps a thin small overlap that has homes", () => {
     const r = reachedDistricts({ shares: { "9": 0.998, "2": 0.002 }, widths: { "9": 900, "2": thin }, withHomes: ["2"] });
@@ -265,6 +288,9 @@ describe("homes near a ZIP's edge", () => {
     expect(blocksNearEdge(zip, pts.map(small))).toEqual([[-121.999, 37.505], [-122.001, 37.505], [-121.995, 37.511]]);
     expect(blocksNearEdge(zip, [])).toEqual([]);
   });
+  it("measures to the edge itself, not its line, past a corner", () => {
+    expect(blocksNearEdge(zip, [small([-122.0012, 37.5112])])).toEqual([]);
+  });
   it("reaches further for a big block, whose edge can touch the ZIP far from its internal point", () => {
     const far: [number, number] = [-122.01, 37.505];
     expect(blocksNearEdge(zip, [small(far)])).toEqual([]);
@@ -275,6 +301,33 @@ describe("homes near a ZIP's edge", () => {
     expect(b.y[0]).toBeCloseTo(37.499, 6);
     expect(b.y[1]).toBeCloseTo(37.511, 6);
     expect(b.x[0]).toBeLessThan(-122.00126);
+  });
+});
+
+describe("normalizeDistrictIds", () => {
+  it("drops leading zeros so map ids match the ballot's district numbers", () => {
+    const s = box(0, 0, 1, 1);
+    expect(Object.keys(normalizeDistrictIds({ "08": s, "10": s, "0": s, "007": s })).sort()).toEqual(["0", "10", "7", "8"]);
+  });
+});
+
+describe("zipReach", () => {
+  const zip = box(-122, 37.5, -121.99, 37.51);
+  const districts = {
+    main: box(-123, 37, -121.9906, 38),
+    sliver: box(-121.9906, 37.5, -121.99, 37.51),
+    neighbor: box(-121.99, 37, -121.6, 38),
+    far: box(-121.5, 37, -121.4, 38),
+  };
+  const boxes = Object.fromEntries(Object.entries(districts).map(([id, d]) => [id, shapeBox(d)]));
+  const shares = { main: 0.996, sliver: 0.004 };
+  it("keeps a small overlap with a home in it, and adds a nearby district with a home near the edge", () => {
+    const r = zipReach(zip, districts, boxes, shares, { inside: [[-121.9903, 37.505]], nearEdge: [[-121.9895, 37.505]] });
+    expect(r.touched).toEqual(["main", "neighbor", "sliver"]);
+  });
+  it("drops the same overlap with no home in it, and ignores a home in a district far from the ZIP", () => {
+    const r = zipReach(zip, districts, boxes, shares, { inside: [], nearEdge: [[-121.45, 37.5]] });
+    expect(r.touched).toEqual(["main"]);
   });
 });
 

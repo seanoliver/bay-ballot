@@ -415,3 +415,24 @@ export function districtsWithHomes(homes: [number, number][], districts: Record<
     return homes.some((p) => insideEdges(es, p));
   });
 }
+
+// The ballot numbers districts without leading zeros; some maps pad them ("08").
+export function normalizeDistrictIds(mapped: Record<string, Shape>): Record<string, Shape> {
+  return Object.fromEntries(Object.entries(mapped).map(([id, s]) => [id.replace(/^0+(?=\d)/, ""), s]));
+}
+
+export function zipReach(
+  zip: Shape,
+  districts: Record<string, Shape>,
+  boxes: Record<string, Box>,
+  shares: Record<string, number>,
+  homes: { inside: [number, number][]; nearEdge: [number, number][] },
+) {
+  const near = padBox(shapeBox(zip), MAX_BLOCK_REACH_M);
+  return reachedDistricts({
+    shares,
+    widths: Object.fromEntries(Object.keys(shares).map((d) => [d, overlapWidth(zip, districts[d])])),
+    withHomes: districtsWithHomes(homes.inside, districts, Object.keys(shares).filter((d) => shares[d] < MIN_DISTRICT_SHARE)),
+    nearEdge: districtsWithHomes(homes.nearEdge, districts, Object.keys(districts).filter((d) => boxesMeet(boxes[d], near))),
+  });
+}

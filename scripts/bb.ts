@@ -23,8 +23,8 @@ import { formatLint, lintQuotes } from "../src/pipeline/quotelint";
 import { guideBallot, newAreaBallot, unknownAreaError } from "../src/pipeline/scope";
 import { parse as parseYaml } from "yaml";
 import {
-  blockPoints, boxesMeet, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, districtsWithHomes, homeBlocksUrl, MIN_DISTRICT_SHARE, overlapWidth,
-  MAX_BLOCK_REACH_M, padBox, pointsIn, blocksNearEdge, poolDistrictCounties, reachedDistricts, shapeBox, shapesById, zctaShapesUrl, zipTableJson, type Shape,
+  blockPoints, buildZipTable, CENSUS_URLS, DISTRICT_MAPS, districtShares, homeBlocksUrl, MAX_BLOCK_REACH_M, normalizeDistrictIds, padBox, pointsIn,
+  blocksNearEdge, poolDistrictCounties, shapeBox, shapesById, zctaShapesUrl, zipReach, zipTableJson, type Shape,
 } from "../src/pipeline/zips";
 import { districtMapKey } from "../src/lib/zip";
 import { shapefileById } from "../src/pipeline/shapefile";
@@ -521,22 +521,13 @@ async function runZips() {
         : get(m.url).then((t) => shapesById(t, m.field, m.url)),
       zctaShapes(inPlace),
     ]);
-    // The ballot numbers districts without leading zeros; some maps pad them ("08").
-    const districts = Object.fromEntries(Object.entries(mapped).map(([id, s]) => [id.replace(/^0+(?=\d)/, ""), s]));
+    const districts = normalizeDistrictIds(mapped);
     if (Object.keys(districts).length !== m.count) throw new Error(`${key}: expected ${m.count} districts, found ${Object.keys(districts).sort().join(", ")}`);
     const shares = districtShares(shapes, districts);
     await fetchHomes(inPlace);
     const boxes = Object.fromEntries(Object.entries(districts).map(([id, d]) => [id, shapeBox(d)]));
     for (const z of inPlace) {
-      const s = shares[z] ?? {};
-      const h = homes[z];
-      const near = padBox(shapeBox(zctas[z]), MAX_BLOCK_REACH_M);
-      const reach = reachedDistricts({
-        shares: s,
-        widths: Object.fromEntries(Object.keys(s).map((d) => [d, overlapWidth(zctas[z], districts[d])])),
-        withHomes: districtsWithHomes(h.inside, districts, Object.keys(s).filter((d) => s[d] < MIN_DISTRICT_SHARE)),
-        nearEdge: districtsWithHomes(h.nearEdge, districts, Object.keys(districts).filter((d) => boxesMeet(boxes[d], near))),
-      });
+      const reach = zipReach(zctas[z], districts, boxes, shares[z] ?? {}, homes[z]);
       for (const n of reach.notes) console.log(`${key}: kept ${z} in district ${n.district}: ${n.why}`);
       for (const d of reach.dropped) console.log(`${key}: dropped ${z} in district ${d.district}, ${(d.share * 100).toFixed(2)}% of its mapped land, ${Math.round(d.width)} m thick, with no 2020 Census homes`);
       if (reach.touched.length) (zips[z].districts ??= {})[key] = reach.touched;
