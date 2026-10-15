@@ -810,6 +810,13 @@ South Bay AFL-CIO Labor Council (`south-bay-labor`)
 - https://www.southbaylabor.org/about: 101 unions, more than 100,000 members, Santa Clara and San Benito counties
 - https://www.southbaylabor.org/bylaws: Article 18: the Executive Board constitutes the Committee on Political Education, which makes recommendations and endorsements
 
+South Bay Progressive Alliance (`south-bay-pa`)
+
+> A Santa Clara County association of individuals, communities and organizations, focused on San Jose and the South Bay, that works to elect corporate-free candidates. Its steering committee decides endorsements.
+
+- https://southbaypa.org/: 'an unincorporated not-for-profit association registered in the State of California and Santa Clara County'; 'generally focused in the South San Francisco Bay area and the city of San Jose'; 'a diverse and inclusive coalition of individuals, communities, and organizations'; 'We work to elect corporate-free candidates'
+- https://southbaypa.org/about/: 'The SBPA Steering Committee makes decisions on the organization's actions, collaborations, and endorsements.'
+
 SPUR (`spur`)
 
 > A nonprofit public policy organization founded in 1910, with offices in San Francisco, San Jose, and Oakland. Committees and city advisory boards recommend ballot measure positions, which its board affirms.

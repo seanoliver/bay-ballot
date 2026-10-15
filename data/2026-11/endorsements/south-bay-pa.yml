@@ -1,0 +1,47 @@
+guide: south-bay-pa
+election: 2026-11
+status: published
+source: https://southbaypa.org/issues/endorsements/
+fetchedAt: 2026-10-15
+hasReasoning: false
+picks:
+  prop-1:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+  prop-43:
+    pick: N
+  assembly-25:
+    pick:
+      - Ash Kalra
+  assembly-24:
+    pick:
+      - Alex Lee
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
+  san-jose-council-9:
+    pick:
+      - Gordon Chester
+  milpitas-council:
+    pick:
+      - Seema Kanani
+  esuhsd-trustee-area-1-short-term:
+    pick:
+      - Mer Curry Nuñez
+  sjusd-trustee-area-2:
+    pick:
+      - Tomara Hall
+  sjusd-trustee-area-4:
+    pick:
+      - Michael Melillo
+  evergreen-sd-trustee:
+    pick:
+      - Monte Wright
+  berryessa-sd-trustee:
+    pick:
+      - Jaria Jaug
