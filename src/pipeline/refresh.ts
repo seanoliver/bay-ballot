@@ -4,6 +4,7 @@ import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
+import { isRejected } from "@/lib/quote-key";
 import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
@@ -194,7 +195,9 @@ async function refreshGuide(
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
   const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes];
   const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
-  const shrunk = shrinkWarning(id, prevInScope, picks, { force: opts.force });
+  // A held near-name pick is still the guide's pick, so it doesn't count as shrinking.
+  const heldNear = Object.fromEntries(extracted.held.filter((h) => inScope(h.contestId)).map((h) => [h.contestId, { pick: h.pick, ranked: false, quotes: [] }]));
+  const shrunk = shrinkWarning(id, prevInScope, { ...heldNear, ...picks }, { force: opts.force });
   if (shrunk) return { id, status: "shrunk", message: shrunk.trim(), notes, pageHash, usage };
 
   let archived: ArchivedSource[] | undefined;
@@ -210,12 +213,23 @@ async function refreshGuide(
 
   const unclear = (prev.held ?? []).flatMap((h) => {
     if (h.reason !== "unclear-match" || !inScope(h.contestId)) return [];
-    const now = picks[h.contestId];
+    const now = picks[h.contestId] ?? extracted.held.find((x) => x.contestId === h.contestId);
     if (!now) return [`${h.contestId}: held ${showPick(h.pick)}, guide no longer picks this contest`];
     return isDeepStrictEqual(now.pick, h.pick) ? [] : [`${h.contestId}: held ${showPick(h.pick)}, guide now picks ${showPick(now.pick)}`];
   });
   const base = scoped ? scopedNextFile(prev, picks, inScope, deps.today(), archived) : nextFile(prev, picks, output.hasReasoning, deps.today(), archived);
-  const nameHolds = extracted.held.filter((h) => inScope(h.contestId) && !(base.held ?? []).some((x) => x.contestId === h.contestId));
+  // A hold the file already has for the same pick is kept as it was (quotes included) and not reported again, like a verifier hold.
+  const prevNameHold = (h: HeldPick) =>
+    (prev.held ?? []).find((x) => x.reason === "name-mismatch" && x.contestId === h.contestId && isDeepStrictEqual(x.pick, h.pick));
+  const rejected = prev.rejectedQuotes ?? [];
+  const nameHolds = extracted.held
+    .filter((h) => inScope(h.contestId) && !(h.contestId in base.picks) && !(base.held ?? []).some((x) => x.contestId === h.contestId))
+    .map((h) => {
+      const { quotes: all = [], ...rest } = h;
+      const quotes = all.filter((q) => !isRejected(q.text, h.contestId, rejected));
+      return prevNameHold(h) ?? { ...rest, ...(quotes.length ? { quotes } : {}) };
+    });
+  const newNameHolds = nameHolds.filter((h) => !(prev.held ?? []).includes(h));
   let next = EndorsementFile.parse(nameHolds.length ? { ...base, held: [...(base.held ?? []), ...nameHolds] } : base);
   const result: Extract<GuideResult, { status: "changed" }> = {
     id,
@@ -223,7 +237,7 @@ async function refreshGuide(
     dataChanged: false,
     diff: diffPicks(prev.picks, next.picks),
     notes,
-    held: nameHolds,
+    held: newNameHolds,
     ...(unclear.length ? { unclear } : {}),
     droppedByVerifier: 0,
     missing: [],
@@ -239,7 +253,7 @@ async function refreshGuide(
     const v = await verify(deps.client, ballot, guide, audited, sources);
     const applied = applyVerdicts(audited, v.output);
     next = EndorsementFile.parse(scoped ? withAudited(next, applied.file, changedIds, inScope) : applied.file);
-    result.held = [...nameHolds, ...applied.held];
+    result.held = [...newNameHolds, ...applied.held];
     result.droppedByVerifier = applied.droppedQuotes.length;
     const picked = (c: string) => c in next.picks || (next.held ?? []).some((h) => h.contestId === c);
     result.missing = applied.missing.filter((m) => inScope(m.contestId) && !picked(m.contestId));

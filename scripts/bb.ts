@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pacificDay } from "../src/lib/changelog";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
-import { EndorsementFile, type Guide } from "../src/lib/schema";
+import { EndorsementFile, isPersonHold, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
 import { claudeCodeClient, modelVia } from "../src/pipeline/claudecode";
 import type { ExtractClient, Source } from "../src/pipeline/extract";
@@ -178,7 +178,7 @@ async function runVerify(): Promise<void> {
         console.log(`${id}: skipped (manual)`);
         continue;
       }
-      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held ?? []).filter((h) => h.reason !== "unclear-match").length === 0) {
+      if (sourcesFor(file).length === 0 || Object.keys(file.picks).length + (file.held ?? []).filter((h) => !isPersonHold(h)).length === 0) {
         console.log(`${id}: skipped (no source or no picks)`);
         continue;
       }

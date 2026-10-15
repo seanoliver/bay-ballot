@@ -172,9 +172,27 @@ describe("toEntries", () => {
     const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary McCoy", "Michael T. Nguyan"] }));
     expect(r.picks["supervisor-d8"]).toBeUndefined();
     expect(r.held).toEqual([
-      expect.objectContaining({ contestId: "supervisor-d8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "name-mismatch", evidence: expect.stringContaining("'Michael T. Nguyan'") }),
+      expect.objectContaining({ contestId: "supervisor-d8", pick: ["Gary McCoy", "Michael T. Nguyen"], reason: "name-mismatch", evidence: expect.stringContaining("`Michael T. Nguyan`") }),
     ]);
     expect(r.notes.some((n) => n.includes("PICK DROPPED"))).toBe(false);
+  });
+
+  it("keeps the first of a contest returned twice when the first is held", () => {
+    const r = run(
+      pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyan"] }),
+      pick({ contestId: "supervisor-d8", candidates: ["Michael T. Nguyen"] }),
+    );
+    expect(r.held).toHaveLength(1);
+    expect(r.picks["supervisor-d8"]).toBeUndefined();
+    expect(r.notes).toContain("supervisor-d8: duplicate pick, kept first");
+    expect(r.notes.some((n) => n.startsWith("supervisor-d8: PICK HELD"))).toBe(true);
+  });
+
+  it("shows the page's spelling on one line as code, so it can't add links or mentions", () => {
+    const r = run(pick({ contestId: "supervisor-d8", candidates: ["Gary\nMcCoyy `[x](https://e.example) @someone`"] }));
+    expect(r.held).toHaveLength(0);
+    const near = run(pick({ contestId: "supervisor-d8", candidates: ["Michael T.\nNguyan`"] }));
+    expect(near.held[0].evidence).toMatch(/^the page names `Michael T\. Nguyan`, not on the ballot; closest `Michael T\. Nguyen`/);
   });
 
   it("passes the guide's own names to quote verification", () => {

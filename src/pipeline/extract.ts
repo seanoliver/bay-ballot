@@ -134,8 +134,10 @@ function candidateNames(
     if (!names.includes(m.name)) names.push(m.name);
   }
   const near = matches.filter((x) => x.suggested);
+  // The page's spelling reaches the PR body: one line, no backticks, as code so it can't add links or mentions.
+  const shown = (s: string) => `\`${s.replace(/[\s`]+/g, " ").trim().slice(0, 80)}\``;
   const mismatch = near.length
-    ? `the page names ${near.map((x) => `'${x.name}'`).join(", ")}, not on the ballot; closest ${near.map((x) => `'${x.suggested}'`).join(", ")}. If it is the same person, add an alias`
+    ? `the page names ${near.map((x) => shown(x.name)).join(", ")}, not on the ballot; closest ${near.map((x) => shown(x.suggested!)).join(", ")}. If it is the same person, add an alias`
     : undefined;
   return { names, ...(mismatch ? { mismatch } : {}) };
 }
@@ -171,7 +173,7 @@ export function toEntries(
       notes.push(`unknown contest ${p.contestId}`);
       continue;
     }
-    if (c.id in picks) {
+    if (c.id in picks || held.some((h) => h.contestId === c.id)) {
       notes.push(`${c.id}: duplicate pick, kept first`);
       continue;
     }
@@ -222,9 +224,18 @@ export function toEntries(
 
     const n = p.rankedCount;
     const partial = ranked && Array.isArray(pick) && n !== null && Number.isInteger(n) && n >= 1 && n < pick.length;
-    const entry = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
-    if (mismatch) held.push({ contestId: c.id, reason: "name-mismatch", evidence: mismatch, ...entry });
-    else picks[c.id] = entry;
+    if (mismatch) {
+      notes.push(`${c.id}: PICK HELD — ${mismatch}`);
+      held.push({
+        contestId: c.id,
+        pick,
+        reason: "name-mismatch",
+        evidence: mismatch,
+        ...(ranked ? { ranked: true } : {}),
+        ...(partial ? { rankedCount: n } : {}),
+        ...(kept.length ? { quotes: kept.map((q) => ({ text: q.text, source: q.source })) } : {}),
+      });
+    } else picks[c.id] = { pick, ranked, ...(partial ? { rankedCount: n } : {}), quotes: kept };
   }
   return { picks, held, notes, dropped };
 }

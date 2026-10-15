@@ -20,12 +20,13 @@ On the old code, `toEntries` with a pick of `["Scott Weiner"]` for `us-rep-11` r
 - `suggestName` (`src/lib/names.ts`) returns the one candidate a rejected name is close to: first names one edit apart or sharing their first three letters, last names equal or (5+ letters) one edit apart, where two swapped letters count as one edit. It checks aliases and nickname variants, and returns nothing when two candidates are close.
 - `toEntries` holds such a pick under `held:` with the new reason `name-mismatch`, the suggested candidate as its pick, and evidence naming the page's spelling. Names close to no candidate are still dropped.
 - The refresh adds these holds to the file and to the run's held list, so the PR is labeled for review and the run exits 2.
-- `nextFile` drops a previous `name-mismatch` hold, since each extraction rebuilds it; once an alias makes the name match, the next extraction publishes the pick. The verifier neither checks nor releases these holds (`isPersonHold` in `src/lib/schema.ts`).
+- `nextFile` drops a previous `name-mismatch` hold, since each extraction rebuilds it; once an alias makes the name match, the next extraction publishes the pick. A rebuilt hold that matches the file's existing one is kept as it was and not reported again. The verifier neither checks nor releases these holds (`isPersonHold` in `src/lib/schema.ts`), and the shrink check counts them as kept.
+- The page's spelling goes into the evidence as inline code on one line, since it reaches the PR body.
 
 ## Verification
 
 - New tests in `tests/names.test.ts`, `tests/extract.test.ts`, `tests/write.test.ts`, `tests/verify.test.ts` and `tests/refresh.test.ts`, including the real #152 spelling against the ballot's "Mano Raju".
-- Mutation checks: each of ten guards (the prefix rule, swapped letters, the 5-letter last-name limit, the single-match rule, the hold in `toEntries`, `nextFile`, the verifier skip and the three refresh paths) fails a test when removed.
+- Mutation checks: each new guard fails a test when removed (the prefix rule, swapped letters, the 5-letter last-name limit, the single-match rule, the hold and duplicate check in `toEntries`, `nextFile`, the verifier skip, the refresh paths, the shrink count, rejected quotes and evidence escaping).
 
 ## Guardrail
 
