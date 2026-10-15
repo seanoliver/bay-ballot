@@ -28,7 +28,7 @@ extraSources:
   - https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
   - https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
   - https://www.eastbaytimes.com/opinion/endorsements/
-contentSelector: "h1.entry-title, .article-body" # article only: sidebars carry headlines for other editorials
+contentSelector: h1.entry-title, .article-body # article only: sidebars carry headlines for other editorials
 contentExclude: aside.related, .sspw-wrapper # "Related Articles" box and the paywall offer inside some editorials
 # The endorsement indexes list headlines, not an article.
 contentSelectors:

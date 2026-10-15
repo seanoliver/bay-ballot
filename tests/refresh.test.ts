@@ -5,7 +5,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { describe, expect, it, vi } from "vitest";
 import { parse } from "yaml";
 import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
-import { SelectorMissError, type Fetched } from "@/pipeline/fetch";
+import { SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
@@ -461,7 +461,7 @@ describe("runRefresh", () => {
     const root = setup(["alpha"]);
     fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
     const { client } = fakeClient();
-    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
       throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
     });
     const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
@@ -583,7 +583,7 @@ describe("seedPages", () => {
     const root = setup(["alpha"], { stored: false });
     fs.appendFileSync(path.join(root, ELECTION, "endorsements", "alpha.yml"), "extraSources:\n  - https://alpha.org/more\n");
     const { client } = fakeClient();
-    const fetchSource = vi.fn(async (u: string): Promise<Fetched> => {
+    const fetchSource = vi.fn<(u: string, opts?: FetchOptions) => Promise<Fetched>>(async (u) => {
       throw new SelectorMissError(`${u}: content selector "x" matched nothing for "x"`);
     });
     await seedPages(deps(client, fetchSource), { root, election: ELECTION });
