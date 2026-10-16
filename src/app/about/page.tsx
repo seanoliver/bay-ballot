@@ -8,6 +8,7 @@ import { BAR_FILL } from "@/components/tone";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { areaBallotLinks, coverage, coverageSentence } from "@/lib/coverage";
 import { formatDate } from "@/lib/display";
+import { MAX_PINS } from "@/lib/filters";
 import { election, latestElection } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,7 @@ function MiniChip({ name, pinned = false }: { name: string; pinned?: boolean }) 
 const STEPS: { title: string; body: string; drawing: ReactNode }[] = [
   {
     title: "Pick your area or enter your ZIP",
-    body: "Your ballot shows only the contests where you vote. Your ZIP stays on your device.",
+    body: "Your area shows its contests. Add your ZIP to narrow them to the ones that can be on your ballot. Your ZIP stays on your device.",
     drawing: (
       <>
         <span className="inline-flex min-h-7 items-center rounded-full bg-foreground px-2.5 text-xs font-medium text-background">San Francisco</span>
@@ -48,7 +49,7 @@ const STEPS: { title: string; body: string; drawing: ReactNode }[] = [
   },
   {
     title: "Open a contest",
-    body: "See how many guides said Yes or No, then read their reasons.",
+    body: "See how the guides split, then read their reasons.",
     drawing: (
       <span className="flex w-40 flex-col gap-1">
         <span className="text-xs font-semibold text-yes">Yes 52%</span>
@@ -61,7 +62,7 @@ const STEPS: { title: string; body: string; drawing: ReactNode }[] = [
   },
   {
     title: "Pin the guides you trust",
-    body: "Tap the pin on up to 4 guides. Their picks then show on every contest.",
+    body: `Tap the pin on up to ${MAX_PINS} guides. Their picks then show on every contest.`,
     drawing: (
       <>
         <MiniChip name="GrowSF" pinned />
