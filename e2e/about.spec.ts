@@ -113,7 +113,7 @@ test("the About page keeps every method fact and link", async ({ page }) => {
   await expect(main.getByText("Quotes that fail are left out, and endorsements the check can't confirm stay off the site until they're confirmed.", { exact: false })).toBeVisible();
   await expect(main.getByText("A few guides publish their endorsements as images or documents, and I enter those by hand.", { exact: false })).toBeVisible();
   await expect(main.getByText("Each quote links to its source or an archived copy.", { exact: false })).toBeVisible();
-  await expect(main.getByText("Guides are checked for updates every day", { exact: false })).toBeVisible();
+  await expect(main.getByText("Guides are checked for updates every day, and the few that can't be checked automatically are checked by hand.", { exact: false })).toBeVisible();
   await expect(main.getByRole("link", { name: "changelog" })).toHaveAttribute("href", "/changelog");
   await open(page, "Is it partisan?");
   await expect(main.getByText("Bay Ballot makes no endorsements of its own.")).toBeVisible();
