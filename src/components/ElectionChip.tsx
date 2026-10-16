@@ -6,6 +6,7 @@ import { daysLeft, electionDayState, pacificDate, RESULTS_URL, shortDate } from 
 import { isPlainClick } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
+import { HISTORY_BUDGET } from "./useBallotFilters";
 
 const CHIP = "inline-flex min-h-10 items-center gap-1 whitespace-nowrap rounded-full px-2.5 text-xs font-semibold lg:px-3 lg:text-[13px] ring-1 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50";
 const SUB = "font-medium text-muted-foreground";
@@ -27,7 +28,8 @@ function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   const section = document.getElementById("before-you-vote");
   section?.focus({ preventScroll: true });
   section?.scrollIntoView();
-  if (window.location.hash === "#before-you-vote") return;
+  // Costs 2: Next follows our write with its own replaceState.
+  if (window.location.hash === "#before-you-vote" || !HISTORY_BUDGET.tryNote(2)) return;
   try {
     window.history.replaceState(null, "", "#before-you-vote");
   } catch {}
