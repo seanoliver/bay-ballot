@@ -83,6 +83,24 @@ test("a keyboard press on the chip moves focus to the voting links", async ({ pa
   await expect(page.getByRole("link", { name: /^Register to vote/ })).toBeFocused();
 });
 
+test("the chip's hash write lets the router take the new URL", async ({ page }) => {
+  await page.addInitScript(() => {
+    const calls: string[] = [];
+    (window as unknown as { replaceCalls: string[] }).replaceCalls = calls;
+    const original = history.replaceState.bind(history);
+    history.replaceState = (data, unused, url) => {
+      calls.push(String(url ?? ""));
+      original(data, unused, url);
+    };
+  });
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto(BALLOT);
+  await expect(chip(page)).toContainText("days");
+  await chip(page).click();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}#before-you-vote$`));
+  await expect.poll(() => page.evaluate(() => (window as unknown as { replaceCalls: string[] }).replaceCalls.filter((u) => u.endsWith(`${location.pathname}#before-you-vote`)).length)).toBeGreaterThan(0);
+});
+
 test("an open tab's chip turns over at Pacific midnight", async ({ page }) => {
   await page.clock.install({ time: new Date("2026-11-02T23:59:00-08:00") });
   await page.goto("/about");
