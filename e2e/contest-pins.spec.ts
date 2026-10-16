@@ -334,9 +334,33 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
     await expect(pinChip(pane, "SF Chronicle")).toHaveAccessibleDescription("San Francisco Chronicle");
     await expect(pinChip(pane, "SF Chronicle")).not.toHaveAttribute("title");
+    await expect(chip).not.toHaveAttribute("title");
     await chip.focus();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("Escape with the mouse over a chip and focus elsewhere closes the pane", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d`);
+    await waitForKeys(page);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    await pane.getByRole("link", { name: /official measures page/ }).focus();
+    await guideLink(pane, "SF Chronicle").hover();
+    await page.keyboard.press("Escape");
+    await expect(page).not.toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("in the sheet, Escape on a focused chip closes the sheet", async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.goto(SF);
+    await waitForKeys(page);
+    await contestRow(page, "Proposition D").click();
+    const sheet = page.getByRole("dialog", { name: "Proposition D" });
+    await expect(sheet).toBeVisible();
+    await guideLink(sheet, "SF Chronicle").focus();
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
   });
 
   test("No pick is left off the Bay Area list and a Bay Area fallback", async ({ page }, info) => {

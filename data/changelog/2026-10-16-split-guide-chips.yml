@@ -2,4 +2,4 @@ date: 2026-10-16
 type: new
 title: A guide chip's name now opens its guide page, and the pin at its end pins it
 pr: 210
-details: "The Guide pages list under each side's chips is gone, since it repeated the chip names. Hovering a name says where it goes."
+details: "The Guide pages list under each side's chips is gone, since it repeated the chip names."
