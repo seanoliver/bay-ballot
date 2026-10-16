@@ -20,7 +20,7 @@ test("the guide page header is a card with type, links and a stat line", async (
   await expect(card.getByText("Newspaper", { exact: true })).toBeVisible();
   await expect(card.getByRole("link", { name: /^Homepage/ })).toHaveAttribute("target", "_blank");
   await expect(card.getByRole("link", { name: /^Endorsements page/ })).toBeVisible();
-  await expect(card.getByText(/^\d+ picks · \d+ with reasons · as of \w+ \d+, \d{4}$/)).toBeVisible();
+  await expect(card.getByText(/^\d+ picks · [1-9]\d* with reasons · as of \w+ \d+, \d{4}$/)).toBeVisible();
 });
 
 test("a list-only guide's stat line says List only instead of a reasons count", async ({ page }) => {
@@ -28,6 +28,17 @@ test("a list-only guide's stat line says List only instead of a reasons count", 
   test.skip(!listOnly, "every published guide explains its picks");
   await page.goto(`/guides/${listOnly!.guide}`);
   await expect(page.locator("header").getByText(/^\d+ picks? · List only · as of \w+ \d+, \d{4}$/)).toBeVisible();
+});
+
+test("a guide that explains its picks but quoted none drops the reasons count", async ({ page }) => {
+  const unquoted = Object.values(data.endorsements)
+    .filter((e) => e.status === "published" && e.hasReasoning && Object.values(e.picks).every((p) => p.quotes.length === 0))
+    .map((e) => e.guide);
+  expect(unquoted).toContain("envirovoters");
+  await page.goto("/guides/envirovoters");
+  const card = page.locator("header", { has: page.getByRole("heading", { level: 1 }) });
+  await expect(card.getByText(/^\d+ picks · as of \w+ \d+, \d{4}$/)).toBeVisible();
+  await expect(card).not.toContainText("with reasons");
 });
 
 // Written out, not read from TYPE_LABEL, so a typo in the page's labels fails here.
@@ -108,6 +119,15 @@ test("a pick row links to its contest", async ({ page }) => {
   await row.click();
   await expect(page).toHaveURL(new RegExp(`${BALLOT}/prop-d$`));
   await expect(page.getByRole("heading", { level: 1, name: "Proposition D" })).toBeVisible();
+});
+
+test("a pick row keeps the filter query the breadcrumb carries", async ({ page }) => {
+  await page.goto(`${GUIDE}?off=sf-gop&why=1`);
+  await expect(page.getByRole("link", { name: "Bay Area ballot", exact: true })).toHaveAttribute("href", `${BALLOT}?off=sf-gop&why=1`);
+  const row = page.getByRole("link", { name: /^Proposition D: (Yes|No)$/ });
+  await expect(row).toHaveAttribute("href", `${BALLOT}/prop-d?off=sf-gop&why=1`);
+  await row.click();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/prop-d\\?off=sf-gop&why=1$`));
 });
 
 test("the contest page has a breadcrumb back to its ballot", async ({ page }) => {
