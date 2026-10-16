@@ -244,18 +244,14 @@ test.describe("pinning from a contest page", () => {
     await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("link", { name: "SPUR", exact: true })).toHaveAttribute("href", "/guides/spur");
   });
 
-  test("a chip with the quote mark explains it on hover, and no-pick chips never have it", async ({ page }, info) => {
+  test("chips have no hover tooltip, and no-pick chips never have the quote mark", async ({ page }, info) => {
     await openContest(page);
     await expect(page.getByText(/means the guide explained its pick/)).toHaveCount(0);
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("link", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("link", { name: /\(gave reasons\)$/ }).first();
-    const tip = chip.locator("[data-tip]");
-    await expect(tip).toBeHidden();
     await chip.hover();
-    await expect(tip).toBeVisible();
-    await expect(tip).toContainText("Gave reasons on this contest.");
-    await expect(tip).toContainText("Opens its guide page.");
+    await expect(page.getByText(/Gave reasons on this contest|Opens its guide page/)).toHaveCount(0);
   });
 
   test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
@@ -329,7 +325,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(pane.getByRole("button", { name: "Show less" })).toHaveCount(0);
   });
 
-  test("a chip's tooltip opens on keyboard focus, gives the full name, and Escape hides it without closing the pane", async ({ page }, info) => {
+  test("a short-named chip's name and pin both carry the full name, and Escape on a focused chip closes the pane", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     await page.goto(`${SF}?c=prop-d`);
     await waitForKeys(page);
@@ -338,132 +334,9 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
     await expect(pinChip(pane, "SF Chronicle")).toHaveAccessibleDescription("San Francisco Chronicle");
     await expect(pinChip(pane, "SF Chronicle")).not.toHaveAttribute("title");
-    const tip = chip.locator("[data-tip]");
-    await expect(tip).toBeHidden();
-    await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
-    for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
-    await expect(chip).toBeFocused();
-    await expect(tip).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(tip).toBeHidden();
-    await expect(pane).toBeVisible();
-    await expect(page).toHaveURL(/[?&]c=prop-d/);
-  });
-
-  test("Escape hides a hovered chip's tooltip while focus is elsewhere, and leaves the pane open", async ({ page }, info) => {
-    test.skip(isPhone(info), "desktop only");
-    await page.goto(`${SF}?c=prop-d`);
-    await waitForKeys(page);
-    const pane = page.getByRole("region", { name: "Proposition D" });
-    await pane.getByRole("link", { name: /official measures page/ }).focus();
-    const chip = guideLink(pane, "SF Chronicle");
-    const tip = chip.locator("[data-tip]");
-    await chip.hover();
-    await expect(tip).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(tip).toBeHidden();
-    await page.waitForTimeout(500);
-    await expect(pane).toBeVisible();
-    await expect(page).toHaveURL(/[?&]c=prop-d/);
-    // Away from the chip, Escape closes the pane as before.
-    await page.mouse.move(0, 0);
+    await chip.focus();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
-  });
-
-  test("a click on a tooltip hides it and neither opens the guide page nor pins", async ({ page }, info) => {
-    test.skip(isPhone(info), "desktop only");
-    await page.goto(`${SF}?c=prop-d`);
-    await waitForKeys(page);
-    const pane = page.getByRole("region", { name: "Proposition D" });
-    const chip = guideLink(pane, "SF Chronicle");
-    const tip = chip.locator("[data-tip]");
-    await chip.hover();
-    await expect(tip).toBeVisible();
-    const navigated = page.waitForURL(/\/guides\//, { timeout: 3000 }).then(
-      () => true,
-      () => false,
-    );
-    await tip.locator("b").click();
-    await expect(tip).toBeHidden();
-    expect(await navigated).toBe(false);
-    await expect(page).toHaveURL(/[?&]c=prop-d/);
-    await expect(pinChip(pane, "SF Chronicle")).toHaveAttribute("aria-pressed", "false");
-    await expect(page).not.toHaveURL(/[?&]pin=/);
-  });
-
-  test("with one chip hovered and another focused, Escape hides both tooltips", async ({ page }, info) => {
-    test.skip(isPhone(info), "a fine pointer at sheet width");
-    await page.setViewportSize({ width: 900, height: 900 });
-    await page.goto(SF);
-    await waitForKeys(page);
-    await contestRow(page, "Proposition D").click();
-    const sheet = page.getByRole("dialog", { name: "Proposition D" });
-    const focused = guideLink(sheet, "SF Chronicle");
-    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
-    for (let i = 0; i < 12 && !(await focused.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
-    await expect(focused).toBeFocused();
-    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link", { name: /\(gave reasons\)$/ }).filter({ hasNotText: "SF Chronicle" }).first();
-    await hovered.hover();
-    await expect(hovered.locator("[data-tip]")).toBeVisible();
-    await expect(focused.locator("[data-tip]")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(hovered.locator("[data-tip]")).toBeHidden();
-    await expect(focused.locator("[data-tip]")).toBeHidden();
-    await expect(sheet).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(sheet).toBeHidden();
-  });
-
-  test("in the sheet with a mouse, Escape hides a chip's tooltip and leaves the sheet open", async ({ page }, info) => {
-    test.skip(isPhone(info), "a fine pointer at sheet width");
-    await page.setViewportSize({ width: 900, height: 900 });
-    await page.goto(SF);
-    await waitForKeys(page);
-    await contestRow(page, "Proposition D").click();
-    const sheet = page.getByRole("dialog", { name: "Proposition D" });
-    await expect(sheet).toBeVisible();
-    const chip = guideLink(sheet, "SF Chronicle");
-    const tip = chip.locator("[data-tip]");
-    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
-    for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
-    await expect(chip).toBeFocused();
-    await expect(tip).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(tip).toBeHidden();
-    // A closing sheet stays visible while it animates out; give it time to finish.
-    await page.waitForTimeout(1000);
-    await expect(sheet).toBeVisible();
-    await expect(page).toHaveURL(/[?&]c=prop-d/);
-    await page.keyboard.press("Escape");
-    await expect(sheet).toBeHidden();
-  });
-
-  test("every chip's tooltip stays inside its row of chips", async ({ page }, info) => {
-    test.skip(isPhone(info), "desktop only");
-    await page.goto(`${SF}?c=prop-d`);
-    await waitForKeys(page);
-    const group = page.getByRole("region", { name: "Proposition D" }).getByRole("group", { name: "Guides for Yes" });
-    await expandChips(group);
-    const row = (await group.boundingBox())!;
-    const chips = group.getByRole("link");
-    let checked = 0;
-    for (const chip of await chips.all()) {
-      const tip = chip.locator("[data-tip]");
-      if (!(await tip.count())) continue;
-      await chip.hover();
-      await expect(tip).toBeVisible();
-      const box = (await tip.boundingBox())!;
-      expect(box.x).toBeGreaterThanOrEqual(row.x - 1);
-      expect(box.x + box.width).toBeLessThanOrEqual(row.x + row.width + 1);
-      const onTop = await tip.evaluate((el) => {
-        const r = el.getBoundingClientRect();
-        return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
-      });
-      expect(onTop).toBe(true);
-      checked++;
-    }
-    expect(checked).toBeGreaterThan(3);
   });
 
   test("No pick is left off the Bay Area list and a Bay Area fallback", async ({ page }, info) => {

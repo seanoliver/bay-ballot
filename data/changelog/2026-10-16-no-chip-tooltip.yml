@@ -1,0 +1,4 @@
+date: 2026-10-16
+type: fix
+title: Guide chips no longer show a tooltip on hover
+details: "The chip's name already links to the guide page, so the tooltip only repeated it. The pin's hover note at the 4-pin limit stays."
