@@ -303,6 +303,9 @@ export function keepPrevQuotes(
           else {
             quotes[i] = q;
             lengthened.push(q);
+            for (let j = quotes.length - 1; j > i; j--) {
+              if (quoteNorm(quotes[j].text).length <= quoteNorm(q.text).length && sameQuote(quotes[j].text, q.text)) quotes.splice(j, 1);
+            }
           }
         }
       } else {

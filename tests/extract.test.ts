@@ -611,6 +611,13 @@ ${q2} ${but}` }];
     expect(r.notes).toEqual([`prop-g: kept previous full quote over the model's shorter one: "${pair.slice(0, 80)}…"`]);
   });
 
+  it("keeps a published pair once when the model returns its sentences as separate quotes", () => {
+    const pair = `${q1} ${q2}`;
+    const r = keep2({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", q1, q2, dashed) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(pair), quote(dashed)]);
+    expect(keep2({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", q1, pair) }).picks["prop-g"].quotes).toEqual([quote(pair)]);
+  });
+
   it("keeps the model's shorter quote when the published full quote no longer passes", () => {
     const gone = `The old page said the closure saved money. ${q2}`;
     const r = keep2({ "prop-g": entry("N", gone) }, { "prop-g": entry("N", q2) });
