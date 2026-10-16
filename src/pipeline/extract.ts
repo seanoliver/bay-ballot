@@ -303,7 +303,9 @@ export function keepPrevQuotes(
       const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
       if (i !== -1) {
         at = i + 1;
-        if (quoteNorm(quotes[i].text).length < quoteNorm(q.text).length) {
+        // A longer model quote may already hold the published one; withoutContained then drops the fragment.
+        const held = quotes.some((x) => quoteNorm(x.text).includes(quoteNorm(q.text)));
+        if (!held && quoteNorm(quotes[i].text).length < quoteNorm(q.text).length) {
           const why = problem(q);
           if (why) notKept(q, why);
           else {
@@ -323,12 +325,12 @@ export function keepPrevQuotes(
     const deduped = withoutContained(quotes);
     if (!restored.length && !lengthened.length && deduped.length === quotes.length) continue;
     quotes.splice(0, quotes.length, ...deduped);
-    for (const q of lengthened) if (quotes.includes(q)) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
     while (quotes.length > MAX_QUOTES) {
       const newest = quotes.findLastIndex((q) => !old.quotes.some((o) => sameQuote(o.text, q.text)));
       const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);
       notes.push(`${id}: dropped new quote to keep the previous ones (limit ${MAX_QUOTES}): "${clip(cut.text)}"`);
     }
+    for (const q of lengthened) if (quotes.includes(q)) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
     for (const q of restored) if (quotes.includes(q)) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
     out[id] = { ...entry, quotes };
   }
