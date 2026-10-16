@@ -465,13 +465,14 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     lines.push("", "## Re-extracted");
     for (const r of changed) {
       lines.push("", `### ${r.id}`, r.dataChanged ? "" : "_Pages changed; extracted data is the same._");
-      for (const d of r.diff) lines.push(`- ${d}`);
-      for (const h of r.held) lines.push(`- **HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}**`);
-      for (const u of r.unclear ?? []) lines.push(`- **unclear-match hold on ${u}**`);
-      for (const k of r.keptNear ?? []) lines.push(`- **${k}**`);
-      for (const w of r.warnings ?? []) lines.push(`- **${w}**`);
-      if (r.droppedByVerifier) lines.push(`- verifier dropped ${r.droppedByVerifier} quote(s)`);
-      for (const m of r.missing) lines.push(`- missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
+      const item = (s: string) => lines.push(`- ${oneLine(s)}`);
+      for (const d of r.diff) item(d);
+      for (const h of r.held) item(`**HELD ${h.contestId}: ${showPick(h.pick)} — ${h.reason}: ${h.evidence}**`);
+      for (const u of r.unclear ?? []) item(`**unclear-match hold on ${u}**`);
+      for (const k of r.keptNear ?? []) item(`**${k}**`);
+      for (const w of r.warnings ?? []) item(`**${w}**`);
+      if (r.droppedByVerifier) item(`verifier dropped ${r.droppedByVerifier} quote(s)`);
+      for (const m of r.missing) item(`missing (reported only) ${m.contestId}: ${m.pick} — ${m.evidence}`);
     }
   }
   const problems = [...by("failed"), ...by("shrunk"), ...by("shrunk-skipped"), ...by("blocked")];
@@ -491,6 +492,9 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   return lines.join("\n") + "\n";
 }
 
+/** Folds newlines in scraped or model text, so one summary item stays one Markdown line. */
+const oneLine = (s: string) => s.replace(/\s+/g, " ");
+
 /**
  * GitHub rejects a PR or issue body over 65,536 characters; the default leaves room for the cc and shrunk-state lines the workflows add.
  * Only the Re-extracted list is shortened, so the verdict, Needs attention and Validation errors stay whole.
@@ -499,23 +503,26 @@ export function capSummary(md: string, max = 60_000): string {
   if (md.length <= max) return md;
   const lines = md.split("\n");
   const start = lines.indexOf("## Re-extracted");
-  let end = start + 1;
-  while (start !== -1 && end < lines.length && /^(### |- |_|$)/.test(lines[end])) end++;
-  const head = lines.slice(0, start + 1).join("\n") + "\n";
-  const tail = "\n" + lines.slice(end).join("\n");
-  const note = "\n_Re-extracted list cut to fit GitHub's size limit._\n";
-  let room = max - head.length - tail.length - note.length;
-  if (start === -1 || room < 0) {
-    const cut = md.slice(0, max - note.length);
-    return cut.slice(0, cut.lastIndexOf("\n") + 1) + note;
+  const next = lines.findIndex((l, i) => i > start && l.startsWith("## "));
+  const end = next === -1 ? lines.length : next;
+  const note = "_Re-extracted list cut to fit GitHub's size limit; plain diff lines were left out first._";
+  const noteSize = note.length + 2;
+  const dropped = new Set<number>();
+  let size = md.length + noteSize;
+  for (let i = end - 1; start !== -1 && i > start && size > max; i--) {
+    if (!/^- (?!\*\*)/.test(lines[i])) continue;
+    dropped.add(i);
+    size -= lines[i].length + 1;
   }
-  const kept: string[] = [];
-  for (const line of lines.slice(start + 1, end)) {
-    if (line.length + 1 > room) break;
-    kept.push(line);
-    room -= line.length + 1;
+  if (start === -1 || size > max) {
+    const fallback = "\n_Summary cut to fit GitHub's size limit._\n";
+    const cut = md.slice(0, max - fallback.length);
+    return cut.slice(0, cut.lastIndexOf("\n") + 1) + fallback;
   }
-  return head + kept.map((l) => l + "\n").join("") + note + tail;
+  const kept = lines.filter((_, i) => !dropped.has(i));
+  if (next === -1) kept.splice(kept.length - 1, 0, "", note);
+  else kept.splice(end - dropped.size, 0, note, "");
+  return kept.join("\n");
 }
 
 export function writeSummary(file: string, md: string): void {

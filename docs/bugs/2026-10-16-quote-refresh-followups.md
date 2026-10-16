@@ -27,7 +27,7 @@ New tests in `tests/extract.test.ts` ("writes no not-kept note when a longer mod
 
 - `keepPrevQuotes`: skip the swap and the note when any remaining quote holds the published quote's normalized text. Write the `lengthened` notes after the `MAX_QUOTES` trim, as the `restored` notes are.
 - `diffPicks`: use `samePick` to decide whether to list `removed` lines. The `~` line still shows a name-order change. Clip by code points.
-- Also from #208: `diffPicks` shows the quote as one line of inline code, so scraped `@handle`, links and images can't render in the PR body; a quote that differs only after normalization (dashes, quotes, spacing) shows as `reworded`; `capSummary` (`src/pipeline/refresh.ts`, written by `writeSummary` from `scripts/bb.ts`) keeps `summary.md` under 60,000 characters, below GitHub's 65,536-character body limit, by shortening only the Re-extracted list.
+- Also from #208: `diffPicks` shows the quote as one line of inline code, so scraped `@handle`, links and images can't render in the PR body; a quote that differs only after normalization (dashes, quotes, spacing, capitalization) shows as `reworded`; `capSummary` (`src/pipeline/refresh.ts`, written by `writeSummary` from `scripts/bb.ts`) keeps `summary.md` under 60,000 characters, below GitHub's 65,536-character body limit, by leaving out plain diff lines from the end of the Re-extracted list; HELD and other bold lines, Needs attention and Validation errors stay. Each summary item is folded onto one line, since scraped evidence can hold newlines.
 
 ## Verification
 
