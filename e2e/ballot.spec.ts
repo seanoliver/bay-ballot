@@ -913,7 +913,7 @@ test.describe("guide page rows", () => {
     });
   }
 
-  test("at 320px the chevron stays with the pick and a district number stays with its title", async ({ page, isMobile }) => {
+  test("at 320px each pick name stays on one line and a district number stays with its title", async ({ page, isMobile }) => {
     test.skip(!isMobile, "phone width");
     await page.setViewportSize({ width: 320, height: 700 });
     await page.goto("/guides/growsf");
@@ -925,20 +925,16 @@ test.describe("guide page rows", () => {
           r.setEnd(node, end);
           return Math.round(r.getClientRects()[0].top);
         };
-        const texts: Text[] = [];
-        const walk = document.createTreeWalker(a.closest("li")!, NodeFilter.SHOW_TEXT);
-        while (walk.nextNode()) if ((walk.currentNode as Text).data.trim()) texts.push(walk.currentNode as Text);
-        const chevron = texts.find((t) => t.data.trim() === "›" || t.data.endsWith("›"))!;
-        const pick = texts[texts.indexOf(chevron) - 1] ?? chevron;
-        const title = texts[0];
+        const title = [...a.childNodes].find((n): n is Text => n.nodeType === Node.TEXT_NODE && !!(n as Text).data.trim())!;
         const m = title.data.match(/(\S+)\s(\d+)$/);
+        const parts = [...a.closest("li")!.querySelectorAll("[aria-hidden=true] > span")];
         return {
-          chevronWithPick: chevron === pick || lineOf(chevron, chevron.data.length - 1, chevron.data.length) === lineOf(pick, pick.data.trimEnd().length - 1, pick.data.trimEnd().length),
+          pickOnOneLine: parts.every((p) => p.getClientRects().length === 1),
           numberWithTitle: !m || lineOf(title, title.data.length - m[2].length, title.data.length) === lineOf(title, m.index!, m.index! + 1 + m[1].length - 1),
         };
       }),
     );
-    expect(lines.every((l) => l.chevronWithPick)).toBe(true);
+    expect(lines.every((l) => l.pickOnOneLine)).toBe(true);
     expect(lines.every((l) => l.numberWithTitle)).toBe(true);
   });
 

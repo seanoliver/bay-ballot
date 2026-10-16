@@ -204,6 +204,15 @@ const TYPE_LABELS: Record<GuideType, string> = {
   civic: "Civic groups",
 };
 
+export const TYPE_LABEL: Record<GuideType, string> = {
+  newspaper: "Newspaper",
+  party: "Party",
+  club: "Political club",
+  union: "Union",
+  advocacy: "Advocacy group",
+  civic: "Civic group",
+};
+
 export function typeState(type: string, f: Filters, guides: GuideInfo[]): "on" | "mixed" | "off" {
   const ofType = guides.filter((g) => g.type === type);
   const on = ofType.filter((g) => isGuideOn(f, g.id)).length;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import type { NextStep, PlaceName } from "@/lib/areas";
 import { candidateSlots } from "@/lib/bar";
 import type { NoPickGuide } from "@/lib/contest-pins";
@@ -9,11 +8,12 @@ import { activeEntries, EMPTY, hiddenLabel, positionGuides, revealGuides, type F
 import type { Contest } from "@/lib/schema";
 import { answerSentence } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
+import { BackLink } from "./BackLink";
 import { BallotNextStep } from "./BallotNextStep";
 import { ContestDetail } from "./ContestDetail";
 import { useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
-import { COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
+import { CARD, COLUMN, DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
 import { markHomeVisit } from "./useHomeRedirect";
 import { useBallotKeys } from "./useBallotKeys";
@@ -64,9 +64,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
       {shown.length ? <FilterSidebar {...filterProps} className={cn(PANE, "js-only lg:pr-2")} /> : null}
       <div data-page-column className={cn(COLUMN, "lg:col-start-2")}>
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
-          <Link href={`${back.href}${carry}`} className="inline-block py-2.5 -my-2.5 text-muted-foreground underline underline-offset-2">
-            {back.label}
-          </Link>
+          <BackLink href={back.href} label={back.label} />
           <div aria-live="polite">
             {hidden > 0 ? (
               <p className="text-muted-foreground">
@@ -88,7 +86,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
           </div>
         </div>
         {shown.length ? <FiltersSheet {...filterProps} className="js-only mt-3 w-full lg:hidden" /> : null}
-        <section className="mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6">
+        <section className={CARD}>
           <ContestDetail
             election={election}
             contest={contest}
