@@ -40,8 +40,9 @@ async function closePanel(page: Page, info: TestInfo) {
   if (isPhone(info)) await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Close" }).click();
 }
 
-// A chip's name is "Pin <guide>", plus "(gave reasons)" when the guide explained its pick here.
-const pinChip = (scope: Page | Locator, name: string) => scope.getByRole("button", { name: new RegExp(`^Pin ${name}( \\(gave reasons\\))?$`) });
+// A chip's pin is "Pin <guide>"; its name links to the guide page, with "(gave reasons)" when the guide explained its pick here.
+const pinChip = (scope: Page | Locator, name: string) => scope.getByRole("button", { name: `Pin ${name}`, exact: true });
+const guideLink = (scope: Page | Locator, name: string) => scope.getByRole("link", { name: new RegExp(`^${name}( \\(gave reasons\\))?$`) });
 
 test.describe("pinning from a contest page", () => {
   test("a guide chip pins the guide, which then shows in Your guides and on the ballot list", async ({ page }, info) => {
@@ -200,30 +201,15 @@ test.describe("pinning from a contest page", () => {
     await expect(page).not.toHaveURL(/[?&]pin=/);
   });
 
-  test("Guide pages lists each side's guides as links, in the chips' order", async ({ page }) => {
+  test("each chip's name links to its guide page, and there is no separate Guide pages list", async ({ page }) => {
     await openContest(page);
-    const side = page.getByRole("group", { name: "Guides for Yes" }).locator("xpath=ancestor::section[1]");
-    const list = side.getByRole("list", { name: "Guide pages for Yes" });
-    await expect(list).toHaveCount(0);
-    await side.getByRole("button", { name: "Guide pages for Yes" }).click();
-    const links = list.getByRole("link");
-    // A chip's visible name is its only bare text; the rest is in spans.
-    const chips = await side
-      .getByRole("group", { name: "Guides for Yes" })
-      .getByRole("button", { name: /^Pin / })
-      .evaluateAll((els) => els.map((el) => [...el.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent).join("").trim()));
-    const names = (await links.allTextContents()).map((t) => t.trim());
-    expect(names.length).toBeGreaterThan(0);
-    expect(names).toEqual(chips.slice(0, names.length));
-    await expect(links).toHaveCount(12);
-    const more = side.getByRole("button", { name: /^and \d+ more guide pages for / });
-    await expect(more).toHaveCount(1);
-    const n = Number((await more.textContent())!.match(/\d+/)![0]);
-    await more.focus();
-    await page.keyboard.press("Enter");
-    await expect(links).toHaveCount(names.length + n);
-    await expect(links.nth(names.length)).toBeFocused();
-    const growsf = list.getByRole("link", { name: "GrowSF", exact: true });
+    const group = page.getByRole("group", { name: "Guides for Yes" });
+    await expect(page.getByRole("button", { name: /^Guide pages/ })).toHaveCount(0);
+    const links = group.getByRole("link");
+    const pins = group.getByRole("button", { name: /^Pin / });
+    expect(await links.count()).toBeGreaterThan(0);
+    await expect(links).toHaveCount(await pins.count());
+    const growsf = guideLink(group, "GrowSF");
     await expect(growsf).toHaveAttribute("href", "/guides/growsf");
     await growsf.click();
     await expect(page).toHaveURL(/\/guides\/growsf$/);
@@ -238,9 +224,9 @@ test.describe("pinning from a contest page", () => {
   test("a chip with the quote mark explains it on hover, and no-pick chips never have it", async ({ page }, info) => {
     await openContest(page);
     await expect(page.getByText(/means the guide explained its pick/)).toHaveCount(0);
-    await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("button", { name: /\(gave reasons\)$/ })).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("link", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
-    const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("button", { name: /\(gave reasons\)$/ }).first();
+    const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("link", { name: /\(gave reasons\)$/ }).first();
     const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
     await chip.hover();
@@ -324,11 +310,11 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await page.goto(`${SF}?c=prop-d`);
     await waitForKeys(page);
     const pane = page.getByRole("region", { name: "Proposition D" });
-    const chip = pinChip(pane, "SF Chronicle");
+    const chip = guideLink(pane, "SF Chronicle");
     await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
     const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
-    await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
+    await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
     for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(chip).toBeFocused();
     await expect(tip).toBeVisible();
@@ -343,8 +329,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await page.goto(`${SF}?c=prop-d`);
     await waitForKeys(page);
     const pane = page.getByRole("region", { name: "Proposition D" });
-    await pane.getByRole("button", { name: "Guide pages for Yes" }).focus();
-    const chip = pinChip(pane, "SF Chronicle");
+    await pane.getByRole("link", { name: /official measures page/ }).focus();
+    const chip = guideLink(pane, "SF Chronicle");
     const tip = chip.locator("[data-tip]");
     await chip.hover();
     await expect(tip).toBeVisible();
@@ -359,17 +345,19 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
   });
 
-  test("a click on a tooltip hides it and pins nothing", async ({ page }, info) => {
+  test("a click on a tooltip hides it and neither opens the guide page nor pins", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     await page.goto(`${SF}?c=prop-d`);
     await waitForKeys(page);
-    const chip = pinChip(page.getByRole("region", { name: "Proposition D" }), "SF Chronicle");
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    const chip = guideLink(pane, "SF Chronicle");
     const tip = chip.locator("[data-tip]");
     await chip.hover();
     await expect(tip).toBeVisible();
     await tip.locator("b").click();
     await expect(tip).toBeHidden();
-    await expect(chip).toHaveAttribute("aria-pressed", "false");
+    await expect(page).toHaveURL(/[?&]c=prop-d/);
+    await expect(pinChip(pane, "SF Chronicle")).toHaveAttribute("aria-pressed", "false");
     await expect(page).not.toHaveURL(/[?&]pin=/);
   });
 
@@ -380,11 +368,11 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await waitForKeys(page);
     await contestRow(page, "Proposition D").click();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
-    const focused = pinChip(sheet, "SF Chronicle");
-    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
+    const focused = guideLink(sheet, "SF Chronicle");
+    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
     for (let i = 0; i < 12 && !(await focused.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(focused).toBeFocused();
-    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /\(gave reasons\)$/ }).filter({ hasNotText: "SF Chronicle" }).first();
+    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link", { name: /\(gave reasons\)$/ }).filter({ hasNotText: "SF Chronicle" }).first();
     await hovered.hover();
     await expect(hovered.locator("[data-tip]")).toBeVisible();
     await expect(focused.locator("[data-tip]")).toBeVisible();
@@ -404,9 +392,9 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await contestRow(page, "Proposition D").click();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     await expect(sheet).toBeVisible();
-    const chip = pinChip(sheet, "SF Chronicle");
+    const chip = guideLink(sheet, "SF Chronicle");
     const tip = chip.locator("[data-tip]");
-    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
+    await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();
     for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(chip).toBeFocused();
     await expect(tip).toBeVisible();
@@ -427,7 +415,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const group = page.getByRole("region", { name: "Proposition D" }).getByRole("group", { name: "Guides for Yes" });
     await expandChips(group);
     const row = (await group.boundingBox())!;
-    const chips = group.getByRole("button", { name: /^Pin / });
+    const chips = group.getByRole("link");
     let checked = 0;
     for (const chip of await chips.all()) {
       const tip = chip.locator("[data-tip]");
