@@ -22,18 +22,18 @@ function current() {
   const id = latestElection();
   const d = election(id);
   if (!d) throw new Error(`latest election '${id}' failed to load`);
-  return { id, ...d };
+  return { id, d };
 }
 
 export function generateStaticParams() {
-  return current().guides.map((g) => ({ guide: g.id }));
+  return current().d.guides.map((g) => ({ guide: g.id }));
 }
 
 async function load(params: PageProps<"/guides/[guide]">["params"]) {
   const { guide: gid } = await params;
-  const d = current();
+  const { id, d } = current();
   const guide = d.guides.find((g) => g.id === gid);
-  return guide ? { d, guide, file: d.endorsements[gid] } : null;
+  return guide ? { id, d, guide, file: d.endorsements[gid] } : null;
 }
 
 export async function generateMetadata({ params }: PageProps<"/guides/[guide]">): Promise<Metadata> {
@@ -44,13 +44,13 @@ export async function generateMetadata({ params }: PageProps<"/guides/[guide]">)
 export default async function GuidePage({ params }: PageProps<"/guides/[guide]">) {
   const x = await load(params);
   if (!x) notFound();
-  const { d, guide, file } = x;
-  const { id, ballot, areas } = d;
+  const { id, d, guide, file } = x;
+  const { ballot, areas } = d;
   const back = guideBallot(guide, areas, id);
   const published = isPublished(file) ? file : null;
   const groups = published ? guidePickGroups(ballot.contests, published, areas) : [];
   const stats = published ? guideStats(groups.flatMap((g) => g.sections.flatMap((s) => s.picks)), published) : null;
-  const { guides, files } = ballotViewProps(election(id)!);
+  const { guides, files } = ballotViewProps(d);
   return (
     <PageColumn>
       <BackLink href={back.href} label={back.label} />

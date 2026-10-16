@@ -1,6 +1,7 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
+import { sourceLink } from "../src/lib/display";
 import { BALLOT, contestRow, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 test("ballot page has the header, logo, intro and footer", async ({ page }) => {
@@ -957,9 +958,11 @@ test.describe("guide page rows", () => {
   });
 
   test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
+    const files = loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements;
+    const chron = files["sf-chronicle"];
     await page.goto("/guides/sf-chronicle");
-    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", /sfchronicle\.com\/projects\/2026\/california-sf-election-endorsements\/$/);
-    const noSource = Object.values(loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements).find((e) => !e.source);
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", sourceLink(chron, chron.source!));
+    const noSource = Object.values(files).find((e) => !e.source);
     test.skip(!noSource, "every guide has a source");
     await page.goto(`/guides/${noSource!.guide}`);
     await expect(page.getByRole("link", { name: /^Homepage/ })).toBeVisible();
