@@ -3,7 +3,7 @@ import { ChangelogDigest } from "@/components/ChangelogDigest";
 import { PageColumn } from "@/components/PageColumn";
 import { areaGuides } from "@/lib/areas";
 import { readChangelog } from "@/lib/changelog";
-import { changelogDays } from "@/lib/changelog-digest";
+import { changelogDays, FOLDED_ROWS } from "@/lib/changelog-digest";
 import { DATA_ROOT, election, latestElection } from "@/lib/site-data";
 
 export const metadata: Metadata = {
@@ -20,6 +20,9 @@ export default function ChangelogPage() {
     <PageColumn>
       <article className="measure">
         <h1 className="text-xl font-semibold">Changelog</h1>
+        <noscript>
+          <style>{`.${FOLDED_ROWS}{display:block;border-top-width:1px;border-radius:calc(var(--radius)*1.4)}`}</style>
+        </noscript>
         <ChangelogDigest days={days} areas={areas} />
       </article>
     </PageColumn>

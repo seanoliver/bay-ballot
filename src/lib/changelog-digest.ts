@@ -5,6 +5,9 @@ import type { ChangelogEntry } from "./schema";
 export type Show = "all" | "site" | "data";
 export const SHOWS: readonly Show[] = ["all", "site", "data"];
 
+/** Class on a day's folded rows; the page's noscript style shows them, since nothing can expand a day without JavaScript. */
+export const FOLDED_ROWS = "changelog-rows";
+
 export type SiteItem = ChangelogEntry & { file: string };
 export type DataRow = { file: string; guide: string | null; name: string | null; text: string; details?: string; pr?: number };
 export type DigestDay = { date: string; site: SiteItem[]; data: DataRow[] };
