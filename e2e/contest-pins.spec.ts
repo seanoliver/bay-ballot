@@ -160,7 +160,8 @@ test.describe("pinning from a contest page", () => {
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
     await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
-    await expect(page.getByText("4 of 4 pinned. Unpin one to pin another.").first()).toHaveClass(/\bsr-only\b/);
+    const described = (await fifth.getAttribute("aria-describedby"))!.split(" ").map((id) => `[id="${id}"]`).join(",");
+    await expect(page.locator(described).filter({ hasText: "4 of 4 pinned" })).toHaveClass(/\bsr-only\b/);
     await fifth.click({ force: true });
     await expect(fifth).toHaveAttribute("aria-pressed", "false");
     await expect(page).toHaveURL(pinParam("sf-chronicle", "growsf", "sf-dems", "league-pissed-off-voters"));
@@ -247,6 +248,13 @@ test.describe("pinning from a contest page", () => {
     await expect(tip).toContainText("Gave reasons on this contest.");
   });
 
+  test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
+    await openContest(page);
+    const side = page.getByRole("heading", { level: 3, name: /^Yes\s*\d/ }).first().locator("xpath=ancestor::section[1]");
+    const gap = await side.evaluate((s) => s.getBoundingClientRect().top - s.parentElement!.parentElement!.previousElementSibling!.getBoundingClientRect().bottom);
+    expect(gap).toBeLessThanOrEqual(33);
+  });
+
   test("an only= link counts just its guides, and Reset then Close leaves no filter in the URL", async ({ page }, info) => {
     await openContest(page, "?only=growsf,sf-chronicle");
     const counted = page.getByText(/\d+ of \d+ guides counted/).filter({ visible: true }).first();
@@ -254,7 +262,15 @@ test.describe("pinning from a contest page", () => {
     const panel = await filterPanel(page, info);
     await panel.getByRole("button", { name: "Reset filters" }).click();
     // Close steps back in history; the reset query is re-applied on the popstate after it.
-    const popped = isPhone(info) ? page.evaluate(() => new Promise((r) => addEventListener("popstate", () => setTimeout(r, 0), { once: true }))) : null;
+    const popped = isPhone(info)
+      ? page.evaluate(
+          () =>
+            new Promise((resolve, reject) => {
+              addEventListener("popstate", () => setTimeout(resolve, 0), { once: true });
+              setTimeout(() => reject(new Error("no popstate after Close")), 5000);
+            }),
+        )
+      : null;
     await closePanel(page, info);
     await popped;
     await expect(page).not.toHaveURL(/[?&](only|off)=/);
@@ -376,6 +392,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(hovered.locator("[data-tip]")).toBeHidden();
     await expect(focused.locator("[data-tip]")).toBeHidden();
     await expect(sheet).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
   });
 
   test("in the sheet with a mouse, Escape hides a chip's tooltip and leaves the sheet open", async ({ page }, info) => {
