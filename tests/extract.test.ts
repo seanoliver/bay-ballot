@@ -675,6 +675,28 @@ ${q2} ${but}` }];
     expect(r.notes).toEqual([`prop-g: previous quote not kept (not-found): "${gone.slice(0, 80)}…"`]);
   });
 
+  it("writes no not-kept note when a longer model quote holds a published pair that fails its checks", () => {
+    const but = "But the closure cost nothing and the park is already full every weekend.";
+    const pair = `${but} ${q2}`;
+    const longer = `${q1} ${pair}`;
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${longer}` }];
+    for (const model of [[q2, longer], [longer, q2]]) {
+      const r = keepPrevQuotes({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", ...model) }, ballot.contests, p);
+      expect(r.picks["prop-g"].quotes).toEqual([quote(longer)]);
+      expect(r.notes).toEqual([]);
+    }
+  });
+
+  it("writes no kept-full-quote note for a published quote the limit of 3 then drops", () => {
+    // A published file holds at most 3 quotes; 4 is the only way to make the limit drop a lengthened one.
+    const pair = `${q1} ${q2}`;
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${pair} ${q3} ${dashed} ${transit}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", q3, dashed, transit, pair) }, { "prop-g": entry("N", q2) }, ballot.contests, p);
+    expect(r.picks["prop-g"].quotes).toHaveLength(3);
+    expect(r.picks["prop-g"].quotes.map((x) => x.text)).not.toContain(pair);
+    expect(r.notes.filter((n) => n.includes("kept previous full quote"))).toEqual([]);
+  });
+
   it("matches an unranked multi-name pick in any order, and a ranked one only in the same order", () => {
     const names = ["Gary McCoy", "Darshini Patel"];
     const sup = (pick: string[], ranked: boolean, ...texts: string[]): Entry => ({ pick, ranked, quotes: texts.map((t) => quote(t)) });

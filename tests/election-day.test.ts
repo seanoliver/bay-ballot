@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { daysLeft, electionDayState, pacificDate, shortDate } from "@/lib/election-day";
 
 const DAY = "2026-11-03";
@@ -44,7 +44,17 @@ describe("labels", () => {
     expect(daysLeft(2)).toBe("2 days");
   });
 
-  it("shortens the date", () => {
-    expect(shortDate(DAY)).toBe("Nov 3");
+  describe("in a zone west of UTC", () => {
+    const tz = process.env.TZ;
+    afterEach(() => {
+      if (tz === undefined) delete process.env.TZ;
+      else process.env.TZ = tz;
+    });
+
+    // CI runs in UTC, where a dropped timeZone option still prints Nov 3.
+    it("shortens the date", () => {
+      process.env.TZ = "America/Los_Angeles";
+      expect(shortDate(DAY)).toBe("Nov 3");
+    });
   });
 });

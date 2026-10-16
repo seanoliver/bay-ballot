@@ -1,20 +1,20 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { areaCounties } from "@/lib/areas";
 import { areaBallotLinks, coverage, coverageSentence } from "@/lib/coverage";
-import { loadElection } from "@/lib/data";
-import { publishedGuides } from "@/lib/filters";
+import { loadElection, type ElectionData } from "@/lib/data";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
 
 describe("coverage", () => {
   it("counts areas, their counties, published guides and contests", () => {
-    expect(coverage(d)).toEqual({
-      areas: d.areas.length,
-      counties: areaCounties(d.areas).length,
-      guides: publishedGuides(d.guides, d.endorsements).length,
-      contests: d.ballot.contests.length,
-    });
+    const area = (id: string, county?: string) => ({ id, jurisdictions: county ? [{ level: "county", name: county }] : [] });
+    const fixture = {
+      areas: [area("sf", "San Francisco"), area("oakland", "Alameda"), area("berkeley", "Alameda"), area("bay-area")],
+      guides: [{ id: "a" }, { id: "b" }, { id: "c" }],
+      endorsements: { a: { status: "published" }, b: { status: "pending" } },
+      ballot: { contests: [{ id: "x" }, { id: "y" }] },
+    } as unknown as ElectionData;
+    expect(coverage(fixture)).toEqual({ areas: 4, counties: 2, guides: 1, contests: 2 });
   });
 
   it("counts a county once however many areas sit in it", () => {

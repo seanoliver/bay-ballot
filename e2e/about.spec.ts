@@ -45,12 +45,34 @@ test("the About page shows three numbered steps and a link to the ballot", async
   await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", BALLOT);
 });
 
-test("the About page's steps stack on phones and sit in a row on desktop", async ({ page }) => {
+test("the About page's steps are one list at reading width, drawings beside the text on desktop and under it on phones", async ({ page }) => {
   await page.goto("/about");
-  const steps = page.getByRole("main").getByRole("list", { name: "How to use it" }).getByRole("listitem");
+  const list = page.getByRole("main").getByRole("list", { name: "How to use it" });
+  const steps = list.getByRole("listitem");
   const ys = await Promise.all([0, 1, 2].map(async (i) => (await steps.nth(i).boundingBox())!.y));
-  if (page.viewportSize()!.width < 768) expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
-  else expect(new Set(ys.map(Math.round)).size).toBe(1);
+  expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
+  const intro = (await page.getByRole("main").locator("p").first().boundingBox())!;
+  expect(Math.abs((await list.boundingBox())!.width - intro.width)).toBeLessThanOrEqual(1);
+  expect(await list.evaluate((e) => parseFloat(getComputedStyle(e).borderTopWidth))).toBeGreaterThan(0);
+  const dividers = await steps.evaluateAll((els) => els.map((e) => parseFloat(getComputedStyle(e).borderTopWidth)));
+  expect(dividers[0]).toBe(0);
+  expect(dividers.slice(1).every((w) => w > 0)).toBe(true);
+  for (const el of await steps.locator("[data-slot=item-title], [data-slot=item-description]").all()) {
+    expect(await el.evaluate((e) => e.scrollHeight <= e.clientHeight)).toBe(true);
+  }
+  for (let i = 0; i < 3; i++) {
+    const text = (await steps.nth(i).locator("[data-slot=item-content]").boundingBox())!;
+    const drawing = (await steps.nth(i).locator("[data-slot=item-actions]").boundingBox())!;
+    if (page.viewportSize()!.width < 640) expect(drawing.y).toBeGreaterThanOrEqual(text.y + text.height);
+    else expect(drawing.x).toBeGreaterThanOrEqual(text.x + text.width);
+  }
+});
+
+test("the About page hides the step drawings from screen readers", async ({ page }) => {
+  await page.goto("/about");
+  const drawings = page.getByRole("main").getByRole("list", { name: "How to use it" }).locator("[data-slot=item-actions]");
+  await expect(drawings).toHaveCount(3);
+  for (const d of await drawings.all()) await expect(d).toHaveAttribute("aria-hidden", "true");
 });
 
 test("the About page's questions start closed and open to show their answers", async ({ page }) => {
@@ -87,11 +109,9 @@ test("Is my area covered? on the About page counts the data and links every area
   await open(page, "Is my area covered?");
   const main = page.getByRole("main");
   await expect(main.getByText(coverageSentence(coverage(data)))).toBeVisible();
-  for (const a of data.areas) {
-    const link = main.getByRole("link", { name: a.name, exact: true });
-    await expect(link).toHaveAttribute("href", `${BALLOT}/${a.id}`);
-    expect((await request.get(`${BALLOT}/${a.id}`)).status()).toBe(200);
-  }
+  for (const a of data.areas) await expect(main.getByRole("link", { name: a.name, exact: true })).toHaveAttribute("href", `${BALLOT}/${a.id}`);
+  const statuses = await Promise.all(data.areas.map(async (a) => (await request.get(`${BALLOT}/${a.id}`)).status()));
+  expect(statuses).toEqual(data.areas.map(() => 200));
 });
 
 test("the About page keeps every method fact and link", async ({ page }) => {
@@ -106,18 +126,21 @@ test("the About page keeps every method fact and link", async ({ page }) => {
   ])
     await expect(main.getByText(rule)).toBeVisible();
   await open(page, "How are guides chosen?");
+  await expect(main.getByText("newspaper editorial boards, party committees, political clubs, labor councils, advocacy groups and civic groups.", { exact: false })).toBeVisible();
   await expect(main.getByText("A guide's endorsements appear once it publishes them for this election.")).toBeVisible();
   await open(page, "How do you check the quotes?");
   await expect(main.getByText("A separate check confirms each quote appears word for word on the guide's page.", { exact: false })).toBeVisible();
   await expect(main.getByText("For most guides, an automated process reads the guide's published pages", { exact: false })).toBeVisible();
   await expect(main.getByText("Quotes that fail are left out, and endorsements the check can't confirm stay off the site until they're confirmed.", { exact: false })).toBeVisible();
   await expect(main.getByText("A few guides publish their endorsements as images or documents, and I enter those by hand.", { exact: false })).toBeVisible();
+  await expect(main.getByText("I monitor the whole process closely.", { exact: false })).toBeVisible();
   await expect(main.getByText("Each quote links to its source or an archived copy.", { exact: false })).toBeVisible();
   await expect(main.getByText("Guides are checked for updates every day, and the few that can't be checked automatically are checked by hand.", { exact: false })).toBeVisible();
   await expect(main.getByRole("link", { name: "changelog" })).toHaveAttribute("href", "/changelog");
   await open(page, "Is it partisan?");
   await expect(main.getByText("Bay Ballot makes no endorsements of its own.")).toBeVisible();
   await expect(main.getByRole("link", { name: "public on GitHub" })).toHaveAttribute("href", REPO);
+  await expect(main.getByText("so anyone can see exactly how it works.", { exact: false })).toBeVisible();
   await expect(main.getByText("It is not affiliated with any guide or campaign.")).toBeVisible();
   await open(page, "What do you track?");
   await expect(main.getByText("Neither uses cookies.", { exact: false })).toBeVisible();
@@ -142,6 +165,13 @@ test("the About page's last question holds Sean's signed letter", async ({ page 
 
 test("the About page never mentions AI or models", async ({ page }) => {
   await page.goto("/about");
-  const text = await page.getByRole("main").textContent();
+  // Join text nodes with spaces: textContent runs adjacent elements together, hiding a word at an element edge.
+  const text = await page.getByRole("main").evaluate((main) => {
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    const parts: string[] = [];
+    while (walker.nextNode()) parts.push(walker.currentNode.textContent ?? "");
+    return parts.join(" ");
+  });
+  expect(text).toContain("I monitor the whole process closely.");
   expect(text).not.toMatch(/\b(AI|LLMs?|models?|Claude)\b/i);
 });
