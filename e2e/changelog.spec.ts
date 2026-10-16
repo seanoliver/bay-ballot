@@ -2,7 +2,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { areaGuides } from "../src/lib/areas";
 import { readChangelog } from "../src/lib/changelog";
-import { changelogDays, dataSummary, rowInArea } from "../src/lib/changelog-digest";
+import { changelogDays, dataSummary, rowInArea, visibleDays } from "../src/lib/changelog-digest";
 import { loadElection } from "../src/lib/data";
 import { monthDay } from "../src/lib/display";
 import { watchErrors } from "./helpers";
@@ -16,6 +16,8 @@ const allRows = dataDays.flatMap((d) => d.data);
 const summaries = (page: Page) => page.locator("main button[aria-expanded]");
 const rows = (page: Page) => page.getByRole("list", { name: /^Data updates/ }).getByRole("listitem");
 const show = (page: Page, name: string) => page.getByRole("group", { name: "Show" }).getByRole("button", { name, exact: true });
+// A click before hydration is dropped.
+const ready = (page: Page) => expect(page.locator("[data-ready]")).toHaveCount(1);
 
 test("the changelog shows one block per day with each day's data updates folded", async ({ page }) => {
   const errors = watchErrors(page);
@@ -33,6 +35,7 @@ test("the changelog shows one block per day with each day's data updates folded"
 
 test("a day's summary expands in place to one row per update", async ({ page }) => {
   await page.goto("/changelog");
+  await ready(page);
   const [day] = dataDays;
   const button = page.getByRole("button", { name: dataSummary(day.data) }).first();
   await button.click();
@@ -48,6 +51,7 @@ test("a day's summary expands in place to one row per update", async ({ page }) 
 
 test("Site hides data updates and Data shows only them, every day expanded", async ({ page }) => {
   await page.goto("/changelog");
+  await ready(page);
   await show(page, "Site").click();
   await expect(show(page, "Site")).toHaveAttribute("aria-pressed", "true");
   await expect(page).toHaveURL(/\?show=site$/);
@@ -62,7 +66,9 @@ test("Site hides data updates and Data shows only them, every day expanded", asy
   await expect(page.getByRole("link", { name: /^Pull request/ })).toHaveCount(withPr.length);
   const withDetails = allRows.find((r) => r.details);
   if (withDetails) await expect(rows(page).filter({ hasText: withDetails.details! })).toHaveCount(1);
-  await expect(rows(page).filter({ hasText: "The Mercury News and East Bay Times editorial boards recommend No on Prop 44" })).toHaveCount(1);
+  const guidedDetails = allRows.find((r) => r.name && r.details)!;
+  expect(guidedDetails).toBeDefined();
+  await expect(rows(page).filter({ hasText: guidedDetails.name! }).filter({ hasText: guidedDetails.details! }).first()).toBeVisible();
 
   await show(page, "All").click();
   await expect(page).toHaveURL(/\/changelog$/);
@@ -77,12 +83,14 @@ test("the area filter narrows data rows to guides that cover the area, and survi
   expect(expected).toBeLessThan(allRows.length);
 
   await page.goto("/changelog?show=data");
+  await ready(page);
   await expect(rows(page)).toHaveCount(allRows.length);
   await page.getByLabel("Area").selectOption({ label: area.name });
   await expect(page).toHaveURL(/\?show=data&area=marin$/);
   await expect(rows(page)).toHaveCount(expected);
 
   await page.reload();
+  await ready(page);
   await expect(page.getByLabel("Area")).toHaveValue("marin");
   await expect(rows(page)).toHaveCount(expected);
 
@@ -96,4 +104,29 @@ test("the area filter narrows data rows to guides that cover the area, and survi
   await show(page, "Data").click();
   await expect(page.getByLabel("Area")).toHaveValue("");
   await expect(rows(page)).toHaveCount(allRows.length);
+});
+
+test("an area link opens the default view with that area's data folded per day", async ({ page }) => {
+  const area = data.areas.find((a) => a.id === "marin")!;
+  const shown = visibleDays(days, { show: "all", guides: new Set(areaGuides(data.guides, area).map((g) => g.id)) });
+  const folded = shown.filter((d) => d.data.length > 0);
+  await page.goto("/changelog?area=marin");
+  await ready(page);
+  await expect(page.getByLabel("Area")).toHaveValue("marin");
+  await expect(show(page, "All")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText(shown.map((d) => monthDay(d.date)));
+  await expect(summaries(page)).toHaveText(folded.map((d) => dataSummary(d.data)));
+  await summaries(page).first().click();
+  await expect(rows(page)).toHaveCount(folded[0].data.length);
+});
+
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("every day's data rows show, with no summaries to expand", async ({ page }) => {
+    await page.goto("/changelog");
+    await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText(days.map((d) => monthDay(d.date)));
+    await expect(rows(page)).toHaveCount(allRows.length);
+    await expect(page.getByRole("button", { name: dataSummary(dataDays[0].data) })).toHaveCount(0);
+  });
 });
