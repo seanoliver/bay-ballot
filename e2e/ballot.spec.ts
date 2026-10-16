@@ -958,7 +958,7 @@ test.describe("guide page rows", () => {
 
   test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
     await page.goto("/guides/sf-chronicle");
-    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", /sfchronicle\.com|web\.archive\.org/);
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", /sfchronicle\.com\/projects\/2026\/california-sf-election-endorsements\/$/);
     const noSource = Object.values(loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements).find((e) => !e.source);
     test.skip(!noSource, "every guide has a source");
     await page.goto(`/guides/${noSource!.guide}`);
