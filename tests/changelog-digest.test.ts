@@ -42,7 +42,7 @@ describe("changelogDays", () => {
 describe("dataSummary", () => {
   it("counts distinct guides and every update", () => {
     expect(dataSummary(days[0].data)).toBe("2 guides updated · 4 updates");
-    expect(dataSummary(days[1].data)).toBe("1 guide updated · 1 update");
+    expect(dataSummary(days[1].data)).toBe("1 guide updated");
   });
   it("counts updates alone when no row has a guide", () => {
     expect(dataSummary([{ guide: null }, { guide: null }])).toBe("2 updates");

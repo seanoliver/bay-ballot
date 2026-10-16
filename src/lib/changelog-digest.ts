@@ -1,7 +1,7 @@
 import { counted } from "./display";
 import type { ChangelogEntry } from "./schema";
 
-// Client-safe: no fs or zod. The changelog page's day blocks, filters and summaries.
+// Client-safe: no fs or zod imports.
 export type Show = "all" | "site" | "data";
 export const SHOWS: readonly Show[] = ["all", "site", "data"];
 
@@ -20,7 +20,6 @@ export function dataRow(e: ChangelogEntry & { file: string }, guides: Map<string
   return { file: e.file, guide: g.id, name: named ? g.name : null, text: named ? e.title.slice(g.name.length + 1) : e.title };
 }
 
-/** Entries arrive newest first; each day keeps that order. */
 export function changelogDays(entries: SiteItem[], guides: GuideName[]): DigestDay[] {
   const byId = new Map(guides.map((g) => [g.id, g]));
   const out: DigestDay[] = [];
@@ -36,13 +35,13 @@ export function changelogDays(entries: SiteItem[], guides: GuideName[]): DigestD
   return out;
 }
 
-/** A row with no guide shows under every area. */
 export const rowInArea = (row: Pick<DataRow, "guide">, guides: ReadonlySet<string> | null) => guides === null || row.guide === null || guides.has(row.guide);
 
 export function dataSummary(rows: Pick<DataRow, "guide">[]): string {
   const guides = new Set(rows.flatMap((r) => (r.guide ? [r.guide] : []))).size;
   const updates = counted(rows.length, "update");
-  return guides > 0 ? `${counted(guides, "guide")} updated · ${updates}` : updates;
+  if (guides === 0) return updates;
+  return guides === rows.length ? `${counted(guides, "guide")} updated` : `${counted(guides, "guide")} updated · ${updates}`;
 }
 
 export function visibleDays(days: DigestDay[], { show, guides }: { show: Show; guides: ReadonlySet<string> | null }): DigestDay[] {
