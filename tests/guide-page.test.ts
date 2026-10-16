@@ -40,8 +40,8 @@ describe("guideBallot", () => {
     expect(guideBallot({ areas: ["sf"] }, areas, "2026-11")).toEqual({ href: "/2026-11/sf", label: "San Francisco ballot" });
   });
   it("links a one-area guide to its own page even when its county has a page", () => {
-    const SJ: Area = { ...PA, id: "san-jose", name: "San Jose", jurisdictions: [...PA.jurisdictions.slice(0, 2), { ...PA.jurisdictions[2], name: "San Jose" }] as Area["jurisdictions"] };
-    expect(guideBallot({ areas: ["palo-alto"] }, [...areas, SJ], "2026-11")).toEqual({ href: "/2026-11/palo-alto", label: "Palo Alto ballot" });
+    const SCC: Area = { id: "santa-clara-county", name: "Santa Clara County", kind: "county", jurisdictions: PA.jurisdictions.slice(0, 2) };
+    expect(guideBallot({ areas: ["palo-alto"] }, [...areas, SCC], "2026-11")).toEqual({ href: "/2026-11/palo-alto", label: "Palo Alto ballot" });
   });
   it("links a guide spanning counties to the Bay Area ballot", () => {
     expect(guideBallot({ areas: ["sf", "san-mateo"] }, areas, "2026-11")).toEqual({ href: "/2026-11", label: "Bay Area ballot" });

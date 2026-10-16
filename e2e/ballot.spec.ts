@@ -1,4 +1,6 @@
+import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { loadElection } from "../src/lib/data";
 import { BALLOT, contestRow, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 test("ballot page has the header, logo, intro and footer", async ({ page }) => {
@@ -957,7 +959,9 @@ test.describe("guide page rows", () => {
   test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
     await page.goto("/guides/sf-chronicle");
     await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", /sfchronicle\.com|web\.archive\.org/);
-    await page.goto("/guides/sf-bay-guardian");
+    const noSource = Object.values(loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements).find((e) => !e.source);
+    test.skip(!noSource, "every guide has a source");
+    await page.goto(`/guides/${noSource!.guide}`);
     await expect(page.getByRole("link", { name: /^Homepage/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveCount(0);
   });
