@@ -135,6 +135,7 @@ export type EndorsementFile = z.infer<typeof EndorsementFile>;
 export const ChangelogEntry = z.object({
   date: z.iso.date(),
   type: z.enum(["new", "data", "fix"]),
+  guide: Slug.optional(),
   title: NonEmpty,
   details: NonEmpty.optional(),
   pr: z.number().int().positive().optional(),

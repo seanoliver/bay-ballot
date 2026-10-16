@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
-import { changelogMonths, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
+import { changelogErrors, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
@@ -90,16 +90,6 @@ describe("utcDay", () => {
   });
 });
 
-describe("changelogMonths", () => {
-  it("groups entries by month in order", () => {
-    const out = changelogMonths([e("2026-10-06", "a"), e("2026-10-01", "b"), e("2026-09-30", "c")]);
-    expect(out.map((m) => [m.label, m.entries.map((x) => x.title)])).toEqual([
-      ["October 2026", ["a", "b"]],
-      ["September 2026", ["c"]],
-    ]);
-  });
-});
-
 describe("pacificDay and latestDay", () => {
   it("is the calendar day in California, not UTC", () => {
     expect(pacificDay(new Date("2026-10-07T00:37:00Z"))).toBe("2026-10-06");
@@ -109,5 +99,68 @@ describe("pacificDay and latestDay", () => {
   it("lets validation accept either day around midnight", () => {
     expect(latestDay(new Date("2026-10-07T00:37:00Z"))).toBe("2026-10-07");
     expect(latestDay(new Date("2026-10-07T12:00:00Z"))).toBe("2026-10-07");
+  });
+});
+
+describe("changelogErrors", () => {
+  const real = path.join(process.cwd(), "data");
+  const roots: string[] = [];
+  afterEach(() => roots.splice(0).forEach((r) => fs.rmSync(r, { recursive: true, force: true })));
+
+  function copyWith(entry: string) {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cle-"));
+    roots.push(root);
+    for (const name of fs.readdirSync(real)) if (name !== "changelog") fs.symlinkSync(path.join(real, name), path.join(root, name));
+    fs.mkdirSync(path.join(root, "changelog"));
+    fs.writeFileSync(path.join(root, "changelog", "2026-10-01-x.yml"), entry);
+    return root;
+  }
+
+  it("accepts the repo's changelog", () => {
+    expect(changelogErrors(real, latestDay())).toEqual([]);
+  });
+
+  it("flags a guide id with no file in guides/", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
+  });
+
+  it("checks guide ids without loading elections", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
+    fs.mkdirSync(path.join(root, "2025-11"));
+    fs.writeFileSync(path.join(root, "2025-11", "ballot.yml"), "contests: [");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
+  });
+
+  it("doesn't flag entries naming a guide whose file fails to parse", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
+    fs.rmSync(path.join(root, "guides"));
+    fs.cpSync(path.join(real, "guides"), path.join(root, "guides"), { recursive: true });
+    fs.writeFileSync(path.join(root, "guides", "growsf.yml"), "id: [");
+    expect(changelogErrors(root, "2026-10-16")).toEqual([]);
+  });
+
+  it("flags every guide id when there is no guides/ folder", () => {
+    const root = dir({ "2026-10-01-x.yml": "date: 2026-10-01\ntype: data\ntitle: t\nguide: growsf\n" });
+    roots.push(root);
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/growsf/);
+  });
+
+  it("counts only .yml files in guides/ as guide ids", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Notes\nguide: notes\n");
+    fs.rmSync(path.join(root, "guides"));
+    fs.cpSync(path.join(real, "guides"), path.join(root, "guides"), { recursive: true });
+    fs.writeFileSync(path.join(root, "guides", "notes.txt"), "");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/notes/);
+  });
+
+  it("reports a changelog file that fails to parse", () => {
+    const root = copyWith("date: nope\n");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/2026-10-01-x\.yml/);
+  });
+
+  it("accepts a guide id that has a file in guides/", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
+    expect(changelogErrors(root, "2026-10-16")).toEqual([]);
   });
 });

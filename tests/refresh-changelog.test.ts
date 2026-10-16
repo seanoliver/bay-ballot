@@ -18,13 +18,14 @@ const contests = [
 const e = (pick: Entry["pick"], quotes = 0, ranked = false): Entry => ({ pick, ranked, quotes: Array.from({ length: quotes }, (_, i) => ({ text: `q${i}`, source: "https://g.org/a" })) });
 const file = (picks: Record<string, Entry>, over: Partial<EndorsementFile> = {}): EndorsementFile =>
   ({ guide: "growsf", election: "2026-11", status: "published", fetchedAt: "2026-10-05", hasReasoning: true, picks, ...over }) as EndorsementFile;
-const title = (before: EndorsementFile, after: EndorsementFile) => guideChangelogEntry({ guideName: "GrowSF", before, after, contests, date: "2026-10-07" })?.title ?? null;
+const title = (before: EndorsementFile, after: EndorsementFile) => guideChangelogEntry({ guideId: "growsf", guideName: "GrowSF", before, after, contests, date: "2026-10-07" })?.title ?? null;
 
 describe("guideChangelogEntry", () => {
   it("announces a first publication with its contest count", () => {
-    expect(guideChangelogEntry({ guideName: "GrowSF", before: file({}, { status: "pending" }), after: file({ "prop-b": e("Y"), governor: e(["Xavier Becerra"]) }), contests, date: "2026-10-07" })).toEqual({
+    expect(guideChangelogEntry({ guideId: "growsf", guideName: "GrowSF", before: file({}, { status: "pending" }), after: file({ "prop-b": e("Y"), governor: e(["Xavier Becerra"]) }), contests, date: "2026-10-07" })).toEqual({
       date: "2026-10-07",
       type: "data",
+      guide: "growsf",
       title: "GrowSF published endorsements for 2 contests",
     });
   });

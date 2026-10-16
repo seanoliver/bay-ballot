@@ -216,7 +216,7 @@ describe("runRefresh", () => {
     const page = PAGE("alpha", "October 6, 2026").replace("No on Prop B:", "Strong No on Prop B:");
     await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION, baseline: main });
     expect(fs.readdirSync(dir)).toEqual(["2026-10-06-refresh-alpha.yml"]);
-    expect(parse(fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8"))).toEqual({ date: "2026-10-06", type: "data", title: "ALPHA endorsed Yes on Prop C" });
+    expect(parse(fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8"))).toEqual({ date: "2026-10-06", type: "data", guide: "alpha", title: "ALPHA endorsed Yes on Prop C" });
     const before = fs.readFileSync(path.join(dir, "2026-10-06-refresh-alpha.yml"), "utf8");
     await runRefresh(deps(fakeClient(extractOut).client, fetcher({ alpha: page })), { root, election: ELECTION, baseline: main });
     expect(fs.readdirSync(dir)).toEqual(["2026-10-06-refresh-alpha.yml"]);
