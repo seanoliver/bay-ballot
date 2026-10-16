@@ -52,7 +52,14 @@ test("the About page's steps are one list at reading width, drawings beside the 
   const ys = await Promise.all([0, 1, 2].map(async (i) => (await steps.nth(i).boundingBox())!.y));
   expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
   const intro = (await page.getByRole("main").locator("p").first().boundingBox())!;
-  expect(Math.round((await list.boundingBox())!.width)).toBeLessThanOrEqual(Math.round(intro.width));
+  expect(Math.abs((await list.boundingBox())!.width - intro.width)).toBeLessThanOrEqual(1);
+  expect(await list.evaluate((e) => parseFloat(getComputedStyle(e).borderTopWidth))).toBeGreaterThan(0);
+  const dividers = await steps.evaluateAll((els) => els.map((e) => parseFloat(getComputedStyle(e).borderTopWidth)));
+  expect(dividers[0]).toBe(0);
+  expect(dividers.slice(1).every((w) => w > 0)).toBe(true);
+  for (const el of await steps.locator("[data-slot=item-title], [data-slot=item-description]").all()) {
+    expect(await el.evaluate((e) => e.scrollHeight <= e.clientHeight)).toBe(true);
+  }
   for (let i = 0; i < 3; i++) {
     const text = (await steps.nth(i).locator("[data-slot=item-content]").boundingBox())!;
     const drawing = (await steps.nth(i).locator("[data-slot=item-actions]").boundingBox())!;
