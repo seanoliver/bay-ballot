@@ -19,7 +19,6 @@ export function coverageSentence(c: Coverage): string {
   return `${count(c.areas, "area")} across ${count(c.counties, "county", "counties")}, ${count(c.guides, "guide")} and ${count(c.contests, "contest")}.`;
 }
 
-/** Every area's ballot page, in data order. */
 export function areaBallotLinks(d: ElectionData): BallotLink[] {
   return d.areas.map((a) => ({ href: `/${d.ballot.election}/${a.id}`, label: a.name }));
 }
