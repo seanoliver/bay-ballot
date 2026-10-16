@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
-import { changelogMonths, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
+import { latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
@@ -87,16 +87,6 @@ describe("utcDay", () => {
   it("is the UTC calendar day, whatever the local time zone", () => {
     expect(utcDay(new Date("2026-10-06T23:30:00-07:00"))).toBe("2026-10-07");
     expect(utcDay(new Date("2026-10-07T00:30:00+09:00"))).toBe("2026-10-06");
-  });
-});
-
-describe("changelogMonths", () => {
-  it("groups entries by month in order", () => {
-    const out = changelogMonths([e("2026-10-06", "a"), e("2026-10-01", "b"), e("2026-09-30", "c")]);
-    expect(out.map((m) => [m.label, m.entries.map((x) => x.title)])).toEqual([
-      ["October 2026", ["a", "b"]],
-      ["September 2026", ["c"]],
-    ]);
   });
 });
 

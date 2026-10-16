@@ -347,7 +347,7 @@ function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, main: Baseline,
     const guide = after.guides.find((g) => g.id === id);
     const before = main.data.endorsements[id];
     if (!guide || !before) continue;
-    const entry = guideChangelogEntry({ guideName: guide.name, before, after: after.endorsements[id], contests: after.ballot.contests, date: deps.today() });
+    const entry = guideChangelogEntry({ guideId: id, guideName: guide.name, before, after: after.endorsements[id], contests: after.ballot.contests, date: deps.today() });
     writeRefreshEntry(dir, id, entry, { date: deps.today(), keep: main.keep });
   }
 }

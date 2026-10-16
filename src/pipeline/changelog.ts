@@ -29,12 +29,14 @@ function change(name: string, b: Entry | undefined, a: Entry | undefined, hasRea
 }
 
 export function guideChangelogEntry({
+  guideId,
   guideName,
   before,
   after,
   contests,
   date,
 }: {
+  guideId: string;
   guideName: string;
   before: EndorsementFile;
   after: EndorsementFile;
@@ -43,7 +45,7 @@ export function guideChangelogEntry({
 }): ChangelogEntry | null {
   const count = Object.keys(after.picks).length;
   if (after.status === "published" && before.status !== "published" && count > 0) {
-    return { date, type: "data", title: `${guideName} published endorsements for ${count} ${count === 1 ? "contest" : "contests"}` };
+    return { date, type: "data", guide: guideId, title: `${guideName} published endorsements for ${count} ${count === 1 ? "contest" : "contests"}` };
   }
   const held = new Set((after.held ?? []).map((h) => h.contestId));
   const list = contests
@@ -53,7 +55,7 @@ export function guideChangelogEntry({
   if (list.length === 0) return null;
   const more = list.length - SHOWN;
   const title = more > 0 ? `${list.slice(0, SHOWN).join("; ")}; and ${more} more ${more === 1 ? "change" : "changes"}` : list.join("; ");
-  return { date, type: "data", title: `${guideName} ${title}` };
+  return { date, type: "data", guide: guideId, title: `${guideName} ${title}` };
 }
 
 export const refreshEntryFile = (date: string, guideId: string, n = 1) => `${date}-refresh-${guideId}${n > 1 ? `--${n}` : ""}.yml`;
