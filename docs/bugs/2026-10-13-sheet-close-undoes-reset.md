@@ -25,4 +25,4 @@ Phone viewport, `/2026-11/prop-d`: tap "Count only these 17 on the ballot", open
 
 ## Guardrail
 
-Unit test "survive closing from the UI when they clear the query" in `tests/sheet-history.test.ts`, and the phone e2e above.
+Unit test "survive closing from the UI when they clear the query" in `tests/sheet-history.test.ts`, and the phone run of `e2e/contest-pins.spec.ts` "an only= link counts just its guides, and Reset then Close leaves no filter in the URL" (the Count only test it replaced was removed with the button in #206).

@@ -100,14 +100,14 @@ export function ContestDetail({
     <div>
       {sides.length || pinning.noPick.length ? <PinHint pinning={pins} /> : null}
       {sides.length ? (
-        <div className="mt-6">
+        <div>
           {sides.map((side) => (
             <SideBlock key={side.key} side={side} rows={rows} contest={contest} short={shortNames} pinning={pins} />
           ))}
           {others.length ? <OtherCandidates others={others} rows={rows} contest={contest} short={shortNames} pinning={pins} /> : null}
         </div>
       ) : (
-        <p className="mt-6 text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
+        <p className="text-sm text-muted-foreground">No guide you&apos;re counting took a position.</p>
       )}
       <NoPickBlock key={contest.id} pinning={pins} short={shortNames} />
     </div>
@@ -267,7 +267,7 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
   );
 }
 
-// The link's own padding is its tap area, so nothing overlaps the note under it. The last word and the arrow never part.
+// The last word and the arrow never part.
 function Official({ source }: { source: OfficialSource }) {
   const cut = source.label.lastIndexOf(" ");
   return (

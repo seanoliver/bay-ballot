@@ -246,6 +246,17 @@ test.describe("pinning from a contest page", () => {
     await expect(tip).toContainText("Gave reasons on this contest.");
   });
 
+  test("an only= link counts just its guides, and Reset then Close leaves no filter in the URL", async ({ page }, info) => {
+    await openContest(page, "?only=growsf,sf-chronicle");
+    const counted = page.getByText(/\d+ of \d+ guides counted/).filter({ visible: true }).first();
+    await expect(counted).toContainText(/^.*\b2 of \d+ guides counted/);
+    const panel = await filterPanel(page, info);
+    await panel.getByRole("button", { name: "Reset filters" }).click();
+    await closePanel(page, info);
+    await expect(page).not.toHaveURL(/[?&](only|off)=/);
+    await expect(counted).not.toContainText(/\b2 of /);
+  });
+
   test("a candidate race has a pin list per candidate", async ({ page }) => {
     await page.goto(`${BALLOT}/supervisor-10`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -353,7 +364,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
     for (let i = 0; i < 12 && !(await focused.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(focused).toBeFocused();
-    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /^Pin / }).filter({ hasNotText: "SF Chronicle" }).first();
+    const hovered = sheet.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /\(gave reasons\)$/ }).filter({ hasNotText: "SF Chronicle" }).first();
     await hovered.hover();
     await expect(hovered.locator("[data-tip]")).toBeVisible();
     await expect(focused.locator("[data-tip]")).toBeVisible();
