@@ -491,6 +491,14 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   return lines.join("\n") + "\n";
 }
 
+/** GitHub rejects a PR or issue body over 65,536 characters; the default leaves room for the cc and shrunk-state lines the workflows add. */
+export function capSummary(md: string, max = 60_000): string {
+  if (md.length <= max) return md;
+  const note = "\n_Summary cut to fit GitHub's size limit; the run log lists every line._\n";
+  const head = md.slice(0, max - note.length);
+  return head.slice(0, head.lastIndexOf("\n") + 1) + note;
+}
+
 export async function seedPages(
   deps: RefreshDeps,
   opts: Pick<RefreshOptions, "root" | "election" | "ids" | "browser">,

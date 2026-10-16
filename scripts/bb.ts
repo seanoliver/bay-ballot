@@ -14,7 +14,7 @@ import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
-import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { capSummary, costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
 import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
 import { applyVerdicts, hasVerifiable, verify } from "../src/pipeline/verify";
@@ -291,7 +291,7 @@ async function runRefreshCmd(): Promise<void> {
   if (errors.length) md += `\n## Validation errors\n\n${errors.map((e) => `- ${e}`).join("\n")}\n`;
   const code = errors.length ? 1 : exitCodeFor(results);
   const summaryPath = option("--summary");
-  if (summaryPath) fs.writeFileSync(summaryPath, md);
+  if (summaryPath) fs.writeFileSync(summaryPath, capSummary(md));
   const resultPath = option("--result");
   if (resultPath) {
     const durationSec = Math.round((Date.now() - started) / 1000);

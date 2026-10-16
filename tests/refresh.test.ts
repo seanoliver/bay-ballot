@@ -8,7 +8,7 @@ import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
 import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
-import { costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
+import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
 import { resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
@@ -1371,5 +1371,19 @@ describe("onlyAreas (widening a guide)", () => {
     expect(f).not.toHaveBeenCalled();
     expect(stream).not.toHaveBeenCalled();
     expect(fs.readFileSync(file, "utf8")).toBe(text);
+  });
+});
+
+describe("capSummary", () => {
+  it("leaves a summary under the limit as it is", () => {
+    expect(capSummary("# Data refresh\n- a\n", 100)).toBe("# Data refresh\n- a\n");
+  });
+
+  it("cuts a long summary at a line break and says so, staying under GitHub's body limit", () => {
+    const md = `# Data refresh\n${Array.from({ length: 2000 }, (_, i) => `- q g: removed \`Reason ${i} ${"x".repeat(60)}\``).join("\n")}\n`;
+    const capped = capSummary(md);
+    expect(md.length).toBeGreaterThan(65_536);
+    expect(capped.length).toBeLessThanOrEqual(60_000);
+    expect(capped).toMatch(/\n- q g: removed `Reason \d+ x+`\n\n_Summary cut to fit GitHub's size limit; the run log lists every line\._\n$/);
   });
 });
