@@ -28,6 +28,22 @@ describe("diffPicks", () => {
     expect(diffPicks(before, after)).toEqual(["q prop-a: 0 -> 2", "~ prop-b: N -> Y", "q prop-b: 3 -> 1"]);
   });
 
+  it("names a published quote that was shortened or removed while the pick stayed", () => {
+    const full = { text: "Reason one for this pick, which runs long. It leans on the first sentence.", source: "https://a.org/" };
+    const before = { "prop-a": { ...e("Y"), quotes: [full] }, "prop-b": e("N", { quotes: 2 }) };
+    const after = { "prop-a": { ...e("Y"), quotes: [{ ...full, text: "It leans on the first sentence." }] }, "prop-b": e("N", { quotes: 1 }) };
+    expect(diffPicks(before, after)).toEqual([
+      `q prop-a: removed "${full.text.slice(0, 60)}…"`,
+      "q prop-b: 2 -> 1",
+      'q prop-b: removed "Reason number 2 for this pick."',
+    ]);
+  });
+
+  it("cuts a removed quote only when it runs past 60 characters", () => {
+    const sixty = { text: "x".repeat(60), source: "https://a.org/" };
+    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [sixty] } }, { "prop-a": e("Y") })).toEqual(["q prop-a: 1 -> 0", `q prop-a: removed "${sixty.text}"`]);
+  });
+
   it("is empty when nothing changed", () => {
     const picks = { "prop-a": e("Y", { quotes: 1 }) };
     expect(diffPicks(picks, structuredClone(picks))).toEqual([]);

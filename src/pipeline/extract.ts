@@ -251,6 +251,12 @@ function sameQuote(a: string, b: string): boolean {
   return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
 }
 
+/** Drops each quote whose text sits inside another's, and later exact repeats, so no sentence shows twice. */
+function withoutContained<T extends { text: string }>(quotes: T[]): T[] {
+  const norms = quotes.map((q) => quoteNorm(q.text));
+  return quotes.filter((_, j) => !norms.some((m, k) => k !== j && (m.length > norms[j].length ? m.includes(norms[j]) : m === norms[j] && k < j)));
+}
+
 /** Same names (in any order unless ranked) or the same vote. */
 export function samePick(a: Entry, b: Entry): boolean {
   if (Array.isArray(a.pick) && Array.isArray(b.pick) && !a.ranked && !b.ranked) {
@@ -288,27 +294,42 @@ export function keepPrevQuotes(
     };
     const quotes = [...entry.quotes];
     const restored: KeptQuote[] = [];
+    const lengthened: KeptQuote[] = [];
+    const notKept = (q: KeptQuote, why: string) => {
+      if (!noted.some((n) => n.contestId === id && sameQuote(n.text, q.text))) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
+    };
     let at = 0;
     for (const q of old.quotes) {
       const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
-      if (i !== -1) at = i + 1;
-      else {
+      if (i !== -1) {
+        at = i + 1;
+        if (quoteNorm(quotes[i].text).length < quoteNorm(q.text).length) {
+          const why = problem(q);
+          if (why) notKept(q, why);
+          else {
+            quotes[i] = q;
+            lengthened.push(q);
+          }
+        }
+      } else {
         const why = problem(q);
-        if (why) {
-          if (!noted.some((n) => n.contestId === id && sameQuote(n.text, q.text))) notes.push(`${id}: previous quote not kept (${why}): "${clip(q.text)}"`);
-        } else {
+        if (why) notKept(q, why);
+        else {
           quotes.splice(at++, 0, q);
           restored.push(q);
         }
       }
     }
-    if (restored.length === 0) continue;
+    const deduped = withoutContained(quotes);
+    if (!restored.length && !lengthened.length && deduped.length === quotes.length) continue;
+    quotes.splice(0, quotes.length, ...deduped);
+    for (const q of lengthened) if (quotes.includes(q)) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
     while (quotes.length > MAX_QUOTES) {
       const newest = quotes.findLastIndex((q) => !old.quotes.some((o) => sameQuote(o.text, q.text)));
       const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);
       notes.push(`${id}: dropped new quote to keep the previous ones (limit ${MAX_QUOTES}): "${clip(cut.text)}"`);
     }
-    for (const q of restored) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
+    for (const q of restored) if (quotes.includes(q)) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
     out[id] = { ...entry, quotes };
   }
   return { picks: out, notes };
