@@ -1,7 +1,7 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
-import { TYPE_LABEL } from "../src/lib/filters";
+import type { GuideType } from "../src/lib/schema";
 import { BALLOT, openBallot } from "./helpers";
 
 const GUIDE = "/guides/sf-chronicle";
@@ -30,7 +30,10 @@ test("a list-only guide's stat line says List only instead of a reasons count", 
   await expect(page.locator("header").getByText(/^\d+ picks? · List only · as of \w+ \d+, \d{4}$/)).toBeVisible();
 });
 
-for (const [type, label] of Object.entries(TYPE_LABEL)) {
+// Written out, not read from TYPE_LABEL, so a typo in the page's labels fails here.
+const LABELS = { newspaper: "Newspaper", party: "Party", club: "Political club", union: "Union", advocacy: "Advocacy group", civic: "Civic group" } satisfies Record<GuideType, string>;
+
+for (const [type, label] of Object.entries(LABELS)) {
   test(`a ${type} guide's page shows the ${label} label`, async ({ page }) => {
     const guide = data.guides.find((g) => g.type === type);
     test.skip(!guide, `no ${type} guide`);
