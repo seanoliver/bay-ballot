@@ -257,7 +257,11 @@ test.describe("pinning from a contest page", () => {
   test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
     await openContest(page);
     const side = page.getByRole("heading", { level: 3, name: /^Yes\s*\d/ }).first().locator("xpath=ancestor::section[1]");
-    const gap = await side.evaluate((s) => s.getBoundingClientRect().top - s.parentElement!.parentElement!.previousElementSibling!.getBoundingClientRect().bottom);
+    // The Yes/No legend ends the summary; the guides block sits 32px below it.
+    const legend = page.getByText(/^Yes\s*\d+\s*No\s*\d+$/);
+    const [above, below] = await Promise.all([legend.boundingBox(), side.boundingBox()]);
+    const gap = below!.y - (above!.y + above!.height);
+    expect(gap).toBeGreaterThanOrEqual(31);
     expect(gap).toBeLessThanOrEqual(33);
   });
 
@@ -268,17 +272,20 @@ test.describe("pinning from a contest page", () => {
     const panel = await filterPanel(page, info);
     await panel.getByRole("button", { name: "Reset filters" }).click();
     // Close steps back in history; the reset query is re-applied on the popstate after it.
-    const popped = isPhone(info)
-      ? page.evaluate(
-          () =>
-            new Promise((resolve, reject) => {
-              addEventListener("popstate", () => setTimeout(resolve, 0), { once: true });
-              setTimeout(() => reject(new Error("no popstate after Close")), 5000);
-            }),
-        )
-      : null;
+    if (isPhone(info)) {
+      await page.evaluate(() => {
+        (window as unknown as { popped: Promise<void> }).popped = new Promise((resolve) => addEventListener("popstate", () => setTimeout(resolve, 0), { once: true }));
+      });
+    }
     await closePanel(page, info);
-    await popped;
+    if (isPhone(info)) {
+      await page.evaluate(() =>
+        Promise.race([
+          (window as unknown as { popped: Promise<void> }).popped,
+          new Promise((_, reject) => setTimeout(() => reject(new Error("no popstate after Close")), 5000)),
+        ]),
+      );
+    }
     await expect(page).not.toHaveURL(/[?&](only|off)=/);
     await expect(counted).not.toContainText(/\b2 of /);
   });
