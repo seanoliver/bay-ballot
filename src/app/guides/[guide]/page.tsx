@@ -50,7 +50,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   const published = isPublished(file) ? file : null;
   const groups = published ? guidePickGroups(ballot.contests, published, areas) : [];
   const stats = published ? guideStats(groups.flatMap((g) => g.sections.flatMap((s) => s.picks)), published) : null;
-  const { guides, files } = ballotViewProps(d);
+  const { guides, files } = ballotViewProps(election(id)!);
   return (
     <PageColumn>
       <BackLink href={back.href} label={back.label} />
