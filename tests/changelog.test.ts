@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
 import { changelogErrors, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
@@ -104,9 +104,12 @@ describe("pacificDay and latestDay", () => {
 
 describe("changelogErrors", () => {
   const real = path.join(process.cwd(), "data");
+  const roots: string[] = [];
+  afterEach(() => roots.splice(0).forEach((r) => fs.rmSync(r, { recursive: true, force: true })));
 
   function copyWith(entry: string) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cle-"));
+    roots.push(root);
     for (const name of fs.readdirSync(real)) if (name !== "changelog") fs.symlinkSync(path.join(real, name), path.join(root, name));
     fs.mkdirSync(path.join(root, "changelog"));
     fs.writeFileSync(path.join(root, "changelog", "2026-10-01-x.yml"), entry);
@@ -119,6 +122,13 @@ describe("changelogErrors", () => {
 
   it("flags a guide id that no election has", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
+  });
+
+  it("still checks guide ids when an election fails to load", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
+    fs.mkdirSync(path.join(root, "2025-11"));
+    fs.writeFileSync(path.join(root, "2025-11", "ballot.yml"), "contests: [");
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
   });
 

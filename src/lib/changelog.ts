@@ -66,6 +66,15 @@ export function latestDay(now = new Date()): string {
 // Guide ids come from every election, so entries about a guide a later election drops stay valid.
 export function changelogErrors(root: string, today: string): string[] {
   const { entries, errors } = readChangelog(root);
-  const guides = new Set(listElections(root).flatMap((id) => loadElection(root, id).guides.map((g) => g.id)));
+  const guides = new Set(listElections(root).flatMap((id) => guideIds(root, id)));
   return [...errors, ...validateChangelog(entries, today, { guides })];
+}
+
+// An election that fails to load is reported by the election check, not here.
+function guideIds(root: string, election: string): string[] {
+  try {
+    return loadElection(root, election).guides.map((g) => g.id);
+  } catch {
+    return [];
+  }
 }
