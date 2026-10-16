@@ -45,12 +45,27 @@ test("the About page shows three numbered steps and a link to the ballot", async
   await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", BALLOT);
 });
 
-test("the About page's steps stack on phones and sit in a row on desktop", async ({ page }) => {
+test("the About page's steps are one list at reading width, drawings beside the text on desktop and under it on phones", async ({ page }) => {
   await page.goto("/about");
-  const steps = page.getByRole("main").getByRole("list", { name: "How to use it" }).getByRole("listitem");
+  const list = page.getByRole("main").getByRole("list", { name: "How to use it" });
+  const steps = list.getByRole("listitem");
   const ys = await Promise.all([0, 1, 2].map(async (i) => (await steps.nth(i).boundingBox())!.y));
-  if (page.viewportSize()!.width < 768) expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
-  else expect(new Set(ys.map(Math.round)).size).toBe(1);
+  expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
+  const intro = (await page.getByRole("main").locator("p").first().boundingBox())!;
+  expect(Math.abs((await list.boundingBox())!.width - intro.width)).toBeLessThanOrEqual(1);
+  expect(await list.evaluate((e) => parseFloat(getComputedStyle(e).borderTopWidth))).toBeGreaterThan(0);
+  const dividers = await steps.evaluateAll((els) => els.map((e) => parseFloat(getComputedStyle(e).borderTopWidth)));
+  expect(dividers[0]).toBe(0);
+  expect(dividers.slice(1).every((w) => w > 0)).toBe(true);
+  for (const el of await steps.locator("[data-slot=item-title], [data-slot=item-description]").all()) {
+    expect(await el.evaluate((e) => e.scrollHeight <= e.clientHeight)).toBe(true);
+  }
+  for (let i = 0; i < 3; i++) {
+    const text = (await steps.nth(i).locator("[data-slot=item-content]").boundingBox())!;
+    const drawing = (await steps.nth(i).locator("[data-slot=item-actions]").boundingBox())!;
+    if (page.viewportSize()!.width < 640) expect(drawing.y).toBeGreaterThanOrEqual(text.y + text.height);
+    else expect(drawing.x).toBeGreaterThanOrEqual(text.x + text.width);
+  }
 });
 
 test("the About page's questions start closed and open to show their answers", async ({ page }) => {
