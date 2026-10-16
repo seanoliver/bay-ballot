@@ -27,7 +27,7 @@ test("the changelog shows one block per day with each day's data updates folded"
   await expect(rows(page)).toHaveCount(0);
   await expect(show(page, "All")).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("link", { name: "Pull request #1 (opens in new tab)" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
-  await expect(page.getByLabel("Area")).toHaveCount(0);
+  await expect(page.getByLabel("Area")).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -58,7 +58,10 @@ test("Site hides data updates and Data shows only them, every day expanded", asy
   await expect(page).toHaveURL(/\?show=data$/);
   await expect(summaries(page)).toHaveCount(0);
   await expect(rows(page)).toHaveCount(allRows.length);
-  await expect(page.getByRole("link", { name: /^Pull request/ })).toHaveCount(0);
+  const withPr = allRows.filter((r) => r.pr);
+  await expect(page.getByRole("link", { name: /^Pull request/ })).toHaveCount(withPr.length);
+  const withDetails = allRows.find((r) => r.details);
+  if (withDetails) await expect(rows(page).filter({ hasText: withDetails.details! })).toHaveCount(1);
 
   await show(page, "All").click();
   await expect(page).toHaveURL(/\/changelog$/);

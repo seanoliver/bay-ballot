@@ -28,7 +28,7 @@ for (const election of listElections(root)) {
 try {
   const today = latestDay();
   const { entries, errors: read } = readChangelog(root);
-  const guides = new Set(loadElection(root, listElections(root).at(-1)!).guides.map((g) => g.id));
+  const guides = new Set(listElections(root).flatMap((id) => loadElection(root, id).guides.map((g) => g.id)));
   const errors = [...read, ...validateChangelog(entries, today, { guides })];
   errors.forEach((e) => console.error(`ERROR ${e}`));
   if (errors.length) failed = true;

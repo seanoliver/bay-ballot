@@ -48,7 +48,6 @@ export function ChangelogDigest({ days, areas }: { days: DigestDay[]; areas: Dig
   const shown = useMemo(() => visibleDays(days, { show, guides }), [days, show, guides]);
   const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
   const selectId = useId();
-  const showArea = show === "data" || area !== null || (show === "all" && open.size > 0);
   const toggle = (date: string) =>
     setOpen((prev) => {
       const next = new Set(prev);
@@ -75,7 +74,7 @@ export function ChangelogDigest({ days, areas }: { days: DigestDay[]; areas: Dig
             </button>
           ))}
         </div>
-        {showArea ? (
+        {show !== "site" ? (
           <div className="flex items-center gap-2 text-sm">
             <label htmlFor={selectId} className="text-muted-foreground">
               Area
@@ -152,6 +151,15 @@ function DataBlock({ date, rows, always, open, onToggle }: { date: string; rows:
           {r.name ? <span className="font-semibold text-foreground">{r.name}</span> : null}
           {r.name ? " " : null}
           {r.text}
+          {r.pr ? (
+            <>
+              {" "}
+              <ExternalLink href={`${PULL}/${r.pr}`} aria-label={`Pull request #${r.pr} (opens in new tab)`} className="underline underline-offset-2">
+                #{r.pr}
+              </ExternalLink>
+            </>
+          ) : null}
+          {r.details ? <span className="mt-1 block">{r.details}</span> : null}
         </li>
       ))}
     </ul>

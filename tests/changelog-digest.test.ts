@@ -81,6 +81,7 @@ describe("digest query", () => {
   it("reads show and area, ignoring unknown values", () => {
     expect(readDigestQuery("", ids)).toEqual({ show: "all", area: null });
     expect(readDigestQuery("?show=data&area=sf", ids)).toEqual({ show: "data", area: "sf" });
+    expect(readDigestQuery("?show=site&area=sf", ids)).toEqual({ show: "site", area: null });
     expect(readDigestQuery("?show=nope&area=mars", ids)).toEqual({ show: "all", area: null });
   });
   it("writes only what differs from the default", () => {
@@ -100,5 +101,12 @@ describe("validateChangelog guide ids", () => {
   it("flags a guide id that does not exist", () => {
     const f = (guide: string) => ({ date: "2026-10-06", guide, file: `2026-10-06-refresh-${guide}.yml` });
     expect(validateChangelog([f("growsf"), f("gone")], "2026-10-06", { guides: new Set(["growsf"]) })).toEqual(["changelog/2026-10-06-refresh-gone.yml: no guide 'gone'"]);
+  });
+});
+
+describe("dataRow keeps a hand-written entry's details and PR", () => {
+  it("copies details and pr onto the row", () => {
+    const row = changelogDays([{ file: "x.yml", date: "2026-10-14", type: "data", title: "Burlingame City Council, District 3 is now on the ballot", details: "The race was missing.", pr: 9 }], [])[0].data[0];
+    expect(row).toMatchObject({ details: "The race was missing.", pr: 9 });
   });
 });

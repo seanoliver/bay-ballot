@@ -6,7 +6,7 @@ export type Show = "all" | "site" | "data";
 export const SHOWS: readonly Show[] = ["all", "site", "data"];
 
 export type SiteItem = ChangelogEntry & { file: string };
-export type DataRow = { file: string; guide: string | null; name: string | null; text: string };
+export type DataRow = { file: string; guide: string | null; name: string | null; text: string; details?: string; pr?: number };
 export type DigestDay = { date: string; site: SiteItem[]; data: DataRow[] };
 export type DigestArea = { id: string; name: string; guides: string[] };
 export type DigestQuery = { show: Show; area: string | null };
@@ -15,9 +15,10 @@ type GuideName = { id: string; name: string };
 
 export function dataRow(e: ChangelogEntry & { file: string }, guides: Map<string, GuideName>): DataRow {
   const g = e.guide ? guides.get(e.guide) : undefined;
-  if (!g) return { file: e.file, guide: null, name: null, text: e.title };
+  const extra = { ...(e.details ? { details: e.details } : {}), ...(e.pr ? { pr: e.pr } : {}) };
+  if (!g) return { file: e.file, guide: null, name: null, text: e.title, ...extra };
   const named = e.title.startsWith(`${g.name} `);
-  return { file: e.file, guide: g.id, name: named ? g.name : null, text: named ? e.title.slice(g.name.length + 1) : e.title };
+  return { file: e.file, guide: g.id, name: named ? g.name : null, text: named ? e.title.slice(g.name.length + 1) : e.title, ...extra };
 }
 
 export function changelogDays(entries: SiteItem[], guides: GuideName[]): DigestDay[] {
@@ -54,7 +55,7 @@ export function readDigestQuery(search: string, areaIds: readonly string[]): Dig
   const q = new URLSearchParams(search);
   const show = SHOWS.find((s) => s === q.get("show")) ?? "all";
   const area = q.get("area");
-  return { show, area: area !== null && areaIds.includes(area) ? area : null };
+  return { show, area: show !== "site" && area !== null && areaIds.includes(area) ? area : null };
 }
 
 export function digestSearch({ show, area }: DigestQuery): string {
