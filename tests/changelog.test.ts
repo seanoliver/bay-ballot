@@ -120,12 +120,12 @@ describe("changelogErrors", () => {
     expect(changelogErrors(real, latestDay())).toEqual([]);
   });
 
-  it("flags a guide id that no election has", () => {
+  it("flags a guide id with no file in guides/", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
   });
 
-  it("still checks guide ids when an election fails to load", () => {
+  it("checks guide ids without loading elections", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
     fs.mkdirSync(path.join(root, "2025-11"));
     fs.writeFileSync(path.join(root, "2025-11", "ballot.yml"), "contests: [");
@@ -140,12 +140,26 @@ describe("changelogErrors", () => {
     expect(changelogErrors(root, "2026-10-16")).toEqual([]);
   });
 
+  it("flags every guide id when there is no guides/ folder", () => {
+    const root = dir({ "2026-10-01-x.yml": "date: 2026-10-01\ntype: data\ntitle: t\nguide: growsf\n" });
+    roots.push(root);
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/growsf/);
+  });
+
+  it("counts only .yml files in guides/ as guide ids", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Notes\nguide: notes\n");
+    fs.rmSync(path.join(root, "guides"));
+    fs.cpSync(path.join(real, "guides"), path.join(root, "guides"), { recursive: true });
+    fs.writeFileSync(path.join(root, "guides", "notes.txt"), "");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/notes/);
+  });
+
   it("reports a changelog file that fails to parse", () => {
     const root = copyWith("date: nope\n");
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/2026-10-01-x\.yml/);
   });
 
-  it("accepts a guide id from the election data", () => {
+  it("accepts a guide id that has a file in guides/", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
     expect(changelogErrors(root, "2026-10-16")).toEqual([]);
   });
