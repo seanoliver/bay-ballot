@@ -160,6 +160,7 @@ test.describe("pinning from a contest page", () => {
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
     await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
+    await expect(page.getByText("4 of 4 pinned. Unpin one to pin another.").first()).toHaveClass(/\bsr-only\b/);
     await fifth.click({ force: true });
     await expect(fifth).toHaveAttribute("aria-pressed", "false");
     await expect(page).toHaveURL(pinParam("sf-chronicle", "growsf", "sf-dems", "league-pissed-off-voters"));

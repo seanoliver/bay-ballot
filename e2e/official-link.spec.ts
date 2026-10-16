@@ -9,6 +9,7 @@ test("a state prop's page links its own page in the state voter guide", async ({
   await expect(link).toHaveAttribute("href", "https://voterguide.sos.ca.gov/propositions/43/");
   await expect(link).toHaveAttribute("target", "_blank");
   await expect(page.getByRole("link", { name: "Official text" })).toHaveCount(0);
+  await expect(page.getByText(/does not write or edit it/)).toHaveCount(0);
 });
 
 test("an SF measure's panel or sheet points to the city's shared measures page", async ({ page }, info) => {
@@ -19,10 +20,12 @@ test("an SF measure's panel or sheet points to the city's shared measures page",
   await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", SF_LIST);
   await expect(detail.getByRole("link", { name: "Official text" })).toHaveCount(0);
+  await expect(detail.getByText(/does not write or edit it/)).toHaveCount(0);
 });
 
 test("a measure linked to a PDF says so", async ({ page }) => {
   await page.goto(`${BALLOT}/fairfield-measure-p`);
   const link = page.getByRole("link", { name: "Read the impartial analysis of Measure P (PDF) (opens in a new tab)" });
   await expect(link).toHaveAttribute("href", /\.pdf$/);
+  await expect(page.getByText(/does not write or edit it/)).toHaveCount(0);
 });
