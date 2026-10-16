@@ -211,6 +211,19 @@ test.describe("pinning from a contest page", () => {
     await expect(page).not.toHaveURL(/[?&]pin=/);
   });
 
+  test("a chip's guide page link doesn't prefetch the page", async ({ page }) => {
+    const fetched: string[] = [];
+    page.on("request", (r) => fetched.push(new URL(r.url()).pathname));
+    await openContest(page);
+    await page.waitForLoadState("networkidle");
+    const group = page.getByRole("group", { name: "Guides for Yes" });
+    const chips = await group.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
+    const bylines = await page.locator("blockquote ~ p a[href^='/guides/']").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
+    const only = chips.filter((href) => href && !bylines.includes(href));
+    expect(only.length).toBeGreaterThan(0);
+    for (const href of only) expect(fetched).not.toContain(href);
+  });
+
   test("each chip's name links to its guide page, and there is no separate Guide pages list", async ({ page }) => {
     await openContest(page);
     const group = page.getByRole("group", { name: "Guides for Yes" });
@@ -323,6 +336,8 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const pane = page.getByRole("region", { name: "Proposition D" });
     const chip = guideLink(pane, "SF Chronicle");
     await expect(chip).toHaveAccessibleDescription("San Francisco Chronicle");
+    await expect(pinChip(pane, "SF Chronicle")).toHaveAccessibleDescription("San Francisco Chronicle");
+    await expect(pinChip(pane, "SF Chronicle")).not.toHaveAttribute("title");
     const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
     await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("link").first().focus();

@@ -161,7 +161,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
         <button
           type="button"
           aria-label={`Pin ${name}`}
-          title={full ? `You can pin up to ${MAX_PINS} guides` : `${pinned ? "Unpin" : "Pin"} ${guide.name}`}
+          title={full ? `You can pin up to ${MAX_PINS} guides` : undefined}
           aria-pressed={pinned}
           aria-disabled={full || undefined}
           aria-describedby={[guide.name !== name && nameId, full && pinning.limitId].filter(Boolean).join(" ") || undefined}
