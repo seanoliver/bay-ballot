@@ -491,12 +491,35 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
   return lines.join("\n") + "\n";
 }
 
-/** GitHub rejects a PR or issue body over 65,536 characters; the default leaves room for the cc and shrunk-state lines the workflows add. */
+/**
+ * GitHub rejects a PR or issue body over 65,536 characters; the default leaves room for the cc and shrunk-state lines the workflows add.
+ * Only the Re-extracted list is shortened, so the verdict, Needs attention and Validation errors stay whole.
+ */
 export function capSummary(md: string, max = 60_000): string {
   if (md.length <= max) return md;
-  const note = "\n_Summary cut to fit GitHub's size limit; the run log lists every line._\n";
-  const head = md.slice(0, max - note.length);
-  return head.slice(0, head.lastIndexOf("\n") + 1) + note;
+  const lines = md.split("\n");
+  const start = lines.indexOf("## Re-extracted");
+  let end = start + 1;
+  while (start !== -1 && end < lines.length && /^(### |- |_|$)/.test(lines[end])) end++;
+  const head = lines.slice(0, start + 1).join("\n") + "\n";
+  const tail = "\n" + lines.slice(end).join("\n");
+  const note = "\n_Re-extracted list cut to fit GitHub's size limit._\n";
+  let room = max - head.length - tail.length - note.length;
+  if (start === -1 || room < 0) {
+    const cut = md.slice(0, max - note.length);
+    return cut.slice(0, cut.lastIndexOf("\n") + 1) + note;
+  }
+  const kept: string[] = [];
+  for (const line of lines.slice(start + 1, end)) {
+    if (line.length + 1 > room) break;
+    kept.push(line);
+    room -= line.length + 1;
+  }
+  return head + kept.map((l) => l + "\n").join("") + note + tail;
+}
+
+export function writeSummary(file: string, md: string): void {
+  fs.writeFileSync(file, capSummary(md));
 }
 
 export async function seedPages(

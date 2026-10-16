@@ -8,7 +8,7 @@ import type { ExtractClient, ExtractOutput } from "@/pipeline/extract";
 import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type FetchOptions } from "@/pipeline/fetch";
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
-import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, type GuideResult } from "@/pipeline/refresh";
+import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, writeSummary, type GuideResult } from "@/pipeline/refresh";
 import { resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
@@ -1379,11 +1379,58 @@ describe("capSummary", () => {
     expect(capSummary("# Data refresh\n- a\n", 100)).toBe("# Data refresh\n- a\n");
   });
 
-  it("cuts a long summary at a line break and says so, staying under GitHub's body limit", () => {
-    const md = `# Data refresh\n${Array.from({ length: 2000 }, (_, i) => `- q g: removed \`Reason ${i} ${"x".repeat(60)}\``).join("\n")}\n`;
-    const capped = capSummary(md);
-    expect(md.length).toBeGreaterThan(65_536);
+  it("leaves a summary exactly at the limit as it is", () => {
+    expect(capSummary("a\n".repeat(50), 100)).toBe("a\n".repeat(50));
+  });
+
+  const diffLines = (n: number) => Array.from({ length: n }, (_, i) => `- q g: removed \`Reason ${i} ${"x".repeat(60)}\``).join("\n");
+  const long = [
+    "# Data refresh 2026-10-16",
+    "",
+    "**Result:** needs review (1 held)",
+    "",
+    "## Re-extracted",
+    "",
+    "### g",
+    diffLines(2000),
+    "- **HELD q: Yes — moved: evidence**",
+    "",
+    "## Needs attention",
+    "- broken: fetch failed",
+    "",
+    "Unchanged: a, b",
+    "",
+    "## Validation errors",
+    "",
+    "- bad.yml: oops",
+    "",
+  ].join("\n");
+
+  it("shortens only the Re-extracted list, keeping the verdict, Needs attention and Validation errors", () => {
+    const capped = capSummary(long);
+    expect(long.length).toBeGreaterThan(65_536);
     expect(capped.length).toBeLessThanOrEqual(60_000);
-    expect(capped).toMatch(/\n- q g: removed `Reason \d+ x+`\n\n_Summary cut to fit GitHub's size limit; the run log lists every line\._\n$/);
+    expect(capped.startsWith("# Data refresh 2026-10-16\n\n**Result:** needs review (1 held)\n\n## Re-extracted\n\n### g\n- q g: removed `Reason 0 ")).toBe(true);
+    expect(capped).toContain("\n_Re-extracted list cut to fit GitHub's size limit._\n\n## Needs attention\n- broken: fetch failed\n");
+    expect(capped.endsWith("Unchanged: a, b\n\n## Validation errors\n\n- bad.yml: oops\n")).toBe(true);
+  });
+
+  it("cuts at a line break when there is no Re-extracted list to shorten", () => {
+    const md = `# Data refresh\n${diffLines(2000)}\n`;
+    const capped = capSummary(md);
+    expect(capped.length).toBeLessThanOrEqual(60_000);
+    expect(capped).toMatch(/\n- q g: removed `Reason \d+ x+`\n\n_Re-extracted list cut to fit GitHub's size limit\._\n$/);
+  });
+
+  it("writeSummary writes the capped summary", () => {
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "bb-summary-")), "summary.md");
+    try {
+      writeSummary(file, long);
+      const written = fs.readFileSync(file, "utf8");
+      expect(written.length).toBeLessThanOrEqual(60_000);
+      expect(written).toBe(capSummary(long));
+    } finally {
+      fs.rmSync(path.dirname(file), { recursive: true, force: true });
+    }
   });
 });
