@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
+import { pacificDate } from "./election-day";
 import { ChangelogEntry } from "./schema";
 
 export type ChangelogItem = ChangelogEntry & { file: string };
@@ -53,8 +54,7 @@ export function validateChangelog(
 
 export const utcDay = (now = new Date()) => now.toISOString().slice(0, 10);
 
-// en-CA formats as YYYY-MM-DD.
-export const pacificDay = (now = new Date()) => now.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+export const pacificDay = (now = new Date()) => pacificDate(now);
 
 export function latestDay(now = new Date()): string {
   const a = utcDay(now);
