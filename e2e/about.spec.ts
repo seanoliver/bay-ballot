@@ -2,11 +2,18 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { coverage, coverageSentence } from "../src/lib/coverage";
 import { loadElection } from "../src/lib/data";
-import { BALLOT } from "./helpers";
+import { BALLOT, isPhone } from "./helpers";
 import { MAX_PINS } from "../src/lib/filters";
 
 const REPO = "https://github.com/seanoliver/bay-ballot";
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
+
+const LETTER = [
+  "I've lived in San Francisco since 2012, and both my kids are in SFUSD. Every election since 2016, I've sat down with my ballot and a dozen browser tabs: the Chronicle, the League of Women Voters, the local clubs and unions, a few advocacy groups. I kept a spreadsheet of who endorsed what, to see where the guides agreed and where they split.",
+  "Over the years I started sharing that spreadsheet with friends and colleagues to help them vote, and kept running into the same problem. Many of them live outside San Francisco, all over the Bay Area, and my spreadsheet only covered the city.",
+  "So I turned it into Bay Ballot: one place for every voter guide in the Bay Area, side by side, one contest at a time, with the reasons each guide gives in its own words. It starts with San Francisco, the Peninsula, the South Bay, the East Bay and the North Bay and will grow from there. It stays up to date as guides publish, and it's free for everyone.",
+  "It doesn't tell you how to vote. It shows you what the people who spend time on this are recommending, and why.",
+];
 
 const question = (page: Page, name: string) => page.getByRole("main").getByRole("button", { name });
 
@@ -34,7 +41,16 @@ test("the About page shows three numbered steps and a link to the ballot", async
   await expect(steps.nth(1)).toContainText("Open a contest");
   await expect(steps.nth(2)).toContainText("Pin the guides you trust");
   await expect(steps.nth(2)).toContainText(`Tap the pin on up to ${MAX_PINS} guides.`);
+  await expect(steps.nth(1)).toContainText("See how the guides split, then read their reasons.");
   await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", BALLOT);
+});
+
+test("the About page's steps stack on phones and sit in a row on desktop", async ({ page }, info) => {
+  await page.goto("/about");
+  const steps = page.getByRole("main").getByRole("list", { name: "How to use it" }).getByRole("listitem");
+  const ys = await Promise.all([0, 1, 2].map(async (i) => (await steps.nth(i).boundingBox())!.y));
+  if (isPhone(info)) expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
+  else expect(new Set(ys.map(Math.round)).size).toBe(1);
 });
 
 test("the About page's questions start closed and open to show their answers", async ({ page }) => {
@@ -81,17 +97,31 @@ test("Is my area covered? on the About page counts the data and links every area
 test("the About page keeps every method fact and link", async ({ page }) => {
   await page.goto("/about");
   const main = page.getByRole("main");
+  await open(page, "How are guides counted?");
+  for (const rule of [
+    "Only guides that took a position on a contest count toward it.",
+    "A guide that ranks candidates counts toward its first choice.",
+    "In races with more than one seat, each name a guide endorses counts.",
+    "An area's page counts only the guides that cover that area. The Bay Area list counts every guide.",
+  ])
+    await expect(main.getByText(rule)).toBeVisible();
   await open(page, "How are guides chosen?");
   await expect(main.getByText("A guide's endorsements appear once it publishes them for this election.")).toBeVisible();
   await open(page, "How do you check the quotes?");
   await expect(main.getByText("A separate check confirms each quote appears word for word on the guide's page.", { exact: false })).toBeVisible();
+  await expect(main.getByText("For most guides, an automated process reads the guide's published pages", { exact: false })).toBeVisible();
+  await expect(main.getByText("Quotes that fail are left out, and endorsements the check can't confirm stay off the site until they're confirmed.", { exact: false })).toBeVisible();
+  await expect(main.getByText("A few guides publish their endorsements as images or documents, and I enter those by hand.", { exact: false })).toBeVisible();
+  await expect(main.getByText("Each quote links to its source or an archived copy.", { exact: false })).toBeVisible();
   await expect(main.getByText("Guides are checked for updates every day", { exact: false })).toBeVisible();
   await expect(main.getByRole("link", { name: "changelog" })).toHaveAttribute("href", "/changelog");
   await open(page, "Is it partisan?");
   await expect(main.getByText("Bay Ballot makes no endorsements of its own.")).toBeVisible();
   await expect(main.getByRole("link", { name: "public on GitHub" })).toHaveAttribute("href", REPO);
+  await expect(main.getByText("It is not affiliated with any guide or campaign.")).toBeVisible();
   await open(page, "What do you track?");
   await expect(main.getByText("Neither uses cookies.", { exact: false })).toBeVisible();
+  await expect(main.getByText("Bay Ballot counts page views with Vercel Web Analytics and Ahrefs Web Analytics, which also counts link clicks.", { exact: false })).toBeVisible();
   await expect(main.getByText("A ZIP code you enter stays on your device.", { exact: false })).toBeVisible();
   await open(page, "Something's wrong. How do I report it?");
   await expect(main.getByRole("link", { name: "corrections@bayballot.com" })).toHaveAttribute("href", "mailto:corrections@bayballot.com");
@@ -106,7 +136,7 @@ test("the About page's last question holds Sean's signed letter", async ({ page 
   await expect(story).toBeHidden();
   await open(page, "Who made Bay Ballot?");
   await expect(story).toBeVisible();
-  await expect(main.getByText("It shows you what the people who spend time on this are recommending, and why.")).toBeVisible();
+  for (const paragraph of LETTER) await expect(main.getByText(paragraph, { exact: true })).toBeVisible();
   await expect(main.getByRole("link", { name: "seanoliver.dev" })).toHaveAttribute("href", "https://seanoliver.dev");
 });
 

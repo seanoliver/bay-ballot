@@ -29,6 +29,10 @@ describe("coverageSentence", () => {
     expect(coverageSentence({ areas: 14, counties: 9, guides: 128, contests: 546 })).toBe("14 areas across 9 counties, 128 guides and 546 contests.");
   });
 
+  it("uses the plural for zero", () => {
+    expect(coverageSentence({ areas: 0, counties: 0, guides: 0, contests: 0 })).toBe("0 areas across 0 counties, 0 guides and 0 contests.");
+  });
+
   it("uses the singular for one", () => {
     expect(coverageSentence({ areas: 1, counties: 1, guides: 1, contests: 1 })).toBe("1 area across 1 county, 1 guide and 1 contest.");
   });
