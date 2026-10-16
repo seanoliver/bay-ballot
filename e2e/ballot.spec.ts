@@ -43,7 +43,6 @@ test.describe("desktop detail pane", () => {
     await expect(pane.getByText(/^(Yes|No) \d+%$|^Split$/).first()).toBeVisible();
     const chips = pane.getByRole("group", { name: /^Guides for / }).first().getByRole("button", { name: /^Pin / });
     expect(await chips.count()).toBeGreaterThan(0);
-    // Guide pages are linked from each quote's byline.
     const link = pane.locator("a[href^='/guides/']").first();
     const href = await link.getAttribute("href");
     expect(href).toMatch(/^\/guides\/[a-z0-9-]+$/);

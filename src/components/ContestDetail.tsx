@@ -68,7 +68,6 @@ export function ContestDetail({
   shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
-  /** Each guide chip pins its guide, and each side can be the only one counted. */
   pinning: Pinning;
 }) {
   const bay = fallback?.scope === "bay";

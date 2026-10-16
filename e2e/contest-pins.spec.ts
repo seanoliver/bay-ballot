@@ -160,6 +160,8 @@ test.describe("pinning from a contest page", () => {
     const fifth = pinChip(page, "SPUR");
     await expect(fifth).toHaveAttribute("aria-disabled", "true");
     await expect(fifth).toHaveAccessibleDescription("4 of 4 pinned. Unpin one to pin another.");
+    await expect(fifth).toHaveAttribute("title", "You can pin up to 4 guides");
+    await expect(fifth).toHaveClass(/\bopacity-60\b/);
     const described = (await fifth.getAttribute("aria-describedby"))!.split(" ").map((id) => `[id="${id}"]`).join(",");
     await expect(page.locator(described).filter({ hasText: "4 of 4 pinned" })).toHaveClass(/\bsr-only\b/);
     await fifth.click({ force: true });
@@ -187,9 +189,11 @@ test.describe("pinning from a contest page", () => {
       expect(box.height).toBeGreaterThanOrEqual(min);
     }
     expect((await pin.boundingBox())!.width).toBeGreaterThanOrEqual(min);
-    await expect(pin.locator("a")).toHaveCount(0);
+    await expect(pin.locator("svg")).not.toHaveClass(/\bfill-current\b/);
     await pin.click();
     await expect(pin).toHaveAttribute("aria-pressed", "true");
+    await expect(pin.locator("svg")).toHaveClass(/\bfill-current\b/);
+    await expect(pin).toHaveClass(/\bbg-foreground\b/);
     await expect(page).toHaveURL(/\/prop-d\?/);
     await pin.click();
     await expect(pin).toHaveAttribute("aria-pressed", "false");
@@ -238,6 +242,7 @@ test.describe("pinning from a contest page", () => {
     await chip.hover();
     await expect(tip).toBeVisible();
     await expect(tip).toContainText("Gave reasons on this contest.");
+    await expect(tip).toContainText("Opens its guide page.");
   });
 
   test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
@@ -360,8 +365,13 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const tip = chip.locator("[data-tip]");
     await chip.hover();
     await expect(tip).toBeVisible();
+    const navigated = page.waitForURL(/\/guides\//, { timeout: 3000 }).then(
+      () => true,
+      () => false,
+    );
     await tip.locator("b").click();
     await expect(tip).toBeHidden();
+    expect(await navigated).toBe(false);
     await expect(page).toHaveURL(/[?&]c=prop-d/);
     await expect(pinChip(pane, "SF Chronicle")).toHaveAttribute("aria-pressed", "false");
     await expect(page).not.toHaveURL(/[?&]pin=/);

@@ -86,7 +86,7 @@ export function PinStatus({ message }: { message: string }) {
   );
 }
 
-// Screen-reader only, and not dead: a disabled chip's aria-describedby points here.
+// Screen-reader only, and not dead: a disabled pin's aria-describedby points here.
 export function PinHint({ pinning }: { pinning: PinControls }) {
   const n = pinning.filters.pins.length;
   return (
@@ -122,6 +122,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
       >
         <Link
           href={`/guides/${guide.id}`}
+          prefetch={false}
           aria-label={`${name}${guide.quoted ? " (gave reasons)" : ""}`}
           aria-describedby={guide.name !== name ? nameId : undefined}
           onClick={(e) => {
@@ -160,9 +161,10 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
         <button
           type="button"
           aria-label={`Pin ${name}`}
+          title={full ? `You can pin up to ${MAX_PINS} guides` : `${pinned ? "Unpin" : "Pin"} ${guide.name}`}
           aria-pressed={pinned}
           aria-disabled={full || undefined}
-          aria-describedby={full ? pinning.limitId : undefined}
+          aria-describedby={[guide.name !== name && nameId, full && pinning.limitId].filter(Boolean).join(" ") || undefined}
           onClick={() => pinning.onPin(guide.id)}
           className={cn(
             "inline-flex min-h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-r-full outline-none sm:min-h-9 focus-visible:ring-3 focus-visible:ring-ring/50 sm:w-9",
@@ -309,7 +311,6 @@ export function PinChips({ guides, short, pinning, label }: { guides: ChipGuide[
   );
 }
 
-/** Plain links to each chip's guide page, in the chips' order: a dozen, then "and N more" shows the rest. */
 export function NoPickBlock({ pinning, short }: { pinning: PinControls; short: boolean }) {
   const guides = pinning.noPick;
   if (!guides.length) return null;
