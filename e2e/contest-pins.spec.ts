@@ -298,7 +298,6 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const tip = chip.locator("[data-tip]");
     await expect(tip).toBeHidden();
     await pane.getByRole("group", { name: /^Guides for / }).first().getByRole("button").first().focus();
-    // Tab from the first chip on to SF Chronicle.
     for (let i = 0; i < 12 && !(await chip.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
     await expect(chip).toBeFocused();
     await expect(tip).toBeVisible();

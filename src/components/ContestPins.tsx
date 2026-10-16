@@ -9,7 +9,6 @@ import { displayName } from "@/lib/display";
 import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 
-/** What a contest's sides need to pin guides. */
 export type Pinning = {
   filters: Filters;
   status: string;
@@ -89,7 +88,7 @@ export function PinStatus({ message }: { message: string }) {
   );
 }
 
-// Screen-reader only: a disabled chip's description points here. Sighted people get the chip tooltip and the status toast.
+// Screen-reader only, and not dead: a disabled chip's aria-describedby points here.
 export function PinHint({ pinning }: { pinning: PinControls }) {
   const n = pinning.filters.pins.length;
   return (
@@ -251,7 +250,6 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   e.preventDefault();
 }
 
-/** The first few chips plus any pinned guide, then "+N more" opens the rest below them. */
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const pinnedLater = guides.slice(CHIPS_SHOWN).filter((g) => isPinned(pinning.filters, g.id)).map((g) => g.id);
