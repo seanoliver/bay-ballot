@@ -228,18 +228,22 @@ test.describe("pinning from a contest page", () => {
     page.on("request", (r) => fetched.push(new URL(r.url()).pathname));
     await page.goto(`${BALLOT}/${CHIP_ONLY!.contest}`);
     await waitForKeys(page);
+    // A wait for the request, started before the action: waitForLoadState("networkidle") returns at once on an idle page.
+    const fetchOf = (timeout: number) => page.waitForRequest((r) => new URL(r.url()).pathname === href, { timeout }).then(() => true, () => false);
+    const inView = fetchOf(5000);
     const group = page.getByRole("group", { name: "Guides for Yes" });
     await expandChips(group);
     const chip = group.locator(`a[href="${href}"]`);
     await expect(chip).toHaveCount(1);
     // The chip is the guide's only link on the page, so no other link can prefetch it.
     await expect(page.locator(`a[href="${href}"]`)).toHaveCount(1);
-    await page.waitForLoadState("networkidle");
+    await chip.scrollIntoViewIfNeeded();
+    expect(await inView).toBe(false);
     expect(fetched).not.toContain(href);
     if (isPhone(info)) return;
+    const onHover = fetchOf(2000);
     await chip.hover();
-    await page.waitForLoadState("networkidle");
-    expect(fetched).not.toContain(href);
+    expect(await onHover).toBe(false);
   });
 
   test("each chip's name links to its guide page, and there is no separate Guide pages list", async ({ page }) => {
