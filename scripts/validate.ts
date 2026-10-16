@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { latestDay, readChangelog, validateChangelog } from "../src/lib/changelog";
+import { changelogErrors, latestDay } from "../src/lib/changelog";
 import { listElections, loadElection, validateElection } from "../src/lib/data";
 import { siteShortLinks } from "../src/lib/short-links";
 
@@ -26,10 +26,7 @@ for (const election of listElections(root)) {
   if (errors.length || warnings.length) failed = true;
 }
 try {
-  const today = latestDay();
-  const { entries, errors: read } = readChangelog(root);
-  const guides = new Set(listElections(root).flatMap((id) => loadElection(root, id).guides.map((g) => g.id)));
-  const errors = [...read, ...validateChangelog(entries, today, { guides })];
+  const errors = changelogErrors(root, latestDay());
   errors.forEach((e) => console.error(`ERROR ${e}`));
   if (errors.length) failed = true;
 } catch (e) {

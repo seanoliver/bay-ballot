@@ -39,6 +39,13 @@ describe("changelogDays", () => {
   });
 });
 
+describe("dataRow without a leading guide name", () => {
+  it("keeps the guide and the whole title", () => {
+    const [row] = changelogDays([entry("2026-10-14", "data", "Endorsements refreshed", "growsf")], guides)[0].data;
+    expect(row).toMatchObject({ guide: "growsf", name: null, text: "Endorsements refreshed" });
+  });
+});
+
 describe("dataSummary", () => {
   it("counts distinct guides and every update", () => {
     expect(dataSummary(days[0].data)).toBe("2 guides updated · 4 updates");

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
+import { listElections, loadElection } from "./data";
 import { ChangelogEntry } from "./schema";
 
 export type ChangelogItem = ChangelogEntry & { file: string };
@@ -60,4 +61,11 @@ export function latestDay(now = new Date()): string {
   const a = utcDay(now);
   const b = pacificDay(now);
   return a > b ? a : b;
+}
+
+// Guide ids come from every election, so entries about a guide a later election drops stay valid.
+export function changelogErrors(root: string, today: string): string[] {
+  const { entries, errors } = readChangelog(root);
+  const guides = new Set(listElections(root).flatMap((id) => loadElection(root, id).guides.map((g) => g.id)));
+  return [...errors, ...validateChangelog(entries, today, { guides })];
 }

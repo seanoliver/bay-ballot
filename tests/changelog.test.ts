@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ChangelogEntry } from "@/lib/schema";
-import { latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
+import { changelogErrors, latestDay, pacificDay, readChangelog, utcDay, validateChangelog } from "@/lib/changelog";
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
@@ -99,5 +99,31 @@ describe("pacificDay and latestDay", () => {
   it("lets validation accept either day around midnight", () => {
     expect(latestDay(new Date("2026-10-07T00:37:00Z"))).toBe("2026-10-07");
     expect(latestDay(new Date("2026-10-07T12:00:00Z"))).toBe("2026-10-07");
+  });
+});
+
+describe("changelogErrors", () => {
+  const real = path.join(process.cwd(), "data");
+
+  function copyWith(entry: string) {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cle-"));
+    for (const name of fs.readdirSync(real)) if (name !== "changelog") fs.symlinkSync(path.join(real, name), path.join(root, name));
+    fs.mkdirSync(path.join(root, "changelog"));
+    fs.writeFileSync(path.join(root, "changelog", "2026-10-01-x.yml"), entry);
+    return root;
+  }
+
+  it("accepts the repo's changelog", () => {
+    expect(changelogErrors(real, latestDay())).toEqual([]);
+  });
+
+  it("flags a guide id that no election has", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Nobody refreshed\nguide: no-such-guide\n");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
+  });
+
+  it("accepts a guide id from the election data", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
+    expect(changelogErrors(root, "2026-10-16")).toEqual([]);
   });
 });

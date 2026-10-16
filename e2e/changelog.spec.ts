@@ -88,4 +88,11 @@ test("the area filter narrows data rows to guides that cover the area, and survi
   await page.getByLabel("Area").selectOption({ label: "All areas" });
   await expect(page).toHaveURL(/\?show=data$/);
   await expect(rows(page)).toHaveCount(allRows.length);
+  await page.getByLabel("Area").selectOption({ label: area.name });
+  await show(page, "Site").click();
+  await expect(page).toHaveURL(/\?show=site$/);
+  await expect(page.getByLabel("Area")).toHaveCount(0);
+  await show(page, "Data").click();
+  await expect(page.getByLabel("Area")).toHaveValue("");
+  await expect(rows(page)).toHaveCount(allRows.length);
 });
