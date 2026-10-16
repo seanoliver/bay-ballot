@@ -33,7 +33,6 @@ export function ElectionChip({ date }: { date: string }) {
     <a href="#before-you-vote" className={cn(CHIP, state?.kind === "day" ? "ring-foreground" : "ring-foreground/15")}>
       {state?.kind === "day" ? (
         <>
-          {/* The full label doesn't fit beside the logo and About on a phone. */}
           <span className="sm:hidden">Polls close 8 pm</span>
           <span className="hidden sm:inline">
             Election day <span className={SUB}>· polls close 8 pm</span>

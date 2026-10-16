@@ -21,7 +21,6 @@ describe("electionDayState", () => {
   });
 
   it("uses the Pacific date, not UTC, near midnight", () => {
-    // 11 pm Pacific on Nov 2 is already Nov 3 in UTC.
     expect(at("2026-11-03T07:00:00Z")).toEqual({ kind: "before", days: 1 });
     // Daylight saving ends Nov 1, 2026: 11:30 pm PST on Nov 1 is still two days out.
     expect(at("2026-11-02T07:30:00Z")).toEqual({ kind: "before", days: 2 });
