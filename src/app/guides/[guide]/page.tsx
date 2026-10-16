@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/BackLink";
+import { CarriedLink } from "@/components/CarriedLink";
 import { CardLink } from "@/components/ExternalLink";
 import { CARD } from "@/components/frame";
 import { PageColumn } from "@/components/PageColumn";
@@ -65,8 +65,18 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
         {published && stats ? (
           <p className="mt-2 text-sm text-muted-foreground">
             <Stat n={stats.picks} word={stats.picks === 1 ? "pick" : "picks"} />
-            {" · "}
-            {stats.withReasons === null ? <span className="font-semibold text-foreground">List only</span> : <Stat n={stats.withReasons} word="with reasons" />}
+            {/* A guide that explains its picks but quoted none drops the count rather than show "0 with reasons". */}
+            {stats.withReasons === null ? (
+              <>
+                {" · "}
+                <span className="font-semibold text-foreground">List only</span>
+              </>
+            ) : stats.withReasons > 0 ? (
+              <>
+                {" · "}
+                <Stat n={stats.withReasons} word="with reasons" />
+              </>
+            ) : null}
             {` · as of ${formatDate(published.fetchedAt)}`}
           </p>
         ) : null}
@@ -84,9 +94,9 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
                     const slots = candidateSlots(p.contest, activeEntries(p.contest.id, guides, files, EMPTY).map((r) => r.entry));
                     return (
                       <li key={p.contest.id} className={cn("relative flex min-h-12 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 transition-[background-color] hover:bg-muted/60", ROW_FOCUS)}>
-                        <Link href={`/${id}/${p.contest.id}`} aria-label={`${p.contest.title}: ${p.label}`} className={cn("min-w-0 font-medium", ROW_LINK)}>
+                        <CarriedLink href={`/${id}/${p.contest.id}`} aria-label={`${p.contest.title}: ${p.label}`} className={cn("min-w-0 font-medium", ROW_LINK)}>
                           {keepNumber(p.contest.title)}
-                        </Link>
+                        </CarriedLink>
                         <span aria-hidden="true" className="ml-auto flex flex-wrap justify-end gap-x-3 gap-y-1 text-sm">
                           {pinParts(p.entry, slots).map((part) => (
                             <span key={part.key} className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
