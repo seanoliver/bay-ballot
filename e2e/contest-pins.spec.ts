@@ -253,7 +253,10 @@ test.describe("pinning from a contest page", () => {
     await expect(counted).toContainText(/^.*\b2 of \d+ guides counted/);
     const panel = await filterPanel(page, info);
     await panel.getByRole("button", { name: "Reset filters" }).click();
+    // Close steps back in history; the reset query is re-applied on the popstate after it.
+    const popped = isPhone(info) ? page.evaluate(() => new Promise((r) => addEventListener("popstate", () => setTimeout(r, 0), { once: true }))) : null;
     await closePanel(page, info);
+    await popped;
     await expect(page).not.toHaveURL(/[?&](only|off)=/);
     await expect(counted).not.toContainText(/\b2 of /);
   });
