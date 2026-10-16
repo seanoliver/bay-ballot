@@ -68,7 +68,6 @@ export function ContestDetail({
   shortNames?: boolean;
   action?: ReactNode;
   fallback?: DetailFallback;
-  /** Each guide chip pins its guide, and each side can be the only one counted. */
   pinning: Pinning;
 }) {
   const bay = fallback?.scope === "bay";
@@ -195,7 +194,7 @@ function SideBlock({ side, rows, contest, short, pinning }: { side: Side; rows: 
   return (
     <section className="space-y-4 border-t border-border pt-6 first:border-t-0 first:pt-0 [&+&]:mt-6">
       {heading}
-      <PinChips key={contest.id} guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} side={side.label} />
+      <PinChips key={contest.id} guides={side.guides} short={short} pinning={pinning} label={`Guides for ${side.label}`} />
       {top.length ? (
         <div className="space-y-4">
           <p className="text-sm font-semibold">Reasons</p>
