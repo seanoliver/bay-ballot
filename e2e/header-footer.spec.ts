@@ -134,6 +134,24 @@ test("the chip's outline is stronger on election day", async ({ page }) => {
   expect(alpha(day)).toBeGreaterThan(alpha(before));
 });
 
+test("a chip click past the history budget scrolls and focuses but leaves the URL", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto(BALLOT);
+  await expect(chip(page)).toContainText("days");
+  await page.waitForLoadState("networkidle");
+  // With the clock fixed, history calls never age out of the budget's 10-second window.
+  await page.getByRole("navigation", { name: "Area" }).evaluate((nav) => {
+    const c = (name: string) => [...nav.querySelectorAll("a")].find((a) => a.textContent === name)!;
+    for (let i = 0; i < 45; i++) c(i % 2 ? "San Mateo" : "Sonoma").click();
+  });
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+  await chip(page).click();
+  const region = page.getByRole("region", { name: "Before you vote" });
+  await expect(region).toBeInViewport();
+  await expect(region).toBeFocused();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+});
+
 test("the chip click fetches nothing from the server", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto(BALLOT);
