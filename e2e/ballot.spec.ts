@@ -929,7 +929,10 @@ test.describe("guide page rows", () => {
         const m = title.data.match(/(\S+)\s(\d+)$/);
         const parts = [...a.closest("li")!.querySelectorAll("[aria-hidden=true] > span")];
         return {
-          pickOnOneLine: parts.every((p) => p.getClientRects().length === 1),
+          pickOnOneLine: parts.every((p) => {
+            const label = [...p.childNodes].find((n): n is Text => n.nodeType === Node.TEXT_NODE)!;
+            return new Set([...(() => { const r = document.createRange(); r.selectNodeContents(label); return r.getClientRects(); })()].map((b) => Math.round(b.top))).size === 1;
+          }),
           numberWithTitle: !m || lineOf(title, title.data.length - m[2].length, title.data.length) === lineOf(title, m.index!, m.index! + 1 + m[1].length - 1),
         };
       }),
@@ -941,6 +944,32 @@ test.describe("guide page rows", () => {
   test("a row's link names the contest and the guide's pick", async ({ page }) => {
     await page.goto("/guides/growsf");
     await expect(page.getByRole("link", { name: /^Governor:? Xavier Becerra$/ })).toBeVisible();
+  });
+
+  test("a row shows the pick's name and colour", async ({ page }) => {
+    await page.goto("/guides/growsf");
+    const row = (name: RegExp) => page.locator("li").filter({ has: page.getByRole("link", { name }) });
+    await expect(row(/^Governor:? Xavier Becerra$/).locator("[aria-hidden=true]")).toHaveText("Becerra");
+    await expect(row(/^Proposition 1:? Yes$/).locator("[aria-hidden=true] .bg-yes-fill")).toHaveCount(1);
+    await expect(row(/^Proposition 4:? No$/).locator("[aria-hidden=true] .bg-no-fill")).toHaveCount(1);
+  });
+
+  test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
+    await page.goto("/guides/sf-chronicle");
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", /sfchronicle\.com|web\.archive\.org/);
+    await page.goto("/guides/sf-bay-guardian");
+    await expect(page.getByRole("link", { name: /^Homepage/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveCount(0);
+  });
+
+  test("a guide's breadcrumb keeps the filter query", async ({ page }) => {
+    await page.goto("/guides/growsf?off=sf-gop");
+    await expect(page.getByRole("link", { name: "San Francisco ballot", exact: true })).toHaveAttribute("href", "/2026-11/sf?off=sf-gop");
+  });
+
+  test("a one-area guide outside SF links to its own area's ballot", async ({ page }) => {
+    await page.goto("/guides/palo-alto-forward");
+    await expect(page.getByRole("link", { name: "Palo Alto ballot", exact: true })).toHaveAttribute("href", "/2026-11/palo-alto");
   });
 
   for (const colorScheme of ["light", "dark"] as const) {

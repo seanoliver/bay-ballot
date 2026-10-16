@@ -5,5 +5,5 @@ export const COLUMN = "mx-auto w-full max-w-3xl pt-4 pb-10 lg:pt-6";
 // viewport tall even around a short card, so it left the screen before the card's bottom met the footer.
 export const PANE = "scrollbar-thin hidden lg:sticky lg:top-0 lg:block lg:self-start lg:max-h-dvh lg:overflow-y-auto lg:overscroll-contain lg:py-6";
 export const CARD = "mt-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 sm:p-6";
-export const DESKTOP ="(min-width: 1024px)";
+export const DESKTOP = "(min-width: 1024px)";
 export const FILTER_SEARCH = "aside[aria-label=Filters] input[type=search]";
