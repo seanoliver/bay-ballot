@@ -116,7 +116,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
     <li style={style} className={cn("relative hover:z-10 focus-within:z-10", className)}>
       <span
         className={cn(
-          "inline-flex min-h-10 items-stretch rounded-full border bg-background text-sm sm:min-h-9",
+          "inline-flex items-stretch rounded-full border bg-background text-sm",
           pinned ? "border-foreground" : "border-foreground/20 shadow-xs",
           full && "border-dashed shadow-none",
         )}
@@ -138,7 +138,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
           onPointerLeave={leaveTip}
           onBlur={resetTip}
           onKeyDown={dismissTip}
-          className="group relative inline-flex items-center gap-1.5 rounded-l-full pr-2.5 pl-3 underline-offset-[3px] outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="group relative inline-flex min-h-10 items-center gap-1.5 rounded-l-full pr-2.5 pl-3 underline-offset-[3px] sm:min-h-9 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {name}
           {guide.quoted ? QUOTE_MARK : null}
@@ -167,7 +167,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
           aria-describedby={full ? pinning.limitId : undefined}
           onClick={() => pinning.onPin(guide.id)}
           className={cn(
-            "inline-flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-r-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:w-9",
+            "inline-flex min-h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-r-full outline-none sm:min-h-9 focus-visible:ring-3 focus-visible:ring-ring/50 sm:w-9",
             pinned ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground",
             full && "cursor-not-allowed opacity-60 hover:bg-transparent hover:text-muted-foreground",
           )}

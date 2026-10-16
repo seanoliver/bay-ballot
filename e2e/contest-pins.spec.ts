@@ -177,16 +177,23 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("status")).toHaveText("You can pin up to 4 guides. Unpin one first.");
   });
 
-  test("the whole chip is the pin button, with nothing else to tap inside it", async ({ page }, info) => {
+  test("a chip's pin and name are separate full-size targets: the pin toggles, the name stays a link", async ({ page }, info) => {
     await openContest(page);
-    const chip = pinChip(page.getByRole("group", { name: "Guides for Yes" }), "GrowSF");
-    await expect(chip.locator("a")).toHaveCount(0);
-    expect((await chip.boundingBox())!.height).toBeGreaterThanOrEqual(isPhone(info) ? 40 : 36);
-    // On the pin icon near its left edge, and on the name in its middle: each toggles.
-    await chip.click({ position: { x: 8, y: 12 } });
-    await expect(chip).toHaveAttribute("aria-pressed", "true");
-    await chip.click();
-    await expect(chip).toHaveAttribute("aria-pressed", "false");
+    const group = page.getByRole("group", { name: "Guides for Yes" });
+    const pin = pinChip(group, "GrowSF");
+    const name = guideLink(group, "GrowSF");
+    const min = isPhone(info) ? 40 : 36;
+    for (const target of [pin, name]) {
+      const box = (await target.boundingBox())!;
+      expect(box.height).toBeGreaterThanOrEqual(min);
+    }
+    expect((await pin.boundingBox())!.width).toBeGreaterThanOrEqual(min);
+    await expect(pin.locator("a")).toHaveCount(0);
+    await pin.click();
+    await expect(pin).toHaveAttribute("aria-pressed", "true");
+    await expect(page).toHaveURL(/\/prop-d\?/);
+    await pin.click();
+    await expect(pin).toHaveAttribute("aria-pressed", "false");
   });
 
   test("Enter and Space on a focused chip pin and unpin it", async ({ page }) => {
