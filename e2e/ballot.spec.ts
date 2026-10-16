@@ -960,6 +960,8 @@ test.describe("guide page rows", () => {
   test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
     const files = loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements;
     const chron = files["sf-chronicle"];
+    // The archived copy is preferred, so the link is not the live page.
+    expect(sourceLink(chron, chron.source!)).not.toBe(chron.source);
     await page.goto("/guides/sf-chronicle");
     await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", sourceLink(chron, chron.source!));
     const noSource = Object.values(files).find((e) => !e.source);
