@@ -11,6 +11,15 @@ const FALLBACK = data.areas.flatMap((a) => (ballotViewProps(data, { area: a }).f
 const yesSide = (n: number) =>
   data.ballot.contests.find((c) => c.kind === "measure" && Object.values(data.endorsements).filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y").length === n);
 
+// A measure with a Yes guide that gave no quote on it, so the guide's only link on the contest page is its chip.
+const CHIP_ONLY = data.ballot.contests
+  .filter((c) => c.kind === "measure")
+  .flatMap((c) =>
+    Object.values(data.endorsements)
+      .filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y" && !(e.hasReasoning && e.picks[c.id].quotes.length > 0))
+      .map((e) => ({ contest: c.id, guide: e.guide })),
+  )[0];
+
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
@@ -194,6 +203,7 @@ test.describe("pinning from a contest page", () => {
     await expect(pin).toHaveAttribute("aria-pressed", "true");
     await expect(pin.locator("svg")).toHaveClass(/\bfill-current\b/);
     await expect(pin).toHaveClass(/\bbg-foreground\b/);
+    await expect(pin).not.toHaveAttribute("title");
     await expect(page).toHaveURL(/\/prop-d\?/);
     await pin.click();
     await expect(pin).toHaveAttribute("aria-pressed", "false");
@@ -211,17 +221,25 @@ test.describe("pinning from a contest page", () => {
     await expect(page).not.toHaveURL(/[?&]pin=/);
   });
 
-  test("a chip's guide page link doesn't prefetch the page", async ({ page }) => {
+  test("a chip's guide page link doesn't prefetch the page, in view or on hover", async ({ page }, info) => {
+    test.skip(!CHIP_ONLY, "no measure has a Yes guide without a quote in today's data");
+    const href = `/guides/${CHIP_ONLY!.guide}`;
     const fetched: string[] = [];
     page.on("request", (r) => fetched.push(new URL(r.url()).pathname));
-    await openContest(page);
-    await page.waitForLoadState("networkidle");
+    await page.goto(`${BALLOT}/${CHIP_ONLY!.contest}`);
+    await waitForKeys(page);
     const group = page.getByRole("group", { name: "Guides for Yes" });
-    const chips = await group.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    const bylines = await page.locator("blockquote ~ p a[href^='/guides/']").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    const only = chips.filter((href) => href && !bylines.includes(href));
-    expect(only.length).toBeGreaterThan(0);
-    for (const href of only) expect(fetched).not.toContain(href);
+    await expandChips(group);
+    const chip = group.locator(`a[href="${href}"]`);
+    await expect(chip).toHaveCount(1);
+    // The chip is the guide's only link on the page, so no other link can prefetch it.
+    await expect(page.locator(`a[href="${href}"]`)).toHaveCount(1);
+    await page.waitForLoadState("networkidle");
+    expect(fetched).not.toContain(href);
+    if (isPhone(info)) return;
+    await chip.hover();
+    await page.waitForLoadState("networkidle");
+    expect(fetched).not.toContain(href);
   });
 
   test("each chip's name links to its guide page, and there is no separate Guide pages list", async ({ page }) => {
@@ -338,6 +356,16 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await chip.focus();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("a short-named pin at the limit is described by its full name and the limit", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d&pin=growsf,sf-dems,league-pissed-off-voters,spur`);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    await expandChips(pane);
+    const pin = pinChip(pane, "SF Chronicle");
+    await expect(pin).toHaveAttribute("aria-disabled", "true");
+    await expect(pin).toHaveAccessibleDescription("San Francisco Chronicle 4 of 4 pinned. Unpin one to pin another.");
   });
 
   test("Escape with the mouse over a chip and focus elsewhere closes the pane", async ({ page }, info) => {
