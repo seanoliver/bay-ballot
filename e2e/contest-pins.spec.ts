@@ -272,10 +272,14 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("link", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("link", { name: /\(gave reasons\)$/ }).first();
-    // Counts what is shown, so a tooltip kept in the DOM and revealed by CSS on hover counts too.
-    const shown = () => chip.locator("xpath=ancestor::li[1]").evaluate((li) => [li, ...li.querySelectorAll("*")].filter((el) => el.checkVisibility()).length);
+    // Counts what is shown, so a tooltip kept in the DOM and revealed by CSS on hover (display, opacity or visibility) counts too.
+    const shown = () =>
+      chip.locator("xpath=ancestor::li[1]").evaluate((li) => [li, ...li.querySelectorAll("*")].filter((el) => el.checkVisibility({ opacityProperty: true, visibilityProperty: true })).length);
+    await page.mouse.move(0, 0);
     const before = await shown();
     await chip.hover();
+    // Nothing to wait for when checking that nothing appeared, so wait out a typical tooltip delay.
+    await page.waitForTimeout(1000);
     await expect(page.getByText(/Gave reasons on this contest|Opens its guide page/)).toHaveCount(0);
     await expect(page.getByRole("tooltip")).toHaveCount(0);
     expect(await shown()).toBe(before);
