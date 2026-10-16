@@ -2,7 +2,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { coverage, coverageSentence } from "../src/lib/coverage";
 import { loadElection } from "../src/lib/data";
-import { BALLOT, isPhone } from "./helpers";
+import { BALLOT } from "./helpers";
 import { MAX_PINS } from "../src/lib/filters";
 
 const REPO = "https://github.com/seanoliver/bay-ballot";
@@ -37,19 +37,19 @@ test("the About page shows three numbered steps and a link to the ballot", async
   const steps = page.getByRole("main").getByRole("list", { name: "How to use it" }).getByRole("listitem");
   await expect(steps).toHaveCount(3);
   await expect(steps.nth(0)).toContainText("Pick your area or enter your ZIP");
-  await expect(steps.nth(0)).toContainText("Your ZIP stays on your device.");
+  await expect(steps.nth(0)).toContainText("Your area shows its contests. Add your ZIP to narrow them to the ones that can be on your ballot. Your ZIP stays on your device.");
   await expect(steps.nth(1)).toContainText("Open a contest");
   await expect(steps.nth(2)).toContainText("Pin the guides you trust");
-  await expect(steps.nth(2)).toContainText(`Tap the pin on up to ${MAX_PINS} guides.`);
+  await expect(steps.nth(2)).toContainText(`Tap the pin on up to ${MAX_PINS} guides. Their picks then show on every contest.`);
   await expect(steps.nth(1)).toContainText("See how the guides split, then read their reasons.");
   await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", BALLOT);
 });
 
-test("the About page's steps stack on phones and sit in a row on desktop", async ({ page }, info) => {
+test("the About page's steps stack on phones and sit in a row on desktop", async ({ page }) => {
   await page.goto("/about");
   const steps = page.getByRole("main").getByRole("list", { name: "How to use it" }).getByRole("listitem");
   const ys = await Promise.all([0, 1, 2].map(async (i) => (await steps.nth(i).boundingBox())!.y));
-  if (isPhone(info)) expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
+  if (page.viewportSize()!.width < 768) expect(ys[0] < ys[1] && ys[1] < ys[2]).toBe(true);
   else expect(new Set(ys.map(Math.round)).size).toBe(1);
 });
 
