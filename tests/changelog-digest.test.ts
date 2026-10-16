@@ -39,6 +39,13 @@ describe("changelogDays", () => {
   });
 });
 
+describe("dataRow on a guided entry", () => {
+  it("keeps the guide name, details and PR", () => {
+    const [row] = changelogDays([{ file: "x.yml", date: "2026-10-14", type: "data", guide: "growsf", title: "GrowSF refreshed", details: "d", pr: 9 }], guides)[0].data;
+    expect(row).toMatchObject({ guide: "growsf", name: "GrowSF", details: "d", pr: 9 });
+  });
+});
+
 describe("dataRow without a leading guide name", () => {
   it("keeps the guide and the whole title", () => {
     const [row] = changelogDays([entry("2026-10-14", "data", "Endorsements refreshed", "growsf")], guides)[0].data;

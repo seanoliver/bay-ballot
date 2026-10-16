@@ -62,6 +62,7 @@ test("Site hides data updates and Data shows only them, every day expanded", asy
   await expect(page.getByRole("link", { name: /^Pull request/ })).toHaveCount(withPr.length);
   const withDetails = allRows.find((r) => r.details);
   if (withDetails) await expect(rows(page).filter({ hasText: withDetails.details! })).toHaveCount(1);
+  await expect(rows(page).filter({ hasText: "The Mercury News and East Bay Times editorial boards recommend No on Prop 44" })).toHaveCount(1);
 
   await show(page, "All").click();
   await expect(page).toHaveURL(/\/changelog$/);

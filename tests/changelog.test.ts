@@ -132,6 +132,17 @@ describe("changelogErrors", () => {
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
   });
 
+  it("accepts a guide id from an older election when a newer one has none", () => {
+    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
+    fs.mkdirSync(path.join(root, "2028-11"));
+    expect(changelogErrors(root, "2026-10-16")).toEqual([]);
+  });
+
+  it("reports a changelog file that fails to parse", () => {
+    const root = copyWith("date: nope\n");
+    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/2026-10-01-x\.yml/);
+  });
+
   it("accepts a guide id from the election data", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
     expect(changelogErrors(root, "2026-10-16")).toEqual([]);
