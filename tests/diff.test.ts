@@ -39,6 +39,11 @@ describe("diffPicks", () => {
     ]);
   });
 
+  it("cuts a removed quote only when it runs past 60 characters", () => {
+    const sixty = { text: "x".repeat(60), source: "https://a.org/" };
+    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [sixty] } }, { "prop-a": e("Y") })).toEqual(["q prop-a: 1 -> 0", `q prop-a: removed "${sixty.text}"`]);
+  });
+
   it("is empty when nothing changed", () => {
     const picks = { "prop-a": e("Y", { quotes: 1 }) };
     expect(diffPicks(picks, structuredClone(picks))).toEqual([]);

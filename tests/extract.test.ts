@@ -618,6 +618,31 @@ ${q2} ${but}` }];
     expect(keep2({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", q1, pair) }).picks["prop-g"].quotes).toEqual([quote(pair)]);
   });
 
+  const short = "We urge a strong No on this one.";
+  const pg3: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q1} ${short} ${q2} ${dashed}` }];
+  const keep3 = (prev: Record<string, Entry>, picks: Record<string, Entry>) => keepPrevQuotes(prev, picks, ballot.contests, pg3);
+
+  it("drops a short sentence of a published pair whichever side of the pair it was on", () => {
+    expect(keep3({ "prop-g": entry("N", `${q1} ${short}`) }, { "prop-g": entry("N", q1, short) }).picks["prop-g"].quotes).toEqual([quote(`${q1} ${short}`)]);
+    expect(keep3({ "prop-g": entry("N", `${short} ${q2}`) }, { "prop-g": entry("N", short, q2) }).picks["prop-g"].quotes).toEqual([quote(`${short} ${q2}`)]);
+  });
+
+  it("drops every other copy of a published pair the model returns, not just the first", () => {
+    const pair = `${q1} ${short}`;
+    expect(keep3({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", q1, pair, short) }).picks["prop-g"].quotes).toEqual([quote(pair)]);
+  });
+
+  it("drops a repeat of a quote the model returned twice for a pick that did not change", () => {
+    expect(keep3({ "prop-g": entry("N", q2) }, { "prop-g": entry("N", q1, q1, q2) }).picks["prop-g"].quotes).toEqual([quote(q1), quote(q2)]);
+  });
+
+  it("keeps the model's quote that already holds the whole published one, and drops the fragment", () => {
+    const longer = `${q1} ${short} ${q2} ${dashed}`;
+    const r = keep3({ "prop-g": entry("N", `${q1} ${short}`) }, { "prop-g": entry("N", q1, longer) });
+    expect(r.picks["prop-g"].quotes).toEqual([quote(longer)]);
+    expect(r.notes).toEqual([]);
+  });
+
   it("keeps the model's shorter quote when the published full quote no longer passes", () => {
     const gone = `The old page said the closure saved money. ${q2}`;
     const r = keep2({ "prop-g": entry("N", gone) }, { "prop-g": entry("N", q2) });

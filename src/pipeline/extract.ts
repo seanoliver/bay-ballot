@@ -251,6 +251,12 @@ function sameQuote(a: string, b: string): boolean {
   return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
 }
 
+/** Drops each quote whose text sits inside another's, and later exact repeats, so no sentence shows twice. */
+function withoutContained<T extends { text: string }>(quotes: T[]): T[] {
+  const norms = quotes.map((q) => quoteNorm(q.text));
+  return quotes.filter((_, j) => !norms.some((m, k) => k !== j && (m.length > norms[j].length ? m.includes(norms[j]) : m === norms[j] && k < j)));
+}
+
 /** Same names (in any order unless ranked) or the same vote. */
 export function samePick(a: Entry, b: Entry): boolean {
   if (Array.isArray(a.pick) && Array.isArray(b.pick) && !a.ranked && !b.ranked) {
@@ -303,9 +309,6 @@ export function keepPrevQuotes(
           else {
             quotes[i] = q;
             lengthened.push(q);
-            for (let j = quotes.length - 1; j > i; j--) {
-              if (quoteNorm(quotes[j].text).length <= quoteNorm(q.text).length && sameQuote(quotes[j].text, q.text)) quotes.splice(j, 1);
-            }
           }
         }
       } else {
@@ -317,17 +320,16 @@ export function keepPrevQuotes(
         }
       }
     }
-    for (const q of lengthened) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
-    if (restored.length === 0) {
-      if (lengthened.length) out[id] = { ...entry, quotes };
-      continue;
-    }
+    const deduped = withoutContained(quotes);
+    if (!restored.length && !lengthened.length && deduped.length === quotes.length) continue;
+    quotes.splice(0, quotes.length, ...deduped);
+    for (const q of lengthened) if (quotes.includes(q)) notes.push(`${id}: kept previous full quote over the model's shorter one: "${clip(q.text)}"`);
     while (quotes.length > MAX_QUOTES) {
       const newest = quotes.findLastIndex((q) => !old.quotes.some((o) => sameQuote(o.text, q.text)));
       const [cut] = quotes.splice(newest === -1 ? quotes.length - 1 : newest, 1);
       notes.push(`${id}: dropped new quote to keep the previous ones (limit ${MAX_QUOTES}): "${clip(cut.text)}"`);
     }
-    for (const q of restored) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
+    for (const q of restored) if (quotes.includes(q)) notes.push(`${id}: kept previous quote the model omitted: "${clip(q.text)}"`);
     out[id] = { ...entry, quotes };
   }
   return { picks: out, notes };
