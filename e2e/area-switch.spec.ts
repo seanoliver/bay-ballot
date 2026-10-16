@@ -96,7 +96,7 @@ test.describe("area switching", () => {
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf$`));
     await expect(heading(page, "San Francisco ballot")).toBeVisible();
     await expect(page).toHaveTitle("San Francisco endorsements (Nov 2026)");
-    await page.getByRole("link", { name: "About" }).click();
+    await page.getByRole("banner").getByRole("link", { name: "About" }).click();
     await expect(page).toHaveURL(/\/about$/);
     await page.goBack();
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf$`));

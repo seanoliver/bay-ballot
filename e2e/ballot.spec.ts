@@ -12,7 +12,8 @@ test("ballot page has the header, logo, intro and footer", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText("Built and maintained in San Francisco by Sean Oliver")).toBeVisible();
   await expect(footer.getByRole("link", { name: "Sean Oliver" })).toHaveAttribute("href", "https://seanoliver.dev");
-  await expect(footer.getByRole("link", { name: "Fully open source on GitHub" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot");
+  await expect(footer.getByRole("link", { name: "Open source", exact: true })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot");
+  await expect(footer.getByText(/Every quote links to its source · Independent; not affiliated with any guide/)).toBeVisible();
   await expect(footer.getByRole("link", { name: "Open an issue" })).toBeVisible();
   await expect(footer.getByRole("link", { name: "Edit on GitHub" })).toHaveCount(0);
   await expect(footer.getByText(/Data as of /)).toBeVisible();
@@ -147,7 +148,7 @@ test.describe("phone sheet", () => {
 test("/about renders", async ({ page }) => {
   await page.goto("/about");
   await expect(page.getByRole("heading", { level: 1, name: "About Bay Ballot" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Corrections" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("heading", { name: "Corrections" })).toBeVisible();
 });
 
 test("an unknown contest is a 404", async ({ page }) => {
