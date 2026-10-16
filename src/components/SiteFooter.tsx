@@ -23,7 +23,7 @@ export function SiteFooter() {
     <footer className="mt-8 border-t border-border bg-muted/40">
       <div className={`${FRAME} space-y-6 py-8 text-sm`}>
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 lg:grid-cols-3 lg:gap-x-8">
-          <section id="before-you-vote" aria-labelledby="before-you-vote-heading" className="col-span-2 scroll-mt-4 rounded-2xl bg-background px-4 pt-3 pb-1 ring-1 ring-foreground/15 lg:col-span-1">
+          <section id="before-you-vote" tabIndex={-1} aria-labelledby="before-you-vote-heading" className="col-span-2 scroll-mt-4 outline-none rounded-2xl bg-background px-4 pt-3 pb-1 ring-1 ring-foreground/15 lg:col-span-1">
             <h2 id="before-you-vote-heading" className="mb-1 text-[15px] font-semibold">
               Before you vote
             </h2>

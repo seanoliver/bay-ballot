@@ -24,8 +24,13 @@ const today = () => pacificDate(new Date());
 function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   if (!isPlainClick(e)) return;
   e.preventDefault();
-  document.getElementById("before-you-vote")?.scrollIntoView();
-  window.history.replaceState(null, "", "#before-you-vote");
+  const section = document.getElementById("before-you-vote");
+  section?.focus({ preventScroll: true });
+  section?.scrollIntoView();
+  if (window.location.hash === "#before-you-vote") return;
+  try {
+    window.history.replaceState(window.history.state, "", "#before-you-vote");
+  } catch {}
 }
 
 export function ElectionChip({ date }: { date: string }) {
