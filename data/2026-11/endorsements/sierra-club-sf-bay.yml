@@ -5,8 +5,14 @@ source: https://www.sierraclub.org/sfbay/2026-endorsements
 extraSources:
   - https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
 fetchWith: browser
-fetchedAt: 2026-10-13
+fetchedAt: 2026-10-16
 hasReasoning: true
+held:
+  - contestId: ac-transit-ward-5
+    pick:
+      - Murphy McCalley
+    reason: name-mismatch
+    evidence: the page names `Murphy McCulley`, not on the ballot; closest `Murphy McCalley`. If it is the same person, add an alias
 rejectedQuotes:
   - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
     reason: 'does not stand alone: opens with "And" (review 2026-10-10)'
@@ -69,6 +75,12 @@ picks:
   assembly-24:
     pick:
       - Alex Lee
+  state-senate-2:
+    pick:
+      - Damon Connolly
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
   attorney-general:
     pick:
       - Rob Bonta
@@ -81,9 +93,6 @@ picks:
   secretary-of-state:
     pick:
       - Shirley N. Weber
-  state-senate-2:
-    pick:
-      - Damon Connolly
   superintendent:
     pick:
       - Richard Barrera
@@ -267,8 +276,6 @@ picks:
       - text: McCoy has a long history of support for sustainable streets and transportation projects.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
       - text: McCoy backs the Safer, Better 17th Street proposal including the parking removal it requires, and wants the D8 segments of the Biking and Rolling Plans’ North Star network completed by 2030.
-        source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
-      - text: Gary McCoy’s strong record and environmental positions made the choice in this race clear.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
   supervisor-10:
     pick:

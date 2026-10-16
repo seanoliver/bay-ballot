@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-15
+fetchedAt: 2026-10-16
 hasReasoning: true
 rejectedQuotes:
   - text: However, we can’t support it, and believe it is a mayoral power grab.
@@ -75,38 +75,6 @@ picks:
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-  supervisor-8:
-    pick:
-      - Gary McCoy
-      - Michael T. Nguyen
-    ranked: true
-    quotes:
-      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: Nguyen impressed us with his commitment to social housing.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  supervisor-6:
-    pick:
-      - Matt Dorsey
-    quotes:
-      - text: Overall, Dorsey has been effective on the Board of Supervisors.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  supervisor-10:
-    pick:
-      - Theo Ellington
-    quotes:
-      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  supervisor-4:
-    pick:
-      - Alan Wong
-  supervisor-2:
-    pick:
-      - Stephen Sherrill
   board-of-education:
     pick:
       - Phil Kim
@@ -121,19 +89,45 @@ picks:
       - Monroe Lace
       - Erwin Tam
     quotes:
-      - text: Overall, Tam has financial skills that would be beneficial to the college district.
-        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
       - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
+        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+      - text: Overall, Tam has financial skills that would be beneficial to the college district.
         source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
   college-board-partial:
     pick:
       - Ruth Ferguson
-  vallejo-council-5:
+  supervisor-2:
     pick:
-      - Tara Beasley Stansberry
-  concord-council-3:
+      - Stephen Sherrill
+  supervisor-4:
     pick:
-      - Robyn Kuslits
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: Overall, Dorsey has been effective on the Board of Supervisors.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+    ranked: true
+    quotes:
+      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Nguyen impressed us with his commitment to social housing.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-10:
+    pick:
+      - Theo Ellington
+    quotes:
+      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   prop-1:
     pick: Y
   prop-2:
@@ -195,10 +189,15 @@ picks:
   prop-b:
     pick: N
     quotes:
+      - text: It’s important to recognize that Prop B will not establish a public bank.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: In short, we don’t see a need for a public bank with its encompassing bureaucratic infrastructure in San Francisco right now.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-c:
     pick: Y
+    quotes:
+      - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-d:
     pick: Y
   prop-e:
@@ -219,6 +218,8 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: Sea level rise and erosion are already a threat that will eventually overwhelm the roadway, as well as the cost to constantly remove sand from it.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: Environmental groups that pushed for Prop K’s passage are opposed to Prop G.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-h:
     pick: Y
     quotes:
@@ -233,8 +234,16 @@ picks:
     quotes:
       - text: Prop I probably wouldn’t even be on the ballot if city officials had followed the intent of the original Prop I.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: This measure, dubbed the Affordable Housing Guarantee Act, is not a new tax.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-j:
     pick: Y
     quotes:
       - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  vallejo-council-5:
+    pick:
+      - Tara Beasley Stansberry
+  concord-council-3:
+    pick:
+      - Robyn Kuslits

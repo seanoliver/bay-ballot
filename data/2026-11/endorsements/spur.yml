@@ -77,7 +77,7 @@ archived:
     snapshot: https://web.archive.org/web/20261005224029/https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
   - source: https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
     snapshot: https://web.archive.org/web/20261005224130/https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
-fetchedAt: 2026-10-08
+fetchedAt: 2026-10-16
 hasReasoning: true
 rejectedQuotes:
   - text: We believe they would reduce duplicative reviews, shorten contracting timelines, improve service delivery, lower administrative costs, and make it easier for businesses and nonprofits to work with the city — critical improvements as the city faces persistent fiscal pressures and growing public service demands.
@@ -90,72 +90,6 @@ rejectedQuotes:
     reason: 'does not stand alone: "This diversion" refers back, and the sentence before it opens with "However" (review 2026-10-11)'
     contestId: prop-i
 picks:
-  prop-a:
-    pick: Y
-    quotes:
-      - text: Although the proposed measure contains many individual amendments, nearly all are technical, administrative, or housekeeping changes that simplify and modernize the charter without materially changing city policy.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-a-departments-and-commission
-      - text: While the final package avoids more controversial but needed reforms, it nonetheless reflects a worthwhile housekeeping package worthy of voters’ support.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-a-departments-and-commission
-  prop-b:
-    pick: N
-    quotes:
-      - text: The measure embeds detailed governance structures for the proposed Municipal Financial Corporation, future public bank, and multiple oversight commissions directly into the city charter, limiting future flexibility and adding complexity to a document that should focus on fundamental governmental structures. Importantly, establishing a public bank does not require these governance provisions to be in the charter.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
-      - text: The city could pursue a public bank through ordinance, administrative action, and existing oversight processes.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
-  prop-c:
-    pick: Y
-    quotes:
-      - text: Affordable housing is one of San Francisco's highest priorities, yet it consistently struggles to secure sufficient funding, and state and federal funding is increasingly unreliable.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-c-housing-trust-fund
-  prop-d:
-    pick: Y
-    quotes:
-      - text: The city’s current processes for placing measures on the ballot are more permissive than those elsewhere in California. By allowing a mayor alone or a minority of the Board of Supervisors to bypass standard public processes, these processes discourage elected leaders from building consensus to solve an identified problem and reduce opportunities for the public to participate in crafting legislative proposals.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-d-ballot-measure-process
-      - text: On balance, SPUR believes the measure's benefits outweigh its downsides and will lead to more effective policies and greater voter engagement.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-d-ballot-measure-process
-  prop-e:
-    pick: Y
-    quotes:
-      - text: San Francisco’s procurement system has become so fragmented that no single official has the authority to ensure that purchasing processes operate efficiently, consistently, and accountably.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-e-city-administrator-duties
-  prop-f:
-    pick: Y
-    quotes:
-      - text: It would remove charter limits on the mayor’s ability to structure the Mayor’s Office to manage a large and complex government.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
-      - text: While the measure would give the mayor greater authority to reorganize charter departments and functions than SPUR envisioned, it would maintain important limits by allowing the Board of Supervisors to reject changes and exempting key independent oversight functions. Taken together, these changes would strengthen the mayor’s ability to serve as the city’s chief executive and voters’ ability to hold the mayor accountable for results.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
-  prop-g:
-    pick: N
-    quotes:
-      - text: Prop. G would undo a successful city effort to protect neighborhoods from the threats of rising sea levels and coastal erosion and create more places for San Franciscans to recreate safely and connect with nature.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes
-      - text: It would delay the city’s plan for addressing climate impacts at a time when the effects of climate change are only increasing.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes
-  prop-h:
-    pick: Y
-    quotes:
-      - text: "Life will get much harder and more expensive in San Francisco and the region if Prop. H does not pass, especially for people with the fewest options: when transit service is cut, riders with disabilities, seniors, students, and low-income workers are hit first and hardest."
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-h-muni-parcel-tax
-      - text: Muni has made financial management a top priority and proven to be a good steward of public funds and responsive to customers.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-h-muni-parcel-tax
-  prop-i:
-    pick: N
-    quotes:
-      - text: The transfer tax has been identified as a significant impediment to real estate investment and downtown recovery. Although this measure provides relief for some types of residential projects, commercial real estate projects would still face high transfer taxes.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
-      - text: Prop. I would also remove the Board of Supervisors’ authority to adjust the transfer tax and the flexibility to respond to evolving housing needs.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
-  prop-j:
-    pick: Y
-    quotes:
-      - text: San Francisco is facing significant fiscal uncertainty and needs revenue to support basic municipal functions, programs, and services.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
-      - text: Closing the foreclosure loophole for commercial and multi-family residential properties offers a way to increase revenue without harming individual homeowners or small landlords.
-        source: https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
   rtm:
     pick: Y
     quotes:
@@ -183,6 +117,8 @@ picks:
       - text: Prop. 3 would make permanent an existing high-earner tax that funds K–12/community college education, children’s healthcare, and debt paydown. This tax has generated more than $119 billion for education and healthcare, with no evidence that it has driven high earners out of state.
         source: https://www.spur.org/voter-guide/2026-11/ca-prop-3-high-earner-income-tax-extension
       - text: It’s highly progressive, hitting only top earners while sustaining programs such as universal school meals that disproportionately benefit low-income students, and it would help backfill Medi-Cal funding just as federal cuts threaten healthcare access for millions of low-income Californians.
+        source: https://www.spur.org/voter-guide/2026-11/ca-prop-3-high-earner-income-tax-extension
+      - text: Prop. 3 would help backfill ongoing funding needs for children’s healthcare and Medi-Cal, which is facing severe federal funding cuts.
         source: https://www.spur.org/voter-guide/2026-11/ca-prop-3-high-earner-income-tax-extension
   prop-4:
     pick: Y
@@ -219,6 +155,8 @@ picks:
     quotes:
       - text: Prop. 41 was primarily placed on the ballot to defeat Prop. 40, a measure to tax billionaires. In addition, it would constrain local and state governments’ ability to raise revenue now and in the future for much-needed housing, transportation, infrastructure, and social services, which are already facing cuts at the federal and state levels.
         source: https://www.spur.org/voter-guide/2026-11/ca-prop-41-audits-special-taxes
+      - text: Applying spending limits to new revenue measures could constrain local and state governments’ ability to fund urgent priorities amid unprecedented federal and state budget cuts.
+        source: https://www.spur.org/voter-guide/2026-11/ca-prop-41-audits-special-taxes
   prop-42:
     pick: N
     quotes:
@@ -233,6 +171,80 @@ picks:
         source: https://www.spur.org/voter-guide/2026-11/ca-prop-43-local-tax-threshold
       - text: It would undermine both the democratic principle of majority rule and one of the few remaining pathways for funding important services.
         source: https://www.spur.org/voter-guide/2026-11/ca-prop-43-local-tax-threshold
+      - text: Prop. 43 would undermine the basic principle of majority rule by imposing a heightened approval threshold on certain voter-proposed initiatives.
+        source: https://www.spur.org/voter-guide/2026-11/ca-prop-43-local-tax-threshold
+  prop-a:
+    pick: Y
+    quotes:
+      - text: Although the proposed measure contains many individual amendments, nearly all are technical, administrative, or housekeeping changes that simplify and modernize the charter without materially changing city policy.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-a-departments-and-commission
+  prop-b:
+    pick: N
+    quotes:
+      - text: The measure embeds detailed governance structures for the proposed Municipal Financial Corporation, future public bank, and multiple oversight commissions directly into the city charter, limiting future flexibility and adding complexity to a document that should focus on fundamental governmental structures. Importantly, establishing a public bank does not require these governance provisions to be in the charter.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
+      - text: The city could pursue a public bank through ordinance, administrative action, and existing oversight processes.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
+      - text: Embedding detailed governance structures in the city charter runs counter to San Francisco’s pursuit of charter reform.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-b-public-bank
+  prop-c:
+    pick: Y
+    quotes:
+      - text: Affordable housing is one of San Francisco's highest priorities, yet it consistently struggles to secure sufficient funding, and state and federal funding is increasingly unreliable.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-c-housing-trust-fund
+      - text: Historically, every dollar San Francisco invests locally in affordable housing has leveraged approximately $2 in additional funding from state and federal sources.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-c-housing-trust-fund
+  prop-d:
+    pick: Y
+    quotes:
+      - text: The city’s current processes for placing measures on the ballot are more permissive than those elsewhere in California. By allowing a mayor alone or a minority of the Board of Supervisors to bypass standard public processes, these processes discourage elected leaders from building consensus to solve an identified problem and reduce opportunities for the public to participate in crafting legislative proposals.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-d-ballot-measure-process
+      - text: On balance, SPUR believes the measure's benefits outweigh its downsides and will lead to more effective policies and greater voter engagement.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-d-ballot-measure-process
+  prop-e:
+    pick: Y
+    quotes:
+      - text: San Francisco’s procurement system has become so fragmented that no single official has the authority to ensure that purchasing processes operate efficiently, consistently, and accountably.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-e-city-administrator-duties
+  prop-f:
+    pick: Y
+    quotes:
+      - text: It would remove charter limits on the mayor’s ability to structure the Mayor’s Office to manage a large and complex government.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
+      - text: While the measure would give the mayor greater authority to reorganize charter departments and functions than SPUR envisioned, it would maintain important limits by allowing the Board of Supervisors to reject changes and exempting key independent oversight functions. Taken together, these changes would strengthen the mayor’s ability to serve as the city’s chief executive and voters’ ability to hold the mayor accountable for results.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
+      - text: Prop. F would adopt many recommendations SPUR made in recent charter analyses, including strengthening the authority of the mayor, as the city’s chief executive officer, to select department heads and hold them accountable for performance.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-f-executive-branch-management
+  prop-g:
+    pick: N
+    quotes:
+      - text: Prop. G would undo a successful city effort to protect neighborhoods from the threats of rising sea levels and coastal erosion and create more places for San Franciscans to recreate safely and connect with nature.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes
+      - text: It would delay the city’s plan for addressing climate impacts at a time when the effects of climate change are only increasing.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-g-cars-sunset-dunes
+  prop-h:
+    pick: Y
+    quotes:
+      - text: "Life will get much harder and more expensive in San Francisco and the region if Prop. H does not pass, especially for people with the fewest options: when transit service is cut, riders with disabilities, seniors, students, and low-income workers are hit first and hardest."
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-h-muni-parcel-tax
+      - text: Muni has made financial management a top priority and proven to be a good steward of public funds and responsive to customers.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-h-muni-parcel-tax
+  prop-i:
+    pick: N
+    quotes:
+      - text: The transfer tax has been identified as a significant impediment to real estate investment and downtown recovery. Although this measure provides relief for some types of residential projects, commercial real estate projects would still face high transfer taxes.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
+      - text: Prop. I would also remove the Board of Supervisors’ authority to adjust the transfer tax and the flexibility to respond to evolving housing needs.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
+      - text: The measure reduces available annual General Fund revenues by between $114 million and $124 million, with no exceptions during fiscal deficits, which would significantly strain the city’s ability to allocate resources to other services.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-i-transfer-tax-set-aside
+  prop-j:
+    pick: Y
+    quotes:
+      - text: San Francisco is facing significant fiscal uncertainty and needs revenue to support basic municipal functions, programs, and services.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
+      - text: Closing the foreclosure loophole for commercial and multi-family residential properties offers a way to increase revenue without harming individual homeowners or small landlords.
+        source: https://www.spur.org/voter-guide/2026-11/sf-prop-j-transfer-tax-foreclosures
   oakland-measure-ee:
     pick: Y
     quotes:
