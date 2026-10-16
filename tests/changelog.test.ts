@@ -7,8 +7,12 @@ import { changelogErrors, latestDay, pacificDay, readChangelog, utcDay, validate
 
 const e = (date: string, title = "t", type: "new" | "data" | "fix" = "new") => ({ date, type, title });
 
+const roots: string[] = [];
+afterEach(() => roots.splice(0).forEach((r) => fs.rmSync(r, { recursive: true, force: true })));
+
 function dir(files: Record<string, string>) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cl-"));
+  roots.push(root);
   fs.mkdirSync(path.join(root, "changelog"));
   for (const [name, body] of Object.entries(files)) fs.writeFileSync(path.join(root, "changelog", name), body);
   return root;
@@ -60,7 +64,18 @@ describe("readChangelog", () => {
     expect(errors.every((x) => x.startsWith("changelog/2026-10-06-"))).toBe(true);
   });
   it("no directory, no entries", () => {
-    expect(readChangelog(fs.mkdtempSync(path.join(os.tmpdir(), "bb-cl-")))).toEqual({ entries: [], errors: [] });
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cl-"));
+    roots.push(root);
+    expect(readChangelog(root)).toEqual({ entries: [], errors: [] });
+  });
+  it("keeps an entry's guide id", () => {
+    const root = dir({ "2026-10-06-refresh-growsf.yml": "date: 2026-10-06\ntype: data\nguide: growsf\ntitle: GrowSF refreshed\n" });
+    expect(readChangelog(root).entries.map((x) => x.guide)).toEqual(["growsf"]);
+  });
+  it("reads only .yml files", () => {
+    const body = "date: 2026-10-06\ntype: new\ntitle: A\n";
+    const root = dir({ "2026-10-06-a.yml": body, "2026-10-06-b.yaml": body, "README.md": "notes", "2026-10-06-c.yml.bak": body });
+    expect(readChangelog(root)).toEqual({ entries: [expect.objectContaining({ file: "2026-10-06-a.yml" })], errors: [] });
   });
 });
 
@@ -104,8 +119,6 @@ describe("pacificDay and latestDay", () => {
 
 describe("changelogErrors", () => {
   const real = path.join(process.cwd(), "data");
-  const roots: string[] = [];
-  afterEach(() => roots.splice(0).forEach((r) => fs.rmSync(r, { recursive: true, force: true })));
 
   function copyWith(entry: string) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "bb-cle-"));
@@ -142,16 +155,14 @@ describe("changelogErrors", () => {
 
   it("flags every guide id when there is no guides/ folder", () => {
     const root = dir({ "2026-10-01-x.yml": "date: 2026-10-01\ntype: data\ntitle: t\nguide: growsf\n" });
-    roots.push(root);
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/growsf/);
   });
 
   it("counts only .yml files in guides/ as guide ids", () => {
-    const root = copyWith("date: 2026-10-01\ntype: data\ntitle: Notes\nguide: notes\n");
-    fs.rmSync(path.join(root, "guides"));
-    fs.cpSync(path.join(real, "guides"), path.join(root, "guides"), { recursive: true });
+    const root = dir({ "2026-10-01-x.yml": "date: 2026-10-01\ntype: data\ntitle: Notes\nguide: notes\n" });
+    fs.mkdirSync(path.join(root, "guides"));
     fs.writeFileSync(path.join(root, "guides", "notes.txt"), "");
-    expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/notes/);
+    expect(changelogErrors(root, "2026-10-16")).toEqual(["changelog/2026-10-01-x.yml: no guide 'notes'"]);
   });
 
   it("reports a changelog file that fails to parse", () => {

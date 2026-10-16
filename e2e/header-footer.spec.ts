@@ -88,8 +88,9 @@ test("the chip's hash write lets the router take the new URL", async ({ page }) 
     const calls: string[] = [];
     (window as unknown as { replaceCalls: string[] }).replaceCalls = calls;
     const original = history.replaceState.bind(history);
+    // A write that keeps history.state passes through Next untouched, so the router never sees its URL.
     history.replaceState = (data, unused, url) => {
-      calls.push(String(url ?? ""));
+      if (data !== history.state) calls.push(String(url ?? ""));
       original(data, unused, url);
     };
   });
@@ -109,6 +110,63 @@ test("an open tab's chip turns over at Pacific midnight", async ({ page }) => {
   await expect(chip(page)).toContainText("polls close 8 pm", { ignoreCase: true });
 });
 
+test("a tab shown again after Pacific midnight updates its chip", async ({ page }) => {
+  // setFixedTime leaves timers on the real clock, so the one-minute interval can't fire first.
+  await page.clock.setFixedTime(new Date("2026-11-02T23:59:00-08:00"));
+  await page.goto("/about");
+  await expect(chip(page)).toContainText("· 1 day");
+  await page.clock.setFixedTime(new Date("2026-11-03T00:01:00-08:00"));
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+  await expect(chip(page)).toContainText("polls close 8 pm", { ignoreCase: true });
+});
+
+test("the chip's outline is stronger on election day", async ({ page }) => {
+  const ring = async (time: string) => {
+    await page.clock.setFixedTime(new Date(time));
+    await page.goto("/about");
+    await expect(chip(page)).toContainText(/days|polls close/i);
+    return chip(page).evaluate((el) => getComputedStyle(el).boxShadow);
+  };
+  const before = await ring("2026-10-16T12:00:00-07:00");
+  const day = await ring("2026-11-03T09:00:00-08:00");
+  expect(day).not.toBe(before);
+  const alpha = (shadow: string) => Number(shadow.match(/\/\s*([\d.]+)\)/)?.[1] ?? 1);
+  expect(alpha(day)).toBeGreaterThan(alpha(before));
+});
+
+test("a chip click past the history budget scrolls and focuses but leaves the URL", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto(BALLOT);
+  await expect(chip(page)).toContainText("days");
+  await page.waitForLoadState("networkidle");
+  // With the clock fixed, history calls never age out of the budget's 10-second window.
+  await page.getByRole("navigation", { name: "Area" }).evaluate((nav) => {
+    const c = (name: string) => [...nav.querySelectorAll("a")].find((a) => a.textContent === name)!;
+    for (let i = 0; i < 45; i++) c(i % 2 ? "San Mateo" : "Sonoma").click();
+  });
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+  await chip(page).click();
+  const region = page.getByRole("region", { name: "Before you vote" });
+  await expect(region).toBeInViewport();
+  await expect(region).toBeFocused();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
+});
+
+test("the chip click fetches nothing from the server", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto(BALLOT);
+  await expect(chip(page)).toContainText("days");
+  // Prefetches of the footer links are fine; a navigation fetch has no prefetch header.
+  const fetches: string[] = [];
+  page.on("request", (r) => {
+    if (new URL(r.url()).searchParams.has("_rsc") && !r.headers()["next-router-prefetch"]) fetches.push(r.url());
+  });
+  await chip(page).click();
+  await expect(page.getByRole("region", { name: "Before you vote" })).toBeInViewport();
+  await page.waitForLoadState("networkidle");
+  expect(fetches).toEqual([]);
+});
+
 test("on election day the chip says polls close at 8 pm", async ({ page }, info) => {
   await page.clock.setFixedTime(new Date("2026-11-03T00:30:00-08:00"));
   await page.goto("/about");
@@ -124,7 +182,7 @@ test("after election day the chip links to results", async ({ page }) => {
   await expect(results).toHaveAttribute("target", "_blank");
 });
 
-test("the footer leads with official voting links, then site and corrections links", async ({ page }) => {
+test("the footer leads with official voting links, then site and corrections links", async ({ page }, info) => {
   await page.goto("/about");
   const footer = page.getByRole("contentinfo");
   const vote = footer.getByRole("region", { name: "Before you vote" });
@@ -138,6 +196,9 @@ test("the footer leads with official voting links, then site and corrections lin
     const link = vote.getByRole("link", { name: new RegExp(`^${name}`) });
     await expect(link).toHaveAttribute("href", href);
     await expect(link).toHaveAttribute("target", "_blank");
+    const domain = link.getByText(new URL(href).hostname, { exact: true });
+    if (isPhone(info)) await expect(domain).toBeVisible();
+    else await expect(domain).toBeHidden();
   }
   const site = footer.getByRole("navigation", { name: "Footer" });
   await expect(site.getByRole("link", { name: "Ballot" })).toHaveAttribute("href", BALLOT);

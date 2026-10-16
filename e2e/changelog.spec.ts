@@ -2,7 +2,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { areaGuides } from "../src/lib/areas";
 import { readChangelog } from "../src/lib/changelog";
-import { changelogDays, dataSummary, rowInArea } from "../src/lib/changelog-digest";
+import { changelogDays, dataSummary, rowInArea, visibleDays } from "../src/lib/changelog-digest";
 import { loadElection } from "../src/lib/data";
 import { monthDay } from "../src/lib/display";
 import { watchErrors } from "./helpers";
@@ -16,6 +16,8 @@ const allRows = dataDays.flatMap((d) => d.data);
 const summaries = (page: Page) => page.locator("main button[aria-expanded]");
 const rows = (page: Page) => page.getByRole("list", { name: /^Data updates/ }).getByRole("listitem");
 const show = (page: Page, name: string) => page.getByRole("group", { name: "Show" }).getByRole("button", { name, exact: true });
+// A click before hydration is dropped.
+const ready = (page: Page) => expect(page.locator("[data-ready]")).toHaveCount(1);
 
 test("the changelog shows one block per day with each day's data updates folded", async ({ page }) => {
   const errors = watchErrors(page);
@@ -28,11 +30,13 @@ test("the changelog shows one block per day with each day's data updates folded"
   await expect(show(page, "All")).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("link", { name: "Pull request #1 (opens in new tab)" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
   await expect(page.getByLabel("Area")).toBeVisible();
+  await expect(page.getByRole("main").getByRole("region")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
 test("a day's summary expands in place to one row per update", async ({ page }) => {
   await page.goto("/changelog");
+  await ready(page);
   const [day] = dataDays;
   const button = page.getByRole("button", { name: dataSummary(day.data) }).first();
   await button.click();
@@ -48,6 +52,7 @@ test("a day's summary expands in place to one row per update", async ({ page }) 
 
 test("Site hides data updates and Data shows only them, every day expanded", async ({ page }) => {
   await page.goto("/changelog");
+  await ready(page);
   await show(page, "Site").click();
   await expect(show(page, "Site")).toHaveAttribute("aria-pressed", "true");
   await expect(page).toHaveURL(/\?show=site$/);
@@ -62,7 +67,9 @@ test("Site hides data updates and Data shows only them, every day expanded", asy
   await expect(page.getByRole("link", { name: /^Pull request/ })).toHaveCount(withPr.length);
   const withDetails = allRows.find((r) => r.details);
   if (withDetails) await expect(rows(page).filter({ hasText: withDetails.details! })).toHaveCount(1);
-  await expect(rows(page).filter({ hasText: "The Mercury News and East Bay Times editorial boards recommend No on Prop 44" })).toHaveCount(1);
+  const guidedDetails = allRows.find((r) => r.name && r.details)!;
+  expect(guidedDetails).toBeDefined();
+  await expect(rows(page).filter({ hasText: guidedDetails.name! }).filter({ hasText: guidedDetails.details! })).toHaveCount(1);
 
   await show(page, "All").click();
   await expect(page).toHaveURL(/\/changelog$/);
@@ -77,12 +84,14 @@ test("the area filter narrows data rows to guides that cover the area, and survi
   expect(expected).toBeLessThan(allRows.length);
 
   await page.goto("/changelog?show=data");
+  await ready(page);
   await expect(rows(page)).toHaveCount(allRows.length);
   await page.getByLabel("Area").selectOption({ label: area.name });
   await expect(page).toHaveURL(/\?show=data&area=marin$/);
   await expect(rows(page)).toHaveCount(expected);
 
   await page.reload();
+  await ready(page);
   await expect(page.getByLabel("Area")).toHaveValue("marin");
   await expect(rows(page)).toHaveCount(expected);
 
@@ -96,4 +105,54 @@ test("the area filter narrows data rows to guides that cover the area, and survi
   await show(page, "Data").click();
   await expect(page.getByLabel("Area")).toHaveValue("");
   await expect(rows(page)).toHaveCount(allRows.length);
+});
+
+test("an area link opens the default view with that area's data folded per day", async ({ page }) => {
+  const area = data.areas.find((a) => a.id === "marin")!;
+  const shown = visibleDays(days, { show: "all", guides: new Set(areaGuides(data.guides, area).map((g) => g.id)) });
+  const folded = shown.filter((d) => d.data.length > 0);
+  await page.goto("/changelog?area=marin");
+  await ready(page);
+  await expect(page.getByLabel("Area")).toHaveValue("marin");
+  await expect(show(page, "All")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText(shown.map((d) => monthDay(d.date)));
+  await expect(summaries(page)).toHaveText(folded.map((d) => dataSummary(d.data)));
+  await summaries(page).first().click();
+  await expect(rows(page)).toHaveCount(folded[0].data.length);
+});
+
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("every day's data rows show, with no summaries to expand", async ({ page }) => {
+    await page.goto("/changelog");
+    await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText(days.map((d) => monthDay(d.date)));
+    await expect(rows(page)).toHaveCount(allRows.length);
+    await expect(page.getByRole("button", { name: dataSummary(dataDays[0].data) })).toHaveCount(0);
+    await expect(page.locator("[data-ready]")).toHaveCount(0);
+  });
+});
+
+test("switching Show many times within ten seconds stays under the browser's history limit", async ({ page }) => {
+  // Like the browser: more than 100 push/replace calls in 10 seconds throws.
+  await page.addInitScript(() => {
+    const calls: number[] = [];
+    for (const name of ["pushState", "replaceState"] as const) {
+      const native = History.prototype[name];
+      History.prototype[name] = function (...args: Parameters<History["replaceState"]>) {
+        const now = Date.now();
+        calls.push(now);
+        if (calls.filter((t) => now - t < 10_000).length > 100) throw new DOMException(`Attempt to use history.${name}() more than 100 times per 10 seconds`, "SecurityError");
+        return native.apply(this, args);
+      };
+    }
+  });
+  const errors = watchErrors(page);
+  await page.goto("/changelog");
+  await ready(page);
+  for (let i = 0; i < 40; i++) for (const name of ["Site", "Data", "All"]) await show(page, name).click();
+  await show(page, "Data").click();
+  await expect(show(page, "Data")).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/\?show=data$/, { timeout: 15_000 });
+  expect(errors).toEqual([]);
 });
