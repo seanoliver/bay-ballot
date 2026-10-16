@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type SyntheticEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { Pin } from "lucide-react";
 import { countedNoPick, pinMessage, type NoPickGuide } from "@/lib/contest-pins";
@@ -111,8 +111,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
   const full = !pinned && f.pins.length >= MAX_PINS;
   const name = short ? guide.short : guide.name;
   return (
-    // Raised while open: an animating chip is its own stacking layer, so later chips would cover its tooltip.
-    <li style={style} className={cn("relative hover:z-10 focus-within:z-10", className)}>
+    <li style={style} className={className}>
       <span
         className={cn(
           "inline-flex items-stretch rounded-full border bg-background text-sm",
@@ -125,19 +124,7 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
           prefetch={false}
           aria-label={`${name}${guide.quoted ? " (gave reasons)" : ""}`}
           aria-describedby={guide.name !== name ? nameId : undefined}
-          onClick={(e) => {
-            // A click on the tooltip, which sits over other chips, hides it instead of following the link.
-            if (e.target instanceof Element && e.target.closest("[data-tip]")) {
-              e.preventDefault();
-              e.currentTarget.dataset.tipHidden = "true";
-            }
-          }}
-          onPointerEnter={hoverTip}
-          onFocus={placeTip}
-          onPointerLeave={leaveTip}
-          onBlur={resetTip}
-          onKeyDown={dismissTip}
-          className="group relative inline-flex min-h-10 items-center gap-1.5 rounded-l-full pr-2.5 pl-3 underline-offset-[3px] sm:min-h-9 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-l-full pr-2.5 pl-3 underline-offset-[3px] sm:min-h-9 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {name}
           {guide.quoted ? QUOTE_MARK : null}
@@ -146,16 +133,6 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
               {guide.name}
             </span>
           ) : null}
-          {/* Inside the link with a padded gap, so the pointer can move onto it without it closing. */}
-          <span
-            aria-hidden="true"
-            data-tip
-            className="absolute top-full left-0 z-20 hidden w-max max-w-56 cursor-default pt-2 text-left text-[13px] leading-snug font-normal no-underline group-focus-visible:block group-data-[tip-hidden=true]:hidden! group-data-[tip-up=true]:top-auto group-data-[tip-up=true]:bottom-full group-data-[tip-up=true]:pt-0 group-data-[tip-up=true]:pb-2 pointer-fine:group-hover:block"
-          >
-            <span className="block rounded-lg bg-foreground px-2.5 py-2 text-background shadow-md">
-              <b className="font-semibold">{guide.name}</b>.{guide.quoted ? " Gave reasons on this contest." : null} Opens its guide page.
-            </span>
-          </span>
         </Link>
         <span aria-hidden="true" className="my-2 w-px bg-foreground/20" />
         <button
@@ -177,82 +154,6 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
       </span>
     </li>
   );
-}
-
-const TIP_MAX = 224;
-
-// Keeps the tooltip inside its row: under the chip from its left edge, else from its right edge, else from the row's start.
-// In a collapsible panel, which clips what overflows it, it opens above the chip when it fits there and not below.
-function placeTip(e: SyntheticEvent<HTMLElement>) {
-  const b = e.currentTarget;
-  const tip = b.querySelector<HTMLElement>("[data-tip]");
-  const row = b.closest("ul");
-  if (!tip || !row) return;
-  const chip = b.getBoundingClientRect();
-  const width = row.clientWidth;
-  const left = chip.left - row.getBoundingClientRect().left;
-  const max = Math.min(TIP_MAX, width);
-  const [from, to] = left + max <= width ? ["0", "auto"] : left + chip.width >= max ? ["auto", "0"] : [`${-left}px`, "auto"];
-  tip.style.left = from;
-  tip.style.right = to;
-  tip.style.maxWidth = `${max}px`;
-  const clip = b.closest(".reveal")?.getBoundingClientRect();
-  if (!clip) return void delete b.dataset.tipUp;
-  // Measured while laid out but unseen, since it is hidden until the hover or focus lands.
-  tip.style.cssText += ";display:block;visibility:hidden";
-  const height = tip.offsetHeight;
-  tip.style.display = tip.style.visibility = "";
-  b.dataset.tipUp = String(chip.bottom + height > clip.bottom && chip.top - height >= clip.top);
-}
-
-function resetTip(e: SyntheticEvent<HTMLElement>) {
-  delete e.currentTarget.dataset.tipHidden;
-}
-
-// The chip under the pointer, whose tooltip Escape hides even while focus is elsewhere.
-let hovered: HTMLElement | null = null;
-
-function hoverTip(e: SyntheticEvent<HTMLElement>) {
-  placeTip(e);
-  hovered = e.currentTarget;
-  document.addEventListener("keydown", escapeHovered, true);
-}
-
-function leaveTip(e: SyntheticEvent<HTMLElement>) {
-  resetTip(e);
-  if (hovered === e.currentTarget) unhover();
-}
-
-function unhover() {
-  hovered = null;
-  document.removeEventListener("keydown", escapeHovered, true);
-}
-
-// Captured on the document, so it runs before the pane's and the sheet's own Escape.
-function escapeHovered(e: globalThis.KeyboardEvent) {
-  if (e.key !== "Escape") return;
-  const b = hovered;
-  if (!b?.isConnected) return unhover();
-  if (!b.matches(":hover") || b.dataset.tipHidden === "true" || !window.matchMedia("(pointer: fine)").matches) return;
-  b.dataset.tipHidden = "true";
-  // Stopping the event skips the focused chip's own handler, so hide its open tooltip here too.
-  const f = document.activeElement;
-  if (f instanceof HTMLElement && f !== b && f.matches(":focus-visible") && f.querySelector("[data-tip]")) f.dataset.tipHidden = "true";
-  e.stopImmediatePropagation();
-  e.preventDefault();
-}
-
-// Escape hides an open tooltip without closing the panel or sheet around it.
-function dismissTip(e: KeyboardEvent<HTMLElement>) {
-  const b = e.currentTarget;
-  if (e.key !== "Escape" || b.dataset.tipHidden === "true") return;
-  const open = b.matches(":focus-visible") || (b.matches(":hover") && window.matchMedia("(pointer: fine)").matches);
-  if (!open) return;
-  b.dataset.tipHidden = "true";
-  // Also keeps it from other listeners on the document, such as the sheet's dismiss.
-  e.nativeEvent.stopImmediatePropagation();
-  e.stopPropagation();
-  e.preventDefault();
 }
 
 export function PinChips({ guides, short, pinning, label }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string }) {
