@@ -148,7 +148,7 @@ test.describe("phone sheet", () => {
 test("/about renders", async ({ page }) => {
   await page.goto("/about");
   await expect(page.getByRole("heading", { level: 1, name: "About Bay Ballot" })).toBeVisible();
-  await expect(page.getByRole("main").getByRole("heading", { name: "Corrections" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("heading", { name: "Questions" })).toBeVisible();
 });
 
 test("an unknown contest is a 404", async ({ page }) => {
