@@ -6,7 +6,6 @@ import type { Area, Contest, EndorsementFile, Guide } from "./schema";
 export type PickSection = { name: string; picks: GuidePick[] };
 export type PickGroup = { key: string; heading: string; sections: PickSection[] };
 
-/** A guide's picks under the ballot's own place and section headings, in ballot order. */
 export function guidePickGroups(contests: Contest[], file: EndorsementFile, areas: Area[]): PickGroup[] {
   const picks = guidePicks(contests, file);
   const byId = new Map(picks.map((p) => [p.contest.id, p]));
@@ -17,7 +16,6 @@ export function guidePickGroups(contests: Contest[], file: EndorsementFile, area
   }));
 }
 
-/** The ballot a guide belongs to: its one area, its county's page when all its areas share one county, else the Bay Area. */
 export function guideBallot(guide: Pick<Guide, "areas">, areas: Area[], election: string): BallotLink {
   const mine = areas.filter((a) => guide.areas.includes(a.id));
   const counties = new Set(mine.map(areaCounty));
@@ -26,7 +24,6 @@ export function guideBallot(guide: Pick<Guide, "areas">, areas: Area[], election
   return home ? { href: `/${election}/${home.id}`, label: `${placeName(home).name} ballot` } : { href: `/${election}`, label: `${BAY_AREA.name} ballot` };
 }
 
-/** How many picks the guide made and how many give a reason; null reasons means a list-only guide. */
 export function guideStats(picks: GuidePick[], file: Pick<EndorsementFile, "hasReasoning">): { picks: number; withReasons: number | null } {
   return { picks: picks.length, withReasons: file.hasReasoning ? picks.filter((p) => p.entry.quotes.length > 0).length : null };
 }
