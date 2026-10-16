@@ -1,4 +1,7 @@
+import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { loadElection } from "../src/lib/data";
+import { sourceLink } from "../src/lib/display";
 import { BALLOT, contestRow, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 test("ballot page has the header, logo, intro and footer", async ({ page }) => {
@@ -913,7 +916,7 @@ test.describe("guide page rows", () => {
     });
   }
 
-  test("at 320px the chevron stays with the pick and a district number stays with its title", async ({ page, isMobile }) => {
+  test("at 320px each pick name stays on one line and a district number stays with its title", async ({ page, isMobile }) => {
     test.skip(!isMobile, "phone width");
     await page.setViewportSize({ width: 320, height: 700 });
     await page.goto("/guides/growsf");
@@ -925,26 +928,55 @@ test.describe("guide page rows", () => {
           r.setEnd(node, end);
           return Math.round(r.getClientRects()[0].top);
         };
-        const texts: Text[] = [];
-        const walk = document.createTreeWalker(a.closest("li")!, NodeFilter.SHOW_TEXT);
-        while (walk.nextNode()) if ((walk.currentNode as Text).data.trim()) texts.push(walk.currentNode as Text);
-        const chevron = texts.find((t) => t.data.trim() === "›" || t.data.endsWith("›"))!;
-        const pick = texts[texts.indexOf(chevron) - 1] ?? chevron;
-        const title = texts[0];
+        const title = [...a.childNodes].find((n): n is Text => n.nodeType === Node.TEXT_NODE && !!(n as Text).data.trim())!;
         const m = title.data.match(/(\S+)\s(\d+)$/);
+        const parts = [...a.closest("li")!.querySelectorAll("[aria-hidden=true] > span")];
         return {
-          chevronWithPick: chevron === pick || lineOf(chevron, chevron.data.length - 1, chevron.data.length) === lineOf(pick, pick.data.trimEnd().length - 1, pick.data.trimEnd().length),
+          pickOnOneLine: parts.every((p) => {
+            const label = [...p.childNodes].find((n): n is Text => n.nodeType === Node.TEXT_NODE)!;
+            return new Set([...(() => { const r = document.createRange(); r.selectNodeContents(label); return r.getClientRects(); })()].map((b) => Math.round(b.top))).size === 1;
+          }),
           numberWithTitle: !m || lineOf(title, title.data.length - m[2].length, title.data.length) === lineOf(title, m.index!, m.index! + 1 + m[1].length - 1),
         };
       }),
     );
-    expect(lines.every((l) => l.chevronWithPick)).toBe(true);
+    expect(lines.every((l) => l.pickOnOneLine)).toBe(true);
     expect(lines.every((l) => l.numberWithTitle)).toBe(true);
   });
 
   test("a row's link names the contest and the guide's pick", async ({ page }) => {
     await page.goto("/guides/growsf");
     await expect(page.getByRole("link", { name: /^Governor:? Xavier Becerra$/ })).toBeVisible();
+  });
+
+  test("a row shows the pick's name and colour", async ({ page }) => {
+    await page.goto("/guides/growsf");
+    const row = (name: RegExp) => page.locator("li").filter({ has: page.getByRole("link", { name }) });
+    await expect(row(/^Governor:? Xavier Becerra$/).locator("[aria-hidden=true]")).toHaveText("Becerra");
+    await expect(row(/^Proposition 1:? Yes$/).locator("[aria-hidden=true] .bg-yes-fill")).toHaveCount(1);
+    await expect(row(/^Proposition 4:? No$/).locator("[aria-hidden=true] .bg-no-fill")).toHaveCount(1);
+  });
+
+  test("the Endorsements page link shows only when the guide has a source", async ({ page }) => {
+    const files = loadElection(path.join(process.cwd(), "data"), "2026-11").endorsements;
+    const chron = files["sf-chronicle"];
+    await page.goto("/guides/sf-chronicle");
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveAttribute("href", sourceLink(chron, chron.source!));
+    const noSource = Object.values(files).find((e) => !e.source);
+    test.skip(!noSource, "every guide has a source");
+    await page.goto(`/guides/${noSource!.guide}`);
+    await expect(page.getByRole("link", { name: /^Homepage/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Endorsements page/ })).toHaveCount(0);
+  });
+
+  test("a guide's breadcrumb keeps the filter query", async ({ page }) => {
+    await page.goto("/guides/growsf?off=sf-gop");
+    await expect(page.getByRole("link", { name: "San Francisco ballot", exact: true })).toHaveAttribute("href", "/2026-11/sf?off=sf-gop");
+  });
+
+  test("a one-area guide outside SF links to its own area's ballot", async ({ page }) => {
+    await page.goto("/guides/palo-alto-forward");
+    await expect(page.getByRole("link", { name: "Palo Alto ballot", exact: true })).toHaveAttribute("href", "/2026-11/palo-alto");
   });
 
   for (const colorScheme of ["light", "dark"] as const) {

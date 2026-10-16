@@ -2,7 +2,7 @@
 
 import { useId, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Landmark } from "lucide-react";
+import { Landmark } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { barSegments, type BarSegment, type BarTone, type Slots } from "@/lib/bar";
 import { detailSides, pickReasons, resultHeadline, type ResultHeadline, type Side, type SideQuote } from "@/lib/detail";
@@ -14,7 +14,7 @@ import type { Contest } from "@/lib/schema";
 import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
 import { NoPickBlock, PinChips, PinHint, PinStatus, TAP, type PinControls, type Pinning } from "./ContestPins";
-import { ExternalLink } from "./ExternalLink";
+import { CardLink, ExternalLink } from "./ExternalLink";
 import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { BAR_FILL } from "./tone";
 import { useCarriedQuery } from "./useBallotFilters";
@@ -266,21 +266,12 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
   );
 }
 
-// The last word and the arrow never part.
 function Official({ source }: { source: OfficialSource }) {
-  const cut = source.label.lastIndexOf(" ");
   return (
     <div className="mt-2 flex items-start gap-2.5">
       <Landmark aria-hidden="true" strokeWidth={1.75} className="mt-2.5 size-5 shrink-0 text-foreground/80" />
       <div className="min-w-0">
-        <ExternalLink href={source.href} className="inline-block py-2 text-base font-semibold underline underline-offset-4">
-          {source.label.slice(0, cut + 1)}
-          <span className="whitespace-nowrap">
-            {source.label.slice(cut + 1)}
-            <ArrowUpRight aria-hidden="true" className="ml-1 inline size-4 align-[-2px]" />
-          </span>
-          <span className="sr-only"> (opens in a new tab)</span>
-        </ExternalLink>
+        <CardLink href={source.href} label={source.label} />
       </div>
     </div>
   );

@@ -1,0 +1,5 @@
+date: 2026-10-16
+type: new
+pr: 217
+title: Guide pages look like the ballot, with picks grouped by section in the ballot's colors
+details: "A guide's page opens with a card naming its type, its links and how many picks give reasons, plus a link back to its ballot."
