@@ -40,7 +40,6 @@ async function closePanel(page: Page, info: TestInfo) {
   if (isPhone(info)) await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Close" }).click();
 }
 
-// A chip's pin is "Pin <guide>"; its name links to the guide page, with "(gave reasons)" when the guide explained its pick here.
 const pinChip = (scope: Page | Locator, name: string) => scope.getByRole("button", { name: `Pin ${name}`, exact: true });
 const guideLink = (scope: Page | Locator, name: string) => scope.getByRole("link", { name: new RegExp(`^${name}( \\(gave reasons\\))?$`) });
 

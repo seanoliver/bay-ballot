@@ -104,7 +104,6 @@ const QUOTE_MARK = (
   </svg>
 );
 
-// The name opens the guide's page; the pin at the pill's end pins it and fills in once pinned.
 function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide; short: boolean; pinning: PinControls; style?: CSSProperties; className?: string }) {
   const nameId = useId();
   const f = pinning.filters;
@@ -123,7 +122,6 @@ function PinChip({ guide, short, pinning, style, className }: { guide: ChipGuide
       >
         <Link
           href={`/guides/${guide.id}`}
-          // Labelled, so the tooltip inside it describes the link without joining its name.
           aria-label={`${name}${guide.quoted ? " (gave reasons)" : ""}`}
           aria-describedby={guide.name !== name ? nameId : undefined}
           onClick={(e) => {
