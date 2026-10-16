@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
-import { listElections, loadElection } from "./data";
 import { ChangelogEntry } from "./schema";
 
 export type ChangelogItem = ChangelogEntry & { file: string };
@@ -63,18 +62,10 @@ export function latestDay(now = new Date()): string {
   return a > b ? a : b;
 }
 
-// Guide ids come from every election, so entries about a guide a later election drops stay valid.
+// Guide ids are the file names in guides/, so a guide file that fails to parse doesn't flag every entry naming it.
 export function changelogErrors(root: string, today: string): string[] {
   const { entries, errors } = readChangelog(root);
-  const guides = new Set(listElections(root).flatMap((id) => guideIds(root, id)));
+  const dir = path.join(root, "guides");
+  const guides = new Set(fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".yml")).map((f) => f.slice(0, -4)) : []);
   return [...errors, ...validateChangelog(entries, today, { guides })];
-}
-
-// An election that fails to load is reported by the election check, not here.
-function guideIds(root: string, election: string): string[] {
-  try {
-    return loadElection(root, election).guides.map((g) => g.id);
-  } catch {
-    return [];
-  }
 }

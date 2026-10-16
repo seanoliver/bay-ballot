@@ -132,9 +132,11 @@ describe("changelogErrors", () => {
     expect(changelogErrors(root, "2026-10-16").join("\n")).toMatch(/no-such-guide/);
   });
 
-  it("accepts a guide id from an older election when a newer one has none", () => {
+  it("doesn't flag entries naming a guide whose file fails to parse", () => {
     const root = copyWith("date: 2026-10-01\ntype: data\ntitle: GrowSF refreshed\nguide: growsf\n");
-    fs.mkdirSync(path.join(root, "2028-11"));
+    fs.rmSync(path.join(root, "guides"));
+    fs.cpSync(path.join(real, "guides"), path.join(root, "guides"), { recursive: true });
+    fs.writeFileSync(path.join(root, "guides", "growsf.yml"), "id: [");
     expect(changelogErrors(root, "2026-10-16")).toEqual([]);
   });
 
