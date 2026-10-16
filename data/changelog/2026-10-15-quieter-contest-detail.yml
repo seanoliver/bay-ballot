@@ -1,0 +1,5 @@
+date: 2026-10-15
+type: fix
+title: A contest's details drop three lines of help text and the Count only button
+details: "The note under the official measures link, the pin count line, the quote mark legend and each side's Count only button are gone. Links that already count only some guides still work. A chip's tooltip still says when a guide gave reasons or when you've pinned the most guides you can."
+pr: 206

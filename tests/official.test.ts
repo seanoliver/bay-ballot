@@ -17,16 +17,12 @@ describe("officialSource", () => {
     expect(officialSource(c)).toEqual({
       href: "https://voterguide.sos.ca.gov/propositions/43/",
       label: "Read Prop 43 in the official state voter guide",
-      note: "From the California Secretary of State, voterguide.sos.ca.gov. Bay Ballot does not write or edit it.",
     });
   });
 
   it("says find, not read, when several measures share one list page", () => {
     const [d] = markSharedLinks([sf("D"), sf("E")]);
-    expect(officialSource(d)).toMatchObject({
-      label: "Find Prop D on the city's official measures page",
-      note: "From the City and County of San Francisco, sf.gov. Bay Ballot does not write or edit it.",
-    });
+    expect(officialSource(d)?.label).toBe("Find Prop D on the city's official measures page");
   });
 
   it("names the county for a county site's list page, even for a city measure", () => {
@@ -37,7 +33,7 @@ describe("officialSource", () => {
 
   it("reads a local measure on its own page", () => {
     const [w] = markSharedLinks([measure({ title: "Measure W", link: "https://www.marincounty.gov/measure-w" })]);
-    expect(officialSource(w)).toMatchObject({ label: "Read Measure W on the county's official page", note: expect.stringContaining("From the County of Marin, marincounty.gov.") });
+    expect(officialSource(w)?.label).toBe("Read Measure W on the county's official page");
   });
 
   it("names the place when a regional measure links to a narrower government's page", () => {
@@ -48,10 +44,7 @@ describe("officialSource", () => {
 
   it("gives an unknown host no possessive and names it by its host", () => {
     const [y] = markSharedLinks([measure({ title: "Measure Y", link: "https://www.townofyountville.gov/659/Measure-Y", jurisdiction: { level: "city", name: "Yountville" } })]);
-    expect(officialSource(y)).toMatchObject({
-      label: "Read Measure Y on its official page",
-      note: "From townofyountville.gov. Bay Ballot does not write or edit it.",
-    });
+    expect(officialSource(y)?.label).toBe("Read Measure Y on its official page");
   });
 
   it("calls a PDF a document, or an impartial analysis when its file name says so", () => {
@@ -61,8 +54,8 @@ describe("officialSource", () => {
   });
 
   it("looks up the government without www", () => {
-    expect(officialSource(measure({ link: "https://smcacre.gov/e" }))?.note).toContain("the County of San Mateo, smcacre.gov");
-    expect(officialSource(measure({ link: "https://www.smcacre.gov/e" }))?.note).toContain("the County of San Mateo, smcacre.gov");
+    expect(officialSource(measure({ link: "https://smcacre.gov/e" }))?.label).toBe("Read Measure A on the county's official page");
+    expect(officialSource(measure({ link: "https://www.smcacre.gov/e" }))?.label).toBe("Read Measure A on the county's official page");
   });
 
   it("is null for candidate races and measures without a link", () => {

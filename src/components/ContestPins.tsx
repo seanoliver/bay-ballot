@@ -2,26 +2,22 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type SyntheticEvent } from "react";
 import Link from "next/link";
-import { ChevronDown, Funnel, Pin } from "lucide-react";
+import { ChevronDown, Pin } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { countedNoPick, isCountingOnly, pinMessage, toggleCountOnly, type NoPickGuide } from "@/lib/contest-pins";
-import type { Side } from "@/lib/detail";
+import { countedNoPick, pinMessage, type NoPickGuide } from "@/lib/contest-pins";
 import { displayName } from "@/lib/display";
-import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
+import { isPinned, MAX_PINS, togglePin, type Filters, type GuideInfo } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 
-/** What a contest's sides need to pin guides and count only one side. */
 export type Pinning = {
   filters: Filters;
   status: string;
   noPick: GuideInfo[];
   onPin: (id: string) => void;
-  onCountOnly: (side: Side) => void;
-  counting: (side: Side) => boolean;
 };
 
 /** Pinning plus what belongs to one rendered contest detail: the panel and the phone sheet can both be in the page. */
-export type PinControls = Pinning & { limitId: string; onCountPress: (key: string) => void };
+export type PinControls = Pinning & { limitId: string };
 
 export type ChipGuide = { id: string; name: string; short: string; quoted: boolean };
 
@@ -37,14 +33,11 @@ export function useContestPins({
   filters: f,
   onChange,
   guides,
-  files,
   noPick,
 }: {
   filters: Filters;
   onChange: (f: Filters) => void;
   guides: GuideInfo[];
-  /** Covering every guide a side can list, to tell whether `only` is that side's. */
-  files: Record<string, PickFile>;
   noPick: NoPickGuide[];
 }): Pinning {
   const [status, setStatus] = useState("");
@@ -66,7 +59,6 @@ export function useContestPins({
     [],
   );
   const counted = useMemo(() => countedNoPick(f, noPick, guides), [f, noPick, guides]);
-  const ids = (side: Side) => side.guides.map((g) => g.id);
 
   return {
     filters: f,
@@ -80,16 +72,10 @@ export function useContestPins({
       const next = togglePin(f, id);
       if (next !== f) onChange(next);
     },
-    counting: (side) => isCountingOnly(f, ids(side), files),
-    onCountOnly: (side) => {
-      const stop = isCountingOnly(f, ids(side), files);
-      onChange(toggleCountOnly(f, ids(side), files));
-      say(stop ? `Stopped counting only the guides for ${side.label}` : `Counting only the ${guidesLabel(side.count)} for ${side.label}`);
-    },
   };
 }
 
-/** A pin toggle or a Count only change, said aloud everywhere and shown as a toast on phones, where the Filters panel is out of sight.
+/** A pin toggle, said aloud everywhere and shown as a toast on phones, where the Filters panel is out of sight.
  * Rendered inside each contest detail so it stays reachable inside the phone sheet, which hides the rest of the page. */
 export function PinStatus({ message }: { message: string }) {
   return (
@@ -102,10 +88,11 @@ export function PinStatus({ message }: { message: string }) {
   );
 }
 
+// Screen-reader only, and not dead: a disabled chip's aria-describedby points here.
 export function PinHint({ pinning }: { pinning: PinControls }) {
   const n = pinning.filters.pins.length;
   return (
-    <p id={pinning.limitId} className="text-sm text-muted-foreground">
+    <p id={pinning.limitId} className="sr-only">
       {n >= MAX_PINS
         ? `${n} of ${MAX_PINS} pinned. Unpin one to pin another.`
         : `Pin a guide to see its picks on every contest. ${n} of ${MAX_PINS} pinned.`}
@@ -243,6 +230,9 @@ function escapeHovered(e: globalThis.KeyboardEvent) {
   if (!b?.isConnected) return unhover();
   if (!b.matches(":hover") || b.dataset.tipHidden === "true" || !window.matchMedia("(pointer: fine)").matches) return;
   b.dataset.tipHidden = "true";
+  // Stopping the event skips the focused chip's own handler, so hide its open tooltip here too.
+  const f = document.activeElement;
+  if (f instanceof HTMLButtonElement && f !== b && f.matches(":focus-visible") && f.querySelector("[data-tip]")) f.dataset.tipHidden = "true";
   e.stopImmediatePropagation();
   e.preventDefault();
 }
@@ -260,7 +250,6 @@ function dismissTip(e: KeyboardEvent<HTMLButtonElement>) {
   e.preventDefault();
 }
 
-/** The first few chips plus any pinned guide, then "+N more" opens the rest below them. A legend explains the quote mark when a chip has one. */
 export function PinChips({ guides, short, pinning, label, side }: { guides: ChipGuide[]; short: boolean; pinning: PinControls; label: string; side: string }) {
   const [all, setAll] = useState(false);
   const pinnedLater = guides.slice(CHIPS_SHOWN).filter((g) => isPinned(pinning.filters, g.id)).map((g) => g.id);
@@ -281,14 +270,6 @@ export function PinChips({ guides, short, pinning, label, side }: { guides: Chip
   }, [all]);
   return (
     <>
-      {guides.some((g) => g.quoted) ? (
-        <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-          <span className="text-foreground">{QUOTE_MARK}</span>
-          <span>
-            <span className="sr-only">A quote mark </span>means the guide explained its pick. Read its reasons below.
-          </span>
-        </p>
-      ) : null}
       <div role="group" aria-label={label}>
         <ul ref={firstRow} className="flex flex-wrap gap-2">
           {first.map((g) => (
@@ -374,30 +355,6 @@ function GuidePages({ guides, short, side }: { guides: ChipGuide[]; short: boole
         </div>
       </CollapsibleContent>
     </Collapsible>
-  );
-}
-
-export function CountOnlyButton({ side, pinning, className }: { side: Side; pinning: PinControls; className?: string }) {
-  const on = pinning.counting(side);
-  return (
-    <button
-      type="button"
-      data-count-only={side.key}
-      aria-pressed={on}
-      title={on ? "Count the guides you counted before" : "Count only these guides on every contest"}
-      onClick={() => {
-        pinning.onCountPress(side.key);
-        pinning.onCountOnly(side);
-      }}
-      className={cn(
-        "inline-flex min-h-10 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-8",
-        on ? "border-foreground bg-foreground text-background" : "border-border bg-background hover:bg-muted",
-        className,
-      )}
-    >
-      <Funnel aria-hidden="true" className="size-3.5 shrink-0" />
-      Count only these {side.count} on the ballot
-    </button>
   );
 }
 

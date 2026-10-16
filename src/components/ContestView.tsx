@@ -50,7 +50,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   const hidden = shown.length - rows.length;
   const carry = useCarriedQuery();
   const filterProps = { filters, onChange: setFilters, guides: shown, files, typeGuides: guides };
-  const pinning = useContestPins({ filters, onChange: setFilters, guides, files, noPick });
+  const pinning = useContestPins({ filters, onChange: setFilters, guides, noPick });
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {

@@ -2,27 +2,27 @@ import type { Contest } from "./schema";
 import { shortTitle } from "./share";
 
 type Level = "state" | "county" | "city";
-type Government = { name: string; place: string; level: Level };
+type Government = { place: string; level: Level };
 
 // The governments behind the measure links in the ballot data, keyed by host without "www.".
 // A host not listed here still gets a link, named by its host alone.
 const GOVERNMENTS: Record<string, Government> = {
-  "voterguide.sos.ca.gov": { name: "the California Secretary of State", place: "California", level: "state" },
-  "sf.gov": { name: "the City and County of San Francisco", place: "San Francisco", level: "city" },
-  "smcacre.gov": { name: "the County of San Mateo", place: "San Mateo County", level: "county" },
-  "alamedacountyca.gov": { name: "the County of Alameda", place: "Alameda County", level: "county" },
-  "marincounty.gov": { name: "the County of Marin", place: "Marin County", level: "county" },
-  "vote.santaclaracounty.gov": { name: "the County of Santa Clara", place: "Santa Clara County", level: "county" },
-  "sonomacounty.gov": { name: "the County of Sonoma", place: "Sonoma County", level: "county" },
-  "contracostavote.gov": { name: "the County of Contra Costa", place: "Contra Costa County", level: "county" },
-  "content.solanocounty.gov": { name: "the County of Solano", place: "Solano County", level: "county" },
-  "napacounty.gov": { name: "the County of Napa", place: "Napa County", level: "county" },
+  "voterguide.sos.ca.gov": { place: "California", level: "state" },
+  "sf.gov": { place: "San Francisco", level: "city" },
+  "smcacre.gov": { place: "San Mateo County", level: "county" },
+  "alamedacountyca.gov": { place: "Alameda County", level: "county" },
+  "marincounty.gov": { place: "Marin County", level: "county" },
+  "vote.santaclaracounty.gov": { place: "Santa Clara County", level: "county" },
+  "sonomacounty.gov": { place: "Sonoma County", level: "county" },
+  "contracostavote.gov": { place: "Contra Costa County", level: "county" },
+  "content.solanocounty.gov": { place: "Solano County", level: "county" },
+  "napacounty.gov": { place: "Napa County", level: "county" },
 };
 
 // How wide a government reaches, to tell when a host is narrower than the contest it links for.
 const REACH: Record<Contest["jurisdiction"]["level"], number> = { state: 4, region: 3, county: 2, city: 1, district: 0 };
 
-export type OfficialSource = { href: string; label: string; note: string };
+export type OfficialSource = { href: string; label: string };
 
 /** Host without "www.", lowercased. */
 export const siteOf = (url: string) => new URL(url).hostname.toLowerCase().replace(/^www\./, "");
@@ -62,7 +62,6 @@ export function officialSource(contest: Contest): OfficialSource | null {
   return {
     href: contest.link,
     label: linkLabel(measureName(contest.title), contest.link, whose(gov, contest), contest.linkShared === true),
-    note: `From ${gov ? `${gov.name}, ${site}` : site}. Bay Ballot does not write or edit it.`,
   };
 }
 
