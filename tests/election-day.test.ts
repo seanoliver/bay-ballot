@@ -28,6 +28,10 @@ describe("electionDayState", () => {
 });
 
 describe("pacificDate", () => {
+  it("returns YYYY-MM-DD", () => {
+    expect(pacificDate(new Date("2026-01-05T20:00:00Z"))).toBe("2026-01-05");
+  });
+
   it("formats the California calendar date", () => {
     expect(pacificDate(new Date("2026-10-16T06:59:00Z"))).toBe("2026-10-15");
     expect(pacificDate(new Date("2026-10-16T07:00:00Z"))).toBe("2026-10-16");

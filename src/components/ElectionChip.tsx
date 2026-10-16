@@ -1,8 +1,9 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type MouseEvent } from "react";
 import { daysLeft, electionDayState, pacificDate, RESULTS_URL, shortDate } from "@/lib/election-day";
+import { isPlainClick } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
 
@@ -11,9 +12,21 @@ const SUB = "font-medium text-muted-foreground";
 
 function subscribe(onChange: () => void) {
   document.addEventListener("visibilitychange", onChange);
-  return () => document.removeEventListener("visibilitychange", onChange);
+  const timer = window.setInterval(onChange, 60_000);
+  return () => {
+    document.removeEventListener("visibilitychange", onChange);
+    window.clearInterval(timer);
+  };
 }
 const today = () => pacificDate(new Date());
+
+// A native fragment jump adds a history entry the app router ignores on Back.
+function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
+  if (!isPlainClick(e)) return;
+  e.preventDefault();
+  document.getElementById("before-you-vote")?.scrollIntoView();
+  window.history.replaceState(null, "", "#before-you-vote");
+}
 
 export function ElectionChip({ date }: { date: string }) {
   // Pages are static and may not rebuild daily, so the count comes from the visitor's clock after hydration.
@@ -30,7 +43,7 @@ export function ElectionChip({ date }: { date: string }) {
     );
   }
   return (
-    <a href="#before-you-vote" className={cn(CHIP, state?.kind === "day" ? "ring-foreground" : "ring-foreground/15")}>
+    <a href="#before-you-vote" onClick={toVotingLinks} className={cn(CHIP, state?.kind === "day" ? "ring-foreground" : "ring-foreground/15")}>
       {state?.kind === "day" ? (
         <>
           <span className="sm:hidden">Polls close 8 pm</span>
@@ -40,7 +53,7 @@ export function ElectionChip({ date }: { date: string }) {
         </>
       ) : (
         <>
-          <span className="hidden lg:inline">Election day</span> {shortDate(date)}
+          <span className="sr-only lg:not-sr-only lg:inline">Election day</span> {shortDate(date)}
           {state ? <span className={SUB}>· {daysLeft(state.days)}</span> : null}
         </>
       )}

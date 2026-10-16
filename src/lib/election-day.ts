@@ -2,10 +2,11 @@ export type ElectionDayState = { kind: "before"; days: number } | { kind: "day" 
 
 export const RESULTS_URL = "https://www.sos.ca.gov/elections";
 
-const pacificDay = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
+const pacificDay = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
 
 export function pacificDate(now: Date): string {
-  return pacificDay.format(now);
+  const part = Object.fromEntries(pacificDay.formatToParts(now).map((p) => [p.type, p.value]));
+  return `${part.year}-${part.month}-${part.day}`;
 }
 
 export function electionDayState(electionDate: string, today: string): ElectionDayState {

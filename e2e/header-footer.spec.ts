@@ -8,7 +8,7 @@ test("the header shows the election chip, About, and Changelog on desktop", asyn
   await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto("/about");
   const banner = page.getByRole("banner");
-  await expect(chip(page)).toHaveText(isPhone(info) ? /^Nov 3\s*· 18 days$/ : /^Election day\s+Nov 3\s*· 18 days$/, { useInnerText: true });
+  await expect(chip(page)).toHaveText(/^Election day\s+Nov 3\s*· 18 days$/, { useInnerText: true });
   await expect(chip(page)).toHaveAttribute("href", "#before-you-vote");
   await expect(banner.getByRole("link", { name: "About" })).toBeVisible();
   const changelog = banner.getByRole("link", { name: "Changelog" });
@@ -30,6 +30,40 @@ test("the chip says 1 day the day before", async ({ page }) => {
   await expect(chip(page)).not.toContainText("days");
 });
 
+test("the chip scrolls to the voting links without breaking Back", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto(BALLOT);
+  await expect(chip(page)).toContainText("days");
+  await chip(page).click();
+  await expect(page.getByRole("region", { name: "Before you vote" })).toBeInViewport();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}#before-you-vote$`));
+  await page.getByRole("contentinfo").getByRole("link", { name: "About", exact: true }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}#before-you-vote$`));
+  await expect(page.getByRole("heading", { level: 1, name: "About Bay Ballot" })).toHaveCount(0);
+});
+
+test("the header fits a 320px screen in every chip state", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  for (const time of ["2026-10-16T12:00:00-07:00", "2026-11-03T09:00:00-08:00", "2026-11-04T09:00:00-08:00"]) {
+    await page.clock.setFixedTime(new Date(time));
+    await page.goto("/about");
+    await expect(chip(page)).toBeVisible();
+    if (time.startsWith("2026-11-04")) await expect(chip(page)).toHaveText("Results", { useInnerText: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  }
+  await expect(page.getByRole("banner").getByRole("link", { name: "Bay Ballot" })).toBeVisible();
+});
+
+test("an open tab's chip turns over at Pacific midnight", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-11-02T23:59:00-08:00") });
+  await page.goto("/about");
+  await expect(chip(page)).toContainText("· 1 day");
+  await page.clock.runFor("02:00");
+  await expect(chip(page)).toContainText("polls close 8 pm", { ignoreCase: true });
+});
+
 test("on election day the chip says polls close at 8 pm", async ({ page }, info) => {
   await page.clock.setFixedTime(new Date("2026-11-03T00:30:00-08:00"));
   await page.goto("/about");
@@ -49,6 +83,7 @@ test("the footer leads with official voting links, then site and corrections lin
   await page.goto("/about");
   const footer = page.getByRole("contentinfo");
   const vote = footer.getByRole("region", { name: "Before you vote" });
+  expect((await vote.boundingBox())!.y).toBeLessThan((await footer.getByRole("navigation", { name: "Footer" }).boundingBox())!.y + 1);
   for (const [name, href] of [
     ["Register to vote", "https://registertovote.ca.gov/"],
     ["Check your registration", "https://voterstatus.sos.ca.gov/"],
@@ -67,4 +102,14 @@ test("the footer leads with official voting links, then site and corrections lin
     "href",
     "https://github.com/seanoliver/bay-ballot/issues/new?template=data-correction.yml",
   );
+});
+
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("the chip shows the date with no count", async ({ page }) => {
+    await page.goto("/about");
+    await expect(chip(page)).toHaveText(/^Election day\s+Nov 3$/, { useInnerText: true });
+    await expect(chip(page)).toHaveAttribute("href", "#before-you-vote");
+  });
 });

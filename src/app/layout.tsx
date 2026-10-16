@@ -38,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <div className={`${FRAME} flex min-h-16 items-center justify-between gap-2 lg:gap-4`}>
               <Link href="/" className="inline-flex min-h-10 items-center gap-2 whitespace-nowrap text-2xl font-extrabold tracking-tight">
                 <Logo size={36} className="-my-2 -ml-1 shrink-0" />
-                Bay Ballot
+                <span className="max-[359px]:sr-only">Bay Ballot</span>
               </Link>
               <div className="flex items-center gap-2 lg:gap-3">
                 {electionDate ? <ElectionChip date={electionDate} /> : null}
