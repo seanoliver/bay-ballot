@@ -15,7 +15,6 @@ export function diffPicks(before: Record<string, Entry>, after: Record<string, E
     const samePick = show(b) === show(e);
     if (!samePick) out.push(`~ ${id}: ${show(b)} -> ${show(e)}`);
     if (b.quotes.length !== e.quotes.length) out.push(`q ${id}: ${b.quotes.length} -> ${e.quotes.length}`);
-    // A shortened quote keeps the count, so name each published quote that is gone or rewritten.
     if (samePick) for (const q of b.quotes) if (!e.quotes.some((x) => x.text === q.text)) out.push(`q ${id}: removed "${clip(q.text)}"`);
   }
   for (const [id, e] of Object.entries(before)) if (!after[id]) out.push(`- ${id}: ${show(e)}`);

@@ -297,7 +297,6 @@ export function keepPrevQuotes(
       const i = quotes.findIndex((x) => sameQuote(x.text, q.text));
       if (i !== -1) {
         at = i + 1;
-        // The model returned part of a published quote, often one sentence of a pair whose second leans on the first.
         if (quoteNorm(quotes[i].text).length < quoteNorm(q.text).length) {
           const why = problem(q);
           if (why) notKept(q, why);
