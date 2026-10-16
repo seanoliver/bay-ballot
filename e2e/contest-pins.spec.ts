@@ -250,8 +250,13 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("link", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("link", { name: /\(gave reasons\)$/ }).first();
+    // Counts what is shown, so a tooltip kept in the DOM and revealed by CSS on hover counts too.
+    const shown = () => chip.locator("xpath=ancestor::li[1]").evaluate((li) => [li, ...li.querySelectorAll("*")].filter((el) => el.checkVisibility()).length);
+    const before = await shown();
     await chip.hover();
     await expect(page.getByText(/Gave reasons on this contest|Opens its guide page/)).toHaveCount(0);
+    await expect(page.getByRole("tooltip")).toHaveCount(0);
+    expect(await shown()).toBe(before);
   });
 
   test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
@@ -336,6 +341,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(pinChip(pane, "SF Chronicle")).not.toHaveAttribute("title");
     await expect(chip).not.toHaveAttribute("title");
     await chip.focus();
+    await expect(chip).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
   });
@@ -351,14 +357,17 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
   });
 
-  test("in the sheet, Escape on a focused chip closes the sheet", async ({ page }) => {
+  test("in the sheet, Escape on a focused chip closes the sheet", async ({ page }, info) => {
+    test.skip(isPhone(info), "sets its own viewport, so the desktop run covers it");
     await page.setViewportSize({ width: 900, height: 900 });
     await page.goto(SF);
     await waitForKeys(page);
     await contestRow(page, "Proposition D").click();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     await expect(sheet).toBeVisible();
-    await guideLink(sheet, "SF Chronicle").focus();
+    const chip = guideLink(sheet, "SF Chronicle");
+    await chip.focus();
+    await expect(chip).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
   });
