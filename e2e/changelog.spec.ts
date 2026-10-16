@@ -30,6 +30,7 @@ test("the changelog shows one block per day with each day's data updates folded"
   await expect(show(page, "All")).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("link", { name: "Pull request #1 (opens in new tab)" })).toHaveAttribute("href", "https://github.com/seanoliver/bay-ballot/pull/1");
   await expect(page.getByLabel("Area")).toBeVisible();
+  await expect(page.getByRole("main").getByRole("region")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
@@ -68,7 +69,7 @@ test("Site hides data updates and Data shows only them, every day expanded", asy
   if (withDetails) await expect(rows(page).filter({ hasText: withDetails.details! })).toHaveCount(1);
   const guidedDetails = allRows.find((r) => r.name && r.details)!;
   expect(guidedDetails).toBeDefined();
-  await expect(rows(page).filter({ hasText: guidedDetails.name! }).filter({ hasText: guidedDetails.details! }).first()).toBeVisible();
+  await expect(rows(page).filter({ hasText: guidedDetails.name! }).filter({ hasText: guidedDetails.details! })).toHaveCount(1);
 
   await show(page, "All").click();
   await expect(page).toHaveURL(/\/changelog$/);
@@ -128,5 +129,30 @@ test.describe("without JavaScript", () => {
     await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText(days.map((d) => monthDay(d.date)));
     await expect(rows(page)).toHaveCount(allRows.length);
     await expect(page.getByRole("button", { name: dataSummary(dataDays[0].data) })).toHaveCount(0);
+    await expect(page.locator("[data-ready]")).toHaveCount(0);
   });
+});
+
+test("switching Show many times within ten seconds stays under the browser's history limit", async ({ page }) => {
+  // Like the browser: more than 100 push/replace calls in 10 seconds throws.
+  await page.addInitScript(() => {
+    const calls: number[] = [];
+    for (const name of ["pushState", "replaceState"] as const) {
+      const native = History.prototype[name];
+      History.prototype[name] = function (...args: Parameters<History["replaceState"]>) {
+        const now = Date.now();
+        calls.push(now);
+        if (calls.filter((t) => now - t < 10_000).length > 100) throw new DOMException(`Attempt to use history.${name}() more than 100 times per 10 seconds`, "SecurityError");
+        return native.apply(this, args);
+      };
+    }
+  });
+  const errors = watchErrors(page);
+  await page.goto("/changelog");
+  await ready(page);
+  for (let i = 0; i < 40; i++) for (const name of ["Site", "Data", "All"]) await show(page, name).click();
+  await show(page, "Data").click();
+  await expect(show(page, "Data")).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/\?show=data$/, { timeout: 15_000 });
+  expect(errors).toEqual([]);
 });
