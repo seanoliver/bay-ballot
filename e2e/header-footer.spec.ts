@@ -3,7 +3,7 @@ import { BALLOT, isPhone, watchErrors } from "./helpers";
 
 const chip = (page: Page) => page.getByRole("banner").getByRole("link", { name: /Nov 3|Election day|Polls close|results/i });
 
-test("the header shows the election chip, About, and Changelog on desktop", async ({ page }, info) => {
+test("the header shows the election chip and About, plus Changelog on desktop", async ({ page }, info) => {
   const errors = watchErrors(page);
   await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto("/about");
@@ -64,6 +64,7 @@ for (const width of [320, 360]) test(`the header fits a ${width}px screen in eve
 
 test("a modified click on the chip keeps the browser's own handling", async ({ page, context }, info) => {
   test.skip(isPhone(info), "no modifier clicks on a phone");
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto("/about");
   await expect(chip(page)).toContainText("days");
   const opened = context.waitForEvent("page");
@@ -73,6 +74,7 @@ test("a modified click on the chip keeps the browser's own handling", async ({ p
 });
 
 test("a keyboard press on the chip moves focus to the voting links", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto("/about");
   await expect(chip(page)).toContainText("days");
   await chip(page).focus();

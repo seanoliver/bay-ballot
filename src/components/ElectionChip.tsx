@@ -29,7 +29,7 @@ function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   section?.scrollIntoView();
   if (window.location.hash === "#before-you-vote") return;
   try {
-    window.history.replaceState(window.history.state, "", "#before-you-vote");
+    window.history.replaceState(null, "", "#before-you-vote");
   } catch {}
 }
 
