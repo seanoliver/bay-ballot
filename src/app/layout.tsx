@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { Geist } from "next/font/google";
+import { ElectionChip } from "@/components/ElectionChip";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
 import { SiteAnalytics, TestAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/seo";
+import { election, latestElection } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -21,7 +23,10 @@ export const metadata: Metadata = {
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
+const NAV = "min-h-10 items-center px-1 text-sm font-medium text-muted-foreground hover:text-foreground";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const electionDate = election(latestElection())?.ballot.date;
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
       <body className="min-h-full bg-muted dark:bg-background">
@@ -30,16 +35,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
         <header className="bg-background">
           <div className="border-b border-border bg-muted/40">
-            <div className={`${FRAME} flex min-h-16 items-center justify-between gap-4`}>
-              <Link href="/" className="inline-flex min-h-10 items-center gap-2 text-2xl font-extrabold tracking-tight">
+            <div className={`${FRAME} flex min-h-16 items-center justify-between gap-2 lg:gap-4`}>
+              <Link href="/" className="inline-flex min-h-10 items-center gap-2 whitespace-nowrap text-2xl font-extrabold tracking-tight">
                 <Logo size={36} className="-my-2 -ml-1 shrink-0" />
-                Bay Ballot
+                <span className="max-[359px]:sr-only">Bay Ballot</span>
               </Link>
-              <nav aria-label="Site">
-                <Link href="/about" className="inline-flex min-h-10 items-center px-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-                  About
-                </Link>
-              </nav>
+              <div className="flex items-center gap-2 lg:gap-3">
+                {electionDate ? <ElectionChip date={electionDate} /> : null}
+                <nav aria-label="Site" className="flex items-center gap-1 lg:gap-2">
+                  <Link href="/changelog" className={`${NAV} hidden lg:inline-flex`}>
+                    Changelog
+                  </Link>
+                  <Link href="/about" className={`${NAV} inline-flex`}>
+                    About
+                  </Link>
+                </nav>
+              </div>
             </div>
           </div>
           <div aria-hidden="true" className="flex h-1 gap-[3px]">
