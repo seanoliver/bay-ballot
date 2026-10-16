@@ -643,6 +643,31 @@ ${q2} ${but}` }];
     expect(r.notes).toEqual([]);
   });
 
+  it("compares normalized text when dropping a sentence of a published pair", () => {
+    const pair = `${q1} ${q2}`;
+    const spaced = q1.replace("the west", "the  west");
+    expect(keep2({ "prop-g": entry("N", pair) }, { "prop-g": entry("N", q2, spaced) }).picks["prop-g"].quotes).toEqual([quote(pair)]);
+  });
+
+  it("puts the published full quote in the shorter quote's place, ahead of a restored one", () => {
+    const pair = `${q1} ${q2}`;
+    expect(keep2({ "prop-g": entry("N", pair, dashed) }, { "prop-g": entry("N", q2) }).picks["prop-g"].quotes).toEqual([quote(pair), quote(dashed)]);
+  });
+
+  it("keeps the first copy of a quote the model repeated", () => {
+    const first = quote(q1, "https://first.org/");
+    const r = keepPrevQuotes({ "prop-g": entry("N", q2) }, { "prop-g": { pick: "N", ranked: false, quotes: [first, quote(q1), quote(q2)] } }, ballot.contests, [...pg3, { url: "https://first.org/", kind: "html", text: `No on Prop G\n${q1}` }]);
+    expect(r.picks["prop-g"].quotes).toEqual([first, quote(q2)]);
+  });
+
+  it("writes no note for a restored quote that a longer model quote already holds", () => {
+    const s = "Rents rose fast across the west side.";
+    const p: Page[] = [{ url: src, kind: "html", text: `No on Prop G\n${q1} ${s}` }];
+    const r = keepPrevQuotes({ "prop-g": entry("N", s) }, { "prop-g": entry("N", `${q1} ${s}`) }, ballot.contests, p);
+    expect(r.picks["prop-g"].quotes).toEqual([quote(`${q1} ${s}`)]);
+    expect(r.notes).toEqual([]);
+  });
+
   it("keeps the model's shorter quote when the published full quote no longer passes", () => {
     const gone = `The old page said the closure saved money. ${q2}`;
     const r = keep2({ "prop-g": entry("N", gone) }, { "prop-g": entry("N", q2) });
