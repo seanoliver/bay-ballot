@@ -168,6 +168,10 @@ District 28: Carol Pefley
 District 29: Dennis Sanchez
 County Candidate Races
 City Candidate Races
+Cupertino
+City Council: Mark Fantozzi
+City Council: Santosh Rao
+‍
 Milpitas
 City Council: Jennie Ha Phan
 School Districts
@@ -176,6 +180,9 @@ Trustee: Linda Chavez
 ‍
 Franklin-McKinley School Board
 Member: Marc Cooper
+‍
+Fremont Union High School District
+Member: Jason Lin
 ‍
 Los Gatos-Saratoga High School District
 Trustee: Ishaan Prasad

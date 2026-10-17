@@ -11,7 +11,7 @@ extraSources:
   - https://www.reformcalifornia.org/voter-guides/alameda
   - https://www.reformcalifornia.org/voter-guides/sonoma
   - https://www.reformcalifornia.org/voter-guides/napa
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-17
 hasReasoning: true
 rejectedQuotes:
   - text: Prop 39 is a bipartisan solution for Voter ID!
@@ -55,17 +55,19 @@ picks:
     quotes:
       - text: Provides taxpayer-funded subsidies to developers without reforming costly mandates that make housing so expensive. Worse, Prop 37 makes the State of California one of the biggest mortgage lenders in America overnight – and taxpayers are left holding the bag for any losses.
         source: https://www.reformcalifornia.org/voter-guides/solano
+      - text: Many of the boondoggle projects supported by this bond will cost more than $1M per unit!
+        source: https://www.reformcalifornia.org/voter-guides/solano
   prop-38:
     pick: Y
     quotes:
       - text: Every drug and treatment developed with this funding must be sold in California at 20% BELOW the national average price.
         source: https://www.reformcalifornia.org/voter-guides/solano
-      - text: Half of the research money is required by law to target cancer, heart disease and Alzheimer's.
-        source: https://www.reformcalifornia.org/voter-guides/solano
   prop-39:
     pick: Y
     quotes:
       - text: Prop 39 requires cleaning up and auditing of voter rolls and citizenship verification of anyone registering to vote.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+      - text: Prop 39 protects the right of every citizen to vote and restores public trust and confidence in our elections.
         source: https://www.reformcalifornia.org/voter-guides/solano
   prop-40:
     pick: N
@@ -84,6 +86,8 @@ picks:
     quotes:
       - text: Prop 42 would prohibit politicians from taxing the value of your savings, checking account, 401k, stock portfolio, and current equity in your home.
         source: https://www.reformcalifornia.org/voter-guides/solano
+      - text: We already pay the highest taxes on income, sales, property, gas and our cars— we don't need a Savings Tax on top of all that!
+        source: https://www.reformcalifornia.org/voter-guides/solano
   prop-43:
     pick: Y
     quotes:
@@ -94,63 +98,13 @@ picks:
     quotes:
       - text: Increases mandates and costs on community health clinics, threatening their ability to provide patient care.
         source: https://www.reformcalifornia.org/voter-guides/solano
+      - text: Trusted healthcare experts warn that Prop 44 would trigger $1.7 billion in penalties in the first year alone and force clinics across California to close their doors.
+        source: https://www.reformcalifornia.org/voter-guides/solano
   prop-45:
     pick: Y
     quotes:
       - text: California’s environmental review law (CEQA) has been weaponized to block and delay housing, adding years and millions of dollars to every project.
         source: https://www.reformcalifornia.org/voter-guides/solano
-  rtm:
-    pick: N
-    quotes:
-      - text: Imposes a new costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-a:
-    pick: N
-    quotes:
-      - text: Sold as streamlining while eliminating just three of the city's hundred-plus commissions, it makes pension board members nearly impossible to remove, hands organized labor a guaranteed seat on the commission that sets water and power rates, strips the city's authority to discipline striking government employees, and lets politicians abolish the watchdog committee voters created to guard homelessness tax dollars.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-b:
-    pick: N
-    quotes:
-      - text: Puts taxpayers on the hook for a loan portfolio written by political appointees, where every lending decision becomes a political decision, every loss lands on the general fund, and the whole operation sits outside the budget scrutiny that applies to real city departments.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-c:
-    pick: N
-    quotes:
-      - text: Locks up an ever-growing share of the city's general fund for another thirty-two years, ratcheting automatically to $125 million every year regardless of deficits, police and fire needs, or the condition of the streets, while expanding taxpayer-funded down payment loans to households earning twice the area median income.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-d:
-    pick: N
-    quotes:
-      - text: Quadruples the signatures ordinary citizens need to put a measure on the ballot, from 2 percent to 8 percent of registered voters, pricing grassroots taxpayer groups and neighborhood coalitions out of the initiative process while leaving well-funded special interests free to simply buy the signatures they need.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-e:
-    pick: N
-    quotes:
-      - text: Hands an unelected City Administrator rulemaking power that takes effect unless politicians affirmatively stop it, raising the dollar threshold above which elected supervisors must approve a contract, and extending that same official's term.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-f:
-    pick: Y
-    quotes:
-      - text: Gives the mayor San Franciscans actually elect the authority to hire and fire the department heads responsible for city services, including — by the measure's own findings — department heads implicated in serious ethical lapses whom the mayor currently cannot remove.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-g:
-    pick: Y
-    quotes:
-      - text: Reopens a taxpayer-funded arterial to the taxpayers who paid for it, undoing a closure that pushed traffic onto Sunset District residential streets and cut off seniors, parents and everyone who cannot make the trip by bicycle.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-h:
-    pick: N
-  prop-i:
-    pick: N
-    quotes:
-      - text: Imposes a new costly transfer tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  prop-j:
-    pick: N
-    quotes:
-      - text: Slaps San Francisco’s real estate transfer tax—up to 6% of fair market value—on foreclosed commercial properties and apartment buildings with five or more units, even when a lender is merely taking back a distressed property.
-        source: https://www.reformcalifornia.org/voter-guides/san-francisco
   governor:
     pick:
       - Steve Hilton
@@ -178,6 +132,8 @@ picks:
   supreme-court-groban:
     pick: N
   supreme-court-evans:
+    pick: N
+  court-of-appeal-6:
     pick: N
   us-rep-1:
     pick:
@@ -257,6 +213,58 @@ picks:
   supervisor-2:
     pick:
       - Nicholas Berg
+  prop-a:
+    pick: N
+    quotes:
+      - text: Sold as streamlining while eliminating just three of the city's hundred-plus commissions, it makes pension board members nearly impossible to remove, hands organized labor a guaranteed seat on the commission that sets water and power rates, strips the city's authority to discipline striking government employees, and lets politicians abolish the watchdog committee voters created to guard homelessness tax dollars.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-b:
+    pick: N
+    quotes:
+      - text: Puts taxpayers on the hook for a loan portfolio written by political appointees, where every lending decision becomes a political decision, every loss lands on the general fund, and the whole operation sits outside the budget scrutiny that applies to real city departments.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-c:
+    pick: N
+    quotes:
+      - text: Locks up an ever-growing share of the city's general fund for another thirty-two years, ratcheting automatically to $125 million every year regardless of deficits, police and fire needs, or the condition of the streets, while expanding taxpayer-funded down payment loans to households earning twice the area median income.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-d:
+    pick: N
+    quotes:
+      - text: Quadruples the signatures ordinary citizens need to put a measure on the ballot, from 2 percent to 8 percent of registered voters, pricing grassroots taxpayer groups and neighborhood coalitions out of the initiative process while leaving well-funded special interests free to simply buy the signatures they need.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-e:
+    pick: N
+    quotes:
+      - text: Hands an unelected City Administrator rulemaking power that takes effect unless politicians affirmatively stop it, raising the dollar threshold above which elected supervisors must approve a contract, and extending that same official's term.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-f:
+    pick: Y
+    quotes:
+      - text: Gives the mayor San Franciscans actually elect the authority to hire and fire the department heads responsible for city services, including — by the measure's own findings — department heads implicated in serious ethical lapses whom the mayor currently cannot remove.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-g:
+    pick: Y
+    quotes:
+      - text: Reopens a taxpayer-funded arterial to the taxpayers who paid for it, undoing a closure that pushed traffic onto Sunset District residential streets and cut off seniors, parents and everyone who cannot make the trip by bicycle.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-h:
+    pick: N
+  prop-i:
+    pick: N
+    quotes:
+      - text: Imposes a new costly transfer tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  prop-j:
+    pick: N
+    quotes:
+      - text: Slaps San Francisco’s real estate transfer tax—up to 6% of fair market value—on foreclosed commercial properties and apartment buildings with five or more units, even when a lender is merely taking back a distressed property.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
+  rtm:
+    pick: N
+    quotes:
+      - text: Imposes a new costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/san-francisco
   winters-jusd-measure-b:
     pick: N
     quotes:
@@ -303,6 +311,37 @@ picks:
     quotes:
       - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/solano
+  benicia-council:
+    pick:
+      - Justin Zollars
+  dixon-council-2:
+    pick:
+      - Thom Bogue
+  fairfield-council-3:
+    pick:
+      - Robert Marin
+  rio-vista-council:
+    pick:
+      - Rick Dolk
+      - Robert Butler
+  suisun-city-mayor:
+    pick:
+      - Michael Jefferson
+  suisun-city-council:
+    pick:
+      - Katrina Garcia
+  vacaville-mayor:
+    pick:
+      - Roy Stockton
+  vacaville-council-2:
+    pick:
+      - Tom Chalk
+  vacaville-council-4:
+    pick:
+      - John Vogel
+  dixon-usd-trustee:
+    pick:
+      - Phil Lockwood
   burlingame-measure-d:
     pick: N
   redwood-city-measure-e:
@@ -389,8 +428,27 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
   san-bruno-measure-ee:
     pick: N
+  foster-city-council-1:
+    pick:
+      - Art Kiesel
+  san-carlos-council:
+    pick:
+      - Mark D. Iwanowski
+  smuhsd-trustee-area-3:
+    pick:
+      - Jennifer Jacobson
+  morgan-hill-measure-a:
+    pick: N
+    quotes:
+      - text: Steals the voters' power to hire and fire the officer who watches Morgan Hill's money, leaving that decision to the officials doing the spending.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
   gilroy-measure-b:
     pick: N
+  santa-clara-measure-c:
+    pick: N
+    quotes:
+      - text: Lets a quarter-million dollars of public work be awarded with no competitive bidding and no council vote, and swaps the objective lowest-responsible-bidder standard for subjective best-value scoring that is nearly impossible to challenge after the fact — in a city with a documented contracting controversy record.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
   los-altos-measure-d:
     pick: Y
   mountain-view-measure-e:
@@ -400,6 +458,18 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/santa-clara
   mountain-view-measure-f:
     pick: N
+  sunnyvale-measure-g:
+    pick: N
+    quotes:
+      - text: Replaces the charter's specific limits on how public works contracts are awarded with authority to use any method state law allows, deleting a taxpayer protection Sunnyvale voters put in the charter on purpose.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  sunnyvale-measure-h:
+    pick: N
+  sunnyvale-measure-i:
+    pick: N
+    quotes:
+      - text: Extends how long an unelected appointee holds a council seat by eliminating the option of filling it at an earlier consolidated election, letting appointees build incumbency advantage on the public's time.
+        source: https://www.reformcalifornia.org/voter-guides/santa-clara
   palo-alto-measure-j:
     pick: N
   milpitas-measure-k:
@@ -421,6 +491,33 @@ picks:
     quotes:
       - text: Caps directors of a large-budget special district at four terms where no limit exists today, in exactly the kind of low-turnout, low-scrutiny office where officials serve for decades unnoticed.
         source: https://www.reformcalifornia.org/voter-guides/santa-clara
+  cupertino-council:
+    pick:
+      - Mark Fantozzi
+      - Santosh Rao
+  milpitas-council:
+    pick:
+      - Jennie Ha Phan
+  alum-rock-sd-trustee-area-5:
+    pick:
+      - Línda Lo Chávez
+  franklin-mckinley-sd-trustee:
+    pick:
+      - Marc Cooper
+  fremont-uhsd-trustee-area-3:
+    pick:
+      - Jason Lin
+  lgsuhsd-trustee-area-2:
+    pick:
+      - Ishaan Prasad
+  milpitas-usd-trustee:
+    pick:
+      - Chris Norwood
+  reed-union-sd-measure-o:
+    pick: N
+    quotes:
+      - text: Authorizes costly bond funded by taxpayer dollars despite massive levels of wasteful spending and awarding contracts without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
   miller-creek-sd-measure-n:
     pick: N
     quotes:
@@ -431,12 +528,22 @@ picks:
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
+  corte-madera-measure-q:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
   fairfax-measure-r:
     pick: N
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
   larkspur-measure-s:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  mill-valley-measure-t:
     pick: N
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
@@ -466,6 +573,16 @@ picks:
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
+  marin-csa-29-measure-z:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  inverness-pud-measure-aa:
+    pick: N
+    quotes:
+      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
+        source: https://www.reformcalifornia.org/voter-guides/marin
   srjc-measure-ab:
     pick: N
   kentfield-fire-measure-bb:
@@ -483,6 +600,31 @@ picks:
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
+  stinson-beach-cwd-measure-ee:
+    pick: N
+    quotes:
+      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  upper-bay-prd-measure-ff:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  novato-council-4:
+    pick:
+      - Chris Carpiniello
+  novato-usd-trustee-area-4:
+    pick:
+      - Francis Drouillard
+  marin-county-board-of-education-3:
+    pick:
+      - Craig Stuart Adams
+  marin-healthcare-district-1:
+    pick:
+      - Clayton Hess
+  richardson-bay-sanitary-director:
+    pick:
+      - John Turnacliff
   dublin-usd-measure-i:
     pick: N
     quotes:
@@ -585,6 +727,18 @@ picks:
     quotes:
       - text: Imposes a new costly utility tax despite massive levels of wasteful spending and awarding contracts without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/alameda
+  union-city-council-3:
+    pick:
+      - Jeff Wang
+  union-city-council-2:
+    pick:
+      - Jaime Patino
+  clpccd-trustee-area-3:
+    pick:
+      - Wendy Huang
+  oak-grove-sd-trustee-area-5:
+    pick:
+      - Pradeep Kumar
   coast-life-support-measure-d:
     pick: N
   waugh-sd-measure-e:
@@ -622,117 +776,25 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/sonoma
   old-adobe-union-sd-measure-o:
     pick: N
-  napa-county-measure-b:
-    pick: N
-  american-canyon-measure-p:
-    pick: N
-  foster-city-council-1:
-    pick:
-      - Art Kiesel
-  san-carlos-council:
-    pick:
-      - Mark D. Iwanowski
-  smuhsd-trustee-area-3:
-    pick:
-      - Jennifer Jacobson
-  benicia-council:
-    pick:
-      - Justin Zollars
-  dixon-council-2:
-    pick:
-      - Thom Bogue
-  fairfield-council-3:
-    pick:
-      - Robert Marin
-  rio-vista-council:
-    pick:
-      - Rick Dolk
-      - Robert Butler
-  suisun-city-mayor:
-    pick:
-      - Michael Jefferson
-  suisun-city-council:
-    pick:
-      - Katrina Garcia
-  vacaville-mayor:
-    pick:
-      - Roy Stockton
-  vacaville-council-2:
-    pick:
-      - Tom Chalk
-  vacaville-council-4:
-    pick:
-      - John Vogel
-  dixon-usd-trustee:
-    pick:
-      - Phil Lockwood
-  milpitas-council:
-    pick:
-      - Jennie Ha Phan
-  alum-rock-sd-trustee-area-5:
-    pick:
-      - Línda Lo Chávez
-  franklin-mckinley-sd-trustee:
-    pick:
-      - Marc Cooper
-  lgsuhsd-trustee-area-2:
-    pick:
-      - Ishaan Prasad
-  milpitas-usd-trustee:
-    pick:
-      - Chris Norwood
-  novato-council-4:
-    pick:
-      - Chris Carpiniello
-  novato-usd-trustee-area-4:
-    pick:
-      - Francis Drouillard
-  marin-county-board-of-education-3:
-    pick:
-      - Craig Stuart Adams
-  marin-healthcare-district-1:
-    pick:
-      - Clayton Hess
-  richardson-bay-sanitary-director:
-    pick:
-      - John Turnacliff
-  union-city-council-3:
-    pick:
-      - Jeff Wang
-  union-city-council-2:
-    pick:
-      - Jaime Patino
-  clpccd-trustee-area-3:
-    pick:
-      - Wendy Huang
-  oak-grove-sd-trustee-area-5:
-    pick:
-      - Pradeep Kumar
   rohnert-park-council-2:
     pick:
       - Paul Carey
   sonoma-council-1:
     pick:
       - Peggy Hutton
-  petaluma-juhsd-trustee-area-5:
-    pick:
-      - John La Bare
-  windsor-usd-trustee:
-    pick:
-      - Rich Carnation
-  st-helena-mayor:
-    pick:
-      - Patrick Kenealy
-  st-helena-council:
-    pick:
-      - Kate Spadarotto
   harmony-union-sd-trustee:
     pick:
       - Michael Podshadley
+  petaluma-juhsd-trustee-area-5:
+    pick:
+      - John La Bare
   two-rock-union-sd-trustee:
     pick:
       - Laura B. Gutierrez
       - Nicolas Noyes
+  windsor-usd-trustee:
+    pick:
+      - Rich Carnation
   gold-ridge-fire-director:
     pick:
       - Doug Jones
@@ -740,64 +802,17 @@ picks:
   sonoma-county-fire-director:
     pick:
       - Richard H. Alpert
+  napa-county-measure-b:
+    pick: N
+  american-canyon-measure-p:
+    pick: N
   st-helena-measure-s:
     pick: N
   yountville-measure-y:
     pick: N
-  morgan-hill-measure-a:
-    pick: N
-    quotes:
-      - text: Steals the voters' power to hire and fire the officer who watches Morgan Hill's money, leaving that decision to the officials doing the spending.
-        source: https://www.reformcalifornia.org/voter-guides/santa-clara
-  santa-clara-measure-c:
-    pick: N
-    quotes:
-      - text: Lets a quarter-million dollars of public work be awarded with no competitive bidding and no council vote, and swaps the objective lowest-responsible-bidder standard for subjective best-value scoring that is nearly impossible to challenge after the fact — in a city with a documented contracting controversy record.
-        source: https://www.reformcalifornia.org/voter-guides/santa-clara
-  sunnyvale-measure-g:
-    pick: N
-    quotes:
-      - text: Replaces the charter's specific limits on how public works contracts are awarded with authority to use any method state law allows, deleting a taxpayer protection Sunnyvale voters put in the charter on purpose.
-        source: https://www.reformcalifornia.org/voter-guides/santa-clara
-  sunnyvale-measure-h:
-    pick: N
-  sunnyvale-measure-i:
-    pick: N
-    quotes:
-      - text: Extends how long an unelected appointee holds a council seat by eliminating the option of filling it at an earlier consolidated election, letting appointees build incumbency advantage on the public's time.
-        source: https://www.reformcalifornia.org/voter-guides/santa-clara
-  reed-union-sd-measure-o:
-    pick: N
-    quotes:
-      - text: Authorizes costly bond funded by taxpayer dollars despite massive levels of wasteful spending and awarding contracts without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  corte-madera-measure-q:
-    pick: N
-    quotes:
-      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  mill-valley-measure-t:
-    pick: N
-    quotes:
-      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  marin-csa-29-measure-z:
-    pick: N
-    quotes:
-      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  inverness-pud-measure-aa:
-    pick: N
-    quotes:
-      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  stinson-beach-cwd-measure-ee:
-    pick: N
-    quotes:
-      - text: Expands the spending ceiling without a specified use for the funds, or a corresponding taxpayer safeguard.
-        source: https://www.reformcalifornia.org/voter-guides/marin
-  upper-bay-prd-measure-ff:
-    pick: N
-    quotes:
-      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
+  st-helena-mayor:
+    pick:
+      - Patrick Kenealy
+  st-helena-council:
+    pick:
+      - Kate Spadarotto
