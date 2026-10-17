@@ -1,7 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { BALLOT } from "./helpers";
 
-// What Google reads off a page: JSON-LD blocks, the robots meta and the icon links.
 const jsonLd = (page: Page) =>
   page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((e) => JSON.parse(e.textContent ?? "null")));
 
@@ -14,7 +13,6 @@ async function breadcrumbs(page: Page): Promise<Crumb[]> {
   return lists[0].itemListElement;
 }
 
-// The trail is the visible breadcrumb link, then the page: same name and path, absolute on bayballot.com, numbered 1..n.
 async function expectTrailMatchesPage(page: Page, path: string) {
   const crumbs = await breadcrumbs(page);
   expect(crumbs.map((c) => c.position)).toEqual(crumbs.map((_, i) => i + 1));

@@ -1,6 +1,5 @@
 import { SITE } from "./seo";
 
-// Schema.org JSON-LD for Google Search: the site name and breadcrumb trails.
 
 export const SITE_NAME = "Bay Ballot";
 
@@ -11,7 +10,6 @@ export function websiteJsonLd() {
 
 export type Crumb = { name: string; path: string };
 
-// One ListItem per visible breadcrumb level, then the page itself, each with an absolute URL.
 export function breadcrumbJsonLd(crumbs: Crumb[]) {
   return {
     "@context": "https://schema.org",
