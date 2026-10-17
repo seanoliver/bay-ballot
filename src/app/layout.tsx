@@ -8,6 +8,7 @@ import { Logo } from "@/components/Logo";
 import { SiteAnalytics, TestAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/seo";
+import { SITE_NAME } from "@/lib/structured-data";
 import { election, latestElection } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: "Bay Ballot — every Bay Area voter guide in one place",
   description: "What Bay Area voter guides recommend for each contest, side by side, with quotes that link to their source.",
+  openGraph: { siteName: SITE_NAME },
   twitter: { card: "summary_large_image" },
+  // Lets Google show a large image preview; index and follow stay at their defaults.
+  robots: { "max-image-preview": "large" },
   referrer: "strict-origin",
   alternates: { canonical: "/" },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
