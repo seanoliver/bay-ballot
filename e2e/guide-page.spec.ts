@@ -1,7 +1,18 @@
-import { expect, test } from "@playwright/test";
+import path from "node:path";
+import { expect, test, type Page } from "@playwright/test";
+import { loadElection } from "../src/lib/data";
+import type { GuideType } from "../src/lib/schema";
 import { BALLOT, openBallot } from "./helpers";
 
 const GUIDE = "/guides/sf-chronicle";
+const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
+
+// The card's look, read off the element: a change to CARD on one page only shows up as a mismatch.
+const cardStyle = (page: Page, selector: string) =>
+  page.locator(selector).first().evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { radius: s.borderRadius, background: s.backgroundColor, ring: s.boxShadow, padding: s.padding };
+  });
 
 test("the guide page header is a card with type, links and a stat line", async ({ page }) => {
   await page.goto(GUIDE);
@@ -9,7 +20,69 @@ test("the guide page header is a card with type, links and a stat line", async (
   await expect(card.getByText("Newspaper", { exact: true })).toBeVisible();
   await expect(card.getByRole("link", { name: /^Homepage/ })).toHaveAttribute("target", "_blank");
   await expect(card.getByRole("link", { name: /^Endorsements page/ })).toBeVisible();
-  await expect(card.getByText(/^\d+ picks · \d+ with reasons · as of \w+ \d+, \d{4}$/)).toBeVisible();
+  await expect(card.getByText(/^\d+ picks · [1-9]\d* with reasons · as of \w+ \d+, \d{4}$/)).toBeVisible();
+});
+
+test("a list-only guide's stat line says List only instead of a reasons count", async ({ page }) => {
+  const listOnly = Object.values(data.endorsements).find((e) => e.status === "published" && !e.hasReasoning);
+  test.skip(!listOnly, "every published guide explains its picks");
+  await page.goto(`/guides/${listOnly!.guide}`);
+  await expect(page.locator("header").getByText(/^\d+ picks? · List only · as of \w+ \d+, \d{4}$/)).toBeVisible();
+});
+
+test("a guide that explains its picks but quoted none drops the reasons count", async ({ page }) => {
+  const unquoted = Object.values(data.endorsements)
+    .filter((e) => e.status === "published" && e.hasReasoning && Object.values(e.picks).every((p) => p.quotes.length === 0))
+    .map((e) => e.guide);
+  expect(unquoted).toContain("envirovoters");
+  await page.goto("/guides/envirovoters");
+  const card = page.locator("header", { has: page.getByRole("heading", { level: 1 }) });
+  await expect(card.getByText(/^\d+ picks · as of \w+ \d+, \d{4}$/)).toBeVisible();
+  await expect(card).not.toContainText("with reasons");
+});
+
+// Written out, not read from TYPE_LABEL, so a typo in the page's labels fails here.
+const LABELS = { newspaper: "Newspaper", party: "Party", club: "Political club", union: "Union", advocacy: "Advocacy group", civic: "Civic group" } satisfies Record<GuideType, string>;
+
+for (const [type, label] of Object.entries(LABELS)) {
+  test(`a ${type} guide's page shows the ${label} label`, async ({ page }) => {
+    const guide = data.guides.find((g) => g.type === type);
+    test.skip(!guide, `no ${type} guide`);
+    await page.goto(`/guides/${guide!.id}`);
+    await expect(page.locator("header", { has: page.getByRole("heading", { level: 1 }) }).getByText(label, { exact: true })).toBeVisible();
+  });
+}
+
+test("at 320px a long pick name stays on one line", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "phone width");
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto("/guides/growsf");
+  // No real label is long enough to wrap at 320px, so write one in.
+  const lines = await page.locator("li [aria-hidden=true] > span").first().evaluate((part) => {
+    const label = [...part.childNodes].find((n): n is Text => n.nodeType === Node.TEXT_NODE)!;
+    label.data = "Maximiliana Christopherson-Montgomery Wellington";
+    const r = document.createRange();
+    r.selectNodeContents(label);
+    return new Set([...r.getClientRects()].map((b) => Math.round(b.top))).size;
+  });
+  expect(lines).toBe(1);
+});
+
+test("the guide header and the contest page share the card look", async ({ page }) => {
+  await page.goto(GUIDE);
+  const guide = await cardStyle(page, "main header");
+  await page.goto(`${BALLOT}/prop-d`);
+  const contest = await cardStyle(page, "main section:has(h1)");
+  expect(guide.radius).not.toBe("0px");
+  expect(guide.ring).not.toBe("none");
+  expect(contest).toEqual(guide);
+});
+
+test("the breadcrumb is 14px on the guide and contest pages", async ({ page }) => {
+  for (const [url, name] of [[GUIDE, "Bay Area ballot"], [`${BALLOT}/prop-d`, "San Francisco ballot"]]) {
+    await page.goto(url);
+    await expect(page.getByRole("link", { name, exact: true })).toHaveCSS("font-size", "14px");
+  }
 });
 
 test("a guide spanning counties links back to the Bay Area ballot", async ({ page }) => {
@@ -46,6 +119,15 @@ test("a pick row links to its contest", async ({ page }) => {
   await row.click();
   await expect(page).toHaveURL(new RegExp(`${BALLOT}/prop-d$`));
   await expect(page.getByRole("heading", { level: 1, name: "Proposition D" })).toBeVisible();
+});
+
+test("a pick row keeps the filter query the breadcrumb carries", async ({ page }) => {
+  await page.goto(`${GUIDE}?off=sf-gop&why=1`);
+  await expect(page.getByRole("link", { name: "Bay Area ballot", exact: true })).toHaveAttribute("href", `${BALLOT}?off=sf-gop&why=1`);
+  const row = page.getByRole("link", { name: /^Proposition D: (Yes|No)$/ });
+  await expect(row).toHaveAttribute("href", `${BALLOT}/prop-d?off=sf-gop&why=1`);
+  await row.click();
+  await expect(page).toHaveURL(new RegExp(`${BALLOT}/prop-d\\?off=sf-gop&why=1$`));
 });
 
 test("the contest page has a breadcrumb back to its ballot", async ({ page }) => {

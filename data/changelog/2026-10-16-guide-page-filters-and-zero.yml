@@ -1,0 +1,5 @@
+date: 2026-10-16
+type: fix
+title: Guide pages keep your filters when you open a contest, and drop a zero quote count
+details: "Opening a contest from a guide's page now keeps the guides you hid and other filters, as the breadcrumb already did. A guide that explains its picks but has none quoted here no longer shows \"0 with reasons\"."
+pr: 243

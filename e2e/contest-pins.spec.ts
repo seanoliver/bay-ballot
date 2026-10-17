@@ -11,6 +11,15 @@ const FALLBACK = data.areas.flatMap((a) => (ballotViewProps(data, { area: a }).f
 const yesSide = (n: number) =>
   data.ballot.contests.find((c) => c.kind === "measure" && Object.values(data.endorsements).filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y").length === n);
 
+// A measure with a Yes guide that gave no quote on it, so the guide's only link on the contest page is its chip.
+const CHIP_ONLY = data.ballot.contests
+  .filter((c) => c.kind === "measure")
+  .flatMap((c) =>
+    Object.values(data.endorsements)
+      .filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y" && !(e.hasReasoning && e.picks[c.id].quotes.length > 0))
+      .map((e) => ({ contest: c.id, guide: e.guide })),
+  )[0];
+
 const PROP_D = `${BALLOT}/prop-d`;
 const pinParam = (...ids: string[]) => new RegExp(`[?&]pin=${ids.join("(,|%2C)")}(&|$)`);
 
@@ -194,6 +203,7 @@ test.describe("pinning from a contest page", () => {
     await expect(pin).toHaveAttribute("aria-pressed", "true");
     await expect(pin.locator("svg")).toHaveClass(/\bfill-current\b/);
     await expect(pin).toHaveClass(/\bbg-foreground\b/);
+    await expect(pin).not.toHaveAttribute("title");
     await expect(page).toHaveURL(/\/prop-d\?/);
     await pin.click();
     await expect(pin).toHaveAttribute("aria-pressed", "false");
@@ -211,17 +221,29 @@ test.describe("pinning from a contest page", () => {
     await expect(page).not.toHaveURL(/[?&]pin=/);
   });
 
-  test("a chip's guide page link doesn't prefetch the page", async ({ page }) => {
+  test("a chip's guide page link doesn't prefetch the page, in view or on hover", async ({ page }, info) => {
+    test.skip(!CHIP_ONLY, "no measure has a Yes guide without a quote in today's data");
+    const href = `/guides/${CHIP_ONLY!.guide}`;
     const fetched: string[] = [];
     page.on("request", (r) => fetched.push(new URL(r.url()).pathname));
-    await openContest(page);
-    await page.waitForLoadState("networkidle");
+    await page.goto(`${BALLOT}/${CHIP_ONLY!.contest}`);
+    await waitForKeys(page);
+    // A wait for the request, started before the action: waitForLoadState("networkidle") returns at once on an idle page.
+    const fetchOf = (timeout: number) => page.waitForRequest((r) => new URL(r.url()).pathname === href, { timeout }).then(() => true, () => false);
+    const inView = fetchOf(5000);
     const group = page.getByRole("group", { name: "Guides for Yes" });
-    const chips = await group.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    const bylines = await page.locator("blockquote ~ p a[href^='/guides/']").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    const only = chips.filter((href) => href && !bylines.includes(href));
-    expect(only.length).toBeGreaterThan(0);
-    for (const href of only) expect(fetched).not.toContain(href);
+    await expandChips(group);
+    const chip = group.locator(`a[href="${href}"]`);
+    await expect(chip).toHaveCount(1);
+    // The chip is the guide's only link on the page, so no other link can prefetch it.
+    await expect(page.locator(`a[href="${href}"]`)).toHaveCount(1);
+    await chip.scrollIntoViewIfNeeded();
+    expect(await inView).toBe(false);
+    expect(fetched).not.toContain(href);
+    if (isPhone(info)) return;
+    const onHover = fetchOf(2000);
+    await chip.hover();
+    expect(await onHover).toBe(false);
   });
 
   test("each chip's name links to its guide page, and there is no separate Guide pages list", async ({ page }) => {
@@ -250,14 +272,27 @@ test.describe("pinning from a contest page", () => {
     await expect(page.getByRole("group", { name: "Guides with no pick" }).getByRole("link", { name: /\(gave reasons\)$/ })).toHaveCount(0);
     if (isPhone(info)) return;
     const chip = page.getByRole("group", { name: "Guides for Yes" }).getByRole("link", { name: /\(gave reasons\)$/ }).first();
+    // Counts what is shown, so a tooltip kept in the DOM and revealed by CSS on hover (display, opacity or visibility) counts too.
+    const shown = () =>
+      chip.locator("xpath=ancestor::li[1]").evaluate((li) => [li, ...li.querySelectorAll("*")].filter((el) => el.checkVisibility({ opacityProperty: true, visibilityProperty: true })).length);
+    await page.mouse.move(0, 0);
+    const before = await shown();
     await chip.hover();
+    // Nothing to wait for when checking that nothing appeared, so wait out a typical tooltip delay.
+    await page.waitForTimeout(1000);
     await expect(page.getByText(/Gave reasons on this contest|Opens its guide page/)).toHaveCount(0);
+    await expect(page.getByRole("tooltip")).toHaveCount(0);
+    expect(await shown()).toBe(before);
   });
 
   test("the first side starts at the top of the guides block, with no gap from the hidden pin line", async ({ page }) => {
     await openContest(page);
     const side = page.getByRole("heading", { level: 3, name: /^Yes\s*\d/ }).first().locator("xpath=ancestor::section[1]");
-    const gap = await side.evaluate((s) => s.getBoundingClientRect().top - s.parentElement!.parentElement!.previousElementSibling!.getBoundingClientRect().bottom);
+    // The Yes/No legend ends the summary; the guides block sits 32px below it.
+    const legend = page.getByText(/^Yes\s*\d+\s*No\s*\d+$/);
+    const [above, below] = await Promise.all([legend.boundingBox(), side.boundingBox()]);
+    const gap = below!.y - (above!.y + above!.height);
+    expect(gap).toBeGreaterThanOrEqual(31);
     expect(gap).toBeLessThanOrEqual(33);
   });
 
@@ -268,17 +303,20 @@ test.describe("pinning from a contest page", () => {
     const panel = await filterPanel(page, info);
     await panel.getByRole("button", { name: "Reset filters" }).click();
     // Close steps back in history; the reset query is re-applied on the popstate after it.
-    const popped = isPhone(info)
-      ? page.evaluate(
-          () =>
-            new Promise((resolve, reject) => {
-              addEventListener("popstate", () => setTimeout(resolve, 0), { once: true });
-              setTimeout(() => reject(new Error("no popstate after Close")), 5000);
-            }),
-        )
-      : null;
+    if (isPhone(info)) {
+      await page.evaluate(() => {
+        (window as unknown as { popped: Promise<void> }).popped = new Promise((resolve) => addEventListener("popstate", () => setTimeout(resolve, 0), { once: true }));
+      });
+    }
     await closePanel(page, info);
-    await popped;
+    if (isPhone(info)) {
+      await page.evaluate(() =>
+        Promise.race([
+          (window as unknown as { popped: Promise<void> }).popped,
+          new Promise((_, reject) => setTimeout(() => reject(new Error("no popstate after Close")), 5000)),
+        ]),
+      );
+    }
     await expect(page).not.toHaveURL(/[?&](only|off)=/);
     await expect(counted).not.toContainText(/\b2 of /);
   });
@@ -336,8 +374,19 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(pinChip(pane, "SF Chronicle")).not.toHaveAttribute("title");
     await expect(chip).not.toHaveAttribute("title");
     await chip.focus();
+    await expect(chip).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
+  });
+
+  test("a short-named pin at the limit is described by its full name and the limit", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    await page.goto(`${SF}?c=prop-d&pin=growsf,sf-dems,league-pissed-off-voters,spur`);
+    const pane = page.getByRole("region", { name: "Proposition D" });
+    await expandChips(pane);
+    const pin = pinChip(pane, "SF Chronicle");
+    await expect(pin).toHaveAttribute("aria-disabled", "true");
+    await expect(pin).toHaveAccessibleDescription("San Francisco Chronicle 4 of 4 pinned. Unpin one to pin another.");
   });
 
   test("Escape with the mouse over a chip and focus elsewhere closes the pane", async ({ page }, info) => {
@@ -351,14 +400,17 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(page).not.toHaveURL(/[?&]c=prop-d/);
   });
 
-  test("in the sheet, Escape on a focused chip closes the sheet", async ({ page }) => {
+  test("in the sheet, Escape on a focused chip closes the sheet", async ({ page }, info) => {
+    test.skip(isPhone(info), "sets its own viewport, so the desktop run covers it");
     await page.setViewportSize({ width: 900, height: 900 });
     await page.goto(SF);
     await waitForKeys(page);
     await contestRow(page, "Proposition D").click();
     const sheet = page.getByRole("dialog", { name: "Proposition D" });
     await expect(sheet).toBeVisible();
-    await guideLink(sheet, "SF Chronicle").focus();
+    const chip = guideLink(sheet, "SF Chronicle");
+    await chip.focus();
+    await expect(chip).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
   });
