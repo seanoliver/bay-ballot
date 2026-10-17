@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-16
+fetchedAt: 2026-10-17
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -16,12 +16,6 @@ rejectedQuotes:
     reason: 'gives no reason on its own: "the bleeding" refers back to the cuts described before it (review 2026-10-11)'
     contestId: prop-h
 picks:
-  us-rep-11:
-    pick:
-      - Scott Wiener
-    quotes:
-      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   lt-governor:
     pick:
       - Fiona Ma
@@ -64,33 +58,18 @@ picks:
     quotes:
       - text: Richard Barrera is an increasingly rare California progressive who brings all parties to the table, a skill that the new state superintendent of public instruction will need as the role of the office changes.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  supreme-court-groban:
-    pick: Y
-    quotes:
-      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  supreme-court-evans:
-    pick: Y
-    quotes:
-      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  court-of-appeal-1:
-    pick: Y
-    quotes:
-      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  court-of-appeal-6:
-    pick: Y
-    quotes:
-      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  supervisor-4:
+  us-rep-11:
     pick:
-      - Alan Wong
+      - Scott Wiener
+    quotes:
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-1:
     pick: Y
     quotes:
       - text: The measure is the product of years of legislative sausage-making and is unwieldy. But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: Befitting the broad consensus on California’s affordability crisis, Prop 1 has no formal opposition.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-2:
     pick: Y
@@ -139,10 +118,47 @@ picks:
     quotes:
       - text: On its surface, everything about Prop 44 on California’s November ballot looks appealing. But it creates a complex administrative and legal regime that will drain limited staff time and resources from nonprofit clinics while distracting from patient care.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-45:
+    pick: N
+  supreme-court-groban:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supreme-court-evans:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  court-of-appeal-1:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  court-of-appeal-6:
+    pick: Y
+    quotes:
+      - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   rtm:
     pick: Y
     quotes:
       - text: The Bay Area does not work without consistent, reliable, well-functioning public transit.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+    quotes:
+      - text: Sherrill has worked diligently to support the Lurie administration on reforms to the City Charter and on greater accountability and transparency in public spending, from nonprofit contracts to departmental budgets.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: San Francisco needs supervisors who take the city’s problems seriously and work with colleagues that might approach them differently. His X persona notwithstanding, Dorsey has shown he can do both on the board.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-a:
     pick: Y
