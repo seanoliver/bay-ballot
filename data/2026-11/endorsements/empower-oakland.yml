@@ -2,7 +2,7 @@ guide: empower-oakland
 election: 2026-11
 status: published
 source: https://www.empoweroakland.com/voter-guide
-fetchedAt: 2026-10-12
+fetchedAt: 2026-10-17
 hasReasoning: true
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
@@ -21,11 +21,8 @@ picks:
   oakland-usd-2:
     pick:
       - Arielle Fleisher
-    ranked: true
     quotes:
       - text: Arielle Fleisher is an OUSD parent, a PTA member, co-leader of her neighborhood council, and founder of a 300+ member moms group.
-        source: https://www.empoweroakland.com/voter-guide
-      - text: Fleisher would be a welcome addition, and much needed breath of fresh air, to a board in desperate need of overhaul.
         source: https://www.empoweroakland.com/voter-guide
       - text: Before becoming a candidate, she helped build an independent parent-led guide to the OUSD budget, so families could actually engage instead of tuning out.
         source: https://www.empoweroakland.com/voter-guide
@@ -39,6 +36,9 @@ picks:
       - Alexandra Williams
       - LeAna Powell
     ranked: true
+    quotes:
+      - text: Williams brings vast experience having worked at both district-run schools and charters.
+        source: https://www.empoweroakland.com/voter-guide
   oakland-mayor:
     pick:
       - Barbara Lee
@@ -51,8 +51,6 @@ picks:
     pick:
       - Charlene Wang
     quotes:
-      - text: Charlene Wang has been a force on the city council since taking office in 2025.
-        source: https://www.empoweroakland.com/voter-guide
       - text: Charlene is perfect for this district as she is both progressive and practical.
         source: https://www.empoweroakland.com/voter-guide
       - text: She is a workhorse for her constituents who tirelessly gathers feedback from the community and then puts that into practice at City Hall.
@@ -61,8 +59,6 @@ picks:
     pick:
       - Janani Ramachandran
     quotes:
-      - text: Janani Ramachandran is running unopposed, and she earned this on her track record rather than by default.
-        source: https://www.empoweroakland.com/voter-guide
       - text: She has a consistent record of asking hard questions and following through.
         source: https://www.empoweroakland.com/voter-guide
   oakland-council-6:
