@@ -33,15 +33,46 @@ describe("diffPicks", () => {
     const before = { "prop-a": { ...e("Y"), quotes: [full] }, "prop-b": e("N", { quotes: 2 }) };
     const after = { "prop-a": { ...e("Y"), quotes: [{ ...full, text: "It leans on the first sentence." }] }, "prop-b": e("N", { quotes: 1 }) };
     expect(diffPicks(before, after)).toEqual([
-      `q prop-a: removed "${full.text.slice(0, 60)}…"`,
+      `q prop-a: removed \`${full.text.slice(0, 60)}…\``,
       "q prop-b: 2 -> 1",
-      'q prop-b: removed "Reason number 2 for this pick."',
+      "q prop-b: removed `Reason number 2 for this pick.`",
     ]);
   });
 
   it("cuts a removed quote only when it runs past 60 characters", () => {
     const sixty = { text: "x".repeat(60), source: "https://a.org/" };
-    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [sixty] } }, { "prop-a": e("Y") })).toEqual(["q prop-a: 1 -> 0", `q prop-a: removed "${sixty.text}"`]);
+    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [sixty] } }, { "prop-a": e("Y") })).toEqual(["q prop-a: 1 -> 0", `q prop-a: removed \`${sixty.text}\``]);
+  });
+
+  it("names removed quotes when an unranked pick only changed name order", () => {
+    const before = { mayor: { ...e(["A One", "B Two"]), quotes: q(1) } };
+    const after = { mayor: e(["B Two", "A One"]) };
+    expect(diffPicks(before, after)).toEqual([
+      "~ mayor: A One / B Two -> B Two / A One",
+      "q mayor: 1 -> 0",
+      "q mayor: removed `Reason number 1 for this pick.`",
+    ]);
+  });
+
+  it("cuts a removed quote by characters, never inside an emoji", () => {
+    const text = `${"x".repeat(59)}😀 and more`;
+    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [{ text, source: "https://a.org/" }] } }, { "prop-a": e("Y") })[1]).toBe(
+      `q prop-a: removed \`${"x".repeat(59)}😀…\``,
+    );
+  });
+
+  it("shows a removed quote as one line of code, so it can't add mentions, links or images", () => {
+    const text = "Ask @someone `why` ![x](https://e.example/i.png)\nor [read](https://e.example).";
+    expect(diffPicks({ "prop-a": { ...e("Y"), quotes: [{ text, source: "https://a.org/" }] } }, { "prop-a": e("Y") })[1]).toBe(
+      "q prop-a: removed `Ask @someone why ![x](https://e.example/i.png) or [read](htt…`",
+    );
+  });
+
+  it("calls a quote that changed only in dashes or spacing reworded, not removed", () => {
+    const text = "Closing the road was a mistake - a costly one - for every family.";
+    const before = { "prop-a": { ...e("Y"), quotes: [{ text, source: "https://a.org/" }] } };
+    const after = { "prop-a": { ...e("Y"), quotes: [{ text: text.replace(/ - /g, " — ").replace("every", "every  "), source: "https://a.org/" }] } };
+    expect(diffPicks(before, after)).toEqual([`q prop-a: reworded \`${text.slice(0, 60)}…\``]);
   });
 
   it("is empty when nothing changed", () => {

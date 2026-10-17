@@ -6,6 +6,7 @@ import { ExternalLink } from "@/components/ExternalLink";
 import { PageColumn } from "@/components/PageColumn";
 import { BAR_FILL } from "@/components/tone";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { areaBallotLinks, coverage, coverageSentence } from "@/lib/coverage";
 import { formatDate } from "@/lib/display";
 import { MAX_PINS } from "@/lib/filters";
@@ -104,18 +105,20 @@ export default function AboutPage() {
 
         <section className="mt-8">
           <h2 id="how-to" className="text-base font-semibold">How to use it</h2>
-          <ol aria-labelledby="how-to" className="mt-3 grid gap-3 md:grid-cols-3">
+          <ol aria-labelledby="how-to" className="measure mt-3 overflow-hidden rounded-xl border border-border bg-card">
             {STEPS.map((s, i) => (
-              <li key={s.title} className="grid grid-cols-[1.75rem_minmax(0,1fr)] content-start gap-x-3 gap-y-1 rounded-xl border border-border bg-card p-4">
-                <span aria-hidden="true" className="grid size-7 place-items-center rounded-full bg-foreground text-sm font-bold text-background">
+              <Item key={s.title} render={<li />} className="gap-3 rounded-none border-x-0 border-b-0 border-t-border p-4 first:border-t-0 sm:px-5">
+                <ItemMedia aria-hidden="true" className="grid size-7 place-items-center rounded-full bg-foreground text-sm font-bold text-background">
                   {i + 1}
-                </span>
-                <span className="self-center font-semibold">{s.title}</span>
-                <span className="col-start-2 text-sm text-muted-foreground">{s.body}</span>
-                <span aria-hidden="true" className="col-start-2 mt-2 flex flex-wrap items-center gap-1.5">
+                </ItemMedia>
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="line-clamp-none text-base font-semibold">{s.title}</ItemTitle>
+                  <ItemDescription className="line-clamp-none">{s.body}</ItemDescription>
+                </ItemContent>
+                <ItemActions aria-hidden="true" className="basis-full flex-wrap gap-1.5 pl-10 sm:basis-46 sm:justify-end sm:pl-0">
                   {s.drawing}
-                </span>
-              </li>
+                </ItemActions>
+              </Item>
             ))}
           </ol>
           <Link

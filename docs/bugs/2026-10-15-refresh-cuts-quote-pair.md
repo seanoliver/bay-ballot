@@ -20,7 +20,7 @@ The 2026-10-15 refresh (#195) removed the SF Chronicle's only Prop 5 quote and s
 ## Fix
 
 - `keepPrevQuotes`: when the model's quote matches a published one but is shorter, swap in the published quote if it still passes `problem()` (on the page, under this contest, not rejected, verifier rules). Otherwise keep the model's quote and note why the published one was not kept. Note: `kept previous full quote over the model's shorter one`.
-- `keepPrevQuotes` then runs `withoutContained` on every unchanged pick: it drops any quote whose normalized text sits inside another quote of that pick, and later exact repeats. Without it, a pair the model split into two quotes came back as the pair plus one of its own sentences. Notes are written only for published quotes that remain.
+- `keepPrevQuotes` then runs `withoutContained` on every unchanged pick: it drops any quote whose normalized text sits inside another quote of that pick, and later exact repeats. Without it, a pair the model split into two quotes came back as the pair plus one of its own sentences. The two "kept …" notes are written only for published quotes that remain; "previous quote not kept" is written when a published quote fails its checks and no remaining quote holds its text (that last condition came with `2026-10-16-quote-refresh-followups.md`).
 - `diffPicks`: when the pick is unchanged, add `q <contest>: removed "<text>"` (cut to 60 characters) for each published quote whose exact text is gone, so shortened and removed quotes appear in the run summary and PR body.
 
 ## Verification

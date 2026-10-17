@@ -1,0 +1,5 @@
+date: 2026-10-16
+type: fix
+title: The About page's three steps are now one list at reading width
+details: "On wide screens each step's drawing sits beside its text instead of under it in a narrow card."
+pr: 224

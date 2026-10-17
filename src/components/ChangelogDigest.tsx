@@ -6,6 +6,7 @@ import { ExternalLink } from "@/components/ExternalLink";
 import {
   dataSummary,
   digestSearch,
+  FOLDED_ROWS,
   readDigestQuery,
   SHOWS,
   visibleDays,
@@ -18,27 +19,19 @@ import {
 } from "@/lib/changelog-digest";
 import { monthDay } from "@/lib/display";
 import { cn } from "@/lib/utils";
+import { replaceQuery, useQuery } from "./useBallotFilters";
 
 const PULL = "https://github.com/seanoliver/bay-ballot/pull";
 const LABEL: Record<SiteItem["type"], string> = { new: "New", data: "Data", fix: "Fix" };
 const SHOW_LABEL: Record<Show, string> = { all: "All", site: "Site", data: "Data" };
 
-const listeners = new Set<() => void>();
-function subscribe(fn: () => void) {
-  listeners.add(fn);
-  window.addEventListener("popstate", fn);
-  return () => {
-    listeners.delete(fn);
-    window.removeEventListener("popstate", fn);
-  };
-}
-function writeQuery(q: DigestQuery) {
-  window.history.replaceState(null, "", digestSearch(q) || window.location.pathname);
-  listeners.forEach((fn) => fn());
-}
+const writeQuery = (q: DigestQuery) => replaceQuery(digestSearch(q).replace(/^\?/, ""));
+const never = () => () => {};
 
 export function ChangelogDigest({ days, areas }: { days: DigestDay[]; areas: DigestArea[] }) {
-  const search = useSyncExternalStore(subscribe, () => window.location.search, () => "");
+  const search = useQuery();
+  // Marks the filter row once hydrated, so tests know a click will be handled.
+  const hydrated = useSyncExternalStore(never, () => true, () => false);
   const areaIds = useMemo(() => areas.map((a) => a.id), [areas]);
   const { show, area } = readDigestQuery(search, areaIds);
   const guides = useMemo(() => {
@@ -57,7 +50,7 @@ export function ChangelogDigest({ days, areas }: { days: DigestDay[]; areas: Dig
 
   return (
     <>
-      <div className="js-only mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div data-ready={hydrated ? "" : undefined} className="js-only mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
         <div role="group" aria-label="Show" className="inline-flex rounded-full bg-muted p-0.5 ring-1 ring-border">
           {SHOWS.map((s) => (
             <button
@@ -97,8 +90,8 @@ export function ChangelogDigest({ days, areas }: { days: DigestDay[]; areas: Dig
       </div>
       {shown.length === 0 ? <p className="mt-8 text-muted-foreground">No updates for this area yet.</p> : null}
       {shown.map((d) => (
-        <section key={d.date} aria-labelledby={`day-${d.date}`} className="mt-6 border-t border-border pt-4">
-          <h2 id={`day-${d.date}`} className="text-base font-semibold">
+        <section key={d.date} className="mt-6 border-t border-border pt-4">
+          <h2 className="text-base font-semibold">
             <time dateTime={d.date}>{monthDay(d.date)}</time>
           </h2>
           {d.site.length > 0 ? (
@@ -145,7 +138,11 @@ function SummaryText({ text }: { text: string }) {
 function DataBlock({ date, rows, always, open, onToggle }: { date: string; rows: DataRow[]; always: boolean; open: boolean; onToggle: () => void }) {
   const listId = `data-${date}`;
   const list = (
-    <ul id={listId} aria-label={`Data updates, ${monthDay(date)}`} className={cn("divide-y divide-border/70 border border-border bg-card text-sm", always ? "rounded-xl" : "rounded-b-xl border-t-0")}>
+    <ul
+      id={listId}
+      aria-label={`Data updates, ${monthDay(date)}`}
+      className={cn("divide-y divide-border/70 border border-border bg-card text-sm", always ? "rounded-xl" : [FOLDED_ROWS, "rounded-b-xl border-t-0", !open && "hidden"])}
+    >
       {rows.map((r) => (
         <li key={r.file} className="px-3 py-2.5 text-muted-foreground">
           {r.name ? <span className="font-semibold text-foreground">{r.name}</span> : null}
@@ -173,14 +170,14 @@ function DataBlock({ date, rows, always, open, onToggle }: { date: string; rows:
         aria-controls={listId}
         onClick={onToggle}
         className={cn(
-          "flex min-h-11 w-full items-center justify-between gap-3 border border-border bg-card px-3 py-2 text-left text-sm outline-none transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+          "js-only flex min-h-11 w-full items-center justify-between gap-3 border border-border bg-card px-3 py-2 text-left text-sm outline-none transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
           open ? "rounded-t-xl" : "rounded-xl",
         )}
       >
         <SummaryText text={dataSummary(rows)} />
         <ChevronDown aria-hidden="true" className={cn("size-5 shrink-0 text-muted-foreground transition-transform duration-(--motion-in) ease-(--ease-out)", open && "rotate-180")} />
       </button>
-      {open ? list : null}
+      {list}
     </div>
   );
 }

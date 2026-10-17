@@ -195,7 +195,7 @@ export function savedFilters({ prev, next, stored }: { prev: Filters; next: Filt
 }
 
 // Not derived from the zod enum: client code must not import zod.
-const TYPE_LABELS: Record<GuideType, string> = {
+const TYPE_GROUP_LABELS: Record<GuideType, string> = {
   newspaper: "Newspapers",
   party: "Parties",
   club: "Political clubs",
@@ -231,7 +231,7 @@ const fold = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").to
 export function guideGroups(guides: GuideInfo[], files: Record<string, PickFile>, query: string): GuideGroup[] {
   const q = fold(query.trim());
   const out: GuideGroup[] = [];
-  for (const [type, label] of Object.entries(TYPE_LABELS) as [GuideType, string][]) {
+  for (const [type, label] of Object.entries(TYPE_GROUP_LABELS) as [GuideType, string][]) {
     const ofType = guides.filter((g) => g.type === type && files[g.id]);
     const matching = ofType.filter((g) => fold(g.name).includes(q) || fold(g.shortName ?? "").includes(q));
     if (matching.length) out.push({ type, heading: `${label} (${ofType.length})`, label, count: ofType.length, guides: matching });
