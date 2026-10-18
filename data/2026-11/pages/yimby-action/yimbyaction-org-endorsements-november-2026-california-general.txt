@@ -1,6 +1,5 @@
 Donate
 Loading
-Donate
 All endorsements
 Voter guide
 California general
@@ -188,3 +187,4 @@ Running for office?
 Request a YIMBY Action endorsement for your campaign.
 Request an endorsement
 00 daysuntil Election Day
+Donate

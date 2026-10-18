@@ -5,57 +5,18 @@ process for the General Election.
 This page includes candidates endorsed during the 2026 Primary Election
 cycle who advanced to the General Election, along with candidates and
 ballot measures endorsed during the General Election endorsement process.
-Federal Positions
-Federal endorsements are made through the California Democratic Party endorsement process.
-U.S. House · District 8
-John Garamendi
-Campaign Website
-[Josh Harder]
-U.S. House · District 9
-Josh Harder
-Campaign Website
-[Mark DeSaulnier]
-U.S. House · District 10
-Mark DeSaulnier
-Campaign Website
-State Offices
-Statewide and legislative endorsements are made through the California Democratic Party endorsement process.
-[Shirley Weber]
-Secretary of State
-Shirley Weber
-Campaign Website
-[Rob Bonta]
-Attorney General
-Rob Bonta
-Campaign Website
-[Malia Cohen]
-Controller
-Malia Cohen
-Campaign Website
-[Sally Lieber]
-Board of Equalization · Area 2
-Sally Lieber
-Campaign Website
-[Lori Wilson]
-Assembly District 11
-Lori Wilson
-Campaign Website
-[Buffy Wicks]
-Assembly District 14
-Buffy Wicks
-Campaign Website
-[Anamarie Avila Farias]
-Assembly District 15
-Anamarie Avila Farias
-Campaign Website
-[Rebecca Bauer-Kahan]
-Assembly District 16
-Rebecca Bauer-Kahan
-Campaign Website
 Countywide & Regional Offices
+[Harpreet Sandhu]
+AC Transit · Ward 1
+Harpreet Sandhu
+Candidate Information
 [Sarah G. Butler]
 Contra Costa County Board of Education · Area 2
 Sarah G. Butler
+Campaign Website
+[Cameron Sasai]
+Contra Costa Community College District · Ward 1
+Cameron Sasai
 Campaign Website
 [Rita Xavier]
 Contra Costa Community College District · Ward 3
@@ -102,18 +63,10 @@ Campaign Website
 San Pablo City Council
 Rita Xavier
 Candidate Information
-[Cameron Sasai]
-Contra Costa Community College District · Ward 1
-Cameron Sasai
-Campaign Website
 [Caitlin Garibaldi]
 WCCUSD · Area 5
 Caitlin Garibaldi
 Campaign Website
-[Harpreet Sandhu]
-AC Transit · Ward 1
-Harpreet Sandhu
-Candidate Information
 [Marguerite Young]
 EBMUD · Ward 3
 Marguerite Young
@@ -302,6 +255,74 @@ Sam Alvarado
 [Allison Picard]
 Contra Costa Water District · Division 2
 Allison Picard
+Campaign Website
+Federal Positions
+Federal endorsements are made through the California Democratic Party
+endorsement process.
+U.S. House · District 8
+John Garamendi
+Campaign Website
+[Josh Harder]
+U.S. House · District 9
+Josh Harder
+Campaign Website
+[Mark DeSaulnier]
+U.S. House · District 10
+Mark DeSaulnier
+Campaign Website
+State Offices
+Statewide and legislative endorsements are made through the California Democratic Party endorsement process.
+[Xavier Beccera]
+Governor
+Xavier Beccera
+Campaign Website
+[Fiona Ma]
+Lieutenant Governor
+Fiona Ma
+Campaign Website
+[Shirley Weber]
+Secretary of State
+Shirley Weber
+Campaign Website
+[Rob Bonta]
+Attorney General
+Rob Bonta
+Campaign Website
+[Malia Cohen]
+Controller
+Malia Cohen
+Campaign Website
+[Eleni Kounalakis]
+Treasurer
+Eleni Kounalakis
+Campaign Website
+[Ben Allen]
+Insurance Commissioner
+Ben Allen
+Campaign Website
+[Richard Barrera]
+Superintendant of Public Instruction
+Richard Barrera
+Campaign Website
+[Sally Lieber]
+Board of Equalization · Area 2
+Sally Lieber
+Campaign Website
+[Lori Wilson]
+Assembly District 11
+Lori Wilson
+Campaign Website
+[Buffy Wicks]
+Assembly District 14
+Buffy Wicks
+Campaign Website
+[Anamarie Avila Farias]
+Assembly District 15
+Anamarie Avila Farias
+Campaign Website
+[Rebecca Bauer-Kahan]
+Assembly District 16
+Rebecca Bauer-Kahan
 Campaign Website
 Ballot Measures
 Positions adopted by the Democratic Party of Contra Costa County
