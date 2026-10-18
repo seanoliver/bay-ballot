@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml/badge.svg)](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml)
 [![Daily data refresh](https://github.com/seanoliver/bay-ballot/actions/workflows/refresh.yml/badge.svg)](https://github.com/seanoliver/bay-ballot/actions/workflows/refresh.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fseanoliver%2Fbay-ballot%2Fbadges%2Fcoverage.json)](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml)
 [![Data updated](https://img.shields.io/github/last-commit/seanoliver/bay-ballot/main?path=data&label=data%20updated)](https://github.com/seanoliver/bay-ballot/commits/main/data)
 [![Voter guides](https://img.shields.io/endpoint?url=https%3A%2F%2Fbayballot.com%2Fbadges%2Fguides)](https://bayballot.com)
 [![Counties](https://img.shields.io/endpoint?url=https%3A%2F%2Fbayballot.com%2Fbadges%2Fcounties)](https://bayballot.com)
@@ -24,6 +25,7 @@ Bay Ballot shows every Bay Area voter guide's endorsements (San Francisco, San M
 npm install
 npm run dev        # http://localhost:3000
 npm test           # unit tests (Vitest)
+npm run coverage   # unit tests with a coverage summary
 npm run validate   # checks every data file against the schema and the ballot
 npm run build
 ```
