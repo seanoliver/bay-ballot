@@ -37,22 +37,49 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # The README's coverage badge reads coverage.json from the badges branch; renaming either breaks it.
   coverage:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run coverage
-      - name: Publish the coverage badge
+      - name: Write the coverage badge
+        run: |
+          # shellcheck disable=SC2016 # ${pct} is a JS template literal
+          node -e '
+            const pct = Math.round(require("./coverage/coverage-summary.json").total.lines.pct);
+            const color = pct >= 80 ? "brightgreen" : pct >= 70 ? "green" : pct >= 60 ? "yellowgreen" : pct >= 50 ? "yellow" : "orange";
+            console.log(JSON.stringify({ schemaVersion: 1, label: "coverage", message: `${pct}%`, color }));
+          ' > coverage.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-badge
+          path: coverage.json
+          retention-days: 1
+
+  # Separate from coverage so the job that runs repo code and dependencies never holds contents: write.
+  # The README's coverage badge reads coverage.json from the badges branch; renaming either breaks it.
+  publish-coverage-badge:
+    needs: coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-badge
+          path: ${{ runner.temp }}/artifact
+      - name: Push the badge to the badges branch
         run: |
           dir="$RUNNER_TEMP/badges"
           if git fetch -q --depth 1 origin badges 2>/dev/null; then
@@ -62,15 +89,10 @@ jobs:
             git -C "$dir" checkout -q --orphan new
             git -C "$dir" rm -rqf .
           fi
-          # shellcheck disable=SC2016 # ${pct} is a JS template literal
-          node -e '
-            const pct = Math.round(require("./coverage/coverage-summary.json").total.lines.pct);
-            const color = pct >= 80 ? "brightgreen" : pct >= 70 ? "green" : pct >= 60 ? "yellowgreen" : pct >= 50 ? "yellow" : "orange";
-            console.log(JSON.stringify({ schemaVersion: 1, label: "coverage", message: `${pct}%`, color }));
-          ' > "$dir/coverage.json"
+          cp "$RUNNER_TEMP/artifact/coverage.json" "$dir/coverage.json"
           # Vercel reads vercel.json from the pushed commit; without it every badge push is a preview deploy.
           printf '{\n  "git": { "deploymentEnabled": false }\n}\n' > "$dir/vercel.json"
           git -C "$dir" add coverage.json vercel.json
           if git -C "$dir" diff --cached --quiet; then echo "Coverage unchanged."; exit 0; fi
-          git -C "$dir" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "coverage: $(node -p "require(\"$dir/coverage.json\").message") [skip ci]"
+          git -C "$dir" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "coverage: $(jq -r .message "$dir/coverage.json") [skip ci]"
           git -C "$dir" push -q origin HEAD:refs/heads/badges
