@@ -1,12 +1,9 @@
 import path from "node:path";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { loadElection } from "../src/lib/data";
-import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, contestRow, isPhone, waitForKeys, watchErrors } from "./helpers";
 
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
-// A contest an area's list shows with Bay Area guides, because none of the area's own took a position.
-const FALLBACK = data.areas.flatMap((a) => (ballotViewProps(data, { area: a }).fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => ({ area: a.id, id }))))[0];
 
 const yesSide = (n: number) =>
   data.ballot.contests.find((c) => c.kind === "measure" && Object.values(data.endorsements).filter((e) => e.status === "published" && e.picks[c.id]?.pick === "Y").length === n);
@@ -415,7 +412,7 @@ test.describe("pinning from the ballot list's contest detail", () => {
     await expect(sheet).toBeHidden();
   });
 
-  test("No pick is left off the Bay Area list and a Bay Area fallback", async ({ page }, info) => {
+  test("No pick is left off the Bay Area list", async ({ page }, info) => {
     test.skip(isPhone(info), "desktop only");
     await page.goto(`${SF}?c=prop-d`);
     await expect(page.getByRole("region", { name: "Proposition D" }).getByRole("group", { name: "Guides with no pick" })).toBeVisible();
@@ -423,10 +420,6 @@ test.describe("pinning from the ballot list's contest detail", () => {
     const pane = page.getByRole("region", { name: "Proposition D" });
     await expect(pane.getByRole("group", { name: "Guides for Yes" })).toBeVisible();
     await expect(pane.getByRole("group", { name: "Guides with no pick" })).toHaveCount(0);
-    test.skip(!FALLBACK, "no area falls back on Bay Area guides in today's data");
-    await page.goto(`${BALLOT}/${FALLBACK!.area}?c=${FALLBACK!.id}`);
-    await expect(page.locator("section[aria-labelledby='detail-title']")).toBeVisible();
-    await expect(page.getByRole("group", { name: "Guides with no pick" })).toHaveCount(0);
   });
 
   test("No pick on a county list covers only the contest's own city", async ({ page }, info) => {

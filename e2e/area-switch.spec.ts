@@ -1,10 +1,7 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
-import { countyPages } from "../src/lib/areas";
 import { loadElection } from "../src/lib/data";
-import { scopeName } from "../src/lib/fallback";
 import { FILTER_SEARCH } from "../src/components/frame";
-import { ballotViewProps } from "../src/lib/site-data";
 import { BALLOT, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
 const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
@@ -195,23 +192,6 @@ test.describe("area switching", () => {
     await expect(heading(page, "Sonoma County ballot")).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma\\?why=1$`));
     if (!isPhone(info)) await expect(page.locator(FILTER_SEARCH)).toHaveValue("press");
-  });
-
-  test("an area's saved section choice applies after a switch", async ({ page }) => {
-    const JUDICIAL = "section-state-judicial";
-    const chips = countyPages(data.areas);
-    const pick = chips.map((a) => ({ a, fb: ballotViewProps(data, { area: a }).fallback?.sections.find((s) => s.id === JUDICIAL) })).find((x) => x.fb);
-    test.skip(!pick, "No county falls back on a judicial contest in today's data");
-    const { a, fb } = pick!;
-    const saved = fb!.initial === "bay" ? "area" : "bay";
-    await page.goto("/about");
-    await page.evaluate(([k, v]) => localStorage.setItem("bb-scope", `${k}=${v}`), [`${a.id}:${JUDICIAL}`, saved]);
-    await openList(page);
-    const chip = a.jurisdictions.find((j) => j.level === "county")!.name;
-    await area(page).getByRole("link", { name: chip, exact: true }).click();
-    await expect(heading(page, `${a.name} ballot`)).toBeVisible();
-    const sw = page.getByRole("region", { name: "California: Judicial" }).getByRole("group", { name: "Show guides from" }).filter({ visible: true }).first();
-    await expect(sw.getByRole("button", { name: saved === "bay" ? "Bay Area" : scopeName(a) })).toHaveAttribute("aria-pressed", "true");
   });
 
   test("every area drawn in the browser matches its server-rendered page", async ({ page, browser }, info) => {

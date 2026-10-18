@@ -1,7 +1,11 @@
+import path from "node:path";
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { inArea } from "../src/lib/areas";
+import { loadElection } from "../src/lib/data";
 import { hiddenLabel } from "../src/lib/filters";
 import { BALLOT, contestIds, contestRow, guideOff, guidesOn, isPhone, openBallot, waitForKeys, watchErrors } from "./helpers";
 
+const data = loadElection(path.join(process.cwd(), "data"), "2026-11");
 const PROP_B = `${BALLOT}/prop-b`;
 const ANSWER = /(voter guides? recommends?|voter guides split) .* on Prop B, as of /;
 const SHOW_ALL = "Show all guides on this contest";
@@ -118,15 +122,19 @@ test.describe("contest page filters", () => {
     await expect(page).toHaveURL(/[?&]off=courage-california/);
   });
 
-  test("a type checked on an area list turns on that type's guides outside the area too", async ({ page }, info) => {
-    await page.goto(`${BALLOT}/sf?off=seiu-1021,sf-building-trades,sf-labor-council,smc-labor-council,south-bay-labor,uesf`);
+  test("a type checked on an area list turns on that type's guides off its ballot too", async ({ page }, info) => {
+    const sf = data.areas.find((a) => a.id === "sf")!;
+    const unions = data.guides.filter((g) => g.type === "union" && data.endorsements[g.id]?.status === "published").map((g) => g.id);
+    const off = unions.filter((id) => !data.ballot.contests.some((c) => inArea(c, sf) && data.endorsements[id].picks[c.id]));
+    expect(off.length).toBeGreaterThan(0);
+    await page.goto(`${BALLOT}/sf?off=${unions.join(",")}`);
     await expect(page.getByRole("heading", { level: 1, name: "San Francisco ballot" })).toBeVisible();
     const panel = await filterPanel(page, info);
-    const unions = panel.getByRole("checkbox", { name: /^Unions/ });
-    await expect(unions).toHaveAttribute("aria-checked", "false");
-    await unions.click();
-    await expect(unions).toHaveAttribute("aria-checked", "true");
-    await expect(page).not.toHaveURL(/smc-labor-council|south-bay-labor/);
+    const box = panel.getByRole("checkbox", { name: /^Unions/ });
+    await expect(box).toHaveAttribute("aria-checked", "false");
+    await box.click();
+    await expect(box).toHaveAttribute("aria-checked", "true");
+    await expect(page).not.toHaveURL(new RegExp(off.join("|")));
   });
 
   test("a contest no guide took a position on has no Filters", async ({ page }) => {

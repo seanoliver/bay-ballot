@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { cardDescription, counted } from "@/lib/display";
-import { fallbackRows, parseScopes, SCOPE_KEY, sectionScope, skippedLabel, withScope, type Fallback, type FallbackSection, type Scope } from "@/lib/fallback";
-import { activeEntries, EMPTY, NO_PINS, pinnedPicks, positionGuides, revealGuides, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
+import { activeEntries, EMPTY, NO_PINS, pinnedPicks, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
 import { areaNoPick, type NoPickScope } from "@/lib/contest-pins";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
@@ -21,7 +20,6 @@ import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
 import { useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
-import { BayBlock, ScopeSwitch } from "./ScopeSwitch";
 import { keepNumber } from "@/lib/display";
 import { DESKTOP, FILTER_SEARCH, FRAME, PANE } from "./frame";
 import { ROW_FOCUS, ROW_LINK } from "./row";
@@ -65,9 +63,10 @@ type Props = {
   allGuides: GuideInfo[];
   files: Record<string, PickFile>;
   pending: string | null;
-  fallback?: Fallback | null;
   /** Unset on the Bay Area list, which has no No pick group. */
   noPick?: NoPickScope;
+  /** On an area list, the guides that cover it. */
+  local?: string[];
   /** True while the list still shows the area being left. */
   busy?: boolean;
   onSwitch?: (href: string) => boolean;
@@ -95,7 +94,7 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, fallback = null, noPick: noPickScope, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, noPick: noPickScope, local, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -376,47 +375,17 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     [all, guides, files, pinKey],
   );
   const pinnedFor = (id: string) => pinnedById.get(id) ?? NO_PINS;
-  const [scopeRaw, setScopeRaw] = useStoredKey(SCOPE_KEY);
-  const chosen = useMemo(() => parseScopes(scopeRaw), [scopeRaw]);
-  const sectionFallback = useMemo(() => new Map((fallback?.sections ?? []).map((s) => [s.id, s])), [fallback]);
-  const fallbackOf = useMemo(() => new Map((fallback?.sections ?? []).flatMap((s) => s.contests.map((id) => [id, s] as const))), [fallback]);
-  const bay = useMemo(() => {
-    const out = new Map<string, BayResult>();
-    if (!fallback) return out;
-    for (const c of all) {
-      if (!fallbackOf.has(c.id)) continue;
-      const every = fallbackRows(c.id, fallback, EMPTY);
-      out.set(c.id, { rows: fallbackRows(c.id, fallback, filters), total: every.length, slots: candidateSlots(c, every.map((r) => r.entry)) });
-    }
-    return out;
-  }, [all, fallback, fallbackOf, filters]);
-  const scopeKey = (s: FallbackSection) => `${area}:${s.id}`;
-  const setScope = (s: FallbackSection, v: Scope) => setScopeRaw(withScope(scopeRaw, scopeKey(s), v));
-  const detailFallback = (c: Contest) => {
-    const s = fallbackOf.get(c.id);
-    const b = bay.get(c.id);
-    if (!s || !b || !fallback) return undefined;
-    return { place: fallback.place, scope: sectionScope(chosen[scopeKey(s)], "bay"), onScope: (v: Scope) => setScope(s, v), onReveal: () => revealBay(c), ...b };
-  };
+  const localSet = useMemo(() => (local ? new Set(local) : undefined), [local]);
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);
   };
-  const revealBay = (c: Contest) => {
-    if (fallback) setFilters(revealGuides(filters, positionGuides(c.id, fallback.guides, fallback.files).map((g) => g.id), fallback.files));
-  };
-  const revealBayRef = useRef(revealBay);
-  useLayoutEffect(() => {
-    revealBayRef.current = revealBay;
-  });
-  const onRevealBayStable = useCallback((c: Contest) => revealBayRef.current(c), []);
   const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides, onBallot: guides };
-  // Not on the Bay Area list, where most guides that skipped a contest don't cover it, nor for a Bay Area fallback.
+  // Not on the Bay Area list, where most guides that skipped a contest don't cover it.
   const noPick = useMemo(
-    () => (shown && area !== null && noPickScope && !fallbackOf.has(shown.id) ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
-    [shown, area, noPickScope, fallbackOf, guides, files],
+    () => (shown && area !== null && noPickScope ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
+    [shown, area, noPickScope, guides, files],
   );
-  // A side lists the area's guides, or a Bay Area fallback's, whose files hold only the contests it covers; the area's own win.
   const pinning = useContestPins({ filters, onChange: setFilters, guides: allGuides, noPick });
   const carry = useCarriedQuery();
 
@@ -651,46 +620,29 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
         {groups.map((g, gi) => (
           <section key={g.key} aria-label={g.heading}>
             <SectionHeading id={nav[gi].id}>{g.heading}</SectionHeading>
-            {g.sections.map((s, si) => {
-              const sf = sectionFallback.get(nav[gi].sections[si].id);
-              const scope = sf ? sectionScope(chosen[scopeKey(sf)], sf.initial) : undefined;
-              return (
-                <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
-                  {sf && scope && fallback ? (
-                    <div className="flex flex-wrap items-end justify-between gap-x-3">
-                      <SectionHeading as="h3" id={nav[gi].sections[si].id}>
-                        {s.name}
-                      </SectionHeading>
-                      <ScopeSwitch className="mb-1.5" place={fallback.place} scope={scope} onChange={(v) => setScope(sf, v)} />
-                    </div>
-                  ) : (
-                    <SectionHeading as="h3" id={nav[gi].sections[si].id}>
-                      {s.name}
-                    </SectionHeading>
-                  )}
-                  <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-                    {s.contests.map((c) => (
-                      <li key={c.id}>
-                        <ContestRow
-                          href={`/${election}/${c.id}${carry}`}
-                          contest={c}
-                          rows={rowsFor(c.id)}
-                          slots={slotsFor(c)}
-                          selected={c.id === selectedId}
-                          onClick={onRowClickStable}
-                          place={fallback?.place}
-                          scope={sf?.contests.includes(c.id) ? scope : undefined}
-                          bay={bay.get(c.id)}
-                          onRevealBay={onRevealBayStable}
-                          zipNote={zipNote(c.id)}
-                          pinned={pinnedFor(c.id)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              );
-            })}
+            {g.sections.map((s, si) => (
+              <section key={s.name} aria-label={`${g.heading}: ${s.name}`}>
+                <SectionHeading as="h3" id={nav[gi].sections[si].id}>
+                  {s.name}
+                </SectionHeading>
+                <ul className="divide-y divide-border overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                  {s.contests.map((c) => (
+                    <li key={c.id}>
+                      <ContestRow
+                        href={`/${election}/${c.id}${carry}`}
+                        contest={c}
+                        rows={rowsFor(c.id)}
+                        slots={slotsFor(c)}
+                        selected={c.id === selectedId}
+                        onClick={onRowClickStable}
+                        zipNote={zipNote(c.id)}
+                        pinned={pinnedFor(c.id)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </section>
         ))}
       </div>
@@ -717,7 +669,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
               pending={pending}
               titleId="detail-title"
               slots={slotsFor(shown)}
-              fallback={detailFallback(shown)}
+              local={localSet}
               pinning={pinning}
               action={
                 <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
@@ -748,7 +700,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 </SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
-                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} fallback={detailFallback(current)} pinning={pinning} />
+                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} local={localSet} pinning={pinning} />
               </div>
             </>
           ) : null}
@@ -758,8 +710,6 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   );
 }
 
-type BayResult = { rows: Row[]; slots: Slots; total: number };
-
 const ContestRow = memo(function ContestRow({
   href,
   contest,
@@ -767,10 +717,6 @@ const ContestRow = memo(function ContestRow({
   slots,
   selected,
   onClick,
-  place,
-  scope,
-  bay,
-  onRevealBay,
   zipNote,
   pinned,
 }: {
@@ -780,17 +726,10 @@ const ContestRow = memo(function ContestRow({
   slots: Slots;
   selected: boolean;
   onClick: (e: MouseEvent<HTMLAnchorElement>, c: Contest) => void;
-  place?: string;
-  scope?: Scope;
-  bay?: BayResult;
-  onRevealBay?: (c: Contest) => void;
   zipNote: string | null;
   pinned: PinnedPick[];
 }) {
   const description = cardDescription(contest);
-  const skipped = scope === "area" && place ? <p className="text-sm text-muted-foreground">{skippedLabel(place)}</p> : null;
-  const wide = scope === "bay" && bay ? bay : null;
-  const reveal = () => onRevealBay?.(contest);
   const note = (layout: "m" | "d") =>
     zipNote ? (
       <p id={`zipnote-${layout}-${contest.id}`} className="basis-full text-sm text-muted-foreground">
@@ -799,7 +738,7 @@ const ContestRow = memo(function ContestRow({
     ) : null;
   return (
     <>
-      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (wide || skipped || zipNote || pinned.length) && "flex-wrap gap-y-2", ROW_FOCUS)}>
+      <div className={cn("relative flex min-h-16 items-center gap-3 py-3 pr-3 pl-3 active:bg-muted/60 lg:hidden", (zipNote || pinned.length) && "flex-wrap gap-y-2", ROW_FOCUS)}>
         <h4 className="min-w-0 flex-1 text-base font-medium">
           <a
             id={`row-m-${contest.id}`}
@@ -812,16 +751,8 @@ const ContestRow = memo(function ContestRow({
           </a>
         </h4>
         {note("m")}
-        {wide ? (
-          <BayBlock id={`bay-m-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} inline className="basis-full">
-            <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} variant="inline" />
-          </BayBlock>
-        ) : skipped ? (
-          <div className="basis-full">{skipped}</div>
-        ) : (
-          <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
-        )}
-        <PinnedPicks picks={pinned} slots={wide?.slots ?? slots} className="basis-full" />
+        <VerdictBar contest={contest} rows={rows} slots={slots} variant="inline" />
+        <PinnedPicks picks={pinned} slots={slots} className="basis-full" />
       </div>
       <div
         className={cn(
@@ -844,16 +775,8 @@ const ContestRow = memo(function ContestRow({
         </h4>
         {note("d")}
         {description ? <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p> : null}
-        {wide ? (
-          <BayBlock id={`bay-d-${contest.id}`} title={contest.title} shown={wide.rows.length} total={wide.total} onReveal={reveal} className="mt-2">
-            <VerdictBar contest={contest} rows={wide.rows} slots={wide.slots} />
-          </BayBlock>
-        ) : skipped ? (
-          <div className="mt-1">{skipped}</div>
-        ) : (
-          <VerdictBar contest={contest} rows={rows} slots={slots} />
-        )}
-        <PinnedPicks picks={pinned} slots={wide?.slots ?? slots} className="mt-2" />
+        <VerdictBar contest={contest} rows={rows} slots={slots} />
+        <PinnedPicks picks={pinned} slots={slots} className="mt-2" />
       </div>
     </>
   );

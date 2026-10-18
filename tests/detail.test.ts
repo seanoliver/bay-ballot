@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detailSides, pickReasons, resultHeadline, type Side } from "@/lib/detail";
+import { detailSides, localFirst, pickReasons, resultHeadline, type Side } from "@/lib/detail";
 import type { Row } from "@/lib/filters";
 import type { Contest, Entry, GuideType } from "@/lib/schema";
 
@@ -51,6 +51,29 @@ describe("detailSides", () => {
     const { sides, others } = detailSides(board, rows);
     expect(sides.map((s) => [s.label, s.count])).toEqual([["W", 4], ["X", 3], ["Y", 2]]);
     expect(others.map((s) => [s.label, s.count])).toEqual([["Z", 1]]);
+  });
+});
+
+describe("localFirst", () => {
+  const gs = ["a", "b", "c", "d", "e"].map((id) => ({ id }));
+  it("puts the area's guides first and keeps the order within each part", () => {
+    expect(localFirst(gs, new Set(["d", "b"])).map((g) => g.id)).toEqual(["b", "d", "a", "c", "e"]);
+  });
+  it("leaves the order alone when every guide or none covers the area", () => {
+    expect(localFirst(gs, new Set())).toEqual(gs);
+    expect(localFirst(gs, new Set(["a", "b", "c", "d", "e"]))).toEqual(gs);
+  });
+});
+
+describe("detailSides with local guides", () => {
+  it("lists each side's local guides first, quoted then A–Z within each part", () => {
+    const rows = [row("Zed", "N"), row("Quoted", "N", [q("a")]), row("Alpha", "N"), row("Local", "N"), row("Yes Local", "Y")];
+    const { sides } = detailSides(measure, rows, undefined, { local: new Set(["local", "zed", "yes-local"]) });
+    expect(sides.map((s) => [s.key, s.guides.map((g) => g.name)])).toEqual([
+      ["Y", ["Yes Local"]],
+      ["N", ["Local", "Zed", "Quoted", "Alpha"]],
+    ]);
+    expect(sides[1].count).toBe(4);
   });
 });
 

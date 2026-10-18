@@ -67,6 +67,12 @@ describe("noPickScope and areaNoPick", () => {
       { id: "berkeley", hasReasoning: false },
     ]);
   });
+
+  it("leaves off a counted guide from another area, which never covered the contest", () => {
+    const wider = [...guides, { id: "sf-club", areas: ["sf"] }];
+    const s = noPickScope(areas[2], [mayor, measure], areas, wider);
+    expect(areaNoPick("measure-a", "alameda", s, wider, { ...files, "sf-club": file([]) }).map((x) => x.id)).toEqual(["acdp", "oak", "berkeley"]);
+  });
 });
 
 describe("countedNoPick", () => {

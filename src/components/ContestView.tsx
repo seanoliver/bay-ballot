@@ -34,9 +34,11 @@ type Props = {
   next: NextStep | null;
   /** Guides covering this contest's area that made no pick on it. */
   noPick: NoPickGuide[];
+  /** The guides covering the contest's area, listed first within each pick. */
+  local?: string[];
 };
 
-export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next, noPick }: Props) {
+export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next, noPick, local }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides });
   const setFilters = (f: Filters) => {
@@ -51,6 +53,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
   const carry = useCarriedQuery();
   const filterProps = { filters, onChange: setFilters, guides: shown, files, typeGuides: guides };
   const pinning = useContestPins({ filters, onChange: setFilters, guides, noPick });
+  const localSet = useMemo(() => (local ? new Set(local) : undefined), [local]);
 
   const [singleKeys] = useSingleKeys();
   useBallotKeys((action) => {
@@ -98,6 +101,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             pageLink={false}
             shortNames={false}
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
+            local={localSet}
             pinning={pinning}
           />
           {next ? <BallotNextStep step={next} carry={carry} /> : null}

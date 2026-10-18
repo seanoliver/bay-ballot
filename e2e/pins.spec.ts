@@ -139,8 +139,8 @@ test.describe("pinned guides", () => {
     await expect(panel.getByText(/^Tap .* next to a guide below/)).toBeFocused();
   });
 
-  test("a guide pinned in another area is listed as not on this ballot", async ({ page }, info) => {
-    await page.goto(`${BALLOT}/oakland?pin=sf-dems`);
+  test("a guide pinned in another area, with no pick on this one's contests, is listed as not on this ballot", async ({ page }, info) => {
+    await page.goto(`${BALLOT}/oakland?pin=marin-dems`);
     const panel = await filterPanel(page, info);
     await expect(panel.getByRole("group", { name: "Your guides" }).getByRole("listitem")).toHaveText(/not on this ballot/);
   });

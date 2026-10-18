@@ -4,40 +4,31 @@ import { areaFromPath, areaHead, areaView, hasContest, snapshotOf, viewFor } fro
 import { areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/areas";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
-import { fallbackFor, scopeName } from "@/lib/fallback";
-import { pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
+import { activeEntries, EMPTY, pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
 import type { Area } from "@/lib/schema";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
 
-// ballotViewProps and ListPage's links and intro as they were before the snapshot, as the reference.
+// ballotViewProps and ListPage's links and intro, built from the election data, as the reference.
 function before(d: ElectionData, area: Area | null) {
   const inScope = area ? areaGuides(d.guides, area) : d.guides;
-  const published = publishedGuides(inScope, d.endorsements);
-  const ids = new Set(published.map((g) => g.id));
   const contests = area ? d.ballot.contests.filter((c) => inArea(c, area)) : d.ballot.contests;
+  const all = publishedFiles(d.endorsements);
+  const picked = (id: string) => contests.some((c) => all[id]?.picks[c.id]);
+  const published = publishedGuides(d.guides, d.endorsements).filter((g) => !area || inScope.includes(g) || picked(g.id));
+  const ids = new Set(published.map((g) => g.id));
   const groups = placeGroups(contests, d.areas);
   const info = (gs: typeof published) => gs.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type }));
-  const guides = info(published);
-  const files = Object.fromEntries(Object.entries(publishedFiles(d.endorsements)).filter(([id]) => ids.has(id)));
+  const files = Object.fromEntries(Object.entries(all).filter(([id]) => ids.has(id)));
   return {
     links: areaLinks(d.ballot.election, d.areas, area?.id ?? null),
     intro: electionIntro({ ...d.ballot, contests }, files, { place: placeName(area).name }),
     groups,
-    guides,
-    allGuides: publishedGuides(d.guides, d.endorsements).map(({ id, name, shortName, type }) => ({ id, name, ...(shortName ? { shortName } : {}), type })),
+    guides: info(published),
+    allGuides: info(publishedGuides(d.guides, d.endorsements)),
     files,
     pending: pendingNote(pendingGuides(inScope, d.endorsements)),
-    ...(area
-      ? {
-          fallback: fallbackFor({
-            groups,
-            place: scopeName(area),
-            local: { guides, files },
-            bay: { guides: info(publishedGuides(d.guides, d.endorsements)), files: publishedFiles(d.endorsements) },
-          }),
-        }
-      : {}),
+    ...(area ? { local: publishedGuides(inScope, d.endorsements).map((g) => g.id) } : {}),
   };
 }
 
@@ -55,6 +46,19 @@ describe("areaView", () => {
     expect(title).toMatch(/ endorsements \(Nov 2026\)$/);
     expect(view).toEqual(before(d, area));
     expect(areaView(sent, id)).toEqual(areaView(snap, id));
+  });
+
+  it("counts every guide that picked a contest on an area's list, as the Bay Area list does", () => {
+    const groban = "supreme-court-groban";
+    const on = (id: string | null) => activeEntries(groban, viewFor(snap, id).guides, viewFor(snap, id).files, EMPTY).map((r) => r.guide.id).sort();
+    expect(on("alameda-county")).toEqual(on(null));
+    expect(on("alameda-county")).toContain("contra-costa-gop");
+  });
+
+  it("lists an area's own guides even when they picked none of its contests", () => {
+    const s = { ...snap, guides: [...snap.guides, { id: "quiet", name: "Quiet", type: "club" as const, areas: ["marin"], published: true }], files: { ...snap.files, quiet: { hasReasoning: false, picks: {} } } };
+    expect(areaView(s, "marin").guides.map((g) => g.id)).toContain("quiet");
+    expect(areaView(s, "sonoma").guides.map((g) => g.id)).not.toContain("quiet");
   });
 
   it("throws on an unknown area", () => {

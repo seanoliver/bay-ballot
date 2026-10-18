@@ -60,20 +60,24 @@ describe("ballotViewProps with an area", () => {
     },
   } as ElectionData;
 
-  it("keeps the area's contests and only its guides", () => {
+  it("keeps the area's contests, and its guides plus any other guide that picked one of them", () => {
     const v = ballotViewProps(d, { area: SF });
     expect(v.ballot.contests.map((c) => c.id)).toEqual(["prop-1", "prop-b"]);
-    expect(v.guides.map((g) => g.id)).toEqual(["s"]);
+    expect(v.guides.map((g) => g.id)).toEqual(["s", "m"]);
     expect(v.allGuides.map((g) => g.id)).toEqual(["s", "m"]);
-    expect(Object.keys(v.files)).toEqual(["s"]);
+    expect(Object.keys(v.files)).toEqual(["s", "m"]);
     expect(v.pending).toBe("1 guide hasn't published yet.");
     expect(v.groups.map((g) => g.heading)).toEqual(["California", "San Francisco"]);
   });
-  it("counts a statewide contest with every guide on the Bay Area list and only the area's guides on an area page", () => {
+  it("counts a statewide contest with every guide that picked it, on the Bay Area list and on each area page", () => {
     const counted = (v: ReturnType<typeof ballotViewProps>) => activeEntries("prop-1", v.guides, v.files, EMPTY).length;
     expect(counted(ballotViewProps(d))).toBe(2);
-    expect(counted(ballotViewProps(d, { area: SM }))).toBe(1);
-    expect(counted(ballotViewProps(d, { area: SF }))).toBe(1);
+    expect(counted(ballotViewProps(d, { area: SM }))).toBe(2);
+    expect(counted(ballotViewProps(d, { area: SF }))).toBe(2);
+  });
+  it("leaves off a guide that covers another area and picked none of this one's contests", () => {
+    const only = { ...d, endorsements: { ...d.endorsements, m: { ...d.endorsements.m, picks: { "mp-p": y } } } } as ElectionData;
+    expect(ballotViewProps(only, { area: SF }).guides.map((g) => g.id)).toEqual(["s"]);
   });
 });
 

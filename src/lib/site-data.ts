@@ -52,7 +52,7 @@ export function snapshotUrl(s: ElectionSnapshot): string {
 }
 
 export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area | null } = {}) {
-  const { groups, guides, allGuides, files, pending, fallback } = viewFor(electionSnapshot(d), area?.id ?? null);
+  const { groups, guides, allGuides, files, pending } = viewFor(electionSnapshot(d), area?.id ?? null);
   return {
     ballot: { ...d.ballot, contests: areaContests(d.ballot.contests, area) },
     groups,
@@ -60,6 +60,5 @@ export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area 
     allGuides,
     files,
     pending,
-    ...(area ? { fallback } : {}),
   };
 }
