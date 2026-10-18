@@ -43,6 +43,9 @@ async function main() {
   writeFileSync(path.join(APP, "icon1.png"), png32);
   writeFileSync(path.join(APP, "favicon.ico"), ico(png32, 32));
 
+  // Google Search wants a favicon larger than 48px; 192 is a multiple of 48 and a whole 12x of the 16-unit grid.
+  writeFileSync(path.join(APP, "icon2.png"), await shoot(logoSvg({ color: PAPER, tile: INK, size: 192 }), 192, 192, true));
+
   // Opaque and square: iOS rounds the corners itself.
   const apple = `<div style="width:180px;height:180px;background:${INK};display:flex;align-items:center;justify-content:center">
     <div style="width:104px;height:120px">${markOnly(PAPER).replace("<svg ", '<svg width="104" height="120" ')}</div></div>`;

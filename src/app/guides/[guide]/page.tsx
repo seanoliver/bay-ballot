@@ -4,6 +4,7 @@ import { BackLink } from "@/components/BackLink";
 import { CarriedLink } from "@/components/CarriedLink";
 import { CardLink } from "@/components/ExternalLink";
 import { CARD } from "@/components/frame";
+import { JsonLd } from "@/components/JsonLd";
 import { PageColumn } from "@/components/PageColumn";
 import { ROW_FOCUS, ROW_LINK } from "@/components/row";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -14,6 +15,7 @@ import { activeEntries, EMPTY, isPublished, TYPE_LABEL } from "@/lib/filters";
 import { guideBallot, guidePickGroups, guideStats } from "@/lib/guide-page";
 import { pinParts } from "@/lib/pins";
 import { ballotViewProps, election, latestElection } from "@/lib/site-data";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { cn } from "@/lib/utils";
 
 export const dynamicParams = false;
@@ -53,6 +55,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   const { guides, files } = ballotViewProps(d);
   return (
     <PageColumn>
+      <JsonLd data={breadcrumbJsonLd([{ name: back.label, path: back.href }, { name: guide.name, path: `/guides/${guide.id}` }])} />
       <BackLink href={back.href} label={back.label} />
       <header className={CARD}>
         <p className="text-sm text-muted-foreground">{TYPE_LABEL[guide.type]}</p>

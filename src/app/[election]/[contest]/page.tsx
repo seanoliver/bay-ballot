@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContestView } from "@/components/ContestView";
+import { JsonLd } from "@/components/JsonLd";
 import { BAY_AREA, contestPlace, nextStep } from "@/lib/areas";
 import { noPickGuides } from "@/lib/contest-pins";
 import type { ElectionData } from "@/lib/data";
@@ -9,6 +10,7 @@ import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { contestDescription, contestTitle } from "@/lib/seo-copy";
 import { ballotViewProps, election, elections } from "@/lib/site-data";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { ListPage, listMetadata } from "../list-page";
 
 export const dynamicParams = false;
@@ -57,19 +59,23 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   if (x.kind === "area") return <ListPage d={x.d} electionId={x.electionId} area={x.area} />;
   const { d, contest, electionId } = x;
   const { guides, files, pending, area, place } = contestView(d, contest);
+  const back = { href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` };
   return (
-    <ContestView
-      election={electionId}
-      contest={contest}
-      guides={guides}
-      files={contestFiles(contest.id, files)}
-      pending={pending}
-      asOf={dataAsOf(d.endorsements)}
-      place={place}
-      area={area?.id ?? null}
-      next={nextStep(electionId, contest, d.ballot.contests, d.areas)}
-      noPick={noPickGuides(contest, d.guides, d.areas, files)}
-      back={{ href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` }}
-    />
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: back.label, path: back.href }, { name: contest.title, path: `/${electionId}/${contest.id}` }])} />
+      <ContestView
+        election={electionId}
+        contest={contest}
+        guides={guides}
+        files={contestFiles(contest.id, files)}
+        pending={pending}
+        asOf={dataAsOf(d.endorsements)}
+        place={place}
+        area={area?.id ?? null}
+        next={nextStep(electionId, contest, d.ballot.contests, d.areas)}
+        noPick={noPickGuides(contest, d.guides, d.areas, files)}
+        back={back}
+      />
+    </>
   );
 }
