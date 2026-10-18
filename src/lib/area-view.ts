@@ -1,4 +1,4 @@
-import { areaGuides, areaLinks, inArea, placeGroups, placeName, type AreaLink, type PlaceGroup } from "./areas";
+import { areaGuides, areaLinks, inArea, localGuides, placeGroups, placeName, type AreaLink, type PlaceGroup } from "./areas";
 import type { ElectionData } from "./data";
 import { electionIntro, pendingNote } from "./display";
 import { noPickScope, type NoPickScope } from "./contest-pins";
@@ -98,7 +98,7 @@ export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
     allGuides,
     files,
     pending: pendingNote(local.filter((g) => !g.published)),
-    ...(area ? { noPick: noPickScope(area, contests, s.areas, published), local: local.filter((g) => g.published).map((g) => g.id) } : {}),
+    ...(area ? { noPick: noPickScope(area, contests, s.areas, published), local: localGuides(published, area, s.areas).map((g) => g.id) } : {}),
   };
 }
 

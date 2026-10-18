@@ -66,6 +66,13 @@ export function areaGuides<G extends { areas: string[] }>(guides: G[], area: Pic
   return guides.filter((g) => g.areas.includes(area.id));
 }
 
+/** Guides that count as local to an area's page: tagged for it, or for the county page a city sits in. */
+export function localGuides<G extends { areas: string[] }>(guides: G[], area: Pick<Area, "id" | "jurisdictions">, areas: Pick<Area, "id" | "kind" | "jurisdictions">[]): G[] {
+  const county = area.jurisdictions.find((j) => j.level === "county")?.name;
+  const ids = new Set([area.id, ...areas.filter((a) => a.kind === "county" && a.jurisdictions.some((j) => j.level === "county" && j.name === county)).map((a) => a.id)]);
+  return guides.filter((g) => g.areas.some((id) => ids.has(id)));
+}
+
 export function placeName(area: Pick<Area, "name" | "shortName"> | null): PlaceName {
   return area ? { name: area.name, short: area.shortName ?? area.name } : BAY_AREA;
 }

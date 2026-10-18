@@ -1,7 +1,7 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { areaFromPath, areaHead, areaView, hasContest, snapshotOf, viewFor } from "@/lib/area-view";
-import { areaGuides, areaLinks, inArea, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, inArea, localGuides, placeGroups, placeName } from "@/lib/areas";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
 import { activeEntries, EMPTY, pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
@@ -28,7 +28,7 @@ function before(d: ElectionData, area: Area | null) {
     allGuides: info(publishedGuides(d.guides, d.endorsements)),
     files,
     pending: pendingNote(pendingGuides(inScope, d.endorsements)),
-    ...(area ? { local: publishedGuides(inScope, d.endorsements).map((g) => g.id) } : {}),
+    ...(area ? { local: localGuides(published, area, d.areas).map((g) => g.id) } : {}),
   };
 }
 

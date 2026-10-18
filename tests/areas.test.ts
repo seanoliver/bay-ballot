@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { areaContests } from "@/lib/area-view";
-import { areaGuides, areaLinks, areasOf, BAY_AREA, ballotCounty, contestArea, contestPlace, countyPages, inArea, nextStep, placeGroups, placeName } from "@/lib/areas";
+import { areaGuides, areaLinks, areasOf, localGuides, BAY_AREA, ballotCounty, contestArea, contestPlace, countyPages, inArea, nextStep, placeGroups, placeName } from "@/lib/areas";
 import type { Area } from "@/lib/schema";
 import { c, mpP, PA, prop1, propB, rc2, rep15, rtm, sccA, SF, SM, smL, smX, sup8 } from "./fixtures/areas";
 
@@ -39,6 +39,22 @@ describe("areaGuides", () => {
   it("keeps the guides that cover the area", () => {
     const gs = [{ id: "a", areas: ["sf"] }, { id: "b", areas: ["san-mateo"] }, { id: "c", areas: ["sf", "san-mateo"] }];
     expect(areaGuides(gs, SM).map((g) => g.id)).toEqual(["b", "c"]);
+  });
+});
+
+describe("localGuides", () => {
+  const county = { level: "county" as const, name: "Alameda" };
+  const areas = [
+    { id: "alameda-county", kind: "county" as const, jurisdictions: [county] },
+    { id: "oakland", kind: "city" as const, jurisdictions: [county, { level: "city" as const, name: "Oakland" }] },
+    { id: "sf", kind: "county" as const, jurisdictions: [{ level: "county" as const, name: "San Francisco" }] },
+  ];
+  const gs = [{ id: "city", areas: ["oakland"] }, { id: "county", areas: ["alameda-county"] }, { id: "sf", areas: ["sf"] }];
+  it("counts a city's county page guides as local", () => {
+    expect(localGuides(gs, areas[1], areas).map((g) => g.id)).toEqual(["city", "county"]);
+  });
+  it("keeps a county page to its own guides", () => {
+    expect(localGuides(gs, areas[0], areas).map((g) => g.id)).toEqual(["county"]);
   });
 });
 
