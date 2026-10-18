@@ -51,4 +51,13 @@ test.describe("county pages count every guide", () => {
     await expect(pane(page).getByRole("group", { name: "Guides for No" })).toBeVisible();
     expect(await pinNames(pane(page).getByRole("group", { name: "Guides for No" }))).toEqual([other, local]);
   });
+
+  test("the Alameda phone sheet lists Alameda's guides first within a pick", async ({ page }, info) => {
+    test.skip(!isPhone(info), "phone only");
+    await page.goto(`${BALLOT}/alameda-county`);
+    await contestRow(page, TITLE).tap();
+    const sheet = page.getByRole("dialog", { name: TITLE });
+    await expect(sheet.getByRole("group", { name: "Guides for No" })).toBeVisible();
+    expect(await pinNames(sheet.getByRole("group", { name: "Guides for No" }))).toEqual([`Pin ${short("reform-california")}`, `Pin ${short("contra-costa-gop")}`]);
+  });
 });

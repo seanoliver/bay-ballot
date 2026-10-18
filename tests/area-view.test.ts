@@ -18,7 +18,13 @@ function before(d: ElectionData, area: Area | null) {
   const ids = new Set(published.map((g) => g.id));
   const groups = placeGroups(contests, d.areas);
   const info = (gs: typeof published) => gs.map(({ id, name, shortName, type }): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type }));
-  const files = Object.fromEntries(Object.entries(all).filter(([id]) => ids.has(id)));
+  const trim = (id: string) => {
+    const file = all[id];
+    const picks = Object.fromEntries(contests.filter((c) => file.picks[c.id]).map((c) => [c.id, file.picks[c.id]]));
+    const archived = file.archived?.filter((a) => Object.values(picks).some((e) => e.quotes.some((q) => q.source === a.source)));
+    return { hasReasoning: file.hasReasoning, picks, ...(archived?.length ? { archived } : {}) };
+  };
+  const files = Object.fromEntries(Object.entries(all).filter(([id]) => ids.has(id)).map(([id, f]) => [id, !area || inScope.some((g) => g.id === id) ? f : trim(id)]));
   return {
     links: areaLinks(d.ballot.election, d.areas, area?.id ?? null),
     intro: electionIntro({ ...d.ballot, contests }, files, { place: placeName(area).name }),
@@ -52,6 +58,15 @@ describe("areaView", () => {
     const on = (id: string | null) => activeEntries(groban, viewFor(snap, id).guides, viewFor(snap, id).files, EMPTY).map((r) => r.guide.id).sort();
     expect(on("alameda-county")).toEqual(on(null));
     expect(on("alameda-county")).toContain("contra-costa-gop");
+  });
+
+  it("sends a guide from outside the area only its picks for the area's contests", () => {
+    const view = viewFor(snap, "napa-county");
+    const on = new Set(view.groups.flatMap((g) => g.sections.flatMap((s) => s.contests.map((c) => c.id))));
+    const outside = Object.keys(view.files).filter((id) => !view.local!.includes(id));
+    expect(outside.length).toBeGreaterThan(0);
+    for (const id of outside) for (const c of Object.keys(view.files[id].picks)) expect(on.has(c)).toBe(true);
+    expect(JSON.stringify(view.files).length).toBeLessThan(JSON.stringify(viewFor(snap, null).files).length / 2);
   });
 
   it("lists an area's own guides even when they picked none of its contests", () => {

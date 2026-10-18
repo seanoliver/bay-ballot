@@ -75,6 +75,12 @@ export function hasContest(s: ElectionSnapshot, areaId: string | null, contestId
   return s.contests.some((c) => c.id === contestId && (!area || inArea(c, area)));
 }
 
+function onlyContests(file: PickFile, on: Set<string>): PickFile {
+  const picks = Object.fromEntries(Object.entries(file.picks).filter(([id]) => on.has(id)));
+  const archived = file.archived?.filter((a) => Object.values(picks).some((e) => e.quotes.some((q) => q.source === a.source)));
+  return { hasReasoning: file.hasReasoning, picks, ...(archived?.length ? { archived } : {}) };
+}
+
 // Counts every published guide that picked one of the area's contests. Counting only `local` makes a county's verdict
 // contradict the contest page's.
 export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
@@ -88,7 +94,11 @@ export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
   const published = s.guides.filter((g) => g.published && (!area || covers.has(g.id) || picked(g.id)));
   const ids = new Set(published.map((g) => g.id));
   const groups = placeGroups(contests, s.areas);
-  const files = Object.fromEntries(Object.entries(s.files).filter(([id]) => ids.has(id)));
+  const files = Object.fromEntries(
+    Object.entries(s.files)
+      .filter(([id]) => ids.has(id))
+      .map(([id, file]) => [id, !area || covers.has(id) ? file : onlyContests(file, on)]),
+  );
   return {
     area: areaId,
     ...areaHead(s, areaId),
