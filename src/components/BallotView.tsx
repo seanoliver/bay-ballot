@@ -376,7 +376,6 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   );
   const pinnedFor = (id: string) => pinnedById.get(id) ?? NO_PINS;
   const localSet = useMemo(() => (local ? new Set(local) : undefined), [local]);
-  // A contest's own page also counts its home area's guides as local (Palo Alto's on the Santa Clara list).
   const paneLocal = useMemo(() => (shown && localSet && noPickScope ? contestLocal(shown.id, localSet, noPickScope) : localSet), [shown, localSet, noPickScope]);
   const sheetLocal = useMemo(() => (current && localSet && noPickScope ? contestLocal(current.id, localSet, noPickScope) : localSet), [current, localSet, noPickScope]);
   const setFilters = (f: Filters) => {
