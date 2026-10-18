@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { election, elections } from "@/lib/site-data";
+import { JsonLd } from "@/components/JsonLd";
+import { election, elections, latestElection } from "@/lib/site-data";
+import { websiteJsonLd } from "@/lib/structured-data";
 import { ListPage, listMetadata } from "./list-page";
 
 export const dynamicParams = false;
@@ -19,5 +21,11 @@ export default async function ElectionPage({ params }: PageProps<"/[election]">)
   const id = (await params).election;
   const d = election(id);
   if (!d) notFound();
-  return <ListPage d={d} electionId={id} area={null} />;
+  // "/" redirects here, and Google takes the site name from the page a home page redirects to.
+  return (
+    <>
+      {id === latestElection() ? <JsonLd data={websiteJsonLd()} /> : null}
+      <ListPage d={d} electionId={id} area={null} />
+    </>
+  );
 }
