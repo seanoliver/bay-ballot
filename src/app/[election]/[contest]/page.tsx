@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContestView } from "@/components/ContestView";
 import { JsonLd } from "@/components/JsonLd";
-import { BAY_AREA, contestPlace, nextStep } from "@/lib/areas";
+import { BAY_AREA, localGuides, contestPlace, nextStep } from "@/lib/areas";
 import { noPickGuides } from "@/lib/contest-pins";
 import type { ElectionData } from "@/lib/data";
 import { dataAsOf } from "@/lib/display";
@@ -74,6 +74,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         area={area?.id ?? null}
         next={nextStep(electionId, contest, d.ballot.contests, d.areas)}
         noPick={noPickGuides(contest, d.guides, d.areas, files)}
+        local={area ? localGuides(d.guides, area, d.areas).map((g) => g.id) : undefined}
         back={back}
       />
     </>

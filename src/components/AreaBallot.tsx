@@ -130,8 +130,8 @@ export function AreaBallot({ election, ...props }: Props) {
       allGuides={view.allGuides}
       files={view.files}
       pending={view.pending}
-      fallback={view.fallback}
       noPick={view.noPick}
+      local={view.local}
       busy={deferredArea !== areaId}
       onSwitch={onSwitchStable}
       onIntent={load}

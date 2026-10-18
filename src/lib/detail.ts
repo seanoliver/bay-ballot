@@ -11,23 +11,29 @@ export type ResultHeadline = { lead: string; tone: "yes" | "no" | "split" | "can
 
 const guides = (n: number) => `${n} ${n === 1 ? "guide" : "guides"}`;
 
-export function detailSides(contest: Contest, rows: Row[], slots?: Slots): { sides: Side[]; others: Side[] } {
+/** The guides covering the page's area first, the rest after, each in the order given. */
+export function localFirst<G extends { id: string }>(guides: G[], local: ReadonlySet<string>): G[] {
+  return [...guides.filter((g) => local.has(g.id)), ...guides.filter((g) => !local.has(g.id))];
+}
+
+export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { local }: { local?: ReadonlySet<string> } = {}): { sides: Side[]; others: Side[] } {
   const colors = slots ?? candidateSlots(contest, rows.map((r) => r.entry));
   const all = groupByPick(contest, rows).map((g): Side => {
     const quoted = g.rows.filter((r) => reasons(r).length > 0);
     const rest = g.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
+    const picked = [...quoted, ...rest].map((r) => ({
+      id: r.guide.id,
+      name: r.guide.name,
+      short: displayName(r.guide, { short: true }),
+      type: r.guide.type,
+      quoted: quoted.includes(r),
+    }));
     return {
       key: g.key,
       label: g.label,
       tone: g.tone === "candidate" ? slotTone(colors, g.key) : g.tone,
       count: g.rows.length,
-      guides: [...quoted, ...rest].map((r) => ({
-        id: r.guide.id,
-        name: r.guide.name,
-        short: displayName(r.guide, { short: true }),
-        type: r.guide.type,
-        quoted: quoted.includes(r),
-      })),
+      guides: local ? localFirst(picked, local) : picked,
       quotes: quoted.flatMap((r) =>
         reasons(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source) })),
       ),

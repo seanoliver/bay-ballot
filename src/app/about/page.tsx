@@ -149,7 +149,7 @@ export default function AboutPage() {
                 <li>Only guides that took a position on a contest count toward it.</li>
                 <li>A guide that ranks candidates counts toward its first choice.</li>
                 <li>In races with more than one seat, each name a guide endorses counts.</li>
-                <li>An area&apos;s page counts only the guides that cover that area. The Bay Area list counts every guide.</li>
+                <li>Every page counts every guide that took a position, so a contest reads the same everywhere. On an area&apos;s page, a contest&apos;s details list the guides that cover that area first.</li>
               </List>
             </Question>
             <Question q="How are guides chosen?">

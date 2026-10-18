@@ -1,0 +1,5 @@
+date: 2026-10-18
+type: fix
+title: County pages count every guide that weighed in on a race, so results match the contest page
+details: "A county page used to count only the guides covering that county, so a race could read one way there and another on its own page. Every guide's pick now counts everywhere, and the county's own guides are listed first in a race's details. The Bay Area / county switch on some sections is gone."
+pr: 248
