@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { areaNoPick, countedNoPick, noPickGuides, noPickScope, pinMessage } from "@/lib/contest-pins";
+import { areaNoPick, contestLocal, countedNoPick, noPickGuides, noPickScope, pinMessage } from "@/lib/contest-pins";
 import { EMPTY, type Filters, type GuideInfo, type PickFile } from "@/lib/filters";
 import type { Area, Contest, Entry } from "@/lib/schema";
 
@@ -72,6 +72,12 @@ describe("noPickScope and areaNoPick", () => {
     const wider = [...guides, { id: "sf-club", areas: ["sf"] }];
     const s = noPickScope(areas[2], [mayor, measure], areas, wider);
     expect(areaNoPick("measure-a", "alameda", s, wider, { ...files, "sf-club": file([]) }).map((x) => x.id)).toEqual(["acdp", "oak", "berkeley"]);
+  });
+
+  it("adds a contest's home-area guides to the list's local guides, as on the contest's page", () => {
+    const local = new Set(["acdp"]);
+    expect([...contestLocal("oakland-mayor", local, scope)]).toEqual(["acdp", "oak"]);
+    expect(contestLocal("measure-a", local, scope)).toBe(local);
   });
 });
 

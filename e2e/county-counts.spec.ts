@@ -61,3 +61,37 @@ test.describe("county pages count every guide", () => {
     expect(await pinNames(sheet.getByRole("group", { name: "Guides for No" }))).toEqual([`Pin ${short("reform-california")}`, `Pin ${short("contra-costa-gop")}`]);
   });
 });
+
+test.describe("a city contest on its county list", () => {
+  const J = "palo-alto-measure-j";
+  const J_TITLE = data.ballot.contests.find((c) => c.id === J)!.title;
+  // The contest page names guides in full and a list by short name, so compare ids.
+  const byLabel = new Map(data.guides.flatMap((g) => [`Pin ${g.name}`, `Pin ${g.shortName ?? g.name}`].map((l) => [l, g.id] as const)));
+  const yesOn = (scope: Locator | Page) => scope.getByRole("group", { name: "Guides for Yes" });
+  const pinIds = async (scope: Locator) => (await pinNames(scope)).map((l) => byLabel.get(l!));
+  const pageOrder = async (page: Page) => {
+    await page.goto(`${BALLOT}/${J}`);
+    await expect(yesOn(page)).toBeVisible();
+    const ids = await pinIds(yesOn(page));
+    expect(ids).not.toContain(undefined);
+    return ids;
+  };
+
+  test("the Santa Clara pane lists Measure J's guides in its contest page's order", async ({ page }, info) => {
+    test.skip(isPhone(info), "desktop only");
+    const order = await pageOrder(page);
+    await page.goto(`${BALLOT}/santa-clara-county?c=${J}`);
+    await expect(yesOn(pane(page))).toBeVisible();
+    expect(await pinIds(yesOn(pane(page)))).toEqual(order);
+  });
+
+  test("the Santa Clara phone sheet lists Measure J's guides in its contest page's order", async ({ page }, info) => {
+    test.skip(!isPhone(info), "phone only");
+    const order = await pageOrder(page);
+    await page.goto(`${BALLOT}/santa-clara-county`);
+    await contestRow(page, J_TITLE).tap();
+    const sheet = page.getByRole("dialog", { name: J_TITLE });
+    await expect(yesOn(sheet)).toBeVisible();
+    expect(await pinIds(yesOn(sheet))).toEqual(order);
+  });
+});
