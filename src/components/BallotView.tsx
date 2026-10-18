@@ -9,7 +9,7 @@ import type { AreaLink, PlaceGroup } from "@/lib/areas";
 import { cardDescription, counted } from "@/lib/display";
 import { activeEntries, EMPTY, NO_PINS, pinnedPicks, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
-import { areaNoPick, type NoPickScope } from "@/lib/contest-pins";
+import { areaNoPick, contestLocal, type NoPickScope } from "@/lib/contest-pins";
 import { stepSelection, trailing, type KeyAction } from "@/lib/keyboard";
 import { navModel, sectionOf, spySection, stepFrom } from "@/lib/section-nav";
 import { isPlainClick, pickSelected, toggleSelection } from "@/lib/links";
@@ -376,6 +376,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   );
   const pinnedFor = (id: string) => pinnedById.get(id) ?? NO_PINS;
   const localSet = useMemo(() => (local ? new Set(local) : undefined), [local]);
+  const paneLocal = useMemo(() => (shown && localSet && noPickScope ? contestLocal(shown.id, localSet, noPickScope) : localSet), [shown, localSet, noPickScope]);
+  const sheetLocal = useMemo(() => (current && localSet && noPickScope ? contestLocal(current.id, localSet, noPickScope) : localSet), [current, localSet, noPickScope]);
   const setFilters = (f: Filters) => {
     markHomeVisit(area);
     applyFilters(f);
@@ -668,7 +670,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
               pending={pending}
               titleId="detail-title"
               slots={slotsFor(shown)}
-              local={localSet}
+              local={paneLocal}
               pinning={pinning}
               action={
                 <Button variant="ghost" size="icon" aria-label="Close details" onClick={closePane} className="-mt-1.5 -mr-2 size-10 shrink-0">
@@ -699,7 +701,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
                 </SheetTitle>
               </SheetHeader>
               <div className="overflow-y-auto overscroll-contain px-4 pb-6">
-                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} local={localSet} pinning={pinning} />
+                <ContestDetail election={election} contest={current} rows={rowsFor(current.id)} pending={pending} heading={false} slots={slotsFor(current)} local={sheetLocal} pinning={pinning} />
               </div>
             </>
           ) : null}

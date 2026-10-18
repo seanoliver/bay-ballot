@@ -1,0 +1,5 @@
+date: 2026-10-18
+type: fix
+title: A city race on its county page lists the city's own guides first, as on the race's page
+details: "On the Santa Clara County page, Palo Alto Measure J now lists Palo Alto guides like LWV Palo Alto and Palo Alto Forward first within a pick, in the same order as the measure's own page."
+pr: 252

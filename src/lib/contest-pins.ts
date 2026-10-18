@@ -45,6 +45,13 @@ export function areaNoPick(contestId: string, area: string, scope: NoPickScope, 
     .map((g) => ({ id: g.id, hasReasoning: files[g.id].hasReasoning }));
 }
 
+/** An area list's local guides for a contest: the list's own, plus those tagged for its home area, as on the contest's page. */
+export function contestLocal(contestId: string, local: ReadonlySet<string>, scope: NoPickScope): ReadonlySet<string> {
+  const home = scope.homes[contestId];
+  if (!home) return local;
+  return new Set([...local, ...Object.keys(scope.guideAreas).filter((id) => scope.guideAreas[id].includes(home))]);
+}
+
 /** The no-pick guides the filters still count, by name. */
 export function countedNoPick(f: Filters, noPick: NoPickGuide[], guides: GuideInfo[]): GuideInfo[] {
   const byId = new Map(guides.map((g) => [g.id, g]));
