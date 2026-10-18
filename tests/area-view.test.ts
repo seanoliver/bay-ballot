@@ -69,6 +69,22 @@ describe("areaView", () => {
     expect(JSON.stringify(view.files).length).toBeLessThan(JSON.stringify(viewFor(snap, null).files).length / 2);
   });
 
+  it("trims an outside guide's file to the area's picks and the archive entries their quotes cite", () => {
+    const here = { pick: "Y" as const, ranked: false, quotes: [{ text: "Yes.", source: "https://a.example" }] };
+    const there = { pick: "N" as const, ranked: false, quotes: [{ text: "No.", source: "https://b.example" }] };
+    const archived = [
+      { source: "https://a.example", snapshot: "https://web.archive.org/a" },
+      { source: "https://b.example", snapshot: "https://web.archive.org/b" },
+    ];
+    const s = {
+      ...snap,
+      guides: [...snap.guides, { id: "visitor", name: "Visitor", type: "club" as const, areas: ["sf"], published: true }],
+      files: { ...snap.files, visitor: { hasReasoning: true, picks: { "us-rep-2": here, "us-rep-11": there }, archived } },
+    };
+    expect(areaView(s, "marin").files.visitor).toEqual({ hasReasoning: true, picks: { "us-rep-2": here }, archived: [archived[0]] });
+    expect(areaView(s, "sf").files.visitor).toEqual(s.files.visitor);
+  });
+
   it("lists an area's own guides even when they picked none of its contests", () => {
     const s = { ...snap, guides: [...snap.guides, { id: "quiet", name: "Quiet", type: "club" as const, areas: ["marin"], published: true }], files: { ...snap.files, quiet: { hasReasoning: false, picks: {} } } };
     expect(areaView(s, "marin").guides.map((g) => g.id)).toContain("quiet");
