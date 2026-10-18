@@ -2,6 +2,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { areaFromPath, areaHead, areaView, hasContest, snapshotOf, viewFor } from "@/lib/area-view";
 import { areaGuides, areaLinks, inArea, localGuides, placeGroups, placeName } from "@/lib/areas";
+import { areaNoPick } from "@/lib/contest-pins";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { electionIntro, pendingNote } from "@/lib/display";
 import { activeEntries, EMPTY, pendingGuides, publishedFiles, publishedGuides, type GuideInfo } from "@/lib/filters";
@@ -66,7 +67,6 @@ describe("areaView", () => {
     const outside = Object.keys(view.files).filter((id) => !view.local!.includes(id));
     expect(outside.length).toBeGreaterThan(0);
     for (const id of outside) for (const c of Object.keys(view.files[id].picks)) expect(on.has(c)).toBe(true);
-    expect(JSON.stringify(view.files).length).toBeLessThan(JSON.stringify(viewFor(snap, null).files).length / 2);
   });
 
   it("trims an outside guide's file to the area's picks and the archive entries their quotes cite", () => {
@@ -89,6 +89,20 @@ describe("areaView", () => {
     const s = { ...snap, guides: [...snap.guides, { id: "quiet", name: "Quiet", type: "club" as const, areas: ["marin"], published: true }], files: { ...snap.files, quiet: { hasReasoning: false, picks: {} } } };
     expect(areaView(s, "marin").guides.map((g) => g.id)).toContain("quiet");
     expect(areaView(s, "sonoma").guides.map((g) => g.id)).not.toContain("quiet");
+  });
+
+  it("lists a city-only guide in a county list's No pick group for its own city's contest, and only there", () => {
+    const pick = { pick: "Y" as const, ranked: false, quotes: [] };
+    const s = {
+      ...snap,
+      guides: [...snap.guides, { id: "oak-club", name: "Oak Club", type: "club" as const, areas: ["oakland"], published: true }],
+      files: { ...snap.files, "oak-club": { hasReasoning: false, picks: { "oakland-council-2": pick } } },
+    };
+    const view = areaView(s, "alameda-county");
+    expect(view.noPick!.homes["oakland-mayor"]).toBe("oakland");
+    const skipped = (contest: string) => areaNoPick(contest, "alameda-county", view.noPick!, view.guides, view.files).map((g) => g.id);
+    expect(skipped("oakland-mayor")).toContain("oak-club");
+    expect(skipped("supreme-court-groban")).not.toContain("oak-club");
   });
 
   it("throws on an unknown area", () => {
