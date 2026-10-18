@@ -1,7 +1,7 @@
 import { BADGE_NAMES, badge, type BadgeName } from "@/lib/badges";
 import { election, latestElection } from "@/lib/site-data";
 
-// Coverage numbers for the README's badges, for the current election.
+// Read by the README's shields.io badges; nothing in the site links here.
 export const dynamic = "force-static";
 export const dynamicParams = false;
 

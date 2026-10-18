@@ -37,7 +37,7 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Main only: coverage slows the tests, and the badge tracks main. The README's coverage badge reads coverage.json from the badges branch.
+  # The README's coverage badge reads coverage.json from the badges branch; renaming either breaks it.
   coverage:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -62,7 +62,6 @@ jobs:
             git -C "$dir" checkout -q --orphan new
             git -C "$dir" rm -rqf .
           fi
-          # shields.io endpoint badge format: https://shields.io/badges/endpoint-badge
           # shellcheck disable=SC2016 # ${pct} is a JS template literal
           node -e '
             const pct = Math.round(require("./coverage/coverage-summary.json").total.lines.pct);

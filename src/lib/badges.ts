@@ -2,7 +2,6 @@ import { countyPages } from "./areas";
 import { publishedFiles } from "./filters";
 import type { ElectionData } from "./data";
 
-// shields.io endpoint badges (https://shields.io/badges/endpoint-badge), read by the README.
 export type Badge = { schemaVersion: 1; label: string; message: string; color: string };
 
 export const BADGE_NAMES = ["guides", "counties"] as const;
