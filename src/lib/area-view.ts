@@ -75,8 +75,8 @@ export function hasContest(s: ElectionSnapshot, areaId: string | null, contestId
   return s.contests.some((c) => c.id === contestId && (!area || inArea(c, area)));
 }
 
-// Every published guide counts on every list, as on the Bay Area's. An area's list names those that cover it or picked one
-// of its contests; its pending note and No pick group keep to the guides that cover it.
+// Counts every published guide that picked one of the area's contests. Counting only `local` makes a county's verdict
+// contradict the contest page's.
 export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
   const area = findArea(s, areaId);
   const { allGuides } = base(s);

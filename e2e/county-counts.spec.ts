@@ -47,7 +47,6 @@ test.describe("county pages count every guide", () => {
     const skipped = await pinNames(noPick);
     expect(skipped).toContain(`Pin ${short("acdp")}`);
     expect(skipped).not.toContain(`Pin ${short("sf-dems")}`);
-    // With no area to put first, the same pick keeps its A–Z order.
     await page.goto(`${BALLOT}?c=${ID}`);
     await expect(pane(page).getByRole("group", { name: "Guides for No" })).toBeVisible();
     expect(await pinNames(pane(page).getByRole("group", { name: "Guides for No" }))).toEqual([other, local]);

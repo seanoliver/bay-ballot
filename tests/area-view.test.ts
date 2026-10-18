@@ -9,7 +9,6 @@ import type { Area } from "@/lib/schema";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
 
-// ballotViewProps and ListPage's links and intro, built from the election data, as the reference.
 function before(d: ElectionData, area: Area | null) {
   const inScope = area ? areaGuides(d.guides, area) : d.guides;
   const contests = area ? d.ballot.contests.filter((c) => inArea(c, area)) : d.ballot.contests;

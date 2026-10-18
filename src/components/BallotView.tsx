@@ -381,7 +381,6 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
     applyFilters(f);
   };
   const filterProps = { filters, onChange: setFilters, guides, files, typeGuides: allGuides, onBallot: guides };
-  // Not on the Bay Area list, where most guides that skipped a contest don't cover it.
   const noPick = useMemo(
     () => (shown && area !== null && noPickScope ? areaNoPick(shown.id, area, noPickScope, guides, files) : []),
     [shown, area, noPickScope, guides, files],
