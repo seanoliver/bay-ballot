@@ -8,7 +8,6 @@ import { loadElection } from "@/lib/data";
 
 const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
 
-// The page is a server component that only composes props, so its element tree can be read without rendering.
 // No contest in the data has a pick whose order the area-first rule changes, so an e2e can't see a missing `local`.
 async function viewProps(contest: string) {
   const page = (await ContestPage({ params: Promise.resolve({ election: "2026-11", contest }) } as PageProps<"/[election]/[contest]">)) as ReactElement<{ children: unknown }>;

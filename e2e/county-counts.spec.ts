@@ -16,19 +16,16 @@ const pin = (id: string) => `Pin ${guide(id).shortName ?? guide(id).name}`;
 const tagged = (id: string, ...areas: string[]) => guide(id).areas.some((a) => areas.includes(a));
 const pickers = (pick: string) => picks.filter((e) => e.picks[ID].pick === pick).map((e) => e.guide);
 
-// The guides an area's list counts as its own: Alameda's, or for a city, the city's and its county's.
 const ALAMEDA = ["alameda-county"];
 const PALO_ALTO = ["palo-alto", "santa-clara-county"];
 
 const pane = (page: Page) => page.locator("section[aria-labelledby='detail-title']");
 const pinNames = (scope: Locator) => scope.getByRole("button", { name: /^Pin / }).evaluateAll((bs) => bs.map((b) => b.getAttribute("aria-label")!));
-/** Every pin in a group, after opening its "+N more". */
 async function allPins(group: Locator) {
   const more = group.getByRole("button", { name: /^\+\d+ more$/ });
   if (await more.count()) await more.click();
   return pinNames(group);
 }
-/** `names`, with the guides tagged for `areas` moved ahead of the rest, each part keeping its order. */
 const localFirst = (names: string[], ids: string[], areas: string[]) => {
   const local = new Set(ids.filter((id) => tagged(id, ...areas)).map(pin));
   return [...names.filter((n) => local.has(n)), ...names.filter((n) => !local.has(n))];
