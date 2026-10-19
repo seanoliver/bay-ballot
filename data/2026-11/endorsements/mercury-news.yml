@@ -84,6 +84,12 @@ archived:
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
 fetchedAt: 2026-10-17
 hasReasoning: true
+pinned:
+  - contestId: ross-council
+    pick:
+      - Robert Herbst
+      - Julie A McMillan
+    reason: from the IJ's 9/27 Ross editorial, which the extractor missed (added by hand 2026-10-07)
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'

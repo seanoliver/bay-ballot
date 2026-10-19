@@ -9,6 +9,11 @@ archived:
     snapshot: https://web.archive.org/web/20261007005125/https://www.southbaylabor.org/2026_endorsements
 fetchedAt: 2026-10-07
 hasReasoning: false
+pinned:
+  - contestId: fremont-uhsd-trustee-area-3
+    pick:
+      - Rosa Kim
+    reason: '"Fremont Union High School District — Trustee Area 3 / Rosa Kim — Sole Endorsement"; the scoped extract missed it (added by hand 2026-10-07)'
 picks:
   governor:
     pick:

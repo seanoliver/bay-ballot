@@ -72,6 +72,27 @@ describe("data", () => {
     expect(r.warnings).toEqual([]);
     expect(r.errors).toEqual([]);
   });
+  it("fails when a pin disagrees with the published picks", () => {
+    const pin = (contestId: string, pick: Entry["pick"] | null, ranked?: boolean) => ({ contestId, pick, reason: "x", ...(ranked === undefined ? {} : { ranked }) });
+    const ok = withFile(base(), { board: e(["B Two", "A One"]) }, { pinned: [pin("board", ["A One", "B Two"]), pin("prop-b", null)] });
+    expect(validateElection(ok).errors).toEqual([]);
+    const bad = withFile(base(), { "prop-b": e("Y"), board: e(["A One"]) }, {
+      pinned: [pin("prop-b", null), pin("board", ["A One"], true), pin("board", ["B Two"]), pin("nope", "Y")],
+    });
+    expect(validateElection(bad).errors).toEqual([
+      "g/prop-b: pinned to no pick but picked; remove the pick",
+      "g/board: pinned ranked: true but the pick has ranked: false",
+      "g/board: pinned twice",
+      "g/board: pinned pick is not the published pick",
+      "g: pin for unknown contest 'nope'",
+      "g/nope: pinned pick is not the published pick",
+    ]);
+  });
+  it("fails when a contest is both pinned and held", () => {
+    const held = [{ contestId: "prop-b", pick: "Y" as const, reason: "unclear-match" as const, evidence: "x" }];
+    const d = withFile(base(), {}, { held, pinned: [{ contestId: "prop-b", pick: null, reason: "x" }] });
+    expect(validateElection(d).errors).toEqual(["g/prop-b: both pinned and held; remove one"]);
+  });
   it("fails when a pick quotes a rejected quote", () => {
     const q = { text: "Prop B is a bad idea.", source: "https://g.org/a" };
     const d = withFile(base(), { "prop-b": { ...e("N"), quotes: [q] } }, { rejectedQuotes: [{ text: "Prop B is a  bad idea.", reason: "not substantive" }] });
