@@ -21,6 +21,7 @@ picks:
   oakland-usd-2:
     pick:
       - Arielle Fleisher
+    ranked: true
     quotes:
       - text: Arielle Fleisher is an OUSD parent, a PTA member, co-leader of her neighborhood council, and founder of a 300+ member moms group.
         source: https://www.empoweroakland.com/voter-guide
