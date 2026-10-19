@@ -926,10 +926,19 @@ describe("applyPins", () => {
   });
 
   it("flags a pin with no ranked field when the page ranks an unranked pick", () => {
-    const file = { ...prev([{ contestId: "ross-council", pick: ["R", "J"], reason: "x" }]), picks: { "ross-council": { pick: ["R", "J"], ranked: false, quotes: [] } } };
-    const r = applyPins(file, { "ross-council": { pick: ["J", "R"], ranked: true, quotes: [] } });
-    expect(r.picks["ross-council"]).toEqual({ pick: ["R", "J"], ranked: false, quotes: [] });
+    const quote = { text: "published", source: "https://a.org/" };
+    const file = { ...prev([{ contestId: "ross-council", pick: ["R", "J"], reason: "x" }]), picks: { "ross-council": { pick: ["R", "J"], ranked: false, quotes: [quote] } } };
+    const r = applyPins(file, { "ross-council": { pick: ["J", "R"], ranked: true, quotes: [{ text: "page", source: "https://a.org/" }] } });
+    expect(r.picks["ross-council"]).toEqual({ pick: ["R", "J"], ranked: false, quotes: [quote] });
     expect(r.conflicts).toEqual(["ross-council: pinned R / J unranked, guide now ranks J / R"]);
+  });
+
+  it("flags a pin with no ranked field when the page reorders a ranked pick, keeping the published quotes", () => {
+    const quote = { text: "published", source: "https://a.org/" };
+    const file = { ...prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], reason: "x" }]), picks: { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [quote] } } };
+    const r = applyPins(file, { "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [{ text: "page", source: "https://a.org/" }] } });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [quote] });
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks B / A"]);
   });
 
   it("keeps the published ranking on a pin with no ranked field", () => {
