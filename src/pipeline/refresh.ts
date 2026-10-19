@@ -414,14 +414,18 @@ export function applyPins(
       continue;
     }
     const pin: Entry = { pick: p.pick, ranked: p.ranked ?? false, quotes: [] };
-    const inOrder = p.ranked === true && !!now?.ranked;
+    const ranked = p.ranked ?? prev.picks[id]?.ranked ?? false;
+    const inOrder = ranked && !!now?.ranked;
     const same = !!now && samePick({ ...now, ranked: inOrder }, { ...pin, ranked: inOrder });
+    const conflict =
+      !seen ? undefined
+      : !same ? `${id}: pinned ${showPick(p.pick)}, guide now picks ${showPick(seen.pick)}`
+      : now.ranked && !ranked ? `${id}: pinned ${showPick(p.pick)} unranked, guide now ranks ${showPick(now.pick)}`
+      : undefined;
     if (!seen) notes.push(`${id}: extract dropped the pinned pick ${showPick(p.pick)}; restored it`);
-    else if (!same) conflicts.push(`${id}: pinned ${showPick(p.pick)}, guide now picks ${showPick(seen.pick)}`);
-    else if (p.ranked === false && now.ranked) conflicts.push(`${id}: pinned ${showPick(p.pick)} unranked, guide now ranks ${showPick(now.pick)}`);
-    const from = same ? now : (prev.picks[id] ?? pin);
-    const ranked = p.ranked ?? from.ranked;
-    if (same && !now.ranked && ranked) notes.push(`${id}: extract dropped ranked; pinned true`);
+    if (conflict) conflicts.push(conflict);
+    else if (same && !now.ranked && ranked) notes.push(`${id}: extract dropped ranked; pinned true`);
+    const from = same && !conflict ? now : (prev.picks[id] ?? pin);
     picks[id] = { ...from, pick: p.pick, ranked };
   }
   return { picks, notes, conflicts };

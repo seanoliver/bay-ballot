@@ -866,10 +866,19 @@ describe("pinned picks", () => {
     const root = setup(["alpha"]);
     const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
     fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("pick: N", "pick: Y"));
-    pin(root, "  - contestId: prop-b\n    pick: Y\n    reason: test\n");
-    const results = await run(root, sameOut);
-    expect(parse(fs.readFileSync(f, "utf8")).picks["prop-b"].pick).toBe("Y");
+    pin(root, "  - contestId: prop-b\n    pick: Y\n    reason: test\n  - contestId: prop-d\n    pick: null\n    reason: other\n");
+    const results = await run(root, extractOut);
+    const after = parse(fs.readFileSync(f, "utf8"));
+    expect(after.picks["prop-b"].pick).toBe("Y");
+    expect(after.picks["prop-c"].pick).toBe("Y");
+    expect(after.pinned).toEqual([
+      { contestId: "prop-b", pick: "Y", reason: "test" },
+      { contestId: "prop-d", pick: null, reason: "other" },
+    ]);
     expect(reviewReasons(results)).toEqual(["alpha: prop-b: pinned Y, guide now picks N"]);
+    const md = summarize(results, { date: "2026-10-06" });
+    expect(md).toContain("needs review (0 held, 1 pinned changed)");
+    expect(md).toContain("- **prop-b: pinned Y, guide now picks N**");
     expect(exitCodeFor(results)).toBe(2);
   });
 
@@ -914,6 +923,20 @@ describe("applyPins", () => {
     expect(r.picks["oakland-usd-2"]).toMatchObject({ pick: ["A", "B"], ranked: false });
     expect(r.notes).toEqual([]);
     expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B unranked, guide now ranks B / A"]);
+  });
+
+  it("flags a pin with no ranked field when the page ranks an unranked pick", () => {
+    const file = { ...prev([{ contestId: "ross-council", pick: ["R", "J"], reason: "x" }]), picks: { "ross-council": { pick: ["R", "J"], ranked: false, quotes: [] } } };
+    const r = applyPins(file, { "ross-council": { pick: ["J", "R"], ranked: true, quotes: [] } });
+    expect(r.picks["ross-council"]).toEqual({ pick: ["R", "J"], ranked: false, quotes: [] });
+    expect(r.conflicts).toEqual(["ross-council: pinned R / J unranked, guide now ranks J / R"]);
+  });
+
+  it("keeps the published ranking on a pin with no ranked field", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], reason: "x" }]), { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [] } });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [] });
+    expect(r.conflicts).toEqual([]);
+    expect(r.notes).toEqual([]);
   });
 
   it("flags a pin when the page's new pick only came back as a near-spelling hold", () => {
