@@ -1,0 +1,5 @@
+date: 2026-10-19
+type: fix
+title: The Bay Area ballot now lives at bayballot.com instead of redirecting to bayballot.com/2026-11
+details: "Links to the Bay Area ballot point at the home page, and search engines are told it is the page to index. The /2026-11 address still works."
+pr: 263

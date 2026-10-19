@@ -14,7 +14,7 @@ import { formatDate, keepNumber, monthYear, sourceLink } from "@/lib/display";
 import { activeEntries, EMPTY, isPublished, TYPE_LABEL } from "@/lib/filters";
 import { guideBallot, guidePickGroups, guideStats } from "@/lib/guide-page";
 import { pinParts } from "@/lib/pins";
-import { ballotViewProps, election, latestElection } from "@/lib/site-data";
+import { ballotViewProps, election, electionIndex, latestElection } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { cn } from "@/lib/utils";
 
@@ -48,7 +48,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   if (!x) notFound();
   const { id, d, guide, file } = x;
   const { ballot, areas } = d;
-  const back = guideBallot(guide, areas, id);
+  const back = guideBallot(guide, areas, id, { index: electionIndex(id) });
   const published = isPublished(file) ? file : null;
   const groups = published ? guidePickGroups(ballot.contests, published, areas) : [];
   const stats = published ? guideStats(groups.flatMap((g) => g.sections.flatMap((s) => s.picks)), published) : null;

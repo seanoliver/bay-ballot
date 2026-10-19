@@ -129,8 +129,9 @@ describe("areaView", () => {
 });
 
 describe("areaFromPath", () => {
-  const s = { election: "2026-11", areas: d.areas };
+  const s = { election: "2026-11", index: "/", areas: d.areas };
   it.each([
+    ["/", null],
     ["/2026-11", null],
     ["/2026-11/", null],
     ["/2026-11/sonoma", "sonoma"],
@@ -139,8 +140,10 @@ describe("areaFromPath", () => {
     ["/2026-11/sonoma/x", undefined],
     ["/2024-03/sonoma", undefined],
     ["/about", undefined],
-    ["/", undefined],
   ])("%s → %s", (p, want) => {
     expect(areaFromPath(s, p)).toBe(want);
+  });
+  it("leaves / alone for an election whose index is elsewhere", () => {
+    expect(areaFromPath({ ...s, index: "/2026-11" }, "/")).toBeUndefined();
   });
 });

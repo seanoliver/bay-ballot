@@ -88,7 +88,7 @@ test("the breadcrumb is 14px on the guide and contest pages", async ({ page }) =
 test("a guide spanning counties links back to the Bay Area ballot", async ({ page }) => {
   await page.goto(GUIDE);
   await page.getByRole("link", { name: "Bay Area ballot", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+  await expect(page).toHaveURL("/");
 });
 
 test("a one-area guide links back to its area's ballot", async ({ page }) => {
@@ -123,7 +123,7 @@ test("a pick row links to its contest", async ({ page }) => {
 
 test("a pick row keeps the filter query the breadcrumb carries", async ({ page }) => {
   await page.goto(`${GUIDE}?off=sf-gop&why=1`);
-  await expect(page.getByRole("link", { name: "Bay Area ballot", exact: true })).toHaveAttribute("href", `${BALLOT}?off=sf-gop&why=1`);
+  await expect(page.getByRole("link", { name: "Bay Area ballot", exact: true })).toHaveAttribute("href", "/?off=sf-gop&why=1");
   const row = page.getByRole("link", { name: /^Proposition D: (Yes|No)$/ });
   await expect(row).toHaveAttribute("href", `${BALLOT}/prop-d?off=sf-gop&why=1`);
   await row.click();

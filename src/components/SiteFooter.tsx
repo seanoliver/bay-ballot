@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { dataAsOf } from "@/lib/display";
-import { election, latestElection } from "@/lib/site-data";
+import { election, electionIndex, latestElection } from "@/lib/site-data";
 import { ExternalLink } from "./ExternalLink";
 import { FRAME } from "./frame";
 
@@ -45,7 +45,7 @@ export function SiteFooter() {
             <h2 className={HEADING}>
               Site
             </h2>
-            <Link href={`/${id}`} className={COL_LINK}>
+            <Link href={electionIndex(id)} className={COL_LINK}>
               Ballot
             </Link>
             <Link href="/changelog" className={COL_LINK}>

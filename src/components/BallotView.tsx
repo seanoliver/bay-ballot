@@ -172,7 +172,8 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
   // To the ZIP's ballot, as a new history entry: in place when the page can switch areas, else by navigation.
   const toZipBallot = (z: string) => {
     // Read from the address bar, not this render: the call can come after the ZIP table loads.
-    const onBayNow = window.location.pathname === bayHref;
+    // The latest election's Bay Area page is served at both / and /<election>.
+    const onBayNow = [bayHref, `/${election}`].includes(window.location.pathname);
     const mineNow = new URLSearchParams(currentSearch()).get(MINE_PARAM);
     stepWrite.cancel();
     setStepped(null);

@@ -10,7 +10,7 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle }
 import { areaBallotLinks, coverage, coverageSentence } from "@/lib/coverage";
 import { formatDate } from "@/lib/display";
 import { MAX_PINS } from "@/lib/filters";
-import { election, latestElection } from "@/lib/site-data";
+import { election, electionIndex, latestElection } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "About · Bay Ballot", alternates: { canonical: "/about" } };
@@ -122,7 +122,7 @@ export default function AboutPage() {
             ))}
           </ol>
           <Link
-            href={`/${id}`}
+            href={electionIndex(id)}
             className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-foreground px-6 font-semibold text-background outline-none hover:bg-foreground/85 focus-visible:ring-3 focus-visible:ring-ring/50 sm:w-auto"
           >
             Go to the ballot

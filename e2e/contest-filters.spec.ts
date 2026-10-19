@@ -188,7 +188,7 @@ test("a filter set on a statewide contest page doesn't send the home page to an 
   if (isPhone(info)) await panel.getByRole("button", { name: "Close" }).click();
   await page.getByRole("banner").getByRole("link", { name: "Bay Ballot" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
-  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+  await expect(page).toHaveURL("/");
 });
 
 test.describe("a shared link's filters beat saved ones", () => {

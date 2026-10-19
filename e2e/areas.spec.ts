@@ -34,9 +34,9 @@ test("a county page's chip clears back to the Bay Area", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Area" });
   const chip = nav.getByRole("link", { name: "Clear San Mateo" });
   await expect(chip).toHaveAttribute("aria-current", "page");
-  await expect(chip).toHaveAttribute("href", BALLOT);
+  await expect(chip).toHaveAttribute("href", "/");
   await chip.click();
-  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+  await expect(page).toHaveURL("/");
   await expect(nav.getByRole("link", { name: "Bay Area" })).toHaveAttribute("aria-current", "page");
 });
 
@@ -59,7 +59,7 @@ test("the SF page has its own title, canonical URL and contests", async ({ page 
   await page.goto(`${BALLOT}/sf`);
   await expect(page).toHaveTitle("San Francisco endorsements (Nov 2026)");
   await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", `https://bayballot.com${BALLOT}/sf`);
-  await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Clear San Francisco" })).toHaveAttribute("href", BALLOT);
+  await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Clear San Francisco" })).toHaveAttribute("href", "/");
   await expect(page.getByText(/November 3, 2026 · \d+ guides · \d+ contests · \d+ endorsements/)).toBeVisible();
   await expect(contestRow(page, "Proposition B")).toBeVisible();
 });
@@ -80,7 +80,7 @@ test("a returning visitor with saved filters lands on the SF page once", async (
   await page.goto(BALLOT);
   await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf$`));
   await page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Bay Area" }).click();
-  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+  await expect(page).toHaveURL("/");
   await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
 });
 
