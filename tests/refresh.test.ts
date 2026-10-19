@@ -1019,6 +1019,12 @@ describe("branchChanges", () => {
     ]);
   });
 
+  it("is what bb refresh passes to the summary when given --baseline", () => {
+    const bb = fs.readFileSync(path.join(__dirname, "..", "scripts", "bb.ts"), "utf8");
+    expect(bb).toContain('const baseline = option("--baseline");');
+    expect(bb).toContain("branch: baseline ? branchChanges(ROOT, baseline) : []");
+  });
+
   it("handles a missing changelog folder on either side", () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
     fs.mkdirSync(path.join(tmp, "branch", "changelog"), { recursive: true });
