@@ -120,6 +120,10 @@ describe("areaView", () => {
     expect(areaHead(snap, "sonoma")).toEqual({ title, links });
   });
 
+  it("areaHead links the Bay Area chip to the snapshot's index", () => {
+    expect(areaHead({ ...snap, index: "/" }, "sonoma").links[0].href).toBe("/");
+  });
+
   it("hasContest knows which contests an area's ballot holds", () => {
     expect(hasContest(snap, "sonoma", "governor")).toBe(true);
     expect(hasContest(snap, "sonoma", "prop-b")).toBe(false);

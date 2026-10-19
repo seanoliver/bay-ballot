@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { ballotViewProps, election, elections, latestElection } from "@/lib/site-data";
+import { ballotViewProps, election, electionIndex, elections, electionSnapshot, latestElection } from "@/lib/site-data";
 import type { ElectionData } from "@/lib/data";
 import type { Contest, EndorsementFile, Entry } from "@/lib/schema";
 import { activeEntries, EMPTY } from "@/lib/filters";
@@ -16,6 +16,16 @@ const file = (archived?: EndorsementFile["archived"]): EndorsementFile => ({
   hasReasoning: true,
   picks: {},
   ...(archived ? { archived } : {}),
+});
+
+describe("electionIndex", () => {
+  it("puts the latest election's Bay Area page at / and keeps an older one under its id", () => {
+    expect(electionIndex(latestElection())).toBe("/");
+    expect(electionIndex("2024-03")).toBe("/2024-03");
+  });
+  it("gives the snapshot the same path", () => {
+    expect(electionSnapshot(election(latestElection())!).index).toBe("/");
+  });
 });
 
 describe("ballotViewProps", () => {
