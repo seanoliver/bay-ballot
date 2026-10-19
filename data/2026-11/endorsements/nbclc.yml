@@ -4,6 +4,10 @@ status: published
 source: https://www.nbclc.org/2026endorsements # covers five counties; its statewide list is the California Labor Federation's PDF, not the council's own
 fetchedAt: 2026-10-09
 hasReasoning: false
+pinned:
+  - contestId: srjc-measure-ab
+    pick: Y
+    reason: '"Measure AB - SRJC District Bond / YES" under "Sonoma Measures"; the extract missed it (added by hand 2026-10-09)'
 picks:
   us-rep-2:
     pick:

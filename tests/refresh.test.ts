@@ -9,7 +9,7 @@ import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type F
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, writeSummary, type GuideResult } from "@/pipeline/refresh";
-import { resultJson, reviewReasons } from "@/pipeline/refresh";
+import { applyPins, resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
 import type { EndorsementFile } from "@/lib/schema";
@@ -814,6 +814,82 @@ describe("runRefresh", () => {
     const results = await runRefresh({ client, fetchSource, today: () => "2026-10-06", log: () => {} }, { root, election: ELECTION });
     expect(results[0]).toMatchObject({ status: "failed" });
     expect(exitCodeFor(results)).toBe(1);
+  });
+});
+
+describe("pinned picks", () => {
+  const pin = (root: string, pinned: string, picks = "") => {
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", `pinned:\n${pinned}picks:\n`) + picks);
+    return f;
+  };
+  const run = (root: string, out: ExtractOutput, opts: { verify?: boolean; held?: boolean } = {}) =>
+    runRefresh(deps(fakeClient(out, { held: opts.held }).client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), {
+      root,
+      election: ELECTION,
+      forceExtract: true,
+      verify: opts.verify ?? false,
+    });
+
+  it("restores a pinned pick the extract dropped, with its quote", async () => {
+    const root = setup(["alpha"]);
+    const quote = `    quotes:\n      - text: we need more affordable housing in every neighborhood.\n        source: ${url("alpha")}\n`;
+    const f = pin(root, "  - contestId: prop-c\n    pick: Y\n    reason: test\n", `  prop-c:\n    pick: Y\n${quote}`);
+    const before = fs.readFileSync(f, "utf8");
+    const results = await run(root, sameOut);
+    expect(fs.readFileSync(f, "utf8")).toBe(before);
+    expect(results[0]).toMatchObject({ notes: expect.arrayContaining(["prop-c: extract dropped the pinned pick Y; restored it"]) });
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("drops an extracted pick on a contest pinned to no pick", async () => {
+    const root = setup(["alpha"]);
+    const f = pin(root, "  - contestId: prop-c\n    pick: null\n    reason: test\n");
+    const results = await run(root, extractOut);
+    expect(Object.keys(parse(fs.readFileSync(f, "utf8")).picks)).toEqual(["prop-b"]);
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("keeps the pin but flags the guide when the page now picks differently", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("pick: N", "pick: Y"));
+    pin(root, "  - contestId: prop-b\n    pick: Y\n    reason: test\n");
+    const results = await run(root, sameOut);
+    expect(parse(fs.readFileSync(f, "utf8")).picks["prop-b"].pick).toBe("Y");
+    expect(reviewReasons(results)).toEqual(["alpha: prop-b: pinned Y, guide now picks N"]);
+    expect(exitCodeFor(results)).toBe(2);
+  });
+
+  it("keeps a pinned pick the verifier would hold", async () => {
+    const root = setup(["alpha"]);
+    const f = pin(root, "  - contestId: prop-c\n    pick: Y\n    reason: test\n", "  prop-c:\n    pick: Y\n");
+    const results = await run(root, extractOut, { verify: true, held: true });
+    const after = parse(fs.readFileSync(f, "utf8"));
+    expect(after.picks["prop-c"].pick).toBe("Y");
+    expect(after.held).toBeUndefined();
+    expect(exitCodeFor(results)).toBe(0);
+  });
+});
+
+describe("applyPins", () => {
+  const prev = (pinned: EndorsementFile["pinned"]): EndorsementFile => ({
+    guide: "alpha", election: ELECTION, status: "published", fetchedAt: "2026-10-05", hasReasoning: true, pinned,
+    picks: { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [] } },
+  });
+
+  it("puts back a pinned ranked flag and keeps the pin's name order", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: false, quotes: [{ text: "q", source: "https://a.org/" }] },
+    });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [{ text: "q", source: "https://a.org/" }] });
+    expect(r.notes).toEqual(["oakland-usd-2: extract changed ranked to false; pinned true"]);
+    expect(r.conflicts).toEqual([]);
+  });
+
+  it("leaves a pin outside the scope alone", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: null, reason: "x" }]), { "oakland-usd-2": { pick: ["A"], ranked: false, quotes: [] } }, () => false);
+    expect(Object.keys(r.picks)).toEqual(["oakland-usd-2"]);
   });
 });
 

@@ -55,6 +55,21 @@ describe("applyVerdicts", () => {
     expect(r.confirmed).toBe(3);
   });
 
+  it("keeps a pinned pick whatever the verifier says, and drops it from missing", () => {
+    const pinned = { ...file, pinned: [{ contestId: "prop-c", pick: "Y" as const, reason: "x" }, { contestId: "prop-d", pick: null, reason: "x" }] };
+    const out: VerifyOutputT = {
+      ...allConfirmed,
+      picks: [allConfirmed.picks[0], allConfirmed.picks[2], { contestId: "prop-c", verdict: "wrong-pick", evidence: "No on C." }],
+      missing: [{ contestId: "prop-d", pick: "N", evidence: "No on D." }],
+    };
+    const r = applyVerdicts(pinned, out);
+    expect(r.file.picks["prop-c"]).toEqual(file.picks["prop-c"]);
+    expect(r.held).toEqual([]);
+    expect(r.missing).toEqual([]);
+    expect(r.notes).toEqual(["prop-c: kept the pinned pick; verifier said wrong-pick: No on C."]);
+    expect(applyVerdicts(pinned, { ...out, picks: [allConfirmed.picks[0], allConfirmed.picks[2]] }).file.picks["prop-c"]).toBeDefined();
+  });
+
   it("holds unconfirmed picks and removes them from the published picks", () => {
     const out: VerifyOutputT = {
       ...allConfirmed,

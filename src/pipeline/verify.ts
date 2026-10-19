@@ -178,6 +178,7 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
   const droppedQuotes: DroppedByVerifier[] = [];
   const notes: string[] = [];
   let confirmed = 0;
+  const pinned = new Set((file.pinned ?? []).map((p) => p.contestId));
   const hold = (contestId: string, e: Entry, reason: HeldPick["reason"], evidence: string): HeldPick => ({
     contestId,
     pick: e.pick,
@@ -190,13 +191,17 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
 
   for (const [contestId, entry] of Object.entries(file.picks)) {
     const v = out.picks.find((p) => p.contestId === contestId);
+    if (v?.verdict === "confirmed") {
+      confirmed++;
+      continue;
+    }
+    if (pinned.has(contestId)) {
+      if (v) notes.push(`${contestId}: kept the pinned pick; verifier said ${v.verdict}: ${v.evidence}`);
+      continue;
+    }
     if (!v) {
       held.push(hold(contestId, entry, "unverified", "The verifier returned no verdict for this pick."));
       delete picks[contestId];
-      continue;
-    }
-    if (v.verdict === "confirmed") {
-      confirmed++;
       continue;
     }
     held.push(hold(contestId, entry, v.verdict, v.evidence));
@@ -234,7 +239,7 @@ export function applyVerdicts(file: EndorsementFile, out: VerifyOutput): Applied
     picks,
     held: allHeld.length ? allHeld : undefined,
   };
-  return { file: next, confirmed, held, droppedQuotes, missing: out.missing, notes };
+  return { file: next, confirmed, held, droppedQuotes, missing: out.missing.filter((m) => !pinned.has(m.contestId)), notes };
 }
 
 export function auditPart(file: EndorsementFile, ids: string[], inScope: (contestId: string) => boolean): EndorsementFile {

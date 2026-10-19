@@ -105,6 +105,15 @@ export type HeldPick = z.infer<typeof HeldPick>;
 /** Holds only a person releases, so the verifier neither re-checks nor releases them. */
 export const isPersonHold = (h: HeldPick) => h.reason === "unclear-match" || h.reason === "name-mismatch";
 
+/** A person's decision on one contest. `pick: null` means the guide takes no position there. */
+export const PinnedPick = z.object({
+  contestId: Slug,
+  pick: Entry.shape.pick.nullable(),
+  ranked: z.boolean().optional(),
+  reason: NonEmpty,
+}).strict();
+export type PinnedPick = z.infer<typeof PinnedPick>;
+
 export const EndorsementFile = z.object({
   guide: Slug,
   election: Election,
@@ -122,6 +131,7 @@ export const EndorsementFile = z.object({
   allowForeignSources: z.boolean().optional(),
   archived: z.array(ArchivedSource).optional(),
   held: z.array(HeldPick).optional(),
+  pinned: z.array(PinnedPick).optional(),
   rejectedQuotes: z.array(z.object({ text: NonEmpty, reason: NonEmpty, contestId: Slug.optional() })).optional(),
   picks: z.record(Slug, Entry).default({}),
 }).strict().superRefine((f, ctx) => {

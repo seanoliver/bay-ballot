@@ -4,6 +4,12 @@ status: published
 source: https://www.empoweroakland.com/voter-guide
 fetchedAt: 2026-10-17
 hasReasoning: true
+pinned:
+  - contestId: oakland-usd-2
+    pick:
+      - Arielle Fleisher
+    ranked: true
+    reason: ranked choice slate; a re-extract dropped ranked (review 2026-10-18)
 rejectedQuotes:
   - text: The city expects this to bring in $4 million to $13 million a year.
     reason: "descriptive: revenue estimate, no reason (review 2026-10-07)"
