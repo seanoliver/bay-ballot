@@ -866,6 +866,7 @@ describe("branchChanges", () => {
     entry("branch", "2026-10-16-refresh-alpha.yml", "Alpha changed");
     fs.writeFileSync(path.join(tmp, "branch", "changelog", ".gitkeep"), "");
     fs.writeFileSync(path.join(tmp, "branch", "changelog", "2026-10-18-refresh-gamma.yml"), "<<<<<<< HEAD\ntitle: x\n");
+    for (const side of ["main", "branch"]) fs.writeFileSync(path.join(tmp, side, "changelog", "2026-10-14-broken.yml"), "title: [\n");
     expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual([
       "Alpha changed",
       "Beta changed",
