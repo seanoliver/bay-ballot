@@ -14,7 +14,7 @@ import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
 import { toYaml } from "../src/pipeline/write";
-import { costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, writeSummary, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
+import { branchChanges, costText, exitCodeFor, pagePath, runRefresh, seedPages, summarize, writeSummary, type GuideResult, type RefreshDeps } from "../src/pipeline/refresh";
 import { notify } from "../src/pipeline/notify";
 import { readReport, reportJson, runRecord, withFailure } from "../src/pipeline/report";
 import { applyVerdicts, hasVerifiable, verify } from "../src/pipeline/verify";
@@ -278,16 +278,17 @@ async function runExtract(): Promise<void> {
 async function runRefreshCmd(): Promise<void> {
   const started = Date.now();
   const gateOnly = flag("--no-extract");
+  const baseline = option("--baseline");
   const results = await runRefresh(refreshDeps({ model: !gateOnly }), {
     root: ROOT, election: ELECTION,
     browser: flag("--browser"), archive: flag("--archive"), maxChanged: REFRESH_BUDGET,
     shrunkSkip: readShrunkState(option("--shrunk-state")),
-    baseline: option("--baseline"),
+    baseline,
     scope: flag("--local-only") ? "local" : "cloud",
     gateOnly,
   });
   const { errors } = validateElection(loadElection(ROOT, ELECTION));
-  let md = summarize(results, { date: today(), dryRun: gateOnly });
+  let md = summarize(results, { date: today(), dryRun: gateOnly, branch: baseline ? branchChanges(ROOT, baseline) : [] });
   if (errors.length) md += `\n## Validation errors\n\n${errors.map((e) => `- ${e}`).join("\n")}\n`;
   const code = errors.length ? 1 : exitCodeFor(results);
   const summaryPath = option("--summary");
