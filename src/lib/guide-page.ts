@@ -16,12 +16,12 @@ export function guidePickGroups(contests: Contest[], file: EndorsementFile, area
   }));
 }
 
-export function guideBallot(guide: Pick<Guide, "areas">, areas: Area[], election: string): BallotLink {
+export function guideBallot(guide: Pick<Guide, "areas">, areas: Area[], election: string, { index = `/${election}` }: { index?: string } = {}): BallotLink {
   const mine = areas.filter((a) => guide.areas.includes(a.id));
   const counties = new Set(mine.map(areaCounty));
   const [county] = counties;
   const home = mine.length === 1 ? mine[0] : counties.size === 1 ? countyPages(areas).find((a) => areaCounty(a) === county) : undefined;
-  return home ? { href: `/${election}/${home.id}`, label: `${placeName(home).name} ballot` } : { href: `/${election}`, label: `${BAY_AREA.name} ballot` };
+  return home ? { href: `/${election}/${home.id}`, label: `${placeName(home).name} ballot` } : { href: index, label: `${BAY_AREA.name} ballot` };
 }
 
 export function guideStats(picks: GuidePick[], file: Pick<EndorsementFile, "hasReasoning">): { picks: number; withReasons: number | null } {

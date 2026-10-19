@@ -45,6 +45,7 @@ describe("guideBallot", () => {
   });
   it("links a guide spanning counties to the Bay Area ballot", () => {
     expect(guideBallot({ areas: ["sf", "san-mateo"] }, areas, "2026-11")).toEqual({ href: "/2026-11", label: "Bay Area ballot" });
+    expect(guideBallot({ areas: ["sf", "san-mateo"] }, areas, "2026-11", { index: "/" })).toEqual({ href: "/", label: "Bay Area ballot" });
   });
   it("links a guide whose areas share a county to that county's page", () => {
     const sc: Area = { id: "santa-clara-county", name: "Santa Clara County", kind: "county", jurisdictions: [{ level: "state", name: "California" }, { level: "county", name: "Santa Clara" }] };

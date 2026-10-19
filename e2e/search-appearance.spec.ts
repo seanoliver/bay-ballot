@@ -26,9 +26,19 @@ async function expectTrailMatchesPage(page: Page, path: string) {
   return crumbs;
 }
 
+test("the home page serves the Bay Area ballot, and the election's own index points its canonical at it", async ({ page, request }) => {
+  const res = await request.get("/", { maxRedirects: 0 });
+  expect(res.status()).toBe(200);
+  for (const path of ["/", BALLOT]) {
+    await page.goto(path);
+    await expect(page).toHaveURL(path);
+    await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://bayballot.com");
+  }
+});
+
 test("the home page names the site Bay Ballot in exactly one WebSite block", async ({ page }) => {
   await page.goto("/");
-  await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
   const sites = (await jsonLd(page)).filter((d) => d["@type"] === "WebSite");
   expect(sites).toEqual([{ "@context": "https://schema.org", "@type": "WebSite", name: "Bay Ballot", url: "https://bayballot.com/" }]);
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "Bay Ballot");

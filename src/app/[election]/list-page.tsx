@@ -6,14 +6,14 @@ import type { ElectionData } from "@/lib/data";
 import { activeEntries, EMPTY } from "@/lib/filters";
 import type { Area } from "@/lib/schema";
 import { areaDescription, areaTitle } from "@/lib/seo-copy";
-import { ballotViewProps, electionSnapshot, snapshotUrl } from "@/lib/site-data";
+import { ballotViewProps, electionIndex, electionSnapshot, snapshotUrl } from "@/lib/site-data";
 
 export function listMetadata(d: ElectionData, electionId: string, area: Area | null): Metadata {
   const { ballot, guides, files } = ballotViewProps(d, { area });
   const place = placeName(area);
   return {
     title: { absolute: areaTitle(place, ballot.date) },
-    alternates: { canonical: area ? `/${electionId}/${area.id}` : `/${electionId}` },
+    alternates: { canonical: area ? `/${electionId}/${area.id}` : electionIndex(electionId) },
     description: areaDescription(place, ballot.contests, (id) => activeEntries(id, guides, files, EMPTY), { statewideOnly: area === null, county: area?.kind === "county" }),
   };
 }

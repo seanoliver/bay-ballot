@@ -41,7 +41,7 @@ export function AreaBallot({ election, ...props }: Props) {
   const snap = "snapshot" in props ? props.snapshot : fetched;
   const initial = "initial" in props ? props.initial : viewFor(props.snapshot, null);
 
-  const path = useLocationPath(initial.area ? `/${election}/${initial.area}` : `/${election}`);
+  const path = useLocationPath(initial.area ? `/${election}/${initial.area}` : (snap?.index ?? `/${election}`));
   const fromPath = snap ? areaFromPath(snap, path) : undefined;
   const areaId = fromPath === undefined ? initial.area : fromPath;
   const deferredArea = useDeferredValue(areaId);

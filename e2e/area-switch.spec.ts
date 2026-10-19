@@ -77,13 +77,13 @@ test.describe("area switching", () => {
     });
     await expect(page).toHaveURL(new RegExp(`${BALLOT}/sonoma$`));
     await expect(heading(page, "Sonoma County ballot")).toBeVisible();
-    const navigations = watchNavigations(page);
-    // Lands on the page that was first loaded, whose route Next already has mounted.
+    // An in-place switch keeps this element; a navigation to another route replaces it.
+    await page.locator("h1").evaluate((h) => h.setAttribute("data-before", ""));
     await pressChip(page, "Clear Sonoma");
-    await expect(page).toHaveURL(new RegExp(`${BALLOT}$`));
+    await expect(page).toHaveURL("/");
     await expect(heading(page, "Bay Area ballot")).toBeVisible();
     await expect(page).toHaveTitle("Bay Area endorsements (Nov 2026)");
-    expect(navigations.length).toBeGreaterThan(0);
+    await expect(page.locator("h1[data-before]")).toHaveCount(0);
   });
 
   test("a returning visitor's redirect keeps its title, and Back from another page returns to it", async ({ page }) => {

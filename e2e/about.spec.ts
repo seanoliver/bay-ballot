@@ -42,7 +42,7 @@ test("the About page shows three numbered steps and a link to the ballot", async
   await expect(steps.nth(2)).toContainText("Pin the guides you trust");
   await expect(steps.nth(2)).toContainText(`Tap the pin on up to ${MAX_PINS} guides. Their picks then show on every contest.`);
   await expect(steps.nth(1)).toContainText("See how the guides split, then read their reasons.");
-  await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", BALLOT);
+  await expect(page.getByRole("main").getByRole("link", { name: "Go to the ballot" })).toHaveAttribute("href", "/");
 });
 
 test("the About page's steps are one list at reading width, drawings beside the text on desktop and under it on phones", async ({ page }) => {

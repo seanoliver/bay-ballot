@@ -20,7 +20,7 @@ test.describe("ZIP filter", () => {
     await expect(contestRow(page, "Palo Alto City Council")).toBeVisible();
     await enterZip(page, "94040");
     await expect(page.getByRole("heading", { level: 1, name: "ZIP 94040 ballot" })).toBeVisible();
-    await expect(page).toHaveURL(`${BALLOT}?mine=1`);
+    await expect(page).toHaveURL("/?mine=1");
     await expect(status(page)).toContainText(/\d+ of \d+ contests can be on your ballot in 94040/);
     await expect(page.getByRole("button", { name: "ZIP 94040. Change" })).toBeFocused();
     await expect(page.getByRole("navigation", { name: "Area" }).getByRole("link", { name: "Santa Clara" })).not.toHaveAttribute("aria-current", "page");
@@ -40,7 +40,7 @@ test.describe("ZIP filter", () => {
     await page.getByRole("button", { name: "Clear ZIP" }).click();
     await expect(page.getByRole("button", { name: "Your ZIP" })).toBeFocused();
     await expect(page.getByRole("heading", { level: 1, name: "Bay Area ballot" })).toBeVisible();
-    await expect(page).toHaveURL(BALLOT);
+    await expect(page).toHaveURL("/");
   });
 
   test("picking an area chip sets the ZIP aside; the ZIP chip brings its ballot back; Back and reload agree", async ({ page }) => {
@@ -87,7 +87,7 @@ test.describe("ZIP filter", () => {
   test("a filter change on the ZIP's ballot keeps it, and changing the ZIP adds no Back step", async ({ page }, info) => {
     await page.goto(BALLOT);
     await enterZip(page, "94040");
-    await expect(page).toHaveURL(`${BALLOT}?mine=1`);
+    await expect(page).toHaveURL("/?mine=1");
     const panel = isPhone(info)
       ? (await page.getByRole("button", { name: /^Filters/ }).click(), page.getByRole("dialog", { name: "Filters" }))
       : page.getByRole("complementary", { name: "Filters" });

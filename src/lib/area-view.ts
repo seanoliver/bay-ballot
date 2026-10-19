@@ -10,6 +10,8 @@ import { areaTitle } from "./seo-copy";
 export type SnapshotGuide = GuideInfo & { areas: string[]; published: boolean };
 export type ElectionSnapshot = {
   election: string;
+  /** The Bay Area page's path. */
+  index: string;
   date: string;
   contests: Contest[];
   areas: Area[];
@@ -35,9 +37,10 @@ export type AreaView = {
 
 const info = ({ id, name, shortName, type }: GuideInfo): GuideInfo => ({ id, name, ...(shortName ? { shortName } : {}), type });
 
-export function snapshotOf(d: ElectionData): ElectionSnapshot {
+export function snapshotOf(d: ElectionData, { index = `/${d.ballot.election}` }: { index?: string } = {}): ElectionSnapshot {
   return {
     election: d.ballot.election,
+    index,
     date: d.ballot.date,
     contests: d.ballot.contests,
     areas: d.areas,
@@ -67,7 +70,7 @@ function findArea(s: ElectionSnapshot, areaId: string | null): Area | null {
 
 /** The parts that follow a switch at once: the page title and the area chips. */
 export function areaHead(s: ElectionSnapshot, areaId: string | null): Pick<AreaView, "title" | "links"> {
-  return { title: areaTitle(placeName(findArea(s, areaId)), s.date), links: areaLinks(s.election, s.areas, areaId) };
+  return { title: areaTitle(placeName(findArea(s, areaId)), s.date), links: areaLinks(s.election, s.areas, areaId, { index: s.index }) };
 }
 
 export function hasContest(s: ElectionSnapshot, areaId: string | null, contestId: string): boolean {
@@ -123,7 +126,8 @@ export function viewFor(s: ElectionSnapshot, areaId: string | null): AreaView {
 }
 
 /** The area a list page's path shows: null for the Bay Area, undefined when the path is not a list page. */
-export function areaFromPath(s: Pick<ElectionSnapshot, "election" | "areas">, pathname: string): string | null | undefined {
+export function areaFromPath(s: Pick<ElectionSnapshot, "election" | "index" | "areas">, pathname: string): string | null | undefined {
+  if (pathname === s.index) return null;
   const [election, slug, ...rest] = pathname.split("/").filter(Boolean);
   if (election !== s.election || rest.length) return undefined;
   if (slug === undefined) return null;

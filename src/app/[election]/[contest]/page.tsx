@@ -9,7 +9,7 @@ import { dataAsOf } from "@/lib/display";
 import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { contestDescription, contestTitle } from "@/lib/seo-copy";
-import { ballotViewProps, election, elections } from "@/lib/site-data";
+import { ballotViewProps, election, electionIndex, elections } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { ListPage, listMetadata } from "../list-page";
 
@@ -59,7 +59,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
   if (x.kind === "area") return <ListPage d={x.d} electionId={x.electionId} area={x.area} />;
   const { d, contest, electionId } = x;
   const { guides, files, pending, area, place } = contestView(d, contest);
-  const back = { href: area ? `/${electionId}/${area.id}` : `/${electionId}`, label: `${area ? place.name : BAY_AREA.name} ballot` };
+  const back = { href: area ? `/${electionId}/${area.id}` : electionIndex(electionId), label: `${area ? place.name : BAY_AREA.name} ballot` };
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: back.label, path: back.href }, { name: contest.title, path: `/${electionId}/${contest.id}` }])} />
