@@ -5,6 +5,19 @@ source: https://docs.google.com/document/d/17P9ht52TNggvTUvs5ZEtCeiWC6kNYrVF_uGE
 allowForeignSources: true
 fetchedAt: 2026-10-14
 hasReasoning: false
+pinned:
+  - contestId: berkeley-council-1
+    pick:
+      - Daria Wrubel
+      - Moni Gangopadhyay
+    ranked: false
+    reason: '"Dual Endorsement | Rank Both Candidates" with no order; released from held by hand (2026-10-07)'
+  - contestId: oakland-usd-4
+    pick:
+      - Sylvia Pfeiffer Williams
+      - Kathryn Camp
+    ranked: false
+    reason: '"Dual Endorsement | Rank Both Candidates" with no order; released from held by hand (2026-10-07)'
 picks:
   governor:
     pick:

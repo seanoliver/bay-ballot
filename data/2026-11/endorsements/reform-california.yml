@@ -13,6 +13,10 @@ extraSources:
   - https://www.reformcalifornia.org/voter-guides/napa
 fetchedAt: 2026-10-17
 hasReasoning: true
+pinned:
+  - contestId: court-of-appeal-6
+    pick: null
+    reason: the Santa Clara page lists seven 6th District justices as DO NOT RETAIN but never names Frederick S. Chung (review 2026-10-09)
 rejectedQuotes:
   - text: Prop 39 is a bipartisan solution for Voter ID!
     reason: slogan; gives no reason (review 2026-10-11)

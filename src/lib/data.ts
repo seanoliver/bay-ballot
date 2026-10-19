@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import { parse } from "yaml";
 import type { z } from "zod";
 import { Area, AreaFile, Ballot, CountyBallot, EndorsementFile, Guide, type Contest } from "./schema";
@@ -210,6 +211,22 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
       else if (guide && !areasOf(c, d.areas).some((a) => guide.areas.includes(a.id))) {
         errors.push(`${id}/${h.contestId}: held pick is outside the guide's areas (${guide.areas.join(", ")})`);
       }
+    }
+    const pinnedIds = new Set<string>();
+    for (const p of e.pinned ?? []) {
+      const where = `${id}/${p.contestId}`;
+      if (pinnedIds.has(p.contestId)) errors.push(`${where}: pinned twice`);
+      pinnedIds.add(p.contestId);
+      if (!contests.has(p.contestId)) errors.push(`${id}: pin for unknown contest '${p.contestId}'`);
+      if (heldIds.has(p.contestId)) errors.push(`${where}: both pinned and held; remove one`);
+      const now = e.picks[p.contestId];
+      if (p.pick === null) {
+        if (now) errors.push(`${where}: pinned to no pick but picked; remove the pick`);
+        continue;
+      }
+      const names = (pick: typeof p.pick, ranked: boolean) => (Array.isArray(pick) && !ranked ? [...pick].sort() : pick);
+      if (!now || !isDeepStrictEqual(names(now.pick, now.ranked), names(p.pick, now.ranked))) errors.push(`${where}: pinned pick is not the published pick`);
+      else if (p.ranked !== undefined && p.ranked !== now.ranked) errors.push(`${where}: pinned ranked: ${p.ranked} but the pick has ranked: ${now.ranked}`);
     }
     if (e.status === "published" && Object.keys(e.picks).length === 0) {
       warnings.push(`${id}: published file has no picks`);

@@ -13,6 +13,10 @@ archived:
     snapshot: https://web.archive.org/web/20261007195539/https://350contracostaaction.org/california-ballot-propositions-2026-our-guide/
 fetchedAt: 2026-10-16
 hasReasoning: true
+pinned:
+  - contestId: napa-county-measure-b
+    pick: Y
+    reason: page says "on the June Ballot", but the Board of Supervisors placed Measure B on the November ballot; a re-extract drops it (review 2026-10-18)
 picks:
   us-rep-8:
     pick:

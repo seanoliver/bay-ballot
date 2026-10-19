@@ -7,6 +7,10 @@ archived:
     snapshot: https://web.archive.org/web/20261006232307/https://sccdp.org/index.php/voter-resources/endorsements/2026-endorsements/
 fetchedAt: 2026-10-07
 hasReasoning: false
+pinned:
+  - contestId: lgsuhsd-measure-n
+    pick: Y
+    reason: '"YES on Measures N / Los Gatos-Saratoga UHSD School Bonds"; the scoped extract missed it (added by hand 2026-10-07)'
 picks:
   valley-water-7:
     pick:
