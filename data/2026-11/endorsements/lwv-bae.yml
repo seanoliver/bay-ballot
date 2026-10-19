@@ -2,7 +2,7 @@ guide: lwv-bae
 election: 2026-11
 status: published
 source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-fetchedAt: 2026-10-14
+fetchedAt: 2026-10-17
 hasReasoning: true
 rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
@@ -33,6 +33,9 @@ picks:
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-p:
     pick: Y
+    quotes:
+      - text: Storm-drain infrastructure is increasingly important for managing intense rainfall and runoff, while maintaining streets supports the safe operation of buses, bicycles, pedestrians at crossings, emergency vehicles and other transportation.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y
   albany-measure-r:
@@ -42,9 +45,9 @@ picks:
   albany-measure-t:
     pick: Y
     quotes:
-      - text: Urban canopy helps mitigate heat-island effects, provides habitat, sequesters carbon and improves pedestrian environments.
-        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
       - text: Albany’s own streetlighting study found locations where inadequate illumination creates safety concerns for pedestrians and bicyclists and recommended improving poorly lit intersections and crosswalks.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Urban canopy helps mitigate heat-island effects, provides habitat, sequesters carbon and improves pedestrian environments.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-u:
     pick: Y
@@ -64,6 +67,8 @@ picks:
       - text: The measure is aligned with the League’s long commitment to expanding opportunities for citizens to run for public office, without the lack of personal wealth standing in the way as a prohibitive barrier.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
       - text: Investing in Berkeley’s public financing of campaign system expands opportunities and helps to reduce the outsized influence Big Money has in our political system.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Increasing funding to keep up with rising costs is what keeps a public financing program relevant, helpful, and true to its democratic mission.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   berkeley-measure-x:
     pick: Y

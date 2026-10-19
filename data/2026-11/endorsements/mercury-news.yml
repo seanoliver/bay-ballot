@@ -82,19 +82,8 @@ archived:
     snapshot: https://web.archive.org/web/20261011162548/https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - source: https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
-fetchedAt: 2026-10-14
+fetchedAt: 2026-10-17
 hasReasoning: true
-held:
-  - contestId: san-jose-council-9
-    pick:
-      - Genny Altwer
-    reason: old-election
-    evidence: Elect Genny Altwer to City Council. May 28, 2026 (primary)
-  - contestId: us-rep-14
-    pick:
-      - Aisha Wahab
-    reason: old-election
-    evidence: Elect Aisha Wahab ... Of nine candidates vying ... May 27, 2026 (primary)
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
@@ -139,9 +128,9 @@ picks:
     quotes:
       - text: How Littau’s moderate politics would function in Congress, where partisan lines have rarely been deeper, is a huge unknown.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
-      - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
-        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
       - text: He’s been an advocate for the environment, commonsense gun control, wildfire protection and the communities that he represents.
+        source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
+      - text: Huffman is a well-known quantity, especially in Marin and Sonoma where he served on the Marin Municipal Water District board and represented the two counties while serving three terms in the state Assembly and seven terms in Congress.
         source: https://www.marinij.com/2026/09/02/editorial-huffman-has-earned-chance-to-represent-expanded-district-in-congress/
   lt-governor:
     pick:
@@ -149,14 +138,10 @@ picks:
     quotes:
       - text: As state treasurer, she has chaired the bond finance committees which determine how to pay for new housing, new schools and environmental protection programs, among several other core state priorities.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+      - text: State treasurer since January 2019, Ma has been serving as California’s primary banker and lead asset manager, overseeing an investment portfolio worth more than $160 billion and processing $3 trillion of banking transactions per year amid a pandemic, global supply disruptions, price spikes, trade wars and, now, energy crises.
+        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
-  insurance-commissioner:
-    pick:
-      - Ben Allen
-    quotes:
-      - text: He co-authored Prop. 4, a $10 billion statewide wildfire prevention and climate resilience bond approved by voters in 2024.
-        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   treasurer:
     pick:
       - Eleni Kounalakis
@@ -167,16 +152,12 @@ picks:
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
       - text: In an interview with our editorial board, Kounalakis demonstrated a clear command of this office’s responsibilities — from bond issuances and housing tax credit programs to state employee pension governance and infrastructure finance.
         source: https://www.mercurynews.com/2026/09/29/endorsement-elect-eleni-kounalakis-californias-next-treasurer-2/
-  superintendent:
+  insurance-commissioner:
     pick:
-      - Richard Barrera
+      - Ben Allen
     quotes:
-      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: He co-authored Prop. 4, a $10 billion statewide wildfire prevention and climate resilience bond approved by voters in 2024.
+        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   state-senate-2:
     pick:
       - Damon Connolly
@@ -193,15 +174,91 @@ picks:
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
       - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
   prop-38:
     pick: N
     quotes:
-      - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
-        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
       - text: The Legislative Analyst’s Office reports that repaying the bond will require $500 million to $600 million in spending out of the state general fund for 20 years.
         source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+      - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
+        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+  prop-39:
+    pick: N
+  prop-43:
+    pick: Y
+  prop-44:
+    pick: N
+  prop-45:
+    pick: Y
   rtm:
     pick: N
+  palo-alto-measure-j:
+    pick: N
+  novato-usd-trustee-area-4:
+    pick:
+      - Abbey Picus
+    quotes:
+      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+      - text: Her experience as an educator, having three children in Novato public schools and having served four years as a trustee make Abbey Picus the clear choice for the Novato Union School District board.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+      - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+  san-rafael-council-3:
+    pick:
+      - Daryoush Davidi
+    quotes:
+      - text: Davidi’s stronger connection with San Rafael’s business community would fill a lacking need on the current council.
+        source: https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
+  novato-council-2:
+    pick:
+      - Rachel Farac
+  novato-council-4:
+    pick:
+      - Dan Christian
+    quotes:
+      - text: Christian stands out as a pragmatic choice, someone in touch with residents and the business community.
+        source: https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
+  larkspur-council:
+    pick:
+      - Stephanie Andre
+      - Sarah Margulies
+      - Jeanne Friedel
+    quotes:
+      - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+      - text: Andre, a former investment banker, has brought her business acumen to the council.
+        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+  san-anselmo-council:
+    pick:
+      - Steve Burdo
+      - Will Dittmar
+    quotes:
+      - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+      - text: In this race, Dittmar stands out as someone who provides the perspective of organizational leadership, an awareness of issues facing local businesses and a knowledge of the financial struggles facing many households.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+      - text: Dittmar would strengthen the council’s balance.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+  tiburon-council:
+    pick:
+      - Jack Ryan
+      - Kathleen Defever
+      - Chuck Hornbrook
+    quotes:
+      - text: Defever’s time on the Planning Commission has been steeped in housing mandates from the state.
+        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+      - text: Calls for improvements to parks and open space have been a priority for many residents in recent years and Hornbrook’s position on the parks commission put him in a position to help keep the ball rolling.
+        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
   sausalito-council:
     pick:
       - Joan Cox
@@ -212,14 +269,14 @@ picks:
   sausalito-measure-x:
     pick: Y
     quotes:
-      - text: Permitting new industrial construction for expanded business proposals is one way to gather tax dollars to address the impacts of climate change.
+      - text: With 40 years of neglect already under its belt, the marine-based businesses along the waterfront may not be able to wait much longer.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-county-measure-p:
     pick: Y
     quotes:
-      - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
-        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
       - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+      - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
         source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
   marin-healthcare-measure-cc:
     pick: Y
@@ -247,64 +304,10 @@ picks:
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
       - text: It is a hefty tax – a $10,000 tax on the sale of a $1 million home; a charge that local Realtors warn will cool the local real estate market, reduce the amount sellers will get for their houses and make it that much harder for people to afford to buy in San Rafael.
         source: https://www.marinij.com/2026/10/05/editorial-ij-recommends-no-vote-on-san-rafael-measure-w/
-  san-rafael-council-3:
-    pick:
-      - Daryoush Davidi
-    quotes:
-      - text: Davidi’s stronger connection with San Rafael’s business community would fill a lacking need on the current council.
-        source: https://www.marinij.com/2026/09/09/editorial-davidi-gets-nod-in-tight-race-for-district-3-seat-on-san-rafael-council/
-  novato-council-2:
-    pick:
-      - Rachel Farac
-  novato-council-4:
-    pick:
-      - Dan Christian
-    quotes:
-      - text: Christian stands out as a pragmatic choice, someone in touch with residents and the business community.
-        source: https://www.marinij.com/2026/09/13/editorial-ij-recommends-farac-christian-in-novato-council-races/
-  novato-usd-trustee-area-4:
-    pick:
-      - Abbey Picus
-    quotes:
-      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
-      - text: Her experience as an educator, having three children in Novato public schools and having served four years as a trustee make Abbey Picus the clear choice for the Novato Union School District board.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
-      - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
-  larkspur-council:
-    pick:
-      - Stephanie Andre
-      - Sarah Margulies
-      - Jeanne Friedel
-    quotes:
-      - text: Andre, a former investment banker, has brought her business acumen to the council.
-        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
-      - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
-        source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
-  san-anselmo-council:
-    pick:
-      - Steve Burdo
-      - Will Dittmar
-    quotes:
-      - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
-        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
-      - text: In this race, Dittmar stands out as someone who provides the perspective of organizational leadership, an awareness of issues facing local businesses and a knowledge of the financial struggles facing many households.
-        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
-      - text: Dittmar would strengthen the council’s balance.
-        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
-  tiburon-council:
-    pick:
-      - Jack Ryan
-      - Kathleen Defever
-      - Chuck Hornbrook
-    quotes:
-      - text: Defever’s time on the Planning Commission has been steeped in housing mandates from the state.
-        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
   ross-council:
     pick:
-      - Julie A McMillan
       - Robert Herbst
+      - Julie A McMillan
     quotes:
       - text: McMillan and Herbst offer a balance and breadth of civic experience and perspectives.
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
@@ -331,10 +334,6 @@ picks:
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
       - text: Fruin, among the first-time council candidates, brings her experience in having served on the Larkspur-Corte Madera School District and being a parent raising her three children in town.
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
-  prop-44:
-    pick: N
-  palo-alto-measure-j:
-    pick: N
   concord-council-1:
     pick:
       - Laura Hoffmeister

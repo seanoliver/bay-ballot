@@ -99,6 +99,7 @@ contests:
     title: Governor
     kind: candidate
     candidates: [Xavier Becerra, Steve Hilton]
+    aliases: { Xavier Becerra: [Xavier Beccera] }
     jurisdiction: { level: state, name: California }
   - id: lt-governor
     section: State

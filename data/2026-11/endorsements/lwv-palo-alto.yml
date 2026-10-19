@@ -5,7 +5,7 @@ source: https://www.lwvpaloalto.org/content.aspx?page_id=22&club_id=366290&modul
 archived:
   - source: https://www.lwvpaloalto.org/content.aspx?page_id=22&club_id=366290&module_id=530740
     snapshot: https://web.archive.org/web/20261006232650/https://www.lwvpaloalto.org/content.aspx?page_id=22&club_id=366290&module_id=530740
-fetchedAt: 2026-10-06
+fetchedAt: 2026-10-16
 hasReasoning: true
 picks:
   palo-alto-measure-j:
@@ -13,3 +13,5 @@ picks:
     quotes:
       - text: We agree that the documented community needs and potential citywide benefits of repairing, renovating, and expanding Cubberley Center outweigh concerns regarding Measure J's funding mechanism, lack of a sunset, lack of a legal spending guarantee, and the equity implications of a sales tax.
         source: https://www.lwvpaloalto.org/content.aspx?page_id=22&club_id=366290&module_id=530740
+  rtm:
+    pick: Y

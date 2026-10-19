@@ -1,6 +1,5 @@
 Donate
 Loading
-Donate
 All endorsements
 Voter guide
 California general
@@ -15,8 +14,9 @@ Register to vote (official site, opens in a new tab)
 Register by
 Check your registration
 How to vote
-Filters
 Grid viewList view
+City
+Filters
 Statewide4 endorsements
 XBXavier BecerraGovernor · StatewideStatewideEndorsed
 FMFiona MaLieutenant Governor · CaliforniaCaliforniaEndorsed
@@ -61,6 +61,8 @@ SESade ElhawaryAssemblymember District 57 · California Assembly District 57Cali
 TMTina McKinnorAssemblymember District 61 · California Assembly District 61California Assembly District 61Endorsed
 CWChris WardAssemblymember District 78 · California Assembly District 78California Assembly District 78Endorsed
 DADavid AlvarezAssemblymember District 80 · California Assembly District 80California Assembly District 80Endorsed
+Regional1 endorsement
+Regional Transit MeasureVote yes
 Alameda County14 endorsements
 Alameda
 MVMalia VellaMayor · Alameda MayorAlameda MayorEndorsed
@@ -95,7 +97,7 @@ FPFreddy PuzaCouncilmember · Culver City At LargeCulver City At LargeEndorsed
 TSThomas SmallCouncilmember · Culver City At LargeCulver City At LargeEndorsed
 Los Angeles
 NRNithya RamanMayor · Los Angeles CityLos Angeles CityEndorsed
-MRMarissa RoyCity Attorney · Los Angeles CityLos Angeles CityEndorsed
+MRMarissa RoyCity Attorney · CitywideCitywideEndorsed
 BWBarri Worth GirvanCouncilmember District 3 · Los Angeles Council District 3Los Angeles Council District 3Endorsed
 JUJose UgarteCouncilmember District 9 · Los Angeles City Council District 9Los Angeles City Council District 9Endorsed
 Santa Monica
@@ -140,8 +142,6 @@ Prop FChanges to Executive Branch ManagementVote yes
 Prop GAllowing Private Vehicles on the Great Highway in Sunset Dunes ParkVote no
 Prop HParcel Tax to Fund Public Muni OperationsVote yes
 Prop IChanges to Real Property Transfer TaxVote no
-San Francisco, CA; San Mateo County, CA; Santa Clara County, CA; Alameda County, CA; Contra Costa County1 endorsement
-Regional Transit MeasureVote yes
 San Mateo County7 endorsements
 Countywide
 MNMark NagalesSupervisor · San Mateo County Supervisor District 5San Mateo County Supervisor District 5Endorsed
@@ -187,3 +187,4 @@ Running for office?
 Request a YIMBY Action endorsement for your campaign.
 Request an endorsement
 00 daysuntil Election Day
+Donate
