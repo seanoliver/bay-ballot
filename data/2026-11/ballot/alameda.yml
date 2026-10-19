@@ -193,6 +193,7 @@ contests:
     title: "AC Transit Board, Ward 5"
     kind: candidate
     candidates: [Joseph Grcar, Murphy McCalley, Luis Reynoso]
+    aliases: { Murphy McCalley: [Murphy McCulley] }
     jurisdiction: { level: district, name: AC Transit, district: "5", within: [{ level: city, name: Fremont }, { level: city, name: Newark }, { level: city, name: Hayward }] }
   - id: acwd-ward-2
     section: School and special districts

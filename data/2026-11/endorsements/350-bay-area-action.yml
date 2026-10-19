@@ -168,3 +168,8 @@ picks:
   healdsburg-council-4:
     pick:
       - Chris Herrod
+  napa-county-measure-b:
+    pick: Y
+    quotes:
+      - text: Ensuring Napa has a dependable source of funds to help stave off catastrophic fires, and funds to enhance and preserve our regional parks with all their benefits, is a clear Yes for us.
+        source: https://350bayareaaction.org/napa_county_wildfire_preparedness_act

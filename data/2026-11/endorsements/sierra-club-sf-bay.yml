@@ -7,12 +7,6 @@ extraSources:
 fetchWith: browser
 fetchedAt: 2026-10-16
 hasReasoning: true
-held:
-  - contestId: ac-transit-ward-5
-    pick:
-      - Murphy McCalley
-    reason: name-mismatch
-    evidence: the page names `Murphy McCulley`, not on the ballot; closest `Murphy McCalley`. If it is the same person, add an alias
 rejectedQuotes:
   - text: And because the measure is a charter amendment, the funding cannot be redirected in a future budget season.
     reason: 'does not stand alone: opens with "And" (review 2026-10-10)'
@@ -105,6 +99,9 @@ picks:
   ac-transit-ward-4:
     pick:
       - Sarah Syed
+  ac-transit-ward-5:
+    pick:
+      - Murphy McCalley
   bart-8:
     pick:
       - Sara Barz

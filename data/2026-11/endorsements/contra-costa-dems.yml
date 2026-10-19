@@ -17,6 +17,9 @@ picks:
   us-rep-10:
     pick:
       - Mark DeSaulnier
+  governor:
+    pick:
+      - Xavier Becerra
   lt-governor:
     pick:
       - Fiona Ma
