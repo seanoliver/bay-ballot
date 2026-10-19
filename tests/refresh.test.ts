@@ -9,7 +9,7 @@ import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type F
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, writeSummary, type GuideResult } from "@/pipeline/refresh";
-import { resultJson, reviewReasons } from "@/pipeline/refresh";
+import { branchChanges, resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
 import type { EndorsementFile } from "@/lib/schema";
@@ -844,6 +844,27 @@ describe("summarize", () => {
     expect(md).toContain("Deferred (budget): gamma");
     expect(md).toContain("Unchanged: alpha");
     expect(md).toContain("Estimated model cost: $3.00");
+    expect(md).not.toContain("All changes on this branch");
+  });
+
+  it("lists every change on the branch ahead of this run's details", () => {
+    const md = summarize([{ id: "alpha", status: "unchanged" }], { date: "2026-10-06", branch: ["Alpha: added a pick", "Beta: two\nlines"] });
+    expect(md).toContain("## All changes on this branch\n\n_Against main, one entry per guide. The rest of this summary covers only this run._\n\n- Alpha: added a pick\n- Beta: two lines");
+  });
+});
+
+describe("branchChanges", () => {
+  it("returns the titles of changelog entries the branch adds over main, oldest first", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
+    const entry = (dir: string, file: string, title: string) => {
+      fs.mkdirSync(path.join(tmp, dir, "changelog"), { recursive: true });
+      fs.writeFileSync(path.join(tmp, dir, "changelog", file), `date: 2026-10-16\ntype: data\ntitle: ${title}\n`);
+    };
+    entry("main", "2026-10-15-launch.yml", "On main");
+    entry("branch", "2026-10-15-launch.yml", "On main");
+    entry("branch", "2026-10-17-refresh-beta.yml", "Beta changed");
+    entry("branch", "2026-10-16-refresh-alpha.yml", "Alpha changed");
+    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual(["Alpha changed", "Beta changed"]);
   });
 });
 

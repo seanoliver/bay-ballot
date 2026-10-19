@@ -5,7 +5,8 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { isRejected } from "@/lib/quote-key";
-import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
+import { parse } from "yaml";
+import { ChangelogEntry, EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
@@ -338,6 +339,17 @@ function loadBaseline(dir: string, election: string): Baseline {
   return { data: loadElection(dir, election), keep: new Set(fs.existsSync(changelog) ? fs.readdirSync(changelog) : []) };
 }
 
+/** Titles of the changelog entries the branch adds over the baseline, which sum up every run since the branch began. */
+export function branchChanges(root: string, baselineDir: string): string[] {
+  const dir = path.join(root, "changelog");
+  const main = path.join(baselineDir, "changelog");
+  const keep = new Set(fs.existsSync(main) ? fs.readdirSync(main) : []);
+  return (fs.existsSync(dir) ? fs.readdirSync(dir) : [])
+    .filter((f) => f.endsWith(".yml") && !keep.has(f))
+    .sort()
+    .map((f) => ChangelogEntry.parse(parse(fs.readFileSync(path.join(dir, f), "utf8"))).title);
+}
+
 function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, main: Baseline, results: GuideResult[]): void {
   const changed = results.filter((r) => r.status === "changed" && r.dataChanged).map((r) => r.id);
   if (changed.length === 0) return;
@@ -434,7 +446,10 @@ export function exitCodeFor(results: GuideResult[]): 0 | 1 | 2 {
   return 0;
 }
 
-export function summarize(results: GuideResult[], { date, dryRun = false }: { date: string; dryRun?: boolean }): string {
+export function summarize(
+  results: GuideResult[],
+  { date, dryRun = false, branch = [] }: { date: string; dryRun?: boolean; branch?: string[] },
+): string {
   const by = (s: GuideResult["status"]) => results.filter((r) => r.status === s);
   const changed = by("changed") as Extract<GuideResult, { status: "changed" }>[];
   const held = changed.reduce((n, r) => n + r.held.length, 0);
@@ -461,6 +476,10 @@ export function summarize(results: GuideResult[], { date, dryRun = false }: { da
     "",
     `Estimated model cost: ${costText(results)}`,
   ];
+  if (branch.length) {
+    lines.push("", "## All changes on this branch", "", "_Against main, one entry per guide. The rest of this summary covers only this run._", "");
+    for (const t of branch) lines.push(`- ${oneLine(t)}`);
+  }
   if (changed.length) {
     lines.push("", "## Re-extracted");
     for (const r of changed) {
