@@ -204,7 +204,7 @@ async function refreshGuide(
     pageTexts,
     { ownNames: [guide.name], rejected: prev.rejectedQuotes, noted: extracted.dropped },
   );
-  const pins = applyPins(prev, kept.picks, inScope);
+  const pins = applyPins(prev, kept.picks, inScope, nearHeld);
   const picks = pins.picks;
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
   const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes, ...pins.notes];
@@ -397,6 +397,7 @@ export function applyPins(
   prev: EndorsementFile,
   extracted: Record<string, Entry>,
   inScope: (contestId: string) => boolean = () => true,
+  nearHeld: HeldPick[] = [],
 ): { picks: Record<string, Entry>; notes: string[]; conflicts: string[] } {
   const picks = { ...extracted };
   const notes: string[] = [];
@@ -405,20 +406,22 @@ export function applyPins(
     const id = p.contestId;
     if (!inScope(id)) continue;
     const now = picks[id];
+    const near = nearHeld.find((h) => h.contestId === id);
+    const seen = now ?? (near && heldEntry(near));
     if (p.pick === null) {
-      if (now) {
-        delete picks[id];
-        notes.push(`${id}: pinned to no pick; dropped the extracted ${showPick(now.pick)}`);
-      }
+      if (seen) notes.push(`${id}: pinned to no pick; dropped the extracted ${showPick(seen.pick)}`);
+      delete picks[id];
       continue;
     }
     const pin: Entry = { pick: p.pick, ranked: p.ranked ?? false, quotes: [] };
-    const same = !!now && samePick({ ...now, ranked: false }, { ...pin, ranked: false });
-    if (!now) notes.push(`${id}: extract dropped the pinned pick ${showPick(p.pick)}; restored it`);
-    else if (!same) conflicts.push(`${id}: pinned ${showPick(p.pick)}, guide now picks ${showPick(now.pick)}`);
+    const inOrder = p.ranked === true && !!now?.ranked;
+    const same = !!now && samePick({ ...now, ranked: inOrder }, { ...pin, ranked: inOrder });
+    if (!seen) notes.push(`${id}: extract dropped the pinned pick ${showPick(p.pick)}; restored it`);
+    else if (!same) conflicts.push(`${id}: pinned ${showPick(p.pick)}, guide now picks ${showPick(seen.pick)}`);
+    else if (p.ranked === false && now.ranked) conflicts.push(`${id}: pinned ${showPick(p.pick)} unranked, guide now ranks ${showPick(now.pick)}`);
     const from = same ? now : (prev.picks[id] ?? pin);
     const ranked = p.ranked ?? from.ranked;
-    if (same && now.ranked !== ranked) notes.push(`${id}: extract changed ranked to ${now.ranked}; pinned ${ranked}`);
+    if (same && !now.ranked && ranked) notes.push(`${id}: extract dropped ranked; pinned true`);
     picks[id] = { ...from, pick: p.pick, ranked };
   }
   return { picks, notes, conflicts };

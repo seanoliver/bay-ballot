@@ -333,6 +333,18 @@ describe("runRefresh", () => {
       expect(reviewReasons(results)).toEqual(["alpha: kept us-rep-11 under a near spelling"]);
     });
 
+    it("builds no near-spelling hold on a contest pinned to no pick", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "pinned:\n  - contestId: us-rep-11\n    pick: null\n    reason: test\npicks:\n"));
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["us-rep-11"]).toBeUndefined();
+      expect(results[0]).toMatchObject({ notes: expect.arrayContaining(["us-rep-11: pinned to no pick; dropped the extracted Scott Wiener"]) });
+      expect(exitCodeFor(results)).toBe(0);
+    });
+
     it("keeps a published multi-name pick when the extractor reorders and misspells it", async () => {
       const root = setup(["alpha"]);
       const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
@@ -883,8 +895,33 @@ describe("applyPins", () => {
       "oakland-usd-2": { pick: ["B", "A"], ranked: false, quotes: [{ text: "q", source: "https://a.org/" }] },
     });
     expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [{ text: "q", source: "https://a.org/" }] });
-    expect(r.notes).toEqual(["oakland-usd-2: extract changed ranked to false; pinned true"]);
+    expect(r.notes).toEqual(["oakland-usd-2: extract dropped ranked; pinned true"]);
     expect(r.conflicts).toEqual([]);
+  });
+
+  it("flags a ranked pin whose order the page changed", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [] },
+    });
+    expect(r.picks["oakland-usd-2"].pick).toEqual(["A", "B"]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks B / A"]);
+  });
+
+  it("flags an unranked pin when the page now ranks the names", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: false, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [] },
+    });
+    expect(r.picks["oakland-usd-2"]).toMatchObject({ pick: ["A", "B"], ranked: false });
+    expect(r.notes).toEqual([]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B unranked, guide now ranks B / A"]);
+  });
+
+  it("flags a pin when the page's new pick only came back as a near-spelling hold", () => {
+    const near = { contestId: "oakland-usd-2", pick: ["C"], reason: "name-mismatch" as const, evidence: "page says Cee" };
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {}, () => true, [near]);
+    expect(r.picks["oakland-usd-2"].pick).toEqual(["A", "B"]);
+    expect(r.notes).toEqual([]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks C"]);
   });
 
   it("leaves a pin outside the scope alone", () => {
