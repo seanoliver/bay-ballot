@@ -5,8 +5,8 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { isRejected } from "@/lib/quote-key";
-import { parse } from "yaml";
-import { ChangelogEntry, EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
+import { readChangelog } from "@/lib/changelog";
+import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
 import { guideChangelogEntry, writeRefreshEntry } from "./changelog";
 import { diffPicks } from "./diff";
@@ -341,13 +341,13 @@ function loadBaseline(dir: string, election: string): Baseline {
 
 /** Titles of the changelog entries the branch adds over the baseline, which sum up every run since the branch began. */
 export function branchChanges(root: string, baselineDir: string): string[] {
-  const dir = path.join(root, "changelog");
   const main = path.join(baselineDir, "changelog");
   const keep = new Set(fs.existsSync(main) ? fs.readdirSync(main) : []);
-  return (fs.existsSync(dir) ? fs.readdirSync(dir) : [])
-    .filter((f) => f.endsWith(".yml") && !keep.has(f))
-    .sort()
-    .map((f) => ChangelogEntry.parse(parse(fs.readFileSync(path.join(dir, f), "utf8"))).title);
+  const { entries, errors } = readChangelog(root);
+  return [
+    ...entries.filter((e) => !keep.has(e.file)).sort((a, b) => a.file.localeCompare(b.file)).map((e) => e.title),
+    ...errors.filter((e) => !keep.has(e.slice("changelog/".length).split(":")[0])).map((e) => `unreadable: ${e}`),
+  ];
 }
 
 function writeChangelog(deps: RefreshDeps, opts: RefreshOptions, main: Baseline, results: GuideResult[]): void {

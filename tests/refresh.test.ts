@@ -854,7 +854,7 @@ describe("summarize", () => {
 });
 
 describe("branchChanges", () => {
-  it("returns the titles of changelog entries the branch adds over main, oldest first", () => {
+  it("returns the titles of changelog entries the branch adds over main, oldest first, naming unreadable ones", () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
     const entry = (dir: string, file: string, title: string) => {
       fs.mkdirSync(path.join(tmp, dir, "changelog"), { recursive: true });
@@ -864,7 +864,21 @@ describe("branchChanges", () => {
     entry("branch", "2026-10-15-launch.yml", "On main");
     entry("branch", "2026-10-17-refresh-beta.yml", "Beta changed");
     entry("branch", "2026-10-16-refresh-alpha.yml", "Alpha changed");
-    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual(["Alpha changed", "Beta changed"]);
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", ".gitkeep"), "");
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", "2026-10-18-refresh-gamma.yml"), "<<<<<<< HEAD\ntitle: x\n");
+    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual([
+      "Alpha changed",
+      "Beta changed",
+      expect.stringMatching(/^unreadable: changelog\/2026-10-18-refresh-gamma\.yml: /),
+    ]);
+  });
+
+  it("handles a missing changelog folder on either side", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
+    fs.mkdirSync(path.join(tmp, "branch", "changelog"), { recursive: true });
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", "2026-10-16-refresh-alpha.yml"), "date: 2026-10-16\ntype: data\ntitle: Alpha changed\n");
+    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual(["Alpha changed"]);
+    expect(branchChanges(path.join(tmp, "main"), path.join(tmp, "branch"))).toEqual([]);
   });
 });
 
