@@ -20,7 +20,7 @@ contests:
     title: Antioch City Council, District 4
     kind: candidate
     candidates: [Sandra G White, Monica E Wilson, Matty Mathews Alappat, Andrew Becker]
-    aliases: { Monica E Wilson: [Monica Wilson, Monica E. Wilson], Matty Mathews Alappat: [Matt Mathews Alappat, Matty Matthews Alappat], Sandra G White: [Sandra White] }
+    aliases: { Monica E Wilson: [Monica Wilson, Monica E. Wilson], Matty Mathews Alappat: [Matt Mathews Alappat, Matty Matthews Alappat, Metty Mathews Alappat], Sandra G White: [Sandra White] }
     jurisdiction: { level: district, name: City Council, district: "4", within: [{ level: city, name: Antioch }] }
   - id: brentwood-council-2
     section: Local candidates

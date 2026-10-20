@@ -63,6 +63,8 @@ YES on Measure Z
 Oakland
 YES on Measure EE
 YES on Measure FF
+Regional
+YES on Measure RTM
 Historical Endorsements
 2025 Endorsements
 California Special Election ( )

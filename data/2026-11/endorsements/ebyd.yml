@@ -10,7 +10,7 @@ held:
       - Aaron Tiedemann
       - Robin D. López
     reason: wrong-rank
-    evidence: "At Large: 1. Aaron Tiedemann, 2. Robin D. Lopez"
+    evidence: "At Large: 1. Aaron Tiedemann, 2. Robin D. Lopez (ranked-choice race, page ranks them; extraction ranked:false)"
 pinned:
   - contestId: rtm
     pick: Y
@@ -94,6 +94,9 @@ picks:
   san-leandro-council-3:
     pick:
       - Joseph Trujillo
+  san-pablo-council:
+    pick:
+      - Caden Cotton-Blake
   union-city-council-3:
     pick:
       - Cheris Crocker-Root
@@ -118,8 +121,6 @@ picks:
   ebrpd-ward-5:
     pick:
       - Olivia Sanwong
-  rtm:
-    pick: Y
   berkeley-measure-u:
     pick: Y
   berkeley-measure-v:
@@ -130,6 +131,5 @@ picks:
     pick: Y
   oakland-measure-ff:
     pick: Y
-  san-pablo-council:
-    pick:
-      - Caden Cotton-Blake
+  rtm:
+    pick: Y
