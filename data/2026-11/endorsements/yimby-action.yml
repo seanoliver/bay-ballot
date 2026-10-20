@@ -5,7 +5,7 @@ source: https://yimbyaction.org/endorsements/november-2026-california-general
 archived:
   - source: https://yimbyaction.org/endorsements/november-2026-california-general
     snapshot: https://web.archive.org/web/20261006200824/https://yimbyaction.org/endorsements/november-2026-california-general
-fetchedAt: 2026-10-19
+fetchedAt: 2026-10-20
 hasReasoning: false
 picks:
   governor:
@@ -26,6 +26,8 @@ picks:
     pick: Y
   prop-43:
     pick: N
+  rtm:
+    pick: Y
   us-rep-1:
     pick:
       - Mike McGuire
@@ -179,8 +181,6 @@ picks:
     pick: Y
   prop-i:
     pick: N
-  rtm:
-    pick: Y
   san-mateo-county-supervisor-5:
     pick:
       - Mark Nagales
@@ -201,12 +201,16 @@ picks:
   san-mateo-council-5:
     pick:
       - Adam Loraine
-  mountain-view-council:
+  palo-alto-council:
     pick:
-      - James Kuszmaul
-      - Erik Poicon
+      - Vicki Veenker
+      - Yu "Yudy" Deng
   san-jose-council-9:
     pick:
       - Gordon Chester
   sausalito-measure-x:
     pick: Y
+  mountain-view-council:
+    pick:
+      - James Kuszmaul
+      - Erik Poicon
