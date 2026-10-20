@@ -11,6 +11,10 @@ held:
       - Robin D. López
     reason: wrong-rank
     evidence: "At Large: 1. Aaron Tiedemann, 2. Robin D. Lopez"
+pinned:
+  - contestId: rtm
+    pick: Y
+    reason: page now says "YES on Measure RTM", added after our 2026-10-08 fetch; EBYD confirmed the June endorsement by email (review 2026-10-20)
 picks:
   us-rep-12:
     pick:
@@ -114,6 +118,8 @@ picks:
   ebrpd-ward-5:
     pick:
       - Olivia Sanwong
+  rtm:
+    pick: Y
   berkeley-measure-u:
     pick: Y
   berkeley-measure-v:
