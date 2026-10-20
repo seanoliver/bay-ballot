@@ -16,12 +16,12 @@ export function sitemapEntries({
   guides,
   lastModified,
 }: {
-  elections: { id: string; areas: string[]; contests: string[] }[];
+  elections: { id: string; index: string; areas: string[]; contests: string[] }[];
   guides: string[];
   lastModified: string;
 }): { url: string; lastModified: string }[] {
   const paths = [
-    ...elections.flatMap((e) => [`/${e.id}`, ...e.areas.map((a) => `/${e.id}/${a}`), ...e.contests.map((c) => `/${e.id}/${c}`)]),
+    ...elections.flatMap((e) => [e.index, ...e.areas.map((a) => `/${e.id}/${a}`), ...e.contests.map((c) => `/${e.id}/${c}`)]),
     ...guides.map((g) => `/guides/${g}`),
     "/about",
     "/changelog",

@@ -91,10 +91,10 @@ export function countyPages(areas: Area[]): Area[] {
 }
 
 /** The Bay Area, then one link per county, named for the county. City pages get no link; their county is marked `within`. */
-export function areaLinks(election: string, areas: Area[], current: string | null): AreaLink[] {
+export function areaLinks(election: string, areas: Area[], current: string | null, { index = `/${election}` }: { index?: string } = {}): AreaLink[] {
   const here = areas.find((a) => a.id === current);
   return [
-    { href: `/${election}`, label: BAY_AREA.name, current: current === null, within: false },
+    { href: index, label: BAY_AREA.name, current: current === null, within: false },
     ...countyPages(areas).map((a) => ({
       href: `/${election}/${a.id}`,
       label: countyOf(a) ?? a.name,

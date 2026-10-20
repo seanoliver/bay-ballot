@@ -13,6 +13,12 @@ fetchWith: browser
 fetchedAt: 2026-10-17
 hasReasoning: true
 rejectedQuotes:
+  - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
+    reason: lists supporters; gives no reason (review 2026-10-19)
+    contestId: prop-c
+  - text: Environmental groups that pushed for Prop K’s passage are opposed to Prop G.
+    reason: cites who opposes it; gives no reason (review 2026-10-19)
+    contestId: prop-g
   - text: However, we can’t support it, and believe it is a mayoral power grab.
     reason: 'does not stand alone: opens with "However" and its subject is "it" (review 2026-10-10)'
     contestId: prop-f
@@ -141,9 +147,6 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-c:
     pick: Y
-    quotes:
-      - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-d:
     pick: Y
   prop-e:
@@ -161,8 +164,6 @@ picks:
     pick: N
     quotes:
       - text: Sea level rise and erosion are already a threat that will eventually overwhelm the roadway, as well as the cost to constantly remove sand from it.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: Environmental groups that pushed for Prop K’s passage are opposed to Prop G.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: The park is there; the city controller’s office estimates it would cost millions of dollars to remove it and reconstruct the roadway, along with an annual cost of about $1.4 million.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures

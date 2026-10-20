@@ -84,6 +84,12 @@ archived:
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
 fetchedAt: 2026-10-17
 hasReasoning: true
+pinned:
+  - contestId: ross-council
+    pick:
+      - Robert Herbst
+      - Julie A McMillan
+    reason: from the IJ's 9/27 Ross editorial, which the extractor missed (added by hand 2026-10-07)
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
@@ -269,6 +275,8 @@ picks:
   sausalito-measure-x:
     pick: Y
     quotes:
+      - text: Permitting new industrial construction for expanded business proposals is one way to gather tax dollars to address the impacts of climate change.
+        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
       - text: With 40 years of neglect already under its belt, the marine-based businesses along the waterfront may not be able to wait much longer.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-county-measure-p:

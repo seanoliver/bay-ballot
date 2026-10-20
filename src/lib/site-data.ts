@@ -17,6 +17,11 @@ export function latestElection(root: string = DATA_ROOT): string {
   return last;
 }
 
+/** The latest election's Bay Area page is the home page; an older election's stays at /<id>. */
+export function electionIndex(id: string): string {
+  return id === latestElection() ? "/" : `/${id}`;
+}
+
 const cache = new Map<string, ElectionData>();
 
 export function election(id: string): ElectionData | undefined {
@@ -34,7 +39,7 @@ const snapshots = new WeakMap<ElectionData, ElectionSnapshot>();
 export function electionSnapshot(d: ElectionData): ElectionSnapshot {
   let s = snapshots.get(d);
   if (!s) {
-    s = snapshotOf(d);
+    s = snapshotOf(d, { index: electionIndex(d.ballot.election) });
     snapshots.set(d, s);
   }
   return s;

@@ -70,7 +70,7 @@ export function shrinkWarning(
 
 export const KEY_ORDER = [
   "guide", "election", "status", "source", "extraSources", "fetchWith", "fetchFrom", "contentSelector", "contentExclude", "contentSelectors", "manual",
-  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "rejectedQuotes", "picks",
+  "allowForeignSources", "archived", "fetchedAt", "hasReasoning", "held", "pinned", "rejectedQuotes", "picks",
 ] as const satisfies readonly (keyof EndorsementFile)[];
 
 function compactEntry(e: Entry): Record<string, unknown> {

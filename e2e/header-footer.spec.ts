@@ -201,7 +201,7 @@ test("the footer leads with official voting links, then site and corrections lin
     else await expect(domain).toBeHidden();
   }
   const site = footer.getByRole("navigation", { name: "Footer" });
-  await expect(site.getByRole("link", { name: "Ballot" })).toHaveAttribute("href", BALLOT);
+  await expect(site.getByRole("link", { name: "Ballot" })).toHaveAttribute("href", "/");
   await expect(site.getByRole("link", { name: "Changelog" })).toHaveAttribute("href", "/changelog");
   await expect(site.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
   await expect(footer.getByRole("link", { name: "corrections@bayballot.com" })).toHaveAttribute("href", "mailto:corrections@bayballot.com");

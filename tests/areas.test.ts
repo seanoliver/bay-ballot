@@ -85,6 +85,10 @@ describe("areaLinks", () => {
     expect(links.filter((l) => l.current)).toEqual([]);
   });
 
+  it("links the Bay Area to the index path it's given", () => {
+    expect(areaLinks("2026-11", [SF], "sf", { index: "/" })[0]).toEqual({ href: "/", label: "Bay Area", current: false, within: false });
+  });
+
   it("does not mark the current county page as within itself", () => {
     expect(areaLinks("2026-11", [SF, SM, SCC, PA], "santa-clara-county").find((l) => l.label === "Santa Clara")).toMatchObject({ current: true, within: false });
   });

@@ -9,7 +9,7 @@ import { fetchSource as realFetchSource, SelectorMissError, type Fetched, type F
 import { normalizePageText, sourceSlug } from "@/pipeline/pagestore";
 import { pagePath } from "@/pipeline/refresh";
 import { capSummary, costOf, exitCodeFor, runRefresh, seedPages, summarize, writeSummary, type GuideResult } from "@/pipeline/refresh";
-import { resultJson, reviewReasons } from "@/pipeline/refresh";
+import { applyPins, branchChanges, resultJson, reviewReasons } from "@/pipeline/refresh";
 import type { VerifyOutput } from "@/pipeline/verify";
 import { toYaml } from "@/pipeline/write";
 import type { EndorsementFile } from "@/lib/schema";
@@ -331,6 +331,18 @@ describe("runRefresh", () => {
       expect(summarize(results, { date: "2026-10-06" })).toContain("needs review (0 held, 1 kept under a near spelling)");
       expect(exitCodeFor(results)).toBe(2);
       expect(reviewReasons(results)).toEqual(["alpha: kept us-rep-11 under a near spelling"]);
+    });
+
+    it("builds no near-spelling hold on a contest pinned to no pick", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", "pinned:\n  - contestId: us-rep-11\n    pick: null\n    reason: test\npicks:\n"));
+      const results = await runRefresh(deps(fakeClient(misspelled).client, fetcher({ alpha: changedPage })), { root, election: ELECTION, verify: false });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["us-rep-11"]).toBeUndefined();
+      expect(results[0]).toMatchObject({ notes: expect.arrayContaining(["us-rep-11: pinned to no pick; dropped the extracted Scott Wiener"]) });
+      expect(exitCodeFor(results)).toBe(0);
     });
 
     it("keeps a published multi-name pick when the extractor reorders and misspells it", async () => {
@@ -817,6 +829,139 @@ describe("runRefresh", () => {
   });
 });
 
+describe("pinned picks", () => {
+  const pin = (root: string, pinned: string, picks = "") => {
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", `pinned:\n${pinned}picks:\n`) + picks);
+    return f;
+  };
+  const run = (root: string, out: ExtractOutput, opts: { verify?: boolean; held?: boolean } = {}) =>
+    runRefresh(deps(fakeClient(out, { held: opts.held }).client, fetcher({ alpha: PAGE("alpha", "October 6, 2026") })), {
+      root,
+      election: ELECTION,
+      forceExtract: true,
+      verify: opts.verify ?? false,
+    });
+
+  it("restores a pinned pick the extract dropped, with its quote", async () => {
+    const root = setup(["alpha"]);
+    const quote = `    quotes:\n      - text: we need more affordable housing in every neighborhood.\n        source: ${url("alpha")}\n`;
+    const f = pin(root, "  - contestId: prop-c\n    pick: Y\n    reason: test\n", `  prop-c:\n    pick: Y\n${quote}`);
+    const before = fs.readFileSync(f, "utf8");
+    const results = await run(root, sameOut);
+    expect(fs.readFileSync(f, "utf8")).toBe(before);
+    expect(results[0]).toMatchObject({ notes: expect.arrayContaining(["prop-c: extract dropped the pinned pick Y; restored it"]) });
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("drops an extracted pick on a contest pinned to no pick", async () => {
+    const root = setup(["alpha"]);
+    const f = pin(root, "  - contestId: prop-c\n    pick: null\n    reason: test\n");
+    const results = await run(root, extractOut);
+    expect(Object.keys(parse(fs.readFileSync(f, "utf8")).picks)).toEqual(["prop-b"]);
+    expect(exitCodeFor(results)).toBe(0);
+  });
+
+  it("keeps the pin but flags the guide when the page now picks differently", async () => {
+    const root = setup(["alpha"]);
+    const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+    fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("pick: N", "pick: Y"));
+    pin(root, "  - contestId: prop-b\n    pick: Y\n    reason: test\n  - contestId: prop-d\n    pick: null\n    reason: other\n");
+    const results = await run(root, extractOut);
+    const after = parse(fs.readFileSync(f, "utf8"));
+    expect(after.picks["prop-b"].pick).toBe("Y");
+    expect(after.picks["prop-c"].pick).toBe("Y");
+    expect(after.pinned).toEqual([
+      { contestId: "prop-b", pick: "Y", reason: "test" },
+      { contestId: "prop-d", pick: null, reason: "other" },
+    ]);
+    expect(reviewReasons(results)).toEqual(["alpha: prop-b: pinned Y, guide now picks N"]);
+    const md = summarize(results, { date: "2026-10-06" });
+    expect(md).toContain("needs review (0 held, 1 pinned changed)");
+    expect(md).toContain("- **prop-b: pinned Y, guide now picks N**");
+    expect(exitCodeFor(results)).toBe(2);
+  });
+
+  it("keeps a pinned pick the verifier would hold", async () => {
+    const root = setup(["alpha"]);
+    const f = pin(root, "  - contestId: prop-c\n    pick: Y\n    reason: test\n", "  prop-c:\n    pick: Y\n");
+    const results = await run(root, extractOut, { verify: true, held: true });
+    const after = parse(fs.readFileSync(f, "utf8"));
+    expect(after.picks["prop-c"].pick).toBe("Y");
+    expect(after.held).toBeUndefined();
+    expect(exitCodeFor(results)).toBe(0);
+  });
+});
+
+describe("applyPins", () => {
+  const prev = (pinned: EndorsementFile["pinned"]): EndorsementFile => ({
+    guide: "alpha", election: ELECTION, status: "published", fetchedAt: "2026-10-05", hasReasoning: true, pinned,
+    picks: { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [] } },
+  });
+
+  it("puts back a pinned ranked flag and keeps the pin's name order", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: false, quotes: [{ text: "q", source: "https://a.org/" }] },
+    });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [{ text: "q", source: "https://a.org/" }] });
+    expect(r.notes).toEqual(["oakland-usd-2: extract dropped ranked; pinned true"]);
+    expect(r.conflicts).toEqual([]);
+  });
+
+  it("flags a ranked pin whose order the page changed", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [] },
+    });
+    expect(r.picks["oakland-usd-2"].pick).toEqual(["A", "B"]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks B / A"]);
+  });
+
+  it("flags an unranked pin when the page now ranks the names", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: false, reason: "x" }]), {
+      "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [] },
+    });
+    expect(r.picks["oakland-usd-2"]).toMatchObject({ pick: ["A", "B"], ranked: false });
+    expect(r.notes).toEqual([]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B unranked, guide now ranks B / A"]);
+  });
+
+  it("flags a pin with no ranked field when the page ranks an unranked pick", () => {
+    const quote = { text: "published", source: "https://a.org/" };
+    const file = { ...prev([{ contestId: "ross-council", pick: ["R", "J"], reason: "x" }]), picks: { "ross-council": { pick: ["R", "J"], ranked: false, quotes: [quote] } } };
+    const r = applyPins(file, { "ross-council": { pick: ["J", "R"], ranked: true, quotes: [{ text: "page", source: "https://a.org/" }] } });
+    expect(r.picks["ross-council"]).toEqual({ pick: ["R", "J"], ranked: false, quotes: [quote] });
+    expect(r.conflicts).toEqual(["ross-council: pinned R / J unranked, guide now ranks J / R"]);
+  });
+
+  it("flags a pin with no ranked field when the page reorders a ranked pick, keeping the published quotes", () => {
+    const quote = { text: "published", source: "https://a.org/" };
+    const file = { ...prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], reason: "x" }]), picks: { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [quote] } } };
+    const r = applyPins(file, { "oakland-usd-2": { pick: ["B", "A"], ranked: true, quotes: [{ text: "page", source: "https://a.org/" }] } });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [quote] });
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks B / A"]);
+  });
+
+  it("keeps the published ranking on a pin with no ranked field", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], reason: "x" }]), { "oakland-usd-2": { pick: ["A", "B"], ranked: true, quotes: [] } });
+    expect(r.picks["oakland-usd-2"]).toEqual({ pick: ["A", "B"], ranked: true, quotes: [] });
+    expect(r.conflicts).toEqual([]);
+    expect(r.notes).toEqual([]);
+  });
+
+  it("flags a pin when the page's new pick only came back as a near-spelling hold", () => {
+    const near = { contestId: "oakland-usd-2", pick: ["C"], reason: "name-mismatch" as const, evidence: "page says Cee" };
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: ["A", "B"], ranked: true, reason: "x" }]), {}, () => true, [near]);
+    expect(r.picks["oakland-usd-2"].pick).toEqual(["A", "B"]);
+    expect(r.notes).toEqual([]);
+    expect(r.conflicts).toEqual(["oakland-usd-2: pinned A / B, guide now picks C"]);
+  });
+
+  it("leaves a pin outside the scope alone", () => {
+    const r = applyPins(prev([{ contestId: "oakland-usd-2", pick: null, reason: "x" }]), { "oakland-usd-2": { pick: ["A"], ranked: false, quotes: [] } }, () => false);
+    expect(Object.keys(r.picks)).toEqual(["oakland-usd-2"]);
+  });
+});
+
 describe("summarize", () => {
   it("lists changed, held, deferred and unchanged guides with totals and cost", () => {
     const usage = { input_tokens: 1_000_000, output_tokens: 100_000, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } as Anthropic.Messages.Usage;
@@ -844,6 +989,48 @@ describe("summarize", () => {
     expect(md).toContain("Deferred (budget): gamma");
     expect(md).toContain("Unchanged: alpha");
     expect(md).toContain("Estimated model cost: $3.00");
+    expect(md).not.toContain("All changes on this branch");
+  });
+
+  it("lists every change on the branch ahead of this run's details", () => {
+    const md = summarize([{ id: "alpha", status: "unchanged" }], { date: "2026-10-06", branch: ["Alpha: added a pick", "Beta: two\nlines"] });
+    expect(md).toContain("## All changes on this branch\n\n_Against main, one entry per guide. The rest of this summary covers only this run._\n\n- Alpha: added a pick\n- Beta: two lines");
+  });
+});
+
+describe("branchChanges", () => {
+  it("returns the titles of changelog entries the branch adds over main, oldest first, naming unreadable ones", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
+    const entry = (dir: string, file: string, title: string) => {
+      fs.mkdirSync(path.join(tmp, dir, "changelog"), { recursive: true });
+      fs.writeFileSync(path.join(tmp, dir, "changelog", file), `date: 2026-10-16\ntype: data\ntitle: ${title}\n`);
+    };
+    entry("main", "2026-10-15-launch.yml", "On main");
+    entry("branch", "2026-10-15-launch.yml", "On main");
+    entry("branch", "2026-10-17-refresh-beta.yml", "Beta changed");
+    entry("branch", "2026-10-16-refresh-alpha.yml", "Alpha changed");
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", ".gitkeep"), "");
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", "2026-10-18-refresh-gamma.yml"), "<<<<<<< HEAD\ntitle: x\n");
+    for (const side of ["main", "branch"]) fs.writeFileSync(path.join(tmp, side, "changelog", "2026-10-14-broken.yml"), "title: [\n");
+    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual([
+      "Alpha changed",
+      "Beta changed",
+      expect.stringMatching(/^unreadable: changelog\/2026-10-18-refresh-gamma\.yml: /),
+    ]);
+  });
+
+  it("is what bb refresh passes to the summary when given --baseline", () => {
+    const bb = fs.readFileSync(path.join(__dirname, "..", "scripts", "bb.ts"), "utf8");
+    expect(bb).toContain('const baseline = option("--baseline");');
+    expect(bb).toContain("branch: baseline ? branchChanges(ROOT, baseline) : []");
+  });
+
+  it("handles a missing changelog folder on either side", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bb-branch-"));
+    fs.mkdirSync(path.join(tmp, "branch", "changelog"), { recursive: true });
+    fs.writeFileSync(path.join(tmp, "branch", "changelog", "2026-10-16-refresh-alpha.yml"), "date: 2026-10-16\ntype: data\ntitle: Alpha changed\n");
+    expect(branchChanges(path.join(tmp, "branch"), path.join(tmp, "main"))).toEqual(["Alpha changed"]);
+    expect(branchChanges(path.join(tmp, "main"), path.join(tmp, "branch"))).toEqual([]);
   });
 });
 
