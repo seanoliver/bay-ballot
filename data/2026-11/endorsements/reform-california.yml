@@ -13,12 +13,6 @@ extraSources:
   - https://www.reformcalifornia.org/voter-guides/napa
 fetchedAt: 2026-10-19
 hasReasoning: true
-held:
-  - contestId: antioch-council-4
-    pick:
-      - Matty Mathews Alappat
-    reason: name-mismatch
-    evidence: the page names `Metty Mathews Alappat`, not on the ballot; closest `Matty Mathews Alappat`. If it is the same person, add an alias
 pinned:
   - contestId: court-of-appeal-6
     pick: null
@@ -582,6 +576,9 @@ picks:
     pick: N
   liberty-uhsd-measure-x:
     pick: N
+  antioch-council-4:
+    pick:
+      - Matty Mathews Alappat
   brentwood-council-2:
     pick:
       - Tammy Zickuhr
