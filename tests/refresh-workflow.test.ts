@@ -102,8 +102,18 @@ describe.skipIf(!hasBash)("refresh.yml phone notification steps", () => {
 });
 
 describe("ci.yml", () => {
-  it("does not run on pushes to the runs branch", () => {
-    const ci = parse(fs.readFileSync(path.join(__dirname, "..", ".github", "workflows", "ci.yml"), "utf8"));
-    expect(ci.on.push["branches-ignore"]).toContain("runs");
+  const ci = parse(fs.readFileSync(path.join(__dirname, "..", ".github", "workflows", "ci.yml"), "utf8"));
+
+  it("runs on pushes to main only, so the runs and badges branches never trigger it", () => {
+    expect(ci.on.push.branches).toEqual(["main"]);
+  });
+
+  it("keeps the dispatch trigger the refresh gate uses", () => {
+    expect(ci.on).toHaveProperty("workflow_dispatch");
+  });
+
+  it("cancels superseded runs only within one PR", () => {
+    expect(ci.concurrency.group).toBe("ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}");
+    expect(ci.concurrency["cancel-in-progress"]).toBe("${{ github.event_name == 'pull_request' }}");
   });
 });
