@@ -1,11 +1,19 @@
 name: CI
 
 on:
+  # Branch pushes run through their PR; running on both doubled every PR's CI.
   push:
-    branches-ignore: [runs, badges]
+    branches: [main]
   pull_request:
+    branches: [main]
   # The refresh workflow dispatches CI on its branch: its GITHUB_TOKEN pushes don't trigger push/pull_request runs.
   workflow_dispatch:
+
+# A new commit cancels its PR's older run. Push and dispatch runs each get their own group, so nothing cancels them;
+# the refresh workflow watches its dispatched run and must never see it cancelled.
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
