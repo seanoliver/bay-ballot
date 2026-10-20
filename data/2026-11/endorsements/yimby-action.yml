@@ -2,41 +2,21 @@ guide: yimby-action
 election: 2026-11
 status: published
 source: https://yimbyaction.org/endorsements/november-2026-california-general
-extraSources:
-  - https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
-  - https://marinyimby.org/endorsements/endorsements/statewide-offices/
-  - https://marinyimby.org/endorsements/endorsements/local-ballot-measures/
-allowForeignSources: true # Marin YIMBY chapter pages carry the reasons for its picks
 archived:
   - source: https://yimbyaction.org/endorsements/november-2026-california-general
     snapshot: https://web.archive.org/web/20261006200824/https://yimbyaction.org/endorsements/november-2026-california-general
-  - source: https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
-    snapshot: https://web.archive.org/web/20261007203137/https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
-  - source: https://marinyimby.org/endorsements/endorsements/statewide-offices/
-    snapshot: https://web.archive.org/web/20261007203156/https://marinyimby.org/endorsements/endorsements/statewide-offices/
-  - source: https://marinyimby.org/endorsements/endorsements/local-ballot-measures/
-    snapshot: https://web.archive.org/web/20261007203321/https://marinyimby.org/endorsements/endorsements/local-ballot-measures/
 fetchedAt: 2026-10-19
-hasReasoning: true
+hasReasoning: false
 picks:
   governor:
     pick:
       - Xavier Becerra
-    quotes:
-      - text: In his questionnaire to YIMBY Action, Becerra committed to pursuing legislation to ensure state housing law applies in the coastal zone just like everywhere else.
-        source: https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
   lt-governor:
     pick:
       - Fiona Ma
-    quotes:
-      - text: California needs leaders who can turn housing goals into homes—and Fiona Ma brings financial and executive experience to that challenge.
-        source: https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
   attorney-general:
     pick:
       - Rob Bonta
-    quotes:
-      - text: Pro-housing laws only work if they’re enforced—and Rob Bonta has made enforcement a priority.
-        source: https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
   insurance-commissioner:
     pick:
       - Ben Allen
@@ -46,17 +26,12 @@ picks:
     pick: Y
   prop-43:
     pick: N
-  rtm:
-    pick: Y
   us-rep-1:
     pick:
       - Mike McGuire
   us-rep-2:
     pick:
       - Jared Huffman
-    quotes:
-      - text: We were particularly encouraged by his support for the 21st Century ROAD to Housing Act, a bipartisan federal housing package that expands affordable-housing financing and supports local housing strategies.
-        source: https://marinyimby.org/endorsements/endorsements/ca-state-assembly/
   us-rep-11:
     pick:
       - Scott Wiener
@@ -204,6 +179,8 @@ picks:
     pick: Y
   prop-i:
     pick: N
+  rtm:
+    pick: Y
   san-mateo-county-supervisor-5:
     pick:
       - Mark Nagales
