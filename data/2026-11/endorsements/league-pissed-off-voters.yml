@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
     snapshot: https://web.archive.org/web/20261005221544/https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-fetchedAt: 2026-10-05
+fetchedAt: 2026-10-20
 hasReasoning: true
 rejectedQuotes:
   - text: Clearly everyone can see that Lieber knows what she’s doing.
@@ -88,10 +88,6 @@ picks:
     quotes:
       - text: Virginia Cheung is a SFUSD parent, a longtime leader in the nonprofit world, and a strong advocate for families and educators.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: Reina Tello is a single parent of SFUSD kids (and an SFUSD graduate herself) and has been an organizer with PODER for decades.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
-      - text: Ryan Hazelton is the executive director of Mariposa Kids afterschool and summer programs, and the chair of the SF Childcare Planning & Advisory Council.
-        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   college-board:
     pick:
       - Leah LaCroix
@@ -100,6 +96,8 @@ picks:
       - text: Leah LaCroix has put in the work. From her time on the SF Youth Commission, she helped deliver the successful Free Muni for Youth program, building coalitions to support this important legislation.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: Leah has the policy chops and patience to bring community voices into long Board of Trustee meetings, and we know she’ll fight like hell to protect and grow City College.
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+      - text: Dr. Bunny McFadden lives and breathes education, with experience teaching high school, parenting her own SFUSD children, serving as president for their school’s PTA, and earning her doctorate in education research.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   assessor:
     pick:
@@ -143,6 +141,8 @@ picks:
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: It’s one basic way to un-stack the deck, at least a little bit.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+      - text: Without public financing, the deck is stacked in favor of any super-rich guy/blue jeans heir who decides it would be fun to buy an election this time around.
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-5:
     pick: Y
     quotes:
@@ -169,10 +169,14 @@ picks:
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
       - text: "Passing Prop 40 is not only the logical and moral thing to do, it would also send a loud and clear message to billionaires: You need to finally pay your fair share, and you can’t spend $50 million in attack ads to buy your way out of it."
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+      - text: The tax wouldn’t touch everyday taxpayers or small business owners or even multi-millionaires, and it wouldn’t even apply to the annual income or primary property of billionaires.
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-41:
     pick: N
     quotes:
       - text: "Proposition 41 sounds like a good idea since it has all the hallmarks of good governance—ensuring audits of programs funded by new taxes, and enforcing state spending caps to limit waste. But, as usual, the real purpose of the measure is buried in the fine print: it’s a poison pill to retroactively invalidate Proposition 40, the billionaire tax."
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+      - text: Propositions 41, 42 and 43 all seek to make it way more difficult to mount campaigns to tax the wealthiest 1%.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   prop-42:
     pick: N
@@ -182,6 +186,9 @@ picks:
     pick: N
   prop-45:
     pick: N
+    quotes:
+      - text: Both the Sierra Club and the Building Trades are urging “no” votes, and when those two see eye to eye on something, we should all pay attention.
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
   rtm:
     pick: Y
     quotes:
@@ -236,4 +243,6 @@ picks:
     pick: Y
     quotes:
       - text: Since the rest of us aren’t affected by Prop J, this is a no-brainer to raise more money for the general fund to pay for vital city services.
+        source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+      - text: Under Prop. J, owners of commercial buildings (including corporations) can’t dodge the transfer tax via foreclosures any longer.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026

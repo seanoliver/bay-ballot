@@ -2,6 +2,7 @@ guide: sf-yimby
 election: 2026-11
 status: published
 source: https://sfyimby.org/endorsements/sf-2026-general-election/
+manual: true # sfyimby.org now redirects to YIMBY Action; picks and quotes are from the archived snapshot
 archived:
   - source: https://sfyimby.org/endorsements/sf-2026-general-election/
     snapshot: https://web.archive.org/web/20261005222607/https://sfyimby.org/endorsements/sf-2026-general-election/

@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-17
+fetchedAt: 2026-10-20
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -68,8 +68,6 @@ picks:
     pick: Y
     quotes:
       - text: The measure is the product of years of legislative sausage-making and is unwieldy. But the need for more affordable housing is too desperate to wait — and Prop 1 is well-positioned to reap the benefits of the state’s new streamlining laws.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-      - text: Befitting the broad consensus on California’s affordability crisis, Prop 1 has no formal opposition.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-2:
     pick: Y
@@ -151,6 +149,8 @@ picks:
     quotes:
       - text: Sherrill has worked diligently to support the Lurie administration on reforms to the City Charter and on greater accountability and transparency in public spending, from nonprofit contracts to departmental budgets.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+      - text: He has demonstrated a willingness to grapple with difficult questions of accountability and to support a more ambitious vision of San Francisco’s future.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   supervisor-4:
     pick:
       - Alan Wong
@@ -159,6 +159,12 @@ picks:
       - Matt Dorsey
     quotes:
       - text: San Francisco needs supervisors who take the city’s problems seriously and work with colleagues that might approach them differently. His X persona notwithstanding, Dorsey has shown he can do both on the board.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  supervisor-8:
+    pick:
+      - Gary McCoy
+    quotes:
+      - text: While we don’t agree with all of McCoy’s policy positions, his years in government and his fluency with housing and behavioral health policy give him the broadest preparation for the job.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-a:
     pick: Y
