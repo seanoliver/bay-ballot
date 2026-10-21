@@ -17,7 +17,7 @@ archived:
     snapshot: https://web.archive.org/web/20261006233913/https://www.progressivevotersguide.com/california/2026/general/county/santaclara
   - source: https://www.progressivevotersguide.com/california/2026/general/county/marin
     snapshot: https://web.archive.org/web/20261007203549/https://www.progressivevotersguide.com/california/2026/general/county/marin
-fetchedAt: 2026-10-14
+fetchedAt: 2026-10-21
 hasReasoning: true
 rejectedQuotes:
   - text: Rep. Mullin has served in this congressional seat since 2022, when he was elected with over 55% of the vote.
@@ -107,6 +107,8 @@ picks:
     quotes:
       - text: Bonta scored a lifetime score of 98 out of 100 on Courage Score, our annual analysis of legislators’ progressive voting records.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: During his time in the State Assembly, Attorney General Bonta was an effective legislator who worked on bills related to climate protections, criminal justice and prison reform, immigrant rights, and housing protections.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   board-of-equalization-1:
     pick:
       - Nelson Esparza
@@ -125,9 +127,6 @@ picks:
     quotes:
       - text: Based on our Courage Score analysis, Asm. Connolly supported nearly all progressive bills that made it to a vote.
         source: https://www.progressivevotersguide.com/california/2026/general/county/marin
-  state-senate-10:
-    pick:
-      - Scott Sakakihara
   assembly-2:
     pick:
       - Chris Rogers
@@ -155,6 +154,9 @@ picks:
   assembly-16:
     pick:
       - Rebecca Bauer-Kahan
+  state-senate-10:
+    pick:
+      - Scott Sakakihara
   assembly-18:
     pick:
       - Mia Bonta
@@ -241,8 +243,13 @@ picks:
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
       - text: The failed 2021 recall election of Governor Newsom cost taxpayers over $200 million – nearly $175 million from counties and $26 million from the state.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
+      - text: Taxpayers bear the costs of recall elections, which are administered through the state and county elections offices.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-38:
     pick: N
+    quotes:
+      - text: VOTING NO on Prop 38 will save the state from having to divert $500 million to $600 million in state funding each year from critical health and human services to bond repayment.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-39:
     pick: N
     quotes:
@@ -256,6 +263,9 @@ picks:
     pick: N
   prop-43:
     pick: N
+    quotes:
+      - text: Cities across California are facing budget deficits with the rise in costs, decreases in revenue, and the impacts of federal cuts to programs and services.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
   prop-44:
     pick: N
     quotes:
@@ -266,23 +276,47 @@ picks:
     quotes:
       - text: Accelerating development serves wealthy developers and their investors while leaving California communities to shoulder the long-term impacts.
         source: https://www.progressivevotersguide.com/california/2026/general/county/sanmateo
-  san-jose-council-5:
+  san-mateo-county-supervisor-5:
     pick:
-      - Peter Ortiz
+      - Mark Nagales
+  san-mateo-county-board-of-education-2:
+    pick:
+      - Dana Johnson
+  berkeley-measure-z:
+    pick: Y
+    quotes:
+      - text: Measure Z will establish a public bank that is owned by Berkeley, with the community acting as board member and auditor.
+        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda
+  oakland-mayor:
+    pick:
+      - Barbara Lee
+  berkeley-council-1:
+    pick:
+      - Daria Wrubel
+  berkeley-council-7:
+    pick:
+      - Syrak Micael
+  sonoma-county-board-of-education-2:
+    pick:
+      - Caitlin Quinn
   richmond-mayor:
     pick:
       - Claudia Jiménez
   antioch-council-1:
     pick:
       - Tamisha Torres-Walker
+  antioch-council-4:
+    pick:
+      - Monica E Wilson
+  cccd-ward-1:
+    pick:
+      - Cameron Sasai
+  cccd-ward-3:
+    pick:
+      - Becca Barrett
+  san-jose-council-5:
+    pick:
+      - Peter Ortiz
   fairfield-council-5:
     pick:
       - Doriss Panduro
-  oakland-mayor:
-    pick:
-      - Barbara Lee
-  berkeley-measure-z:
-    pick: Y
-    quotes:
-      - text: Measure Z will establish a public bank that is owned by Berkeley, with the community acting as board member and auditor.
-        source: https://www.progressivevotersguide.com/california/2026/general/county/alameda

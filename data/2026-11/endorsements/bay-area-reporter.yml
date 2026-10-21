@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-20
+fetchedAt: 2026-10-21
 hasReasoning: true
 rejectedQuotes:
   - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
@@ -95,9 +95,9 @@ picks:
       - Monroe Lace
       - Erwin Tam
     quotes:
-      - text: Overall, Tam has financial skills that would be beneficial to the college district.
-        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
       - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
+        source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+      - text: Overall, Tam has financial skills that would be beneficial to the college district.
         source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
   college-board-partial:
     pick:
@@ -136,12 +136,6 @@ picks:
     quotes:
       - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  vallejo-council-5:
-    pick:
-      - Tara Beasley Stansberry
-  concord-council-3:
-    pick:
-      - Robyn Kuslits
   prop-1:
     pick: Y
   prop-2:
@@ -211,6 +205,9 @@ picks:
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-c:
     pick: Y
+    quotes:
+      - text: It is the city’s most significant fund for affordable housing.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-d:
     pick: Y
   prop-e:
@@ -250,3 +247,9 @@ picks:
     quotes:
       - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  vallejo-council-5:
+    pick:
+      - Tara Beasley Stansberry
+  concord-council-3:
+    pick:
+      - Robyn Kuslits

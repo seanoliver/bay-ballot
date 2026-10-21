@@ -88,9 +88,6 @@ All League News
 [THE ELECTION button blue]
 [voter service]
 Calendar
-Voter Service
-@ -
-More details...
 Democracy Under Siege: Defending and Empowering Voters in 2026
 @ -
 More details...
@@ -101,6 +98,9 @@ Criminal Justice Team
 @ -
 More details...
 11 Day Vote Centers Open.
+@ -
+More details...
+Coffee Hour
 @ -
 More details...
 [Website design award]

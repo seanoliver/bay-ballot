@@ -2,7 +2,7 @@ guide: berkeley-dems
 election: 2026-11
 status: published
 source: https://www.berkeleydemocraticclub.com/votebdc26/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-21
 hasReasoning: true
 rejectedQuotes:
   - text: However, the bank is not yet authorized to operate because California law requires state approval and FDIC insurance.
@@ -55,10 +55,14 @@ picks:
     quotes:
       - text: Since joining the City Council, Igor Tregub has worked to make downtown Berkeley a better place to live, work, and visit.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: He helped reopen Civic Center Park, supported new housing at a range of income levels, and advanced improvements to make Downtown safer for walkers, bikers, and drivers.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-council-7:
     pick:
       - Syrak Micael
     quotes:
+      - text: His experience negotiating with the University as a transfer representative would serve him well on the City Council.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
       - text: Syrak is a talented organizer who keeps students engaged in local politics through campus organizing and voter registration.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
       - text: Syrak also worked with the Alameda Labor Council to organize campus support for Proposition 50 to fight back against Donald Trump’s attempt to rig elections.
@@ -68,6 +72,8 @@ picks:
       - Mark Humbert
     quotes:
       - text: He has supported firefighters and wildfire preparedness, pushed for safer streets, helped restore bus service on Ashby Avenue and secured millions of dollars from UC for traffic improvements.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: Mark also helped complete the new Willard Clubhouse, which now offers additional after-school childcare and community gatherings.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-rent-board:
     pick:
@@ -113,6 +119,8 @@ picks:
     quotes:
       - text: Measure W is a noncontroversial measure that makes administrative changes to the charter.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
+      - text: It would also align several local election deadlines and procedures with state law.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-measure-x:
     pick: Y
     quotes:
@@ -125,6 +133,9 @@ picks:
         source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-measure-z:
     pick: N
+    quotes:
+      - text: At a time when the General Fund is under significant pressure, the City could end up absorbing the costs of administering a bank that may never materialize.
+        source: https://www.berkeleydemocraticclub.com/votebdc26/
   berkeley-measure-aa:
     pick: Y
     quotes:
