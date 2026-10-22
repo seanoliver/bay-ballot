@@ -5,7 +5,7 @@ source: https://bikeeastbay.org/election2026/
 archived:
   - source: https://bikeeastbay.org/election2026/
     snapshot: https://web.archive.org/web/20261007195707/https://bikeeastbay.org/election2026/
-fetchedAt: 2026-10-10
+fetchedAt: 2026-10-22
 hasReasoning: true
 picks:
   rtm:
@@ -22,6 +22,8 @@ picks:
     quotes:
       - text: If Prop 43 is passed, a 2/3rds (66.667%) supermajority of voter support will be required to pass any special tax increase vote going to specific expenditures.
         source: https://bikeeastbay.org/election2026/
+      - text: It removes the current 50%+1 simple majority threshold option for citizen-led ballot measures.
+        source: https://bikeeastbay.org/election2026/
   prop-45:
     pick: N
     quotes:
@@ -30,4 +32,8 @@ picks:
   berkeley-measure-u:
     pick: Y
   berkeley-measure-v:
+    pick: Y
+  alameda-measure-l:
+    pick: Y
+  emeryville-measure-bb:
     pick: Y

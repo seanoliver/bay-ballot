@@ -7,7 +7,7 @@ These are the candidates and ballot measures YIMBY Action endorses in this elect
 This is every endorsement in California. Enter your address to see only the ones on your ballot.
 Election
 Endorsements
-111
+110
 California general electionTue
 00 days
 Register to vote (official site, opens in a new tab)
@@ -63,7 +63,7 @@ CWChris WardAssemblymember District 78 · California Assembly District 78Califor
 DADavid AlvarezAssemblymember District 80 · California Assembly District 80California Assembly District 80Endorsed
 Regional1 endorsement
 Regional Transit MeasureVote yes
-Alameda County14 endorsements
+Alameda County13 endorsements
 Alameda
 MVMalia VellaMayor · Alameda MayorAlameda MayorEndorsed
 TAThushan AmarasiriwardenaCouncilmember · Alameda City CouncilAlameda City CouncilEndorsed
@@ -72,8 +72,7 @@ Albany
 ATAaron TiedemannCouncilmember · Albany City CouncilAlbany City CouncilEndorsed
 RDRobin D. LopezCouncilmember · Albany City CouncilAlbany City CouncilEndorsed
 Berkeley
-DWDaria WrubelCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 1Endorsed
-RBRoss BernetCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 1Endorsed
+RBRoss BernetCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 11st choice
 ITIgor TregubCouncilmember District 4 · Berkeley City Council District 4Berkeley City Council District 4Endorsed
 MHMark HumbertCouncilmember District 8 · Berkeley City Council District 8Berkeley City Council District 8Endorsed
 Emeryville

@@ -5,7 +5,7 @@ source: https://envirovoters.org/2026-endorsements/
 archived:
   - source: https://envirovoters.org/2026-endorsements/
     snapshot: https://web.archive.org/web/20261007195635/https://envirovoters.org/2026-endorsements/
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-22
 hasReasoning: true
 picks:
   governor:
@@ -29,9 +29,24 @@ picks:
   superintendent:
     pick:
       - Richard Barrera
-  board-of-equalization-2:
-    pick:
-      - Sally J. Lieber
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-45:
+    pick: N
   state-senate-2:
     pick:
       - Damon Connolly
@@ -101,13 +116,6 @@ picks:
   us-rep-19:
     pick:
       - Jimmy Panetta
-  prop-2:
-    pick: Y
-  prop-4:
-    pick: Y
-  prop-39:
-    pick: N
-  prop-43:
-    pick: N
-  prop-45:
-    pick: N
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
