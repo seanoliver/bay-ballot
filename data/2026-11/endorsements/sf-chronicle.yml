@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-20
+fetchedAt: 2026-10-22
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -16,6 +16,12 @@ rejectedQuotes:
     reason: 'gives no reason on its own: "the bleeding" refers back to the cuts described before it (review 2026-10-11)'
     contestId: prop-h
 picks:
+  us-rep-11:
+    pick:
+      - Scott Wiener
+    quotes:
+      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   lt-governor:
     pick:
       - Fiona Ma
@@ -57,12 +63,6 @@ picks:
       - Richard Barrera
     quotes:
       - text: Richard Barrera is an increasingly rare California progressive who brings all parties to the table, a skill that the new state superintendent of public instruction will need as the role of the office changes.
-        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  us-rep-11:
-    pick:
-      - Scott Wiener
-    quotes:
-      - text: With Scott Wiener, San Franciscans would send the state’s most relentless and effective legislator to Washington to zero in on universal healthcare, humane immigration policies, protections for the LGBTQ community and preserving democracy from President Donald Trump.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-1:
     pick: Y
@@ -118,12 +118,12 @@ picks:
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-45:
     pick: N
-  supreme-court-groban:
+  supreme-court-evans:
     pick: Y
     quotes:
       - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-  supreme-court-evans:
+  supreme-court-groban:
     pick: Y
     quotes:
       - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
@@ -166,6 +166,11 @@ picks:
     quotes:
       - text: While we don’t agree with all of McCoy’s policy positions, his years in government and his fluency with housing and behavioral health policy give him the broadest preparation for the job.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  college-board:
+    pick:
+      - Elijah Ball
+      - Monroe Lace
+      - Erwin Tam
   prop-a:
     pick: Y
     quotes:
