@@ -84,10 +84,9 @@ CWCharlene WangCouncilmember District 2 · Oakland City Council District 2Oaklan
 AVAdriana ValenciaTransit Board District 3 · AC Transit Ward 3AC Transit Ward 3Endorsed
 San Leandro
 RRRobert RaburnTransit Board District 4 · BART Board of Directors District 4BART Board of Directors District 4Endorsed
-Contra Costa County2 endorsements
+Contra Costa County1 endorsement
 Moraga
 KHKerry HillisMayor · Moraga MayorMoraga MayorEndorsed
-KHKerry HillisCouncilmember · Town of MoragaTown of MoragaEndorsed
 Los Angeles County13 endorsements
 Burbank
 EPEddy PolonCouncilmember · Burbank At LargeBurbank At LargeEndorsed
@@ -142,7 +141,7 @@ Prop FChanges to Executive Branch ManagementVote yes
 Prop GAllowing Private Vehicles on the Great Highway in Sunset Dunes ParkVote no
 Prop HParcel Tax to Fund Public Muni OperationsVote yes
 Prop IChanges to Real Property Transfer TaxVote no
-San Mateo County7 endorsements
+San Mateo County8 endorsements
 Countywide
 MNMark NagalesSupervisor · San Mateo County Supervisor District 5San Mateo County Supervisor District 5Endorsed
 Foster City
@@ -151,6 +150,7 @@ Menlo Park
 Measure PMenlo Park Downtown Parking LotsVote no
 Redwood City
 CSChris SturkenCouncilmember District 2 · Redwood City District 2Redwood City District 2Endorsed
+Measure ERent Control on Affordable HousingVote no
 San Bruno
 AHAuros HarmanCouncilmember District 4 · San Bruno District 4San Bruno District 4Endorsed
 San Mateo
