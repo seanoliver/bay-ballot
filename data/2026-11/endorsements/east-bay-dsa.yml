@@ -32,6 +32,73 @@ rejectedQuotes:
   - text: Before being elected, she spent 27 years teaching in Oakland public schools, including as a special-education teacher and history teacher.
     reason: background, not a reason (review 2026-10-11)
     contestId: oakland-usd-2
+pinned:
+  - contestId: insurance-commissioner
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: board-of-equalization-2
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: us-rep-12
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: us-rep-14
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: us-rep-17
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: assembly-14
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: assembly-20
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: assembly-24
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-1
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-2
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-3
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-4
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-5
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-38
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-39
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-40
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-41
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-42
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-43
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-44
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: prop-45
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
+  - contestId: rtm
+    pick: null
+    reason: 'the guide marks this "Recommendation Source: California DSA"; not East Bay DSA''s position (review 2026-10-22)'
 picks:
   oakland-council-2:
     pick:
@@ -80,114 +147,6 @@ picks:
       - Nathan Mizell
       - Vylma Ortiz
       - Derek Rodriguez
-  insurance-commissioner:
-    pick:
-      - Jane Kim
-    quotes:
-      - text: Kim has clearly distinguished herself as the progressive in this race.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-      - text: She is running on aggressively regulating the insurance industry and creating a public Disaster Insurance for All program.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  board-of-equalization-2:
-    pick:
-      - Sally J. Lieber
-    quotes:
-      - text: Though she hasn’t been endorsed for re-election, she remains an ally, and her challenger, Democrat John Pimentel, is to her right.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  assembly-14:
-    pick:
-      - Mark Rendon
-  assembly-20:
-    pick:
-      - Liz Ortega
-  assembly-24:
-    pick:
-      - Alex Lee
-    quotes:
-      - text: While some of Lee’s stances over the past few years have diverged from ours—his opposition to the anti-caste discrimination legislation being one of the more recent incidents—he is still one of the most progressive members of the Assembly and the leading voice on expanding public housing.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  us-rep-12:
-    pick:
-      - Lateefah Simon
-  us-rep-14:
-    pick:
-      - Aisha Wahab
-    quotes:
-      - text: A champion of single-payer healthcare, the repeal of Citizens United, anti-racist legislation, and the expansion of rent control, she has earned a number of progressive endorsers.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  us-rep-17:
-    pick:
-      - Ro Khanna
-    quotes:
-      - text: We have supported Khanna in the past for his advocacy of Medicare for All, the Green New Deal, debt free college, and his efforts to get corporate PAC money out of elections.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-1:
-    pick: Y
-  prop-2:
-    pick: Y
-    quotes:
-      - text: Larger reserves give the state greater ability to maintain services during downturns, rather than balancing budgets on workers and service recipients.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-3:
-    pick: Y
-    quotes:
-      - text: If Prop 3 does not pass, the higher tax rates on the wealthy will sunset in 2031, and the state will see a loss of between $5-$15B in annual funding for public education.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-4:
-    pick: Y
-    quotes:
-      - text: Electoral politics systematically privileges people who can raise money from wealthy donors, corporations, and professional political networks.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-5:
-    pick: Y
-    quotes:
-      - text: California's recall system creates a bizarre democratic loophole in which a majority can elect someone normally, then a smaller and differently composed electorate can remove them and potentially install a replacement with only a small plurality.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-38:
-    pick: N
-    quotes:
-      - text: This proposition is pretty naked self-dealing by wealthy individuals.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-39:
-    pick: N
-    quotes:
-      - text: Voting is a democratic right, not something conditioned on navigating unnecessary administrative barriers.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-40:
-    pick: Y
-    quotes:
-      - text: Prop 40 responds to the immediate need for more healthcare funding, provides a corrective to Trump’s push for greater wealth consolidation, and offers a pilot wealth tax in order to address expanding inequality.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-41:
-    pick: N
-    quotes:
-      - text: Prop 41 is one of two measures put on the ballot by billionaires to thwart the Billionaire Tax (Prop 40).
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-42:
-    pick: N
-    quotes:
-      - text: Prop 42 is the second of two measures put on the ballot to thwart the Billionaire Tax (Prop 40).
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-43:
-    pick: N
-    quotes:
-      - text: Prop 43, backed by the Howard Jarvis Taxpayer Association, aims to make it harder to raise local revenue by changing the threshold on local ballot measures that raise taxes from a simple majority to a ⅔ supermajority.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-44:
-    pick: Y
-    quotes:
-      - text: The measure attempts to constrain how much revenue can be diverted away from the charitable/health-care mission into management compensation and administrative overhead and related spending.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  prop-45:
-    pick: N
-    quotes:
-      - text: If passed, this proposition can only be legislatively amended at all by a 2/3rds vote of the legislature. Any defects or unintended consequences would therefore be incredibly difficult to fix through the ordinary democratic process.
-        source: https://vote.eastbaydsa.org/simple-guide.html
-  rtm:
-    pick: Y
-    quotes:
-      - text: BART, Muni, AC Transit, and Caltrain collectively face operating deficits of more than $800 million annually starting in the 2027–28 fiscal year.
-        source: https://vote.eastbaydsa.org/simple-guide.html
   dublin-usd-measure-i:
     pick: Y
   san-lorenzo-usd-measure-j:
