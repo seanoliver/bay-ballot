@@ -7,7 +7,7 @@ extraSources:
   - https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
 fetchFrom: local # returns HTTP 403 to GitHub's runners; refreshed by the scheduled job on Sean's Mac
 allowForeignSources: true # Google Drive PDF and the chapter's Substack
-fetchedAt: 2026-10-15
+fetchedAt: 2026-10-22
 hasReasoning: true
 picks:
   us-rep-1:
@@ -78,7 +78,7 @@ picks:
     pick: Y
     quotes:
       - text: Allows state policymakers to save more in strong revenue years to better protect vital public services during economic downturns, since deposits in the key reserves would no longer count as spending for the Gann Limit calculations.
-        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
   prop-3:
     pick: Y
   prop-4:
@@ -92,7 +92,7 @@ picks:
     pick: Y
     quotes:
       - text: Creates affordable homeownership opportunities for working and middle-class Californians and encourages new home construction—with ZERO COST TO TAXPAYERS.
-        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
   prop-38:
     pick: N
     quotes:
@@ -102,14 +102,14 @@ picks:
     pick: N
     quotes:
       - text: "Make no mistake: Prop 39 will make voting harder, riskier, and more expensive for Californians because that’s what it was designed to do."
-        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
   prop-40:
     pick: Y
     quotes:
       - text: Right now, families across California are one hospital closure away from losing the care they depend on.
         source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
       - text: "Federal healthcare cuts have blown a $30 billion hole in Medi-Cal funding, and Prop 40 is our chance to fix it directly: a one-time 5% tax on the roughly 200 Californians worth over $1 billion."
-        source: https://indivisiblesonomacounty.substack.com/p/indivisible-sonoma-county-recommends
+        source: https://indivisiblesoco.org/voting-resources-clonedisc-2026-midterm-voting-guide/
   prop-41:
     pick: N
     quotes:
