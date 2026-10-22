@@ -7,6 +7,11 @@ archived:
     snapshot: https://web.archive.org/web/20261006200824/https://yimbyaction.org/endorsements/november-2026-california-general
 fetchedAt: 2026-10-21
 hasReasoning: false
+pinned:
+  - contestId: moraga-council
+    pick:
+      - Kerry Hillis
+    reason: the page now lists Kerry Hillis only as "Mayor · Moraga Mayor", his current title; Moraga's mayor is not elected, and his only race on the ballot is Town Council (review 2026-10-22)
 picks:
   governor:
     pick:
@@ -113,6 +118,9 @@ picks:
   bart-4:
     pick:
       - Robert Raburn
+  moraga-council:
+    pick:
+      - Kerry Hillis
   corte-madera-council:
     pick:
       - Ava Fruin
