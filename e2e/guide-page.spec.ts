@@ -2,6 +2,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { readChangelog } from "../src/lib/changelog";
 import { loadElection } from "../src/lib/data";
+import { sourceLink } from "../src/lib/display";
 import type { GuideType } from "../src/lib/schema";
 import { BALLOT, openBallot } from "./helpers";
 
@@ -158,9 +159,8 @@ test("the change history row shows a focus ring from the keyboard", async ({ pag
   await page.goto(GUIDE);
   const summary = page.locator("details summary", { has: page.getByRole("heading", { name: "Change history" }) });
   await summary.scrollIntoViewIfNeeded();
-  // A Tab press first, so the browser treats the focus that follows as keyboard focus.
+  await page.locator("main ul > li > div").last().locator("a, button").last().focus();
   await page.keyboard.press("Tab");
-  await summary.focus();
   await expect(summary).toBeFocused();
   expect(await summary.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe("none");
 });
@@ -189,7 +189,19 @@ test("a pick's reasons open under its row, and a pick without reasons has no but
   await expect(button).toHaveAttribute("aria-expanded", "true");
   await expect(row.locator("blockquote")).toHaveCount(quoted[1].quotes.length);
   await expect(row.locator("blockquote").first()).toContainText(quoted[1].quotes[0].text);
-  await expect(row.getByRole("link", { name: "Source" }).first()).toHaveAttribute("target", "_blank");
+  const source = row.getByRole("link", { name: "Source" }).first();
+  await expect(source).toHaveAttribute("target", "_blank");
+  await expect(source).toHaveAttribute("href", sourceLink(file, quoted[1].quotes[0].source));
   const bareRow = page.locator("main li", { has: page.getByRole("link", { name: new RegExp(`^${title(bare[0]).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:`) }) });
   await expect(bareRow.getByRole("button")).toHaveCount(0);
+});
+
+test("a pick row shows a focus ring when its contest link gets keyboard focus", async ({ page, isMobile }) => {
+  test.skip(isMobile, "keyboard focus");
+  await page.goto(GUIDE);
+  const link = page.locator("main ul > li > div > a").first();
+  await page.locator("main header a").last().focus();
+  await page.keyboard.press("Tab");
+  await expect(link).toBeFocused();
+  expect(await link.evaluate((el) => getComputedStyle(el.parentElement!).outlineStyle)).not.toBe("none");
 });
