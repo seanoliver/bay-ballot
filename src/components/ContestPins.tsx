@@ -98,7 +98,7 @@ export function PinHint({ pinning }: { pinning: PinControls }) {
   );
 }
 
-const QUOTE_MARK = (
+export const QUOTE_MARK = (
   <svg viewBox="0 0 12 12" aria-hidden="true" className="size-3 shrink-0 fill-current">
     <path d="M1 7.2C1 4.6 2.4 2.8 4.6 2l.5.9C3.8 3.6 3.2 4.5 3.1 5.6h1.7V10H1V7.2Zm6 0C7 4.6 8.4 2.8 10.6 2l.5.9c-1.3.7-1.9 1.6-2 2.7h1.7V10H7V7.2Z" />
   </svg>

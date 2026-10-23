@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/BackLink";
-import { CarriedLink } from "@/components/CarriedLink";
 import { CardLink } from "@/components/ExternalLink";
 import { CARD } from "@/components/frame";
 import { GuideHistory } from "@/components/GuideHistory";
+import { GuidePickRow } from "@/components/GuidePickRow";
 import { JsonLd } from "@/components/JsonLd";
 import { PageColumn } from "@/components/PageColumn";
-import { ROW_FOCUS, ROW_LINK } from "@/components/row";
 import { SectionHeading } from "@/components/SectionHeading";
-import { BAR_FILL } from "@/components/tone";
 import { candidateSlots } from "@/lib/bar";
 import { readChangelog } from "@/lib/changelog";
 import { guideHistory } from "@/lib/changelog-digest";
@@ -19,7 +17,6 @@ import { guideBallot, guidePickGroups, guideStats } from "@/lib/guide-page";
 import { pinParts } from "@/lib/pins";
 import { ballotViewProps, DATA_ROOT, election, electionIndex, latestElection } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
-import { cn } from "@/lib/utils";
 
 export const dynamicParams = false;
 
@@ -100,19 +97,14 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
                   {s.picks.map((p) => {
                     const slots = candidateSlots(p.contest, activeEntries(p.contest.id, guides, files, EMPTY).map((r) => r.entry));
                     return (
-                      <li key={p.contest.id} className={cn("relative flex min-h-12 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 transition-[background-color] hover:bg-muted/60", ROW_FOCUS)}>
-                        <CarriedLink href={`/${id}/${p.contest.id}`} aria-label={`${p.contest.title}: ${p.label}`} className={cn("min-w-0 font-medium", ROW_LINK)}>
-                          {keepNumber(p.contest.title)}
-                        </CarriedLink>
-                        <span aria-hidden="true" className="ml-auto flex flex-wrap justify-end gap-x-3 gap-y-1 text-sm">
-                          {pinParts(p.entry, slots).map((part) => (
-                            <span key={part.key} className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
-                              <span className={cn("size-2.5 shrink-0 rounded-[3px]", BAR_FILL[part.tone])} />
-                              {part.label}
-                            </span>
-                          ))}
-                        </span>
-                      </li>
+                      <GuidePickRow
+                        key={p.contest.id}
+                        href={`/${id}/${p.contest.id}`}
+                        title={keepNumber(p.contest.title)}
+                        label={`${p.contest.title}: ${p.label}`}
+                        parts={pinParts(p.entry, slots)}
+                        quotes={p.entry.quotes.map((q) => ({ text: q.text, href: sourceLink(published, q.source) }))}
+                      />
                     );
                   })}
                 </ul>
