@@ -150,6 +150,7 @@ test("the About page keeps every method fact and link", async ({ page }) => {
   await expect(main.getByRole("link", { name: "corrections@bayballot.com" })).toHaveAttribute("href", "mailto:corrections@bayballot.com");
   await expect(main.getByRole("link", { name: "Open an issue on GitHub" })).toHaveAttribute("href", `${REPO}/issues/new?template=data-correction.yml`);
   await expect(main.getByRole("link", { name: "pull request" })).toHaveAttribute("href", `${REPO}/pulls`);
+  await expect(main.getByText("The same address takes ideas and general feedback.")).toBeVisible();
 });
 
 test("the About page's last question holds Sean's signed letter", async ({ page }) => {

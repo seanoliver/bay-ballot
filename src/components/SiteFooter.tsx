@@ -56,7 +56,7 @@ export function SiteFooter() {
             </Link>
           </nav>
           <div>
-            <h2 className={HEADING}>Corrections &amp; feedback</h2>
+            <h2 className={HEADING}>Contact</h2>
             <a href="mailto:corrections@bayballot.com" className={COL_LINK}>
               <span>
                 corrections@
