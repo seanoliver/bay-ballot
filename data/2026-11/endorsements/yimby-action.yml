@@ -11,8 +11,9 @@ pinned:
   - contestId: berkeley-council-1
     pick:
       - Ross Bernet
+      - Daria Wrubel
     ranked: true
-    reason: the page now lists only Ross Bernet, as "1st choice"; Daria Wrubel was dropped (review 2026-10-23)
+    reason: the page lists Ross Bernet as "1st choice" and Daria Wrubel as "2nd choice" (review 2026-10-23)
   - contestId: moraga-council
     pick:
       - Kerry Hillis
@@ -103,6 +104,7 @@ picks:
   berkeley-council-1:
     pick:
       - Ross Bernet
+      - Daria Wrubel
     ranked: true
   berkeley-council-4:
     pick:

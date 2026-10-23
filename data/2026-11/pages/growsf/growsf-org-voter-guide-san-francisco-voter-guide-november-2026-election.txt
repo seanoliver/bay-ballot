@@ -7,7 +7,7 @@ Build enough housing to end the affordability crisis
 Clean, safe streets and fully staffed police
 Treatment and care for the drug crisis
 A faster, more transparent City Hall
-51,394
+58,822
 ballots cast (est.)
 0
 readers since
@@ -388,43 +388,35 @@ Laborer / Community Organizer | No Response
 Supervisor, District 8
 Vote Darshini Patel
 ShareTop
-We recommend voting for Darshini Patel as your #1 choice for Supervisor, District 8.
-Manny Yekutiel has dropped out. He ended his campaign on . His name is still on your ballot, but he is not running.
-Patel is with us on housing. She supports Mayor Lurie's Family Zoning Plan: "Nearly 50 years after we downzoned, ending the freeze was necessary," she told Mission Local. She supported lowering the inclusionary housing rate, which Nguyen opposed, and she wants permitting deadlines that escalate automatically when the City misses them.
-We also love how she makes decisions. She reads the research and lets the data shape her positions. GrowSF will keep publishing research and polling to help shape City policy, and we're excited to have a supervisor in District 8 who will read it.
-Patel worked on social innovation and civic participation in the Obama White House. At DoorDash she helped launch more than 300 markets and built the team that advocated for its restaurants. Her campaign's sibling site, TLDR SF, publishes a city budget explorer and twelve years of Board of Supervisors votes, about 139,000 of them.
-When data contradicts what I expected to find, I change my position, not the data.
-[[Darshini Patel](https://votedarshini.com/principles/)]
-Darshini PatelCommunity Advocate
-Why vote for Darshini Patel?
-1. Get the rezoned homes built
-The state requires San Francisco to plan for 82,069 new homes by 2031. The Controller's Office of Economic Analysis projects that the Family Zoning Plan will add 8,500 to 14,600 homes over twenty years. Patel's housing platform starts from that gap: "Rezoning was necessary, but it's not sufficient alone." Along with enforcing permit deadlines, she would extend the fee reductions that expire this November and build local financing tools that don't depend on federal money.
-2. Measure results, then publish them
-She wants 311 judged by whether problems come back, not by how fast tickets close, with the results published by district. She says Muni has not published route-level performance data since 2018, and she wants it published again. As she told India Currents, "A metric that rewards activity instead of results will eventually produce more activity instead of better results."
-3. Treatment that works
-Mission Local scored her a yes on expanding conservatorship, "only as a last resort when it leads to actual treatment." McCoy answered ambiguously and Nguyen said no. She supports CARE Court and wants the treatment capacity built that makes it work. District 8 has zero emergency shelter beds, and she commits to a community process in her first six months to choose a District 8 shelter site.
-4. Police work that clears cases
-She supports the City's real-time camera network, which she says has assisted 500 arrests. On drugs, her rule is "Arrest dealers. Divert users to treatment. Measure results." She argues that running SFPD on overtime costs more than staffing it properly.
-We don't see eye to eye on everything. She would vote against renewing the City's license-plate camera contract, and she has spoken in favor of safe injection sites. She also doesn't want arrest to be the main response to drug use, which falls short of the zero tolerance for fentanyl on our streets that we support.
-We never look for 100% agreement with the candidates we endorse. Reasonable people can disagree, and we're proud to endorse candidates who engage honestly with the evidence and bring new ideas to the table.
+We recommend voting for Darshini Patel as your #1 choice for Supervisor, District 8. However, Gary McCoy updated his platform after we endorsed Patel, and it is now more aligned with GrowSF, so we recommend that you read this write-up in full and decide for yourself.
+The District 8 race has been turbulent. We endorsed Manny Yekutiel earlier this year, but we withdrew our endorsement after three credible sexual assault allegations, which he denies. Manny ended his campaign on , though his name still appears on your ballot. That left three candidates: Gary McCoy, Darshini Patel, and Michael T. Nguyen. None of them are fully aligned with GrowSF's priorities, and each offers different trade-offs. Nguyen is the least aligned of the three. On , we judged that Patel edged out McCoy and we endorsed her. Two days later, McCoy published a public safety platform that addressed many of our concerns, and now we see both of them as reasonably aligned with us. This race has changed so much that we chose to stick with a Patel #1 endorsement, though it's not unreasonable to pick either Patel or McCoy.
+Housing
+Patel and McCoy are both with us on housing. Both have run as YIMBYs, and both support Mayor Lurie's Family Zoning Plan. "Nearly 50 years after we downzoned, ending the freeze was necessary," Patel told Mission Local, and McCoy supports the plan "to expand family-friendly housing options across the city." Both also support this year's cut to the inclusionary housing rate, which Nguyen opposed.
+They each have plans to get the rezoned homes built. The state requires San Francisco to plan for 82,069 new homes by 2031, and the Controller's Office of Economic Analysis projects that the Family Zoning Plan will add 8,500 to 14,600 homes over twenty years. Patel's housing platform would set permitting deadlines that escalate automatically when the City misses them, extend the fee reductions that expire this November, and build local financing tools that don't depend on federal money. McCoy wants a binding agreement with the owners of the Safeway at Market and Church streets to build thousands of homes there, and he supports changing the City rule that requires taller buildings to have two staircases.
+Public safety and treatment
+McCoy's public safety platform update brought him much closer to Patel, and to us. Both would arrest drug dealers and move drug users into treatment. Patel's rule is "Arrest dealers. Divert users to treatment. Measure results." McCoy says "we should arrest drug dealers while expanding treatment and step-down beds for drug users." He would also track whether people end up back on the street or in the justice system after treatment, and tie nonprofit funding to those results. Both would expand the crisis teams that respond to people in mental health or drug crises (Patel, McCoy).
+They differ in emphasis. Patel leans more on court-ordered care. She told Mission Local she would expand conservatorship, "but only as a last resort when it leads to actual treatment." She also supports CARE Court (a state program that lets a judge order treatment for people with severe mental illness). District 8 has zero emergency shelter beds, and she commits to a community process in her first six months to choose a District 8 shelter site. McCoy leans more on building treatment capacity. He would fund detox and residential treatment beds "for anyone who needs them," build behavioral health campuses on hospital grounds starting at Zuckerberg San Francisco General, and send crisis teams that "actually reach the people who refuse help." He has said he won't expand conservatorship without more beds and more funding, and his platform would pay for those beds. He also says harm reduction "should be a doorway to treatment and not the end of the line."
+On police, McCoy is closer to us. He supports hiring and keeping officers "until SFPD is fully staffed," and he would put foot patrols on the commercial streets of Noe Valley, Glen Park, Cole Valley, and the Castro. Patel agrees that running SFPD on overtime "costs more than staffing it properly" and wants better recruitment and retention, but says "None of that requires a bigger budget." Her focus is on controlling police overtime and sending more 911 calls to crisis teams. Both support some police technology. McCoy supports the SFPD drone program "with guardrails," speed cameras near schools, and voluntary links to merchant and neighbor cameras. Patel says the drone program "has helped track down stolen vehicles," and she supports red-light and speed cameras.
+Where we disagree with both
+Both would end the City's license-plate camera contract, and we would keep it. Patel would vote against renewing it, and McCoy would introduce legislation to end it in his first 90 days.
+Neither supports zero tolerance for drug use on our streets. Patel says arresting people "may move the immediate problem, but it doesn't reduce it long term," and McCoy says public drug use "can't be addressed simply by arresting people." Both have also supported drug-use sites (Patel, McCoy).
+Michael T. Nguyen
+Nguyen opposed the Family Zoning Plan, opposed lowering the inclusionary rate, and opposes expanding conservatorship. He does not support "criminalizing drug use."
 Where the candidates stand
 Issue | Darshini Patel | Gary McCoy | Michael T. Nguyen
 Supports Mayor Lurie's Family Zoning Plan | Yes | Yes | No
-Lower the inclusionary housing rate | Yes | Hesitated, then yes | No
-Expand conservatorship | Yes, as a last resort | Not without more beds | No
-Let judges order treatment for severe mental illness (CARE Court) | Yes | Unclear | Unclear
+Lower the inclusionary housing rate | Yes | Yes | No
 Arrest fentanyl dealers | Yes | Yes | Unclear
+Fully staff SFPD | Within the current budget | Yes | Yes
+More foot patrols on commercial streets | Unclear | Yes | Unclear
+Fund treatment beds for everyone who needs one | Unclear | Yes | Unclear
+Expand street crisis teams | Yes | Yes | Unclear
+Expand conservatorship | Yes, as a last resort | Once there are more beds | No
+Let judges order treatment for severe mental illness (CARE Court) | Yes | Unclear | Unclear
 Zero tolerance for drug use on our streets | No | No | No
-Supports drug-use sites | Has spoken for them | Yes, a leading advocate | Unclear
-Fully staff SFPD | Yes | Yes | Yes
-Patel declined our questionnaire, McCoy did not answer it, and Nguyen did not respond. Their positions come from their platforms and Mission Local's coverage of the candidates on Family Zoning, housing, conservatorship, drug arrests, and harm reduction. Patel's support for CARE Court is from her platform. Nguyen's position on police staffing is from the Bay Area Reporter's endorsement editorial.
-Why not the other candidates?
-Gary McCoy is unfit for this job.
-From through , four clients and one staff member fatally overdosed inside HealthRIGHT 360's San Francisco treatment programs. McCoy was HealthRIGHT's vice president of policy and public affairs the whole time. A state investigation into two of the deaths found the nonprofit had skipped the hourly safety checks its policies required. McCoy still backs drug-use sites, and in 2022 he called for "decriminalizing drugs" and "a safe supply."
-In 2002, about a month after he moved to San Francisco, McCoy was arrested at 16th and Mission for possessing and attempting to distribute heroin. That case was dismissed after a drug diversion program and the record sealed. Before that, Virginia court records show he was convicted of felony grand theft and six misdemeanors, and he was jailed for violating probation.
-In 2022, he sued journalist Erica Sandberg for $1.9 million over a post she shared on Twitter.
-Michael T. Nguyen opposed the Family Zoning Plan, opposed lowering the inclusionary rate, and opposes expanding conservatorship.
-Patel rejects the progressive-versus-moderate split and says she is "not running for Supervisor as a step toward another office." District 8 needs a supervisor who will follow the numbers on housing. That is why she has our endorsement.
+Supports drug-use sites | Yes | Yes | Unclear
+Keep the City's license-plate cameras | No | No | No
+Patel declined our questionnaire and has begun attacking us in the press after we endorsed her, which we find troubling. McCoy did not answer our questionnaire, and Nguyen did not respond to it. Their positions come from their platforms and Mission Local's coverage of the candidates on Family Zoning, housing, conservatorship, drug arrests, license-plate cameras, and harm reduction. McCoy's positions on treatment beds, crisis teams, dealers, police staffing, foot patrols, and police technology are from his public safety platform, and his support for drug-use sites is from the San Francisco Standard. Nguyen's position on police staffing is from the Bay Area Reporter's endorsement editorial.
 District 8 uses ranked-choice voting, so you can rank up to 10 candidates in order of preference.
 Who's running?
 Candidate | Profession | Questionnaire
