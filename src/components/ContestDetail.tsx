@@ -249,9 +249,9 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
 
 function OfficialSummary({ summary }: { summary: NonNullable<Contest["summary"]> }) {
   return (
-    <div className="mt-1 text-sm">
+    <div className="@container mt-1 text-sm">
       <p className="measure text-muted-foreground">{summary.text}</p>
-      <dl className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-4">
+      <dl className="mt-3 grid gap-2 @lg:grid-cols-2 @lg:gap-4">
         {(["yes", "no"] as const).map((side) => (
           <div key={side}>
             <dt className="flex items-center gap-2 font-semibold">

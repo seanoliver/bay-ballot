@@ -24,3 +24,15 @@ test("a measure without a summary keeps its ballot label", async ({ page }) => {
   await expect(card.getByText(local.description!, { exact: true })).toBeVisible();
   await expect(card.locator("dl")).toHaveCount(0);
 });
+
+test("in the ballot's side pane the Yes and No meanings stack in one column", async ({ page, isMobile }) => {
+  test.skip(isMobile, "the side pane is desktop only");
+  await page.setViewportSize({ width: 1100, height: 1000 });
+  await page.goto(BALLOT);
+  await page.locator(`a[href="${BALLOT}/prop-41"]:visible`).first().click();
+  const pane = page.locator("dl", { has: page.getByText("Yes means", { exact: true }) });
+  await expect(pane.locator("dd")).toHaveText([contest("prop-41").summary!.yes, contest("prop-41").summary!.no]);
+  const [yes, no] = await pane.locator("dt").evaluateAll((ts) => ts.map((t) => t.getBoundingClientRect()));
+  expect(no.top).toBeGreaterThan(yes.bottom);
+  expect(no.left).toBe(yes.left);
+});
