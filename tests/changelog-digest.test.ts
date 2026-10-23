@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { changelogDays, dataSummary, digestSearch, readDigestQuery, rowInArea, visibleDays, type SiteItem } from "@/lib/changelog-digest";
+import { changelogDays, dataSummary, digestSearch, guideHistory, historySummary, readDigestQuery, rowInArea, visibleDays, type SiteItem } from "@/lib/changelog-digest";
 import { monthDay } from "@/lib/display";
 import { validateChangelog } from "@/lib/changelog";
 
@@ -122,5 +122,39 @@ describe("dataRow keeps a hand-written entry's details and PR", () => {
   it("copies details and pr onto the row", () => {
     const row = changelogDays([{ file: "x.yml", date: "2026-10-14", type: "data", title: "Burlingame City Council, District 3 is now on the ballot", details: "The race was missing.", pr: 9 }], [])[0].data[0];
     expect(row).toMatchObject({ details: "The race was missing.", pr: 9 });
+  });
+});
+
+describe("guideHistory", () => {
+  it("keeps only the guide's data entries, with its name dropped and the rest capitalized", () => {
+    expect(guideHistory(entries, guides[0]).map((r) => [r.date, r.text])).toEqual([
+      ["2026-10-15", "Added a reason for Prop E"],
+      ["2026-10-15", "Endorsed No on Prop F"],
+    ]);
+  });
+  it("leaves a title that doesn't start with the guide's name as written", () => {
+    const rows = guideHistory([entry("2026-10-15", "data", "restored a quote on Prop 1", "growsf")], guides[0]);
+    expect(rows[0].text).toBe("restored a quote on Prop 1");
+  });
+  it("a guide with no entries gets no rows", () => {
+    expect(guideHistory(entries, { id: "nobody", name: "Nobody" })).toEqual([]);
+  });
+  it("leaves out site entries tagged with the guide", () => {
+    const rows = guideHistory([entry("2026-10-15", "fix", "GrowSF's links open its new page", "growsf"), entry("2026-10-14", "data", "GrowSF endorsed No on Prop F", "growsf")], guides[0]);
+    expect(rows.map((r) => r.date)).toEqual(["2026-10-14"]);
+  });
+  it("keeps the order it is given, which readChangelog sorts newest first", () => {
+    const rows = guideHistory([entry("2026-10-20", "data", "GrowSF endorsed No on Prop F", "growsf"), entry("2026-10-07", "data", "GrowSF added a reason for Prop E", "growsf")], guides[0]);
+    expect(rows.map((r) => r.date)).toEqual(["2026-10-20", "2026-10-07"]);
+  });
+});
+
+describe("historySummary", () => {
+  const row = (date: string) => ({ file: `${date}.yml`, guide: "growsf", name: "GrowSF", text: "x", date });
+  it("counts the updates and names the oldest and newest dates, in any input order", () => {
+    expect(historySummary([row("2026-10-07"), row("2026-10-22"), row("2026-10-15")])).toBe("3 updates since Oct 7 · latest Oct 22");
+  });
+  it("says update for one", () => {
+    expect(historySummary([row("2026-09-30")])).toBe("1 update since Sep 30 · latest Sep 30");
   });
 });

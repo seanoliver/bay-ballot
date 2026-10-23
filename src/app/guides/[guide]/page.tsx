@@ -4,17 +4,20 @@ import { BackLink } from "@/components/BackLink";
 import { CarriedLink } from "@/components/CarriedLink";
 import { CardLink } from "@/components/ExternalLink";
 import { CARD } from "@/components/frame";
+import { GuideHistory } from "@/components/GuideHistory";
 import { JsonLd } from "@/components/JsonLd";
 import { PageColumn } from "@/components/PageColumn";
 import { ROW_FOCUS, ROW_LINK } from "@/components/row";
 import { SectionHeading } from "@/components/SectionHeading";
 import { BAR_FILL } from "@/components/tone";
 import { candidateSlots } from "@/lib/bar";
+import { readChangelog } from "@/lib/changelog";
+import { guideHistory } from "@/lib/changelog-digest";
 import { formatDate, keepNumber, monthYear, sourceLink } from "@/lib/display";
 import { activeEntries, EMPTY, isPublished, TYPE_LABEL } from "@/lib/filters";
 import { guideBallot, guidePickGroups, guideStats } from "@/lib/guide-page";
 import { pinParts } from "@/lib/pins";
-import { ballotViewProps, election, electionIndex, latestElection } from "@/lib/site-data";
+import { ballotViewProps, DATA_ROOT, election, electionIndex, latestElection } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +56,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
   const groups = published ? guidePickGroups(ballot.contests, published, areas) : [];
   const stats = published ? guideStats(groups.flatMap((g) => g.sections.flatMap((s) => s.picks)), published) : null;
   const { guides, files } = ballotViewProps(d);
+  const history = guideHistory(readChangelog(DATA_ROOT).entries, guide);
   return (
     <PageColumn>
       <JsonLd data={breadcrumbJsonLd([{ name: back.label, path: back.href }, { name: guide.name, path: `/guides/${guide.id}` }])} />
@@ -119,6 +123,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
       ) : (
         <p className="mt-8 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} endorsements yet</p>
       )}
+      <GuideHistory rows={history} />
     </PageColumn>
   );
 }

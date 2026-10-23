@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayName, groupByPick, headline, pendingNote, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
+import { displayName, groupByPick, headline, pendingNote, shortMonthDay, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -196,5 +196,13 @@ describe("displayName", () => {
   it("full name otherwise", () => {
     expect(displayName(long)).toBe("San Francisco League of Pissed Off Voters");
     expect(displayName(long, { short: false })).toBe("San Francisco League of Pissed Off Voters");
+  });
+});
+
+describe("shortMonthDay", () => {
+  it("writes a short month and day in UTC, so the day never shifts", () => {
+    expect(shortMonthDay("2026-10-05")).toBe("Oct 5");
+    expect(shortMonthDay("2026-10-31")).toBe("Oct 31");
+    expect(shortMonthDay("2026-11-01T23:30:00-08:00")).toBe("Nov 1");
   });
 });

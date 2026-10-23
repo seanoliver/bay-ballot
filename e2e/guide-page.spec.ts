@@ -1,5 +1,6 @@
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { readChangelog } from "../src/lib/changelog";
 import { loadElection } from "../src/lib/data";
 import type { GuideType } from "../src/lib/schema";
 import { BALLOT, openBallot } from "./helpers";
@@ -136,4 +137,38 @@ test("the contest page has a breadcrumb back to its ballot", async ({ page }) =>
   await expect(crumb).toHaveAttribute("href", `${BALLOT}/sf`);
   const box = (await crumb.boundingBox())!;
   expect(box.height).toBeGreaterThanOrEqual(40);
+});
+
+test("the change history starts closed and opens to the guide's updates, newest first", async ({ page }) => {
+  await page.goto(GUIDE);
+  const history = page.locator("details", { has: page.getByRole("heading", { level: 2, name: "Change history" }) });
+  const rows = history.locator("li");
+  await expect(history).not.toHaveAttribute("open");
+  await expect(history.locator("summary")).toContainText(/\d+ updates? since \w{3} \d+ · latest \w{3} \d+/);
+  await expect(rows.first()).toBeHidden();
+  await history.locator("summary").click();
+  await expect(rows.first()).toBeVisible();
+  const dates = await history.locator("time").evaluateAll((ts) => ts.map((t) => t.getAttribute("datetime") ?? ""));
+  expect(dates).toEqual([...dates].sort().reverse());
+  await expect(rows.first()).not.toContainText("San Francisco Chronicle");
+});
+
+test("the change history row shows a focus ring from the keyboard", async ({ page, isMobile }) => {
+  test.skip(isMobile, "keyboard focus");
+  await page.goto(GUIDE);
+  const summary = page.locator("details summary", { has: page.getByRole("heading", { name: "Change history" }) });
+  await summary.scrollIntoViewIfNeeded();
+  await page.locator("main ul li a").last().focus();
+  await page.keyboard.press("Tab");
+  await expect(summary).toBeFocused();
+  expect(await summary.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe("none");
+});
+
+test("a guide with no updates has no change history row", async ({ page }) => {
+  const updated = new Set(readChangelog(path.join(process.cwd(), "data")).entries.filter((e) => e.type === "data").map((e) => e.guide));
+  const quiet = data.guides.find((g) => !updated.has(g.id));
+  test.skip(!quiet, "every guide has an update");
+  await page.goto(`/guides/${quiet!.id}`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Change history" })).toHaveCount(0);
 });
