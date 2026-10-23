@@ -51,6 +51,8 @@ export const Contest = z.object({
   kind: z.enum(["candidate", "measure", "retention"]),
   description: z.string().optional(),
   link: HttpUrl.optional(),
+  // Copied word for word from the official voter guide: its summary and what a Yes and a No vote mean.
+  summary: z.object({ text: NonEmpty, yes: NonEmpty, no: NonEmpty }).optional(),
   candidates: z.array(NonEmpty).default([]),
   seats: z.number().int().positive().default(1),
   rankedChoice: z.boolean().default(false),
@@ -59,7 +61,7 @@ export const Contest = z.object({
 }).refine((c) => Object.keys(c.aliases ?? {}).every((name) => c.candidates.includes(name)), {
   message: "every alias key must be one of the contest's candidates",
   path: ["aliases"],
-});
+}).refine((c) => !c.summary || c.kind === "measure", { message: "only a measure has a Yes/No summary", path: ["summary"] });
 // linkShared is set by loadBallot, never read from YAML: another contest links to the same official page.
 export type Contest = z.infer<typeof Contest> & { linkShared?: true };
 

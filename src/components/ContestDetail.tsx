@@ -121,7 +121,11 @@ export function ContestDetail({
             {action}
           </div>
         ) : null}
-        {description ? <p className="measure mt-1 text-sm text-muted-foreground">{description}</p> : null}
+        {contest.summary ? (
+          <OfficialSummary summary={contest.summary} />
+        ) : description ? (
+          <p className="measure mt-1 text-sm text-muted-foreground">{description}</p>
+        ) : null}
         {official ? <Official source={official} /> : null}
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
         {summary}
@@ -240,6 +244,25 @@ function AllReasons({ rest, total, tone }: { rest: SideQuote[]; total: number; t
         {open ? "Fewer reasons" : `All reasons (${total})`}
       </CollapsibleTrigger>
     </Collapsible>
+  );
+}
+
+function OfficialSummary({ summary }: { summary: NonNullable<Contest["summary"]> }) {
+  return (
+    <div className="mt-1 text-sm">
+      <p className="measure text-muted-foreground">{summary.text}</p>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-4">
+        {(["yes", "no"] as const).map((side) => (
+          <div key={side}>
+            <dt className="flex items-center gap-2 font-semibold">
+              <span aria-hidden="true" className={cn("size-2.5 shrink-0 rounded-[3px]", BAR_FILL[side])} />
+              {SIDE_NAME[side === "yes" ? "Y" : "N"]} means
+            </dt>
+            <dd className="pl-4.5">{summary[side]}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 
