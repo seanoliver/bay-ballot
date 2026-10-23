@@ -3,18 +3,23 @@
 [Sonoma County Democratic Party]
 Search for:
 Register to Vote
-2026 General Election & Local Measure Endorsements
+2026 General Election Endorsements
 [Sonoma County Democratic Party]
-Sonoma County Democratic Party 2026 General Election Endorsements
-Federal:
+2026 General Election Endorsements
+Jump to a section:
+Candidate Endorsements
+Local Ballot Measures
+Statewide Propositions
+Voting Information
+Federal Offices
 U.S. Congress, District 1 – Mike McGuire
 U.S. Congress, District 2 – Jared Huffman
 U.S. Congress, District 4 – Mike Thompson
-State:
+State Offices
 State Senate, District 2 – Damon Connolly
 State Assembly, District 2 – Chris Rogers
 State Assembly, District 4 – Cecilia Aguiar-Curry
-Local:
+Local Offices
 Sonoma County Board of Supervisors, District 2 – Joanna Paun
 Sonoma County Board of Supervisors, District 4 – Melanie Bagby
 Cloverdale City Council – Kimberly Kern
@@ -39,8 +44,8 @@ Sebastopol City Council – Sandra Maurer
 Sonoma City Council, District 1 – Julian Mackie
 Sonoma Valley Unified School District, Area 1 – Susan McIntosh
 Windsor Town Council, District 1 – Evan Kubota
-Windsor Unified School District – Michael Brown and Trish Donoho
-Sonoma County Democrats 2026 Local Ballot Measure Endorsements
+Windsor Unified School District – Michael Brown and Trish Donoho\
+Local Ballot Measure Endorsements
 The Sonoma County Democratic Party has reviewed local measures appearing on the General Election ballot and is proud to recommend a YES vote on the measures endorsed below.
 Local ballot measures have a direct impact on the services and institutions our communities rely on every day — including public schools and higher education, emergency medical services, fire protection, parks, public safety, roads, and other essential local services.
 Below are our endorsements, along with information about what each measure would do.
@@ -49,59 +54,82 @@ Unless otherwise noted, the Sonoma County Democratic Party recommends a YES vote
 YES on Measure D — Coast Life Support District Parcel Tax
 Measure D is a parcel tax measure supporting the Coast Life Support District, which provides emergency medical and ambulance services along approximately 60 miles of the Sonoma and Mendocino County coastline.
 The funding helps ensure the continued availability of emergency ambulance and life-support services in a large, geographically challenging rural service area where rapid access to emergency medical care is essential.
-Sonoma County Democratic Party Recommendation: YES
 🎓 Schools & Education
 YES on Measure E — Waugh School District Bond
 Measure E is a general obligation bond for the Waugh School District.
 Bond funding provides locally controlled resources for school facility needs and capital improvements. General obligation bond proceeds are dedicated to facilities and cannot be used for routine operating expenses.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure G — West Sonoma County Union High School District Parcel Tax
 Measure G is a parcel tax benefiting the West Sonoma County Union High School District.
 The measure provides locally controlled funding to support educational programs and services for students in the district.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure AB — Sonoma County Junior College District Bond
 Measure AB would authorize up to $830 million in general obligation bonds for the Sonoma County Junior College District, which operates Santa Rosa Junior College and its educational facilities throughout the region.
 The measure is designed to maintain the combined tax rate associated with the district’s previous voter-approved bonds rather than increase the current tax rate.
 Funding would be used to repair and modernize aging facilities; upgrade classrooms, laboratories and technology; improve earthquake and fire safety; and expand facilities used to train students for local careers including nursing and healthcare, firefighting and emergency medical services, agriculture, auto mechanics, building trades and other high-demand occupations.
 Bond proceeds must remain under local control and cannot be used for administrator salaries, pensions or routine operating expenses. The measure also includes independent financial and performance audits, public disclosure requirements and oversight by an independent Citizens’ Oversight Committee.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure J — Windsor Unified School District Bond
 Measure J is a general obligation bond for the Windsor Unified School District.
 The measure provides locally controlled funding for school facilities and capital improvements within the district.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure M — Harmony Union School District Parcel Tax
 Measure M is a parcel tax benefiting the Harmony Union School District.
 The measure provides locally controlled funding to support the district’s schools, educational programs and services for students.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure O — Old Adobe Union School District Bond
 Measure O would authorize $48 million in general obligation bonds for the Old Adobe Union School District.
 The bond would provide locally controlled funding for school facility improvements and other eligible capital projects within the district.
-Sonoma County Democratic Party Recommendation: YES
 🚒 Fire Protection & Emergency Services
 YES on Measure N — Schell-Vista Fire Protection District Appropriations Limit Extension
 Measure N would extend the Schell-Vista Fire Protection District’s appropriations limit for an additional four years.
 An appropriations limit determines the amount of tax revenue a local government agency is permitted to spend. Extending the limit allows the district to continue using locally available revenues to provide fire protection, emergency response and related services.
-Sonoma County Democratic Party Recommendation: YES
 🌳 Parks & Open Space
 YES on Measure H — Sonoma County Regional Parks
 Measure H would extend the existing 1/8-cent sales tax supporting Sonoma County Regional Parks.
 Originally approved by voters in 2018, the dedicated funding supports Sonoma County’s regional parks system and helps fund park maintenance, operations, improvements and protection of public lands.
 Rather than creating a new tax, Measure H would continue the existing voter-approved funding source.
-Sonoma County Democratic Party Recommendation: YES
 🏛️ Local Community Services
 YES on Measure I — Town of Windsor Transactions & Use Tax
 Measure I would establish a new 1% transactions and use tax — commonly referred to as a sales tax — in the Town of Windsor.
 Revenue generated by the measure would provide locally controlled funding for Town services.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure K — City of Rohnert Park Transactions & Use Tax
 Measure K would establish a new 0.5% transactions and use tax — commonly referred to as a sales tax — in the City of Rohnert Park.
 Revenue generated by the measure would remain locally controlled and be available to support City services and community needs.
-Sonoma County Democratic Party Recommendation: YES
 YES on Measure L — City of Santa Rosa Community Safety/Financial Stability Measure
 Measure L would reauthorize Santa Rosa’s existing 0.5% Measure Q sales tax at a new 1% rate.
 The measure is intended to maintain the City’s financial stability and support general City services, including 911 emergency medical and fire response, police response, street and pothole repairs, and maintenance of public places and infrastructure.
 The City estimates the measure would generate approximately $46 million annually. The measure also includes independent audits and public disclosure requirements, and the revenue must remain under local control for use in Santa Rosa.
-Sonoma County Democratic Party Recommendation: YES
+Statewide Ballot Propositions
+In addition to our local candidate and ballot measure endorsements, we’re sharing the California Democratic Party’s official positions on the statewide propositions appearing on the ballot.
+These propositions address important issues affecting Californians, including affordable housing, public education, healthcare, voting rights, campaign financing, taxation, and essential public services.
+The following summaries reflect the California Democratic Party’s positions and explanations.
+Statewide positions are attributed to the California Democratic Party. For full ballot language, see the California Official Voter Information Guide.
+Propositions Supported by the California Democratic Party
+Proposition 1 — Affordable Housing
+Would authorize funding to build, rehabilitate, and preserve affordable housing for veterans, seniors, working families, and other Californians, without creating a new tax.
+Proposition 2 — California’s Rainy Day Fund
+Would strengthen California’s budget reserves to help protect funding for public schools and healthcare during economic downturns.
+Proposition 3 — Protecting Schools and Healthcare
+Would extend higher income tax rates on California’s wealthiest taxpayers, helping maintain funding for public education and healthcare.
+Proposition 4 — Public Campaign Financing
+Would allow public financing of election campaigns, providing an alternative to private campaign contributions and potentially reducing candidates’ reliance on wealthy donors.
+Proposition 5 — Recall Elections
+Would change the process for replacing recalled statewide elected officials, allowing the majority of voters to determine whether an official remains in office without a separate replacement election.
+Proposition 37 — Homeownership Affordability
+Would establish a homebuyer loan program intended to make purchasing a home more affordable for qualifying California families, without additional costs to taxpayers.
+Proposition 38 — Medical Research
+Would provide funding for immunology research and the development of new treatments and potential cures for serious diseases, addressing concerns about reductions in federal medical research funding.
+Proposition 40 — Healthcare Funding and Billionaire Taxation
+Would establish a one-time wealth tax on California billionaires, directing revenue primarily toward healthcare services, with additional funding for education and food assistance programs.
+Propositions Opposed by the California Democratic Party
+Proposition 39 — Voter Identification Requirements
+Would establish new voter identification and citizenship verification requirements. The California Democratic Party opposes the measure, citing concerns that the additional requirements could make voting more difficult.
+Proposition 41 — State Tax and Spending Requirements
+Would establish additional auditing and spending-limit requirements for certain state taxes. The California Democratic Party opposes the measure, arguing that these requirements could obstruct efforts to establish taxes on billionaires.
+Proposition 42 — Restrictions on Future State Taxes
+Would restrict certain new state taxes on personal assets and limit retroactive taxation. The California Democratic Party opposes the measure because of concerns that it could prevent future revenue measures, including taxes on billionaires.
+Proposition 43 — Local Government Funding
+Would increase the voter approval threshold for certain local tax measures, limiting the ability to raise revenue for services such as fire protection, roads, and public schools.
+Proposition 44 — Community Healthcare Clinics
+Would establish new spending requirements for federally qualified health centers. The California Democratic Party opposes the measure, warning that it could threaten the financial stability of community health clinics and reduce access to healthcare for millions of patients.
+Proposition 45 — Environmental and Development Oversight
+Would change environmental review requirements for certain development projects, including data centers, gas pipelines, and industrial facilities. The California Democratic Party opposes the measure because of concerns that it could reduce public review and environmental oversight.
 Make a Plan to Vote
 The General Election includes important federal, state and local contests in addition to these local ballot measures.
 Voting by mail begins , and Election Day is .
@@ -109,9 +137,13 @@ We encourage every Sonoma County voter to learn about the issues on their ballot
 Official Election Information
 For official ballot language, voter information, registration information, Vote Center locations and other election resources, visit the Sonoma County Registrar of Voters.
 This page will be updated as additional endorsements are made or additional information about local ballot measures becomes available.
-admin2026-10-02T14: -
-2026 General Election & Local Measure Endorsements
-Sonoma County Democratic Party 2026 General Election Endorsements Federal: U.S. Congress, District 1 - Mike McGuire U.S. Congress, District 2 - Jared Huffman U.S. Congress, District 4 - Mike Thompson State: State Senate, District 2 [...]
+Additional resources: California Democratic Party | California Voter Information Guide
+admin2026-10-21T17: -
+Senior Voter Assistance
+Protect Your Vote. Protect Your Voice. Free voter assistance for seniors in Sonoma County The Sonoma County Democratic Party is offering free assistance to help senior voters return their ballots and participate in the November [...]
+admin2026-10-21T17: -
+2026 General Election Endorsements
+2026 General Election Endorsements Jump to a section: Candidate Endorsements Local Ballot Measures Statewide Propositions Voting Information Federal Offices U.S. Congress, District 1 - Mike McGuire U.S. Congress, District 2 - Jared Huffman U.S. Congress, [...]
 admin2026-08-01T10: -
 2026 General Election Application for Endorsement
 2026 General Election Application for Endorsement – Sonoma County Democratic Party Welcome to the Sonoma County Democratic Party’s (SCDP) guide for the endorsement application process for the 2026 General Election! Below, you’ll find all the [...]
@@ -123,9 +155,6 @@ admin2026-03-11T14: -
 Creatives Contest Overview The Sonoma County Democratic Party is sponsoring a creatives contest celebrating the 250th Anniversary of the Declaration of Independence. Middle Schoolers, High Schoolers, and Young Adults (post-high school, up to age 25) [...]
 admin2026-02-27T23: -
 North Bay Unites – Noncooperation Training
-admin2026-02-10T17: -
-CADEM 2026 State Convention
-The California Democratic Party 2026 State Endorsing Convention will be taking place from , through at the Moscone Center in San Francisco. The focus will be on endorsements for federal and [...]
 448 Sebastopol Ave Santa Rosa CA 95401 – (707) 575-3029
 Paid for by the Sonoma County Democratic Party FPPC ID# 742474 (sonomademocrats.org) and not authorized by any candidate or candidate’s committee.
 Page load link

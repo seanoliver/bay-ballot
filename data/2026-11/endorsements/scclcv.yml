@@ -5,17 +5,9 @@ source: https://www.scclcv.org/scclcv-endorsements/
 archived:
   - source: https://www.scclcv.org/scclcv-endorsements/
     snapshot: https://web.archive.org/web/20261006234757/https://www.scclcv.org/scclcv-endorsements/
-fetchedAt: 2026-10-07
+fetchedAt: 2026-10-22
 hasReasoning: false
 picks:
-  mountain-view-council:
-    pick:
-      - Paul Donahue
-      - IdaRose Sylvester
-      - Silja Paymer
-  palo-alto-council:
-    pick:
-      - Vicki Veenker
   campbell-council-4:
     pick:
       - Davis Stuart Fields
@@ -34,6 +26,17 @@ picks:
   los-altos-council-2:
     pick:
       - Anky van Deursen
+  los-gatos-council:
+    pick:
+      - Rob Moore
+  mountain-view-council:
+    pick:
+      - Paul Donahue
+      - IdaRose Sylvester
+      - Silja Paymer
+  palo-alto-council:
+    pick:
+      - Vicki Veenker
   sunnyvale-council-1:
     pick:
       - Linda Sell

@@ -5,9 +5,14 @@ source: https://yimbyaction.org/endorsements/november-2026-california-general
 archived:
   - source: https://yimbyaction.org/endorsements/november-2026-california-general
     snapshot: https://web.archive.org/web/20261006200824/https://yimbyaction.org/endorsements/november-2026-california-general
-fetchedAt: 2026-10-21
+fetchedAt: 2026-10-22
 hasReasoning: false
 pinned:
+  - contestId: berkeley-council-1
+    pick:
+      - Ross Bernet
+    ranked: true
+    reason: the page now lists only Ross Bernet, as "1st choice"; Daria Wrubel was dropped (review 2026-10-23)
   - contestId: moraga-council
     pick:
       - Kerry Hillis
@@ -97,8 +102,8 @@ picks:
       - Robin D. López
   berkeley-council-1:
     pick:
-      - Daria Wrubel
       - Ross Bernet
+    ranked: true
   berkeley-council-4:
     pick:
       - Igor A. Tregub
@@ -118,9 +123,6 @@ picks:
   bart-4:
     pick:
       - Robert Raburn
-  moraga-council:
-    pick:
-      - Kerry Hillis
   corte-madera-council:
     pick:
       - Ava Fruin
@@ -221,3 +223,6 @@ picks:
       - Gordon Chester
   sausalito-measure-x:
     pick: Y
+  moraga-council:
+    pick:
+      - Kerry Hillis

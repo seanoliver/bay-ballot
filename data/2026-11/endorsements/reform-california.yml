@@ -11,9 +11,13 @@ extraSources:
   - https://www.reformcalifornia.org/voter-guides/alameda
   - https://www.reformcalifornia.org/voter-guides/sonoma
   - https://www.reformcalifornia.org/voter-guides/napa
-fetchedAt: 2026-10-19
+fetchedAt: 2026-10-22
 hasReasoning: true
 pinned:
+  - contestId: marin-county-board-of-education-3
+    pick:
+      - Craig Stuart Adams
+    reason: the Marin page lists him under "Trustee Area 5", but he is on the ballot only in Area 3 (review 2026-10-23)
   - contestId: court-of-appeal-6
     pick: null
     reason: the Santa Clara page lists seven 6th District justices as DO NOT RETAIN but never names Frederick S. Chung (review 2026-10-09)
@@ -48,6 +52,8 @@ picks:
     pick: N
     quotes:
       - text: Voters wisely decided years ago that their tax dollars should never be used to fund the campaigns of politicians, but with Prop 4 the politicians are refusing to take no for an answer.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+      - text: Repeals a previously approved ban on public financing of politicians’ campaigns.
         source: https://www.reformcalifornia.org/voter-guides/solano
   prop-5:
     pick: N
@@ -269,75 +275,130 @@ picks:
     quotes:
       - text: Imposes a new costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/san-francisco
-  san-mateo-county-measure-l:
-    pick: N
-  san-mateo-county-measure-aa:
+  winters-jusd-measure-b:
     pick: N
     quotes:
-      - text: Adds equity and belonging language to the county charter preamble, duplicating rights already guaranteed by the U.S. and California Constitutions while creating the hook for hiring, contracting and program preferences no voter approved.
+      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  solano-county-measure-e:
+    pick: N
+    quotes:
+      - text: Imposes a new costly business tax despite that will destroy jobs to simply support more massive levels of wasteful spending by the city.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  solano-county-measure-h:
+    pick: N
+    quotes:
+      - text: Imposes a new costly business tax despite that will destroy jobs to simply support more massive levels of wasteful spending by the city.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  rio-vista-measure-o:
+    pick: N
+  fairfield-measure-p:
+    pick: N
+    quotes:
+      - text: Extends and increases costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  fairfield-measure-q:
+    pick: N
+    quotes:
+      - text: Makes the officer who certifies Fairfield's elections and processes its public records an employee hand-picked by the City Manager — including records requests about the City Manager's own office.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  dixon-usd-measure-u:
+    pick: N
+    quotes:
+      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  vacaville-measure-v:
+    pick: N
+    quotes:
+      - text: Imposes a costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  benicia-measure-x:
+    pick: N
+  benicia-measure-y:
+    pick: N
+  benicia-measure-z:
+    pick: N
+    quotes:
+      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/solano
+  burlingame-measure-d:
+    pick: N
+  redwood-city-measure-e:
+    pick: N
+  san-mateo-measure-f:
+    pick: N
+    quotes:
+      - text: Masquerades as routine charter cleanup while allowing emergency ordinances to remain in force indefinitely, eliminating guaranteed twice-monthly evening council meetings, stripping elected councilmembers of confirmation over the city’s top financial officer, and doubling how long politicians may leave a council seat vacant.
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  san-carlos-measure-g:
+    pick: N
+  san-mateo-measure-h:
+    pick: N
+  half-moon-bay-measure-i:
+    pick: Y
   san-mateo-county-measure-j:
     pick: Y
     quotes:
       - text: Requires the Board of Supervisors to hold at least one public meeting before handing anyone an elected county office, ending the practice of settling appointments privately and ratifying them in a single agenda item.
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  san-mateo-county-measure-u:
-    pick: Y
-    quotes:
-      - text: Takes the pen out of the hands of the politicians who run in the districts, requiring an independent commission to redraw supervisorial boundaries after each census instead of letting incumbents manufacture their own safe seats.
-        source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  burlingame-sd-measure-r:
-    pick: N
-  cabrillo-usd-measure-z:
-    pick: N
-    quotes:
-      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  jefferson-uhsd-measure-m:
-    pick: N
-  pacifica-sd-measure-t:
-    pick: N
-    quotes:
-      - text: Renews a costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/san-mateo
   san-carlos-sd-measure-k:
     pick: N
-  smcccd-measure-v:
+  san-mateo-county-measure-l:
     pick: N
-  smfcsd-measure-w:
+  jefferson-uhsd-measure-m:
     pick: N
-  belmont-measure-y:
-    pick: N
-  brisbane-measure-x:
-    pick: N
-  burlingame-measure-d:
+  portola-valley-measure-n:
     pick: N
   east-palo-alto-measure-o:
     pick: N
-  east-palo-alto-measure-cc:
-    pick: Y
-    quotes:
-      - text: Caps City Council service at three consecutive terms where no limit exists today, and closes the loophole that lets an appointee bank nearly two extra years before the clock starts running.
-        source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  half-moon-bay-measure-i:
+  menlo-park-measure-p:
     pick: Y
   half-moon-bay-measure-q:
     pick: N
     quotes:
       - text: Hands city-owned property worth millions to a private developer on a 99-year lease at one dollar a year — no rent, no revenue, no reversion for a century — when the city could lease at fair value and fund the same housing with a subsidy voters can see, price and end.
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  menlo-park-measure-p:
-    pick: Y
-  pacifica-measure-bb:
-    pick: N
-  portola-valley-measure-n:
-    pick: N
-  redwood-city-measure-e:
+  burlingame-sd-measure-r:
     pick: N
   san-bruno-measure-s:
     pick: N
     quotes:
       - text: Asks San Bruno voters to permanently surrender their own right to approve the tallest and densest projects in their city, handing the final word on height, density and scenic corridors to staff and a four-vote council majority.
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  pacifica-sd-measure-t:
+    pick: N
+    quotes:
+      - text: Renews a costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  san-mateo-county-measure-u:
+    pick: Y
+    quotes:
+      - text: Takes the pen out of the hands of the politicians who run in the districts, requiring an independent commission to redraw supervisorial boundaries after each census instead of letting incumbents manufacture their own safe seats.
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  smcccd-measure-v:
+    pick: N
+  smfcsd-measure-w:
+    pick: N
+  brisbane-measure-x:
+    pick: N
+  belmont-measure-y:
+    pick: N
+  cabrillo-usd-measure-z:
+    pick: N
+    quotes:
+      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  san-mateo-county-measure-aa:
+    pick: N
+    quotes:
+      - text: Adds equity and belonging language to the county charter preamble, duplicating rights already guaranteed by the U.S. and California Constitutions while creating the hook for hiring, contracting and program preferences no voter approved.
+        source: https://www.reformcalifornia.org/voter-guides/san-mateo
+  pacifica-measure-bb:
+    pick: N
+  east-palo-alto-measure-cc:
+    pick: Y
+    quotes:
+      - text: Caps City Council service at three consecutive terms where no limit exists today, and closes the loophole that lets an appointee bank nearly two extra years before the clock starts running.
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
   san-bruno-measure-dd:
     pick: N
@@ -346,24 +407,6 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/san-mateo
   san-bruno-measure-ee:
     pick: N
-  san-carlos-measure-g:
-    pick: N
-  san-mateo-measure-h:
-    pick: N
-  san-mateo-measure-f:
-    pick: N
-    quotes:
-      - text: Masquerades as routine charter cleanup while allowing emergency ordinances to remain in force indefinitely, eliminating guaranteed twice-monthly evening council meetings, stripping elected councilmembers of confirmation over the city’s top financial officer, and doubling how long politicians may leave a council seat vacant.
-        source: https://www.reformcalifornia.org/voter-guides/san-mateo
-  foster-city-council-1:
-    pick:
-      - Art Kiesel
-  san-carlos-council:
-    pick:
-      - Mark D. Iwanowski
-  smuhsd-trustee-area-3:
-    pick:
-      - Jennifer Jacobson
   morgan-hill-measure-a:
     pick: N
     quotes:
@@ -418,33 +461,6 @@ picks:
     quotes:
       - text: Caps directors of a large-budget special district at four terms where no limit exists today, in exactly the kind of low-turnout, low-scrutiny office where officials serve for decades unnoticed.
         source: https://www.reformcalifornia.org/voter-guides/santa-clara
-  cupertino-council:
-    pick:
-      - Mark Fantozzi
-      - Santosh Rao
-  milpitas-council:
-    pick:
-      - Jennie Ha Phan
-  alum-rock-sd-trustee-area-5:
-    pick:
-      - Línda Lo Chávez
-  franklin-mckinley-sd-trustee:
-    pick:
-      - Marc Cooper
-  fremont-uhsd-trustee-area-3:
-    pick:
-      - Jason Lin
-  lgsuhsd-trustee-area-2:
-    pick:
-      - Ishaan Prasad
-  milpitas-usd-trustee:
-    pick:
-      - Chris Norwood
-  marin-county-measure-p:
-    pick: N
-    quotes:
-      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/marin
   miller-creek-sd-measure-n:
     pick: N
     quotes:
@@ -454,6 +470,11 @@ picks:
     pick: N
     quotes:
       - text: Authorizes costly bond funded by taxpayer dollars despite massive levels of wasteful spending and awarding contracts without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/marin
+  marin-county-measure-p:
+    pick: N
+    quotes:
+      - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
   corte-madera-measure-q:
     pick: N
@@ -537,21 +558,6 @@ picks:
     quotes:
       - text: Imposes a costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/marin
-  novato-council-4:
-    pick:
-      - Chris Carpiniello
-  novato-usd-trustee-area-4:
-    pick:
-      - Francis Drouillard
-  marin-county-board-of-education-3:
-    pick:
-      - Craig Stuart Adams
-  marin-healthcare-district-1:
-    pick:
-      - Clayton Hess
-  richardson-bay-sanitary-director:
-    pick:
-      - John Turnacliff
   clayton-measure-m:
     pick: N
   clayton-measure-n:
@@ -576,30 +582,6 @@ picks:
     pick: N
   liberty-uhsd-measure-x:
     pick: N
-  antioch-council-4:
-    pick:
-      - Matty Mathews Alappat
-  brentwood-council-2:
-    pick:
-      - Tammy Zickuhr
-  brentwood-council-4:
-    pick:
-      - Holley Bishop-Mello
-  danville-council:
-    pick:
-      - Pratima Sonavne
-  brentwood-usd:
-    pick:
-      - Oxsana Pajoluk
-  contra-costa-county-board-of-education-2:
-    pick:
-      - Pamela West
-  mdusd-area-4:
-    pick:
-      - Al Anderson
-  liberty-uhsd-area-4:
-    pick:
-      - Tamara Weber
   dublin-usd-measure-i:
     pick: N
     quotes:
@@ -702,29 +684,17 @@ picks:
     quotes:
       - text: Imposes a new costly utility tax despite massive levels of wasteful spending and awarding contracts without fair and open competition.
         source: https://www.reformcalifornia.org/voter-guides/alameda
-  union-city-council-3:
-    pick:
-      - Jeff Wang
-  union-city-council-2:
-    pick:
-      - Jaime Patino
-  clpccd-trustee-area-3:
-    pick:
-      - Wendy Huang
-  oak-grove-sd-trustee-area-5:
-    pick:
-      - Pradeep Kumar
-  sonoma-county-measure-h:
-    pick: N
-    quotes:
-      - text: Extends and increase costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/sonoma
   coast-life-support-measure-d:
     pick: N
   waugh-sd-measure-e:
     pick: N
   west-sonoma-uhsd-measure-g:
     pick: N
+  sonoma-county-measure-h:
+    pick: N
+    quotes:
+      - text: Extends and increase costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
+        source: https://www.reformcalifornia.org/voter-guides/sonoma
   windsor-measure-i:
     pick: N
     quotes:
@@ -751,32 +721,6 @@ picks:
         source: https://www.reformcalifornia.org/voter-guides/sonoma
   old-adobe-union-sd-measure-o:
     pick: N
-  rohnert-park-council-2:
-    pick:
-      - Paul Carey
-  sonoma-council-1:
-    pick:
-      - Peggy Hutton
-  harmony-union-sd-trustee:
-    pick:
-      - Michael Podshadley
-  petaluma-juhsd-trustee-area-5:
-    pick:
-      - John La Bare
-  two-rock-union-sd-trustee:
-    pick:
-      - Laura B. Gutierrez
-      - Nicolas Noyes
-  windsor-usd-trustee:
-    pick:
-      - Rich Carnation
-  gold-ridge-fire-director:
-    pick:
-      - Doug Jones
-      - Robert Gloeckner
-  sonoma-county-fire-director:
-    pick:
-      - Richard H. Alpert
   napa-county-measure-b:
     pick: N
   american-canyon-measure-p:
@@ -785,58 +729,6 @@ picks:
     pick: N
   yountville-measure-y:
     pick: N
-  st-helena-mayor:
-    pick:
-      - Patrick Kenealy
-  st-helena-council:
-    pick:
-      - Kate Spadarotto
-  winters-jusd-measure-b:
-    pick: N
-    quotes:
-      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  solano-county-measure-e:
-    pick: N
-    quotes:
-      - text: Imposes a new costly business tax despite that will destroy jobs to simply support more massive levels of wasteful spending by the city.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  solano-county-measure-h:
-    pick: N
-    quotes:
-      - text: Imposes a new costly business tax despite that will destroy jobs to simply support more massive levels of wasteful spending by the city.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  rio-vista-measure-o:
-    pick: N
-  fairfield-measure-p:
-    pick: N
-    quotes:
-      - text: Extends and increases costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  fairfield-measure-q:
-    pick: N
-    quotes:
-      - text: Makes the officer who certifies Fairfield's elections and processes its public records an employee hand-picked by the City Manager — including records requests about the City Manager's own office.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  dixon-usd-measure-u:
-    pick: N
-    quotes:
-      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  vacaville-measure-v:
-    pick: N
-    quotes:
-      - text: Imposes a costly sales tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
-  benicia-measure-x:
-    pick: N
-  benicia-measure-y:
-    pick: N
-  benicia-measure-z:
-    pick: N
-    quotes:
-      - text: Imposes a new costly property tax despite massive levels of wasteful spending, giving government workers massive salary hikes and pension spikes, and awarding contracts to political supporters without fair and open competition.
-        source: https://www.reformcalifornia.org/voter-guides/solano
   benicia-council:
     pick:
       - Justin Zollars
@@ -868,3 +760,114 @@ picks:
   dixon-usd-trustee:
     pick:
       - Phil Lockwood
+  foster-city-council-1:
+    pick:
+      - Art Kiesel
+  san-carlos-council:
+    pick:
+      - Mark D. Iwanowski
+  smuhsd-trustee-area-3:
+    pick:
+      - Jennifer Jacobson
+  cupertino-council:
+    pick:
+      - Mark Fantozzi
+      - Santosh Rao
+  milpitas-council:
+    pick:
+      - Jennie Ha Phan
+  alum-rock-sd-trustee-area-5:
+    pick:
+      - Línda Lo Chávez
+  franklin-mckinley-sd-trustee:
+    pick:
+      - Marc Cooper
+  lgsuhsd-trustee-area-2:
+    pick:
+      - Ishaan Prasad
+  milpitas-usd-trustee:
+    pick:
+      - Chris Norwood
+  novato-council-4:
+    pick:
+      - Chris Carpiniello
+  novato-usd-trustee-area-4:
+    pick:
+      - Francis Drouillard
+  marin-county-board-of-education-3:
+    pick:
+      - Craig Stuart Adams
+  marin-healthcare-district-1:
+    pick:
+      - Clayton Hess
+  richardson-bay-sanitary-director:
+    pick:
+      - John Turnacliff
+  antioch-council-4:
+    pick:
+      - Matty Mathews Alappat
+  brentwood-council-2:
+    pick:
+      - Tammy Zickuhr
+  brentwood-council-4:
+    pick:
+      - Holley Bishop-Mello
+  danville-council:
+    pick:
+      - Pratima Sonavne
+  brentwood-usd:
+    pick:
+      - Oxsana Pajoluk
+  contra-costa-county-board-of-education-2:
+    pick:
+      - Pamela West
+  mdusd-area-4:
+    pick:
+      - Al Anderson
+  liberty-uhsd-area-4:
+    pick:
+      - Tamara Weber
+  union-city-council-3:
+    pick:
+      - Jeff Wang
+  union-city-council-2:
+    pick:
+      - Jaime Patino
+  clpccd-trustee-area-3:
+    pick:
+      - Wendy Huang
+  oak-grove-sd-trustee-area-5:
+    pick:
+      - Pradeep Kumar
+  rohnert-park-council-2:
+    pick:
+      - Paul Carey
+  sonoma-council-1:
+    pick:
+      - Peggy Hutton
+  harmony-union-sd-trustee:
+    pick:
+      - Michael Podshadley
+  petaluma-juhsd-trustee-area-5:
+    pick:
+      - John La Bare
+  two-rock-union-sd-trustee:
+    pick:
+      - Laura B. Gutierrez
+      - Nicolas Noyes
+  windsor-usd-trustee:
+    pick:
+      - Rich Carnation
+  gold-ridge-fire-director:
+    pick:
+      - Doug Jones
+      - Robert Gloeckner
+  sonoma-county-fire-director:
+    pick:
+      - Richard H. Alpert
+  st-helena-mayor:
+    pick:
+      - Patrick Kenealy
+  st-helena-council:
+    pick:
+      - Kate Spadarotto
