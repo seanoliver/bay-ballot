@@ -13,7 +13,8 @@ Get every open refresh PR reviewed, fixed and merged. The bot's PR body says wha
 
 1. **List the work.**
    ```bash
-   gh pr list --state open --json number,title,headRefName,labels | jq '.[] | select(.headRefName|test("^data/refresh"))'
+   gh pr list --state open --json number,title,headRefName,baseRefName,isCrossRepository,labels \
+     | jq '.[] | select((.headRefName|test("^data/refresh")) and (.isCrossRepository|not) and .baseRefName=="main")'
    gh issue list --state open --search "refresh needs review in:title"
    ```
    Nothing open: say so and stop. Take PRs one at a time, oldest first. `headRefName` is the branch: `data/refresh` (GitHub job) or `data/refresh-local` (the job on Sean's Mac).
@@ -26,15 +27,15 @@ Get every open refresh PR reviewed, fixed and merged. The bot's PR body says wha
    | `HELD … wrong-rank` | Page says "1st choice", "#1" or ranks names | Move the pick into `picks` with `ranked: true`, delete the `held` entry, and add a `pinned` entry (contestId, pick, `ranked`, reason with the review date). The extractor never ranks a one-name pick, so without the pin it is held again next run |
    | Other `HELD` | Does the page support the pick? | Yes: release and pin as above. No: leave it held |
    | Removed pick | Did the page drop it? | Dropped ("No endorsement", name gone): leave it. Page unchanged, or it names a seat the candidate isn't running for: restore the pick and pin it |
-   | `missing (reported only)` | Find the name in `data/2026-11/ballot/<county>.yml` | It's the same candidate under a mislabeled seat: put the pick back in `picks` under the contest the ballot file has, and pin it |
+   | `missing (reported only)`, or the verifier found a pick on the page that isn't in `picks` | Read the page, then find the name in `data/2026-11/ballot.yml` (statewide, regional) or `data/2026-11/ballot/<county>.yml` | Page endorses it: add it to `picks` under the contest the ballot file has, and pin it. Page doesn't: leave it and say so in the report |
    | `kept the published pick`, `name-mismatch`, `unclear-match`, pin conflicts | The matching runbook bullet under "When a PR is left open" | Follow it |
    | `q … removed`, "verifier dropped N quotes", name reorders in unranked picks | One spot check | Usually fine; leave |
    | Shrunk guide, fetch failure | | Out of scope: report it |
 
-   Check every candidate name and contest id against the ballot file before pinning. A contest can have several lines (a `HELD` pick and a removal of the old pick): decide what the page says now and publish that once.
-5. **Fix the changelog** for each guide you edited: `data/changelog/<date>-refresh-<guide>.yml` must describe that guide's change against `main`. Drop a change a pin undid. Add an entry when you published something the bot didn't announce: held picks aren't announced, so releasing one always needs an entry. Leave no entry for a pick that stays held. Copy the bot's format: `date`, `type: data`, `guide`, and a `title` that starts with the guide's name.
+   Check every candidate name and contest id against `data/2026-11/ballot.yml` or the county file before pinning. A contest can have several lines (a `HELD` pick and a removal of the old pick): decide what the page says now and publish that once.
+5. **Fix the changelog** for each guide you edited: its entry file must describe that guide's change against `main`. Edit only entry files this branch adds (`git diff --name-only --diff-filter=A origin/main...HEAD -- data/changelog`). A file already on `main` is never rewritten: a new entry for a date that already has `<date>-refresh-<guide>.yml` on `main` takes the next free suffix, `--2`, then `--3`. Drop a change a pin undid. Add an entry when you published something the bot didn't announce: held picks aren't announced, so releasing one always needs an entry. Leave no entry for a pick that stays held. Copy the bot's format: `date`, `type: data`, `guide`, and a `title` that starts with the guide's name.
 6. **Validate and push.** `npm run validate` must end with `data OK`. Commit with `data: <what you fixed>` and a body naming each pick and the page text that supports it. Push to the PR branch. The push starts CI; don't dispatch it.
-7. **Run `finalize-pr`** on the PR. Keep the bot's run report as the PR body (Sean's decision); record Step 2 as "kept bot report". The merge hook blocks `gh pr merge` until finalize-pr writes its receipt.
+7. **Run `finalize-pr`** on the PR. The bot's run report fails finalize-pr's 200-word body check. Put "keep the bot's run report as the body" in the Step 6b checkpoint question, recommended, since the report is the record of what the refresh changed; do not rewrite it. The merge hook blocks `gh pr merge` until finalize-pr writes its receipt.
 8. **Merge** when the `ci` check passes: `gh pr merge <n> --squash`. The `needs-review` label doesn't block a manual merge.
 9. **Clean up**: `git checkout main && git pull --ff-only`, delete the local PR branch, then the next PR.
 
