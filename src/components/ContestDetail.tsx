@@ -14,7 +14,7 @@ import { tally } from "@/lib/score";
 import { cn } from "@/lib/utils";
 import { NoPickBlock, PinChips, PinHint, PinStatus, TAP, type PinControls, type Pinning } from "./ContestPins";
 import { CardLink, ExternalLink } from "./ExternalLink";
-import { BAR_FILL } from "./tone";
+import { BAR_FILL, BORDER } from "./tone";
 import { useCarriedQuery } from "./useBallotFilters";
 import { RankedPopover, Swatch, VerdictBar } from "./VerdictBar";
 
@@ -24,17 +24,6 @@ const LEAD_TEXT: Record<ResultHeadline["tone"], string> = {
   split: "text-split",
   candidate: "text-foreground",
   none: "text-muted-foreground",
-};
-
-const BORDER: Record<BarTone, string> = {
-  yes: "border-yes-fill",
-  no: "border-no-fill",
-  c1: "border-bar-1",
-  c2: "border-bar-2",
-  c3: "border-bar-3",
-  c4: "border-bar-4",
-  other: "border-muted-foreground/40",
-  empty: "border-border",
 };
 
 export function ContestDetail({

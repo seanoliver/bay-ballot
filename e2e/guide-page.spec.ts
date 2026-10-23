@@ -158,8 +158,9 @@ test("the change history row shows a focus ring from the keyboard", async ({ pag
   await page.goto(GUIDE);
   const summary = page.locator("details summary", { has: page.getByRole("heading", { name: "Change history" }) });
   await summary.scrollIntoViewIfNeeded();
-  await page.locator("main ul li a").last().focus();
+  // A Tab press first, so the browser treats the focus that follows as keyboard focus.
   await page.keyboard.press("Tab");
+  await summary.focus();
   await expect(summary).toBeFocused();
   expect(await summary.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe("none");
 });
@@ -171,4 +172,24 @@ test("a guide with no updates has no change history row", async ({ page }) => {
   await page.goto(`/guides/${quiet!.id}`);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Change history" })).toHaveCount(0);
+});
+
+test("a pick's reasons open under its row, and a pick without reasons has no button", async ({ page }) => {
+  const file = data.endorsements["sf-chronicle"];
+  if (file.status !== "published") throw new Error("sf-chronicle is not published");
+  const quoted = Object.entries(file.picks).find(([, p]) => p.quotes.length > 1)!;
+  const bare = Object.entries(file.picks).find(([, p]) => p.quotes.length === 0)!;
+  const title = (id: string) => data.ballot.contests.find((c) => c.id === id)!.title;
+  await page.goto(GUIDE);
+  const button = page.getByRole("button", { name: `${quoted[1].quotes.length} reasons for ${title(quoted[0])}` });
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  const row = page.locator("main li", { has: button });
+  await expect(row.locator("blockquote").first()).toBeHidden();
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(row.locator("blockquote")).toHaveCount(quoted[1].quotes.length);
+  await expect(row.locator("blockquote").first()).toContainText(quoted[1].quotes[0].text);
+  await expect(row.getByRole("link", { name: "Source" }).first()).toHaveAttribute("target", "_blank");
+  const bareRow = page.locator("main li", { has: page.getByRole("link", { name: new RegExp(`^${title(bare[0]).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:`) }) });
+  await expect(bareRow.getByRole("button")).toHaveCount(0);
 });
