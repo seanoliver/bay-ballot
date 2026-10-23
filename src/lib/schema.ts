@@ -51,7 +51,6 @@ export const Contest = z.object({
   kind: z.enum(["candidate", "measure", "retention"]),
   description: z.string().optional(),
   link: HttpUrl.optional(),
-  // Copied word for word from the official voter guide: its summary and what a Yes and a No vote mean.
   summary: z.object({ text: NonEmpty, yes: NonEmpty, no: NonEmpty }).optional(),
   candidates: z.array(NonEmpty).default([]),
   seats: z.number().int().positive().default(1),
