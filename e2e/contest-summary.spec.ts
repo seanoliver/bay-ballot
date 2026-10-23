@@ -36,3 +36,12 @@ test("in the ballot's side pane the Yes and No meanings stack in one column", as
   expect(no.top).toBeGreaterThan(yes.bottom);
   expect(no.left).toBe(yes.left);
 });
+
+test("on the wide contest page the Yes and No meanings sit side by side", async ({ page, isMobile }) => {
+  test.skip(isMobile, "phones stack them");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(`${BALLOT}/prop-41`);
+  const [yes, no] = await page.locator("main section:has(h1) dl dt").evaluateAll((ts) => ts.map((t) => t.getBoundingClientRect()));
+  expect(no.left).toBeGreaterThan(yes.right);
+  expect(Math.abs(no.top - yes.top)).toBeLessThan(2);
+});
