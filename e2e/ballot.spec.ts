@@ -886,7 +886,7 @@ test.describe("guide page rows", () => {
       await page.keyboard.press("Shift+Tab");
       await page.keyboard.press("Tab");
       const ratio = await first.evaluate((el) => {
-        const row = el.closest("li")!;
+        const row = el.parentElement!;
         const card = getComputedStyle(row.closest("ul")!).backgroundColor;
         const page = getComputedStyle(document.body).backgroundColor;
         const canvas = document.createElement("canvas");
@@ -952,7 +952,7 @@ test.describe("guide page rows", () => {
   test("a row shows the pick's name and colour", async ({ page }) => {
     await page.goto("/guides/growsf");
     const row = (name: RegExp) => page.locator("li").filter({ has: page.getByRole("link", { name }) });
-    await expect(row(/^Governor:? Xavier Becerra$/).locator("[aria-hidden=true]")).toHaveText("Becerra");
+    await expect(row(/^Governor:? Xavier Becerra$/).locator("span[aria-hidden=true]")).toHaveText("Becerra");
     await expect(row(/^Proposition 1:? Yes$/).locator("[aria-hidden=true] .bg-yes-fill")).toHaveCount(1);
     await expect(row(/^Proposition 4:? No$/).locator("[aria-hidden=true] .bg-no-fill")).toHaveCount(1);
   });
@@ -992,7 +992,7 @@ test.describe("guide page rows", () => {
       await page.keyboard.press("Tab");
       await expect(first).toBeFocused();
       const outline = await first.evaluate((el) => {
-        const row = el.closest("li") ?? el;
+        const row = el.parentElement ?? el;
         const styles = [getComputedStyle(el), getComputedStyle(row)];
         return styles.map((s) => [s.outlineStyle, s.outlineWidth]);
       });
