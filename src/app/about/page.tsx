@@ -218,6 +218,7 @@ export default function AboutPage() {
                   with the fix.
                 </li>
               </List>
+              <p>The same address takes ideas and general feedback.</p>
             </Question>
             <Question q="Who made Bay Ballot?">
               <div className="rounded-xl border border-border bg-card p-5 sm:p-7">

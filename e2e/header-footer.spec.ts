@@ -200,6 +200,7 @@ test("the footer leads with official voting links, then site and corrections lin
     if (isPhone(info)) await expect(domain).toBeVisible();
     else await expect(domain).toBeHidden();
   }
+  await expect(footer.getByRole("heading", { name: "Corrections & feedback" })).toBeVisible();
   const site = footer.getByRole("navigation", { name: "Footer" });
   await expect(site.getByRole("link", { name: "Ballot" })).toHaveAttribute("href", "/");
   await expect(site.getByRole("link", { name: "Changelog" })).toHaveAttribute("href", "/changelog");
