@@ -25,7 +25,6 @@ export function dataRow(e: ChangelogEntry & { file: string }, guides: Map<string
   return { file: e.file, guide: g.id, name: named ? g.name : null, text: named ? e.title.slice(g.name.length + 1) : e.title, ...extra };
 }
 
-/** One guide's data entries, newest first, with its name dropped from the front of each title. */
 export function guideHistory(entries: SiteItem[], guide: GuideName): GuideRow[] {
   const byId = new Map([[guide.id, guide]]);
   return entries
