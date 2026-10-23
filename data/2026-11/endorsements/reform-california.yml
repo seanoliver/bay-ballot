@@ -14,6 +14,10 @@ extraSources:
 fetchedAt: 2026-10-22
 hasReasoning: true
 pinned:
+  - contestId: marin-county-board-of-education-3
+    pick:
+      - Craig Stuart Adams
+    reason: the Marin page lists him under "Trustee Area 5", but he is on the ballot only in Area 3 (review 2026-10-23)
   - contestId: court-of-appeal-6
     pick: null
     reason: the Santa Clara page lists seven 6th District justices as DO NOT RETAIN but never names Frederick S. Chung (review 2026-10-09)
@@ -790,6 +794,9 @@ picks:
   novato-usd-trustee-area-4:
     pick:
       - Francis Drouillard
+  marin-county-board-of-education-3:
+    pick:
+      - Craig Stuart Adams
   marin-healthcare-district-1:
     pick:
       - Clayton Hess
