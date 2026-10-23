@@ -133,8 +133,8 @@ describe("guideHistory", () => {
     ]);
   });
   it("leaves a title that doesn't start with the guide's name as written", () => {
-    const rows = guideHistory([entry("2026-10-15", "data", "Restored a quote on Prop 1", "growsf")], guides[0]);
-    expect(rows[0].text).toBe("Restored a quote on Prop 1");
+    const rows = guideHistory([entry("2026-10-15", "data", "restored a quote on Prop 1", "growsf")], guides[0]);
+    expect(rows[0].text).toBe("restored a quote on Prop 1");
   });
   it("a guide with no entries gets no rows", () => {
     expect(guideHistory(entries, { id: "nobody", name: "Nobody" })).toEqual([]);
