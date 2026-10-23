@@ -1,4 +1,4 @@
-import { counted } from "./display";
+import { counted, shortMonthDay } from "./display";
 import type { ChangelogEntry } from "./schema";
 
 // Client-safe: no fs or zod imports.
@@ -33,6 +33,11 @@ export function guideHistory(entries: SiteItem[], guide: GuideName): GuideRow[] 
       const row = dataRow(e, byId);
       return { ...row, date: e.date, text: row.name ? row.text.charAt(0).toUpperCase() + row.text.slice(1) : row.text };
     });
+}
+
+export function historySummary(rows: GuideRow[]): string {
+  const dates = rows.map((r) => r.date).sort();
+  return `${counted(rows.length, "update")} since ${shortMonthDay(dates[0])} · latest ${shortMonthDay(dates.at(-1)!)}`;
 }
 
 export function changelogDays(entries: SiteItem[], guides: GuideName[]): DigestDay[] {
