@@ -5,7 +5,7 @@ source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-e
 archived:
   - source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
     snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
-fetchedAt: 2026-10-15
+fetchedAt: 2026-10-23
 hasReasoning: true
 rejectedQuotes:
   - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
@@ -171,6 +171,8 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Ball is a college campus planner who has done this job at other California community colleges.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Tam, a former City College student, has spent 25 years as a municipal financial advisor and has worked with more than 30 California community colleges on their financing plans.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   college-board-partial:
     pick:
       - Ruth Ferguson
@@ -222,7 +224,7 @@ picks:
     pick:
       - Darshini Patel
     quotes:
-      - text: Patel is with us on housing.
+      - text: Patel's housing platform would set permitting deadlines that escalate automatically when the City misses them, extend the fee reductions that expire this November, and build local financing tools that don't depend on federal money.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   supervisor-10:
     pick:
@@ -364,6 +366,8 @@ picks:
       - text: Muni is running out of money.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: The real choice is whether Muni gets its own funding or its deficit quietly eats the rest of the budget.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: "The tax is built to stay accountable: it sunsets in 2042, an independent efficiency review is due by April 2028, and the Board of Supervisors can amend or repeal it by majority vote if the SFMTA wastes the money."
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-i:
     pick: N
