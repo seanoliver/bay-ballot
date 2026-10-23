@@ -143,6 +143,10 @@ export function monthDay(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric" });
 }
 
+export function shortMonthDay(iso: string): string {
+  return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" });
+}
+
 export function monthYear(iso: string): string {
   return day(iso).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long" });
 }

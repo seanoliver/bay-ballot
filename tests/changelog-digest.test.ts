@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { changelogDays, dataSummary, digestSearch, readDigestQuery, rowInArea, visibleDays, type SiteItem } from "@/lib/changelog-digest";
+import { changelogDays, dataSummary, digestSearch, guideHistory, readDigestQuery, rowInArea, visibleDays, type SiteItem } from "@/lib/changelog-digest";
 import { monthDay } from "@/lib/display";
 import { validateChangelog } from "@/lib/changelog";
 
@@ -122,5 +122,21 @@ describe("dataRow keeps a hand-written entry's details and PR", () => {
   it("copies details and pr onto the row", () => {
     const row = changelogDays([{ file: "x.yml", date: "2026-10-14", type: "data", title: "Burlingame City Council, District 3 is now on the ballot", details: "The race was missing.", pr: 9 }], [])[0].data[0];
     expect(row).toMatchObject({ details: "The race was missing.", pr: 9 });
+  });
+});
+
+describe("guideHistory", () => {
+  it("keeps only the guide's data entries, newest first, with its name dropped and the rest capitalized", () => {
+    expect(guideHistory(entries, guides[0]).map((r) => [r.date, r.text])).toEqual([
+      ["2026-10-15", "Added a reason for Prop E"],
+      ["2026-10-15", "Endorsed No on Prop F"],
+    ]);
+  });
+  it("leaves a title that doesn't start with the guide's name as written", () => {
+    const rows = guideHistory([entry("2026-10-15", "data", "Restored a quote on Prop 1", "growsf")], guides[0]);
+    expect(rows[0].text).toBe("Restored a quote on Prop 1");
+  });
+  it("a guide with no entries gets no rows", () => {
+    expect(guideHistory(entries, { id: "nobody", name: "Nobody" })).toEqual([]);
   });
 });

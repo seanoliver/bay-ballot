@@ -10,6 +10,7 @@ export const FOLDED_ROWS = "changelog-rows";
 
 export type SiteItem = ChangelogEntry & { file: string };
 export type DataRow = { file: string; guide: string | null; name: string | null; text: string; details?: string; pr?: number };
+export type GuideRow = DataRow & { date: string };
 export type DigestDay = { date: string; site: SiteItem[]; data: DataRow[] };
 export type DigestArea = { id: string; name: string; guides: string[] };
 export type DigestQuery = { show: Show; area: string | null };
@@ -22,6 +23,17 @@ export function dataRow(e: ChangelogEntry & { file: string }, guides: Map<string
   if (!g) return { file: e.file, guide: null, name: null, text: e.title, ...extra };
   const named = e.title.startsWith(`${g.name} `);
   return { file: e.file, guide: g.id, name: named ? g.name : null, text: named ? e.title.slice(g.name.length + 1) : e.title, ...extra };
+}
+
+/** One guide's data entries, newest first, with its name dropped from the front of each title. */
+export function guideHistory(entries: SiteItem[], guide: GuideName): GuideRow[] {
+  const byId = new Map([[guide.id, guide]]);
+  return entries
+    .filter((e) => e.type === "data" && e.guide === guide.id)
+    .map((e) => {
+      const row = dataRow(e, byId);
+      return { ...row, date: e.date, text: row.name ? row.text.charAt(0).toUpperCase() + row.text.slice(1) : row.text };
+    });
 }
 
 export function changelogDays(entries: SiteItem[], guides: GuideName[]): DigestDay[] {

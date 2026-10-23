@@ -137,3 +137,17 @@ test("the contest page has a breadcrumb back to its ballot", async ({ page }) =>
   const box = (await crumb.boundingBox())!;
   expect(box.height).toBeGreaterThanOrEqual(40);
 });
+
+test("the change history starts closed and opens to the guide's updates, newest first", async ({ page }) => {
+  await page.goto(GUIDE);
+  const history = page.locator("details", { has: page.getByRole("heading", { level: 2, name: "Change history" }) });
+  const rows = history.locator("li");
+  await expect(history).not.toHaveAttribute("open");
+  await expect(history.locator("summary")).toContainText(/\d+ updates? since \w{3} \d+ · latest \w{3} \d+/);
+  await expect(rows.first()).toBeHidden();
+  await history.locator("summary").click();
+  await expect(rows.first()).toBeVisible();
+  const dates = await history.locator("time").evaluateAll((ts) => ts.map((t) => t.getAttribute("datetime") ?? ""));
+  expect(dates).toEqual([...dates].sort().reverse());
+  await expect(rows.first()).not.toContainText("San Francisco Chronicle");
+});
