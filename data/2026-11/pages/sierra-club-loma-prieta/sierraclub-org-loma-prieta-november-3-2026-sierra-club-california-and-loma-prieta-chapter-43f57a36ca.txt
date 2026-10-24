@@ -151,5 +151,5 @@ Donate Now
 [linkedin-white sharing button] Share
 [arrow_left sharing button]
 [arrow_right sharing button]
-Close menu
 [dot image pixel]
+Close menu
