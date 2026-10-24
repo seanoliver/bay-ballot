@@ -76,7 +76,7 @@ contests:
     kind: candidate
     rankedChoice: true
     candidates: [Gary McCoy, Michael T. Nguyen, Darshini Patel, "Emanuel \"Manny\" Yekutiel"]
-    aliases: { Michael T. Nguyen: [Michael Trung Nguyen] }
+    aliases: { Michael T. Nguyen: [Michael Trung Nguyen, Michel Nguyen] }
     jurisdiction: { level: district, name: Supervisor, district: "8", within: [{ level: county, name: San Francisco }] }
   - id: supervisor-10
     section: Local candidates
