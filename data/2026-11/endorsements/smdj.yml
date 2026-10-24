@@ -70,7 +70,7 @@ archived:
     snapshot: https://web.archive.org/web/20261014231032/https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
   - source: https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
     snapshot: https://web.archive.org/web/20261014231053/https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-24
 hasReasoning: true
 rejectedQuotes:
   - text: The current system is regressive, meaning the more money a business makes, the less it will pay.
@@ -253,6 +253,8 @@ picks:
   half-moon-bay-council-5:
     pick:
       - Steven R. Booker
+  rtm:
+    pick: Y
   burlingame-measure-d:
     pick: Y
     quotes:
@@ -294,3 +296,7 @@ picks:
     pick: Y
   san-bruno-measure-s:
     pick: Y
+  smcccd-measure-v:
+    pick: Y
+  san-bruno-measure-dd:
+    pick: N

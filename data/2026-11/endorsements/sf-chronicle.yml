@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-24
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -160,6 +160,11 @@ picks:
     quotes:
       - text: California could do more to assuage concerns about election integrity. But even if you think voter fraud is a problem in California, Prop 39 would turn our elections into a never-ending lawsuit.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-40:
+    pick: N
+    quotes:
+      - text: Ultimately, neither this editorial board nor anyone else has any idea what the full effect of Prop 40 will be.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
   prop-41:
     pick: N
     quotes:
@@ -231,4 +236,9 @@ picks:
     pick: N
     quotes:
       - text: Everyone wants affordable housing. But Prop I is a cocktail of poison pills that will actually make San Francisco’s housing crisis worse.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  prop-j:
+    pick: Y
+    quotes:
+      - text: Prop J is an in-the-weeds tax measure intended to close a loophole in San Francisco’s transfer tax policty.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
