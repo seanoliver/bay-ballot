@@ -1,6 +1,128 @@
 guide: home-sharers-dems
 election: 2026-11
-status: pending
-fetchedAt: 2026-10-05
+status: published
+source: https://www.homesharersdemclub.org/2026/10/hsdc-endorsements-november-3-2026/
+fetchedAt: 2026-10-24
 hasReasoning: false
-picks: {}
+picks:
+  governor:
+    pick:
+      - Xavier Becerra
+  lt-governor:
+    pick:
+      - Fiona Ma
+  us-rep-11:
+    pick:
+      - Scott Wiener
+  us-rep-15:
+    pick:
+      - Kevin Mullin
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+  controller:
+    pick:
+      - Malia M. Cohen
+  treasurer:
+    pick:
+      - Eleni Kounalakis
+  attorney-general:
+    pick:
+      - Rob Bonta
+  insurance-commissioner:
+    pick:
+      - Ben Allen
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  assembly-17:
+    pick:
+      - Matt Haney
+  assembly-19:
+    pick:
+      - Catherine Stefani
+  superintendent:
+    pick:
+      - Richard Barrera
+  board-of-education:
+    pick:
+      - Laurance Lee
+      - Alida Fisher
+      - Phil Kim
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
+  bart-8:
+    pick:
+      - Sara Barz
+  assessor:
+    pick:
+      - Joaquín Torres
+  public-defender:
+    pick:
+      - Mano Raju
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+  supervisor-8:
+    pick:
+      - Michael T. Nguyen
+      - Gary McCoy
+    ranked: true
+  supervisor-10:
+    pick:
+      - J.R. Eppler
+      - Theo Ellington
+    ranked: true
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-39:
+    pick: N
+  prop-40:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+  prop-a:
+    pick: Y
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+  prop-d:
+    pick: Y
+  prop-e:
+    pick: Y
+  prop-f:
+    pick: Y
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: N
+  prop-j:
+    pick: Y
+  rtm:
+    pick: Y
