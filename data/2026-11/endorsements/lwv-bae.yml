@@ -2,7 +2,7 @@ guide: lwv-bae
 election: 2026-11
 status: published
 source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-24
 hasReasoning: true
 rejectedQuotes:
   - text: As previously stated, the increase simply brings the sales tax up to the level of most Alameda County municipalities.
@@ -35,6 +35,8 @@ picks:
     pick: Y
     quotes:
       - text: Storm-drain infrastructure is increasingly important for managing intense rainfall and runoff, while maintaining streets supports the safe operation of buses, bicycles, pedestrians at crossings, emergency vehicles and other transportation.
+        source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
+      - text: Golden Gate Fields currently generates about $287,000—nearly 22% of all revenue from the street/storm-drain tax.
         source: https://www.lwvbae.org/league-news/vote-with-the-league-nov-2024-2/
   albany-measure-q:
     pick: Y

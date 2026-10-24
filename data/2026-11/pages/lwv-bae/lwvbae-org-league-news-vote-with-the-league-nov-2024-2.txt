@@ -88,9 +88,6 @@ All League News
 [THE ELECTION button blue]
 [voter service]
 Calendar
-Criminal Justice Team
-@ -
-More details...
 11 Day Vote Centers Open.
 @ -
 More details...
@@ -101,6 +98,9 @@ Voter Service
 @ -
 More details...
 Criminal Justice Team
+@ -
+More details...
+4 Day Vote Center Opens
 @ -
 More details...
 [Website design award]

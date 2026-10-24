@@ -5,7 +5,7 @@ source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-e
 archived:
   - source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
     snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-24
 hasReasoning: true
 rejectedQuotes:
   - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
@@ -107,6 +107,8 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Allen has spent over a decade working on insurance, climate, and consumer protection.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Ben Allen understands how insurance works and has already done more than anyone in this race to fix it.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   board-of-equalization-2:
     pick:
       - John Pimentel
@@ -114,6 +116,8 @@ picks:
       - text: Pimentel is the rare candidate who agrees that this elected office shouldn't exist.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Pimentel's record is heavy on execution.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Pimentel's positions are more in line with ours and more aligned with good government.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   assembly-17:
     pick:
@@ -151,6 +155,8 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: We checked the Commission on Judicial Performance, which publishes every public censure, admonishment, and removal in California, and none of these eleven justices appears in it.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Even when a judge repeatedly makes judgments we disagree with, if they're following the law then we should focus on changing the law, not the judge.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   board-of-education:
     pick:
       - Autumn Brown Garibay
@@ -169,9 +175,9 @@ picks:
     quotes:
       - text: Ball knows how a campus gets built and paid for, Lace knows where the students would come from, and Tam knows how to read the books.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: Ball is a college campus planner who has done this job at other California community colleges.
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Tam, a former City College student, has spent 25 years as a municipal financial advisor and has worked with more than 30 California community colleges on their financing plans.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Ball is a college campus planner who has done this job at other California community colleges.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   college-board-partial:
     pick:
@@ -287,8 +293,6 @@ picks:
     quotes:
       - text: A constitutional limit that any measure can evade in a definitions section is not law, it is decoration.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: "Prop 41 closes the loophole: no new state tax may exempt itself from the limit."
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-42:
     pick: Y
     quotes:
@@ -342,6 +346,8 @@ picks:
     pick: Y
     quotes:
       - text: San Francisco is forced to vote on too many ballot measures.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Laws that are not easy to fix should not be this easy to enact.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-e:
     pick: Y
