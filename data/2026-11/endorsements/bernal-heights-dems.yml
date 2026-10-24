@@ -1,6 +1,43 @@
 guide: bernal-heights-dems
 election: 2026-11
-status: pending
-fetchedAt: 2026-10-05
+status: published
+source: https://bhdemocrats.org/index.php/endorsements-november-2026/ # slate is a single image (wp-content/uploads/2026/10/image.png); no page text
+fetchedAt: 2026-10-24
 hasReasoning: false
-picks: {}
+manual: true # picks hand-entered from the slate image; extract skips this guide
+picks:
+  us-rep-11: { pick: ["Connie Chan"] }
+  attorney-general: { pick: ["Rob Bonta"] }
+  secretary-of-state: { pick: ["Shirley N. Weber"] }
+  insurance-commissioner: { pick: ["Jane Kim"] }
+  superintendent: { pick: ["Richard Barrera"] }
+  board-of-equalization-2: { pick: ["Sally J. Lieber"] }
+  assessor: { pick: ["Joaquín Torres"] }
+  public-defender: { pick: ["Mano Raju"] }
+  supervisor-8: { pick: ["Gary McCoy", "Michael T. Nguyen"], ranked: true }
+  college-board: { pick: ["Leah LaCroix", "Jeremy Lee", "Bunny McFadden"] }
+  board-of-education: { pick: ["Virginia Cheung", "Ryan Hazelton", "Reina Tello"] }
+  prop-1: { pick: Y }
+  prop-2: { pick: Y }
+  prop-3: { pick: Y }
+  prop-4: { pick: Y }
+  prop-5: { pick: Y }
+  prop-37: { pick: N }
+  prop-38: { pick: Y }
+  prop-39: { pick: N }
+  prop-40: { pick: Y }
+  prop-41: { pick: N }
+  prop-42: { pick: N }
+  prop-43: { pick: N }
+  prop-44: { pick: Y }
+  prop-45: { pick: N }
+  rtm: { pick: Y }
+  prop-a: { pick: N }
+  prop-b: { pick: Y }
+  prop-c: { pick: Y }
+  prop-d: { pick: N }
+  prop-e: { pick: N }
+  prop-f: { pick: N }
+  prop-h: { pick: Y }
+  prop-i: { pick: Y }
+  prop-j: { pick: Y }
