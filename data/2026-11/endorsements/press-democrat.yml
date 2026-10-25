@@ -28,7 +28,7 @@ contentExclude: aside.related, .sspw-wrapper # "Related Articles" box and the pa
 archived:
   - source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
     snapshot: https://web.archive.org/web/20261011162813/https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
-fetchedAt: 2026-10-13
+fetchedAt: 2026-10-25
 hasReasoning: true
 pinned:
   - contestId: windsor-mayor
@@ -114,8 +114,13 @@ picks:
     quotes:
       - text: There is an interesting case to make that new taxes should fit within the spending limit, but retroactively creating that system to target one tax on about 200 billionaires is not the right way to get there.
         source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
+      - text: It would nullify any state taxes enacted after Jan. 1, 2026, that exempt their revenue from the state spending limit.
+        source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
   prop-42:
     pick: N
+    quotes:
+      - text: It would ban any new state tax on personal property enacted after Jan. 1, 2026.
+        source: https://www.pressdemocrat.com/2026/10/10/endorsement-if-you-support-the-billionaire-tax-vote-no-on-props-41-and-42/
   prop-43:
     pick: N
     quotes:
@@ -177,15 +182,14 @@ picks:
   rohnert-park-council-5:
     pick:
       - Susan Hollingsworth Adams
-    quotes:
-      - text: The two-time council member has been a fiscal stalwart, thinking critically about every dollar the council has to spend.
-        source: https://www.pressdemocrat.com/2026/09/30/endorsement-rohnert-park-can-forge-strong-future-with-khoury-tams-hollingsworth-adams/
   rohnert-park-measure-k:
     pick: Y
     quotes:
       - text: Rohnert Park leaders have made the necessary cuts.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
       - text: If it moves forward, Measure K would bring an expected $5.5 million annually into city coffers.
+        source: https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
+      - text: Now voters can decide whether they want to receive reduced services or help maintain current levels.
         source: https://www.pressdemocrat.com/2026/09/23/endorsement-yes-on-k-rohnert-park-sales-tax-would-help-keep-citys-services-afloat/
   santa-rosa-council-4:
     pick:
@@ -226,8 +230,6 @@ picks:
     quotes:
       - text: "Simply put: preserving the town many residents love requires more funding."
         source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-yes-on-i-windsor-sales-tax-would-provide-lifeline-for-town/
-      - text: Measure I on the Nov. 3 ballot is a one-cent sales tax that would generate about $5 million a year.
-        source: https://www.pressdemocrat.com/2026/09/18/pd-endorsement-yes-on-i-windsor-sales-tax-would-provide-lifeline-for-town/
   srjc-measure-ab:
     pick: Y
     quotes:
@@ -245,8 +247,6 @@ picks:
   napa-county-measure-b:
     pick: Y
     quotes:
-      - text: Measure B is a proposed new half-cent sales tax that would bring $23 million annually into the county for wildfire prevention and open space preservation maintenance.
-        source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
       - text: As climate change continues to make North Bay summers hotter and dryer, this new funding source could help bring continued peace of mind to Napa County residents.
         source: https://www.pressdemocrat.com/2026/10/08/endorsement-yes-on-b-keep-napa-fire-resilient-and-maintain-its-open-space/
   american-canyon-measure-p:

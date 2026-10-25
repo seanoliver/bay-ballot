@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-25
 hasReasoning: true
 rejectedQuotes:
   - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
@@ -135,15 +135,9 @@ picks:
   supervisor-10:
     pick:
       - Theo Ellington
-  vallejo-council-5:
-    pick:
-      - Tara Beasley Stansberry
-  concord-council-3:
-    pick:
-      - Robyn Kuslits
     quotes:
-      - text: Kuslits does not support new data centers in Concord.
-        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
+      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   prop-1:
     pick: Y
   prop-2:
@@ -225,9 +219,9 @@ picks:
     quotes:
       - text: The mayor already has power over city departments.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-g:
     pick: N
@@ -257,3 +251,12 @@ picks:
     quotes:
       - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+  vallejo-council-5:
+    pick:
+      - Tara Beasley Stansberry
+  concord-council-3:
+    pick:
+      - Robyn Kuslits
+    quotes:
+      - text: Kuslits does not support new data centers in Concord.
+        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
