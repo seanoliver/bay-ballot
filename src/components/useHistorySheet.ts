@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CLOSED, sheetStep, type SheetEvent } from "@/lib/sheet-history";
 import { CHANGE_EVENT, currentSearch, HISTORY_BUDGET, replaceQuery } from "./useBallotFilters";
 
-export function useHistorySheet(): [boolean, (open: boolean) => void] {
+/** `leave` closes without stepping back, for a navigation away; it returns whether the sheet had pushed a history entry. */
+export function useHistorySheet(): [boolean, (open: boolean) => void, () => boolean] {
   const state = useRef(CLOSED);
   const [open, setOpenState] = useState(false);
 
@@ -36,5 +37,11 @@ export function useHistorySheet(): [boolean, (open: boolean) => void] {
     },
     [step],
   );
-  return [open, setOpen];
+  const leave = useCallback(() => {
+    const pushed = state.current.open && state.current.pushed;
+    state.current = CLOSED;
+    setOpenState(false);
+    return pushed;
+  }, []);
+  return [open, setOpen, leave];
 }

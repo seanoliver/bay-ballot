@@ -38,6 +38,7 @@ export function ContestDetail({
   pageLink = true,
   shortNames = true,
   action,
+  vote,
   local,
   pinning,
 }: {
@@ -52,6 +53,7 @@ export function ContestDetail({
   pageLink?: boolean;
   shortNames?: boolean;
   action?: ReactNode;
+  vote?: ReactNode;
   /** Guides covering the page's area, listed first within each pick. */
   local?: ReadonlySet<string>;
   pinning: Pinning;
@@ -117,6 +119,7 @@ export function ContestDetail({
         ) : null}
         {official ? <Official source={official} /> : null}
         {answer ? <p className="measure mt-3 text-base">{answer}</p> : null}
+        {vote}
         {summary}
       </div>
 

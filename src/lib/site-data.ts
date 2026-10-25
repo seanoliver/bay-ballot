@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { areaContests, snapshotOf, viewFor, type ElectionSnapshot } from "./area-view";
 import { listElections, loadElection, type ElectionData } from "./data";
+import { myBallotIndex, type MyBallotIndex } from "./my-ballot";
 import type { Area } from "./schema";
 
 export const DATA_ROOT = path.join(process.cwd(), "data");
@@ -67,3 +68,16 @@ export function ballotViewProps(d: ElectionData, { area = null }: { area?: Area 
     pending,
   };
 }
+
+const indexes = new WeakMap<ElectionData, { index: MyBallotIndex; url: string }>();
+function myBallot(d: ElectionData) {
+  let x = indexes.get(d);
+  if (!x) {
+    const index = myBallotIndex(d.ballot.contests, d.areas);
+    x = { index, url: `/${d.ballot.election}/my-ballot.json?v=${createHash("sha1").update(JSON.stringify(index)).digest("hex").slice(0, 10)}` };
+    indexes.set(d, x);
+  }
+  return x;
+}
+export const myBallotData = (d: ElectionData) => myBallot(d).index;
+export const myBallotUrl = (d: ElectionData) => myBallot(d).url;

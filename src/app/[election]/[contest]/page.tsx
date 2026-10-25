@@ -65,6 +65,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
       <JsonLd data={breadcrumbJsonLd([{ name: back.label, path: back.href }, { name: contest.title, path: `/${electionId}/${contest.id}` }])} />
       <ContestView
         election={electionId}
+        date={d.ballot.date}
         contest={contest}
         guides={guides}
         files={contestFiles(contest.id, files)}
