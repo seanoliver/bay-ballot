@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useSyncExternalStore, type MouseEvent } from "react";
-import { daysLeft, electionDayState, pacificDate, RESULTS_URL, shortDate } from "@/lib/election-day";
+import { daysLeft, electionDayState, pacificDate, RESULTS_URL, shortDate, type ElectionDayState } from "@/lib/election-day";
 import { isPlainClick } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "./ExternalLink";
@@ -35,10 +35,14 @@ function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   } catch {}
 }
 
-export function ElectionChip({ date }: { date: string }) {
-  // Pages are static and may not rebuild daily, so the count comes from the visitor's clock after hydration.
+/** Null until hydrated. Pages are static and may not rebuild daily, so the day comes from the visitor's clock. */
+export function useElectionDay(date: string): ElectionDayState | null {
   const now = useSyncExternalStore(subscribe, today, () => null);
-  const state = now ? electionDayState(date, now) : null;
+  return now ? electionDayState(date, now) : null;
+}
+
+export function ElectionChip({ date }: { date: string }) {
+  const state = useElectionDay(date);
 
   if (state?.kind === "after") {
     return (

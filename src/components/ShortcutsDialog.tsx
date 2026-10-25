@@ -10,6 +10,7 @@ const SHORTCUTS: [string[], string][] = [
   [["Esc"], "Close the details"],
   [["g"], "Jump to a section"],
   [["/"], "Search guides"],
+  [["b"], "Open your ballot"],
   [["?"], "Show these shortcuts"],
 ];
 
@@ -60,7 +61,7 @@ export function ShortcutsDialog({
           })}
         </dl>
         <label className="flex cursor-pointer items-center justify-between gap-4 border-t border-border pt-3 text-sm">
-          <span>Single-key shortcuts (j, k, g, /, and ?)</span>
+          <span>Single-key shortcuts (j, k, g, b, /, and ?)</span>
           <Switch checked={singleKeys} onCheckedChange={onSingleKeysChange} />
         </label>
       </DialogContent>

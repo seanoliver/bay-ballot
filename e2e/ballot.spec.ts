@@ -489,7 +489,7 @@ test.describe("desktop keyboard", () => {
     const next = await after(page, "us-rep-11");
     await page.keyboard.press("Shift+?");
     const dialog = page.getByRole("dialog", { name: "Keyboard shortcuts" });
-    const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, g, /, and ?)" });
+    const toggle = dialog.getByRole("switch", { name: "Single-key shortcuts (j, k, g, b, /, and ?)" });
     await expect(toggle).toBeChecked();
     await toggle.click();
     await expect(toggle).not.toBeChecked();
@@ -510,7 +510,7 @@ test.describe("desktop keyboard", () => {
     await expect(toggle).not.toBeChecked();
     await expect(dialog.getByText("Search guides (off)")).toBeVisible();
     await expect(dialog.getByText("Show these shortcuts (off)")).toBeVisible();
-    await dialog.getByText("Single-key shortcuts (j, k, g, /, and ?)").click();
+    await dialog.getByText("Single-key shortcuts (j, k, g, b, /, and ?)").click();
     await expect(toggle).toBeChecked();
     await expect(dialog.getByText("Search guides", { exact: true })).toBeVisible();
   });
