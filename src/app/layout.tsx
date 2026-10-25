@@ -5,11 +5,12 @@ import { Geist } from "next/font/google";
 import { ElectionChip } from "@/components/ElectionChip";
 import { FRAME } from "@/components/frame";
 import { Logo } from "@/components/Logo";
+import { MyBallotPill } from "@/components/MyBallotPill";
 import { SiteAnalytics, TestAnalytics } from "@/components/SiteAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/seo";
 import { SITE_NAME } from "@/lib/structured-data";
-import { election, latestElection } from "@/lib/site-data";
+import { election, latestElection, myBallotUrl } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -30,7 +31,8 @@ export const metadata: Metadata = {
 const NAV = "min-h-10 items-center px-1 text-sm font-medium text-muted-foreground hover:text-foreground";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  const electionDate = election(latestElection())?.ballot.date;
+  const latest = election(latestElection());
+  const electionDate = latest?.ballot.date;
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
       <body className="min-h-full bg-muted dark:bg-background">
@@ -65,6 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main>{children}</main>
         <SiteFooter />
+        {latest ? <MyBallotPill election={latest.ballot.election} date={latest.ballot.date} indexUrl={myBallotUrl(latest)} areas={latest.areas.map((a) => a.id)} /> : null}
         {/* Not unconditional: off Vercel the Vercel script 404s and fails the e2e console-error checks. */}
         {process.env.VERCEL ? <SiteAnalytics ahrefs={process.env.VERCEL_ENV === "production"} /> : <TestAnalytics />}
       </body>

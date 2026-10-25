@@ -1,6 +1,181 @@
 guide: sf-bay-guardian
 election: 2026-11
-status: pending
-fetchedAt: 2026-10-05
-hasReasoning: false
-picks: {}
+status: published
+source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+fetchedAt: 2026-10-24
+hasReasoning: true
+picks:
+  us-rep-11:
+    pick:
+      - Connie Chan
+    quotes:
+      - text: Chan supports a national moratorium on data centers.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: Chan supports an immediate end to all military funding for Israel; Wiener does not.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: Chan has taken the position that allowing developers to build more luxury housing won’t bring down rents for the working class.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  secretary-of-state:
+    pick:
+      - Shirley N. Weber
+    quotes:
+      - text: At a time when Trump is trying to destroy democracy by undermining the right to vote, Weber has been a consistent advocate for open government and voting rights.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  insurance-commissioner:
+    pick:
+      - Jane Kim
+    quotes:
+      - text: Kim, a former SF supervisor, is talking about guaranteed natural disaster insurance, a public option for car insurance—and overall better controls over the massive, powerful industry.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  board-of-equalization-2:
+    pick:
+      - Sally J. Lieber
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Barrera, a longtime San Diego School Board member, has the support of the California Teachers Association, and we support him too.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  supreme-court-groban:
+    pick: Y
+  supreme-court-evans:
+    pick: Y
+  court-of-appeal-1:
+    pick: Y
+  board-of-education:
+    pick:
+      - Virginia Cheung
+      - Reina Tello
+      - Ryan Hazelton
+  college-board:
+    pick:
+      - Leah LaCroix
+      - Jeremy Lee
+      - Bunny McFadden
+  assessor:
+    pick:
+      - Joaquín Torres
+  public-defender:
+    pick:
+      - Mano Raju
+    quotes:
+      - text: Raju has done an exceptional job leading one of the best public defender’s offices in the nation.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: He is a leader in criminal justice reform, and we are happy to support him for another term.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  supervisor-8:
+    pick:
+      - Michael T. Nguyen
+      - Gary McCoy
+    ranked: true
+    quotes:
+      - text: Nguyen is the only progressive in the race, supported by former state Assemblymember Tom Ammiano, former Sups. Dean Preston, Sandra Lee Fewer, John Avalos, and Gordon Mar, as well as the Milk Club and SF Rising Action Fund.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  supervisor-10:
+    pick:
+      - Dionjay (DJ) Brookter
+      - J.R. Eppler
+    quotes:
+      - text: Brookter also opposes Flock cameras and the mayor’s upzoning plan, is Yes on 40 and Yes on I, and he has such broad progressive support that we are happy to endorse him.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
+    quotes:
+      - text: Prop. 2 would increase the amount of money the state has to put on reserve in good years to prevent budget disasters in bad years.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-3:
+    pick: Y
+  prop-4:
+    pick: Y
+  prop-5:
+    pick: Y
+    quotes:
+      - text: "California’s law controlling recall elections is bizarre: When a recall is on the ballot, the voters both decide whether to get rid of an official and decide who will replace them."
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: N
+    quotes:
+      - text: The problem is, the $8.4 billion in state bonds, which will take $500 million annually out of the state budget, must go to an organization that meets a set of difficult criteria—and the only organization currently meeting those rules is run by the person who funded Prop. 38.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-39:
+    pick: N
+  prop-40:
+    pick: Y
+    quotes:
+      - text: The level of wealth accumulated by the top 10 percent, most of it by the top 1 percent, over the past five decades (since the Reagan tax cuts) has been one of the greatest scandals in US history.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: Economic inequality and climate change are existential crises facing humanity, and they are closely related.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: "The No on 40 TV ads are just lies: It will not tax anyone’s retirement fund unless that person is a billionaire."
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-41:
+    pick: N
+    quotes:
+      - text: Prop. 41 is just a poison pill that would undermine the billionaire tax.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-42:
+    pick: N
+    quotes:
+      - text: Prop. 42 is a simple poison pill that would not only undermine Prop. 40 but would ban any future wealth taxes.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-43:
+    pick: N
+    quotes:
+      - text: Prop. 43 seeks to undermine a recent state Supreme Court decision that ruled local tax measures put on the ballot by citizen initiative can take effect with just 50 percent plus 1.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-44:
+    pick: N
+  prop-45:
+    pick: N
+    quotes:
+      - text: Supporters are pushing this as a pro-housing measure, but it’s actually a sweeping attack on the California Environmental Quality Act.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+      - text: Even California YIMBY opposes it.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  rtm:
+    pick: Y
+    quotes:
+      - text: Prop. RTM is a regional sales tax hike that is probably the only way to save BART from near extinction.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-a:
+    pick: N
+    quotes:
+      - text: Prop. A is part of Lurie’s move, supported by $8 million in billionaire tech money, to increase the power of the Mayor’s Office and eliminate community oversight of City Hall.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-b:
+    pick: Y
+  prop-c:
+    pick: Y
+    quotes:
+      - text: It would use tax-increment financing to increase the amount of city money that is earmarked for affordable housing, reaching as much as $125 million a year.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-d:
+    pick: N
+    quotes:
+      - text: "Prop. D is another in a series of mayoral and billionaire power grabs, and it’s the worst of the package: It would quadruple the number of signatures required to put an initiative on the ballot and eliminate the ability of four supes to place a measure on the ballot with their signatures."
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-e:
+    pick: N
+    quotes:
+      - text: Prop. E would eliminate Board of Supes and community oversight of tens of millions in city contracts.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-f:
+    pick: N
+    quotes:
+      - text: Prop. F would allow the mayor to fire commissioners at will, undermining the entire idea of community oversight and a commission structure.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-g:
+    pick: Y
+  prop-h:
+    pick: Y
+  prop-i:
+    pick: Y
+    quotes:
+      - text: The money, from a tax on high-end property sales (mostly paid by big commercial speculators), would not exist if the voters hadn’t believed it was going for affordable housing.
+        source: https://www.sfbg.com/2026/10/06/endorsements-for-the-november-3-2026-election/
+  prop-j:
+    pick: Y

@@ -18,11 +18,13 @@ import { useBallotFilters, useCarriedQuery } from "./useBallotFilters";
 import { markHomeVisit } from "./useHomeRedirect";
 import { useBallotKeys } from "./useBallotKeys";
 import { useSingleKeys } from "./useSingleKeys";
+import { YourVote } from "./YourVote";
 
 const TITLE_ID = "contest-title";
 
 type Props = {
   election: string;
+  date: string;
   contest: Contest;
   guides: GuideInfo[];
   files: Record<string, PickFile>;
@@ -38,7 +40,7 @@ type Props = {
   local?: string[];
 };
 
-export function ContestView({ election, contest, guides, files, pending, asOf, place, back, area, next, noPick, local }: Props) {
+export function ContestView({ election, date, contest, guides, files, pending, asOf, place, back, area, next, noPick, local }: Props) {
   // All guides, not just this contest's: filters drop ids they don't know, which would forget the list's other hidden guides.
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides });
   const setFilters = (f: Filters) => {
@@ -103,6 +105,7 @@ export function ContestView({ election, contest, guides, files, pending, asOf, p
             answer={rows.length > 0 || hidden === 0 ? answerSentence(contest, rows, asOf, place) : undefined}
             local={localSet}
             pinning={pinning}
+            vote={<YourVote election={election} date={date} contest={contest} />}
           />
           {next ? <BallotNextStep step={next} carry={carry} /> : null}
         </section>

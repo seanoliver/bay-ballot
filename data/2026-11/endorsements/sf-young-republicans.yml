@@ -1,6 +1,19 @@
 guide: sf-young-republicans
 election: 2026-11
-status: pending
-fetchedAt: 2026-10-05
+status: published
+source: https://www.sfyoungrepublicans.com/news # "November 2026 Endorsements" opens in a pop-up from "Read More"; the page needs JavaScript and the post has no URL of its own
+fetchedAt: 2026-10-24
 hasReasoning: false
-picks: {}
+manual: true # picks hand-entered from the post, read in a browser; extract skips this guide
+picks:
+  us-rep-15: { pick: ["Charles Hoelter"] }
+  governor: { pick: ["Steve Hilton"] }
+  lt-governor: { pick: ["Gloria Romero"] }
+  attorney-general: { pick: ["Michael E. Gates"] }
+  controller: { pick: ["Herb W Morgan"] }
+  treasurer: { pick: ["Jennifer Hawks"] }
+  superintendent: { pick: ["Sonja Shaw"] }
+  assembly-19: { pick: ["Philip Louis Wing"] }
+  prop-b: { pick: N }
+  prop-g: { pick: Y }
+  prop-39: { pick: Y }
