@@ -6,7 +6,7 @@ fetchFrom: local # blocks GitHub's runners (bot wall); refreshed by the schedule
 archived:
   - source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
     snapshot: https://web.archive.org/web/20261005222009/https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
-fetchedAt: 2026-10-24
+fetchedAt: 2026-10-26
 hasReasoning: true
 rejectedQuotes:
   - text: But it is a necessary investment in keeping the region’s transit system functioning while those larger challenges are addressed.
@@ -84,6 +84,11 @@ picks:
     quotes:
       - text: None of the justices up for retention in the November election have been cited for disciplinary matters on the Commission on Judicial Performance’s database, nor have our queries into their backgrounds turned up any red flags.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  board-of-education:
+    pick:
+      - Phil Kim
+      - Autumn Brown Garibay
+      - Tim Tung
   college-board:
     pick:
       - Elijah Ball
