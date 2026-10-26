@@ -98,6 +98,15 @@ test.describe("Your ballot", () => {
     expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe('{"started":true,"picks":{}}');
   });
 
+  test("a judge's retention takes Yes, No or Blank", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.goto(`${BALLOT}/supreme-court-evans`);
+    await expect(vote(page).getByRole("button")).toHaveText(["Yes", "No", "Blank"]);
+    await vote(page).getByRole("button", { name: "Yes" }).click();
+    expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe('{"started":true,"picks":{"supreme-court-evans":"Y"}}');
+  });
+
   test("a tap writes against what's stored, keeping a pick this page never saw", async ({ page }) => {
     await page.clock.setFixedTime(BEFORE);
     await seed(page);

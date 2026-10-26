@@ -37,7 +37,7 @@ export function YourVote({ election, date, contest }: { election: string; date: 
   // A name the data no longer lists would take a seat no button can clear.
   const names = Array.isArray(pick) ? pick.filter((n) => contest.candidates.includes(n)) : [];
   const hint =
-    contest.kind === "measure"
+    contest.kind !== "candidate"
       ? null
       : ranked
         ? "Tap names in the order you'd rank them. Tap again to remove. Ranking fewer is fine."
@@ -53,7 +53,7 @@ export function YourVote({ election, date, contest }: { election: string; date: 
         </h2>
         <p className="text-xs text-muted-foreground">{saved ? "Saved on this device" : "Not saved"}</p>
       </div>
-      {contest.kind === "measure" ? (
+      {contest.kind !== "candidate" ? (
         <div role="group" aria-label="Your vote" className="mt-2 grid grid-cols-3 gap-2">
           {(["Y", "N", "blank"] as const).map((v) => (
             <button key={v} type="button" aria-pressed={pick === v} onClick={() => choose(pick === v ? null : v)} className={cn(OPTION, "justify-center", pick === v ? ON : OFF)}>
