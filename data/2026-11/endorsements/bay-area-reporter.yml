@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-25
+fetchedAt: 2026-10-26
 hasReasoning: true
 rejectedQuotes:
   - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
@@ -79,9 +79,9 @@ picks:
     pick:
       - Richard Barrera
     quotes:
-      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
   board-of-education:
     pick:
@@ -251,12 +251,3 @@ picks:
     quotes:
       - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-  vallejo-council-5:
-    pick:
-      - Tara Beasley Stansberry
-  concord-council-3:
-    pick:
-      - Robyn Kuslits
-    quotes:
-      - text: Kuslits does not support new data centers in Concord.
-        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
