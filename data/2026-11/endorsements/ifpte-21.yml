@@ -4,6 +4,15 @@ status: published
 source: https://ifpte21.org/endorsements/
 fetchedAt: 2026-10-24
 hasReasoning: false
+pinned:
+  - contestId: valley-water-6
+    pick:
+      - Milan Balinton
+    reason: 'page lists "Santa Clara Valley Water Board District 6: Milan Balinton"; the extract missed it (review 2026-10-26)'
+  - contestId: valley-water-7
+    pick:
+      - Pete Dailey
+    reason: 'page lists "Santa Clara Valley Water Board District 7: Pete Dailey"; the extract missed it (review 2026-10-26)'
 picks:
   governor:
     pick:
@@ -97,3 +106,9 @@ picks:
   solano-county-supervisor-4:
     pick:
       - Michael "Mike" Silva
+  valley-water-6:
+    pick:
+      - Milan Balinton
+  valley-water-7:
+    pick:
+      - Pete Dailey
