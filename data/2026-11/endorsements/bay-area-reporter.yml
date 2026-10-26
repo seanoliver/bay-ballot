@@ -58,6 +58,9 @@ rejectedQuotes:
   - text: On the whole, Prop E is a good start.
     reason: "bare verdict: gives no reason (review 2026-10-11)"
     contestId: prop-e
+  - text: We think Beasley-Stansberry would be a good addition to the Vallejo City Council and recommend her for election in District 5.
+    reason: "bare verdict: gives no reason (review 2026-10-26)"
+    contestId: vallejo-council-5
 pinned:
   - contestId: vallejo-council-5
     pick:
