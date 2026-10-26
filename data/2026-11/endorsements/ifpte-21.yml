@@ -2,7 +2,7 @@ guide: ifpte-21
 election: 2026-11
 status: published
 source: https://ifpte21.org/endorsements/
-fetchedAt: 2026-10-09
+fetchedAt: 2026-10-24
 hasReasoning: false
 picks:
   governor:
@@ -32,6 +32,15 @@ picks:
   assembly-16:
     pick:
       - Rebecca Bauer-Kahan
+  assembly-18:
+    pick:
+      - Mia Bonta
+  assembly-20:
+    pick:
+      - Liz Ortega
+  assembly-24:
+    pick:
+      - Alex Lee
   prop-1:
     pick: Y
   prop-2:
@@ -60,35 +69,31 @@ picks:
     pick: N
   rtm:
     pick: Y
+  hayward-measure-cc:
+    pick: Y
+  richmond-measure-q:
+    pick: Y
+  oakland-council-4:
+    pick:
+      - Janani Ramachandran
+  oakland-council-2:
+    pick:
+      - Nate Adams
+  oakland-mayor:
+    pick:
+      - Barbara Lee
   richmond-mayor:
     pick:
       - Claudia Jiménez
+  san-leandro-council-2:
+    pick:
+      - James Aguilar
   ebmud-ward-3:
     pick:
       - Marguerite Young
   ebmud-ward-7:
     pick:
       - Gary Wolff
-  assembly-18:
-    pick:
-      - Mia Bonta
-  assembly-20:
-    pick:
-      - Liz Ortega
-  assembly-24:
-    pick:
-      - Alex Lee
-  hayward-measure-cc:
-    pick: Y
-  oakland-council-4:
-    pick:
-      - Janani Ramachandran
-  oakland-mayor:
-    pick:
-      - Barbara Lee
-  san-leandro-council-2:
-    pick:
-      - James Aguilar
   solano-county-supervisor-4:
     pick:
       - Michael "Mike" Silva

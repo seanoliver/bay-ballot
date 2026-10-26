@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-23
+fetchedAt: 2026-10-26
 hasReasoning: true
 rejectedQuotes:
   - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
@@ -58,6 +58,18 @@ rejectedQuotes:
   - text: On the whole, Prop E is a good start.
     reason: "bare verdict: gives no reason (review 2026-10-11)"
     contestId: prop-e
+  - text: We think Beasley-Stansberry would be a good addition to the Vallejo City Council and recommend her for election in District 5.
+    reason: "bare verdict: gives no reason (review 2026-10-26)"
+    contestId: vallejo-council-5
+pinned:
+  - contestId: vallejo-council-5
+    pick:
+      - Tara Beasley Stansberry
+    reason: page says "recommend her for election in District 5"; a re-extract drops it (review 2026-10-26)
+  - contestId: concord-council-3
+    pick:
+      - Robyn Kuslits
+    reason: page says "recommend her for the District 3 seat"; a re-extract drops it (review 2026-10-26)
 picks:
   lt-governor:
     pick:
@@ -79,9 +91,9 @@ picks:
     pick:
       - Richard Barrera
     quotes:
-      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
+        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
   board-of-education:
     pick:
@@ -135,6 +147,9 @@ picks:
   supervisor-10:
     pick:
       - Theo Ellington
+    quotes:
+      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
   vallejo-council-5:
     pick:
       - Tara Beasley Stansberry
@@ -225,9 +240,9 @@ picks:
     quotes:
       - text: The mayor already has power over city departments.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
       - text: We think oversight by the Board of Supervisors and the various city commissions provide critical checks and balances in city government.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
+      - text: We see no need to add another bureaucratic level with the deployment of deputy mayors.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-g:
     pick: N
