@@ -168,10 +168,16 @@ picks:
     quotes:
       - text: Current Trustee Boris Lipkin is by far the most knowledgable and engaged.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
+        about:
+          - Boris Lipkin
       - text: Tripathi is intimately familiar with all the volunteer positions in which a parent can engage and is well versed in the issues the district faces.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
+        about:
+          - Shivani Tripathi
       - text: Also impressive is Chawla, who focuses on data and also making sure she can be a bridge of communication with parents.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-lipkin-chawla-tripathi-for-san-carlos-school-board/article_f9ee0b59-6fcc-4471-8ecf-0f3f5249f78d.html
+        about:
+          - Megha Chawla
   south-san-francisco-council-3:
     pick:
       - Buenaflor (Flor) Nicolas

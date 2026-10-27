@@ -12,6 +12,15 @@ extraSources:
 fetchWith: browser
 fetchedAt: 2026-10-26
 hasReasoning: true
+pinned:
+  - contestId: vallejo-council-5
+    pick:
+      - Tara Beasley Stansberry
+    reason: page says "recommend her for election in District 5"; a re-extract drops it (review 2026-10-26)
+  - contestId: concord-council-3
+    pick:
+      - Robyn Kuslits
+    reason: page says "recommend her for the District 3 seat"; a re-extract drops it (review 2026-10-26)
 rejectedQuotes:
   - text: Prop C has the support of Mayor Daniel Lurie, a majority of the Board of Supervisors, and labor organizations.
     reason: lists supporters; gives no reason (review 2026-10-19)
@@ -61,15 +70,6 @@ rejectedQuotes:
   - text: We think Beasley-Stansberry would be a good addition to the Vallejo City Council and recommend her for election in District 5.
     reason: "bare verdict: gives no reason (review 2026-10-26)"
     contestId: vallejo-council-5
-pinned:
-  - contestId: vallejo-council-5
-    pick:
-      - Tara Beasley Stansberry
-    reason: page says "recommend her for election in District 5"; a re-extract drops it (review 2026-10-26)
-  - contestId: concord-council-3
-    pick:
-      - Robyn Kuslits
-    reason: page says "recommend her for the District 3 seat"; a re-extract drops it (review 2026-10-26)
 picks:
   lt-governor:
     pick:
@@ -103,6 +103,8 @@ picks:
     quotes:
       - text: Fisher’s correct that achieving a balanced budget is a major milestone for the district and that the work is not finished.
         source: https://www.ebar.com/story/170125/Opinion/Editorial/Editorial%3A%20SF%20school%20board%20recommendations
+        about:
+          - Alida Fisher
   college-board:
     pick:
       - Elijah Ball
@@ -111,8 +113,12 @@ picks:
     quotes:
       - text: Overall, we’re impressed with Ball and think his background will be an asset to the college board.
         source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+        about:
+          - Elijah Ball
       - text: Overall, Tam has financial skills that would be beneficial to the college district.
         source: https://www.ebar.com/story/170122/Opinion/Editorial/Editorial%3A%20An%20LGBTQ%20slate%20for%20City%20College%20board
+        about:
+          - Erwin Tam
   college-board-partial:
     pick:
       - Ruth Ferguson
@@ -140,10 +146,16 @@ picks:
     quotes:
       - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Gary McCoy
       - text: Nguyen impressed us with his commitment to social housing.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Michael T. Nguyen
       - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
         source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Gary McCoy
   supervisor-10:
     pick:
       - Theo Ellington

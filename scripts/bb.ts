@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pacificDay } from "../src/lib/changelog";
 import { loadElection, validateElection, type ElectionData } from "../src/lib/data";
+import { tagQuotes } from "../src/lib/quote-about";
 import { EndorsementFile, type Guide } from "../src/lib/schema";
 import { archiveUrl } from "../src/pipeline/archive";
 import { claudeCodeClient, modelVia } from "../src/pipeline/claudecode";
@@ -133,7 +134,9 @@ async function verifyAndWrite(client: ExtractClient, data: ElectionData, guide: 
   const applied = applyVerdicts(file, output);
   // Held contests are asked about only when the verifier sees them, so it may report an unclear-match hold as missing.
   const isHeld = new Set((applied.file.held ?? []).map((h) => h.contestId));
-  const r = { ...applied, missing: applied.missing.filter((m) => !isHeld.has(m.contestId)) };
+  const aliases = Object.fromEntries(data.ballot.contests.map((c) => [c.id, c.aliases ?? {}]));
+  const tagged = { ...applied.file, picks: tagQuotes(applied.file.picks, { prev: file.picks, aliases }) };
+  const r = { ...applied, file: tagged, missing: applied.missing.filter((m) => !isHeld.has(m.contestId)) };
   const path_ = endorsementPath(guide.id);
   if (!isDeepStrictEqual(r.file, file)) fs.writeFileSync(path_, toYaml(EndorsementFile.parse(r.file), { previous: fs.readFileSync(path_, "utf8") }));
 

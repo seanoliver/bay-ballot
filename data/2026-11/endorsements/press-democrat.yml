@@ -143,10 +143,16 @@ picks:
     quotes:
       - text: During his short tenure on the council, Marquez has been a fierce advocate for safeguarding a regional water supply, plus transparency and policy change for the council.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+        about:
+          - Andrés Marquez
       - text: Parker has extensive experience with the city’s budgeting process and, with a seat at the table, could bring his ideas for managing the city’s deficit to the forefront.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+        about:
+          - Chris Parker
       - text: Carter, while new to politics, has extensive leadership experience serving the city.
         source: https://www.pressdemocrat.com/2026/10/05/endorsement-marquez-parker-and-carter-can-steer-cloverdale-in-the-right-direction/
+        about:
+          - Will Carter
   healdsburg-council-2:
     pick:
       - Mathew Lopez
