@@ -6,7 +6,7 @@ archived:
   - source: https://www.edleedems.org/nov2026/
     snapshot: https://web.archive.org/web/20261005221047/https://www.edleedems.org/nov2026/
 fetchedAt: 2026-10-12
-hasReasoning: false
+hasReasoning: true
 picks:
   us-rep-11:
     pick:
@@ -98,14 +98,14 @@ picks:
       - Phil Kim
       - Tim Tung
       - Autumn Brown Garibay
-  college-board-partial:
-    pick:
-      - Ruth Ferguson
   college-board:
     pick:
       - Elijah Ball
       - Monroe Lace
       - Erwin Tam
+  college-board-partial:
+    pick:
+      - Ruth Ferguson
   bart-8:
     pick:
       - Sara Barz
