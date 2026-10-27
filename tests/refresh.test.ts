@@ -309,6 +309,55 @@ describe("runRefresh", () => {
     expect(exitCodeFor(results)).toBe(0);
   });
 
+  describe("quote about tags", () => {
+    const BOARD = ["Phil Kim", "Ryan Hazelton", "Alida Fisher"];
+    const FISHER = "Alida Fisher is right that a balanced budget is a major milestone for the district.";
+    const page = `${PAGE("alpha", "x").replace("No on Prop B:", "Strong No on Prop B:")}\nBoard of Education\nPhil Kim, Ryan Hazelton and Alida Fisher\n${FISHER}`;
+    const out: ExtractOutput = {
+      hasReasoning: true,
+      picks: [extractOut.picks[0], { contestId: "board-of-education", vote: null, candidates: BOARD, ranked: false, rankedCount: null, quotes: [FISHER], note: null }],
+    };
+    const boardYaml = (key: "picks" | "held", about: boolean) =>
+      `  - contestId: board-of-education\n    pick: [${BOARD.join(", ")}]\n    reason: unverified\n    evidence: no verdict\n    quotes:\n      - text: ${FISHER}\n        source: ${url("alpha")}\n${about ? "        about: [Alida Fisher]\n" : ""}`.replace(
+        key === "picks" ? /^  - contestId: board-of-education\n    pick: (.*)\n    reason: .*\n    evidence: .*\n/ : /^$/,
+        key === "picks" ? "  board-of-education:\n    pick: $1\n" : "",
+      );
+
+    it("compares tagged picks with the published file, so an unchanged guide skips the verifier", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8") + boardYaml("picks", true));
+      const before = fs.readFileSync(f, "utf8");
+      const { client, stream } = fakeClient(out);
+      const results = await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+      expect(stream.mock.calls.map((c) => c[0].model)).toEqual(["claude-sonnet-5-5"]);
+      expect(results[0]).toMatchObject({ status: "changed", dataChanged: false });
+      expect(fs.readFileSync(f, "utf8")).toBe(before);
+    });
+
+    it("tags the quotes of a pick the verifier releases from a hold", async () => {
+      const root = setup(["alpha"]);
+      const f = path.join(root, ELECTION, "endorsements", "alpha.yml");
+      fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("picks:\n", `held:\n${boardYaml("held", false)}picks:\n`));
+      const verdicts: VerifyOutput = {
+        picks: ["prop-b", "board-of-education"].map((contestId) => ({ contestId, verdict: "confirmed" as const, evidence: "e" })),
+        quotes: [{ contestId: "board-of-education", index: 1, verdict: "confirmed", evidence: "e" }],
+        missing: [],
+      };
+      const client = { messages: { stream: vi.fn((req: { model: string }) => ({
+        finalMessage: async () => ({
+          stop_reason: "end_turn", stop_details: null,
+          usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+          content: [{ type: "text", text: JSON.stringify(req.model.includes("opus") ? verdicts : out) }],
+        }),
+      })) } } as unknown as ExtractClient;
+      await runRefresh(deps(client, fetcher({ alpha: page })), { root, election: ELECTION });
+      const file = parse(fs.readFileSync(f, "utf8"));
+      expect(file.held).toBeUndefined();
+      expect(file.picks["board-of-education"].quotes).toEqual([{ text: FISHER, source: url("alpha"), about: ["Alida Fisher"] }]);
+    });
+  });
+
   describe("a name close to a candidate's", () => {
     const misspelled: ExtractOutput = {
       hasReasoning: true,

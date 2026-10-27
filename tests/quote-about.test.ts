@@ -60,6 +60,10 @@ describe("tagQuotes", () => {
     const prev = { boe: entry([{ text: "Fisher’s right, and   Kim agrees.", source: src, about: board }]) };
     expect(tagQuotes({ boe: entry([{ text: "Fisher's right, and Kim agrees.", source: src }]) }, { prev }).boe.quotes[0].about).toEqual(board);
   });
+  it("never overwrites an about already on the quote", () => {
+    const picks = { boe: entry([{ text: "Fisher is right.", source: src, about: board }]) };
+    expect(tagQuotes(picks).boe.quotes[0].about).toEqual(board);
+  });
   it("returns the same entry when nothing changes", () => {
     const picks = { boe: entry([{ text: "They will steady the board.", source: src }]) };
     expect(tagQuotes(picks).boe).toBe(picks.boe);
