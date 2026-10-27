@@ -1,5 +1,6 @@
-import { candidateSlots, slotTone, surname, type BarTone, type Slots } from "./bar";
+import { candidateSlots, slotTone, type BarTone, type Slots } from "./bar";
 import { displayName, groupByPick, reasons, sourceLink } from "./display";
+import { names, quoteIsFor } from "./quote-about";
 import type { Row } from "./filters";
 import type { Contest, GuideType } from "./schema";
 import { tally, unanimous } from "./score";
@@ -19,7 +20,9 @@ export function localFirst<G extends { id: string }>(guides: G[], local: Readonl
 export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { local }: { local?: ReadonlySet<string> } = {}): { sides: Side[]; others: Side[] } {
   const colors = slots ?? candidateSlots(contest, rows.map((r) => r.entry));
   const all = groupByPick(contest, rows).map((g): Side => {
-    const quoted = g.rows.filter((r) => reasons(r).length > 0);
+    // A guide picking several names may give a reason for only some of them.
+    const own = (r: Row) => (g.tone === "candidate" ? reasons(r).filter((q) => quoteIsFor(q, g.key)) : reasons(r));
+    const quoted = g.rows.filter((r) => own(r).length > 0);
     const rest = g.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));
     const picked = [...quoted, ...rest].map((r) => ({
       id: r.guide.id,
@@ -35,7 +38,7 @@ export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { loca
       count: g.rows.length,
       guides: local ? localFirst(picked, local) : picked,
       quotes: quoted.flatMap((r) =>
-        reasons(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source) })),
+        own(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source) })),
       ),
     };
   });
@@ -44,16 +47,13 @@ export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { loca
 }
 
 const SHORT = 200;
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const mentions = (text: string, name: string) =>
-  [name, surname(name)].some((n) => new RegExp(`\\b${escape(n)}\\b`, "i").test(text));
 
 export function pickReasons(side: Side, rows: Row[], contest: Contest): { top: SideQuote[]; rest: SideQuote[] } {
   const rivals =
     contest.kind === "candidate"
       ? [...new Set([...contest.candidates, ...rows.flatMap((r) => (Array.isArray(r.entry.pick) ? r.entry.pick : []))])].filter((n) => n !== side.key)
       : [];
-  const attack = (q: SideQuote) => !mentions(q.text, side.key) && rivals.some((n) => mentions(q.text, n));
+  const attack = (q: SideQuote) => !names(q.text, side.key) && rivals.some((n) => names(q.text, n));
   const score = (q: SideQuote) => [attack(q) ? 1 : 0, q.text.length > SHORT ? 1 : 0, q.text.length];
   const better = (a: SideQuote, b: SideQuote) => {
     const [x, y] = [score(a), score(b)];

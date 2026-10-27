@@ -282,10 +282,16 @@ picks:
     quotes:
       - text: J.R. Eppler is our first choice because his record and positions best align with the Sierra Club.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+        about:
+          - J.R. Eppler
       - text: Eppler has also supported building the kind of transit-oriented housing that allows more residents to access the district’s schools, shops, and parks without a car.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+        about:
+          - J.R. Eppler
       - text: Ellington has also backed several environmental transportation and housing priorities.
         source: https://www.sierraclub.org/sfbay/november-2026-combined-endorsements-explanations
+        about:
+          - Theo Ellington
   san-leandro-mayor:
     pick:
       - Juan González III

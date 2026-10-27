@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from "node:util";
 import type Anthropic from "@anthropic-ai/sdk";
 import { loadElection, type ElectionData } from "@/lib/data";
 import { isRejected } from "@/lib/quote-key";
+import { tagQuotes } from "@/lib/quote-about";
 import { readChangelog } from "@/lib/changelog";
 import { EndorsementFile, isPersonHold, type ArchivedSource, type Ballot, type Entry, type Guide, type HeldPick } from "@/lib/schema";
 import { onSubscription } from "./claudecode";
@@ -206,7 +207,10 @@ async function refreshGuide(
     { ownNames: [guide.name], rejected: prev.rejectedQuotes, noted: extracted.dropped },
   );
   const pins = applyPins(prev, kept.picks, inScope, nearHeld);
-  const picks = pins.picks;
+  // Tag before comparing with the published file, which carries `about`, or every refresh looks like a change.
+  const aliases = Object.fromEntries(ballot.contests.map((c) => [c.id, c.aliases ?? {}]));
+  const tag = (p: Record<string, Entry>) => tagQuotes(p, { prev: prev.picks, aliases });
+  const picks = tag(pins.picks);
   const outOfScope = new Set(ballot.contests.filter((c) => !inScope(c.id)).map((c) => c.id));
   const notes = [...extracted.notes.filter((n) => !outOfScope.has(n.split(":")[0])), ...kept.notes, ...pins.notes];
   const prevInScope = Object.fromEntries(Object.entries(prev.picks).filter(([c]) => inScope(c)));
@@ -294,6 +298,8 @@ async function refreshGuide(
   if (scoped && !Object.keys(next.picks).some(inScope) && !(next.held ?? []).some((h) => inScope(h.contestId))) {
     result.warnings?.push(`no endorsements found for ${opts.onlyAreas?.join(", ")}`);
   }
+  // Picks the verifier released carry untagged quotes.
+  next = { ...next, picks: tag(next.picks) };
   result.dataChanged = !sameFile(prev, next);
   if (result.dataChanged) {
     const file = path.join(opts.root, opts.election, "endorsements", `${id}.yml`);
