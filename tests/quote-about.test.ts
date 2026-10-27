@@ -60,6 +60,16 @@ describe("tagQuotes", () => {
     const prev = { boe: entry([{ text: "Fisher’s right, and   Kim agrees.", source: src, about: board }]) };
     expect(tagQuotes({ boe: entry([{ text: "Fisher's right, and Kim agrees.", source: src }]) }, { prev }).boe.quotes[0].about).toEqual(board);
   });
+  it("re-derives about when the quote was trimmed or extended", () => {
+    const long = "Alida Fisher is right about the budget. Phil Kim and Ryan Hazelton bring classroom experience.";
+    const short = "Phil Kim and Ryan Hazelton bring classroom experience.";
+    const trimmed = tagQuotes({ boe: entry([{ text: short, source: src }]) }, { prev: { boe: entry([{ text: long, source: src, about: ["Alida Fisher"] }]) } });
+    expect(trimmed.boe.quotes[0].about).toEqual(["Phil Kim", "Ryan Hazelton"]);
+    const extended = tagQuotes({ boe: entry([{ text: long.replace("Phil Kim and Ryan Hazelton", "Kim, Hazelton and Fisher"), source: src }]) }, {
+      prev: { boe: entry([{ text: "Alida Fisher is right about the budget.", source: src, about: ["Alida Fisher"] }]) },
+    });
+    expect(extended.boe.quotes[0].about).toBeUndefined();
+  });
   it("never overwrites an about already on the quote", () => {
     const picks = { boe: entry([{ text: "Fisher is right.", source: src, about: board }]) };
     expect(tagQuotes(picks).boe.quotes[0].about).toEqual(board);
