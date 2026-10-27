@@ -80,7 +80,6 @@ export const CountyBallot = z.object({
 export const Quote = z.object({
   text: NonEmpty,
   source: HttpUrl,
-  // The picked candidates the quote is about, when it is about some of a multi-name pick. Omitted means the whole pick.
   about: z.array(NonEmpty).min(1).optional(),
 });
 export type Quote = z.infer<typeof Quote>;

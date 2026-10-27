@@ -135,7 +135,6 @@ async function verifyAndWrite(client: ExtractClient, data: ElectionData, guide: 
   // Held contests are asked about only when the verifier sees them, so it may report an unclear-match hold as missing.
   const isHeld = new Set((applied.file.held ?? []).map((h) => h.contestId));
   const aliases = Object.fromEntries(data.ballot.contests.map((c) => [c.id, c.aliases ?? {}]));
-  // Picks the verifier released carry untagged quotes.
   const tagged = { ...applied.file, picks: tagQuotes(applied.file.picks, { prev: file.picks, aliases }) };
   const r = { ...applied, file: tagged, missing: applied.missing.filter((m) => !isHeld.has(m.contestId)) };
   const path_ = endorsementPath(guide.id);

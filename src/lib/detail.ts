@@ -20,7 +20,6 @@ export function localFirst<G extends { id: string }>(guides: G[], local: Readonl
 export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { local }: { local?: ReadonlySet<string> } = {}): { sides: Side[]; others: Side[] } {
   const colors = slots ?? candidateSlots(contest, rows.map((r) => r.entry));
   const all = groupByPick(contest, rows).map((g): Side => {
-    // A guide picking several names may give a reason for only some of them.
     const own = (r: Row) => (g.tone === "candidate" ? reasons(r).filter((q) => quoteIsFor(q, g.key)) : reasons(r));
     const quoted = g.rows.filter((r) => own(r).length > 0);
     const rest = g.rows.filter((r) => !quoted.includes(r)).sort((a, b) => a.guide.name.localeCompare(b.guide.name, "en"));

@@ -12,26 +12,18 @@ export function names(text: string, name: string, aliases: string[] = []): boole
   });
 }
 
-/**
- * The picked candidates a quote names, when it names some but not all of them.
- * Undefined means the quote is about the whole pick: a measure, a single name, or a quote naming none or all of them.
- */
+/** Undefined means the quote is about the whole pick, never that it names no one. */
 export function quoteAbout(text: string, pick: Entry["pick"], aliases: Record<string, string[]> = {}): string[] | undefined {
   if (!Array.isArray(pick) || pick.length < 2) return undefined;
-  // A quote may use a first name alone ("Leah has the policy chops"), matched as written.
   const first = (n: string) => n.split(/\s+/)[0].replace(/[.,]/g, "");
   const byFirst = (n: string) => first(n).length >= 2 && n.includes(" ") && pick.filter((m) => first(m) === first(n)).length === 1 && word(first(n), "u").test(text);
   const named = pick.filter((n) => names(text, n, aliases[n]) || byFirst(n));
   return named.length && named.length < pick.length ? named : undefined;
 }
 
-/** Whether a guide's quote belongs under one of its picked candidates. */
 export const quoteIsFor = (q: Pick<Quote, "about">, name: string) => !q.about || q.about.includes(name);
 
-/**
- * Sets `about` on each quote that lacks it. A quote already published with `about` keeps it while those names are still picked,
- * so a hand-made correction survives the next extract.
- */
+/** A published quote's `about` wins over the derived one while those names stay picked, so hand fixes survive re-extracts. */
 export function tagQuotes(
   picks: Record<string, Entry>,
   { prev = {}, aliases = {} }: { prev?: Record<string, Entry>; aliases?: Record<string, Record<string, string[]>> } = {},
