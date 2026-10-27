@@ -1,4 +1,5 @@
 import { surname } from "./bar";
+import { sameQuoteText } from "./quote-key";
 import type { Entry, Quote } from "./schema";
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
@@ -34,7 +35,7 @@ export function tagQuotes(
       if (!Array.isArray(pick) || pick.length < 2) return [id, e];
       const quotes = e.quotes.map((q) => {
         if (q.about) return q;
-        const was = prev[id]?.quotes.find((p) => p.text === q.text)?.about;
+        const was = prev[id]?.quotes.find((p) => sameQuoteText(p.text, q.text))?.about;
         const about = was?.every((n) => pick.includes(n)) ? was : quoteAbout(q.text, pick, aliases[id]);
         return about ? { ...q, about } : q;
       });

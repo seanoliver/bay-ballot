@@ -56,6 +56,10 @@ describe("tagQuotes", () => {
     const dropped = { boe: entry([{ text: "They will steady the board.", source: src }], ["Ryan Hazelton", "Alida Fisher"]) };
     expect(tagQuotes(dropped, { prev }).boe.quotes[0].about).toBeUndefined();
   });
+  it("keeps a published about when the quote comes back with different quote marks or spacing", () => {
+    const prev = { boe: entry([{ text: "Fisher’s right, and   Kim agrees.", source: src, about: board }]) };
+    expect(tagQuotes({ boe: entry([{ text: "Fisher's right, and Kim agrees.", source: src }]) }, { prev }).boe.quotes[0].about).toEqual(board);
+  });
   it("returns the same entry when nothing changes", () => {
     const picks = { boe: entry([{ text: "They will steady the board.", source: src }]) };
     expect(tagQuotes(picks).boe).toBe(picks.boe);
