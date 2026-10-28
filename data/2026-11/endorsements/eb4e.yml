@@ -66,8 +66,12 @@ picks:
     quotes:
       - text: CM Mourra has been a vocal champion of housing, transit, and safe streets during his time on council.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+        about:
+          - David Mourra
       - text: Corry Frydlewicz is unapologetically devoted to safe streets and building a more walkable community.
         source: https://eastbayforeveryone.org/2026/09/21/eb4e-2026-general-election-endorsements/
+        about:
+          - Corry Frydlewicz
   oakland-council-2:
     pick:
       - Charlene Wang

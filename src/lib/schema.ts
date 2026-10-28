@@ -77,7 +77,11 @@ export const CountyBallot = z.object({
   contests: z.array(Contest).min(1),
 });
 
-export const Quote = z.object({ text: NonEmpty, source: HttpUrl });
+export const Quote = z.object({
+  text: NonEmpty,
+  source: HttpUrl,
+  about: z.array(NonEmpty).min(1).optional(),
+});
 export type Quote = z.infer<typeof Quote>;
 
 export const Entry = z.object({

@@ -88,6 +88,8 @@ picks:
     quotes:
       - text: Virginia Cheung is a SFUSD parent, a longtime leader in the nonprofit world, and a strong advocate for families and educators.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Virginia Cheung
   college-board:
     pick:
       - Leah LaCroix
@@ -95,10 +97,16 @@ picks:
     quotes:
       - text: Leah LaCroix has put in the work. From her time on the SF Youth Commission, she helped deliver the successful Free Muni for Youth program, building coalitions to support this important legislation.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Leah LaCroix
       - text: Leah has the policy chops and patience to bring community voices into long Board of Trustee meetings, and we know she’ll fight like hell to protect and grow City College.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Leah LaCroix
       - text: Dr. Bunny McFadden lives and breathes education, with experience teaching high school, parenting her own SFUSD children, serving as president for their school’s PTA, and earning her doctorate in education research.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Bunny McFadden
   assessor:
     pick:
       - Joaquín Torres
@@ -113,10 +121,16 @@ picks:
     quotes:
       - text: Gary brings years of legislative experience and is committed to tackling homelessness and supporting mental health with more crisis response teams and recovery services.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Gary McCoy
       - text: As a former legislative aide to Nancy Pelosi, Gary’s a practical problem-solver with the policy chops to get things done on day one.
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Gary McCoy
       - text: "Michael Nguyen gets our #2 vote because of his platform as a pro-people power, anti-displacement advocate focused on working families, renters, and everyday residents."
         source: https://www.theleaguesf.org/san_francisco_pissed_off_voter_guide_november_2026
+        about:
+          - Michael T. Nguyen
   supervisor-10:
     pick:
       - J.R. Eppler

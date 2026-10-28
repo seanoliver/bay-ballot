@@ -154,6 +154,18 @@ describe("data", () => {
       "g/board: expected a name list for a candidate contest, got 'Y'",
     ]);
   });
+  it("fails when a quote names only some picks without about, or about names someone not picked", () => {
+    const src = "https://g.org/a";
+    const d = withFile(base(), {
+      board: { ...e(["A One", "B Two"]), quotes: [{ text: "Two has the experience.", source: src }, { text: "One is right.", source: src, about: ["C Three"] }] },
+      "prop-b": { ...e("N"), quotes: [{ text: "Bad idea.", source: src, about: ["A One"] }] },
+    });
+    expect(validateElection(d).errors).toEqual([
+      'g/board: quote names only B Two but has no about, so it shows under every pick: "Two has the experience.…"',
+      "g/board: quote about 'C Three', who is not in the pick: \"One is right.…\"",
+      "g/prop-b: quote has about on a N pick",
+    ]);
+  });
   it("flags non-candidates", () => {
     const r = validateElection(withFile(base(), { board: e(["Zed"]) }));
     expect(r.errors).toEqual(["g/board: 'Zed' is not a candidate"]);

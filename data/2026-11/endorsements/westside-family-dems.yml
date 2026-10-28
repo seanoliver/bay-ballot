@@ -43,8 +43,13 @@ picks:
     quotes:
       - text: Phil Kim has performed well as Board of Education president since his appointment in August 2024, including spearheading a 4-3 board vote to bring back eighth grade algebra.
         source: https://westsidefamilysf.com/current-endorsements
+        about:
+          - Phil Kim
       - text: Autumn Brown Garibay shows unusual tenacity and willingness to tackle the hard issues, coupled with pragmatic ideas and a drive to get things done. Tim Tung is similarly pragmatic and outcomes-focused, and will bring badly needed fiscal expertise to the BOE.
         source: https://westsidefamilysf.com/current-endorsements
+        about:
+          - Autumn Brown Garibay
+          - Tim Tung
   college-board:
     pick:
       - Elijah Ball
@@ -53,8 +58,13 @@ picks:
     quotes:
       - text: Ball is a campus designer, who can help City College deal with its large portfolio of cash-draining properties.
         source: https://westsidefamilysf.com/current-endorsements
+        about:
+          - Elijah Ball
       - text: Tam is a finance expert, well-qualified to understand City College’s large financial problems. And Lace is a public school teacher who can help boost enrollment by building bridges between SFUSD and City College.
         source: https://westsidefamilysf.com/current-endorsements
+        about:
+          - Erwin Tam
+          - Monroe Lace
   college-board-partial:
     pick:
       - Ruth Ferguson

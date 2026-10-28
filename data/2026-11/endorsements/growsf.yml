@@ -165,8 +165,12 @@ picks:
     quotes:
       - text: Tim has 20 years of experience auditing and balancing budgets, exactly the expertise the district needs to solve its budget crisis.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+        about:
+          - Tim Tung
       - text: Phil is a former public school teacher who led STEM policy across 20+ states and 300+ schools, and his colleagues elected him Board President unanimously in January.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+        about:
+          - Phil Kim
   college-board:
     pick:
       - Elijah Ball
@@ -177,8 +181,12 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Tam, a former City College student, has spent 25 years as a municipal financial advisor and has worked with more than 30 California community colleges on their financing plans.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+        about:
+          - Erwin Tam
       - text: Ball is a college campus planner who has done this job at other California community colleges.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+        about:
+          - Elijah Ball
   college-board-partial:
     pick:
       - Ruth Ferguson

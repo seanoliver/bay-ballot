@@ -8,6 +8,7 @@ import { areaCounties, areaCounty, areasOf, ballotCounty, countyPages, inArea, p
 import { countySlug } from "./counties";
 import { matchName } from "./names";
 import { markSharedLinks } from "./official";
+import { quoteAbout } from "./quote-about";
 import { isRejected } from "./quote-key";
 
 export type ElectionData = {
@@ -251,7 +252,10 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
         errors.push(`${where}: expected a name list for a candidate contest, got '${entry.pick}'`);
         continue;
       }
-      if (!Array.isArray(entry.pick)) continue;
+      if (!Array.isArray(entry.pick)) {
+        if (entry.quotes.some((q) => q.about)) errors.push(`${where}: quote has about on a ${entry.pick} pick`);
+        continue;
+      }
       if (entry.ranked && !c.rankedChoice) {
         errors.push(`${where}: ranked pick on a contest without ranked-choice voting`);
       }
@@ -265,6 +269,12 @@ export function validateElection(d: ElectionData): { errors: string[]; warnings:
         const m = matchName(name, c.candidates);
         if (!m) errors.push(`${where}: '${name}' is not a candidate`);
         else if (m.fuzzy) warnings.push(`${where}: '${name}' matched '${m.name}' — fix spelling`);
+      }
+      for (const q of entry.quotes) {
+        const clip = `"${q.text.slice(0, 60)}…"`;
+        for (const n of q.about ?? []) if (!entry.pick.includes(n)) errors.push(`${where}: quote about '${n}', who is not in the pick: ${clip}`);
+        const named = q.about ? undefined : quoteAbout(q.text, entry.pick, c.aliases);
+        if (named) errors.push(`${where}: quote names only ${named.join(", ")} but has no about, so it shows under every pick: ${clip}`);
       }
       // Not single-seat races: they may carry an unranked dual endorsement.
       if (!entry.ranked && c.seats > 1 && entry.pick.length > c.seats) {
