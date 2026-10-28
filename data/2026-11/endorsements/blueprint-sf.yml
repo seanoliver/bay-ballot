@@ -20,8 +20,12 @@ picks:
     quotes:
       - text: A financial expert on the Board of Education would help SFUSD right the ship. That’s where Tim Tung comes in.
         source: https://www.sfblueprint.org/advocacy/november-2026-voter-guide
+        about:
+          - Tim Tung
       - text: Tung is a finance professional with decades of experience and the credentials to match.
         source: https://www.sfblueprint.org/advocacy/november-2026-voter-guide
+        about:
+          - Tim Tung
   supervisor-2:
     pick:
       - Stephen Sherrill

@@ -10,11 +10,13 @@ export function quoteKey(text: string): string {
 
 export const MIN_CONTAINED = 40;
 
+/** Equal up to quotes, spacing and case, or one holds the other once both are long enough. */
+export function sameQuoteText(a: string, b: string): boolean {
+  const x = quoteKey(a);
+  const y = quoteKey(b);
+  return x === y || (Math.min(x.length, y.length) >= MIN_CONTAINED && (x.includes(y) || y.includes(x)));
+}
+
 export function isRejected(text: string, contestId: string, rejected: { text: string; contestId?: string }[]): boolean {
-  const q = quoteKey(text);
-  return rejected.some((r) => {
-    if (r.contestId && r.contestId !== contestId) return false;
-    const k = quoteKey(r.text);
-    return k === q || (Math.min(k.length, q.length) >= MIN_CONTAINED && (k.includes(q) || q.includes(k)));
-  });
+  return rejected.some((r) => (!r.contestId || r.contestId === contestId) && sameQuoteText(r.text, text));
 }

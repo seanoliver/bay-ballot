@@ -95,6 +95,8 @@ picks:
     quotes:
       - text: Incumbent Craig Gleason is a dedicated public servant with an extensive history of building up and out the open spaces in the Santa Cruz Mountains.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Craig Gleason
   santa-clara-county-board-of-education-7:
     pick:
       - Raeena S. Lari
@@ -119,6 +121,8 @@ picks:
     quotes:
       - text: Ruben Abrica, the incumbent, has been a long term advocate for affordable housing.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Ruben Abrica
   fremont-council-2:
     pick:
       - Desrie Campbell
@@ -195,8 +199,12 @@ picks:
     quotes:
       - text: Incumbent Anne Kepner is a progressive leader and has been advocating to make tuition free for the two colleges.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Anne J. Kepner
       - text: Colin Glaves is backed by faculty and is advocating for more teacher-board coordination.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Colin Lee Elliott Glaves
   wvm-trustee-area-7:
     pick:
       - Doug Robb
@@ -219,8 +227,12 @@ picks:
     quotes:
       - text: Naomi Nakano-Matsumoto is a veteran trustee who has done a lot to help the district.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Naomi Nakano-Matsumoto
       - text: Ilanit Eliaz is a special education teacher who could bring a unique view to the board and has won a lot of local support.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Ilanit Eliaz
   gilroy-usd-trustee-area-3:
     pick:
       - Michelle Nelson
@@ -309,6 +321,8 @@ picks:
     quotes:
       - text: We recommend Lyseria Phillips, a staunch union member firmly in favor of teacher’s protections and community building.
         source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
+        about:
+          - Lyseria Evelyn Phillips
   saratoga-union-sd-trustee:
     pick:
       - Anna Goldberg

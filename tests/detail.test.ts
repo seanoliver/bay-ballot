@@ -46,6 +46,17 @@ describe("detailSides", () => {
       ["Connie Chan", 1, "c2"],
     ]);
   });
+  it("multi-seat: a quote tagged with about shows only under those names", () => {
+    const rows = [row("A", ["W", "X", "Y"], [{ ...q("W is right."), about: ["W"] }, q("They will steady the board.")])];
+    const { sides } = detailSides(board, rows);
+    expect(sides.map((s) => [s.key, s.quotes.map((x) => x.text), s.guides[0].quoted])).toEqual([
+      ["W", ["W is right.", "They will steady the board."], true],
+      ["X", ["They will steady the board."], true],
+      ["Y", ["They will steady the board."], true],
+    ]);
+    const only = [row("A", ["W", "X"], [{ ...q("W is right."), about: ["W"] }])];
+    expect(detailSides(board, only).sides.map((s) => [s.key, s.quotes.length, s.guides[0].quoted])).toEqual([["W", 1, true], ["X", 0, false]]);
+  });
   it("multi-seat: the top `seats` names are sides; the rest are others", () => {
     const rows = [row("A", ["W", "X", "Y", "Z"]), row("B", ["W", "X", "Y"]), row("C", ["W", "X"]), row("D", ["W"])];
     const { sides, others } = detailSides(board, rows);

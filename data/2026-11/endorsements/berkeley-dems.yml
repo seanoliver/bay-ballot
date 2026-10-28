@@ -91,8 +91,13 @@ picks:
     quotes:
       - text: Brown and Shanoski are incumbents running for re-election and have increased the accessibility of bathrooms in the district, supported the construction of new facilities, supported the community with afterschool needs and transportation, and supported expanding Career Technical education for high school students.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
+        about:
+          - Ka'Dijah A. Brown
+          - Jennifer Shanoski
       - text: Sandy Park is a 25 year veteran school teacher and administrator who wants to demystify the School Board and build a culture of shared decisionmaking.
         source: https://www.berkeleydemocraticclub.com/votebdc26/
+        about:
+          - Sandy Park
   rtm:
     pick: Y
     quotes:

@@ -288,8 +288,12 @@ picks:
     quotes:
       - text: Among the challengers, Friedel offers the most City Hall experience, as an 18-year member of the city parks and recreation commission and a volunteer in the successful effort to raise more than $5 million in donations that helped make the city’s new library a reality.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+        about:
+          - Jeanne Friedel
       - text: Andre, a former investment banker, has brought her business acumen to the council.
         source: https://www.marinij.com/2026/09/16/editorial-andre-friedel-margulies-best-for-larkspur/
+        about:
+          - Stephanie Andre
   san-anselmo-council:
     pick:
       - Steve Burdo
@@ -297,8 +301,12 @@ picks:
     quotes:
       - text: Retaining Burdo provides continuity, community experience and a representative who does his homework.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+        about:
+          - Steve Burdo
       - text: In this race, Dittmar stands out as someone who provides the perspective of organizational leadership, an awareness of issues facing local businesses and a knowledge of the financial struggles facing many households.
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+        about:
+          - Will Dittmar
   tiburon-council:
     pick:
       - Jack Ryan
@@ -307,8 +315,12 @@ picks:
     quotes:
       - text: Defever’s time on the Planning Commission has been steeped in housing mandates from the state.
         source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+        about:
+          - Kathleen Defever
       - text: Calls for improvements to parks and open space have been a priority for many residents in recent years and Hornbrook’s position on the parks commission put him in a position to help keep the ball rolling.
         source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+        about:
+          - Chuck Hornbrook
   sausalito-council:
     pick:
       - Joan Cox
@@ -316,6 +328,8 @@ picks:
     quotes:
       - text: Cox was a strong voice in support of the 2025 city-sponsored measure that re-zoned part of the city-owned Martin Luther King Jr. school property for affordable housing.
         source: https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
+        about:
+          - Joan Cox
   sausalito-measure-x:
     pick: Y
   marin-county-measure-p:
@@ -334,6 +348,8 @@ picks:
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
       - text: McMillan is a lawyer and a longtime civic leader, including having served a term on the Ross School Board.
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+        about:
+          - Julie A McMillan
   marin-healthcare-measure-cc:
     pick: Y
     quotes:
@@ -370,7 +386,13 @@ picks:
     quotes:
       - text: Beckman has been a strong member of the council since he was first elected in 2018.
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
+        about:
+          - Eli Beckman
       - text: Beckman, an architect, has also become a leading voice in guiding town’s efforts to meet the state mandate that it pave the way for building more than 700 new homes by 2031.
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
+        about:
+          - Eli Beckman
       - text: Fruin, among the first-time council candidates, brings her experience in having served on the Larkspur-Corte Madera School District and being a parent raising her three children in town.
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
+        about:
+          - Ava Fruin

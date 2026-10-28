@@ -46,6 +46,8 @@ picks:
     quotes:
       - text: Williams brings vast experience having worked at both district-run schools and charters.
         source: https://www.empoweroakland.com/voter-guide
+        about:
+          - Alexandra Williams
   oakland-mayor:
     pick:
       - Barbara Lee
