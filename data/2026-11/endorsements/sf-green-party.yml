@@ -43,6 +43,8 @@ picks:
     quotes:
       - text: Of all the incumbents on the Board, Fisher seems to be the most in support of real public education and the one who best understands the pitfalls of moving to an unpopular system that would ban most families in SF from accessing the best public schools that our taxes pay for.
         source: https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+        about:
+          - Alida Fisher
   college-board:
     pick:
       - Leah LaCroix
@@ -50,8 +52,12 @@ picks:
     quotes:
       - text: Leah LaCroix gave great answers to our questionnaire, and she has clear ideas for increasing revenue while maintaining Free City College.
         source: https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+        about:
+          - Leah LaCroix
       - text: Jeremy Lee is co-president of the Rose Pak Asian American Club, and is also a staunch defender of Free City College.
         source: https://www.sfgreenparty.org/endorsements/123-november-2026-endorsements
+        about:
+          - Jeremy Lee
   prop-a:
     pick: N
     quotes:
