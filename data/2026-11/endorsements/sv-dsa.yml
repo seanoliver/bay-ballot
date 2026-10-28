@@ -15,6 +15,9 @@ held:
     reason: unclear-match
     evidence: The guide's "Measure O - East Palo Alto" write-up describes a 1.5% tax on landlords' rental revenue, which was the city's 2016 Measure O. The 2026 Measure O is a general obligation bond, so the Yes may not be meant for it (decision 2026-10-09).
 rejectedQuotes:
+  - text: Gilroy has one of the highest per capita homelessness rates in the Bay Area, nearly double that of San Jose.
+    reason: 'not a reason on its own: the reason is the next sentence ("such a tax would hit..."), which points back (review 2026-10-28)'
+    contestId: gilroy-measure-b
   - text: That leaves us to recommend teacher Sarabjit Cheema, who at least has decent plans to address housing and development.
     reason: 'does not stand alone: opens with "That leaves us", which continues the prior sentences (review 2026-10-10)'
     contestId: union-city-council-4
@@ -436,8 +439,14 @@ picks:
     pick: Y
   newark-measure-dd:
     pick: Y
+    quotes:
+      - text: Measure DD would implement a business tax increase of up to 0.3% on gross receipts to raise an estimated $6 million annually to fund police/fire services, street infrastructure, and weather emergency preparedness. The tax restructuring would also lower taxes for smaller businesses.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   union-city-measure-ii:
     pick: Y
+    quotes:
+      - text: The measure would also continue the allowance of exceptions for 70+ year old as well as low income residents, and continue the existing audits of the collection and expenditures by a third party.
+        source: https://docs.google.com/document/d/e/2PACX-1vQAtAN3xtKSl7Pkx34nNpJyypPlm_Zga45PZHEYVk6jNpwxcp0GDBFrLsU9wjTjliya6ZP0OrMkljEt/pub
   rtm:
     pick: Y
     quotes:
