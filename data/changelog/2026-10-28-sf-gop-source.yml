@@ -3,3 +3,4 @@ type: fix
 guide: sf-gop
 title: San Francisco Republican Party links now go to its new endorsements page
 details: The party moved its November 2026 endorsements to sfgop.org/endorsements, and the old address returns "page not found". The picks and reasons are unchanged.
+pr: 312
