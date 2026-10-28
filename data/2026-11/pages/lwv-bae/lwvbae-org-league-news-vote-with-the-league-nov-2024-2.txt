@@ -88,9 +88,6 @@ All League News
 [THE ELECTION button blue]
 [voter service]
 Calendar
-Coffee Hour
-@ -
-More details...
 Voter Service
 @ -
 More details...
@@ -101,6 +98,9 @@ More details...
 @ -
 More details...
 Board Meeting
+@ -
+More details...
+Voter Service
 @ -
 More details...
 [Website design award]
