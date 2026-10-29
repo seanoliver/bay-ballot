@@ -62,8 +62,28 @@ Measure R, $100 million bond for Burlingame schools: YES
 Measure Q, 555 Kelly Ave. senior farmworker housing in Half Moon Bay: YES
 Measure K, $489 annual parcel tax for San Carlos schools: YES
 Measure F, city charter cleanup for San Mateo: YES
-Measure H, Quarter-cent sales tax for San Mateo city services: YES
-Measure G, Half-cent sales tax for San Carlos city services: YES
-Measure S, Repealing all height limits in San Bruno: YES
+Measure H, quarter-cent sales tax for San Mateo city services: YES
+Measure G, half-cent sales tax for San Carlos city services: YES
+Measure S, repealing all height limits in San Bruno: YES
 Measure V, $848 million bond for the San Mateo County Community College District: YES
-Measure DD, Eliminate safe and sane fireworks in San Bruno: NO
+Measure DD, eliminate safe and sane fireworks in San Bruno: NO
+Measure W, $498 million bond for San Mateo-Foster City School District: YES
+Measure J, extend time to fill county vacancy: YES
+Measure U, establish independent redistricting commission: YES
+Measure L, amending county charter preamble to make resilience to storms a priority: NO
+Measure AA, amending county charter preamble to affirm commitment to dignity and civil rights: NO
+STATE PROPOSITIONS
+Proposition 1: $11.25 billion housing bond. YES
+Proposition 2: Increase the rainy day fund. YES
+Proposition 3: Make permanent high-income tax for education. YES
+Proposition 4: Public financing of campaigns. NO
+Proposition 5: California recall reform. NO
+Proposition 37: Homebuyer loan program. YES
+Proposition 38: Immunotherapy group bond. NO
+Proposition 39: Government ID for voting. NO
+Proposition 40: The billionaire tax. NO
+Proposition 41: Requires an audit of any new tax program. NO
+Proposition 42: Bans taxes on personal property. NO
+Proposition 43: Raise threshold of citizen initiatives for new taxes to two-thirds. NO
+Proposition 44: Clinic funding requirements. NO
+Proposition 45: CEQA reform. NO
