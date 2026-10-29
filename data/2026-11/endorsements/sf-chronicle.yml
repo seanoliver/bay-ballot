@@ -252,3 +252,8 @@ picks:
     quotes:
       - text: Prop J is an in-the-weeds tax measure intended to close a loophole in San Francisco’s transfer tax policty.
         source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
+  oakland-measure-ee:
+    pick: Y
+    quotes:
+      - text: The reforms Measure EE is pursuing are all normal and essential components of a strong mayor system.
+        source: https://www.sfchronicle.com/projects/2026/california-sf-election-endorsements/
