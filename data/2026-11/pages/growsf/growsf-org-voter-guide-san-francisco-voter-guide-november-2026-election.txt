@@ -7,7 +7,7 @@ Build enough housing to end the affordability crisis
 Clean, safe streets and fully staffed police
 Treatment and care for the drug crisis
 A faster, more transparent City Hall
-87,575
+108,876
 ballots cast (est.)
 0
 readers since
@@ -608,8 +608,9 @@ Oakland | 10% of registered voters
 Los Angeles | 15% of votes cast for Mayor
 (appx. 6.3% of registered voters)
 San Diego | 10% of registered voters
-San Jose | 5% of registered voters
+San Jose | 5% of registered voters note
 Anaheim, Bakersfield, Fresno, Long Beach, Sacramento | 10% of registered voters
+San Jose's charter says 5% of "persons eligible to vote," but the City Clerk counts only registered voters, as these 2014 and 2012 memos show. That works out to about 27,900 signatures today. Counting every eligible adult would raise the bar to an estimated 6% of registered voters, based on Santa Clara County's registration rate, which is still below the 8% in Prop D. We couldn't find a published explanation from the City Attorney.
 Read the full annotated legal text →
 Click to show fiscal impacts and more detailsCollapse details
 City Attorney's title and summary (PDF)

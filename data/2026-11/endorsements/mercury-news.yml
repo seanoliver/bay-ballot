@@ -82,14 +82,14 @@ archived:
     snapshot: https://web.archive.org/web/20261011162548/https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - source: https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
-fetchedAt: 2026-10-28
+fetchedAt: 2026-10-30
 hasReasoning: true
 held:
   - contestId: san-jose-council-9
     pick:
       - Genny Altwer
     reason: old-election
-    evidence: Elect Genny Altwer to City Council. May 28, 2026 (primary endorsement)
+    evidence: "Endorsement: San Jose needs a blight fighter. Elect Genny Altwer to City Council. May 28, 2026 (primary)"
 pinned:
   - contestId: ross-council
     pick:
@@ -173,16 +173,8 @@ picks:
     quotes:
       - text: He co-authored Prop. 4, a $10 billion statewide wildfire prevention and climate resilience bond approved by voters in 2024.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
-  superintendent:
-    pick:
-      - Richard Barrera
-    quotes:
-      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Allen — who placed second in the June primary with 19% of the vote — understands the limits of this office.
+        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   state-senate-2:
     pick:
       - Damon Connolly
@@ -201,18 +193,18 @@ picks:
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
       - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
   prop-3:
     pick: Y
-  prop-4:
-    pick: N
-    quotes:
-      - text: Taxpayer dollars must stay reserved to fix municipal roads and parks, rather than finance elections.
-        source: https://www.mercurynews.com/opinion/endorsements/
-  prop-5:
-    pick: N
-    quotes:
-      - text: This ballot measure blocks voters from instantly replacing politicians, leaving Sacramento insiders untouchable.
-        source: https://www.mercurynews.com/opinion/endorsements/
   prop-38:
     pick: N
     quotes:
@@ -238,6 +230,8 @@ picks:
     pick: N
   palo-alto-measure-j:
     pick: N
+  gilroy-usd-measure-m:
+    pick: Y
   oakland-measure-ee:
     pick: N
   oakland-usd-2:
@@ -258,15 +252,18 @@ picks:
   concord-council-5:
     pick:
       - Laura Nakamura
+  sjusd-trustee-area-4:
+    pick:
+      - Michael Melillo
   novato-usd-trustee-area-4:
     pick:
       - Abbey Picus
     quotes:
-      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
-        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
       - text: Her experience as an educator, having three children in Novato public schools and having served four years as a trustee make Abbey Picus the clear choice for the Novato Union School District board.
         source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
       - text: In Picus, the school board has an educator who knows the local public schools from the perspective of being a parent and from being a classroom teacher who’s working with students every day.
+        source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
+      - text: Picus’ experience and knowledge are going to be valuable to the board as it navigates difficult financial shoals confronting Novato’s public schools.
         source: https://www.marinij.com/2026/09/06/editorial-novato-should-reelect-picus-to-school-board/
   san-rafael-council-3:
     pick:
@@ -361,6 +358,8 @@ picks:
       - text: Supporters of Measure CC are right, MarinHealth needs another push as it tries to gain steady footing in providing independent quality care.
         source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
       - text: It is true that the state has mandated that Redwood Pavilion must meet safety standards soon.
+        source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
+      - text: The money from Measure CC is designated for the expansion and modernization of intensive care, trauma, triage and hospital facilities, as well as additional capacity for the emergency room and patient rooms.
         source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
   marin-healthcare-district-3:
     pick:

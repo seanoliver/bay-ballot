@@ -5,7 +5,7 @@ source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-e
 archived:
   - source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
     snapshot: https://web.archive.org/web/20261005221311/https://growsf.org/voter-guide/
-fetchedAt: 2026-10-24
+fetchedAt: 2026-10-30
 hasReasoning: true
 rejectedQuotes:
   - text: Had the recall passed by a single vote, Elder would have become governor with fewer than half the votes Newsom got to keep his job.
@@ -80,6 +80,8 @@ picks:
       - Malia M. Cohen
     quotes:
       - text: Cohen knows public finance, and she knows San Francisco.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Before becoming Controller, Cohen chaired the Budget and Finance Committee and the Audit and Oversight Committee on the SF Board of Supervisors.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: Overall, Cohen has brought transparency and accountability to the state's spending.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
@@ -202,6 +204,8 @@ picks:
       - text: She co-founded Seamless Bay Area to push the region's agencies to work as one system rather than two dozen fiefdoms, and co-authored SPUR's 2015 report making that case.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: She worked on Clipper and the Clipper START low-income fare discount at MTC, and has spent the years since at Apple putting transit cards into Apple Wallet across North America and Europe.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: BART's next board will spend its term on budgets, contracts, and whether riders come back. Barz has spent her career on exactly that.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   assessor:
     pick:
@@ -345,6 +349,8 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
       - text: San Francisco is facing a $643M two-year deficit, and the Controller prices the corporation and bank at $310M to $460M over eight years.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
+      - text: Let's at least get our own finances in order before trying to run a bank.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-c:
     pick: Y
     quotes:
@@ -354,8 +360,6 @@ picks:
     pick: Y
     quotes:
       - text: San Francisco is forced to vote on too many ballot measures.
-        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
-      - text: Laws that are not easy to fix should not be this easy to enact.
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-e:
     pick: Y
@@ -392,3 +396,6 @@ picks:
         source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
   prop-j:
     pick: Y
+    quotes:
+      - text: When Madison Capital bought the defaulted loan on the 34-story tower at 45 Fremont for $238M this year and took the building, it paid no transfer tax.
+        source: https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/
