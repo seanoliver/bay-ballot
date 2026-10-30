@@ -11,7 +11,7 @@ fetchWith: browser
 archived:
   - source: https://www.greenbelt.org/voter-guide-26/
     snapshot: https://web.archive.org/web/20261006195600/https://www.greenbelt.org/voter-guide-26/
-fetchedAt: 2026-10-29
+fetchedAt: 2026-10-30
 hasReasoning: true
 rejectedQuotes:
   - text: Vote NO on Measure G to save Sunset Dunes and keep the 2-mile stretch of the Upper Great Highway along San Francisco’s Ocean Beach closed to cars and open for people.
@@ -38,6 +38,11 @@ picks:
     quotes:
       - text: Greenbelt Alliance opposes Proposition 43’s goal to raise the threshold for citizen-initiated local special tax measures, limiting voters’ ability to fund essential local services.
         source: https://www.greenbelt.org/voter-guide-26/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Despite monumental CEQA reforms, California’s business lobby and sprawl developers are proposing a ballot initiative that would make far more radical changes to the law.
+        source: https://www.greenbelt.org/voter-guide-26/
   prop-g:
     pick: N
   prop-h:
@@ -61,9 +66,9 @@ picks:
   albany-measure-o:
     pick: Y
     quotes:
-      - text: Decisions about citywide housing policy should be made through a standardized, public process, not controlled by a narrow petition requirement limited to voters living within 300 feet of a project.
-        source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
       - text: Measure O is a good governance measure and a sensible approach to land use that expands participation and supports equitable housing opportunities.
+        source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
+      - text: Decisions about citywide housing policy should be made through a standardized, public process, not controlled by a narrow petition requirement limited to voters living within 300 feet of a project.
         source: https://www.greenbelt.org/blog/vote-yes-measure-o-albany/
   sausalito-measure-x:
     pick: Y

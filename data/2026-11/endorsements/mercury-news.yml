@@ -82,14 +82,14 @@ archived:
     snapshot: https://web.archive.org/web/20261011162548/https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - source: https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
-fetchedAt: 2026-10-29
+fetchedAt: 2026-10-30
 hasReasoning: true
 held:
   - contestId: san-jose-council-9
     pick:
       - Genny Altwer
     reason: old-election
-    evidence: Elect Genny Altwer to City Council. By Mercury News Editorial Board May 28, 2026 (primary-era endorsement)
+    evidence: "Endorsement: San Jose needs a blight fighter. Elect Genny Altwer to City Council. May 28, 2026 (primary)"
 pinned:
   - contestId: ross-council
     pick:
@@ -173,6 +173,8 @@ picks:
     quotes:
       - text: He co-authored Prop. 4, a $10 billion statewide wildfire prevention and climate resilience bond approved by voters in 2024.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+      - text: Allen — who placed second in the June primary with 19% of the vote — understands the limits of this office.
+        source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
   state-senate-2:
     pick:
       - Damon Connolly
@@ -206,9 +208,9 @@ picks:
   prop-38:
     pick: N
     quotes:
-      - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
-        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
       - text: The Legislative Analyst’s Office reports that repaying the bond will require $500 million to $600 million in spending out of the state general fund for 20 years.
+        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+      - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
         source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
   prop-39:
     pick: N
@@ -250,6 +252,9 @@ picks:
   concord-council-5:
     pick:
       - Laura Nakamura
+  sjusd-trustee-area-4:
+    pick:
+      - Michael Melillo
   novato-usd-trustee-area-4:
     pick:
       - Abbey Picus
@@ -325,6 +330,8 @@ picks:
         source: https://www.marinij.com/2026/09/24/endorsement-cox-huffman-get-nod-over-strong-challengers-in-sausalito/
         about:
           - Joan Cox
+  sausalito-measure-x:
+    pick: Y
   marin-county-measure-p:
     pick: Y
     quotes:
@@ -345,8 +352,6 @@ picks:
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
         about:
           - Julie A McMillan
-  sausalito-measure-x:
-    pick: Y
   marin-healthcare-measure-cc:
     pick: Y
     quotes:
