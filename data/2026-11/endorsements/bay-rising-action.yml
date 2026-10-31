@@ -5,7 +5,7 @@ source: https://bayrisingaction.org/voterguide/
 archived:
   - source: https://bayrisingaction.org/voterguide/
     snapshot: https://web.archive.org/web/20261006195712/https://bayrisingaction.org/voterguide/
-fetchedAt: 2026-10-15
+fetchedAt: 2026-10-31
 hasReasoning: true
 rejectedQuotes:
   - text: Prop 4 would lift the ban on public funding for state and local election campaigns (except in charter cities and counties), allowing governments to create public campaign financing programs.
@@ -89,6 +89,8 @@ picks:
   rtm:
     pick: Y
     quotes:
+      - text: After decades of underinvestment, public transit agencies in the Bay Area are facing severe financial crises.
+        source: https://bayrisingaction.org/voterguide/
       - text: "Without this funding, public transit services would be cut dramatically: MUNI would cut services by at least 30%, AC Transit would reduce service by 16%, and BART would close 15 stations and cut service by 70%."
         source: https://bayrisingaction.org/voterguide/
       - text: An investment in public transit is an investment in a thriving economy, clearer air, and a more affordable region.
@@ -118,6 +120,8 @@ picks:
     quotes:
       - text: After years of pandemic disruption and lost revenue, Muni is confronting a $307 million annual deficit—a shortfall so large it rivals the combined budgets of the city’s parks and library systems. Resulting cuts to Muni would worsen SF’s congestion and gridlock, which is already ranked the 3rd-worst in any major US city.
         source: https://bayrisingaction.org/voterguide/
+      - text: San Francisco’s public transit system is facing a once-in-a-generation funding crisis.
+        source: https://bayrisingaction.org/voterguide/
   prop-i:
     pick: Y
     quotes:
@@ -126,26 +130,6 @@ picks:
       - text: Measure I dedicates an existing, voter-approved tax to fund permanently affordable housing and preventing displacement.
         source: https://bayrisingaction.org/voterguide/
   prop-j:
-    pick: Y
-  oakland-measure-ee:
-    pick: Y
-    quotes:
-      - text: Under Measure EE, the Mayor serves as the Chief Executive Officer in Oakland, giving them veto power over legislation and line items in the budget. The city council can override a Mayoral veto with a supermajority, providing checks and balances between the legislative and executive branches of government.
-        source: https://bayrisingaction.org/voterguide/
-      - text: Measure EE was drafted after an extensive community process, co-facilitated by the League of Women Voters.
-        source: https://bayrisingaction.org/voterguide/
-  oakland-measure-ff:
-    pick: Y
-  berkeley-measure-x:
-    pick: Y
-  berkeley-measure-z:
-    pick: Y
-    quotes:
-      - text: Public banks loan to local institutions like community banks and credit unions, and stipulate how the funds are used.
-        source: https://bayrisingaction.org/voterguide/
-      - text: If passed, Berkeley would be the first public bank in California.
-        source: https://bayrisingaction.org/voterguide/
-  san-pablo-measure-s:
     pick: Y
   marin-county-measure-p:
     pick: Y
@@ -158,3 +142,27 @@ picks:
         source: https://bayrisingaction.org/voterguide/
       - text: This measure would also strengthen just cause for eviction by requiring landlords to provide one of a list of approved reasons before evicting a tenant.
         source: https://bayrisingaction.org/voterguide/
+  berkeley-measure-x:
+    pick: Y
+  berkeley-measure-z:
+    pick: Y
+    quotes:
+      - text: Public banks loan to local institutions like community banks and credit unions, and stipulate how the funds are used.
+        source: https://bayrisingaction.org/voterguide/
+      - text: If passed, Berkeley would be the first public bank in California.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure Z in Berkeley would charge a temporary parcel tax of 6 cents per square foot of residential improvements, or 9 cents per square foot of commercial improvements, for six years, generating $9.2 million per year.
+        source: https://bayrisingaction.org/voterguide/
+  oakland-measure-ee:
+    pick: Y
+    quotes:
+      - text: Under Measure EE, the Mayor serves as the Chief Executive Officer in Oakland, giving them veto power over legislation and line items in the budget. The city council can override a Mayoral veto with a supermajority, providing checks and balances between the legislative and executive branches of government.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure EE is a charter amendment that clarifies the Mayor and City Council’s responsibilities, powers, and accountability structures.
+        source: https://bayrisingaction.org/voterguide/
+      - text: Measure EE was drafted after an extensive community process, co-facilitated by the League of Women Voters.
+        source: https://bayrisingaction.org/voterguide/
+  oakland-measure-ff:
+    pick: Y
+  san-pablo-measure-s:
+    pick: Y

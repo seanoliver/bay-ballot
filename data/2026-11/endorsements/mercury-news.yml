@@ -82,14 +82,8 @@ archived:
     snapshot: https://web.archive.org/web/20261011162548/https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - source: https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
-fetchedAt: 2026-10-30
+fetchedAt: 2026-10-31
 hasReasoning: true
-held:
-  - contestId: san-jose-council-9
-    pick:
-      - Genny Altwer
-    reason: old-election
-    evidence: "Endorsement: San Jose needs a blight fighter. Elect Genny Altwer to City Council. May 28, 2026 (primary)"
 pinned:
   - contestId: ross-council
     pick:
@@ -208,9 +202,9 @@ picks:
   prop-38:
     pick: N
     quotes:
-      - text: The Legislative Analyst’s Office reports that repaying the bond will require $500 million to $600 million in spending out of the state general fund for 20 years.
-        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
       - text: No matter how one looks at it, Prop. 38 makes little sense unless your research institution expects to get a windfall of public funds.
+        source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
+      - text: The Legislative Analyst’s Office reports that repaying the bond will require $500 million to $600 million in spending out of the state general fund for 20 years.
         source: https://www.mercurynews.com/2026/10/13/endorsement-no-on-california-proposition-38-an-8-4-billion-money-grab-immunotherapy-ucla-research-ballot-measure/
   prop-39:
     pick: N
@@ -232,17 +226,24 @@ picks:
     pick: N
   gilroy-usd-measure-m:
     pick: Y
-  oakland-measure-ee:
-    pick: N
-  oakland-usd-2:
+  sjusd-trustee-area-4:
     pick:
-      - Arielle Fleisher
-  oakland-usd-4:
+      - Michael Melillo
+  san-jose-council-5:
     pick:
-      - Kathryn Camp
-  oakland-usd-6:
+      - Peter Ortiz
+  san-jose-council-7:
     pick:
-      - Alexandra Williams
+      - Bien Doan
+  santa-clara-mayor:
+    pick:
+      - David Kertes
+  santa-clara-council-2:
+    pick:
+      - Yvonne Inciarte
+  santa-clara-council-3:
+    pick:
+      - Eric Crutchlow
   concord-council-1:
     pick:
       - Laura Hoffmeister
@@ -252,9 +253,17 @@ picks:
   concord-council-5:
     pick:
       - Laura Nakamura
-  sjusd-trustee-area-4:
+  oakland-usd-2:
     pick:
-      - Michael Melillo
+      - Arielle Fleisher
+  oakland-usd-4:
+    pick:
+      - Kathryn Camp
+  oakland-usd-6:
+    pick:
+      - Alexandra Williams
+  oakland-measure-ee:
+    pick: N
   novato-usd-trustee-area-4:
     pick:
       - Abbey Picus
@@ -307,6 +316,10 @@ picks:
         source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
         about:
           - Will Dittmar
+      - text: Dittmar would strengthen the council’s balance.
+        source: https://www.marinij.com/2026/09/20/editorial-in-tight-race-ij-picks-burdo-dittmar-for-san-anselmo-council/
+        about:
+          - Will Dittmar
   tiburon-council:
     pick:
       - Jack Ryan
@@ -332,6 +345,9 @@ picks:
           - Joan Cox
   sausalito-measure-x:
     pick: Y
+    quotes:
+      - text: With 40 years of neglect already under its belt, the marine-based businesses along the waterfront may not be able to wait much longer.
+        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-county-measure-p:
     pick: Y
     quotes:
@@ -407,3 +423,6 @@ picks:
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
         about:
           - Ava Fruin
+  san-jose-council-9:
+    pick:
+      - Genny Altwer
