@@ -82,7 +82,7 @@ archived:
     snapshot: https://web.archive.org/web/20261011162548/https://www.marinij.com/2026/10/08/endorsement-bragman-da-cunha-best-for-fairfax-town-council/
   - source: https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
     snapshot: https://web.archive.org/web/20261011162702/https://www.marinij.com/2026/10/10/endorsement-harlander-sutherland-wynn-best-for-tam-union-board-seats/
-fetchedAt: 2026-10-31
+fetchedAt: 2026-11-01
 hasReasoning: true
 pinned:
   - contestId: ross-council
@@ -145,11 +145,11 @@ picks:
     pick:
       - Fiona Ma
     quotes:
-      - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
-        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: As state treasurer, she has chaired the bond finance committees which determine how to pay for new housing, new schools and environmental protection programs, among several other core state priorities.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
       - text: State treasurer since January 2019, Ma has been serving as California’s primary banker and lead asset manager, overseeing an investment portfolio worth more than $160 billion and processing $3 trillion of banking transactions per year amid a pandemic, global supply disruptions, price spikes, trade wars and, now, energy crises.
+        source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
+      - text: Romero’s election to this office would expose California’s coasts to oil drilling and its universities to Trump’s sweeping agenda to rewrite their curricula.
         source: https://www.mercurynews.com/2026/09/25/endorsement-elect-fiona-ma-californias-lieutenant-governor/
   treasurer:
     pick:
@@ -169,6 +169,16 @@ picks:
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
       - text: Allen — who placed second in the June primary with 19% of the vote — understands the limits of this office.
         source: https://www.mercurynews.com/2026/09/26/endorsement-elect-ben-allen-californias-next-insurance-commissioner-2/
+  superintendent:
+    pick:
+      - Richard Barrera
+    quotes:
+      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
+      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
+        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
   state-senate-2:
     pick:
       - Damon Connolly
@@ -187,18 +197,12 @@ picks:
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
       - text: Lucan has proven himself to be a careful, caring, responsive and responsible local political leader.
         source: https://www.marinij.com/2026/09/05/editorial-in-close-race-lucans-experience-makes-him-choice-for-assembly/
-  superintendent:
-    pick:
-      - Richard Barrera
-    quotes:
-      - text: Barrera is a thoughtful, detail-oriented reformer with concrete, measurable objectives.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera has specific ideas for reducing chronic student absenteeism by focusing on safe and healthy environments, student connectedness and family engagement.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
-      - text: Barrera’s emphasis on practical solutions and clear sense of the evolving responsibilities are distinguishing.
-        source: https://www.mercurynews.com/2026/10/07/endorsement-elect-richard-barrera-californias-superintendent-of-public-instruction-november-election-california-public-schools-sonja-shaw/
   prop-3:
     pick: Y
+  prop-4:
+    pick: N
+  prop-5:
+    pick: N
   prop-38:
     pick: N
     quotes:
@@ -226,33 +230,20 @@ picks:
     pick: N
   gilroy-usd-measure-m:
     pick: Y
-  sjusd-trustee-area-4:
-    pick:
-      - Michael Melillo
   san-jose-council-5:
     pick:
       - Peter Ortiz
   san-jose-council-7:
     pick:
       - Bien Doan
-  santa-clara-mayor:
+  san-jose-council-9:
     pick:
-      - David Kertes
-  santa-clara-council-2:
+      - Genny Altwer
+  sjusd-trustee-area-4:
     pick:
-      - Yvonne Inciarte
-  santa-clara-council-3:
-    pick:
-      - Eric Crutchlow
-  concord-council-1:
-    pick:
-      - Laura Hoffmeister
-  concord-council-3:
-    pick:
-      - Dena Acosta Beere
-  concord-council-5:
-    pick:
-      - Laura Nakamura
+      - Michael Melillo
+  oakland-measure-ee:
+    pick: N
   oakland-usd-2:
     pick:
       - Arielle Fleisher
@@ -262,8 +253,15 @@ picks:
   oakland-usd-6:
     pick:
       - Alexandra Williams
-  oakland-measure-ee:
-    pick: N
+  concord-council-1:
+    pick:
+      - Laura Hoffmeister
+  concord-council-3:
+    pick:
+      - Dena Acosta Beere
+  concord-council-5:
+    pick:
+      - Laura Nakamura
   novato-usd-trustee-area-4:
     pick:
       - Abbey Picus
@@ -326,14 +324,14 @@ picks:
       - Kathleen Defever
       - Chuck Hornbrook
     quotes:
-      - text: Defever’s time on the Planning Commission has been steeped in housing mandates from the state.
-        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
-        about:
-          - Kathleen Defever
       - text: Calls for improvements to parks and open space have been a priority for many residents in recent years and Hornbrook’s position on the parks commission put him in a position to help keep the ball rolling.
         source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
         about:
           - Chuck Hornbrook
+      - text: Defever’s time on the Planning Commission has been steeped in housing mandates from the state.
+        source: https://www.marinij.com/2026/09/23/endorsement-ryan-hornbrook-defever-best-for-tiburon-council/
+        about:
+          - Kathleen Defever
   sausalito-council:
     pick:
       - Joan Cox
@@ -348,14 +346,16 @@ picks:
     quotes:
       - text: With 40 years of neglect already under its belt, the marine-based businesses along the waterfront may not be able to wait much longer.
         source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
+      - text: The 210-acre former World War II shipyard region between Bridgeway and Richardson Bay in the northern part of the city is plagued by vacant offices, decaying structures, rotting vehicles and tidal flooding that promises to get worse.
+        source: https://www.marinij.com/2026/09/30/endorsement-sausalitos-marinship-needs-measure-x-to-take-a-step-forward/
   marin-county-measure-p:
     pick: Y
     quotes:
-      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
-        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
       - text: Childcare for families in need allows Marin workers to contribute to businesses that support the economy.
         source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
       - text: Quality childcare and early education in Marin and the Bay Area have been unaffordable to many people for a long time.
+        source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
+      - text: Quality early education provides important cognitive and social skills during a time of life when 90% of the brain is developed.
         source: https://www.marinij.com/2026/09/26/endorsement-marin-childcare-tax-measure-p-deserves-support/
   ross-council:
     pick:
@@ -368,14 +368,16 @@ picks:
         source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
         about:
           - Julie A McMillan
+      - text: Having Herbst on the council will provide a voice and vote for his side of the debate.
+        source: https://www.marinij.com/2026/09/27/endorsement-ij-recommends-herbst-mcmillan-for-ross-council-seats/
+        about:
+          - Robert Herbst
   marin-healthcare-measure-cc:
     pick: Y
     quotes:
       - text: Supporters of Measure CC are right, MarinHealth needs another push as it tries to gain steady footing in providing independent quality care.
         source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
       - text: It is true that the state has mandated that Redwood Pavilion must meet safety standards soon.
-        source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
-      - text: The money from Measure CC is designated for the expansion and modernization of intensive care, trauma, triage and hospital facilities, as well as additional capacity for the emergency room and patient rooms.
         source: https://www.marinij.com/2026/10/03/endorsement-pass-measure-cc-hospital-tax-elect-su-hess-to-healthcare-board/
   marin-healthcare-district-3:
     pick:
@@ -411,10 +413,6 @@ picks:
       - Pat Ravasio
       - Ava Fruin
     quotes:
-      - text: Beckman has been a strong member of the council since he was first elected in 2018.
-        source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
-        about:
-          - Eli Beckman
       - text: Beckman, an architect, has also become a leading voice in guiding town’s efforts to meet the state mandate that it pave the way for building more than 700 new homes by 2031.
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
         about:
@@ -423,6 +421,7 @@ picks:
         source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
         about:
           - Ava Fruin
-  san-jose-council-9:
-    pick:
-      - Genny Altwer
+      - text: Beckman has been a strong member of the council since he was first elected in 2018.
+        source: https://www.marinij.com/2026/10/11/endorsement-ij-recommends-beckman-ravasio-fruin-for-corte-madera-council/
+        about:
+          - Eli Beckman
