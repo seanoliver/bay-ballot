@@ -51,7 +51,7 @@ Add a row each week from Search Console (Pages report, Performance) and `site:ba
 - The Search Console Pages report lags by days. URL Inspection and `site:` show the current state.
 - Copying official text (Secretary of State, county guides) adds no unique content in Google's eyes; that text is on many sites.
 - New content must not restate what the page already says.
-- Ahrefs has no Search Console or analytics data for this site, and its API units ran out on Oct 30. Vercel Web Analytics (filter `referrerHostname` to Google) is the reliable traffic source.
+- The Ahrefs API showed no Search Console connection for this site, and its units ran out on Oct 30. Ahrefs Web Analytics runs in production but wasn't checked. Vercel Web Analytics (filter `referrerHostname` to Google) is the reliable traffic source.
 
 ## References
 

@@ -5,7 +5,7 @@ Status: draft for review
 
 ## Why
 
-On Oct 22, between 05:00 and 08:00 UTC, Google dropped about 590 bayballot.com pages from its index. Google referral visits fell from about 430 a day to about 30. Search Console shows no manual action, no security issue and no removal request. Contest pages are now "Crawled - currently not indexed". The home page, the county and area pages, and a few guide pages are still indexed. See `docs/investigations/2026-10-30-google-search-traffic-drop.md`.
+On Oct 22, between 05:00 and 08:00 UTC, Google referral traffic to bayballot.com collapsed, and Google dropped most of its ~590 indexed pages. Google referral visits fell from about 430 a day to about 30. Search Console shows no manual action, no security issue and no removal request. Contest pages are now "Crawled - currently not indexed". The home page, the county and area pages, and a few guide pages are still indexed. See `docs/investigations/2026-10-30-google-search-traffic-drop.md`.
 
 Adding official text did not bring pages back. All 14 state proposition pages got the Secretary of State's summaries in #284, and 7 of them were crawled after that went live. All 14 are still out of the index. The drop looks like Google re-rating the whole site: a new domain with Ahrefs Domain Rating 4.2, with hundreds of near-identical template pages. More text per page is not the fix.
 
