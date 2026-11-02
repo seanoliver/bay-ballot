@@ -10,7 +10,7 @@ extraSources:
   - https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
   - https://www.ebar.com/story/170969/
 fetchWith: browser
-fetchedAt: 2026-10-31
+fetchedAt: 2026-11-02
 hasReasoning: true
 pinned:
   - contestId: vallejo-council-5
@@ -93,8 +93,46 @@ picks:
     quotes:
       - text: An advocate for LGBTQ students is needed in top state education posts, and Barrera has shown he understands the issues facing queer and trans students.
         source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
-      - text: Despite the looming state Department of Education reorganization, we think Barrera will work to make the most of the changed landscape. Having a progressive voice at the helm is important, no matter the results of restructuring.
-        source: https://www.ebar.com/story/169936/Opinion/Editorial/Editorial%3A%20CA%20statewide%20recommendations
+  supervisor-8:
+    pick:
+      - Gary McCoy
+      - Michael T. Nguyen
+    ranked: true
+    quotes:
+      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Gary McCoy
+      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Gary McCoy
+      - text: Nguyen impressed us with his commitment to social housing.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+        about:
+          - Michael T. Nguyen
+  supervisor-6:
+    pick:
+      - Matt Dorsey
+    quotes:
+      - text: Overall, Dorsey has been effective on the Board of Supervisors.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+      - text: Dorsey is aligned with Mayor Daniel Lurie’s public safety goals and continues to call for a fully-staffed San Francisco Police Department.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-10:
+    pick:
+      - Theo Ellington
+    quotes:
+      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
+        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
+  supervisor-4:
+    pick:
+      - Alan Wong
+  supervisor-2:
+    pick:
+      - Stephen Sherrill
   board-of-education:
     pick:
       - Phil Kim
@@ -122,61 +160,65 @@ picks:
   college-board-partial:
     pick:
       - Ruth Ferguson
-  supervisor-8:
-    pick:
-      - Gary McCoy
-      - Michael T. Nguyen
-    ranked: true
+  prop-1:
+    pick: Y
+  prop-2:
+    pick: Y
     quotes:
-      - text: One of the things that stood out to us in talking to McCoy is his dedication to constituent services.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-        about:
-          - Gary McCoy
-      - text: Nguyen impressed us with his commitment to social housing.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-        about:
-          - Michael T. Nguyen
-      - text: In his candidate questionnaire and a virtual editorial board meeting, McCoy demonstrated he has the experience and policy chops to represent District 8, which includes the Castro, Noe Valley, Twin Peaks, Glen Park, and other neighborhoods.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-        about:
-          - Gary McCoy
-  supervisor-6:
-    pick:
-      - Matt Dorsey
+      - text: The state has seen its economy go from a $100 billion surplus to a $50 billion deficit within a few years.
+        source: https://www.ebar.com/story/170969/
+  prop-3:
+    pick: Y
     quotes:
-      - text: Overall, Dorsey has been effective on the Board of Supervisors.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: Dorsey has devoted substantial efforts on recovery-oriented drug policy.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-      - text: Dorsey is aligned with Mayor Daniel Lurie’s public safety goals and continues to call for a fully-staffed San Francisco Police Department.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  supervisor-10:
-    pick:
-      - Theo Ellington
+      - text: It would bring in between $5 billion and $15 billion each year.
+        source: https://www.ebar.com/story/170969/
+  prop-4:
+    pick: Y
     quotes:
-      - text: He was born and raised in the Bayview, and counts himself a strong ally to the LGBTQ community.
-        source: https://www.ebar.com/story/170743/Opinion/Editorial/Editorial%3A%20The%20B.A.R.%20makes%20its%20SF%20supervisor%20choices
-  supervisor-4:
-    pick:
-      - Alan Wong
-  supervisor-2:
-    pick:
-      - Stephen Sherrill
-  vallejo-council-5:
-    pick:
-      - Tara Beasley Stansberry
-  concord-council-3:
-    pick:
-      - Robyn Kuslits
+      - text: We think public financing is a good tool for qualified candidates, as we have seen in San Francisco elections.
+        source: https://www.ebar.com/story/170969/
+  prop-5:
+    pick: Y
+  prop-37:
+    pick: Y
+  prop-38:
+    pick: N
+  prop-39:
+    pick: N
     quotes:
-      - text: Kuslits does not support new data centers in Concord.
-        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
+      - text: California elections are already secure and safe.
+        source: https://www.ebar.com/story/170969/
+      - text: Ultimately, Prop 39 would make it harder for Golden State voters to cast ballots.
+        source: https://www.ebar.com/story/170969/
+  prop-40:
+    pick: N
+  prop-41:
+    pick: N
+  prop-42:
+    pick: N
+  prop-43:
+    pick: N
+  prop-44:
+    pick: N
+    quotes:
+      - text: This initiative statute would make it extremely difficult for local health clinics to maintain their operations.
+        source: https://www.ebar.com/story/170969/
+  prop-45:
+    pick: N
+    quotes:
+      - text: Prop 45 would weaken critical protections for air and water quality protection.
+        source: https://www.ebar.com/story/170969/
+      - text: While the state does need more housing, laws enacted in recent years already allow for speedier approvals.
+        source: https://www.ebar.com/story/170969/
+  rtm:
+    pick: Y
+    quotes:
+      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
+        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-a:
     pick: Y
     quotes:
       - text: The city’s charter - i.e. governing document - is in need of a redo, and Prop A is a start.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-      - text: Prop A renames some commissions and deletes obsolete language, among other things.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
   prop-b:
     pick: N
@@ -230,60 +272,12 @@ picks:
     quotes:
       - text: Written by Lurie and District 5 Supervisor Bilal Mahmood, Prop J would raise between $100 million and $150 million for the city’s general fund.
         source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-  rtm:
-    pick: Y
+  vallejo-council-5:
+    pick:
+      - Tara Beasley Stansberry
+  concord-council-3:
+    pick:
+      - Robyn Kuslits
     quotes:
-      - text: Without this funding, the future of Bay Area public transit would be catastrophic, with significant service cuts in store for BART, AC Transit, Muni, and Caltrain.
-        source: https://www.ebar.com/story/170564/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20SF%2C%20regional%20measures
-  prop-1:
-    pick: Y
-  prop-2:
-    pick: Y
-    quotes:
-      - text: The state has seen its economy go from a $100 billion surplus to a $50 billion deficit within a few years.
-        source: https://www.ebar.com/story/170969/
-      - text: Prop 2 doubles the reserve cap from 10% to 20% of general fund revenues, requiring savings until the fund’s balance equals 20% of the general fund.
-        source: https://www.ebar.com/story/170969/
-  prop-3:
-    pick: Y
-    quotes:
-      - text: It would bring in between $5 billion and $15 billion each year.
-        source: https://www.ebar.com/story/170969/
-  prop-4:
-    pick: Y
-    quotes:
-      - text: We think public financing is a good tool for qualified candidates, as we have seen in San Francisco elections.
-        source: https://www.ebar.com/story/170969/
-  prop-5:
-    pick: Y
-  prop-37:
-    pick: Y
-  prop-38:
-    pick: N
-  prop-39:
-    pick: N
-    quotes:
-      - text: California elections are already secure and safe.
-        source: https://www.ebar.com/story/170969/
-      - text: Ultimately, Prop 39 would make it harder for Golden State voters to cast ballots.
-        source: https://www.ebar.com/story/170969/
-  prop-40:
-    pick: N
-  prop-41:
-    pick: N
-  prop-42:
-    pick: N
-  prop-43:
-    pick: N
-  prop-44:
-    pick: N
-    quotes:
-      - text: This initiative statute would make it extremely difficult for local health clinics to maintain their operations.
-        source: https://www.ebar.com/story/170969/
-  prop-45:
-    pick: N
-    quotes:
-      - text: Prop 45 would weaken critical protections for air and water quality protection.
-        source: https://www.ebar.com/story/170969/
-      - text: While the state does need more housing, laws enacted in recent years already allow for speedier approvals.
-        source: https://www.ebar.com/story/170969/
+      - text: Kuslits does not support new data centers in Concord.
+        source: https://www.ebar.com/story/170347/Opinion/Editorial/Editorial%3A%20B.A.R.%20endorses%20city%20council%20candidates
