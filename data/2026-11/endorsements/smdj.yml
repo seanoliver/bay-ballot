@@ -70,7 +70,7 @@ archived:
     snapshot: https://web.archive.org/web/20261014231032/https://www.smdailyjournal.com/opinion/editorials/hsieh-richardson-for-south-san-francisco-unified-school-district-board-of-trustees/article_b3e62f36-3892-4fa7-8a71-2458bd6492cb.html
   - source: https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
     snapshot: https://web.archive.org/web/20261014231053/https://www.smdailyjournal.com/opinion/editorials/yes-on-measure-r-for-burlingame-schools/article_4fb1e725-bc4d-4562-bc98-736aa2de3620.html
-fetchedAt: 2026-10-29
+fetchedAt: 2026-11-02
 hasReasoning: true
 rejectedQuotes:
   - text: The current system is regressive, meaning the more money a business makes, the less it will pay.
@@ -108,18 +108,18 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
       - text: He is involved, active and engaged with anyone who seeks ways to better the community overall.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-nagales-for-district-5-board-of-supervisors/article_c43d10a2-0417-47b8-bd14-db43d80f8651.html
-  san-mateo-county-board-of-education-2:
-    pick:
-      - Dana Johnson
-    quotes:
-      - text: Gerard is in the game, and understands the role but Johnson exhibits more creativity — including connecting incarcerated youth with college and job training programs and making new community partnerships for assistance.
-        source: https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
   smcccd-trustee-area-2:
     pick:
       - Mike Guingona
     quotes:
       - text: Guingona is well versed in the district’s finances, plans, challenges and opportunities.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-guingona-for-area-2-community-college-trustee/article_0ca98605-cf72-4269-88af-fd3cdfd06a6e.html
+  san-mateo-county-board-of-education-2:
+    pick:
+      - Dana Johnson
+    quotes:
+      - text: Gerard is in the game, and understands the role but Johnson exhibits more creativity — including connecting incarcerated youth with college and job training programs and making new community partnerships for assistance.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-johnson-for-board-of-education/article_63e644b2-1dbd-4f8d-8fee-60b79fca4a9e.html
   smuhsd-trustee-area-3:
     pick:
       - Diana Harris
@@ -271,6 +271,8 @@ picks:
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
       - text: Hotel tax revenue is one of the more consistent drivers of tax revenue in Burlingame, and its 12% rate is lower than most other cities on the Peninsula.
         source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
+      - text: Out-of-town visitors bring revenue but they also bring impact, and the idea behind the tax is that the revenue will offset that impact on our roads, parks and other infrastructure.
+        source: https://www.smdailyjournal.com/opinion/editorials/editorial-yes-on-measure-d/article_1202b9ee-9707-463f-9b29-b6605fc30017.html
   redwood-city-measure-e:
     pick: N
     quotes:
@@ -310,6 +312,8 @@ picks:
   san-bruno-measure-dd:
     pick: N
   smfcsd-measure-w:
+    pick: Y
+  belmont-measure-y:
     pick: Y
   san-mateo-county-measure-j:
     pick: Y
