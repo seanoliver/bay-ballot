@@ -251,7 +251,7 @@ contests:
     kind: candidate
     candidates: [Kurt Chun, Cristine Soto Deberry, Peter Fleming, Thomas W. Perazzo, Eric Steinhofer, Amy Svendberg, Thomas Clark]
     seats: 4
-    aliases: { Cristine Soto Deberry: [Cristine Soto DeBerry, Cristine DeBerry] }
+    aliases: { Cristine Soto Deberry: [Cristine Soto DeBerry, Cristine DeBerry], Amy Svendberg: [Amy Svenberg] }
     jurisdiction: { level: district, name: Southern Marin Fire Protection District, district: "at-large", within: [{ level: county, name: Marin }] }
   - id: marin-healthcare-district-1
     section: School and special districts

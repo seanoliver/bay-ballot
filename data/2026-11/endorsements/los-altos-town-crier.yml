@@ -6,14 +6,13 @@ extraSources:
   - https://www.losaltosonline.com/opinion/town-crier-measure-d-is-a-mistake/article_5baa06a9-1a33-4188-9113-43ebcf443a8d.html
 fetchedAt: 2026-10-31
 hasReasoning: true
-held:
+pinned:
   - contestId: mountain-view-council
     pick:
       - IdaRose Sylvester
       - Paul Donahue
       - Robert Cox
-    reason: wrong-pick
-    evidence: Mountain View City Council IdaRose Sylvester Paul Donahue Robert Cox Kuszmaul
+    reason: the endorsements article lists these three under "Mountain View City Council" (3 seats); the verifier's wrong-pick hold cited a name not on the page (review 2026-11-01)
 rejectedQuotes:
   - text: The first is that Measure D is unnecessary.
     reason: 'does not stand alone: "The first is" points to a list (review 2026-10-07)'
@@ -28,6 +27,11 @@ rejectedQuotes:
     reason: 'does not stand alone: opens with "Instead" (review 2026-10-10)'
     contestId: los-altos-measure-d
 picks:
+  mountain-view-council:
+    pick:
+      - IdaRose Sylvester
+      - Paul Donahue
+      - Robert Cox
   los-altos-council-2:
     pick:
       - Anky van Deursen
