@@ -23,7 +23,7 @@ Approach A from `docs/superpowers/specs/2026-10-30-site-level-seo-design.md`:
 
 | Step | Status |
 |---|---|
-| Design doc | draft, in review |
+| Design doc | approved Oct 30 |
 | Press kit page | built, in review |
 | Pitches | not started |
 
