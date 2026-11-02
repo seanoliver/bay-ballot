@@ -90,6 +90,18 @@ pinned:
       - Robert Herbst
       - Julie A McMillan
     reason: from the IJ's 9/27 Ross editorial, which the extractor missed (added by hand 2026-10-07)
+  - contestId: santa-clara-mayor
+    pick:
+      - David Kertes
+    reason: from the 10/31 Santa Clara editorial ("voters should elect David Kertes for mayor"); the index headline dropped the names (review 2026-11-01)
+  - contestId: santa-clara-council-2
+    pick:
+      - Yvonne Inciarte
+    reason: from the 10/31 Santa Clara editorial ("Yvonne Inciarte for City Council District 2"); the index headline dropped the names (review 2026-11-01)
+  - contestId: santa-clara-council-3
+    pick:
+      - Eric Crutchlow
+    reason: from the 10/31 Santa Clara editorial ("Eric Crutchlow for District 3"); the index headline dropped the names (review 2026-11-01)
 rejectedQuotes:
   - text: However, the IJ editorial board is generally in support of term limits and it is time for leaders with fresh ideas on the council.
     reason: 'does not stand alone: opens with "However" (review 2026-10-10)'
@@ -242,6 +254,15 @@ picks:
   sjusd-trustee-area-4:
     pick:
       - Michael Melillo
+  santa-clara-mayor:
+    pick:
+      - David Kertes
+  santa-clara-council-2:
+    pick:
+      - Yvonne Inciarte
+  santa-clara-council-3:
+    pick:
+      - Eric Crutchlow
   oakland-measure-ee:
     pick: N
   oakland-usd-2:
