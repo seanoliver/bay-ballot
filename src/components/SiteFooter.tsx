@@ -55,6 +55,9 @@ export function SiteFooter() {
             <Link href="/about" className={COL_LINK}>
               About
             </Link>
+            <Link href="/press" className={COL_LINK}>
+              Press kit
+            </Link>
           </nav>
           <div>
             <h2 className={HEADING}>Contact</h2>
