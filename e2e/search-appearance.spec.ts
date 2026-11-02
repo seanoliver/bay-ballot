@@ -1,4 +1,7 @@
+import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { areaContests } from "../src/lib/area-view";
+import { loadElection } from "../src/lib/data";
 import { BALLOT } from "./helpers";
 
 const jsonLd = (page: Page) =>
@@ -77,4 +80,16 @@ test("an icon link of at least 192px serves a square image that size", async ({ 
   // PNG header: width and height are big-endian at bytes 16 and 20.
   const size = String(png.readUInt32BE(16));
   expect([size, String(png.readUInt32BE(20))]).toEqual(big[0].sizes.split("x"));
+});
+
+test("a county page links to every one of its contests in its server HTML", async ({ request }) => {
+  const d = loadElection(path.join(process.cwd(), "data"), "2026-11");
+  const county = d.areas.find((a) => a.id === "contra-costa")!;
+  const ids = areaContests(d.ballot.contests, county).map((c) => c.id);
+  expect(ids).toEqual(expect.arrayContaining(["cccd-ward-3", "hercules-measure-p"]));
+  const res = await request.get(`${BALLOT}/contra-costa`);
+  expect(res.status()).toBe(200);
+  const html = await res.text();
+  // Exact hrefs: the server renders no carried query (`?…`) after the contest id.
+  expect(ids.filter((id) => !html.includes(`href="${BALLOT}/${id}"`))).toEqual([]);
 });
