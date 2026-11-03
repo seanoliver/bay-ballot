@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { checkLinks, linkChangeLines, probeLink, withArchived, type LinkState } from "@/pipeline/linkcheck";
+import { checkAllLinks, checkLinks, flagLine, probeLink, withArchived, type LinkState } from "@/pipeline/linkcheck";
 import type { EndorsementFile } from "@/lib/schema";
 
 const respond = (status: number, url: string) => async () => Object.defineProperty(new Response(null, { status }), "url", { value: url });
@@ -78,11 +78,30 @@ describe("withArchived", () => {
   });
 });
 
-describe("linkChangeLines", () => {
-  it("says which way each link moved", () => {
-    expect(linkChangeLines("g", [{ source: "https://g.org/a", now: "gone" }, { source: "https://g.org/b", now: "live" }])).toEqual([
-      "g: https://g.org/a is gone; its quotes now link the Wayback copy",
-      "g: https://g.org/b is back; its quotes link the live page again",
-    ]);
+describe("checkAllLinks", () => {
+  it("checks every file with archived sources and returns only the ones that change, by id", async () => {
+    const entry = (u: string, gone?: string) => [{ source: u, snapshot: `https://web.archive.org/web/1/${u}`, ...(gone ? { gone } : {}) }];
+    const files = {
+      b: { archived: entry("https://b.org/") },
+      a: { archived: entry("https://a.org/", "2026-11-01") },
+      c: { archived: entry("https://c.org/") },
+      d: {},
+    } as unknown as Record<string, EndorsementFile>;
+    const seen: string[] = [];
+    const probe = async (u: string): Promise<LinkState> => (seen.push(u), u === "https://c.org/" ? "live" : u === "https://a.org/" ? "live" : "gone");
+    const r = await checkAllLinks(files, { today: "2026-11-03", probe, recheckMs: 0, workers: 2 });
+    expect(r.map((x) => [x.id, x.changes.map((c) => c.now)])).toEqual([["a", ["live"]], ["b", ["gone"]]]);
+    expect(new Set(seen)).toEqual(new Set(["https://a.org/", "https://b.org/", "https://c.org/"]));
+  });
+});
+
+describe("flagLine", () => {
+  it("says what to do for a missing page and for one that came back", () => {
+    expect(flagLine("g", { source: "https://g.org/a", now: "gone" })).toBe(
+      "g: https://g.org/a is missing. Find where the guide moved it and update the source, or run `npm run bb -- check-links` to link the Wayback copy.",
+    );
+    expect(flagLine("g", { source: "https://g.org/b", now: "live" })).toBe(
+      "g: https://g.org/b is marked gone but loads again. Check it is still the guide's page, then run `npm run bb -- check-links` to link it again.",
+    );
   });
 });

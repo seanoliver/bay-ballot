@@ -67,6 +67,26 @@ export function withArchived(yamlText: string, archived: ArchivedSource[]): stri
   return [...lines.slice(0, start), ...block, ...lines.slice(end)].join("\n");
 }
 
-export function linkChangeLines(id: string, changes: LinkChange[]): string[] {
-  return changes.map((c) => `${id}: ${c.source} is ${c.now === "gone" ? "gone; its quotes now link the Wayback copy" : "back; its quotes link the live page again"}`);
+export function flagLine(id: string, c: LinkChange): string {
+  return c.now === "gone"
+    ? `${id}: ${c.source} is missing. Find where the guide moved it and update the source, or run \`npm run bb -- check-links\` to link the Wayback copy.`
+    : `${id}: ${c.source} is marked gone but loads again. Check it is still the guide's page, then run \`npm run bb -- check-links\` to link it again.`;
+}
+
+export type LinkCheckResult = { id: string; archived: ArchivedSource[]; changes: LinkChange[] };
+
+export async function checkAllLinks(
+  files: Record<string, EndorsementFile>,
+  opts: { today: string; probe?: (url: string) => Promise<LinkState>; recheckMs?: number; workers?: number },
+): Promise<LinkCheckResult[]> {
+  const queue = Object.keys(files).filter((id) => files[id].archived?.length);
+  const results: LinkCheckResult[] = [];
+  const worker = async () => {
+    for (let id = queue.shift(); id; id = queue.shift()) {
+      const r = await checkLinks(files[id], opts);
+      if (r) results.push({ id, ...r });
+    }
+  };
+  await Promise.all(Array.from({ length: opts.workers ?? 8 }, worker));
+  return results.sort((a, b) => a.id.localeCompare(b.id));
 }

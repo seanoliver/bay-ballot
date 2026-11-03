@@ -150,11 +150,23 @@ jobs:
             gh issue create --title "$title" --body "$body"
           fi
 
-      - name: Check source links
+      - name: Flag missing source pages
         if: steps.base.outputs.stop != 'true'
         continue-on-error: true
         timeout-minutes: 10
-        run: npm run bb -- check-links --summary summary.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run bb -- check-links --report link-flags.md
+          title="Source pages to check"
+          issue="$(gh issue list --state open --app github-actions --search "in:title \"$title\"" --json number,title --jq "map(select(.title == \"$title\")) | .[0].number // empty")"
+          if [ -s link-flags.md ]; then
+            { echo "These guide pages failed the daily link check on $(date -u +%F). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"; echo; cat link-flags.md; echo; echo "cc @seanoliver"; } > link-issue.md
+            if [ -n "$issue" ]; then gh issue edit "$issue" --body-file link-issue.md; else gh issue create --title "$title" --body-file link-issue.md; fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "Every source page passed the link check on $(date -u +%F); closing."
+          fi
+          rm -f link-flags.md link-issue.md
 
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
       - name: Decide whether to commit

@@ -201,6 +201,10 @@ describe("quoteFragment", () => {
       ":~:text=Prop%20A%20funds%20street,the%20next%20ten%20years.",
     );
   });
+  it("uses the whole quote up to eight words and a range from nine", () => {
+    expect(quoteFragment("one two three four five six seven eight")).toBe(":~:text=one%20two%20three%20four%20five%20six%20seven%20eight");
+    expect(quoteFragment("one two three four five six seven eight nine")).toBe(":~:text=one%20two%20three%20four,six%20seven%20eight%20nine");
+  });
   it("escapes the fragment's own syntax and trims surrounding quote marks", () => {
     expect(quoteFragment("“Yes on A-1, & B”")).toBe(":~:text=Yes%20on%20A%2D1%2C%20%26%20B");
     expect(quoteFragment("  ")).toBe("");

@@ -11,7 +11,7 @@ import { claudeCodeClient, modelVia } from "../src/pipeline/claudecode";
 import type { ExtractClient, Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
-import { checkLinks, linkChangeLines, withArchived } from "../src/pipeline/linkcheck";
+import { checkAllLinks, flagLine, withArchived } from "../src/pipeline/linkcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
@@ -43,7 +43,8 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- fetch-check <guide...> | --all [--browser]   (fetch only; prints what came back, writes nothing)
        npm run bb -- discover
        npm run bb -- check
-       npm run bb -- check-links [--summary <file.md>]   (marks archived sources whose live page is gone, so quote links open the snapshot)
+       npm run bb -- check-links [--report <file.md>]   (marks archived sources whose live page is gone, so quote links open the snapshot;
+                                                 --report lists them in <file.md> instead and changes nothing)
        npm run bb -- review [--no-open]
        npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
        npm run bb -- zips   (downloads Census ZIP overlap tables and district maps; writes src/data/zips.json)
@@ -87,7 +88,7 @@ in .env.local, unless --no-fallback; any other Claude Code failure fails the cal
 const [cmd, ...args] = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
 const VALUE_OPTIONS = [
-  "--summary", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via",
+  "--summary", "--report", "--result", "--shrunk-state", "--baseline", "--only-areas", "--via",
   "--scope", "--guide", "--click", "--record", "--run-url", "--pr", "--exit-code", "--failed",
 ];
 const option = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
@@ -367,23 +368,13 @@ function runCheck(): void {
 
 async function runCheckLinks(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
-  const ids = Object.keys(data.endorsements).filter((id) => data.endorsements[id].archived?.length);
-  const queue = [...ids];
-  const lines: string[] = [];
-  const worker = async () => {
-    for (let id = queue.shift(); id; id = queue.shift()) {
-      const r = await checkLinks(data.endorsements[id], { today: today() });
-      if (!r) continue;
-      const path_ = endorsementPath(id);
-      fs.writeFileSync(path_, withArchived(fs.readFileSync(path_, "utf8"), r.archived));
-      lines.push(...linkChangeLines(id, r.changes));
-    }
-  };
-  await Promise.all(Array.from({ length: 8 }, worker));
-  lines.sort().forEach((l) => console.log(l));
-  console.log(`check-links: ${ids.length} guides checked`);
-  const summaryPath = option("--summary");
-  if (summaryPath && lines.length) fs.appendFileSync(summaryPath, `\n## Source links\n\n${lines.map((l) => `- ${l}`).join("\n")}\n`);
+  const results = await checkAllLinks(data.endorsements, { today: today() });
+  const lines = results.flatMap((r) => r.changes.map((c) => flagLine(r.id, c)));
+  const reportPath = option("--report");
+  if (reportPath) fs.writeFileSync(reportPath, lines.map((l) => `- ${l}\n`).join(""));
+  else for (const r of results) fs.writeFileSync(endorsementPath(r.id), withArchived(fs.readFileSync(endorsementPath(r.id), "utf8"), r.archived));
+  lines.forEach((l) => console.log(l));
+  console.log(`check-links: ${Object.values(data.endorsements).filter((f) => f.archived?.length).length} guides checked, ${lines.length} ${reportPath ? "flagged" : "changed"}`);
 }
 
 function committedEndorsements(ids: string[]): Record<string, EndorsementFile> {

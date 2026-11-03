@@ -19,7 +19,8 @@ Open any guide page, tap a quote's link: it goes to `https://web.archive.org/web
 
 - `sourceLink` links the live page, with a `#:~:text=` fragment for the quote (first and last four words), so the browser scrolls to it. PDFs get no fragment.
 - `ArchivedSource` has an optional `gone` date. Only a gone source links its snapshot.
-- `npm run bb -- check-links` sets or clears `gone`. It marks a source gone on 404, 410 or a dead domain, confirmed by a second probe a minute later. Blocks (403, 429), 5xx errors and timeouts leave it unchanged. The daily refresh workflow runs it before deciding whether to commit, and lists any change in the refresh PR body.
+- `npm run bb -- check-links` sets or clears `gone`. It marks a source gone on 404, 410 or a dead domain, confirmed by a second probe a minute later. Blocks (403, 429), 5xx errors and timeouts leave it unchanged.
+- The daily refresh runs it with `--report`, which changes no data and keeps a "Source pages to check" issue listing missing pages. A person looks for where the guide moved the page before marking it gone.
 - Re-archiving a gone source keeps its old snapshot.
 
 ## Verification
