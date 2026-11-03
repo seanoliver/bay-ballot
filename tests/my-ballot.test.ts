@@ -129,13 +129,11 @@ describe("ballotPosition", () => {
     expect(ballotPosition(index, "prop-a", ["oakland"], {})).toBeNull();
   });
 
-  it("uses a guessed area only when no chosen area, area page, or contest area applies", () => {
-    const statewide = CONTESTS.find((c) => !index.contests[c.id].area && order.includes(c.id))!.id;
-    expect(ballotPosition(index, statewide, [null, "bay-area"], {})).toBeNull();
-    expect(ballotPosition(index, statewide, [null, "bay-area"], {}, { guess: "sf" })!.area).toBe("sf");
-    expect(ballotPosition(index, statewide, ["oakland"], {}, { guess: "sf" })!.area).toBe("oakland");
-    expect(ballotPosition(index, "prop-a", [null, null], {}, { guess: "oakland" })!.area).toBe("sf");
-    expect(ballotPosition(index, statewide, [null], {}, { guess: "__proto__" })).toBeNull();
+  it("needs an area the voter chose, and never falls back to the contest's own area", () => {
+    expect(ballotPosition(index, "prop-a", [null, null], {})).toBeNull();
+    expect(ballotPosition(index, "prop-a", [null, "bay-area"], {})).toBeNull();
+    expect(ballotPosition(index, "prop-a", [null, "sf"], {})!.area).toBe("sf");
+    expect(ballotPosition(index, "prop-a", ["__proto__", "constructor"], {})).toBeNull();
   });
 
   it("has no previous at the start and no next at the end", () => {

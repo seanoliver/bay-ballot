@@ -38,23 +38,6 @@ function read(key: string): string | null {
 /** Client only: reads localStorage. */
 export const storedAreas = () => [read(AREA_KEY), read(SEEN_KEY)];
 
-// Session only, and never in AREA_KEY: a guess must not outrank a contest's own area on later pages.
-const GUESS_KEY = "bb-ballot-guess";
-
-export function guessedArea(): string | null {
-  try {
-    return window.sessionStorage.getItem(GUESS_KEY);
-  } catch {
-    return null;
-  }
-}
-
-export function rememberGuess(area: string) {
-  try {
-    window.sessionStorage.setItem(GUESS_KEY, area);
-  } catch {}
-}
-
 export const OPEN_BALLOT = "bb-open-ballot";
 
 export function useBallotIndex(url: string, enabled: boolean, { retryKey = "" }: { retryKey?: string } = {}): { index: MyBallotIndex | null; failed: boolean; retry: () => void } {

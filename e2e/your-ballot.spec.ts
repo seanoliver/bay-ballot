@@ -71,12 +71,15 @@ test.describe("Your ballot", () => {
     expect(errors).toEqual([]);
   });
 
-  test("the bar keeps its area on statewide contests when the voter started on a local one", async ({ page }) => {
+  test("the bar waits for a chosen area, then covers statewide contests too", async ({ page }) => {
     await page.clock.setFixedTime(BEFORE);
     await seed(page);
-    await page.goto(`${BALLOT}/prop-a`);
     const bar = page.getByRole("navigation", { name: "Contest by contest" });
-    await expect(bar).toBeVisible();
+    await page.goto(`${BALLOT}/prop-a`);
+    await expect(pill(page, /^Your ballot/)).toBeVisible();
+    await expect(bar).toHaveCount(0);
+    await page.goto(`${BALLOT}/sf`);
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("bb-ballot-area"))).toBe("sf");
     await page.goto(`${BALLOT}/prop-5`);
     await expect(bar).toBeVisible();
   });
