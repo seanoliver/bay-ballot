@@ -7,7 +7,7 @@ import { sourcesFor } from "./sources";
 
 function mergeArchived(prev: EndorsementFile, fresh: ArchivedSource[]): ArchivedSource[] {
   const bySource = new Map((prev.archived ?? []).map((a) => [a.source, a]));
-  for (const a of fresh) bySource.set(a.source, a);
+  for (const a of fresh) if (!bySource.get(a.source)?.gone) bySource.set(a.source, a);
   return sourcesFor(prev).flatMap((url) => bySource.get(url) ?? []);
 }
 

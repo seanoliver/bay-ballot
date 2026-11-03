@@ -103,6 +103,10 @@ contests:
     title: Proposition A
     kind: measure
     description: "Charter Changes Affecting Various City Departments and Commissions"
+    summary:
+      text: "Proposition A would align the Charter with how some City departments currently operate, change some processes, and eliminate or reorganize certain commissions and advisory bodies. Proposition A would require the Board of Supervisors to amend voter-approved laws to enact some of these changes."
+      yes: "If you vote “yes,” you want to amend the Charter to align it with how some City departments currently operate, change some processes, eliminate or reorganize certain commissions and advisory bodies, and require the Board of Supervisors to amend voter-approved laws to enact some of these changes."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-b
@@ -110,6 +114,10 @@ contests:
     title: Proposition B
     kind: measure
     description: "Establishing a Municipal Finance Corporation and a Public Bank"
+    summary:
+      text: "Proposition B would amend the City Charter to authorize the City to establish a municipal finance corporation if the City has sufficient funding and resources. After three years of operation, the municipal finance corporation may become a public bank."
+      yes: "If you vote “yes,” you want to authorize the City to establish a municipal finance corporation and a public bank."
+      no: "If you vote “no,” you do not want to authorize the City to establish a municipal finance corporation and a public bank."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-c
@@ -117,6 +125,10 @@ contests:
     title: Proposition C
     kind: measure
     description: "Contributions to the Housing Trust Fund"
+    summary:
+      text: "Proposition C would change how the City’s annual contributions to the Housing Trust Fund (HTF) are set, increase funding and expand programs for affordable housing, and extend the Fund’s expiration date."
+      yes: "If you vote “yes,” you want to amend the Charter to change how the City’s annual contributions to the Housing Trust Fund are set, increase funding and expand programs for affordable housing, and extend the Fund to 2058."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-d
@@ -124,6 +136,10 @@ contests:
     title: Proposition D
     kind: measure
     description: "Changes to Ballot Measure Process"
+    summary:
+      text: "Shall the City amend the Charter to increase the requirements for signature initiatives from 2% to 8% of registered voters in San Francisco (currently from about 10,600 to about 42,500 signatures), increase the requirements for calling special elections, allow signature initiatives to be withdrawn before an election, and remove the ability of a minority of Board of Supervisors members or the Mayor to place measures on the ballot?"
+      yes: "If you vote “yes,” you want to increase the requirements for signature initiatives from 2% to 8% of registered voters (currently from about 10,600 to about 42,500 signatures), increase the requirements for special elections, allow signature initiatives to be withdrawn, and remove the ability of a minority of Board members or the Mayor to place measures on the ballot."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-e
@@ -131,6 +147,10 @@ contests:
     title: Proposition E
     kind: measure
     description: "City Administrator’s Authority and Changes to City Contracting"
+    summary:
+      text: "Shall the City amend the Charter to give the City Administrator more authority by centralizing the City’s purchasing rules and processes, changing how the City approves purchasing rules, changing when contracts and leases require Board of Supervisors approval, and extending the City Administrator’s term?"
+      yes: "If you vote “yes,” you want to give the City Administrator more authority by centralizing the City’s Purchasing rules and processes, changing how the City approves Purchasing rules, changing when contracts and leases require Board approval, and extending the City Administrator’s term."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-f
@@ -138,6 +158,10 @@ contests:
     title: Proposition F
     kind: measure
     description: "Changes to Executive Branch Management"
+    summary:
+      text: "Shall the City amend the Charter to expand the Mayor’s authority to transfer responsibilities between departments, hire deputy mayors, and hire some and fire most department heads; and to allow City officials to remove members of boards and commissions without cause?"
+      yes: "If you vote “yes,” you want to expand the Mayor’s authority to transfer responsibilities, hire deputy mayors, hire some and fire most department heads, and allow City officials to remove members of boards or commissions without cause."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-g
@@ -145,6 +169,10 @@ contests:
     title: Proposition G
     kind: measure
     description: "Allowing Private Vehicles on the Upper Great Highway in Sunset Dunes Park"
+    summary:
+      text: "Proposition G would close Sunset Dunes Park from Monday at 4:00 a.m. through Friday at 6:00 p.m., unless a holiday falls on a weekday, in order to reopen the roadway known as the Upper Great Highway to private vehicles during that time."
+      yes: "If you vote “yes,” you want to close Sunset Dunes Park from Monday at 4:00 a.m. through Friday at 6:00 p.m., unless a holiday falls on a weekday, in order to reopen the roadway known as the Upper Great Highway to private vehicles during that time."
+      no: "If you vote “no,” you do not want the City to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-h
@@ -152,6 +180,10 @@ contests:
     title: Proposition H
     kind: measure
     description: "Parcel Tax to Fund Muni Operations"
+    summary:
+      text: "Starting July 1, 2027, and continuing until June 30, 2042, Proposition H would fund Muni service through a new annual parcel tax on real estate in San Francisco. The tax would be adjusted annually for inflation."
+      yes: "If you vote “yes,” you want the City to fund Muni service through a new annual parcel tax on real estate."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-i
@@ -159,6 +191,10 @@ contests:
     title: Proposition I
     kind: measure
     description: "Changes to Real Property Transfer Tax"
+    summary:
+      text: "Proposition I would dedicate half of the transfer tax revenues when certain real estate with a value or sales price of more than $10,000,000 changes hands, to be spent only on affordable housing, including social housing developments and housing assistance."
+      yes: "If you vote “yes,” you want to dedicate half of the transfer tax revenues when certain real estate with a value or sales price of more than $10,000,000 changes hands, to be spent only on affordable housing, including social housing developments and housing assistance."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }
   - id: prop-j
@@ -166,5 +202,9 @@ contests:
     title: Proposition J
     kind: measure
     description: "Removal of Foreclosure Exemption for Real Property Transfer Tax"
+    summary:
+      text: "Proposition J would apply a transfer tax for properties such as commercial, industrial, and large residential real estate that a lender takes through foreclosure or is handed over to the lender to avoid foreclosure. Starting March 1, 2027, these properties would be taxed on their full market value."
+      yes: "If you vote “yes,” you want to apply a transfer tax for properties such as commercial, industrial, and large residential properties, that are transferred to a lender because of foreclosure."
+      no: "If you vote “no,” you do not want to make these changes."
     link: https://www.sf.gov/qualified-ballot-measures
     jurisdiction: { level: city, name: San Francisco }

@@ -1,20 +1,23 @@
 "use client";
 
-import { Check } from "lucide-react";
+import Link from "next/link";
+import { Check, ChevronRight } from "lucide-react";
 import { shortDate } from "@/lib/election-day";
-import { myPickLabel, setPick, tapCandidate, type MyPick } from "@/lib/my-ballot";
+import { ballotPosition, myPickLabel, setPick, tapCandidate, type MyPick } from "@/lib/my-ballot";
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { useElectionDay } from "./ElectionChip";
+import { chosenArea, OPEN_BALLOT, useBallotIndex } from "./useBallotIndex";
 import { useMyBallot } from "./useMyBallot";
 
 const OPTION = "inline-flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium ring-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
 const ON = "bg-primary text-primary-foreground ring-primary";
 const OFF = "bg-background ring-foreground/15 hover:bg-muted";
 
-export function YourVote({ election, date, contest }: { election: string; date: string; contest: Contest }) {
+export function YourVote({ election, date, contest, indexUrl }: { election: string; date: string; contest: Contest; indexUrl: string }) {
   const { ballot, update, saved } = useMyBallot(election);
   const day = useElectionDay(date);
+  const { index } = useBallotIndex(indexUrl, ballot?.started === true && day !== null && day.kind !== "after");
   if (!ballot || !day) return null;
   const pick = ballot.picks[contest.id];
   const ranked = contest.kind === "candidate" && contest.rankedChoice;
@@ -89,11 +92,40 @@ export function YourVote({ election, date, contest }: { election: string; date: 
           </ul>
         </>
       )}
+      {pick && index ? <NextContest election={election} position={ballotPosition(index, contest.id, [chosenArea()], ballot.picks)} titles={index.contests} /> : null}
       {saved ? null : (
         <p role="status" className="mt-2 text-xs text-muted-foreground">
           This browser isn&apos;t saving data, so your picks will be gone when you close the tab. Private browsing does this.
         </p>
       )}
     </section>
+  );
+}
+
+const NEXT_ROW = "mt-2 flex min-h-11 items-center justify-between gap-3 rounded-lg bg-muted px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+
+function NextContest({ election, position, titles }: { election: string; position: ReturnType<typeof ballotPosition>; titles: Record<string, { title: string }> }) {
+  if (!position) return null;
+  const left = position.order.length - position.decided;
+  if (position.next) {
+    return (
+      <Link href={`/${election}/${position.next}`} className={cn(NEXT_ROW, "hover:bg-foreground/10")}>
+        <span className="min-w-0 truncate">
+          Next: <span className="font-medium">{titles[position.next]?.title ?? position.next}</span>
+        </span>
+        <ChevronRight aria-hidden="true" className="size-4 shrink-0" />
+      </Link>
+    );
+  }
+  return (
+    <button type="button" aria-haspopup="dialog" onClick={() => window.dispatchEvent(new Event(OPEN_BALLOT))} className={cn(NEXT_ROW, "w-full text-left hover:bg-foreground/10")}>
+      <span>
+        <span className="font-medium">Last contest.</span> {left === 0 ? "Every contest decided." : `${left} still undecided.`}
+      </span>
+      <span className="inline-flex shrink-0 items-center font-medium">
+        Review
+        <ChevronRight aria-hidden="true" className="size-4" />
+      </span>
+    </button>
   );
 }

@@ -92,7 +92,7 @@ export const Entry = z.object({
 });
 export type Entry = z.infer<typeof Entry>;
 
-export const ArchivedSource = z.object({ source: HttpUrl, snapshot: HttpUrl });
+export const ArchivedSource = z.object({ source: HttpUrl, snapshot: HttpUrl, gone: z.iso.date().optional() });
 export type ArchivedSource = z.infer<typeof ArchivedSource>;
 
 export const HeldPick = z.object({

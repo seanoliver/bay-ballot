@@ -103,7 +103,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
                         title={keepNumber(p.contest.title)}
                         label={`${p.contest.title}: ${p.label}`}
                         parts={pinParts(p.entry, slots)}
-                        quotes={p.entry.quotes.map((q) => ({ text: q.text, href: sourceLink(published, q.source) }))}
+                        quotes={p.entry.quotes.map((q) => ({ text: q.text, href: sourceLink(published, q.source, { quote: q.text }) }))}
                       />
                     );
                   })}

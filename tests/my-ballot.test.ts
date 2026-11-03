@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { myBallotIndex, myBallotText, myPickLabel, pageSlug, parseMyBallot, pickArea, setPick, tapCandidate, type MyBallot } from "@/lib/my-ballot";
+import { ballotPosition, myBallotIndex, myBallotText, shortTitle, myPickLabel, pageSlug, parseMyBallot, pickArea, setPick, tapCandidate, type MyBallot } from "@/lib/my-ballot";
 import { election, myBallotData, myBallotUrl } from "@/lib/site-data";
 import type { Area, Contest } from "@/lib/schema";
 
@@ -111,6 +111,41 @@ describe("pickArea", () => {
 
   it("ignores keys inherited from Object", () => {
     expect(pickArea(index, "constructor", ["toString", "__proto__"])).toEqual({ area: null, here: null });
+  });
+});
+
+describe("ballotPosition", () => {
+  const index = myBallotIndex(CONTESTS, [SF, OAK]);
+  const order = index.areas.sf.groups.flatMap((g) => g.sections.flatMap((s) => s.ids));
+  it("finds the contest in the voter's area ballot, with its neighbors and how many are decided", () => {
+    const at = order.indexOf("prop-a");
+    const p = ballotPosition(index, "prop-a", ["sf"], { "prop-a": "Y", "not-on-ballot": "N" })!;
+    expect(p).toMatchObject({ area: "sf", at, prev: order[at - 1] ?? null, next: order[at + 1] ?? null, decided: 1 });
+    expect(p.order).toEqual(order);
+  });
+
+  it("is null on an area page, or for a contest not on the remembered area's ballot", () => {
+    expect(ballotPosition(index, "sf", ["sf"], {})).toBeNull();
+    expect(ballotPosition(index, "prop-a", ["oakland"], {})).toBeNull();
+  });
+
+  it("needs an area the voter chose, and never falls back to the contest's own area", () => {
+    expect(ballotPosition(index, "prop-a", [null, null], {})).toBeNull();
+    expect(ballotPosition(index, "prop-a", [null, "bay-area"], {})).toBeNull();
+    expect(ballotPosition(index, "prop-a", [null, "sf"], {})!.area).toBe("sf");
+    expect(ballotPosition(index, "prop-a", ["__proto__", "constructor"], {})).toBeNull();
+  });
+
+  it("has no previous at the start and no next at the end", () => {
+    expect(ballotPosition(index, order[0], ["sf"], {})!.prev).toBeNull();
+    expect(ballotPosition(index, order[order.length - 1], ["sf"], {})!.next).toBeNull();
+  });
+});
+
+describe("shortTitle", () => {
+  it("shortens Proposition only", () => {
+    expect(shortTitle("Proposition H")).toBe("Prop H");
+    expect(shortTitle("Board of Supervisors, District 8")).toBe("Board of Supervisors, District 8");
   });
 });
 
