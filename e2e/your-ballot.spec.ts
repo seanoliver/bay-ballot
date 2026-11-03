@@ -84,6 +84,28 @@ test.describe("Your ballot", () => {
     await expect(bar).toBeVisible();
   });
 
+  test("a guide filter on a contest page doesn't count as choosing an area", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.addInitScript(() => localStorage.setItem("bb-area", "sf"));
+    await page.goto(`${BALLOT}/prop-a`);
+    await expect(pill(page, /^Your ballot/)).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Contest by contest" })).toHaveCount(0);
+  });
+
+  test("the last contest says when every contest is decided", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    const index = await (await page.request.get(`${BALLOT}/my-ballot.json`)).json();
+    const order: string[] = index.areas.sf.groups.flatMap((g: { sections: { ids: string[] }[] }) => g.sections.flatMap((s) => s.ids));
+    const last = order[order.length - 1];
+    await seed(page, Object.fromEntries(order.slice(0, -1).map((id) => [id, "blank"])));
+    await page.addInitScript(() => localStorage.setItem("bb-ballot-area", "sf"));
+    await page.goto(`${BALLOT}/${last}`);
+    await vote(page).getByRole("button", { name: "Yes" }).click();
+    await expect(vote(page)).toContainText("Last contest. Every contest decided.");
+    await expect(page.getByRole("navigation", { name: "Contest by contest" })).toContainText(`${order.length} decided`);
+  });
+
   test("a failed index load retries on the next page", async ({ page }) => {
     await page.clock.setFixedTime(BEFORE);
     await seed(page);

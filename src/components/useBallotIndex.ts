@@ -38,6 +38,8 @@ function read(key: string): string | null {
 /** Client only: reads localStorage. */
 export const storedAreas = () => [read(AREA_KEY), read(SEEN_KEY)];
 
+export const chosenArea = () => read(AREA_KEY);
+
 export const OPEN_BALLOT = "bb-open-ballot";
 
 export function useBallotIndex(url: string, enabled: boolean, { retryKey = "" }: { retryKey?: string } = {}): { index: MyBallotIndex | null; failed: boolean; retry: () => void } {

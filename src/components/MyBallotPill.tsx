@@ -12,7 +12,7 @@ import { isPlainClick } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { useElectionDay } from "./ElectionChip";
 import { ExternalLink } from "./ExternalLink";
-import { AREA_KEY, OPEN_BALLOT, storedAreas, useBallotIndex } from "./useBallotIndex";
+import { AREA_KEY, chosenArea, OPEN_BALLOT, storedAreas, useBallotIndex } from "./useBallotIndex";
 import { useHistorySheet } from "./useHistorySheet";
 import { useMyBallot, type BallotUpdate } from "./useMyBallot";
 import { useSingleKeys } from "./useSingleKeys";
@@ -51,7 +51,7 @@ export function MyBallotPill({ election, date, indexUrl, areas }: { election: st
   const live = ballot !== null && ballot.started && !after;
   // Not only while open: the bar needs the index on every contest page.
   const { index, failed, retry } = useBallotIndex(indexUrl, open || (live && slug !== null), { retryKey: pathname });
-  const position = live && index && ballot ? ballotPosition(index, slug, storedAreas(), ballot.picks) : null;
+  const position = live && index && ballot ? ballotPosition(index, slug, [chosenArea()], ballot.picks) : null;
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
