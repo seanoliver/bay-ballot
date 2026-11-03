@@ -50,8 +50,16 @@ export function MyBallotPill({ election, date, indexUrl, areas }: { election: st
 
   const live = ballot !== null && ballot.started && !after;
   // Not only while open: the bar needs the index on every contest page.
-  const { index, failed, retry } = useBallotIndex(indexUrl, open || (live && slug !== null));
+  const { index, failed, retry } = useBallotIndex(indexUrl, open || (live && slug !== null), { retryKey: pathname });
   const position = live && index && ballot ? ballotPosition(index, slug, storedAreas(), ballot.picks) : null;
+  const positionArea = position?.area ?? null;
+
+  useEffect(() => {
+    if (!positionArea) return;
+    try {
+      window.localStorage.setItem(AREA_KEY, positionArea);
+    } catch {}
+  }, [positionArea]);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);

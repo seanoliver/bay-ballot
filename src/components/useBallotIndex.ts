@@ -40,18 +40,20 @@ export const storedAreas = () => [read(AREA_KEY), read(SEEN_KEY)];
 
 export const OPEN_BALLOT = "bb-open-ballot";
 
-export function useBallotIndex(url: string, enabled: boolean): { index: MyBallotIndex | null; failed: boolean; retry: () => void } {
-  const [index, setIndex] = useState<MyBallotIndex | "failed" | null>(null);
+export function useBallotIndex(url: string, enabled: boolean, { retryKey = "" }: { retryKey?: string } = {}): { index: MyBallotIndex | null; failed: boolean; retry: () => void } {
+  const [index, setIndex] = useState<MyBallotIndex | null>(null);
+  const [failedFor, setFailedFor] = useState<string | null>(null);
+  const failed = failedFor === retryKey;
   useEffect(() => {
-    if (!enabled || index) return;
+    if (!enabled || index || failed) return;
     let live = true;
     loadIndex(url).then(
       (x) => live && setIndex(x),
-      () => live && setIndex("failed"),
+      () => live && setFailedFor(retryKey),
     );
     return () => {
       live = false;
     };
-  }, [enabled, index, url]);
-  return { index: index === "failed" ? null : index, failed: index === "failed", retry: () => setIndex(null) };
+  }, [enabled, index, failed, retryKey, url]);
+  return { index, failed, retry: () => setFailedFor(null) };
 }

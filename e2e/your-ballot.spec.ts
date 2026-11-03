@@ -71,6 +71,72 @@ test.describe("Your ballot", () => {
     expect(errors).toEqual([]);
   });
 
+  test("the bar keeps its area on statewide contests when the voter started on a local one", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.goto(`${BALLOT}/prop-a`);
+    const bar = page.getByRole("navigation", { name: "Contest by contest" });
+    await expect(bar).toBeVisible();
+    await page.goto(`${BALLOT}/prop-5`);
+    await expect(bar).toBeVisible();
+  });
+
+  test("a failed index load retries on the next page", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.addInitScript(() => localStorage.setItem("bb-ballot-area", "sf"));
+    let failed = false;
+    await page.route("**/my-ballot.json*", (route) => {
+      if (failed) return route.continue();
+      failed = true;
+      return route.abort();
+    });
+    await page.goto(`${BALLOT}/prop-a`);
+    await expect.poll(() => failed).toBe(true);
+    await expect(pill(page, /^Your ballot/)).toBeVisible();
+    await page.getByRole("link", { name: "San Francisco ballot", exact: true }).first().click();
+    await expect(page).toHaveURL(new RegExp(`${BALLOT}/sf`));
+    await pill(page, /^Your ballot/).click();
+    await sheet(page).getByRole("link", { name: /^Proposition A\b/ }).click();
+    await expect(page).toHaveURL(`${BALLOT}/prop-a`);
+    await expect(page.getByRole("navigation", { name: "Contest by contest" })).toBeVisible();
+  });
+
+  test("the first contest has no Previous, and the last one reviews in the sheet", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.addInitScript(() => localStorage.setItem("bb-ballot-area", "sf"));
+    const index = await (await page.request.get(`${BALLOT}/my-ballot.json`)).json();
+    const order: string[] = index.areas.sf.groups.flatMap((g: { sections: { ids: string[] }[] }) => g.sections.flatMap((s) => s.ids));
+    const bar = page.getByRole("navigation", { name: "Contest by contest" });
+
+    await page.goto(`${BALLOT}/${order[0]}`);
+    await expect(bar).toContainText(`1 of ${order.length}`);
+    await expect(bar.getByRole("link", { name: /^Previous: / })).toHaveCount(0);
+    await expect(vote(page).getByRole("link", { name: /^Next: / })).toHaveCount(0);
+
+    await page.goto(`${BALLOT}/${order[order.length - 1]}`);
+    await expect(bar).toContainText(`${order.length} of ${order.length}`);
+    await vote(page).getByRole("button", { name: "Yes" }).click();
+    await expect(vote(page)).toContainText(`Last contest. ${order.length - 1} still undecided.`);
+    await vote(page).getByRole("button", { name: /Review/ }).click();
+    await expect(sheet(page)).toContainText("1 picked");
+    await page.keyboard.press("Escape");
+    await bar.getByRole("button", { name: "Review" }).click();
+    await expect(sheet(page)).toBeVisible();
+  });
+
+  test("a contest not on the remembered area's ballot keeps the pill", async ({ page }) => {
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.addInitScript(() => localStorage.setItem("bb-ballot-area", "oakland"));
+    await page.goto(`${BALLOT}/prop-a`);
+    await vote(page).getByRole("button", { name: "Yes" }).click();
+    await expect(pill(page, /^Your ballot/)).toContainText("1");
+    await expect(page.getByRole("navigation", { name: "Contest by contest" })).toHaveCount(0);
+    await expect(vote(page).getByRole("link", { name: /^Next: / })).toHaveCount(0);
+  });
+
   test("a ranked-choice race ranks in tap order", async ({ page }) => {
     await page.clock.setFixedTime(BEFORE);
     await page.addInitScript(() => localStorage.setItem("bb-ballot-2026-11", JSON.stringify({ started: true, picks: {} })));
