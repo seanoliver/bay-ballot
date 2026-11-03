@@ -18,122 +18,122 @@ Grid viewList view
 City
 Filters
 Statewide4 endorsements
-XBXavier BecerraGovernor · StatewideStatewideEndorsed
-FMFiona MaLieutenant Governor · CaliforniaCaliforniaEndorsed
-RBRob BontaAttorney General · CA Attorney GeneralCA Attorney GeneralEndorsed
-BABen AllenInsurance Commissioner · CaliforniaCaliforniaEndorsed
+Xavier BecerraGovernor · StatewideStatewideEndorsed
+Fiona MaLieutenant Governor · CaliforniaCaliforniaEndorsed
+Rob BontaAttorney General · CA Attorney GeneralCA Attorney GeneralEndorsed
+Ben AllenInsurance Commissioner · CaliforniaCaliforniaEndorsed
 Statewide ballot measures4 endorsements
 Prop 1Bond For Affordable Housing - ballot measureVote yes
 Prop 37Downpayment assistance for new homesVote yes
 Prop 43Supermajority vote for tax initativesVote no
 Prop 45Modify Environmental Review for Critical InfrastructureNo consensus
 Federal6 endorsements
-MMMike McGuireU.S. Representative District 1 · CA Congressional District 1CA Congressional District 1Endorsed
-JHJared HuffmanU.S. Representative District 2 · US House of Representatives California District 2US House of Representatives California District 2Endorsed
-SWScott WienerU.S. Representative District 11 · California Congressional District 11California Congressional District 11Endorsed
-LFLaura FriedmanU.S. Representative District 30 · CA Congressional District 30CA Congressional District 30Endorsed
-RGRobert GarciaU.S. Representative District 42 · CA Congressional District 42CA Congressional District 42Endorsed
-SPScott PetersU.S. Representative District 50 · CA Congressional District 50CA Congressional District 50Endorsed
+Mike McGuireU.S. Representative District 1 · CA Congressional District 1CA Congressional District 1Endorsed
+Jared HuffmanU.S. Representative District 2 · US House of Representatives California District 2US House of Representatives California District 2Endorsed
+Scott WienerU.S. Representative District 11 · California Congressional District 11California Congressional District 11Endorsed
+Laura FriedmanU.S. Representative District 30 · CA Congressional District 30CA Congressional District 30Endorsed
+Robert GarciaU.S. Representative District 42 · CA Congressional District 42CA Congressional District 42Endorsed
+Scott PetersU.S. Representative District 50 · CA Congressional District 50CA Congressional District 50Endorsed
 State Legislature27 endorsements
-SSScott SakakiharaState Senator District 10 · California Senate District 10California Senate District 10Endorsed
-JEJohn EricksonState Senator District 24 · CA Senate District 24, West LACA Senate District 24, West LAEndorsed
-SHSara HernandezState Senator District 26 · CA State Senate District 26CA State Senate District 26Endorsed
-CRChris RogersAssemblymember District 2 · CA State Assembly District 2CA State Assembly District 2Endorsed
-CACecilia Aguiar-CurryAssemblymember District 4 · CA State Assembly District 4CA State Assembly District 4Endorsed
-JPJoe PattersonAssemblymember District 5 · CA Assembly District 5CA Assembly District 5Endorsed
-HFHeath FloraAssemblymember District 9 · CA Assembly District 9CA Assembly District 9Endorsed
-LWLori WilsonAssemblymember District 11 · CA Assembly District 11CA Assembly District 11Endorsed
-ELEric LucanAssemblymember District 12 · California Assembly District 12California Assembly District 12Endorsed
-BWBuffy WicksAssemblymember District 14 · CA Assembly District 14CA Assembly District 14Endorsed
-MHMatt HaneyAssemblymember District 17 · California Assembly District 17California Assembly District 17Endorsed
-MBMia BontaAssemblymember District 18 · CA Assembly District 18CA Assembly District 18Endorsed
-CSCatherine StefaniAssemblymember District 19 · California Assembly District 19California Assembly District 19Endorsed
-MBMarc BermanAssemblymember District 23 · Assembly District 23Assembly District 23Endorsed
-ALAlex LeeAssemblymember District 24 · CA Assembly District 24CA Assembly District 24Endorsed
-AKAsh KalraAssemblymember District 25 · CA State Assembly District 25CA State Assembly District 25Endorsed
-PAPatrick AhrensAssemblymember District 26 · CA Assembly District 26CA Assembly District 26Endorsed
-RRRobert RivasAssemblymember District 29 · CA Assembly District 29CA Assembly District 29Endorsed
-PSPilar SchiavoAssemblymember District 40 · CA Assembly District 40CA Assembly District 40Endorsed
-JGJesse GabrielAssemblymember District 46 · CA State Assembly District 46CA State Assembly District 46Endorsed
-RGRobert GarciaAssemblymember District 50 · California Assembly District 50California Assembly District 50Endorsed
-JCJessica CalozaAssemblymember District 52 · California Assembly District 52California Assembly District 52Endorsed
-MGMark GonzalezAssemblymember District 54 · California Assembly District 54California Assembly District 54Endorsed
-SESade ElhawaryAssemblymember District 57 · California Assembly District 57California Assembly District 57Endorsed
-TMTina McKinnorAssemblymember District 61 · California Assembly District 61California Assembly District 61Endorsed
-CWChris WardAssemblymember District 78 · California Assembly District 78California Assembly District 78Endorsed
-DADavid AlvarezAssemblymember District 80 · California Assembly District 80California Assembly District 80Endorsed
+Scott SakakiharaState Senator District 10 · California Senate District 10California Senate District 10Endorsed
+John EricksonState Senator District 24 · CA Senate District 24, West LACA Senate District 24, West LAEndorsed
+Sara HernandezState Senator District 26 · CA State Senate District 26CA State Senate District 26Endorsed
+Chris RogersAssemblymember District 2 · CA State Assembly District 2CA State Assembly District 2Endorsed
+Cecilia Aguiar-CurryAssemblymember District 4 · CA State Assembly District 4CA State Assembly District 4Endorsed
+Joe PattersonAssemblymember District 5 · CA Assembly District 5CA Assembly District 5Endorsed
+Heath FloraAssemblymember District 9 · CA Assembly District 9CA Assembly District 9Endorsed
+Lori WilsonAssemblymember District 11 · CA Assembly District 11CA Assembly District 11Endorsed
+Eric LucanAssemblymember District 12 · California Assembly District 12California Assembly District 12Endorsed
+Buffy WicksAssemblymember District 14 · CA Assembly District 14CA Assembly District 14Endorsed
+Matt HaneyAssemblymember District 17 · California Assembly District 17California Assembly District 17Endorsed
+Mia BontaAssemblymember District 18 · CA Assembly District 18CA Assembly District 18Endorsed
+Catherine StefaniAssemblymember District 19 · California Assembly District 19California Assembly District 19Endorsed
+Marc BermanAssemblymember District 23 · Assembly District 23Assembly District 23Endorsed
+Alex LeeAssemblymember District 24 · CA Assembly District 24CA Assembly District 24Endorsed
+Ash KalraAssemblymember District 25 · CA State Assembly District 25CA State Assembly District 25Endorsed
+Patrick AhrensAssemblymember District 26 · CA Assembly District 26CA Assembly District 26Endorsed
+Robert RivasAssemblymember District 29 · CA Assembly District 29CA Assembly District 29Endorsed
+Pilar SchiavoAssemblymember District 40 · CA Assembly District 40CA Assembly District 40Endorsed
+Jesse GabrielAssemblymember District 46 · CA State Assembly District 46CA State Assembly District 46Endorsed
+Robert GarciaAssemblymember District 50 · California Assembly District 50California Assembly District 50Endorsed
+Jessica CalozaAssemblymember District 52 · California Assembly District 52California Assembly District 52Endorsed
+Mark GonzalezAssemblymember District 54 · California Assembly District 54California Assembly District 54Endorsed
+Sade ElhawaryAssemblymember District 57 · California Assembly District 57California Assembly District 57Endorsed
+Tina McKinnorAssemblymember District 61 · California Assembly District 61California Assembly District 61Endorsed
+Chris WardAssemblymember District 78 · California Assembly District 78California Assembly District 78Endorsed
+David AlvarezAssemblymember District 80 · California Assembly District 80California Assembly District 80Endorsed
 Regional1 endorsement
 Regional Transit MeasureVote yes
 Alameda County14 endorsements
 Alameda
-MVMalia VellaMayor · Alameda MayorAlameda MayorEndorsed
-TAThushan AmarasiriwardenaCouncilmember · Alameda City CouncilAlameda City CouncilDual pick
-TSTyler SavageCouncilmember · Alameda City CouncilAlameda City CouncilDual pick
+Malia VellaMayor · Alameda MayorAlameda MayorEndorsed
+Thushan AmarasiriwardenaCouncilmember · Alameda City CouncilAlameda City CouncilDual pick
+Tyler SavageCouncilmember · Alameda City CouncilAlameda City CouncilDual pick
 Albany
-ATAaron TiedemannCouncilmember · Albany City CouncilAlbany City CouncilDual pick
-RDRobin D. LopezCouncilmember · Albany City CouncilAlbany City CouncilDual pick
+Aaron TiedemannCouncilmember · Albany City CouncilAlbany City CouncilDual pick
+Robin D. LopezCouncilmember · Albany City CouncilAlbany City CouncilDual pick
 Berkeley
-RBRoss BernetCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 11st choice
-DWDaria WrubelCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 12nd choice
-ITIgor TregubCouncilmember District 4 · Berkeley City Council District 4Berkeley City Council District 4Endorsed
-MHMark HumbertCouncilmember District 8 · Berkeley City Council District 8Berkeley City Council District 8Endorsed
+Ross BernetCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 11st choice
+Daria WrubelCouncilmember District 1 · Berkeley City Council District 1Berkeley City Council District 12nd choice
+Igor TregubCouncilmember District 4 · Berkeley City Council District 4Berkeley City Council District 4Endorsed
+Mark HumbertCouncilmember District 8 · Berkeley City Council District 8Berkeley City Council District 8Endorsed
 Emeryville
-CFCorry FrydlewiczCouncilmember · Emeryville City CouncilEmeryville City CouncilEndorsed
-DMDavid MourraCouncilmember · Emeryville City CouncilEmeryville City CouncilEndorsed
+Corry FrydlewiczCouncilmember · Emeryville City CouncilEmeryville City CouncilEndorsed
+David MourraCouncilmember · Emeryville City CouncilEmeryville City CouncilEndorsed
 Oakland
-CWCharlene WangCouncilmember District 2 · Oakland City Council District 2Oakland City Council District 2Endorsed
-AVAdriana ValenciaTransit Board District 3 · AC Transit Ward 3AC Transit Ward 3Endorsed
+Charlene WangCouncilmember District 2 · Oakland City Council District 2Oakland City Council District 2Endorsed
+Adriana ValenciaTransit Board District 3 · AC Transit Ward 3AC Transit Ward 3Endorsed
 San Leandro
-RRRobert RaburnTransit Board District 4 · BART Board of Directors District 4BART Board of Directors District 4Endorsed
+Robert RaburnTransit Board District 4 · BART Board of Directors District 4BART Board of Directors District 4Endorsed
 Contra Costa County1 endorsement
 Moraga
-KHKerry HillisMayor · Moraga MayorMoraga MayorEndorsed
+Kerry HillisMayor · Moraga MayorMoraga MayorEndorsed
 Los Angeles County13 endorsements
 Burbank
-EPEddy PolonCouncilmember · Burbank At LargeBurbank At LargeEndorsed
-MVMike Van GorderCouncilmember · Burbank At LargeBurbank At LargeEndorsed
+Eddy PolonCouncilmember · Burbank At LargeBurbank At LargeEndorsed
+Mike Van GorderCouncilmember · Burbank At LargeBurbank At LargeEndorsed
 Culver City
-FPFreddy PuzaCouncilmember · Culver City At LargeCulver City At LargeEndorsed
-TSThomas SmallCouncilmember · Culver City At LargeCulver City At LargeEndorsed
+Freddy PuzaCouncilmember · Culver City At LargeCulver City At LargeEndorsed
+Thomas SmallCouncilmember · Culver City At LargeCulver City At LargeEndorsed
 Los Angeles
-NRNithya RamanMayor · Los Angeles CityLos Angeles CityEndorsed
-MRMarissa RoyCity Attorney · CitywideCitywideEndorsed
-BWBarri Worth GirvanCouncilmember District 3 · Los Angeles Council District 3Los Angeles Council District 3Endorsed
-JUJose UgarteCouncilmember District 9 · Los Angeles City Council District 9Los Angeles City Council District 9Endorsed
+Nithya RamanMayor · Los Angeles CityLos Angeles CityEndorsed
+Marissa RoyCity Attorney · CitywideCitywideEndorsed
+Barri Worth GirvanCouncilmember District 3 · Los Angeles Council District 3Los Angeles Council District 3Endorsed
+Jose UgarteCouncilmember District 9 · Los Angeles City Council District 9Los Angeles City Council District 9Endorsed
 Santa Monica
-CTCaroline TorosisCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
-DTDoug TrusslerCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
-EGEli GillCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
+Caroline TorosisCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
+Doug TrusslerCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
+Eli GillCouncilmember · Santa Monica At LargeSanta Monica At LargeEndorsed
 West Hollywood
-CBChelsea ByersCouncilmember · West Hollywood At LargeWest Hollywood At LargeEndorsed
-HKHelen KriegerCouncilmember · West Hollywood At LargeWest Hollywood At LargeEndorsed
+Chelsea ByersCouncilmember · West Hollywood At LargeWest Hollywood At LargeEndorsed
+Helen KriegerCouncilmember · West Hollywood At LargeWest Hollywood At LargeEndorsed
 Marin County12 endorsements
 Corte Madera
-AFAva FruinCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
-DBDavid BellCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
-EBEli BeckmanCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
+Ava FruinCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
+David BellCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
+Eli BeckmanCouncilmember · Corte Madera Town CouncilCorte Madera Town CouncilEndorsed
 Larkspur
-BJBrian JaffeCouncilmember · Larkspur City CouncilLarkspur City CouncilEndorsed
-GWGareth WalterCouncilmember · Larkspur City CouncilLarkspur City CouncilEndorsed
+Brian JaffeCouncilmember · Larkspur City CouncilLarkspur City CouncilEndorsed
+Gareth WalterCouncilmember · Larkspur City CouncilLarkspur City CouncilEndorsed
 Novato
-RFRachel FaracCouncilmember District 2 · Novato City Council, District 2Novato City Council, District 2Endorsed
-PEPat EklundCouncilmember District 4 · Novato City Council, District 4Novato City Council, District 4Endorsed
+Rachel FaracCouncilmember District 2 · Novato City Council, District 2Novato City Council, District 2Endorsed
+Pat EklundCouncilmember District 4 · Novato City Council, District 4Novato City Council, District 4Endorsed
 Ross
-PRPaul RoeslerCouncilmember · Ross Town CouncilRoss Town CouncilEndorsed
+Paul RoeslerCouncilmember · Ross Town CouncilRoss Town CouncilEndorsed
 RHRobert HerbstCouncilmember · Ross Town CouncilRoss Town CouncilEndorsed
 San Anselmo
-WDWill DittmarCouncilmember · San Anselmo Town CouncilSan Anselmo Town CouncilEndorsed
+Will DittmarCouncilmember · San Anselmo Town CouncilSan Anselmo Town CouncilEndorsed
 San Rafael
-EHEli HillCouncilmember District 2 · San Rafael City Council District 2San Rafael City Council District 2Endorsed
-RSRobert SandovalCouncilmember District 3 · San Rafael City Council District 3San Rafael City Council District 3Endorsed
+Eli HillCouncilmember District 2 · San Rafael City Council District 2San Rafael City Council District 2Endorsed
+Robert SandovalCouncilmember District 3 · San Rafael City Council District 3San Rafael City Council District 3Endorsed
 San Francisco15 endorsements
-SSStephen SherrillCounty Board District 2 · San Francisco Board of Supervisors District 2San Francisco Board of Supervisors District 2Endorsed
-AWAlan WongCounty Board District 4 · San Francisco Board of Supervisors District 4San Francisco Board of Supervisors District 4Endorsed
-MDMatt DorseyCounty Board District 6 · San Francisco Board of Supervisors District 6San Francisco Board of Supervisors District 6Endorsed
-GMGary McCoyCounty Board District 8 · San Francisco Board of Supervisors District 8San Francisco Board of Supervisors District 8Endorsed
-TETheo EllingtonCounty Board District 10 · San Francisco Board of Supervisors District 10San Francisco Board of Supervisors District 10Endorsed
-JTJoaquin TorresClerk/Recorder · San Francisco Country Assessor-RecorderSan Francisco Country Assessor-RecorderEndorsed
-SBSara BarzTransit Board District 8 · BART Board of Directors District 8BART Board of Directors District 8Endorsed
+Stephen SherrillCounty Board District 2 · San Francisco Board of Supervisors District 2San Francisco Board of Supervisors District 2Endorsed
+Alan WongCounty Board District 4 · San Francisco Board of Supervisors District 4San Francisco Board of Supervisors District 4Endorsed
+Matt DorseyCounty Board District 6 · San Francisco Board of Supervisors District 6San Francisco Board of Supervisors District 6Endorsed
+Gary McCoyCounty Board District 8 · San Francisco Board of Supervisors District 8San Francisco Board of Supervisors District 8Endorsed
+Theo EllingtonCounty Board District 10 · San Francisco Board of Supervisors District 10San Francisco Board of Supervisors District 10Endorsed
+Joaquin TorresClerk/Recorder · San Francisco Country Assessor-RecorderSan Francisco Country Assessor-RecorderEndorsed
+Sara BarzTransit Board District 8 · BART Board of Directors District 8BART Board of Directors District 8Endorsed
 Prop ACharter Changes Affecting Various City Departments and CommissionsVote yes
 Prop CHousing Trust FundVote yes
 Prop DChanges To Ballot Measure ThresholdsVote yes
@@ -144,31 +144,31 @@ Prop HParcel Tax to Fund Public Muni OperationsVote yes
 Prop IChanges to Real Property Transfer TaxVote no
 San Mateo County8 endorsements
 Countywide
-MNMark NagalesSupervisor · San Mateo County Supervisor District 5San Mateo County Supervisor District 5Endorsed
+Mark NagalesSupervisor · San Mateo County Supervisor District 5San Mateo County Supervisor District 5Endorsed
 Foster City
-PSPhoebe Shin VenkatCouncilmember District 1 · Foster City District 1Foster City District 1Endorsed
+Phoebe Shin VenkatCouncilmember District 1 · Foster City District 1Foster City District 1Endorsed
 Menlo Park
 Measure PMenlo Park Downtown Parking LotsVote no
 Redwood City
-CSChris SturkenCouncilmember District 2 · Redwood City District 2Redwood City District 2Endorsed
+Chris SturkenCouncilmember District 2 · Redwood City District 2Redwood City District 2Endorsed
 Measure ERent Control on Affordable HousingVote no
 San Bruno
-AHAuros HarmanCouncilmember District 4 · San Bruno District 4San Bruno District 4Endorsed
+Auros HarmanCouncilmember District 4 · San Bruno District 4San Bruno District 4Endorsed
 San Mateo
-SPSeema PatelCouncilmember District 3 · San Mateo City Council District 3San Mateo City Council District 3Endorsed
-ALAdam LoraineCouncilmember District 5 · San Mateo City Council District 5San Mateo City Council District 5Endorsed
+Seema PatelCouncilmember District 3 · San Mateo City Council District 3San Mateo City Council District 3Endorsed
+Adam LoraineCouncilmember District 5 · San Mateo City Council District 5San Mateo City Council District 5Endorsed
 Santa Clara County5 endorsements
 Mountain View
-JKJames KuszmaulCouncilmember · Mountain View City CouncilMountain View City CouncilEndorsed
-EPEric PoiconMountain View City Council · At-largeAt-largeEndorsed
+James KuszmaulCouncilmember · Mountain View City CouncilMountain View City CouncilEndorsed
+Eric PoiconMountain View City Council · At-largeAt-largeEndorsed
 Palo Alto
-VVVicki VeenkerPalo Alto City Council · At-largeAt-largeEndorsed
-YDYudy DengPalo Alto City Council · CitywideCitywideEndorsed
+Vicki VeenkerPalo Alto City Council · At-largeAt-largeEndorsed
+Yudy DengPalo Alto City Council · CitywideCitywideEndorsed
 San Jose
-GCGordon ChesterCouncilmember District 9 · City of San Jose District 9City of San Jose District 9Endorsed
+Gordon ChesterCouncilmember District 9 · City of San Jose District 9City of San Jose District 9Endorsed
 Santa Cruz1 endorsement
 Capitola
-PWPeter WilkCity of Capitola City Council Member · CitywideCitywideEndorsed
+Peter WilkCity of Capitola City Council Member · CitywideCitywideEndorsed
 Sausalito1 endorsement
 Measure XArts. Industrial & Maritime Preservation and Improvement InitiativeVote yes
 Find your ballot
