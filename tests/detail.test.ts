@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { detailSides, localFirst, pickReasons, resultHeadline, type Side } from "@/lib/detail";
 import type { Row } from "@/lib/filters";
-import type { Contest, Entry, GuideType } from "@/lib/schema";
+import type { ArchivedSource, Contest, Entry, GuideType } from "@/lib/schema";
 
 const measure = { id: "prop-b", title: "Proposition B", kind: "measure", seats: 1, candidates: [], rankedChoice: false } as unknown as Contest;
 const race = { id: "sup-8", title: "Supervisor, District 8", kind: "candidate", seats: 1, candidates: ["Connie Chan", "Scott Wiener"], rankedChoice: true } as unknown as Contest;
 const board = { id: "boe", title: "Board of Education", kind: "candidate", seats: 3, candidates: [], rankedChoice: false } as unknown as Contest;
 
 const q = (text: string, source = "https://g.org/a") => ({ text, source });
-type Opts = { ranked?: boolean; list?: boolean; archived?: { source: string; snapshot: string }[]; type?: GuideType; short?: string };
+type Opts = { ranked?: boolean; list?: boolean; archived?: ArchivedSource[]; type?: GuideType; short?: string };
 const row = (name: string, pick: Entry["pick"], quotes: Entry["quotes"] = [], opts: Opts = {}): Row => ({
   guide: { id: name.toLowerCase().replace(/\s+/g, "-"), name, type: opts.type ?? "club", ...(opts.short ? { shortName: opts.short } : {}) },
   entry: { pick, ranked: opts.ranked ?? false, quotes },
@@ -33,11 +33,14 @@ describe("detailSides", () => {
     expect(sides[0].guides[0].quoted).toBe(false);
     expect(sides[0].quotes).toEqual([]);
   });
-  it("quotes carry the guide, its type and the archived link", () => {
-    const rows = [row("A", "N", [q("Bad.", "https://a.org/p")], { type: "newspaper", archived: [{ source: "https://a.org/p", snapshot: "https://web.archive.org/x" }] })];
+  it("quotes carry the guide, its type and a link to the quote on the live page", () => {
+    const archived: ArchivedSource[] = [{ source: "https://a.org/p", snapshot: "https://web.archive.org/x" }];
+    const rows = [row("A", "N", [q("Bad.", "https://a.org/p")], { type: "newspaper", archived })];
     expect(detailSides(measure, rows).sides[0].quotes).toEqual([
-      { guideId: "a", guideName: "A", type: "newspaper", text: "Bad.", href: "https://web.archive.org/x" },
+      { guideId: "a", guideName: "A", type: "newspaper", text: "Bad.", href: "https://a.org/p#:~:text=Bad." },
     ]);
+    const gone = [row("A", "N", [q("Bad.", "https://a.org/p")], { type: "newspaper", archived: [{ ...archived[0], gone: "2026-11-03" }] })];
+    expect(detailSides(measure, gone).sides[0].quotes[0].href).toBe("https://web.archive.org/x");
   });
   it("candidates: one side per name in bar order with its slot tone", () => {
     const rows = [row("A", ["Scott Wiener"]), row("B", ["Scott Wiener"]), row("C", ["Connie Chan"])];

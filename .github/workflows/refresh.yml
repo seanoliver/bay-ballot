@@ -150,6 +150,13 @@ jobs:
             gh issue create --title "$title" --body "$body"
           fi
 
+      # Marks sources whose live page is gone, so their quote links open the Wayback snapshot instead.
+      - name: Check source links
+        if: steps.base.outputs.stop != 'true'
+        continue-on-error: true
+        timeout-minutes: 10
+        run: npm run bb -- check-links
+
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
       - name: Decide whether to commit
         id: changes
