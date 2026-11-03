@@ -7,7 +7,7 @@ import { ballotPosition, myPickLabel, setPick, tapCandidate, type MyPick } from 
 import type { Contest } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { useElectionDay } from "./ElectionChip";
-import { OPEN_BALLOT, storedAreas, useBallotIndex } from "./useBallotIndex";
+import { guessedArea, OPEN_BALLOT, storedAreas, useBallotIndex } from "./useBallotIndex";
 import { useMyBallot } from "./useMyBallot";
 
 const OPTION = "inline-flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium ring-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -92,7 +92,7 @@ export function YourVote({ election, date, contest, indexUrl }: { election: stri
           </ul>
         </>
       )}
-      {pick && index ? <NextContest election={election} position={ballotPosition(index, contest.id, storedAreas(), ballot.picks)} titles={index.contests} /> : null}
+      {pick && index ? <NextContest election={election} position={ballotPosition(index, contest.id, storedAreas(), ballot.picks, { guess: guessedArea() })} titles={index.contests} /> : null}
       {saved ? null : (
         <p role="status" className="mt-2 text-xs text-muted-foreground">
           This browser isn&apos;t saving data, so your picks will be gone when you close the tab. Private browsing does this.

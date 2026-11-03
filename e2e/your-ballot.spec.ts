@@ -168,6 +168,22 @@ test.describe("Your ballot", () => {
     await expect(page.getByText("You planned:")).toHaveCount(0);
   });
 
+  test("no bar before the ballot is started or after election day", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("bb-ballot-area", "sf"));
+    const bar = page.getByRole("navigation", { name: "Contest by contest" });
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page, { "prop-a": "Y" }, false);
+    await page.goto(`${BALLOT}/prop-a`);
+    await expect(pill(page, /^Your ballot$/)).toBeVisible();
+    await expect(bar).toHaveCount(0);
+
+    await page.evaluate((k) => localStorage.setItem(k, JSON.stringify({ started: true, picks: { "prop-a": "Y" } })), KEY);
+    await page.clock.setFixedTime(AFTER);
+    await page.reload();
+    await expect(pill(page, /^Your Nov 3 ballot$/)).toBeVisible();
+    await expect(bar).toHaveCount(0);
+  });
+
   test("with no picks after election day there is no pill", async ({ page }) => {
     await page.clock.setFixedTime(AFTER);
     await page.goto(`${BALLOT}/sf`);
