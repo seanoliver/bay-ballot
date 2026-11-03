@@ -37,7 +37,7 @@ export function detailSides(contest: Contest, rows: Row[], slots?: Slots, { loca
       count: g.rows.length,
       guides: local ? localFirst(picked, local) : picked,
       quotes: quoted.flatMap((r) =>
-        own(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source) })),
+        own(r).map((q) => ({ guideId: r.guide.id, guideName: r.guide.name, type: r.guide.type, text: q.text, href: sourceLink(r.file, q.source, { quote: q.text }) })),
       ),
     };
   });

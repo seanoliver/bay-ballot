@@ -73,7 +73,7 @@ export function selectContent(html: string, selector: string, exclude?: string):
 }
 
 // A real browser UA: some guide sites return 403/406 to bot-like or short ones.
-const UA =
+export const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
 
 function pdfToText(buf: Buffer): string {

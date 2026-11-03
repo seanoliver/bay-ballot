@@ -117,8 +117,28 @@ export function reasons(row: Row): Quote[] {
   return row.file.hasReasoning ? row.entry.quotes : [];
 }
 
-export function sourceLink(file: Pick<EndorsementFile, "archived">, url: string): string {
-  return file.archived?.find((a) => a.source === url)?.snapshot ?? url;
+const FRAGMENT_WORDS = 4;
+
+// `-` is text-fragment syntax that encodeURIComponent leaves unescaped.
+function fragmentText(words: string[]): string {
+  return encodeURIComponent(words.join(" ")).replace(/-/g, "%2D");
+}
+
+export function quoteFragment(quote: string): string {
+  const words = quote.replace(/^[\s"'“”‘’]+|[\s"'“”‘’]+$/g, "").split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "";
+  const text = words.length <= FRAGMENT_WORDS * 2
+    ? fragmentText(words)
+    : `${fragmentText(words.slice(0, FRAGMENT_WORDS))},${fragmentText(words.slice(-FRAGMENT_WORDS))}`;
+  return `:~:text=${text}`;
+}
+
+export function sourceLink(file: Pick<EndorsementFile, "archived">, url: string, { quote }: { quote?: string } = {}): string {
+  const archived = file.archived?.find((a) => a.source === url);
+  if (archived?.gone) return archived.snapshot;
+  const fragment = quote && !/\.pdf(?:$|[?#])/i.test(url) ? quoteFragment(quote) : "";
+  if (!fragment) return url;
+  return url.includes("#") ? `${url}${fragment}` : `${url}#${fragment}`;
 }
 
 export type GuidePick = { contest: Contest; entry: Entry; label: string };

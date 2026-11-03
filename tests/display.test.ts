@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayName, groupByPick, headline, pendingNote, shortMonthDay, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
+import { displayName, groupByPick, headline, pendingNote, quoteFragment, shortMonthDay, sourceLink, rankedDetails, rankedText, topPicks } from "@/lib/display";
 import { tally } from "@/lib/score";
 import type { Contest, Entry, Guide } from "@/lib/schema";
 import type { Row } from "@/lib/filters";
@@ -176,14 +176,38 @@ describe("pendingNote", () => {
 describe("sourceLink", () => {
   const archived = [
     { source: "https://g.org/a", snapshot: "https://web.archive.org/web/1/https://g.org/a" },
-    { source: "https://g.org/b", snapshot: "https://web.archive.org/web/2/https://g.org/b" },
+    { source: "https://g.org/b", snapshot: "https://web.archive.org/web/2/https://g.org/b", gone: "2026-11-03" },
   ];
-  it("returns the archived snapshot for a matching source", () => {
-    expect(sourceLink({ archived }, "https://g.org/b")).toBe("https://web.archive.org/web/2/https://g.org/b");
-  });
-  it("falls back to the live url when no snapshot matches or nothing is archived", () => {
+  it("links the live page while it is up, even with a snapshot", () => {
+    expect(sourceLink({ archived }, "https://g.org/a")).toBe("https://g.org/a");
     expect(sourceLink({ archived }, "https://g.org/c")).toBe("https://g.org/c");
     expect(sourceLink({}, "https://g.org/a")).toBe("https://g.org/a");
+  });
+  it("links the snapshot once the live page is gone, with no fragment", () => {
+    expect(sourceLink({ archived }, "https://g.org/b", { quote: "Vote yes" })).toBe("https://web.archive.org/web/2/https://g.org/b");
+  });
+  it("jumps to the quote on the live page", () => {
+    expect(sourceLink({ archived }, "https://g.org/a", { quote: "Vote yes on A" })).toBe("https://g.org/a#:~:text=Vote%20yes%20on%20A");
+    expect(sourceLink({}, "https://g.org/a#picks", { quote: "Vote yes" })).toBe("https://g.org/a#picks:~:text=Vote%20yes");
+  });
+  it("leaves PDFs without a fragment", () => {
+    expect(sourceLink({}, "https://g.org/guide.pdf", { quote: "Vote yes" })).toBe("https://g.org/guide.pdf");
+  });
+});
+
+describe("quoteFragment", () => {
+  it("uses the first and last four words of a long quote", () => {
+    expect(quoteFragment("Prop A funds street repairs, transit, and parks for the next ten years.")).toBe(
+      ":~:text=Prop%20A%20funds%20street,the%20next%20ten%20years.",
+    );
+  });
+  it("uses the whole quote up to eight words and a range from nine", () => {
+    expect(quoteFragment("one two three four five six seven eight")).toBe(":~:text=one%20two%20three%20four%20five%20six%20seven%20eight");
+    expect(quoteFragment("one two three four five six seven eight nine")).toBe(":~:text=one%20two%20three%20four,six%20seven%20eight%20nine");
+  });
+  it("escapes the fragment's own syntax and trims surrounding quote marks", () => {
+    expect(quoteFragment("“Yes on A-1, & B”")).toBe(":~:text=Yes%20on%20A%2D1%2C%20%26%20B");
+    expect(quoteFragment("  ")).toBe("");
   });
 });
 

@@ -1,0 +1,4 @@
+date: 2026-11-03
+type: fix
+title: Quote links open the guide's own page
+details: Each quote's source link now opens the live page and jumps to the quoted words. The saved Wayback copy is used only when the page has been taken down.
