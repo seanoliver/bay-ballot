@@ -7,7 +7,6 @@ export type LinkState = "live" | "gone" | "unknown";
 const TIMEOUT_MS = 20_000;
 const GONE_STATUS = new Set([404, 410]);
 
-/** Only a missing page, a dead domain or a redirect to the site's home page counts as gone; blocks and outages stay unknown. */
 export async function probeLink(url: string, fetchFn: FetchFn = fetch): Promise<LinkState> {
   let res: Response;
   try {
@@ -26,7 +25,6 @@ export async function probeLink(url: string, fetchFn: FetchFn = fetch): Promise<
 
 export type LinkChange = { source: string; was: "live" | "gone"; now: "live" | "gone" };
 
-/** Marks each archived source gone or live again. Returns null when nothing changed. */
 export async function checkLinks(
   file: EndorsementFile,
   { today, probe = probeLink }: { today: string; probe?: (url: string) => Promise<LinkState> },

@@ -150,7 +150,6 @@ jobs:
             gh issue create --title "$title" --body "$body"
           fi
 
-      # Marks sources whose live page is gone, so their quote links open the Wayback snapshot instead.
       - name: Check source links
         if: steps.base.outputs.stop != 'true'
         continue-on-error: true
