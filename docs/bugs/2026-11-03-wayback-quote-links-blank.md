@@ -19,12 +19,13 @@ Open any guide page, tap a quote's link: it goes to `https://web.archive.org/web
 
 - `sourceLink` links the live page, with a `#:~:text=` fragment for the quote (first and last four words), so the browser scrolls to it. PDFs get no fragment.
 - `ArchivedSource` has an optional `gone` date. Only a gone source links its snapshot.
-- `npm run bb -- check-links` sets or clears `gone`. It marks a source gone on 404, 410, a dead domain, or a redirect from a page to the site's home page. Blocks (403, 429), 5xx errors and timeouts leave it unchanged. The daily refresh workflow runs it before deciding whether to commit.
+- `npm run bb -- check-links` sets or clears `gone`. It marks a source gone on 404, 410 or a dead domain, confirmed by a second probe a minute later. Blocks (403, 429), 5xx errors and timeouts leave it unchanged. The daily refresh workflow runs it before deciding whether to commit, and lists any change in the refresh PR body.
+- Re-archiving a gone source keeps its old snapshot.
 
 ## Verification
 
 - `tests/linkcheck.test.ts`, `tests/display.test.ts`, `tests/detail.test.ts`.
-- `npm run bb -- check-links` on 2026-11-03 marked two sources gone: sfyimby.org (404) and contracostadems.com/endorsements/ (redirects to the home page). Both confirmed with curl.
+- `npm run bb -- check-links` on 2026-11-03 marked sfyimby.org gone (404, confirmed with curl). contracostadems.com/endorsements/ redirects to its home page, which now holds the endorsements, so it stays live.
 
 ## Guardrail
 

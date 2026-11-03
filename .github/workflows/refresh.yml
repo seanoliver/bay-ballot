@@ -154,7 +154,7 @@ jobs:
         if: steps.base.outputs.stop != 'true'
         continue-on-error: true
         timeout-minutes: 10
-        run: npm run bb -- check-links
+        run: npm run bb -- check-links --summary summary.md
 
       # A re-extracted guide's page text must be committed even if its data didn't change, or the next run re-extracts it.
       - name: Decide whether to commit

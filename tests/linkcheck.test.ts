@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { checkLinks, probeLink } from "@/pipeline/linkcheck";
+import { parse } from "yaml";
+import { checkLinks, linkChangeLines, probeLink, withArchived, type LinkState } from "@/pipeline/linkcheck";
 import type { EndorsementFile } from "@/lib/schema";
 
 const respond = (status: number, url: string) => async () => Object.defineProperty(new Response(null, { status }), "url", { value: url });
@@ -9,43 +10,79 @@ describe("probeLink", () => {
     expect(await probeLink("https://g.org/a", respond(404, "https://g.org/a"))).toBe("gone");
     expect(await probeLink("https://g.org/a", respond(410, "https://g.org/a"))).toBe("gone");
   });
-  it("counts blocks and outages as unknown", async () => {
+  it("counts blocks, outages and other network errors as unknown", async () => {
     for (const status of [403, 429, 500, 503]) expect(await probeLink("https://g.org/a", respond(status, "https://g.org/a"))).toBe("unknown");
     expect(await probeLink("https://g.org/a", async () => { throw new Error("timeout"); })).toBe("unknown");
+    const retry = Object.assign(new TypeError("fetch failed"), { cause: { code: "EAI_AGAIN" } });
+    expect(await probeLink("https://g.org/a", async () => { throw retry; })).toBe("unknown");
   });
   it("counts a dead domain as gone", async () => {
     const dns = Object.assign(new TypeError("fetch failed"), { cause: { code: "ENOTFOUND" } });
     expect(await probeLink("https://g.org/a", async () => { throw dns; })).toBe("gone");
   });
-  it("counts a redirect from a page to the home page as gone", async () => {
-    expect(await probeLink("https://g.org/2026", respond(200, "https://g.org/"))).toBe("gone");
-    expect(await probeLink("https://g.org/", respond(200, "https://g.org/"))).toBe("live");
-    expect(await probeLink("https://g.org/a", respond(200, "https://g.org/b"))).toBe("live");
+  it("counts any page that loads as live, wherever it redirects", async () => {
+    expect(await probeLink("https://g.org/endorsements/", respond(200, "https://g.org/"))).toBe("live");
+    expect(await probeLink("https://g.org/a", respond(200, "https://other.org/"))).toBe("live");
   });
 });
 
 describe("checkLinks", () => {
   const file = (archived: EndorsementFile["archived"]) => ({ archived }) as EndorsementFile;
   const snap = (s: string) => `https://web.archive.org/web/1/${s}`;
-  it("marks a gone source and clears one that came back", async () => {
+  const sequence = (states: Record<string, LinkState[]>) => async (u: string) => states[u].shift()!;
+
+  it("marks a source gone only when a second probe agrees, and clears one that came back", async () => {
     const f = file([
       { source: "https://g.org/a", snapshot: snap("https://g.org/a") },
       { source: "https://g.org/b", snapshot: snap("https://g.org/b"), gone: "2026-11-01" },
+      { source: "https://g.org/c", snapshot: snap("https://g.org/c") },
     ]);
-    const r = await checkLinks(f, { today: "2026-11-03", probe: async (u) => (u.endsWith("/a") ? "gone" : "live") });
-    expect(r?.file.archived).toEqual([
+    const probe = sequence({ "https://g.org/a": ["gone", "gone"], "https://g.org/b": ["live"], "https://g.org/c": ["gone", "live"] });
+    const r = await checkLinks(f, { today: "2026-11-03", probe, recheckMs: 0 });
+    expect(r?.archived).toEqual([
       { source: "https://g.org/a", snapshot: snap("https://g.org/a"), gone: "2026-11-03" },
       { source: "https://g.org/b", snapshot: snap("https://g.org/b") },
+      { source: "https://g.org/c", snapshot: snap("https://g.org/c") },
     ]);
-    expect(r?.changes.map((c) => c.now)).toEqual(["gone", "live"]);
+    expect(r?.changes).toEqual([
+      { source: "https://g.org/a", now: "gone" },
+      { source: "https://g.org/b", now: "live" },
+    ]);
   });
   it("changes nothing when a probe is unknown or the state holds", async () => {
     const f = file([
       { source: "https://g.org/a", snapshot: snap("https://g.org/a"), gone: "2026-11-01" },
       { source: "https://g.org/b", snapshot: snap("https://g.org/b") },
     ]);
-    expect(await checkLinks(f, { today: "2026-11-03", probe: async () => "unknown" })).toBeNull();
-    expect(await checkLinks(f, { today: "2026-11-03", probe: async (u) => (u.endsWith("/a") ? "gone" : "live") })).toBeNull();
+    expect(await checkLinks(f, { today: "2026-11-03", probe: async () => "unknown", recheckMs: 0 })).toBeNull();
+    expect(await checkLinks(f, { today: "2026-11-03", probe: async (u) => (u.endsWith("/a") ? "gone" : "live"), recheckMs: 0 })).toBeNull();
     expect(await checkLinks(file(undefined), { today: "2026-11-03" })).toBeNull();
+  });
+});
+
+describe("withArchived", () => {
+  it("rewrites only the archived list and keeps the file's layout and comments", () => {
+    const before = [
+      "guide: g",
+      "manual: true # entered by hand",
+      "archived:",
+      "  - source: https://g.org/a",
+      "    snapshot: https://web.archive.org/web/1/https://g.org/a",
+      "picks:",
+      "  prop-a: { pick: Y, quotes: [] }",
+      "",
+    ].join("\n");
+    const after = withArchived(before, [{ source: "https://g.org/a", snapshot: "https://web.archive.org/web/1/https://g.org/a", gone: "2026-11-03" }]);
+    expect(after).toBe(before.replace("https://g.org/a\npicks:", "https://g.org/a\n    gone: 2026-11-03\npicks:"));
+    expect(parse(after).archived[0].gone).toBe("2026-11-03");
+  });
+});
+
+describe("linkChangeLines", () => {
+  it("says which way each link moved", () => {
+    expect(linkChangeLines("g", [{ source: "https://g.org/a", now: "gone" }, { source: "https://g.org/b", now: "live" }])).toEqual([
+      "g: https://g.org/a is gone; its quotes now link the Wayback copy",
+      "g: https://g.org/b is back; its quotes link the live page again",
+    ]);
   });
 });

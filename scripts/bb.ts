@@ -11,7 +11,7 @@ import { claudeCodeClient, modelVia } from "../src/pipeline/claudecode";
 import type { ExtractClient, Source } from "../src/pipeline/extract";
 import { fetchSource } from "../src/pipeline/fetch";
 import { fetchCheck, formatFetchCheck } from "../src/pipeline/fetchcheck";
-import { checkLinks } from "../src/pipeline/linkcheck";
+import { checkLinks, linkChangeLines, withArchived } from "../src/pipeline/linkcheck";
 import { makeClient, resolveApiKey } from "../src/pipeline/key";
 import { checkHosts, fetchOptions, sourcesFor } from "../src/pipeline/sources";
 import { buildReviewModel, renderReviewHtml } from "../src/pipeline/review";
@@ -43,7 +43,7 @@ const USAGE = `usage: npm run bb -- extract <guide...> | --all [--browser] [--ar
        npm run bb -- fetch-check <guide...> | --all [--browser]   (fetch only; prints what came back, writes nothing)
        npm run bb -- discover
        npm run bb -- check
-       npm run bb -- check-links   (marks archived sources whose live page is gone, so quote links open the snapshot)
+       npm run bb -- check-links [--summary <file.md>]   (marks archived sources whose live page is gone, so quote links open the snapshot)
        npm run bb -- review [--no-open]
        npm run bb -- quote-lint [--guide <id>]   (read-only; lists published quotes that fail the quote checks)
        npm run bb -- zips   (downloads Census ZIP overlap tables and district maps; writes src/data/zips.json)
@@ -369,17 +369,21 @@ async function runCheckLinks(): Promise<void> {
   const data = loadElection(ROOT, ELECTION);
   const ids = Object.keys(data.endorsements).filter((id) => data.endorsements[id].archived?.length);
   const queue = [...ids];
+  const lines: string[] = [];
   const worker = async () => {
     for (let id = queue.shift(); id; id = queue.shift()) {
       const r = await checkLinks(data.endorsements[id], { today: today() });
       if (!r) continue;
       const path_ = endorsementPath(id);
-      fs.writeFileSync(path_, toYaml(EndorsementFile.parse(r.file), { previous: fs.readFileSync(path_, "utf8") }));
-      for (const c of r.changes) console.log(`${id}: ${c.source} is ${c.now === "gone" ? "gone; quotes now link the snapshot" : "back; quotes link the live page"}`);
+      fs.writeFileSync(path_, withArchived(fs.readFileSync(path_, "utf8"), r.archived));
+      lines.push(...linkChangeLines(id, r.changes));
     }
   };
   await Promise.all(Array.from({ length: 8 }, worker));
+  lines.sort().forEach((l) => console.log(l));
   console.log(`check-links: ${ids.length} guides checked`);
+  const summaryPath = option("--summary");
+  if (summaryPath && lines.length) fs.appendFileSync(summaryPath, `\n## Source links\n\n${lines.map((l) => `- ${l}`).join("\n")}\n`);
 }
 
 function committedEndorsements(ids: string[]): Record<string, EndorsementFile> {

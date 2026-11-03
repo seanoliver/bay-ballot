@@ -191,7 +191,8 @@ test("a pick's reasons open under its row, and a pick without reasons has no but
   await expect(row.locator("blockquote").first()).toContainText(quoted[1].quotes[0].text);
   const source = row.getByRole("link", { name: "Source" }).first();
   await expect(source).toHaveAttribute("target", "_blank");
-  await expect(source).toHaveAttribute("href", sourceLink(file, quoted[1].quotes[0].source));
+  await expect(source).toHaveAttribute("href", sourceLink(file, quoted[1].quotes[0].source, { quote: quoted[1].quotes[0].text }));
+  await expect(source).toHaveAttribute("href", /#.*:~:text=/);
   const bareRow = page.locator("main li", { has: page.getByRole("link", { name: new RegExp(`^${title(bare[0]).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:`) }) });
   await expect(bareRow.getByRole("button")).toHaveCount(0);
 });

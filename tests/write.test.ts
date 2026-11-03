@@ -74,6 +74,13 @@ describe("nextFile", () => {
     expect(nextFile({ ...prev, archived: old }, picks, true, "2026-10-05", fresh).archived).toEqual([fresh[0], old[1]]);
   });
 
+  it("keeps the snapshot of a gone source when it is re-archived", () => {
+    const src = prev.source!;
+    const old = [{ source: src, snapshot: `https://web.archive.org/web/20260512000000/${src}`, gone: "2026-11-03" }];
+    const fresh = [{ source: src, snapshot: `https://web.archive.org/web/20261105000000/${src}` }];
+    expect(nextFile({ ...prev, archived: old }, picks, true, "2026-11-05", fresh).archived).toEqual(old);
+  });
+
   it("drops snapshots for sources the file no longer lists", () => {
     const gone = [{ source: "https://www.spur.org/old-page", snapshot: "https://web.archive.org/web/1/https://www.spur.org/old-page" }];
     const fresh = [{ source: prev.source!, snapshot: `https://web.archive.org/web/20261005000000/${prev.source}` }];
