@@ -102,3 +102,16 @@ export function pickArea(index: MyBallotIndex, slug: string | null, stored: (str
   const area = stored.find((k) => has(index.areas, k)) ?? (has(index.areas, slug) ? slug : null) ?? (here ? (index.contests[here].area ?? null) : null);
   return { area, here };
 }
+
+export type BallotPosition = { area: string; order: string[]; at: number; prev: string | null; next: string | null; decided: number };
+
+export function ballotPosition(index: MyBallotIndex, slug: string | null, stored: (string | null)[], picks: MyBallot["picks"]): BallotPosition | null {
+  const { area, here } = pickArea(index, slug, stored);
+  if (!area || !here) return null;
+  const order = index.areas[area].groups.flatMap((g) => g.sections.flatMap((s) => s.ids));
+  const at = order.indexOf(here);
+  if (at === -1) return null;
+  return { area, order, at, prev: order[at - 1] ?? null, next: order[at + 1] ?? null, decided: order.filter((id) => Object.hasOwn(picks, id)).length };
+}
+
+export const shortTitle = (title: string) => title.replace(/^Proposition\b/, "Prop");

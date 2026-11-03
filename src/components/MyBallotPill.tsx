@@ -3,50 +3,19 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import { RESULTS_URL, shortDate } from "@/lib/election-day";
-import { SEEN_KEY } from "@/lib/home-redirect";
 import { isTypingTarget, OVERLAY } from "@/lib/keyboard";
-import { myBallotText, myPickLabel, pageSlug, pickArea, type MyBallot, type MyBallotIndex } from "@/lib/my-ballot";
+import { ballotPosition, myBallotText, myPickLabel, pageSlug, pickArea, shortTitle, type BallotPosition, type MyBallot, type MyBallotIndex } from "@/lib/my-ballot";
 import { isPlainClick } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { useElectionDay } from "./ElectionChip";
 import { ExternalLink } from "./ExternalLink";
+import { AREA_KEY, OPEN_BALLOT, storedAreas, useBallotIndex } from "./useBallotIndex";
 import { useHistorySheet } from "./useHistorySheet";
 import { useMyBallot, type BallotUpdate } from "./useMyBallot";
 import { useSingleKeys } from "./useSingleKeys";
-
-const indexes = new Map<string, Promise<MyBallotIndex>>();
-function loadIndex(url: string): Promise<MyBallotIndex> {
-  let p = indexes.get(url);
-  if (!p) {
-    // Not AbortSignal.timeout: Safari added it only in 16.
-    const abort = new AbortController();
-    const timer = window.setTimeout(() => abort.abort(), 15_000);
-    p = fetch(url, { signal: abort.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`${url}: ${r.status}`);
-        return r.json() as Promise<MyBallotIndex>;
-      })
-      .finally(() => window.clearTimeout(timer));
-    // A failure isn't kept, so Try again fetches again.
-    p.catch(() => indexes.delete(url));
-    indexes.set(url, p);
-  }
-  return p;
-}
-
-// Its own key: the home page writes "bay-area" to SEEN_KEY, which would forget the voter's area.
-const AREA_KEY = "bb-ballot-area";
-
-function read(key: string): string | null {
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
 
 const PILL = "fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium shadow-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
 const FOOT_LINK = "inline-flex min-h-10 items-center underline underline-offset-2 hover:text-foreground";
@@ -56,7 +25,6 @@ export function MyBallotPill({ election, date, indexUrl, areas }: { election: st
   const day = useElectionDay(date);
   const [open, setOpen, leave] = useHistorySheet();
   const [singleKeys] = useSingleKeys();
-  const [index, setIndex] = useState<MyBallotIndex | "failed" | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const slug = pageSlug(election, pathname);
@@ -80,17 +48,16 @@ export function MyBallotPill({ election, date, indexUrl, areas }: { election: st
   const after = day?.kind === "after";
   const shown = ballot !== null && day !== null && !(after && count === 0);
 
+  const live = ballot !== null && ballot.started && !after;
+  // Not only while open: the bar needs the index on every contest page.
+  const { index, failed, retry } = useBallotIndex(indexUrl, open || (live && slug !== null));
+  const position = live && index && ballot ? ballotPosition(index, slug, storedAreas(), ballot.picks) : null;
+
   useEffect(() => {
-    if (!open || index) return;
-    let live = true;
-    loadIndex(indexUrl).then(
-      (x) => live && setIndex(x),
-      () => live && setIndex("failed"),
-    );
-    return () => {
-      live = false;
-    };
-  }, [open, index, indexUrl]);
+    const onOpen = () => setOpen(true);
+    window.addEventListener(OPEN_BALLOT, onOpen);
+    return () => window.removeEventListener(OPEN_BALLOT, onOpen);
+  }, [setOpen]);
 
   useEffect(() => {
     if (!shown || !singleKeys) return;
@@ -109,26 +76,85 @@ export function MyBallotPill({ election, date, indexUrl, areas }: { election: st
   const dark = ballot.started && !after;
   return (
     <>
-      <button
-        type="button"
-        aria-haspopup="dialog"
-        onClick={() => setOpen(true)}
-        className={cn(PILL, "js-only", dark ? "bg-primary text-primary-foreground" : "bg-background text-foreground ring-1 ring-foreground/15")}
-      >
-        {label}
-        {dark ? <span className="tabular-nums opacity-75">{count}</span> : null}
-        <span className="sr-only">{dark ? ` · ${count} picked` : ""}</span>
-      </button>
+      {position && index ? (
+        <NextBar election={election} index={index} position={position} openSheet={() => setOpen(true)} />
+      ) : (
+        <button
+          type="button"
+          aria-haspopup="dialog"
+          onClick={() => setOpen(true)}
+          className={cn(PILL, "js-only", dark ? "bg-primary text-primary-foreground" : "bg-background text-foreground ring-1 ring-foreground/15")}
+        >
+          {label}
+          {dark ? <span className="tabular-nums opacity-75">{count}</span> : null}
+          <span className="sr-only">{dark ? ` · ${count} picked` : ""}</span>
+        </button>
+      )}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"
           className="max-h-[85dvh] gap-0 rounded-t-2xl p-0 pb-[env(safe-area-inset-bottom)] lg:max-h-[min(42rem,80dvh)] lg:w-[24rem] lg:rounded-2xl lg:border lg:pb-0 data-[side=bottom]:lg:right-4 data-[side=bottom]:lg:bottom-4 data-[side=bottom]:lg:left-auto"
         >
           {open ? (
-            <SheetBody election={election} after={after} ballot={ballot} index={index === "failed" ? null : index} failed={index === "failed"} retry={() => setIndex(null)} slug={slug} label={label} update={update} close={() => setOpen(false)} go={go} />
+            <SheetBody election={election} after={after} ballot={ballot} index={index} failed={failed} retry={retry} slug={slug} label={label} update={update} close={() => setOpen(false)} go={go} />
           ) : null}
         </SheetContent>
       </Sheet>
+    </>
+  );
+}
+
+const BAR_BTN = "inline-flex min-h-11 items-center rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+
+function NextBar({ election, index, position, openSheet }: { election: string; index: MyBallotIndex; position: BallotPosition; openSheet: () => void }) {
+  const { order, at, prev, next, decided } = position;
+  const title = (id: string) => index.contests[id]?.title ?? id;
+  return (
+    <>
+      <div aria-hidden="true" className="js-only h-20 lg:hidden" />
+      <nav
+        aria-label="Contest by contest"
+        className="js-only fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:inset-x-auto lg:right-4 lg:bottom-4 lg:w-[24rem] lg:rounded-2xl lg:border lg:pb-3 lg:shadow-lg"
+      >
+        <div aria-hidden="true" className="mb-2 h-[3px] overflow-hidden rounded-full bg-muted">
+          <div className="h-full bg-foreground" style={{ width: `${(decided / order.length) * 100}%` }} />
+        </div>
+        <div className="grid grid-cols-[2.75rem_minmax(0,1fr)_minmax(0,1.3fr)] items-center gap-2">
+          {prev ? (
+            <Link href={`/${election}/${prev}`} aria-label={`Previous: ${title(prev)}`} className={cn(BAR_BTN, "justify-center ring-1 ring-foreground/15 hover:bg-muted")}>
+              <ChevronLeft aria-hidden="true" className="size-5" />
+            </Link>
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            aria-label={`Your ballot, ${at + 1} of ${order.length}, ${decided} decided`}
+            onClick={openSheet}
+            className={cn(BAR_BTN, "flex-col justify-center leading-tight hover:bg-muted")}
+          >
+            <span className="text-sm font-semibold tabular-nums">
+              {at + 1} of {order.length}
+            </span>
+            <span className="text-xs text-muted-foreground tabular-nums">{decided} decided</span>
+          </button>
+          {next ? (
+            <Link href={`/${election}/${next}`} className={cn(BAR_BTN, "justify-between gap-1 bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80")}>
+              <span className="truncate">
+                <span className="sr-only">Next: </span>
+                {shortTitle(title(next))}
+              </span>
+              <ChevronRight aria-hidden="true" className="size-4 shrink-0" />
+            </Link>
+          ) : (
+            <button type="button" aria-haspopup="dialog" onClick={openSheet} className={cn(BAR_BTN, "justify-between gap-1 bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80")}>
+              Review
+              <ChevronRight aria-hidden="true" className="size-4 shrink-0" />
+            </button>
+          )}
+        </div>
+      </nav>
     </>
   );
 }
@@ -161,7 +187,7 @@ function SheetBody({
   const [confirming, setConfirming] = useState(false);
   const [copied, setCopied] = useState<"yes" | "failed" | null>(null);
   const list = useRef<HTMLDivElement>(null);
-  const { area, here } = index ? pickArea(index, slug, [read(AREA_KEY), read(SEEN_KEY)]) : { area: null, here: null };
+  const { area, here } = index ? pickArea(index, slug, storedAreas()) : { area: null, here: null };
   const view = area && index ? index.areas[area] : null;
   const count = Object.keys(ballot.picks).length;
   const live = ballot.started && !after;

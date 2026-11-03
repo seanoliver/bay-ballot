@@ -46,6 +46,31 @@ test.describe("Your ballot", () => {
     expect(errors).toEqual([]);
   });
 
+  test("the bar and the Next row step through the area ballot", async ({ page }) => {
+    const errors = watchErrors(page);
+    await page.clock.setFixedTime(BEFORE);
+    await seed(page);
+    await page.goto(`${BALLOT}/sf`);
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("bb-ballot-area"))).toBe("sf");
+    await page.goto(`${BALLOT}/prop-5`);
+    const bar = page.getByRole("navigation", { name: "Contest by contest" });
+    await expect(bar).toContainText("0 decided");
+    const next = bar.getByRole("link", { name: /^Next: / });
+    const nextName = (await next.textContent())!.trim();
+
+    await vote(page).getByRole("button", { name: "Yes" }).click();
+    await expect(bar).toContainText("1 decided");
+    await vote(page).getByRole("link", { name: /^Next: / }).click();
+    await expect(page).not.toHaveURL(`${BALLOT}/prop-5`);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(nextName.replace(/^Next: /, "").replace(/^Prop\b/, "Proposition"));
+    await bar.getByRole("link", { name: "Previous: Proposition 5" }).click();
+    await expect(page).toHaveURL(`${BALLOT}/prop-5`);
+
+    await pill(page, /^Your ballot/).click();
+    await expect(sheet(page)).toContainText("1 picked");
+    expect(errors).toEqual([]);
+  });
+
   test("a ranked-choice race ranks in tap order", async ({ page }) => {
     await page.clock.setFixedTime(BEFORE);
     await page.addInitScript(() => localStorage.setItem("bb-ballot-2026-11", JSON.stringify({ started: true, picks: {} })));

@@ -9,7 +9,7 @@ import { dataAsOf } from "@/lib/display";
 import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
 import { contestDescription, contestTitle } from "@/lib/seo-copy";
-import { ballotViewProps, election, electionIndex, elections } from "@/lib/site-data";
+import { ballotViewProps, election, electionIndex, elections, myBallotUrl } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { ListPage, listMetadata } from "../list-page";
 
@@ -77,6 +77,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         noPick={noPickGuides(contest, d.guides, d.areas, files)}
         local={area ? localGuides(d.guides, area, d.areas).map((g) => g.id) : undefined}
         back={back}
+        indexUrl={myBallotUrl(d)}
       />
     </>
   );
