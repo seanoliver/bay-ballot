@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { AreaLink, PlaceGroup } from "@/lib/areas";
+import type { ResultsLink } from "@/lib/results";
 import { cardDescription, counted } from "@/lib/display";
 import { activeEntries, EMPTY, NO_PINS, pinnedPicks, toQuery, type Filters, type GuideInfo, type PickFile, type PinnedPick, type Row } from "@/lib/filters";
 import { candidateSlots, type Slots } from "@/lib/bar";
@@ -18,6 +19,7 @@ import { isZip, MINE_PARAM, ZIP_KEY, zipGroups, type ZipPlaces, type ZipTable, t
 import { cn } from "@/lib/utils";
 import { AreaPicker } from "./AreaPicker";
 import { ContestDetail } from "./ContestDetail";
+import { ElectionOver } from "./ElectionOver";
 import { useContestPins } from "./ContestPins";
 import { FilterSidebar, FiltersSheet } from "./FilterPanel";
 import { keepNumber } from "@/lib/display";
@@ -58,6 +60,8 @@ type Props = {
   area: string | null;
   links: AreaLink[];
   intro: { title: string; line: string };
+  date: string;
+  results: ResultsLink[];
   groups: PlaceGroup[];
   guides: GuideInfo[];
   allGuides: GuideInfo[];
@@ -94,7 +98,7 @@ function zipSpoken(zip: string, s: ZipSummary, showAll: boolean): string {
 const slotsCache = new WeakMap<PlaceGroup[], Map<string, Slots>>();
 const rowsCache = new WeakMap<PlaceGroup[], { filters: string; rows: Map<string, Row[]> }>();
 
-export function BallotView({ election, area, links, intro, groups: allGroups, guides, allGuides, files, pending, noPick: noPickScope, local, busy = false, onSwitch, onIntent }: Props) {
+export function BallotView({ election, area, links, intro, date, results, groups: allGroups, guides, allGuides, files, pending, noPick: noPickScope, local, busy = false, onSwitch, onIntent }: Props) {
   const { filters, setFilters: applyFilters } = useBallotFilters({ guides: allGuides, keep: ["c", MINE_PARAM] });
   const [requested, setRequested] = useQueryParam("c");
   useHomeRedirect({ election, area });
@@ -547,6 +551,7 @@ export function BallotView({ election, area, links, intro, groups: allGroups, gu
         <div className="pt-4 pb-1 lg:pt-6">
           <h1 className="text-xl font-semibold">{heading}</h1>
           <p className="text-sm text-muted-foreground">{intro.line}</p>
+          <ElectionOver date={date} links={results} />
           <div className="js-only hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
             <p aria-hidden="true">{singleKeys ? "↑↓ to browse · ? for shortcuts" : "↑↓ to browse"}</p>
             <button type="button" className="underline underline-offset-2 hover:text-foreground" onClick={() => setShortcutsOpen(true)}>

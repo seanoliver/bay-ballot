@@ -22,7 +22,7 @@ function subscribe(onChange: () => void) {
 const today = () => pacificDate(new Date());
 
 // A native fragment jump adds a history entry the app router ignores on Back.
-function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
+export function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   if (!isPlainClick(e)) return;
   e.preventDefault();
   const section = document.getElementById("before-you-vote");
@@ -35,10 +35,15 @@ function toVotingLinks(e: MouseEvent<HTMLAnchorElement>) {
   } catch {}
 }
 
-/** Null until hydrated. Pages are static and may not rebuild daily, so the day comes from the visitor's clock. */
+// The Pacific date of the build, inlined by next.config.
+const BUILD_DAY = process.env.BUILD_DAY;
+
+/** Null until hydrated unless the build ran after election day, so results links are in the HTML and don't shift the page under a tap. */
 export function useElectionDay(date: string): ElectionDayState | null {
   const now = useSyncExternalStore(subscribe, today, () => null);
-  return now ? electionDayState(date, now) : null;
+  if (now) return electionDayState(date, now);
+  const built = BUILD_DAY ? electionDayState(date, BUILD_DAY) : null;
+  return built?.kind === "after" ? built : null;
 }
 
 export function ElectionChip({ date }: { date: string }) {

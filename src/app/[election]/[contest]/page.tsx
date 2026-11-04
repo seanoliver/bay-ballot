@@ -8,6 +8,7 @@ import type { ElectionData } from "@/lib/data";
 import { dataAsOf } from "@/lib/display";
 import { activeEntries, contestFiles, EMPTY } from "@/lib/filters";
 import type { Contest } from "@/lib/schema";
+import { contestResults } from "@/lib/results";
 import { contestDescription, contestTitle } from "@/lib/seo-copy";
 import { ballotViewProps, election, electionIndex, elections, myBallotUrl } from "@/lib/site-data";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
@@ -78,6 +79,7 @@ export default async function ContestPage({ params }: PageProps<"/[election]/[co
         local={area ? localGuides(d.guides, area, d.areas).map((g) => g.id) : undefined}
         back={back}
         indexUrl={myBallotUrl(d)}
+        results={contestResults(contest, d.areas)}
       />
     </>
   );

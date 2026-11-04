@@ -1,3 +1,4 @@
+import { areaResults } from "@/lib/results";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { areaFromPath, areaHead, areaView, hasContest, snapshotOf, viewFor } from "@/lib/area-view";
@@ -29,6 +30,8 @@ function before(d: ElectionData, area: Area | null) {
   return {
     links: areaLinks(d.ballot.election, d.areas, area?.id ?? null),
     intro: electionIntro({ ...d.ballot, contests }, files, { place: placeName(area).name }),
+    date: d.ballot.date,
+    results: areaResults(area),
     groups,
     guides: info(published),
     allGuides: info(publishedGuides(d.guides, d.endorsements)),

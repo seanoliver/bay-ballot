@@ -1,3 +1,4 @@
+import { areaResults, type ResultsLink } from "./results";
 import { areaGuides, areaLinks, inArea, localGuides, placeGroups, placeName, type AreaLink, type PlaceGroup } from "./areas";
 import type { ElectionData } from "./data";
 import { electionIntro, pendingNote } from "./display";
@@ -24,6 +25,8 @@ export type AreaView = {
   title: string;
   links: AreaLink[];
   intro: { title: string; line: string };
+  date: string;
+  results: ResultsLink[];
   groups: PlaceGroup[];
   guides: GuideInfo[];
   // Names too, so a guide pinned on another area's page can be listed and unpinned here.
@@ -106,6 +109,8 @@ export function areaView(s: ElectionSnapshot, areaId: string | null): AreaView {
     area: areaId,
     ...areaHead(s, areaId),
     intro: electionIntro({ date: s.date, contests }, files, { place: placeName(area).name }),
+    date: s.date,
+    results: areaResults(area ?? null),
     groups,
     guides: published.map(info),
     allGuides,

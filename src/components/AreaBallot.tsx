@@ -125,6 +125,8 @@ export function AreaBallot({ election, ...props }: Props) {
       area={view.area}
       links={head.links}
       intro={view.intro}
+      date={view.date}
+      results={view.results}
       groups={view.groups}
       guides={view.guides}
       allGuides={view.allGuides}

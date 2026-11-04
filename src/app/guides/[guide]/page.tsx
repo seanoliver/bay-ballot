@@ -10,6 +10,7 @@ import { PageColumn } from "@/components/PageColumn";
 import { SectionHeading } from "@/components/SectionHeading";
 import { candidateSlots } from "@/lib/bar";
 import { readChangelog } from "@/lib/changelog";
+import { pacificDate, unpublishedLine } from "@/lib/election-day";
 import { guideHistory } from "@/lib/changelog-digest";
 import { formatDate, keepNumber, monthYear, sourceLink } from "@/lib/display";
 import { activeEntries, EMPTY, isPublished, TYPE_LABEL } from "@/lib/filters";
@@ -113,7 +114,9 @@ export default async function GuidePage({ params }: PageProps<"/guides/[guide]">
           </section>
         ))
       ) : (
-        <p className="mt-8 text-muted-foreground">Hasn&apos;t published {monthYear(ballot.date)} endorsements yet</p>
+        <p className="mt-8 text-muted-foreground">
+          {unpublishedLine(ballot.date, pacificDate(new Date()), monthYear(ballot.date))}
+        </p>
       )}
       <GuideHistory rows={history} />
     </PageColumn>
