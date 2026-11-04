@@ -25,6 +25,7 @@ export function sitemapEntries({
     ...guides.map((g) => `/guides/${g}`),
     "/about",
     "/changelog",
+    "/press",
   ];
   return paths.map((p) => ({ url: `${SITE}${p}`, lastModified }));
 }

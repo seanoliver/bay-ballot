@@ -19,12 +19,12 @@ Approach A from `docs/superpowers/specs/2026-10-30-site-level-seo-design.md`:
 
 1. Keep every contest indexable. A guide-count cutoff was rejected: 3 of the top 10 contest pages by clicks had only 1 guide.
 2. Keep county and area pages as the pages Google ranks for broad searches.
-3. Add link features (a guide badge, a press section) and send a few pitches.
+3. Add a link feature (a `/press` press kit with a link snippet for the site or any guide) and send a few pitches.
 
 | Step | Status |
 |---|---|
-| Design doc | draft, in review |
-| Guide badge, press section | not started (needs three-option mockups) |
+| Design doc | approved Oct 30 |
+| Press kit page | built, in review |
 | Pitches | not started |
 
 ## Measurements

@@ -20,7 +20,7 @@ describe("sitemapEntries", () => {
   });
   const urls = entries.map((e) => e.url);
 
-  it("lists each election's index, every contest, every guide, /about and /changelog, absolute on bayballot.com", () => {
+  it("lists each election's index, every contest, every guide, /about, /changelog and /press, absolute on bayballot.com", () => {
     expect(urls).toEqual([
       "https://bayballot.com/2024-11",
       "https://bayballot.com/",
@@ -31,6 +31,7 @@ describe("sitemapEntries", () => {
       "https://bayballot.com/guides/growsf",
       "https://bayballot.com/about",
       "https://bayballot.com/changelog",
+      "https://bayballot.com/press",
     ]);
   });
   it("never lists a preview host, or the latest election's index under its own id", () => {
