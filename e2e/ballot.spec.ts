@@ -171,7 +171,7 @@ test("dark mode renders without errors", async ({ page }) => {
 test("a guide that hasn't published shows no list-only badge or as-of date", async ({ page }) => {
   await page.goto("/guides/sf-examiner");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByText("Hasn't published")).toBeVisible();
+  await expect(page.getByText(/^(Hasn't|Didn't) publish/)).toBeVisible();
   await expect(page.getByText("List only")).toHaveCount(0);
   await expect(page.getByText(/· as of /)).toHaveCount(0);
 });

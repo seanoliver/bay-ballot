@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { BALLOT, isPhone, watchErrors } from "./helpers";
+import { electionDayState, pacificDate } from "../src/lib/election-day";
 
 const chip = (page: Page) => page.getByRole("banner").getByRole("link", { name: /Nov 3|Election day|Polls close|results/i });
 
@@ -178,11 +179,12 @@ test("after election day the chip links to results", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-11-04T00:30:00-08:00"));
   await page.goto("/about");
   const results = page.getByRole("banner").getByRole("link", { name: "Election results" });
-  await expect(results).toHaveAttribute("href", "https://www.sos.ca.gov/elections");
+  await expect(results).toHaveAttribute("href", "https://electionresults.sos.ca.gov/");
   await expect(results).toHaveAttribute("target", "_blank");
 });
 
 test("the footer leads with official voting links, then site and corrections links", async ({ page }, info) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
   await page.goto("/about");
   const footer = page.getByRole("contentinfo");
   const vote = footer.getByRole("region", { name: "Before you vote" });
@@ -212,12 +214,61 @@ test("the footer leads with official voting links, then site and corrections lin
   );
 });
 
+test("after election day the footer lists results by county", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T09:00:00-08:00"));
+  await page.goto("/about");
+  const results = page.getByRole("contentinfo").getByRole("region", { name: "Results by county" });
+  await expect(results.getByRole("link")).toHaveCount(10);
+  await expect(results.getByRole("link", { name: /^California, statewide/ })).toHaveAttribute("href", "https://electionresults.sos.ca.gov/");
+  await expect(results.getByRole("link", { name: /^San Francisco/ })).toHaveAttribute("href", "https://www.sfelections.org/results/20261103w/index.html");
+});
+
+test("after election day an area ballot links its county's results, and a contest links the county that counts it", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T09:00:00-08:00"));
+  await page.goto("/2026-11/sf");
+  await expect(page.getByText("The election is over. Results:")).toBeVisible();
+  await expect(page.getByRole("link", { name: /^San Francisco results/ })).toHaveAttribute("href", "https://www.sfelections.org/results/20261103w/index.html");
+  await expect(page.getByRole("link", { name: /^Statewide results/ })).toHaveAttribute("href", "https://electionresults.sos.ca.gov/");
+  await page.goto("/2026-11/prop-a");
+  const line = page.getByRole("paragraph").filter({ hasText: "The election is over. See the results:" });
+  await expect(line.getByRole("link")).toHaveCount(1);
+  await expect(line.getByRole("link", { name: /^San Francisco/ })).toHaveAttribute("href", "https://www.sfelections.org/results/20261103w/index.html");
+  await page.goto("/2026-11/prop-43");
+  await expect(line.getByRole("link")).toHaveCount(1);
+  await expect(line.getByRole("link", { name: /^statewide/ })).toHaveAttribute("href", "https://electionresults.sos.ca.gov/");
+});
+
+test("after election day the Bay Area ballot points to the footer's county list", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T09:00:00-08:00"));
+  await page.goto("/2026-11");
+  await page.getByRole("main").getByRole("link", { name: "Results by county" }).click();
+  await expect(page.getByRole("region", { name: "Results by county" })).toBeInViewport();
+});
+
+test("before election day the ballot shows no results links", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-10-16T12:00:00-07:00"));
+  await page.goto("/2026-11/sf");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByText("The election is over. Results:")).toHaveCount(0);
+});
+
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("the chip shows the date with no count", async ({ page }) => {
+  const builtAfter = electionDayState("2026-11-03", pacificDate(new Date())).kind === "after";
+
+  test("before election day, the chip shows the date with no count", async ({ page }) => {
+    test.skip(builtAfter, "built after election day");
     await page.goto("/about");
     await expect(chip(page)).toHaveText(/^Election day\s+Nov 3$/, { useInnerText: true });
     await expect(chip(page)).toHaveAttribute("href", "#before-you-vote");
+  });
+
+  test("built after election day, the page already holds the results links", async ({ page }) => {
+    test.skip(!builtAfter, "built before election day");
+    await page.goto("/2026-11/sf");
+    await expect(chip(page)).toHaveAttribute("href", "https://electionresults.sos.ca.gov/");
+    await expect(page.getByText("The election is over. Results:")).toBeVisible();
+    await expect(page.getByRole("contentinfo").getByRole("region", { name: "Results by county" })).toBeVisible();
   });
 });

@@ -1,6 +1,6 @@
 export type ElectionDayState = { kind: "before"; days: number } | { kind: "day" } | { kind: "after" };
 
-export const RESULTS_URL = "https://www.sos.ca.gov/elections";
+export const RESULTS_URL = "https://electionresults.sos.ca.gov/";
 
 const pacificDay = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
 
@@ -19,4 +19,8 @@ export const daysLeft = (days: number) => `${days} ${days === 1 ? "day" : "days"
 
 export function shortDate(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+export function unpublishedLine(electionDate: string, today: string, month: string): string {
+  return electionDayState(electionDate, today).kind === "after" ? `Didn't publish ${month} endorsements` : `Hasn't published ${month} endorsements yet`;
 }
