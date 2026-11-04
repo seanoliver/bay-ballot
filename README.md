@@ -1,7 +1,6 @@
 # Bay Ballot
 
 [![CI](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml/badge.svg)](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml)
-[![Daily data refresh](https://github.com/seanoliver/bay-ballot/actions/workflows/refresh.yml/badge.svg)](https://github.com/seanoliver/bay-ballot/actions/workflows/refresh.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fseanoliver%2Fbay-ballot%2Fbadges%2Fcoverage.json)](https://github.com/seanoliver/bay-ballot/actions/workflows/ci.yml)
 [![Data updated](https://img.shields.io/github/last-commit/seanoliver/bay-ballot/main?path=data&label=data%20updated)](https://github.com/seanoliver/bay-ballot/commits/main/data)
 [![Voter guides](https://img.shields.io/endpoint?url=https%3A%2F%2Fbayballot.com%2Fbadges%2Fguides)](https://bayballot.com)

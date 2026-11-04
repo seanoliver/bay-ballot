@@ -2,6 +2,8 @@
 
 ## Daily refresh (automated, until Nov 3, 2026)
 
+The workflow has been disabled since the election. To turn it back on: `gh workflow enable refresh.yml`.
+
 GitHub Actions runs **Daily data refresh** (`.github/workflows/refresh.yml`) every day at 13:00 UTC: 6 am Pacific while daylight time lasts, 5 am after Nov 1.
 
 What a run does:
@@ -91,7 +93,7 @@ GitHub's runners use data-center addresses, and some sites put those behind a bo
 
 ### Local refresh on Sean's Mac
 
-A launchd job runs the local refresh every day at 07:00 local time. It refreshes only the `fetchFrom: local` guides, from a home connection the sites don't block. It never merges anything: it opens or updates a PR and notifies Sean, who merges it.
+Unloaded on Nov 4, 2026, after the election. To turn it back on: `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.bayballot.local-refresh.plist`. While loaded, a launchd job runs the local refresh every day at 07:00 local time. It refreshes only the `fetchFrom: local` guides, from a home connection the sites don't block. It never merges anything: it opens or updates a PR and notifies Sean, who merges it.
 
 - **Where it runs:** its own worktree at `~/code/projects/bay-ballot-refresh`, created on first run and reset each run.
   - It first checks that the worktree is a linked worktree of this repository (not the source checkout itself), is its own top-level checkout, has no branch checked out, and has no changes outside `data/`. If a check fails (or `git status` itself fails), it stops with an error and touches nothing.

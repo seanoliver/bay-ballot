@@ -167,7 +167,7 @@ export default function AboutPage() {
                 copy. Guides that publish only a list of endorsements show no quotes.
               </p>
               <p>
-                Guides are checked for updates every day, and the few that can&apos;t be checked automatically are checked by hand. Updates are listed
+                Guides were checked for updates every day through November 3, 2026, and the few that couldn&apos;t be checked automatically were checked by hand. Updates are listed
                 on the{" "}
                 <Link href="/changelog" className={LINK}>
                   changelog
