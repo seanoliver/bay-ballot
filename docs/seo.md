@@ -24,7 +24,7 @@ Approach A from `docs/superpowers/specs/2026-10-30-site-level-seo-design.md`:
 | Step | Status |
 |---|---|
 | Design doc | approved Oct 30 |
-| Press kit page | built, in review |
+| Press kit page | shipped 2026-11-08 (#323) |
 | Pitches | not started |
 
 ## Measurements
