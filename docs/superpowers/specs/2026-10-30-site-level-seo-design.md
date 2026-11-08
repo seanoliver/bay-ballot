@@ -1,7 +1,7 @@
 # Site-level SEO: earn links, keep every contest indexable
 
 Date: 2026-10-30
-Status: draft for review
+Status: approved Oct 30, 2026
 
 ## Why
 
